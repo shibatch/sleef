@@ -1,8 +1,8 @@
 CC=gcc
-OPT=-O -Wall -Wno-unused -Wno-attributes
+OPT=-O -Wall -Wno-unused -Wno-attributes -ffp-contract=off
 SDE=/opt/sde-bdw-external-5.38.0-2013-01-03-lin/sde
 
-all : testsse2 testavx
+all : testsse2 testavx testavx2
 
 iutsse2 : sleefsimddp.c sleefsimdsp.c helpersse2.h iut.c
 	$(CC) $(OPT) -DENABLE_SSE2 -msse2 iut.c sleefsimddp.c sleefsimdsp.c -o iutsse2 -lm
@@ -41,10 +41,10 @@ testavx : iutavx ../tester/tester ../tester/testeru1 ../tester/testersp ../teste
 	../tester/testerspu1 ./iutavx
 
 testavx2 : iutavx2 ../tester/tester ../tester/testeru1 ../tester/testersp ../tester/testerspu1
-	../tester/tester $(SDE) -- ./iutavx2
-	../tester/testeru1 $(SDE) -- ./iutavx2
-	../tester/testersp $(SDE) -- ./iutavx2
-	../tester/testerspu1 $(SDE) -- ./iutavx2
+	../tester/tester ./iutavx2
+	../tester/testeru1 ./iutavx2
+	../tester/testersp ./iutavx2
+	../tester/testerspu1 ./iutavx2
 
 testfma4 : iutfma4 ../tester/tester ../tester/testeru1 ../tester/testersp ../tester/testerspu1
 	../tester/tester ./iutfma4
@@ -54,3 +54,8 @@ testfma4 : iutfma4 ../tester/tester ../tester/testeru1 ../tester/testersp ../tes
 
 clean :
 	rm -f *~ *.o *.s iutsse2 iutavx iutavx2 iutfma4 iutneon
+
+# ../tester/tester $(SDE) -- ./iutavx2
+# ../tester/testeru1 $(SDE) -- ./iutavx2
+# ../tester/testersp $(SDE) -- ./iutavx2
+# ../tester/testerspu1 $(SDE) -- ./iutavx2

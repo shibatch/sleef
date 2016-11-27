@@ -716,6 +716,22 @@ double xxcbrt_u1(double d) {
   return s[idx];
 }
 
+int xxilogb(double d) {
+  double s[VECTLENDP];
+  int t[VECTLENDP];
+  int i;
+  for(i=0;i<VECTLENDP;i++) {
+    s[i] = random()/(double)RAND_MAX*20000-10000;
+  }
+  int idx = random() & (VECTLENDP-1);
+  s[idx] = d;
+
+  vdouble a = vloadu(s);
+  vint vi = xilogb(a);
+  vstoreui(t, vi);
+
+  return t[idx];
+}
 #endif
 
 //
@@ -1335,6 +1351,23 @@ float2 xxsincosf_u1(float d) {
 
   return d2;
 }
+
+int xxilogbf(float d) {
+  float s[VECTLENSP];
+  int t[VECTLENSP];
+  int i;
+  for(i=0;i<VECTLENSP;i++) {
+    s[i] = random()/(float)RAND_MAX*20000-10000;
+  }
+  int idx = random() & (VECTLENSP-1);
+  s[idx] = d;
+
+  vfloat a = vloaduf(s);
+  vint2 vi = xilogbf(a);
+  vstoreui2(t, vi);
+
+  return t[idx];
+}
 #endif
 
 //
@@ -1534,6 +1567,12 @@ int main(int argc, char **argv) {
       sscanf(buf, "cbrt_u1 %" PRIx64, &u);
       u = d2u(xxcbrt_u1(u2d(u)));
       printf("%" PRIx64 "\n", u);
+    } else if (startsWith(buf, "ilogb ")) {
+      uint64_t u;
+      int i;
+      sscanf(buf, "ilogb %" PRIx64, &u);
+      i = xxilogb(u2d(u));
+      printf("%d\n", i);
     }
 #ifdef ENABLE_SP
     else 
@@ -1716,6 +1755,12 @@ int main(int argc, char **argv) {
       sscanf(buf, "sincosf_u1 %x", &u);
       float2 x = xxsincosf_u1(u2f(u));
       printf("%x %x\n", f2u(x.x), f2u(x.y));
+    } else if (startsWith(buf, "ilogbf ")) {
+      uint32_t u;
+      int i;
+      sscanf(buf, "ilogbf %x", &u);
+      i = xxilogbf(u2f(u));
+      printf("%d\n", i);
     }
 #endif
 

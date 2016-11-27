@@ -19,6 +19,8 @@
 #define POSITIVE_INFINITY INFINITY
 #define NEGATIVE_INFINITY (-INFINITY)
 
+#define DENORMAL_DBL_MIN (4.94066e-324)
+
 typedef int boolean;
 
 #define true 1
@@ -139,12 +141,12 @@ long double ulp(long double x) {
   int exp;
 
   if (x == 0) {
-    return DBL_MIN;
+    return DENORMAL_DBL_MIN;
   } else {
     frexpl(x, &exp);
   }
 
-  return fmax(ldexp(1.0, exp-53), DBL_MIN);
+  return fmax(ldexp(1.0, exp-53), DENORMAL_DBL_MIN);
 }
 
 double countULP(long double x, long double y) {
@@ -1611,7 +1613,7 @@ void do_test() {
   {
     fprintf(stderr, "sin_u1 denormal/nonnumber test ... ");
 
-    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY };
+    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, +0.0, -0.0 };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
@@ -1627,7 +1629,7 @@ void do_test() {
   {
     fprintf(stderr, "sin in sincos_u1 denormal/nonnumber test ... ");
 
-    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY };
+    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, +0.0, -0.0 };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
@@ -1644,7 +1646,7 @@ void do_test() {
   {
     fprintf(stderr, "cos_u1 denormal/nonnumber test ... ");
 
-    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY };
+    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, +0.0, -0.0 };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
@@ -1660,7 +1662,7 @@ void do_test() {
   {
     fprintf(stderr, "cos in sincos_u1 denormal/nonnumber test ... ");
 
-    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY };
+    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, +0.0, -0.0 };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
@@ -1677,7 +1679,7 @@ void do_test() {
   {
     fprintf(stderr, "tan_u1 denormal/nonnumber test ... ");
 
-    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, M_PI/2, -M_PI/2 };
+    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, M_PI/2, -M_PI/2, +0.0, -0.0 };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
@@ -1693,7 +1695,7 @@ void do_test() {
   {
     fprintf(stderr, "asin_u1 denormal/nonnumber test ... ");
 
-    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, 2, -2, 1, -1 };
+    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, 2, -2, 1, -1, +0.0, -0.0 };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
@@ -1710,7 +1712,7 @@ void do_test() {
   {
     fprintf(stderr, "acos_u1 denormal/nonnumber test ... ");
 
-    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, 2, -2, 1, -1 };
+    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, 2, -2, 1, -1, +0.0, -0.0 };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
@@ -1727,7 +1729,7 @@ void do_test() {
   {
     fprintf(stderr, "atan_u1 denormal/nonnumber test ... ");
 
-    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY };
+    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, +0.0, -0.0 };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
@@ -1744,7 +1746,7 @@ void do_test() {
   {
     fprintf(stderr, "log_u1 denormal/nonnumber test ... ");
 
-    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, 0, -1 };
+    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, 0, -1, +0.0, -0.0 };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
@@ -2360,6 +2362,22 @@ void do_test() {
       max = fmax(max, u);
     }
 
+    for(i=0;i<10000;i++) {
+      d = pow(0.933254300796991, i);
+      double q = child_log(d);
+      long double c = loglfr(d);
+      double u = countULP(q, c);
+      max = fmax(max, u);
+    }
+
+    for(i=0;i<10000;i++) {
+      d = 2.3e-308 * pow(0.996323, i);
+      double q = child_log(d);
+      long double c = loglfr(d);
+      double u = countULP(q, c);
+      max = fmax(max, u);
+    }
+
     fprintf(stderr, "log_u1 : %lf ... ", max);
 
     showResult(max < 1);
@@ -2763,6 +2781,23 @@ void do_test() {
       max = fmax(max, u);
     }
 
+    int i;
+    for(i=0;i<10000;i++) {
+      d = 2.3e-308 * pow(0.996323, i);
+      double q = child_log10(d);
+      long double c = log10lfr(d);
+      double u = countULP(q, c);
+      max = fmax(max, u);
+    }
+    
+    for(i=0;i<10000;i++) {
+      d = pow(0.933254300796991, i);
+      double q = child_log10(d);
+      long double c = log10lfr(d);
+      double u = countULP(q, c);
+      max = fmax(max, u);
+    }
+
     fprintf(stderr, "log10 : %lf ... ", max);
 
     showResult(max < 1);
@@ -2797,6 +2832,23 @@ void do_test() {
       double d2 = -pow(10, -d);
       double q = child_log1p(d2);
       long double c = log1plfr(d2);
+      double u = countULP(q, c);
+      max = fmax(max, u);
+    }
+
+    int i;
+    for(i=0;i<10000;i++) {
+      d = 2.3e-308 * pow(0.996323, i);
+      double q = child_log1p(d);
+      long double c = log1plfr(d);
+      double u = countULP(q, c);
+      max = fmax(max, u);
+    }
+
+    for(i=0;i<10000;i++) {
+      d = pow(0.933254300796991, i);
+      double q = child_log1p(d);
+      long double c = log1plfr(d);
       double u = countULP(q, c);
       max = fmax(max, u);
     }

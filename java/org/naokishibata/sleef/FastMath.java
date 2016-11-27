@@ -58,6 +58,7 @@ public class FastMath {
 
     static boolean ispinf(double d) { return d == Double.POSITIVE_INFINITY; }
     static boolean isminf(double d) { return d == Double.NEGATIVE_INFINITY; }
+    static boolean isnegzero(double x) { return Double.doubleToRawLongBits(x) == Double.doubleToRawLongBits(-0.0); }
 
     /**
        Returns the integer value that is closest to the argument. The
@@ -86,21 +87,26 @@ public class FastMath {
 	return Double.longBitsToDouble(((long)(q + 0x3ff)) << 52);
     }
 
-    static int ilogbp1(double d) {
+    static int ilogbk(double d) {
 	boolean m = d < 4.9090934652977266E-91;
 	d = m ? 2.037035976334486E90 * d : d;
 	int q = (int)(Double.doubleToRawLongBits(d) >> 52) & 0x7ff;
-	q = m ? q - (300 + 0x03fe) : q - 0x03fe;
+	q = m ? q - (300 + 0x03ff) : q - 0x03ff;
 	return q;
     }
 
+    public static final int FP_ILOGB0 = (-2147483648);
+    public static final int FP_ILOGBNAN = (-2147483648);
+    public static final int INT_MAX = 2147483647;
+	
     /**
        Returns the exponent part of their argument as a signed integer
     */
     public static int ilogb(double d) {
-	int e = ilogbp1(fabs(d)) - 1;
-	e = d == 0 ? -2147483648 : e;
-	e = d == Double.POSITIVE_INFINITY || d == Double.NEGATIVE_INFINITY ? 2147483647 : e;
+	int e = ilogbk(fabs(d));
+	e = d == 0.0 ? FP_ILOGB0 : e;
+	e = isnan(d) ? FP_ILOGBNAN : e;
+	e = isinf(d) ? INT_MAX : e;
 	return e;
     }
 
@@ -402,7 +408,7 @@ public class FastMath {
        maximum error of 3 ulps.
     */
     public static double acos(double d) {
-	return mulsign(atan2k(Math.sqrt((1+d)*(1-d)), fabs(d)), d) + (d < 0 ? Math.PI : 0);
+	return mulsign(atan2k(Math.sqrt((1+d)*(1-d)), fabs(d)), d) + (sign(d) == -1 ? Math.PI : 0);
     }
 
     /**
@@ -413,7 +419,7 @@ public class FastMath {
 	double t, u;
 	int q = 0;
 
-	if (s < 0) { s = -s; q = 2; }
+	if (sign(s) == -1) { s = -s; q = 2; }
 	if (s > 1) { s = 1.0 / s; q |= 1; }
 
 	t = s * s;
@@ -484,6 +490,8 @@ public class FastMath {
 	u = mla(u, s, -0.166666666666666657414808);
 
 	u = mla(s, u * d, d);
+
+	if (isnegzero(d)) u = -0.0;
 
 	return u;
     }
@@ -556,6 +564,8 @@ public class FastMath {
 
 	r.x = t + u;
 
+	if (isnegzero(d)) r.x = -0.0;
+	
 	u = -1.13615350239097429531523e-11;
 	u = mla(u, s, 2.08757471207040055479366e-09);
 	u = mla(u, s, -2.75573144028847567498567e-07);
@@ -633,7 +643,7 @@ public class FastMath {
 	double x, x2, t, m;
 	int e, i;
 
-	e = ilogbp1(d * 0.7071);
+	e = ilogbk(d * 1.4142);
 	m = ldexp(d, -e);
 
 	x = (m-1) / (m+1);
@@ -693,7 +703,7 @@ public class FastMath {
 	double m, t;
 	int e;
 
-	e = ilogbp1(d * 0.7071);
+	e = ilogbk(d * 1.4142);
 	m = ldexp(d, -e);
 
 	x = dddiv_d2_d2_d2(ddadd2_d2_d_d(-1, m), ddadd2_d2_d_d(1, m));
@@ -849,7 +859,7 @@ public class FastMath {
 	double t;
 	int e;
 
-	e = ilogbp1(d.x * 0.7071);
+	e = ilogbk(d.x * 1.4142);
 	m = ddscale_d2_d2_d(d, pow2i(-e));
 
 	x = dddiv_d2_d2_d2(ddadd2_d2_d2_d(m, -1), ddadd2_d2_d2_d(m, 1));
@@ -971,7 +981,7 @@ public class FastMath {
 	double x, y, q = 1.0;
 	int e, r;
 
-	e = ilogbp1(d);
+	e = ilogbk(d) + 1;
 	d = ldexp(d, -e);
 	r = (e + 6144) % 3;
 	q = (r == 1) ? 1.2599210498948731647672106 : q;
@@ -1027,6 +1037,7 @@ public class FastMath {
 	double x = d.x + d.y;
 	if (a > 700) x = Double.POSITIVE_INFINITY;
 	if (a < -0.36043653389117156089696070315825181539851971360337e+2) x = -1;
+	if (isnegzero(a)) x = -0.0;
 	return x;
     }
 
@@ -1057,6 +1068,7 @@ public class FastMath {
 	if (ispinf(a)) x = Double.POSITIVE_INFINITY;
 	if (a < -1) x = Double.NaN;
 	if (a == -1) x = -Double.POSITIVE_INFINITY;
+	if (isnegzero(a)) x = -0.0;
 
 	return x;
     }
@@ -1104,16 +1116,25 @@ public class FastMath {
     private static boolean ispinff(float d) { return d == Float.POSITIVE_INFINITY; }
     private static boolean isminff(float d) { return d == Float.NEGATIVE_INFINITY; }
     private static float rintf(float x) { return x < 0 ? (int)(x - 0.5f) : (int)(x + 0.5f); }
+    private static boolean isnegzerof(float x) { return floatToRawIntBits(x) == floatToRawIntBits(-0.0f); }
 
     static int floatToRawIntBits(float d) { return Float.floatToRawIntBits(d); }
     static float intBitsToFloat(int i) { return Float.intBitsToFloat(i); }
 
-    static int ilogbp1f(float d) {
+    static int ilogbkf(float d) {
 	boolean m = d < 5.421010862427522E-20f;
 	d = m ? 1.8446744073709552E19f * d : d;
 	int q = (floatToRawIntBits(d) >> 23) & 0xff;
-	q = m ? q - (64 + 0x7e) : q - 0x7e;
+	q = m ? q - (64 + 0x7f) : q - 0x7f;
 	return q;
+    }
+
+    public static int ilogbf(float d) {
+	int e = ilogbkf(fabsf(d));
+	e = d == 0.0f  ? FP_ILOGB0 : e;
+	e = isnanf(d) ? FP_ILOGBNAN : e;
+	e = isinff(d) ? INT_MAX : e;
+	return e;
     }
 
     static float pow2if(int q) {
@@ -1339,7 +1360,7 @@ public class FastMath {
 	float x, y, q = 1.0f;
 	int e, r;
 
-	e = ilogbp1f(d);
+	e = ilogbkf(d) + 1;
 	d = ldexpf(d, -e);
 	r = (e + 6144) % 3;
 	q = (r == 1) ? 1.2599210498948731647672106f : q;
@@ -1389,6 +1410,7 @@ public class FastMath {
 	u = mlaf(s, u * d, d);
 
 	if (isinff(d)) { u = NANf; }
+	if (isnegzerof(d)) u = -0.0f;
 
 	return u;
     }
@@ -1455,6 +1477,8 @@ public class FastMath {
 
 	r.x = t + u;
 
+	if (isnegzerof(d)) r.x = -0.0f;
+	
 	u = -2.71811842367242206819355e-07f;
 	u = mlaf(u, s, 2.47990446951007470488548e-05f);
 	u = mlaf(u, s, -0.00138888787478208541870117f);
@@ -1517,7 +1541,7 @@ public class FastMath {
 	float t, u;
 	int q = 0;
 
-	if (s < 0) { s = -s; q = 2; }
+	if (signf(s) == -1) { s = -s; q = 2; }
 	if (s > 1) { s = 1.0f / s; q |= 1; }
 
 	t = s * s;
@@ -1594,7 +1618,7 @@ public class FastMath {
        precision. The results may have maximum error of 3 ulps.
     */
     public static float acosf(float d) {
-	return mulsignf(atan2kf(sqrtf((1.0f+d)*(1.0f-d)), fabsf(d)), d) + (d < 0 ? (float)M_PIf : 0.0f);
+	return mulsignf(atan2kf(sqrtf((1.0f+d)*(1.0f-d)), fabsf(d)), d) + (signf(d) == -1 ? (float)M_PIf : 0.0f);
     }
 
     /**
@@ -1605,7 +1629,7 @@ public class FastMath {
 	float x, x2, t, m;
 	int e;
 
-	e = ilogbp1f(d * 0.7071f);
+	e = ilogbkf(d * 1.4142f);
 	m = ldexpf(d, -e);
 
 	x = (m-1.0f) / (m+1.0f);
@@ -1678,7 +1702,7 @@ public class FastMath {
 	float m, t;
 	int e;
 
-	e = ilogbp1f(d * 0.7071f);
+	e = ilogbkf(d * 1.4142f);
 	m = ldexpf(d, -e);
 
 	x = dfdiv_f2_f2_f2(dfadd2_f2_f_f(-1, m), dfadd2_f2_f_f(1, m));
@@ -1780,7 +1804,7 @@ public class FastMath {
 	float t;
 	int e;
 
-	e = ilogbp1f(d.x * 0.7071f);
+	e = ilogbkf(d.x * 1.4142f);
 	m = dfscale_f2_f2_f(d, pow2if(-e));
 
 	x = dfdiv_f2_f2_f2(dfadd2_f2_f2_f(m, -1), dfadd2_f2_f2_f(m, 1));
@@ -1850,6 +1874,7 @@ public class FastMath {
 	float x = d.x + d.y;
 	if (a > 88.0f) x = INFINITYf;
 	if (a < -0.15942385152878742116596338793538061065739925620174e+2f) x = -1;
+	if (isnegzerof(a)) x = -0.0f;
 	return x;
     }
 
@@ -1871,6 +1896,7 @@ public class FastMath {
 	if (isinff(a)) x = INFINITYf;
 	if (a < -1) x = NANf;
 	if (a == -1) x = -INFINITYf;
+	if (isnegzerof(a)) x = -0.0f;
 
 	return x;
     }

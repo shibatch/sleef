@@ -22,6 +22,8 @@
 #define POSITIVE_INFINITY (INFINITY)
 #define NEGATIVE_INFINITY (-INFINITY)
 
+#define DENORMAL_FLT_MIN (1.40130e-45f)
+
 typedef int boolean;
 
 #define true 1
@@ -127,7 +129,7 @@ boolean isMinusZero(double x) { return x == 0 && copysign(1, x) == -1; }
 boolean xisnan(double x) { return x != x; }
 
 double flushToZero(double y) {
-  if (enableFlushToZero && fabs(y) < 1.2e-38) y = copysign(0.0, y);
+  if (enableFlushToZero && fabsf(y) < 1.17549e-38) y = copysign(0.0, y);
   return y;
 }
 
@@ -152,12 +154,12 @@ double ulp(double x) {
   int exp;
 
   if (x == 0) {
-    return FLT_MIN;
+    return DENORMAL_FLT_MIN;
   } else {
     frexpf(x, &exp);
   }
 
-  return fmaxf(ldexpf(1.0, exp-24), FLT_MIN);
+  return fmaxf(ldexpf(1.0, exp-24), DENORMAL_FLT_MIN);
 }
 
 double countULP(double x, double y) {
@@ -934,6 +936,17 @@ float child_ldexpf(float x, int q) {
   return u2f(u);
 }
 
+int child_ilogbf(float x) {
+  char str[256];
+  int i;
+  
+  sprintf(str, "ilogbf %x\n", f2u(x));
+  write(ptoc[1], str, strlen(str));
+  if (readln(ctop[0], str, 255) < 1) stop("child_ilogbf");
+  sscanf(str, "%d", &i);
+  return i;
+}
+
 int allTestsPassed = 1;
 
 void showResult(int success) {
@@ -1624,7 +1637,7 @@ void do_test() {
   {
     fprintf(stderr, "sinf denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf };
+    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -1641,7 +1654,7 @@ void do_test() {
   {
     fprintf(stderr, "sin in sincosf denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf };
+    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -1659,7 +1672,7 @@ void do_test() {
   {
     fprintf(stderr, "cosf denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf };
+    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -1676,7 +1689,7 @@ void do_test() {
   {
     fprintf(stderr, "cos in sincosf denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf };
+    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -1694,7 +1707,7 @@ void do_test() {
   {
     fprintf(stderr, "tanf denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, M_PIf/2, -M_PIf/2 };
+    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, M_PIf/2, -M_PIf/2, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -1710,7 +1723,7 @@ void do_test() {
   {
     fprintf(stderr, "asinf denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 2, -2, 1, -1 };
+    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 2, -2, 1, -1, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -1727,7 +1740,7 @@ void do_test() {
   {
     fprintf(stderr, "acosf denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 2, -2, 1, -1 };
+    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 2, -2, 1, -1, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -1743,7 +1756,7 @@ void do_test() {
   {
     fprintf(stderr, "atanf denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf };
+    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -1760,11 +1773,12 @@ void do_test() {
   {
     fprintf(stderr, "logf denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 0, -1 };
+    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 0, -1, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
       if (!cmpDenorm(child_logf(xa[i]), logfr(xa[i]))) {
+	fprintf(stderr, "xa = %.20g, d = %.20g, c = %.20g\n", xa[i], child_logf(xa[i]), logfr(xa[i]));
 	success = false;
 	break;
       }
@@ -1776,7 +1790,7 @@ void do_test() {
   {
     fprintf(stderr, "expf denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, -2000, 2000 };
+    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, -2000, 2000, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -1793,7 +1807,7 @@ void do_test() {
   {
     fprintf(stderr, "sinhf denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, +0.0, -0.0, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 10000, -10000 };
+    float xa[] = { NANf, +0.0, -0.0, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 10000, -10000, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -1809,7 +1823,7 @@ void do_test() {
   {
     fprintf(stderr, "coshf denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, +0.0, -0.0, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 10000, -10000 };
+    float xa[] = { NANf, +0.0, -0.0, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 10000, -10000, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -1825,7 +1839,7 @@ void do_test() {
   {
     fprintf(stderr, "tanhf denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, +0.0, -0.0, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 10000, -10000 };
+    float xa[] = { NANf, +0.0, -0.0, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 10000, -10000, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -1841,7 +1855,7 @@ void do_test() {
   {
     fprintf(stderr, "asinhf denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, +0.0, -0.0, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 10000, -10000 };
+    float xa[] = { NANf, +0.0, -0.0, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 10000, -10000, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -1857,7 +1871,7 @@ void do_test() {
   {
     fprintf(stderr, "acoshf denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, +0.0, -0.0, 1.0, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 10000, -10000 };
+    float xa[] = { NANf, +0.0, -0.0, 1.0, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 10000, -10000, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -1873,7 +1887,7 @@ void do_test() {
   {
     fprintf(stderr, "atanhf denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, +0.0, -0.0, 1.0, -1.0, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 10000, -10000 };
+    float xa[] = { NANf, +0.0, -0.0, 1.0, -1.0, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 10000, -10000, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -1923,7 +1937,7 @@ void do_test() {
   {
     fprintf(stderr, "exp2f denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf };
+    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -1940,7 +1954,7 @@ void do_test() {
   {
     fprintf(stderr, "exp10f denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf };
+    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -1957,7 +1971,7 @@ void do_test() {
   {
     fprintf(stderr, "expm1f denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf };
+    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -1974,7 +1988,7 @@ void do_test() {
   {
     fprintf(stderr, "log10f denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 0, -1 };
+    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 0, -1, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -1990,7 +2004,7 @@ void do_test() {
   {
     fprintf(stderr, "log1pf denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 0, -1, -2 };
+    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 0, -1, -2, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -2015,6 +2029,23 @@ void do_test() {
       boolean pass = (isfinite(c) && d == c) || cmpDenorm(d, c);
       if (!pass) {
 	fprintf(stderr, "xa = %.20g, d = %.20g, c = %.20g\n", (double)i, d, c);
+	success = false;
+	break;
+      }
+    }
+
+    showResult(success);
+  }
+
+  {
+    fprintf(stderr, "ilogbf denormal/nonnumber test ... ");
+
+    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 0, -1, -2, +0.0f, -0.0f };
+
+    boolean success = true;
+    for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+      if (child_ilogbf(xa[i]) != ilogbf(flushToZero(xa[i]))) {
+	fprintf(stderr, "arg = %.20g, correct = %d, test = %d\n", xa[i], child_ilogbf(xa[i]), ilogbf(xa[i]));
 	success = false;
 	break;
       }
@@ -2367,10 +2398,6 @@ void do_test() {
       double c = loglfr(flushToZero(d));
       double u = countULP(q, c);
       max = fmax(max, u);
-      if (u > 1000) {
-	fprintf(stderr, "q = %.20g\nc = %.20g\nd = %.20g\nulp = %g\n", q, (double)c, d, (double)ulp(c));
-	goto STOP_LOG;
-      }
     }
 
     for(d = 0.0001;d < 10000;d += 0.1) {
@@ -2378,10 +2405,6 @@ void do_test() {
       double c = loglfr(flushToZero(d));
       double u = countULP(q, c);
       max = fmax(max, u);
-      if (u > 1000) {
-	fprintf(stderr, "q = %.20g\nc = %.20g\nd = %.20g\nulp = %g\n", q, (double)c, d, (double)ulp(c));
-	goto STOP_LOG;
-      }
     }
 
     int i;
@@ -2392,14 +2415,32 @@ void do_test() {
       double u = countULP(q, c);
       if (flushToZero(d * 0.1) == 0.0 && q == NEGATIVE_INFINITYf) u = 0;
       max = fmax(max, u);
-      if (u > 1000) {
-	fprintf(stderr, "q = %.20g\nc = %.20g\nd = %.20g\nulp = %g\n", q, (double)c, d, (double)ulp(c));
+    }
+
+    for(i=0;i<10000;i++) {
+      d = pow(0.9894640051300762, i);
+      float q = child_logf(d);
+      double c = loglfr(flushToZero(d));
+      double u = countULP(q, c);
+      if (flushToZero(d * 0.1) == 0.0 && q == NEGATIVE_INFINITYf) u = 0;
+      max = fmax(max, u);
+    }
+
+    for(i=0;i<10000;i++) {
+      d = 1.2e-38 * pow(0.9984, i);
+      float q = child_logf(d);
+      double c = loglfr(flushToZero(d));
+      double u = countULP(q, c);
+      if (flushToZero(d * 0.1) == 0.0 && q == NEGATIVE_INFINITYf) u = 0;
+      max = fmax(max, u);
+      if (u > 10) {
+	fprintf(stderr, "arg = %g, correct = %g, iut = %g\n", flushToZero(d), c, q);
 	goto STOP_LOG;
       }
     }
 
   STOP_LOG:
-
+    
     fprintf(stderr, "logf : %lf ... ", max);
 
     showResult(max < 5);
@@ -2719,6 +2760,10 @@ void do_test() {
       float q = child_log10f(d);
       double c = log10lfr(flushToZero(d));
       double u = countULP(q, c);
+      if (u >= 1) {
+	fprintf(stderr, "q = %.20g\nc = %.20g\nd = %.20g\nulp = %g\n", (double)q, (double)c, (double)d, u);
+	goto STOP_LOG10;
+      }
       max = fmax(max, u);
     }
 
@@ -2726,8 +2771,35 @@ void do_test() {
       float q = child_log10f(d);
       double c = log10lfr(flushToZero(d));
       double u = countULP(q, c);
+      if (u >= 1) {
+	fprintf(stderr, "q = %.20g\nc = %.20g\nd = %.20g\nulp = %g\n", (double)q, (double)c, (double)d, u);
+	goto STOP_LOG10;
+      }
       max = fmax(max, u);
     }
+
+    int i;
+    for(i=0;i<10000;i++) {
+      d = 1.2e-38 * pow(0.9984, i);
+      float q = child_log10f(d);
+      double c = log10lfr(flushToZero(d));
+      double u = countULP(q, c);
+      if (u >= 1) {
+	fprintf(stderr, "q = %.20g\nc = %.20g\nd = %.20g\nulp = %g\n", (double)q, (double)c, (double)d, u);
+	goto STOP_LOG10;
+      }
+      max = fmax(max, u);
+    }
+
+    for(i=0;i<10000;i++) {
+      d = pow(0.9894640051300762, i);
+      float q = child_log10f(d);
+      double c = log10lfr(flushToZero(d));
+      double u = countULP(q, c);
+      max = fmax(max, u);
+    }
+    
+  STOP_LOG10:
 
     fprintf(stderr, "log10f : %lf ... ", max);
 
@@ -2742,8 +2814,8 @@ void do_test() {
       float q = child_log1pf(d);
       double c = log1plfr(flushToZero(d));
       double u = countULP(q, c);
-      if (u > 10) {
-	fprintf(stderr, "q = %.20g\nc = %.20g\nd = %.20g\nulp = %g\n", q, (double)c, d, (double)ulp(c));
+      if (u > 3) {
+	fprintf(stderr, "q = %.20g\nc = %.20g\nd = %.20g\nulp = %g\n", q, (double)c, d, u);
 	goto STOP_LOG1P;
       }
       max = fmax(max, u);
@@ -2753,8 +2825,8 @@ void do_test() {
       float q = child_log1pf(d);
       double c = log1plfr(flushToZero(d));
       double u = countULP(q, c);
-      if (u > 10) {
-	fprintf(stderr, "q = %.20g\nc = %.20g\nd = %.20g\nulp = %g\n", q, (double)c, d, (double)ulp(c));
+      if (u > 3) {
+	fprintf(stderr, "q = %.20g\nc = %.20g\nd = %.20g\nulp = %g\n", q, (double)c, d, u);
 	goto STOP_LOG1P;
       }
       max = fmax(max, u);
@@ -2766,8 +2838,8 @@ void do_test() {
       double c = log1plfr(flushToZero(d2));
       double u = countULP(q, c);
       if (flushToZero(d2 * 0.1) == 0.0 && q == 0.0) u = 0;
-      if (u > 10) {
-	fprintf(stderr, "q = %.20g\nc = %.20g\nd = %.20g\nulp = %g\n", q, (double)c, d2, (double)ulp(c));
+      if (u > 3) {
+	fprintf(stderr, "q = %.20g\nc = %.20g\nd = %.20g\nulp = %g\n", q, (double)c, d2, u);
 	goto STOP_LOG1P;
       }
       max = fmax(max, u);
@@ -2779,18 +2851,40 @@ void do_test() {
       double c = log1plfr(flushToZero(d2));
       double u = countULP(q, c);
       if (flushToZero(d2 * 0.1) == 0.0 && q == 0.0) u = 0;
-      if (u > 10) {
-	fprintf(stderr, "q = %.20g\nc = %.20g\nd = %.20g\nulp = %g\n", q, (double)c, d2, (double)ulp(c));
+      if (u > 3) {
+	fprintf(stderr, "q = %.20g\nc = %.20g\nd = %.20g\nulp = %g\n", q, (double)c, d2, u);
 	goto STOP_LOG1P;
       }
       max = fmax(max, u);
     }
 
+    for(i=0;i<10000;i++) {
+      d = 1.2e-38 * pow(0.9984, i);
+      float q = child_log1pf(d);
+      double c = log1plfr(flushToZero(d));
+      double u = countULP(q, c);
+      if (flushToZero(d * 0.1) == 0.0 && q == 0.0) u = 0;
+      if (u > 3) {
+	fprintf(stderr, "q = %.20g\nc = %.20g\nd = %.20g\nulp = %g\n", q, (double)c, d, u);
+	goto STOP_LOG1P;
+      }
+      max = fmax(max, u);
+    }
+
+    for(i=0;i<10000;i++) {
+      d = pow(0.9894640051300762, i);
+      float q = child_log1pf(d);
+      double c = log1plfr(flushToZero(d));
+      double u = countULP(q, c);
+      if (flushToZero(d * 0.1) == 0.0 && q == 0.0) u = 0;
+      max = fmax(max, u);
+    }
+    
   STOP_LOG1P:
 
     fprintf(stderr, "log1pf : %lf ... ", max);
 
-    showResult(max < 1);
+    showResult(max <= 3);
   }
 
   {
@@ -2834,7 +2928,7 @@ void do_test() {
       double u = countULP(q, c);
       max = fmax(max, u);
       if (u > 1000) {
-	fprintf(stderr, "q = %.20g\nc = %.20g\nd = %.20g\nulp = %g\n", q, (double)c, d, (double)ulp(c));
+	fprintf(stderr, "q = %.20g\nc = %.20g\nd = %.20g\nulp = %g\n", q, (double)c, d, u);
 	goto STOP_EXP10;
       }
     }
@@ -2845,7 +2939,7 @@ void do_test() {
       double u = countULP(q, c);
       max = fmax(max, u);
       if (u > 1000) {
-	fprintf(stderr, "q = %.20g\nc = %.20g\nd = %.20g\nulp = %g\n", q, (double)c, d, (double)ulp(c));
+	fprintf(stderr, "q = %.20g\nc = %.20g\nd = %.20g\nulp = %g\n", q, (double)c, d, u);
 	goto STOP_EXP10;
       }
     }
@@ -2866,7 +2960,7 @@ void do_test() {
       double u = countULP(q, c);
       max = fmax(max, u);
       if (u > 1000) {
-	fprintf(stderr, "q = %.20g\nc = %.20g\nd = %.20g\nulp = %g\n", q, (double)c, d, (double)ulp(c));
+	fprintf(stderr, "q = %.20g\nc = %.20g\nd = %.20g\nulp = %g\n", q, (double)c, d, u);
 	goto STOP_EXPM1;
       }
     }
@@ -2877,7 +2971,7 @@ void do_test() {
       double u = countULP(q, c);
       max = fmax(max, u);
       if (u > 1000) {
-	fprintf(stderr, "q = %.20g\nc = %.20g\nd = %.20g\nulp = %g\n", q, (double)c, d, (double)ulp(c));
+	fprintf(stderr, "q = %.20g\nc = %.20g\nd = %.20g\nulp = %g\n", q, (double)c, d, u);
 	goto STOP_EXPM1;
       }
     }
@@ -2911,6 +3005,59 @@ void do_test() {
     fprintf(stderr, "expm1f : %lf ... ", max);
 
     showResult(max < 5);
+  }
+
+  {
+    float d;
+    boolean success = true;
+    
+    for(d = 0.0001;d < 10;d += 0.0001) {
+      int q = child_ilogbf(d);
+      int c = ilogbf(flushToZero(d));
+      if (q != c) {
+	fprintf(stderr, "ilogbf : arg = %.20g, correct = %d, test = %d\n", d, ilogbf(d), child_ilogbf(d));
+	success = false;
+	goto STOP_ILOGB;
+      }
+    }
+
+    for(d = 0.0001;d < 10000;d += 0.1) {
+      int q = child_ilogbf(d);
+      int c = ilogbf(flushToZero(d));
+      if (q != c) {
+	fprintf(stderr, "ilogbf : arg = %.20g, correct = %d, test = %d\n", d, ilogbf(d), child_ilogbf(d));
+	success = false;
+	goto STOP_ILOGB;
+      }
+    }
+
+    int i;
+    for(i=0;i<10000;i++) {
+      d = 1.2e-38 * pow(0.9984, i);
+      int q = child_ilogbf(d);
+      int c = ilogbf(flushToZero(d));
+      if (q != c) {
+	fprintf(stderr, "ilogbf : arg = %.20g, correct = %d, test = %d\n", d, ilogbf(d), child_ilogbf(d));
+	success = false;
+	goto STOP_ILOGB;
+      }
+    }
+
+    for(i=0;i<10000;i++) {
+      d = pow(0.9894640051300762, i);
+      int q = child_ilogbf(d);
+      int c = ilogbf(flushToZero(d));
+      if (q != c) {
+	fprintf(stderr, "ilogbf : arg = %.20g, correct = %d, test = %d\n", d, ilogbf(d), child_ilogbf(d));
+	success = false;
+	goto STOP_ILOGB;
+      }
+    }
+    
+  STOP_ILOGB:
+
+    fprintf(stderr, "ilogbf : ");
+    showResult(success);
   }
 }
 

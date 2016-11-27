@@ -441,6 +441,18 @@ int main(int argc, char **argv) {
       sscanf(buf, "cbrtf_u1 %x", &u);
       u = f2u(xcbrtf_u1(u2f(u)));
       printf("%x\n", u);
+    } else if (startsWith(buf, "ilogb ")) {
+      uint64_t u;
+      int i;
+      sscanf(buf, "ilogb %" PRIx64, &u);
+      i = xilogb(u2d(u));
+      printf("%d\n", i);
+    } else if (startsWith(buf, "ilogbf ")) {
+      uint32_t u;
+      int i;
+      sscanf(buf, "ilogbf %x", &u);
+      i = xilogbf(u2f(u));
+      printf("%d\n", i);
     } else {
       break;
     }

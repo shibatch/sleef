@@ -211,6 +211,28 @@ static INLINE vdouble visinf2(vdouble d, vdouble m) {
   return _mm256_and_pd((vdouble)visinf_vm_vd(d), _mm256_or_pd((vdouble)vsignbit_vm_vd(d), m));
 }
 
+static INLINE vmask visnegzero_vm_vd(vdouble d) {
+  return _mm256_cmpeq_epi64((__m256i)d, (__m256i)_mm256_set1_pd(-0.0));
+}
+
+static INLINE vmask vsignbitmask_vm_vd(vdouble d) {
+  return visnegzero_vm_vd(_mm256_and_pd(d, _mm256_set1_pd(-0.0)));
+}
+
+static INLINE vint vsel_vi_vd_vi(vdouble d0, vint x) {
+  __m128i mask = _mm256_cvtpd_epi32(_mm256_and_pd((__m256d)vsignbitmask_vm_vd(d0), _mm256_set_pd(1.0, 1.0, 1.0, 1.0)));
+  mask = _mm_cmpeq_epi32(mask, _mm_set_epi32(1, 1, 1, 1));
+  return vand_vi_vi_vi(mask, x);
+}
+
+static INLINE vmask visnegzero_vm_vf(vfloat d) {
+  return _mm256_cmpeq_epi32((__m256i)d, (__m256i)_mm256_set1_ps(-0.0f));
+}
+
+static INLINE vmask vsignbitmask_vm_vf(vfloat d) {
+  return visnegzero_vm_vf(_mm256_and_ps(d, _mm256_set1_ps(-0.0f)));
+}
+
 static INLINE vdouble vpow2i_vd_vi(vint q) {
   vint2 r = _mm256_slli_epi64(_mm256_cvtepi32_epi64(_mm_add_epi32(_mm_set_epi32(0x3ff, 0x3ff, 0x3ff, 0x3ff), q)), 52);
   r = _mm256_and_si256(r, _mm256_set_epi32(0xfff00000, 0, 0xfff00000, 0, 0xfff00000, 0, 0xfff00000, 0));
@@ -230,11 +252,11 @@ static INLINE vdouble vldexp_vd_vd_vi(vdouble x, vint q) {
   return vmul_vd_vd_vd(vmul_vd_vd_vd(vmul_vd_vd_vd(vmul_vd_vd_vd(vmul_vd_vd_vd(x, y), y), y), y), vpow2i_vd_vi(q));
 }
 
-static INLINE vint vilogbp1_vi_vd(vdouble d) {
+static INLINE vint vilogbk_vi_vd(vdouble d) {
   vint q, r, c;
   vmask m = vlt_vm_vd_vd(d, vcast_vd_d(4.9090934652977266E-91));
   d = vsel_vd_vm_vd_vd(m, vmul_vd_vd_vd(vcast_vd_d(2.037035976334486E90), d), d);
-  c = _mm256_cvtpd_epi32(vsel_vd_vm_vd_vd(m, vcast_vd_d(300+0x3fe), vcast_vd_d(0x3fe)));
+  c = _mm256_cvtpd_epi32(vsel_vd_vm_vd_vd(m, vcast_vd_d(300+0x3ff), vcast_vd_d(0x3ff)));
   q = (__m128i)_mm256_castpd256_pd128(d);
   q = (__m128i)_mm_shuffle_ps((__m128)q, _mm_set_ps(0, 0, 0, 0), _MM_SHUFFLE(0,0,3,1));
   r = (__m128i)_mm256_extractf128_pd(d, 1);

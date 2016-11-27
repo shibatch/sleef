@@ -16,8 +16,24 @@ Author : Naoki Shibata
 Main download page : http://shibatch.sourceforge.net/
 
 
+--
+
+The trigonometric functions are tested to return values with specified
+accuracy when the argument is within the following range.
+
+Double precision trigonometric functions : |arg| <= 10000000
+Single precision trigonometric functions : |arg| <= 10000
+
+--
+
 
 History
+
+2.90 Added ilogbf. All the reported bugs(listed below) are fixed.
+* Log function returned incorrect values when the argument is very small.
+* Signs of returned values were incorrect when the argument is signed zero.
+* Tester incorrectly counted ULP in some cases.
+* ilogb function returned incorrect values in some cases.
 
 2.80 Added support for ARM NEON. Added higher accuracy single
 precision functions : sinf_u1, cosf_u1, sincosf_u1, tanf_u1, asinf_u1,

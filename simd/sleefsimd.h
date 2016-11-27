@@ -23,6 +23,9 @@ static void vstoreuf(float *p, vfloat v) { _mm_storeu_ps(p, v); }
 static vint2 vloadui2(int32_t *p) { return (vint2)_mm_loadu_si128((__m128i *)p); }
 static void vstoreui2(int32_t *p, vint2 v) { _mm_storeu_si128((__m128i *)p, (__m128i)v); }
 
+static vint vloadui(int32_t *p) { return (vint)_mm_loadu_si128((__m128i *)p); }
+static void vstoreui(int32_t *p, vint v) { _mm_storeu_si128((__m128i *)p, (__m128i)v); }
+
 #define ENABLE_DP
 #define ENABLE_SP
 #endif
@@ -62,6 +65,9 @@ static void vstoreui2(int32_t *p, vint2 v) {
   _mm_storeu_si128((__m128i *)(p + 4), v.y);  
 }
 
+static vint vloadui(int32_t *p) { return (vint)_mm_loadu_si128((__m128i *)p); }
+static void vstoreui(int32_t *p, vint v) { _mm_storeu_si128((__m128i *)p, (__m128i)v); }
+
 #define ENABLE_DP
 #define ENABLE_SP
 #endif
@@ -90,14 +96,45 @@ static void vstoreuf(float *p, vfloat v) { return _mm256_storeu_ps(p, v); }
 static vint2 vloadui2(int32_t *p) { return _mm256_loadu_si256((__m256i const *)p); }
 static void vstoreui2(int32_t *p, vint2 v) { return _mm256_storeu_si256((__m256i *)p, v); }
 
+static vint vloadui(int32_t *p) { return (vint)_mm_loadu_si128((__m128i *)p); }
+static void vstoreui(int32_t *p, vint v) { _mm_storeu_si128((__m128i *)p, (__m128i)v); }
+
 #define ENABLE_DP
 #define ENABLE_SP
 #endif
 
 
-// ******** ARM NEON ********
+// ******** ARM NEON AArch32 ********
 
-#ifdef ENABLE_NEON
+#ifdef ENABLE_NEON32
+#include <arm_neon.h>
+
+#define VECTLENDP 2
+#define VECTLENSP 4
+
+//typedef __m128d vdouble;
+typedef int32x4_t vint;
+typedef uint32x4_t vmask;
+
+typedef float32x4_t vfloat;
+typedef int32x4_t vint2;
+
+//static vdouble vloadu(double *p) { return _mm_loadu_pd(p); }
+//static void vstoreu(double *p, vdouble v) { _mm_storeu_pd(p, v); }
+
+static vfloat vloaduf(float *p) { return vld1q_f32(p); }
+static void vstoreuf(float *p, vfloat v) { vst1q_f32(p, v); }
+
+static vint2 vloadui2(int32_t *p) { return (vint2)vld1q_s32(p); }
+static void vstoreui2(int32_t *p, vint2 v) { vst1q_s32(p, v); }
+
+#define ENABLE_SP
+#endif
+
+
+// ******** ARM NEON AArch64 ********
+
+#ifdef ENABLE_NEON64
 #include <arm_neon.h>
 
 #define VECTLENDP 2
@@ -178,6 +215,7 @@ typedef struct {
 } vfloat2;
 
 vfloat xldexpf(vfloat x, vint2 q);
+vint2 xilogbf(vfloat d);
 
 vfloat xsinf(vfloat d);
 vfloat xcosf(vfloat d);

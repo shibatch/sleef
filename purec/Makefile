@@ -1,7 +1,7 @@
 CC=gcc
 
 iut : sleefdp.c sleefsp.c iut.c
-	$(CC) -Wall -DNDEBUG sleefdp.c sleefsp.c iut.c -o iut -lm
+	$(CC) -ffp-contract=off -Wall -DNDEBUG sleefdp.c sleefsp.c iut.c -o iut -lm
 
 ../tester/tester :
 	cd ../tester; make tester

@@ -244,6 +244,41 @@ static INLINE vdouble visinf2(vdouble d, vdouble m) {
   return _mm256_and_pd((vdouble)visinf_vm_vd(d), _mm256_or_pd((vdouble)vsignbit_vm_vd(d), m));
 }
 
+static INLINE vmask visnegzero_vm_vd(vdouble d) {
+  __m256i t = _mm256_set1_epi32(0);
+  t = _mm256_insertf128_si256(t, _mm_cmpeq_epi32(_mm256_extractf128_si256((__m256i)d, 0), (__m128i)_mm_set1_pd(-0.0)), 0);
+  t = _mm256_insertf128_si256(t, _mm_cmpeq_epi32(_mm256_extractf128_si256((__m256i)d, 1), (__m128i)_mm_set1_pd(-0.0)), 1);
+  t = (__m256i)_mm256_and_pd((__m256d)_mm256_shuffle_ps((__m256)t, (__m256)t, 0xa0a0), (__m256d)_mm256_shuffle_ps((__m256)t, (__m256)t, 0xf5f5));
+  return t;
+}
+
+static INLINE vmask vsignbitmask_vm_vd(vdouble d) {
+  __m256d t = _mm256_and_pd(d, _mm256_set1_pd(-0.0));
+  return (__m256i)_mm256_cmp_pd((__m256d)_mm256_shuffle_ps((__m256)t, (__m256)t, 0xf5f5), _mm256_set1_pd(-1.0609978954826361576e-314), _CMP_EQ_OQ);
+  // -1.0609978954826361576e-314 is 0x8000000080000000 reinterpreted to double
+}
+
+static INLINE vint vsel_vi_vd_vi(vdouble d0, vint x) {
+  __m128i mask = _mm256_cvtpd_epi32(_mm256_and_pd((__m256d)vsignbitmask_vm_vd(d0), _mm256_set_pd(1.0, 1.0, 1.0, 1.0)));
+  mask = _mm_cmpeq_epi32(mask, _mm_set_epi32(1, 1, 1, 1));
+  return vand_vi_vi_vi(mask, x);
+}
+
+static INLINE vmask visnegzero_vm_vf(vfloat d) {
+  __m256i t = _mm256_set1_epi32(0);
+  t = _mm256_insertf128_si256(t, _mm_cmpeq_epi32(_mm256_extractf128_si256((__m256i)d, 0), (__m128i)_mm_set1_ps(-0.0)), 0);
+  t = _mm256_insertf128_si256(t, _mm_cmpeq_epi32(_mm256_extractf128_si256((__m256i)d, 1), (__m128i)_mm_set1_ps(-0.0)), 1);
+  return t;
+}
+
+static INLINE vmask vsignbitmask_vm_vf(vfloat d) {
+  d = _mm256_and_ps(d, _mm256_set1_ps(-0.0f));
+  __m256i t = _mm256_set1_epi32(0);
+  t = _mm256_insertf128_si256(t, _mm_cmpeq_epi32(_mm256_extractf128_si256((__m256i)d, 0), (__m128i)_mm_set1_ps(-0.0f)), 0);
+  t = _mm256_insertf128_si256(t, _mm_cmpeq_epi32(_mm256_extractf128_si256((__m256i)d, 1), (__m128i)_mm_set1_ps(-0.0f)), 1);
+  return t;
+}
+
 static INLINE vdouble vpow2i_vd_vi(vint q) {
   vint r;
   vdouble y;
@@ -274,11 +309,11 @@ static INLINE vdouble vldexp_vd_vd_vi(vdouble x, vint q) {
   return vmul_vd_vd_vd(vmul_vd_vd_vd(vmul_vd_vd_vd(vmul_vd_vd_vd(vmul_vd_vd_vd(x, y), y), y), y), vpow2i_vd_vi(q));
 }
 
-static INLINE vint vilogbp1_vi_vd(vdouble d) {
+static INLINE vint vilogbk_vi_vd(vdouble d) {
   vint q, r, c;
   vmask m = vlt_vm_vd_vd(d, vcast_vd_d(4.9090934652977266E-91));
   d = vsel_vd_vm_vd_vd(m, vmul_vd_vd_vd(vcast_vd_d(2.037035976334486E90), d), d);
-  c = _mm256_cvtpd_epi32(vsel_vd_vm_vd_vd(m, vcast_vd_d(300+0x3fe), vcast_vd_d(0x3fe)));
+  c = _mm256_cvtpd_epi32(vsel_vd_vm_vd_vd(m, vcast_vd_d(300+0x3ff), vcast_vd_d(0x3ff)));
   q = (__m128i)_mm256_castpd256_pd128(d);
   q = (__m128i)_mm_shuffle_ps((__m128)q, _mm_set_ps(0, 0, 0, 0), _MM_SHUFFLE(0,0,3,1));
   r = (__m128i)_mm256_extractf128_pd(d, 1);

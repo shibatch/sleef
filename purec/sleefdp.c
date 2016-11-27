@@ -1,8 +1,11 @@
+// Always use -ffp-contract=off option to compile SLEEF.
+
 #include <stdio.h>
 
 #include <assert.h>
 #include <stdint.h>
 #include <math.h>
+#include <limits.h>
 
 #include "nonnumber.h"
 
@@ -51,6 +54,7 @@ static inline int xisnan(double x) { return x != x; }
 static inline int xisinf(double x) { return x == INFINITY || x == -INFINITY; }
 static inline int xisminf(double x) { return x == -INFINITY; }
 static inline int xispinf(double x) { return x == INFINITY; }
+static inline int xisnegzero(double x) { return doubleToRawLongBits(x) == doubleToRawLongBits(-0.0); }
 
 static inline double pow2i(int q) {
   return longBitsToDouble(((int64_t)(q + 0x3ff)) << 52);
@@ -73,18 +77,19 @@ static inline double ldexpk(double x, int q) {
 
 double xldexp(double x, int q) { return ldexpk(x, q); }
 
-static inline int ilogbp1(double d) {
+static inline int ilogbk(double d) {
   int m = d < 4.9090934652977266E-91;
   d = m ? 2.037035976334486E90 * d : d;
   int q = (doubleToRawLongBits(d) >> 52) & 0x7ff;
-  q = m ? q - (300 + 0x03fe) : q - 0x03fe;
+  q = m ? q - (300 + 0x03ff) : q - 0x03ff;
   return q;
 }
 
 int xilogb(double d) {
-  int e = ilogbp1(xfabs(d)) - 1;
-  e = d == 0 ? -2147483648 : e;
-  e = d == INFINITY || d == -INFINITY ? 2147483647 : e;
+  int e = ilogbk(xfabs(d));
+  e = d == 0.0  ? FP_ILOGB0 : e;
+  e = xisnan(d) ? FP_ILOGBNAN : e;
+  e = xisinf(d) ? INT_MAX : e;
   return e;
 }
 
@@ -401,14 +406,14 @@ double xasin(double d) {
 }
 
 double xacos(double d) {
-  return mulsign(atan2k(sqrt((1+d)*(1-d)), xfabs(d)), d) + (d < 0 ? M_PI : 0);
+  return mulsign(atan2k(sqrt((1+d)*(1-d)), xfabs(d)), d) + (sign(d) == -1 ? M_PI : 0);
 }
 
 double xatan(double s) {
   double t, u;
   int q = 0;
 
-  if (s < 0) { s = -s; q = 2; }
+  if (sign(s) == -1) { s = -s; q = 2; }
   if (s > 1) { s = 1.0 / s; q |= 1; }
 
   t = s * s;
@@ -504,7 +509,7 @@ double xacos_u1(double d) {
   double2 d2 = atan2k_u1(ddsqrt_d2_d2(ddmul_d2_d2_d2(ddadd_d2_d_d(1, d), ddadd_d2_d_d(1,-d))), dd(xfabs(d), 0));
   d2 = ddscale_d2_d2_d(d2, mulsign(1, d));
   if (xfabs(d) == 1) d2 = dd(0, 0);
-  if (d < 0) d2 = ddadd_d2_d2_d2(dd(3.141592653589793116, 1.2246467991473532072e-16), d2);
+  if (sign(d) == -1) d2 = ddadd_d2_d2_d2(dd(3.141592653589793116, 1.2246467991473532072e-16), d2);
   return d2.x + d2.y;
 }
 
@@ -542,6 +547,8 @@ double xsin(double d) {
 
   u = mla(s, u * d, d);
 
+  if (xisnegzero(d)) u = -0.0;
+
   return u;
 }
 
@@ -574,6 +581,7 @@ double xsin_u1(double d) {
   u = x.x + x.y;
 
   if ((q & 1) != 0) u = -u;
+  if (xisnegzero(d)) u = -0.0;
 
   return u;
 }
@@ -660,7 +668,7 @@ double2 xsincos(double d) {
   t = s;
 
   s = s * s;
-
+  
   u = 1.58938307283228937328511e-10;
   u = mla(u, s, -2.50506943502539773349318e-08);
   u = mla(u, s, 2.75573131776846360512547e-06);
@@ -670,6 +678,8 @@ double2 xsincos(double d) {
   u = u * s * t;
 
   r.x = t + u;
+
+  if (xisnegzero(d)) r.x = -0.0;
 
   u = -1.13615350239097429531523e-11;
   u = mla(u, s, 2.08757471207040055479366e-09);
@@ -717,6 +727,8 @@ double2 xsincos_u1(double d) {
 
   x = ddadd_d2_d2_d(t, u);
   r.x = x.x + x.y;
+
+  if (xisnegzero(d)) r.x = -0.0;
 
   u = -1.13615350239097429531523e-11;
   u = mla(u, s.x, 2.08757471207040055479366e-09);
@@ -817,6 +829,8 @@ double xtan_u1(double d) {
 
   u = x.x + x.y;
 
+  if (xisnegzero(d)) u = -0.0;
+  
   return u;
 }
 
@@ -824,7 +838,7 @@ double xlog(double d) {
   double x, x2, t, m;
   int e;
 
-  e = ilogbp1(d * 0.7071);
+  e = ilogbk(d * 1.4142);
   m = ldexpk(d, -e);
 
   x = (m-1) / (m+1);
@@ -880,7 +894,7 @@ static inline double2 logk(double d) {
   double m, t;
   int e;
 
-  e = ilogbp1(d * 0.7071);
+  e = ilogbk(d * 1.4142);
   m = ldexpk(d, -e);
 
   x = dddiv_d2_d2_d2(ddadd2_d2_d_d(-1, m), ddadd2_d2_d_d(1, m));
@@ -1027,7 +1041,7 @@ static inline double2 logk2(double2 d) {
   double t;
   int e;
 
-  e = ilogbp1(d.x * 0.7071);
+  e = ilogbk(d.x * 1.4142);
   m = ddscale_d2_d2_d(d, pow2i(-e));
 
   x = dddiv_d2_d2_d2(ddadd2_d2_d2_d(m, -1), ddadd2_d2_d2_d(m, 1));
@@ -1135,7 +1149,7 @@ double xcbrt(double d) { // max error : 2 ulps
   double x, y, q = 1.0;
   int e, r;
 
-  e = ilogbp1(d);
+  e = ilogbk(d)+1;
   d = ldexpk(d, -e);
   r = (e + 6144) % 3;
   q = (r == 1) ? 1.2599210498948731647672106 : q;
@@ -1164,7 +1178,7 @@ double xcbrt_u1(double d) {
   double2 q2 = dd(1, 0), u, v;
   int e, r;
 
-  e = ilogbp1(d);
+  e = ilogbk(d)+1;
   d = ldexpk(d, -e);
   r = (e + 6144) % 3;
   q2 = (r == 1) ? dd(1.2599210498948731907, -2.5899333753005069177e-17) : q2;
@@ -1221,6 +1235,7 @@ double xexpm1(double a) {
   double x = d.x + d.y;
   if (a > 700) x = INFINITY;
   if (a < -0.36043653389117156089696070315825181539851971360337e+2) x = -1;
+  if (xisnegzero(a)) x = -0.0;
   return x;
 }
 
@@ -1242,6 +1257,7 @@ double xlog1p(double a) {
   if (xisinf(a)) x = INFINITY;
   if (a < -1) x = NAN;
   if (a == -1) x = -INFINITY;
+  if (xisnegzero(a)) x = -0.0;
 
   return x;
 }

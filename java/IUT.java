@@ -158,6 +158,11 @@ public class IUT {
 		long x = hexToLong(a[1]), y = hexToLong(a[2]);
 		double d = FastMath.ldexp(Double.longBitsToDouble(x), (int)Double.longBitsToDouble(y));
 		System.out.println(longToHex(Double.doubleToRawLongBits(d)));
+	    } else if (s.startsWith("ilogb ")) {
+		String[] a = s.split(" ");
+		long x = hexToLong(a[1]);
+		int i = FastMath.ilogb(Double.longBitsToDouble(x));
+		System.out.println(i);
 	    } else if (s.startsWith("sinf ")) {
 		String[] a = s.split(" ");
 		long x = hexToLong(a[1]);
@@ -286,6 +291,11 @@ public class IUT {
 		long x = hexToLong(a[1]);
 		float d = (float)Math.sqrt(Float.intBitsToFloat((int)x));
 		System.out.println(longToHex(Float.floatToRawIntBits(d)));
+	    } else if (s.startsWith("ilogbf ")) {
+		String[] a = s.split(" ");
+		long x = hexToLong(a[1]);
+		int i = FastMath.ilogb(Float.intBitsToFloat((int)x));
+		System.out.println(i);
 	    } else {
 		break;
 	    }

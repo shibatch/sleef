@@ -1,7 +1,7 @@
 test :
-	cd java; make test
 	cd purec; make test
 	cd simd; make testsse2 testavx
+	cd java; make test
 
 clean :
 	rm -f *~

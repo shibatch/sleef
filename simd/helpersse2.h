@@ -128,7 +128,7 @@ static INLINE vint2 vcast_vi2_i(int i) { return _mm_set_epi32(i, i, i, i); }
 
 static INLINE vint2 vadd_vi2_vi2_vi2(vint2 x, vint2 y) { return vadd_vi_vi_vi(x, y); }
 static INLINE vint2 vsub_vi2_vi2_vi2(vint2 x, vint2 y) { return vsub_vi_vi_vi(x, y); }
-static INLINE vint vneg_vi2_vi2(vint2 e) { return vsub_vi2_vi2_vi2(vcast_vi2_i(0), e); }
+static INLINE vint2 vneg_vi2_vi2(vint2 e) { return vsub_vi2_vi2_vi2(vcast_vi2_i(0), e); }
 
 static INLINE vint2 vand_vi2_vi2_vi2(vint2 x, vint2 y) { return vand_vi_vi_vi(x, y); }
 static INLINE vint2 vandnot_vi2_vi2_vi2(vint2 x, vint2 y) { return vandnot_vi_vi_vi(x, y); }
@@ -194,6 +194,28 @@ static INLINE vdouble visinf2(vdouble d, vdouble m) {
   return (__m128d)_mm_and_si128(visinf_vm_vd(d), _mm_or_si128(vsignbit_vm_vd(d), (__m128i)m));
 }
 
+static INLINE vmask visnegzero_vm_vd(vdouble d) {
+  __m128i t = _mm_cmpeq_epi32((__m128i) d, (__m128i)_mm_set1_pd(-0.0));
+  return (__m128i)_mm_and_pd((__m128d)_mm_shuffle_epi32(t, 0xa0), (__m128d)_mm_shuffle_epi32(t, 0xf5));
+}
+
+static INLINE vmask vsignbitmask_vm_vd(vdouble d) {
+  return _mm_cmpeq_epi32(_mm_shuffle_epi32(_mm_and_si128((__m128i)d, _mm_set_epi32(0x80000000, 0x0, 0x80000000, 0x0)), 0xf5), _mm_set1_epi32(0x80000000));
+}
+
+static INLINE vmask visnegzero_vm_vf(vfloat d) {
+  return _mm_cmpeq_epi32((__m128i) d, (__m128i)_mm_set1_ps(-0.0));
+}
+
+static INLINE vmask vsignbitmask_vm_vf(vfloat d) {
+  return _mm_cmpeq_epi32(_mm_and_si128((__m128i)d, _mm_set_epi32(0x80000000, 0x80000000, 0x80000000, 0x80000000)), _mm_set1_epi32(0x80000000));
+}
+
+static INLINE vint vsel_vi_vd_vi(vdouble d, vint x) {
+  vmask mask = (vmask)_mm_cmpeq_ps(_mm_cvtpd_ps((vdouble)vsignbitmask_vm_vd(d)), _mm_set_ps(0, 0, 0, 0));
+  return vandnot_vi_vi_vi(mask, x);
+}
+
 //
 
 static INLINE vdouble vpow2i_vd_vi(vint q) {
@@ -215,13 +237,13 @@ static INLINE vdouble vldexp_vd_vd_vi(vdouble x, vint q) {
   return vmul_vd_vd_vd(vmul_vd_vd_vd(vmul_vd_vd_vd(vmul_vd_vd_vd(vmul_vd_vd_vd(x, y), y), y), y), vpow2i_vd_vi(q));
 }
 
-static INLINE vint vilogbp1_vi_vd(vdouble d) {
+static INLINE vint vilogbk_vi_vd(vdouble d) {
   vint m = vlt_vm_vd_vd(d, vcast_vd_d(4.9090934652977266E-91));
   d = vsel_vd_vm_vd_vd(m, vmul_vd_vd_vd(vcast_vd_d(2.037035976334486E90), d), d);
   __m128i q = _mm_and_si128((__m128i)d, _mm_set_epi32(((1 << 12)-1) << 20, 0, ((1 << 12)-1) << 20, 0));
   q = _mm_srli_epi32(q, 20);
-  q = vor_vm_vm_vm(vand_vm_vm_vm   (m, _mm_sub_epi32(q, _mm_set_epi32(300 + 0x3fe, 0, 300 + 0x3fe, 0))),
-		   vandnot_vm_vm_vm(m, _mm_sub_epi32(q, _mm_set_epi32(      0x3fe, 0,       0x3fe, 0))));
+  q = vor_vm_vm_vm(vand_vm_vm_vm   (m, _mm_sub_epi32(q, _mm_set_epi32(300 + 0x3ff, 0, 300 + 0x3ff, 0))),
+		   vandnot_vm_vm_vm(m, _mm_sub_epi32(q, _mm_set_epi32(      0x3ff, 0,       0x3ff, 0))));
   q = (__m128i)_mm_shuffle_ps((__m128)q, (__m128)q, _MM_SHUFFLE(0,0,3,1));
   return q;
 }

@@ -1,8 +1,11 @@
+// Always use -ffp-contract=off option to compile SLEEF.
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <stdint.h>
 #include <math.h>
+#include <limits.h>
 
 #include "nonnumber.h"
 
@@ -51,13 +54,22 @@ static inline int xisnanf(float x) { return x != x; }
 static inline int xisinff(float x) { return x == INFINITYf || x == -INFINITYf; }
 static inline int xisminff(float x) { return x == -INFINITYf; }
 static inline int xispinff(float x) { return x == INFINITYf; }
+static inline int xisnegzerof(float x) { return floatToRawIntBits(x) == floatToRawIntBits(-0.0); }
 
-static inline int ilogbp1f(float d) {
+static inline int ilogbkf(float d) {
   int m = d < 5.421010862427522E-20f;
   d = m ? 1.8446744073709552E19f * d : d;
   int q = (floatToRawIntBits(d) >> 23) & 0xff;
-  q = m ? q - (64 + 0x7e) : q - 0x7e;
+  q = m ? q - (64 + 0x7f) : q - 0x7f;
   return q;
+}
+
+int xilogbf(float d) {
+  int e = ilogbkf(xfabsf(d));
+  e = d == 0.0f  ? FP_ILOGB0 : e;
+  e = xisnanf(d) ? FP_ILOGBNAN : e;
+  e = xisinff(d) ? INT_MAX : e;
+  return e;
 }
 
 static inline float pow2if(int q) {
@@ -345,6 +357,7 @@ float xsinf(float d) {
 
   s = d * d;
 
+  if (floatToRawIntBits(d) == floatToRawIntBits(-0.0f)) s = -0.0f;
   if ((q & 1) != 0) d = -d;
 
   u = 2.6083159809786593541503e-06f;
@@ -355,6 +368,7 @@ float xsinf(float d) {
   u = mlaf(s, u * d, d);
 
   if (xisinff(d)) u = NANf;
+  if (xisnegzerof(d)) u = -0.0f;
 
   return u;
 }
@@ -384,6 +398,7 @@ float xsinf_u1(float d) {
   u = x.x + x.y;
 
   if ((q & 1) != 0) u = -u;
+  if (xisnegzerof(d)) u = -0.0f;
 
   return u;
 }
@@ -470,6 +485,8 @@ float2 xsincosf(float d) {
 
   r.x = t + u;
 
+  if (xisnegzerof(d)) r.x = -0.0f;
+  
   u = -2.71811842367242206819355e-07f;
   u = mlaf(u, s, 2.47990446951007470488548e-05f);
   u = mlaf(u, s, -0.00138888787478208541870117f);
@@ -511,6 +528,7 @@ float2 xsincosf_u1(float d) {
 
   x = dfadd_f2_f2_f(t, u);
   r.x = x.x + x.y;
+  if (xisnegzerof(d)) r.x = -0.0f;
 
   u = -2.71811842367242206819355e-07f;
   u = mlaf(u, s.x, 2.47990446951007470488548e-05f);
@@ -595,6 +613,8 @@ float xtanf_u1(float d) {
 
   u = x.x + x.y;
 
+  if (xisnegzerof(d)) u = -0.0f;
+
   return u;
 }
 
@@ -602,7 +622,7 @@ float xatanf(float s) {
   float t, u;
   int q = 0;
 
-  if (s < 0) { s = -s; q = 2; }
+  if (signf(s) == -1) { s = -s; q = 2; }
   if (s > 1) { s = 1.0f / s; q |= 1; }
 
   t = s * s;
@@ -665,7 +685,7 @@ float xasinf(float d) {
 }
 
 float xacosf(float d) {
-  return mulsignf(atan2kf(sqrtf((1.0f+d)*(1.0f-d)), fabsf(d)), d) + (d < 0 ? (float)M_PI : 0.0f);
+  return mulsignf(atan2kf(sqrtf((1.0f+d)*(1.0f-d)), fabsf(d)), d) + (signf(d) == -1 ? (float)M_PI : 0.0f);
 }
 
 static float2 atan2kf_u1(float2 y, float2 x) {
@@ -722,7 +742,7 @@ float xacosf_u1(float d) {
   float2 d2 = atan2kf_u1(dfsqrt_f2_f2(dfmul_f2_f2_f2(dfadd_f2_f_f(1, d), dfadd_f2_f_f(1,-d))), df(xfabsf(d), 0));
   d2 = dfscale_f2_f2_f(d2, mulsignf(1.0f, d));
   if (xfabsf(d) == 1) d2 = df(0.0f, 0.0f);
-  if (d < 0) d2 = dfadd_f2_f2_f2(df(3.1415927410125732422f,-8.7422776573475857731e-08f), d2);
+  if (signf(d) == -1) d2 = dfadd_f2_f2_f2(df(3.1415927410125732422f,-8.7422776573475857731e-08f), d2);
   return d2.x + d2.y;
 }
 
@@ -737,7 +757,7 @@ float xlogf(float d) {
   float x, x2, t, m;
   int e;
 
-  e = ilogbp1f(d * 0.7071f);
+  e = ilogbkf(d * 1.4142f);
   m = ldexpkf(d, -e);
 
   x = (m-1.0f) / (m+1.0f);
@@ -814,7 +834,7 @@ static inline float2 logkf(float d) {
   float m, t;
   int e;
 
-  e = ilogbp1f(d * 0.7071f);
+  e = ilogbkf(d * 1.4142f);
   m = ldexpkf(d, -e);
 
   x = dfdiv_f2_f2_f2(dfadd2_f2_f_f(-1, m), dfadd2_f2_f_f(1, m));
@@ -925,7 +945,7 @@ static inline float2 logk2f(float2 d) {
   float t;
   int e;
 
-  e = ilogbp1f(d.x * 0.7071f);
+  e = ilogbkf(d.x * 1.4142f);
   m = dfscale_f2_f2_f(d, pow2if(-e));
 
   x = dfdiv_f2_f2_f2(dfadd2_f2_f2_f(m, -1), dfadd2_f2_f2_f(m, 1));
@@ -995,6 +1015,7 @@ float xexpm1f(float a) {
   float x = d.x + d.y;
   if (a > 88.0f) x = INFINITYf;
   if (a < -0.15942385152878742116596338793538061065739925620174e+2f) x = -1;
+  if (xisnegzerof(a)) x = -0.0f;
   return x;
 }
 
@@ -1016,6 +1037,7 @@ float xlog1pf(float a) {
   if (xisinff(a)) x = INFINITYf;
   if (a < -1) x = NANf;
   if (a == -1) x = -INFINITYf;
+  if (xisnegzerof(a)) x = -0.0f;
 
   return x;
 }
@@ -1026,7 +1048,7 @@ float xcbrtf(float d) {
   float x, y, q = 1.0f;
   int e, r;
 
-  e = ilogbp1f(d);
+  e = ilogbkf(d)+1;
   d = ldexpkf(d, -e);
   r = (e + 6144) % 3;
   q = (r == 1) ? 1.2599210498948731647672106f : q;
@@ -1054,7 +1076,7 @@ float xcbrtf_u1(float d) {
   float2 q2 = df(1, 0), u, v;
   int e, r;
 
-  e = ilogbp1f(d);
+  e = ilogbkf(d)+1;
   d = ldexpkf(d, -e);
   r = (e + 6144) % 3;
   q2 = (r == 1) ? df(1.2599210739135742188, -2.4018701694217270415e-08) : q2;

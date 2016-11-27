@@ -22,6 +22,8 @@
 #define POSITIVE_INFINITY (INFINITY)
 #define NEGATIVE_INFINITY (-INFINITY)
 
+#define DENORMAL_FLT_MIN (1.40130e-45f)
+
 typedef int boolean;
 
 #define true 1
@@ -127,7 +129,7 @@ boolean isMinusZero(double x) { return x == 0 && copysign(1, x) == -1; }
 boolean xisnan(double x) { return x != x; }
 
 double flushToZero(double y) {
-  if (enableFlushToZero && fabs(y) < 1.2e-38) y = copysign(0.0, y);
+  if (enableFlushToZero && fabsf(y) < 1.17549e-38) y = copysign(0.0, y);
   return y;
 }
 
@@ -152,12 +154,12 @@ double ulp(double x) {
   int exp;
 
   if (x == 0) {
-    return FLT_MIN;
+    return DENORMAL_FLT_MIN;
   } else {
     frexpf(x, &exp);
   }
 
-  return fmaxf(ldexpf(1.0, exp-24), FLT_MIN);
+  return fmaxf(ldexpf(1.0, exp-24), DENORMAL_FLT_MIN);
 }
 
 double countULP(double x, double y) {
@@ -1625,7 +1627,7 @@ void do_test() {
   {
     fprintf(stderr, "sinf_u1 denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf };
+    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -1642,7 +1644,7 @@ void do_test() {
   {
     fprintf(stderr, "sin in sincosf_u1 denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf };
+    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -1660,7 +1662,7 @@ void do_test() {
   {
     fprintf(stderr, "cosf_u1 denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf };
+    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -1677,7 +1679,7 @@ void do_test() {
   {
     fprintf(stderr, "cos in sincosf_u1 denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf };
+    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -1695,7 +1697,7 @@ void do_test() {
   {
     fprintf(stderr, "tanf_u1 denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, M_PIf/2, -M_PIf/2 };
+    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, M_PIf/2, -M_PIf/2, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -1711,7 +1713,7 @@ void do_test() {
   {
     fprintf(stderr, "asinf_u1 denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 2, -2, 1, -1 };
+    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 2, -2, 1, -1, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -1728,7 +1730,7 @@ void do_test() {
   {
     fprintf(stderr, "acosf_u1 denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 2, -2, 1, -1 };
+    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 2, -2, 1, -1, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -1744,7 +1746,7 @@ void do_test() {
   {
     fprintf(stderr, "atanf_u1 denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf };
+    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -1761,7 +1763,7 @@ void do_test() {
   {
     fprintf(stderr, "logf_u1 denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 0, -1 };
+    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 0, -1, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -2397,6 +2399,24 @@ void do_test() {
 	fprintf(stderr, "q = %.20g\nc = %.20g\nd = %.20g\nulp = %g\ni=%d\n", q, (double)c, d, (double)ulp(c), i);
 	goto STOP_LOG;
       }
+    }
+
+    for(i=0;i<10000;i++) {
+      d = pow(0.9894640051300762, i);
+      float q = child_logf(d);
+      double c = loglfr(flushToZero(d));
+      double u = countULP(q, c);
+      if (flushToZero(d * 0.1) == 0.0 && q == NEGATIVE_INFINITYf) u = 0;
+      max = fmax(max, u);
+    }
+
+    for(i=0;i<10000;i++) {
+      d = 1.2e-38 * pow(0.9984, i);
+      float q = child_logf(d);
+      double c = loglfr(flushToZero(d));
+      double u = countULP(q, c);
+      if (flushToZero(d * 0.1) == 0.0 && q == NEGATIVE_INFINITYf) u = 0;
+      max = fmax(max, u);
     }
 
   STOP_LOG:
