@@ -2,6 +2,10 @@ typedef struct {
   vdouble x, y;
 } vdouble2;
 
+static INLINE vdouble vupper_vd_vd(vdouble d) {
+  return (vdouble)vand_vm_vm_vm((vmask)d, vcast_vm_i_i(0xffffffff, 0xf8000000));
+}
+
 static INLINE vdouble2 vcast_vd2_vd_vd(vdouble h, vdouble l) {
   vdouble2 ret = {h, l};
   return ret;
@@ -12,10 +16,10 @@ static INLINE vdouble2 vcast_vd2_d_d(double h, double l) {
   return ret;
 }
 
-static INLINE vdouble2 vsel_vd2_vm_vd2_vd2(vmask m, vdouble2 x, vdouble2 y) {
+static INLINE vdouble2 vsel_vd2_vo_vd2_vd2(vopmask m, vdouble2 x, vdouble2 y) {
   vdouble2 r;
-  r.x = vsel_vd_vm_vd_vd(m, x.x, y.x);
-  r.y = vsel_vd_vm_vd_vd(m, x.y, y.y);
+  r.x = vsel_vd_vo_vd_vd(m, x.x, y.x);
+  r.y = vsel_vd_vo_vd_vd(m, x.y, y.y);
   return r;
 }
 
@@ -145,7 +149,7 @@ static INLINE vdouble2 ddadd2_vd2_vd2_vd2(vdouble2 x, vdouble2 y) {
   return r;
 }
 
-static inline vdouble2 ddsub_vd2_vd_vd(vdouble x, vdouble y) {
+static INLINE vdouble2 ddsub_vd2_vd_vd(vdouble x, vdouble y) {
   // |x| >= |y|
 
   vdouble2 r;
@@ -169,19 +173,6 @@ static INLINE vdouble2 ddsub_vd2_vd2_vd2(vdouble2 x, vdouble2 y) {
 
   return r;
 }
-
-#if 0
-static inline vdouble2 ddsub_vd2_vd2_vd2(vdouble2 x, vdouble2 y) {
-  // |x| >= |y|
-
-  vdouble2 r;
-
-  r.x = vsub_vd_vd_vd(x.x, y.x);
-  r.y = vsub_vd_vd_vd(vadd_vd_vd_vd(vsub_vd_vd_vd(vsub_vd_vd_vd(x.x, r.x), y.x), x.y), y.y);
-
-  return r;
-}
-#endif
 
 #ifdef ENABLE_FMA_DP
 static INLINE vdouble2 dddiv_vd2_vd2_vd2(vdouble2 n, vdouble2 d) {
@@ -232,7 +223,7 @@ static INLINE vdouble2 ddmul_vd2_vd2_vd(vdouble2 x, vdouble y) {
   return r;
 }
 
-static inline vdouble2 ddrec_vd2_vd(vdouble d) {
+static INLINE vdouble2 ddrec_vd2_vd(vdouble d) {
   vdouble2 q;
 
   q.x = vrec_vd_vd(d);

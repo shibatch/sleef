@@ -1,8 +1,8 @@
-CC=gcc-5
-OPT=-O -Wall -Wno-unused -Wno-attributes -ffp-contract=off -fmax-errors=3
+CC=clang
+OPT=-O -Wall -Wno-unused -Wno-attributes -ffp-contract=off -ferror-limit=3
 SDE=sde
 
-all : testsse2 testavx testavx2
+all : testclangvec
 
 iutsse2 : sleefsimddp.c sleefsimdsp.c helpersse2.h iut.c
 	$(CC) $(OPT) -DENABLE_SSE2 -msse2 iut.c sleefsimddp.c sleefsimdsp.c -o iutsse2 -lm
@@ -18,6 +18,9 @@ iutavx512f : sleefsimddp.c sleefsimdsp.c helperavx512f.h iut.c
 
 iutfma4 : sleefsimddp.c sleefsimdsp.c helperfma4.h iut.c
 	$(CC) $(OPT) -DENABLE_FMA4 -mavx -mfma4 iut.c sleefsimddp.c sleefsimdsp.c -o iutfma4 -lm
+
+iutclangvec : sleefsimddp.c sleefsimdsp.c helperclangvec.h iut.c
+	$(CC) $(OPT) -DENABLE_CLANGVEC iut.c sleefsimddp.c sleefsimdsp.c -o iutclangvec -lm
 
 ../tester/tester :
 	cd ../tester; make tester
@@ -60,6 +63,12 @@ testfma4 : iutfma4 ../tester/tester ../tester/testeru1 ../tester/testersp ../tes
 	../tester/testersp ./iutfma4
 	../tester/testeru1 ./iutfma4
 	../tester/testerspu1 ./iutfma4
+
+testclangvec : iutclangvec ../tester/tester ../tester/testeru1 ../tester/testersp ../tester/testerspu1
+	../tester/tester ./iutclangvec
+	../tester/testersp ./iutclangvec
+	../tester/testeru1 ./iutclangvec
+	../tester/testerspu1 ./iutclangvec
 
 clean :
 	rm -f *~ *.o *.s iutsse2 iutavx iutavx2 iutavx512f iutfma4 iutneon iutclangvec

@@ -43,9 +43,7 @@ typedef __m256d vdouble;
 typedef __m128i vint;
 
 typedef __m256 vfloat;
-typedef struct {
-  vint x, y;
-} vint2;
+typedef struct { __m128i x, y; } vint2;
 
 static vdouble vloadu(double *p) { return _mm256_loadu_pd(p); }
 static void vstoreu(double *p, vdouble v) { return _mm256_storeu_pd(p, v); }
@@ -104,6 +102,37 @@ static void vstoreui(int32_t *p, vint v) { _mm_storeu_si128((__m128i *)p, (__m12
 #endif
 
 
+// ******** AVX512F ********
+
+#ifdef ENABLE_AVX512F
+#include <immintrin.h>
+
+#define VECTLENDP 8
+#define VECTLENSP 16
+
+typedef __m512d vdouble;
+typedef __m256i vint;
+
+typedef __m512 vfloat;
+typedef __m512i vint2;
+
+static vdouble vloadu(double *p) { return _mm512_loadu_pd(p); }
+static void vstoreu(double *p, vdouble v) { return _mm512_storeu_pd(p, v); }
+
+static vfloat vloaduf(float *p) { return _mm512_loadu_ps(p); }
+static void vstoreuf(float *p, vfloat v) { return _mm512_storeu_ps(p, v); }
+
+static vint2 vloadui2(int32_t *p) { return _mm512_loadu_si512((__m512i const *)p); }
+static void vstoreui2(int32_t *p, vint2 v) { return _mm512_storeu_si512((__m512i *)p, v); }
+
+static vint vloadui(int32_t *p) { return _mm256_loadu_si256((__m256i const *)p); }
+static void vstoreui(int32_t *p, vint v) { return _mm256_storeu_si256((__m256i *)p, v); }
+
+#define ENABLE_DP
+#define ENABLE_SP
+#endif
+
+
 // ******** ARM NEON AArch32 ********
 
 #ifdef ENABLE_NEON32
@@ -114,7 +143,6 @@ static void vstoreui(int32_t *p, vint v) { _mm_storeu_si128((__m128i *)p, (__m12
 
 //typedef __m128d vdouble;
 typedef int32x4_t vint;
-typedef uint32x4_t vmask;
 
 typedef float32x4_t vfloat;
 typedef int32x4_t vint2;
@@ -142,7 +170,6 @@ static void vstoreui2(int32_t *p, vint2 v) { vst1q_s32(p, v); }
 
 //typedef __m128d vdouble;
 typedef int32x4_t vint;
-typedef uint32x4_t vmask;
 
 typedef float32x4_t vfloat;
 typedef int32x4_t vint2;
@@ -159,6 +186,61 @@ static void vstoreui2(int32_t *p, vint2 v) { vst1q_s32(p, v); }
 #define ENABLE_SP
 #endif
 
+
+// ******** Clang Exntended Vector ********
+
+#ifdef ENABLE_CLANGVEC
+#define VECTLENDP 8
+#define VECTLENSP (VECTLENDP*2)
+
+typedef double vdouble __attribute__((ext_vector_type(VECTLENDP)));
+typedef int32_t vint __attribute__((ext_vector_type(VECTLENDP)));
+
+typedef float vfloat __attribute__((ext_vector_type(VECTLENDP*2)));
+typedef int32_t vint2 __attribute__((ext_vector_type(VECTLENDP*2)));
+
+static vdouble vloadu(double *p) {
+  vdouble vd;
+  for(int i=0;i<VECTLENDP;i++) vd[i] = p[i];
+  return vd;
+}
+static void vstoreu(double *p, vdouble v) {
+  for(int i=0;i<VECTLENDP;i++) p[i] = v[i];
+}
+
+static vfloat vloaduf(float *p) {
+  vfloat vf;
+  for(int i=0;i<VECTLENSP;i++) vf[i] = p[i];
+  return vf;
+}
+static void vstoreuf(float *p, vfloat v) {
+  for(int i=0;i<VECTLENSP;i++) p[i] = v[i];
+}
+
+static vint2 vloadui2(int32_t *p) {
+  vint2 vi;
+  for(int i=0;i<VECTLENSP;i++) vi[i] = p[i];
+  return vi;
+}
+static void vstoreui2(int32_t *p, vint2 v) {
+  for(int i=0;i<VECTLENSP;i++) p[i] = v[i];
+}
+
+static vint vloadui(int32_t *p) {
+  vint vi;
+  for(int i=0;i<VECTLENDP;i++) vi[i] = p[i];
+  return vi;
+}
+static void vstoreui(int32_t *p, vint v) {
+  for(int i=0;i<VECTLENDP;i++) p[i] = v[i];
+}
+
+#define ENABLE_DP
+#define ENABLE_SP
+#endif
+
+
+////
 
 #ifdef ENABLE_DP
 typedef struct {

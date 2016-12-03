@@ -2037,6 +2037,78 @@ void do_test() {
   {
     float d, max = 0;
 
+    for(d = 0.0001;d < 10;d += 0.0001) {
+      float q = child_logf(d);
+      double c = loglfr(flushToZero(d));
+      double u = countULP(q, c);
+      max = fmax(max, u);
+      if (u > 1000) {
+	fprintf(stderr, "arg = %.20g\ncorrect = %.20g\ntest = %.20g\nulp = %g\n", d, (double)c, q, (double)countULP(q, c));
+	goto STOP_LOG;
+      }
+    }
+
+    for(d = 0.0001;d < 10000;d += 0.1) {
+      float q = child_logf(d);
+      double c = loglfr(flushToZero(d));
+      double u = countULP(q, c);
+      max = fmax(max, u);
+      if (u > 1000) {
+	fprintf(stderr, "arg = %.20g\ncorrect = %.20g\ntest = %.20g\nulp = %g\n", d, (double)c, q, (double)countULP(q, c));
+	goto STOP_LOG;
+      }
+    }
+
+    int i;
+    for(i = -1000;i <= 1000;i++) {
+      d = pow(1.1, i);
+      float q = child_logf(d);
+      double c = loglfr(flushToZero(d));
+      double u = countULP(q, c);
+      if (flushToZero(d * 0.1) == 0.0 && q == NEGATIVE_INFINITYf) u = 0;
+      max = fmax(max, u);
+      if (u > 1000) {
+	fprintf(stderr, "arg = %.20g\ncorrect = %.20g\ntest = %.20g\nulp = %g\n", d, (double)c, q, (double)countULP(q, c));
+	goto STOP_LOG;
+      }
+    }
+
+    for(i=0;i<10000;i++) {
+      d = pow(0.9894640051300762, i);
+      float q = child_logf(d);
+      double c = loglfr(flushToZero(d));
+      double u = countULP(q, c);
+      if (flushToZero(d * 0.1) == 0.0 && q == NEGATIVE_INFINITYf) u = 0;
+      max = fmax(max, u);
+      if (u > 1000) {
+	fprintf(stderr, "arg = %.20g\ncorrect = %.20g\ntest = %.20g\nulp = %g\n", d, (double)c, q, (double)countULP(q, c));
+	goto STOP_LOG;
+      }
+    }
+
+    for(i=0;i<10000;i++) {
+      d = 1.2e-38 * pow(0.9984, i);
+      float q = child_logf(d);
+      double c = loglfr(flushToZero(d));
+      double u = countULP(q, c);
+      if (flushToZero(d * 0.1) == 0.0 && q == NEGATIVE_INFINITYf) u = 0;
+      max = fmax(max, u);
+      if (u > 1000) {
+	fprintf(stderr, "arg = %.20g\ncorrect = %.20g\ntest = %.20g\nulp = %g\n", d, (double)c, q, (double)countULP(q, c));
+	goto STOP_LOG;
+      }
+    }
+
+  STOP_LOG:
+
+    fprintf(stderr, "logf_u1 : %lf ... ", max);
+
+    showResult(max < 1);
+  }
+
+  {
+    float d, max = 0;
+
     for(d = -10;d < 10;d += 0.0002) {
       float q = child_sinf(d);
       double c = sinlfr(flushToZero(d));
@@ -2358,70 +2430,6 @@ void do_test() {
   STOP_ATAN2:
 
     fprintf(stderr, "atan2f_u1 : %lf ... ", max);
-
-    showResult(max < 1);
-  }
-
-  {
-    float d, max = 0;
-
-    for(d = 0.0001;d < 10;d += 0.0001) {
-      float q = child_logf(d);
-      double c = loglfr(flushToZero(d));
-      double u = countULP(q, c);
-      max = fmax(max, u);
-      if (u > 1000) {
-	fprintf(stderr, "q = %.20g\nc = %.20g\nd = %.20g\nulp = %g\n", q, (double)c, d, (double)ulp(c));
-	goto STOP_LOG;
-      }
-    }
-
-    for(d = 0.0001;d < 10000;d += 0.1) {
-      float q = child_logf(d);
-      double c = loglfr(flushToZero(d));
-      double u = countULP(q, c);
-      max = fmax(max, u);
-      if (u > 1000) {
-	fprintf(stderr, "q = %.20g\nc = %.20g\nd = %.20g\nulp = %g\n", q, (double)c, d, (double)ulp(c));
-	goto STOP_LOG;
-      }
-    }
-
-    int i;
-    for(i = -1000;i <= 1000;i++) {
-      d = pow(1.1, i);
-      float q = child_logf(d);
-      double c = loglfr(flushToZero(d));
-      double u = countULP(q, c);
-      if (flushToZero(d * 0.1) == 0.0 && q == NEGATIVE_INFINITYf) u = 0;
-      max = fmax(max, u);
-      if (u > 1000) {
-	fprintf(stderr, "q = %.20g\nc = %.20g\nd = %.20g\nulp = %g\ni=%d\n", q, (double)c, d, (double)ulp(c), i);
-	goto STOP_LOG;
-      }
-    }
-
-    for(i=0;i<10000;i++) {
-      d = pow(0.9894640051300762, i);
-      float q = child_logf(d);
-      double c = loglfr(flushToZero(d));
-      double u = countULP(q, c);
-      if (flushToZero(d * 0.1) == 0.0 && q == NEGATIVE_INFINITYf) u = 0;
-      max = fmax(max, u);
-    }
-
-    for(i=0;i<10000;i++) {
-      d = 1.2e-38 * pow(0.9984, i);
-      float q = child_logf(d);
-      double c = loglfr(flushToZero(d));
-      double u = countULP(q, c);
-      if (flushToZero(d * 0.1) == 0.0 && q == NEGATIVE_INFINITYf) u = 0;
-      max = fmax(max, u);
-    }
-
-  STOP_LOG:
-
-    fprintf(stderr, "logf_u1 : %lf ... ", max);
 
     showResult(max < 1);
   }

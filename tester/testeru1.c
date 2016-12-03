@@ -2378,6 +2378,14 @@ void do_test() {
       max = fmax(max, u);
     }
 
+    for(i=0;i<10000;i++) {
+      d = DBL_MAX * pow(0.9314821319758632, i);
+      double q = child_log(d);
+      long double c = loglfr(d);
+      double u = countULP(q, c);
+      max = fmax(max, u);
+    }
+    
     fprintf(stderr, "log_u1 : %lf ... ", max);
 
     showResult(max < 1);
@@ -2798,6 +2806,14 @@ void do_test() {
       max = fmax(max, u);
     }
 
+    for(i=0;i<10000;i++) {
+      d = DBL_MAX * pow(0.9314821319758632, i);
+      double q = child_log10(d);
+      long double c = log10lfr(d);
+      double u = countULP(q, c);
+      max = fmax(max, u);
+    }
+    
     fprintf(stderr, "log10 : %lf ... ", max);
 
     showResult(max < 1);

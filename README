@@ -29,6 +29,8 @@ Single precision trigonometric functions : |arg| <= 10000
 
 History
 
+2.100 Added support for AVX-512F and Clang Extended Vectors.
+
 2.90 Added ilogbf. All the reported bugs(listed below) are fixed.
 * Log function returned incorrect values when the argument is very small.
 * Signs of returned values were incorrect when the argument is signed zero.

@@ -757,20 +757,20 @@ float xlogf(float d) {
   float x, x2, t, m;
   int e;
 
-  e = ilogbkf(d * 1.4142f);
+  e = ilogbkf(d * (1.0f/0.75f));
   m = ldexpkf(d, -e);
-
+  
   x = (m-1.0f) / (m+1.0f);
   x2 = x * x;
 
-  t = 0.2371599674224853515625f;
-  t = mlaf(t, x2, 0.285279005765914916992188f);
-  t = mlaf(t, x2, 0.400005519390106201171875f);
-  t = mlaf(t, x2, 0.666666567325592041015625f);
+  t = 0.2392828464508056640625f;
+  t = mlaf(t, x2, 0.28518211841583251953125f);
+  t = mlaf(t, x2, 0.400005877017974853515625f);
+  t = mlaf(t, x2, 0.666666686534881591796875f);
   t = mlaf(t, x2, 2.0f);
 
   x = x * t + 0.693147180559945286226764f * e;
-
+  
   if (xisinff(d)) x = INFINITYf;
   if (d < 0) x = NANf;
   if (d == 0) x = -INFINITYf;
@@ -834,16 +834,16 @@ static inline float2 logkf(float d) {
   float m, t;
   int e;
 
-  e = ilogbkf(d * 1.4142f);
+  e = ilogbkf(d * (1.0f/0.75f));
   m = ldexpkf(d, -e);
 
   x = dfdiv_f2_f2_f2(dfadd2_f2_f_f(-1, m), dfadd2_f2_f_f(1, m));
   x2 = dfsqu_f2_f2(x);
-
-  t = 0.2371599674224853515625f;
-  t = mlaf(t, x2.x, 0.285279005765914916992188f);
-  t = mlaf(t, x2.x, 0.400005519390106201171875f);
-  t = mlaf(t, x2.x, 0.666666567325592041015625f);
+  
+  t = 0.2392828464508056640625f;
+  t = mlaf(t, x2.x, 0.28518211841583251953125f);
+  t = mlaf(t, x2.x, 0.400005877017974853515625f);
+  t = mlaf(t, x2.x, 0.666666686534881591796875f);
 
   return dfadd2_f2_f2_f2(dfmul_f2_f2_f(df(0.69314718246459960938f, -1.904654323148236017e-09f), e),
 			 dfadd2_f2_f2_f2(dfscale_f2_f2_f(x, 2), dfmul_f2_f2_f(dfmul_f2_f2_f2(x2, x), t)));
@@ -945,16 +945,16 @@ static inline float2 logk2f(float2 d) {
   float t;
   int e;
 
-  e = ilogbkf(d.x * 1.4142f);
+  e = ilogbkf(d.x * (1.0f/0.75f));
   m = dfscale_f2_f2_f(d, pow2if(-e));
 
   x = dfdiv_f2_f2_f2(dfadd2_f2_f2_f(m, -1), dfadd2_f2_f2_f(m, 1));
   x2 = dfsqu_f2_f2(x);
 
-  t = 0.2371599674224853515625f;
-  t = mlaf(t, x2.x, 0.285279005765914916992188f);
-  t = mlaf(t, x2.x, 0.400005519390106201171875f);
-  t = mlaf(t, x2.x, 0.666666567325592041015625f);
+  t = 0.2392828464508056640625f;
+  t = mlaf(t, x2.x, 0.28518211841583251953125f);
+  t = mlaf(t, x2.x, 0.400005877017974853515625f);
+  t = mlaf(t, x2.x, 0.666666686534881591796875f);
 
   return dfadd2_f2_f2_f2(dfmul_f2_f2_f(df(0.69314718246459960938f, -1.904654323148236017e-09f), e),
 			 dfadd2_f2_f2_f2(dfscale_f2_f2_f(x, 2), dfmul_f2_f2_f(dfmul_f2_f2_f2(x2, x), t)));

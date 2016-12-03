@@ -371,6 +371,24 @@ double xxatanh(double d) {
   return s[idx];
 }
 
+#if 0
+double xxsqrt(double d) {
+  double s[VECTLENDP];
+  int i;
+  for(i=0;i<VECTLENDP;i++) {
+    s[i] = random()/(double)RAND_MAX*20000-10000;
+  }
+  int idx = random() & (VECTLENDP-1);
+  s[idx] = d;
+
+  vdouble a = vloadu(s);
+  a = xsqrt(a);
+  vstoreu(s, a);
+
+  return s[idx];
+}
+#endif
+
 double xxcbrt(double d) {
   double s[VECTLENDP];
   int i;
@@ -479,11 +497,6 @@ double xxpow(double x, double y) {
   s[idx] = x;
   t[idx] = y;
 
-  s[0] = x;
-  s[1] = x;
-  t[0] = y;
-  t[1] = y;
-
   vdouble a, b;
 
   a = vloadu(s);
@@ -517,28 +530,29 @@ double xxatan2(double y, double x) {
 }
 
 double xxldexp(double x, int q) {
-  double s[VECTLENDP];
-  int t[4];
+  union {
+    double s[VECTLENDP];
+    vdouble vd;
+  } ud;
+  union {
+    int t[VECTLENDP*2];
+    vint vi;
+  } ui;
+
   int i;
   for(i=0;i<VECTLENDP;i++) {
-    s[i] = random()/(double)RAND_MAX*20000-10000;
-    t[i] = (int)(random()/(double)RAND_MAX*20000-10000);
+    ud.s[i] = random()/(double)RAND_MAX*20000-10000;
+    ui.t[i*2+0] = ui.t[i*2+1] = (int)(random()/(double)RAND_MAX*20000-10000);
   }
 
   int idx = random() & (VECTLENDP-1);
 
-  s[idx] = x;
-  t[idx] = q;
+  ud.s[idx] = x;
+  ui.t[idx] = q;
 
-  vdouble a;
-  vint b;
+  ud.vd = xldexp(ud.vd, ui.vi);
 
-  a = vloadu(s);
-  b = _mm_loadu_si128((__m128i *)t);
-  a = xldexp(a, b);
-  vstoreu(s, a);
-
-  return s[idx];
+  return ud.s[idx];
 }
 
 double xxsin_u1(double d) {
@@ -718,7 +732,7 @@ double xxcbrt_u1(double d) {
 
 int xxilogb(double d) {
   double s[VECTLENDP];
-  int t[VECTLENDP];
+  int t[VECTLENDP*2];
   int i;
   for(i=0;i<VECTLENDP;i++) {
     s[i] = random()/(double)RAND_MAX*20000-10000;
@@ -1136,11 +1150,6 @@ float xxpowf(float x, float y) {
 
   s[idx] = x;
   t[idx] = y;
-
-  s[0] = x;
-  s[1] = x;
-  t[0] = y;
-  t[1] = y;
 
   vfloat a, b;
 

@@ -2060,6 +2060,189 @@ void do_test() {
 
   //
 
+  {
+    float d, max = 0;
+
+    for(d = 0.0001;d < 10;d += 0.0001) {
+      float q = child_logf(d);
+      double c = loglfr(flushToZero(d));
+      double u = countULP(q, c);
+      max = fmax(max, u);
+      if (u > 10) {
+	fprintf(stderr, "arg = %g, correct = %g, iut = %g\n", flushToZero(d), c, q);
+	goto STOP_LOG;
+      }
+    }
+
+    for(d = 0.0001;d < 10000;d += 0.1) {
+      float q = child_logf(d);
+      double c = loglfr(flushToZero(d));
+      double u = countULP(q, c);
+      max = fmax(max, u);
+      if (u > 10) {
+	fprintf(stderr, "arg = %g, correct = %g, iut = %g\n", flushToZero(d), c, q);
+	goto STOP_LOG;
+      }
+    }
+
+    int i;
+    for(i = -1000;i <= 1000;i++) {
+      d = pow(1.1, i);
+      float q = child_logf(d);
+      double c = loglfr(flushToZero(d));
+      double u = countULP(q, c);
+      if (flushToZero(d * 0.1) == 0.0 && q == NEGATIVE_INFINITYf) u = 0;
+      max = fmax(max, u);
+      if (u > 10) {
+	fprintf(stderr, "arg = %g, correct = %g, iut = %g\n", flushToZero(d), c, q);
+	goto STOP_LOG;
+      }
+    }
+
+    for(i=0;i<10000;i++) {
+      d = pow(0.9894640051300762, i);
+      float q = child_logf(d);
+      double c = loglfr(flushToZero(d));
+      double u = countULP(q, c);
+      if (flushToZero(d * 0.1) == 0.0 && q == NEGATIVE_INFINITYf) u = 0;
+      max = fmax(max, u);
+      if (u > 10) {
+	fprintf(stderr, "arg = %g, correct = %g, iut = %g\n", flushToZero(d), c, q);
+	goto STOP_LOG;
+      }
+    }
+
+    for(i=0;i<10000;i++) {
+      d = 1.2e-38 * pow(0.9984, i);
+      float q = child_logf(d);
+      double c = loglfr(flushToZero(d));
+      double u = countULP(q, c);
+      if (flushToZero(d * 0.1) == 0.0 && q == NEGATIVE_INFINITYf) u = 0;
+      max = fmax(max, u);
+      if (u > 10) {
+	fprintf(stderr, "arg = %g, correct = %g, iut = %g\n", flushToZero(d), c, q);
+	goto STOP_LOG;
+      }
+    }
+
+  STOP_LOG:
+    
+    fprintf(stderr, "logf : %lf ... ", max);
+
+    showResult(max < 5);
+  }
+
+  {
+    float d, max = 0;
+
+    for(d = -10;d < 10;d += 0.0002) {
+      float q = child_expf(d);
+      double c = explfr(flushToZero(d));
+      double u = countULP(q, c);
+      max = fmax(max, u);
+    }
+
+    for(d = -1000;d < 1000;d += 0.1) {
+      float q = child_expf(d);
+      double c = explfr(flushToZero(d));
+      double u = countULP(q, c);
+      max = fmax(max, u);
+    }
+
+    fprintf(stderr, "expf : %lf ... ", max);
+
+    showResult(max < 1);
+  }
+
+  {
+    float x, y, max = 0;
+
+    for(y = 0.1;y < 100;y += 0.21) {
+      for(x = -100;x < 100;x += 0.22) {
+	float q = child_powf(x, y);
+	double c = powlfr(flushToZero(x), flushToZero(y));
+	double u = countULP(q, c);
+	max = fmax(max, u);
+	if (u > 10) {
+	  fprintf(stderr, "q = %g, c = %g, x = %g, y = %g\n", q, c, x, y);
+	  goto STOP_POW;
+	}
+      }
+    }
+
+    float d;
+    for(d = -1000;d < 1000;d += 0.1) {
+      float q = child_powf(2.1f, d);
+      double c = powlfr(2.1f, flushToZero(d));
+      double u = countULP(q, c);
+      max = fmax(max, u);
+
+      if (u > 10) {
+	fprintf(stderr, "q = %g, c = %g, d = %g\n", q, c, d);
+	goto STOP_POW;
+      }
+    }
+
+  STOP_POW:
+
+    fprintf(stderr, "powf : %lf ... ", max);
+
+    showResult(max < 1);
+  }
+
+  {
+    float d;
+    boolean success = true;
+    
+    for(d = 0.0001;d < 10;d += 0.0001) {
+      int q = child_ilogbf(d);
+      int c = ilogbf(flushToZero(d));
+      if (q != c) {
+	fprintf(stderr, "ilogbf : arg = %.20g, correct = %d, test = %d\n", d, ilogbf(d), child_ilogbf(d));
+	success = false;
+	goto STOP_ILOGB;
+      }
+    }
+
+    for(d = 0.0001;d < 10000;d += 0.1) {
+      int q = child_ilogbf(d);
+      int c = ilogbf(flushToZero(d));
+      if (q != c) {
+	fprintf(stderr, "ilogbf : arg = %.20g, correct = %d, test = %d\n", d, ilogbf(d), child_ilogbf(d));
+	success = false;
+	goto STOP_ILOGB;
+      }
+    }
+
+    int i;
+    for(i=0;i<10000;i++) {
+      d = 1.2e-38 * pow(0.9984, i);
+      int q = child_ilogbf(d);
+      int c = ilogbf(flushToZero(d));
+      if (q != c) {
+	fprintf(stderr, "ilogbf : arg = %.20g, correct = %d, test = %d\n", d, ilogbf(d), child_ilogbf(d));
+	success = false;
+	goto STOP_ILOGB;
+      }
+    }
+
+    for(i=0;i<10000;i++) {
+      d = pow(0.9894640051300762, i);
+      int q = child_ilogbf(d);
+      int c = ilogbf(flushToZero(d));
+      if (q != c) {
+	fprintf(stderr, "ilogbf : arg = %.20g, correct = %d, test = %d\n", d, ilogbf(d), child_ilogbf(d));
+	success = false;
+	goto STOP_ILOGB;
+      }
+    }
+    
+  STOP_ILOGB:
+
+    fprintf(stderr, "ilogbf : ");
+    showResult(success);
+  }
+
   //
 
   {
@@ -2388,120 +2571,6 @@ void do_test() {
     fprintf(stderr, "atan2f : %lf ... ", max);
 
     showResult(max < 5);
-  }
-
-  {
-    float d, max = 0;
-
-    for(d = 0.0001;d < 10;d += 0.0001) {
-      float q = child_logf(d);
-      double c = loglfr(flushToZero(d));
-      double u = countULP(q, c);
-      max = fmax(max, u);
-    }
-
-    for(d = 0.0001;d < 10000;d += 0.1) {
-      float q = child_logf(d);
-      double c = loglfr(flushToZero(d));
-      double u = countULP(q, c);
-      max = fmax(max, u);
-    }
-
-    int i;
-    for(i = -1000;i <= 1000;i++) {
-      d = pow(1.1, i);
-      float q = child_logf(d);
-      double c = loglfr(flushToZero(d));
-      double u = countULP(q, c);
-      if (flushToZero(d * 0.1) == 0.0 && q == NEGATIVE_INFINITYf) u = 0;
-      max = fmax(max, u);
-    }
-
-    for(i=0;i<10000;i++) {
-      d = pow(0.9894640051300762, i);
-      float q = child_logf(d);
-      double c = loglfr(flushToZero(d));
-      double u = countULP(q, c);
-      if (flushToZero(d * 0.1) == 0.0 && q == NEGATIVE_INFINITYf) u = 0;
-      max = fmax(max, u);
-    }
-
-    for(i=0;i<10000;i++) {
-      d = 1.2e-38 * pow(0.9984, i);
-      float q = child_logf(d);
-      double c = loglfr(flushToZero(d));
-      double u = countULP(q, c);
-      if (flushToZero(d * 0.1) == 0.0 && q == NEGATIVE_INFINITYf) u = 0;
-      max = fmax(max, u);
-      if (u > 10) {
-	fprintf(stderr, "arg = %g, correct = %g, iut = %g\n", flushToZero(d), c, q);
-	goto STOP_LOG;
-      }
-    }
-
-  STOP_LOG:
-    
-    fprintf(stderr, "logf : %lf ... ", max);
-
-    showResult(max < 5);
-  }
-
-  {
-    float d, max = 0;
-
-    for(d = -10;d < 10;d += 0.0002) {
-      float q = child_expf(d);
-      double c = explfr(flushToZero(d));
-      double u = countULP(q, c);
-      max = fmax(max, u);
-    }
-
-    for(d = -1000;d < 1000;d += 0.1) {
-      float q = child_expf(d);
-      double c = explfr(flushToZero(d));
-      double u = countULP(q, c);
-      max = fmax(max, u);
-    }
-
-    fprintf(stderr, "expf : %lf ... ", max);
-
-    showResult(max < 1);
-  }
-
-  {
-    float x, y, max = 0;
-
-    for(y = 0.1;y < 100;y += 0.21) {
-      for(x = -100;x < 100;x += 0.22) {
-	float q = child_powf(x, y);
-	double c = powlfr(flushToZero(x), flushToZero(y));
-	double u = countULP(q, c);
-	max = fmax(max, u);
-	if (u > 10) {
-	  fprintf(stderr, "q = %g, c = %g, x = %g, y = %g\n", q, c, x, y);
-	  goto STOP_POW;
-	}
-      }
-    }
-
-    float d;
-    for(d = -1000;d < 1000;d += 0.1) {
-      float q = child_powf(2.1f, d);
-      double c = powlfr(2.1f, flushToZero(d));
-      double u = countULP(q, c);
-      max = fmax(max, u);
-
-      if (u > 10) {
-	fprintf(stderr, "q = %g, c = %g, d = %g\n", q, c, d);
-	goto STOP_POW;
-      }
-    }
-
-  STOP_POW:
-
-    fprintf(stderr, "powf : %lf ... ", max);
-
-    showResult(max < 1);
   }
 
   {
@@ -3005,59 +3074,6 @@ void do_test() {
     fprintf(stderr, "expm1f : %lf ... ", max);
 
     showResult(max < 5);
-  }
-
-  {
-    float d;
-    boolean success = true;
-    
-    for(d = 0.0001;d < 10;d += 0.0001) {
-      int q = child_ilogbf(d);
-      int c = ilogbf(flushToZero(d));
-      if (q != c) {
-	fprintf(stderr, "ilogbf : arg = %.20g, correct = %d, test = %d\n", d, ilogbf(d), child_ilogbf(d));
-	success = false;
-	goto STOP_ILOGB;
-      }
-    }
-
-    for(d = 0.0001;d < 10000;d += 0.1) {
-      int q = child_ilogbf(d);
-      int c = ilogbf(flushToZero(d));
-      if (q != c) {
-	fprintf(stderr, "ilogbf : arg = %.20g, correct = %d, test = %d\n", d, ilogbf(d), child_ilogbf(d));
-	success = false;
-	goto STOP_ILOGB;
-      }
-    }
-
-    int i;
-    for(i=0;i<10000;i++) {
-      d = 1.2e-38 * pow(0.9984, i);
-      int q = child_ilogbf(d);
-      int c = ilogbf(flushToZero(d));
-      if (q != c) {
-	fprintf(stderr, "ilogbf : arg = %.20g, correct = %d, test = %d\n", d, ilogbf(d), child_ilogbf(d));
-	success = false;
-	goto STOP_ILOGB;
-      }
-    }
-
-    for(i=0;i<10000;i++) {
-      d = pow(0.9894640051300762, i);
-      int q = child_ilogbf(d);
-      int c = ilogbf(flushToZero(d));
-      if (q != c) {
-	fprintf(stderr, "ilogbf : arg = %.20g, correct = %d, test = %d\n", d, ilogbf(d), child_ilogbf(d));
-	success = false;
-	goto STOP_ILOGB;
-      }
-    }
-    
-  STOP_ILOGB:
-
-    fprintf(stderr, "ilogbf : ");
-    showResult(success);
   }
 }
 

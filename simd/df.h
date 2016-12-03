@@ -2,6 +2,10 @@ typedef struct {
   vfloat x, y;
 } vfloat2;
 
+static INLINE vfloat vupper_vf_vf(vfloat d) {
+  return vreinterpret_vf_vi2(vand_vi2_vi2_vi2(vreinterpret_vi2_vf(d), vcast_vi2_i(0xfffff000)));
+}
+
 static INLINE vfloat2 vcast_vf2_vf_vf(vfloat h, vfloat l) {
   vfloat2 ret = {h, l};
   return ret;
@@ -12,10 +16,10 @@ static INLINE vfloat2 vcast_vf2_f_f(float h, float l) {
   return ret;
 }
 
-static INLINE vfloat2 vsel_vf2_vm_vf2_vf2(vmask m, vfloat2 x, vfloat2 y) {
+static INLINE vfloat2 vsel_vf2_vo_vf2_vf2(vopmask m, vfloat2 x, vfloat2 y) {
   vfloat2 r;
-  r.x = vsel_vf_vm_vf_vf(m, x.x, y.x);
-  r.y = vsel_vf_vm_vf_vf(m, x.y, y.y);
+  r.x = vsel_vf_vo_vf_vf(m, x.x, y.x);
+  r.y = vsel_vf_vo_vf_vf(m, x.y, y.y);
   return r;
 }
 
@@ -146,7 +150,7 @@ static INLINE vfloat2 dfadd2_vf2_vf2_vf2(vfloat2 x, vfloat2 y) {
   return r;
 }
 
-static inline vfloat2 dfsub_vf2_vf_vf(vfloat x, vfloat y) {
+static INLINE vfloat2 dfsub_vf2_vf_vf(vfloat x, vfloat y) {
   // |x| >= |y|
 
   vfloat2 r;
@@ -220,7 +224,7 @@ static INLINE vfloat2 dfmul_vf2_vf2_vf(vfloat2 x, vfloat y) {
   return r;
 }
 
-static inline vfloat2 dfrec_vf2_vf(vfloat d) {
+static INLINE vfloat2 dfrec_vf2_vf(vfloat d) {
   vfloat2 q;
 
   q.x = vrec_vf_vf(d);
