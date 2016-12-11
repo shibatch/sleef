@@ -1695,7 +1695,7 @@ void do_test() {
   {
     fprintf(stderr, "asin_u1 denormal/nonnumber test ... ");
 
-    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, 2, -2, 1, -1, +0.0, -0.0 };
+    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, 2, -2, 1, -1, nextafter(1, 2), nextafter(-1, -2), +0.0, -0.0 };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
@@ -1712,7 +1712,7 @@ void do_test() {
   {
     fprintf(stderr, "acos_u1 denormal/nonnumber test ... ");
 
-    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, 2, -2, 1, -1, +0.0, -0.0 };
+    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, 2, -2, 1, -1, nextafter(1, 2), nextafter(-1, -2), +0.0, -0.0 };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
@@ -1746,7 +1746,7 @@ void do_test() {
   {
     fprintf(stderr, "log_u1 denormal/nonnumber test ... ");
 
-    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, 0, -1, +0.0, -0.0 };
+    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, 0, nextafter(0, -1), -1, +0.0, -0.0 };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
@@ -2032,7 +2032,7 @@ void do_test() {
       }
     }
 
-    for(d = -10000000;d < 10000000;d += 200.1) {
+    for(d = -1e+14;d < 1e+14;d += (1e+9 + 0.1)) {
       double q = child_sin(d);
       long double c = sinlfr(d);
       double u = countULP(q, c);
@@ -2078,7 +2078,7 @@ void do_test() {
       max = fmax(max, u);
     }
 
-    for(d = -10000000;d < 10000000;d += 200.1) {
+    for(d = -1e+14;d < 1e+14;d += (1e+9 + 0.1)) {
       double q = child_cos(d);
       long double c = coslfr(d);
       double u = countULP(q, c);
@@ -2118,7 +2118,7 @@ void do_test() {
       }
     }
 
-    for(d = -10000000;d < 10000000;d += 200.1) {
+    for(d = -1e+14;d < 1e+14;d += (1e+9 + 0.1)) {
       double2 q = child_sincos(d);
       long double c = sinlfr(d);
       double u = fabs((q.x - c) / ulp(c));
@@ -2164,7 +2164,7 @@ void do_test() {
       max = fmax(max, u);
     }
 
-    for(d = -10000000;d < 10000000;d += 200.1) {
+    for(d = -1e+14;d < 1e+14;d += (1e+9 + 0.1)) {
       double2 q = child_sincos(d);
       long double c = coslfr(d);
       double u = fabs((q.y - c) / ulp(c));
@@ -2200,7 +2200,7 @@ void do_test() {
       max = fmax(max, u);
     }
 
-    for(d = -10000000;d < 10000000;d += 200.1) {
+    for(d = -1e+14;d < 1e+14;d += (1e+9 + 0.1)) {
       double q = child_tan(d);
       long double c = tanlfr(d);
       double u = countULP(q, c);

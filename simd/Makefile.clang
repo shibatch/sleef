@@ -22,6 +22,18 @@ iutfma4 : sleefsimddp.c sleefsimdsp.c helperfma4.h iut.c
 iutclangvec : sleefsimddp.c sleefsimdsp.c helperclangvec.h iut.c
 	$(CC) $(OPT) -DENABLE_CLANGVEC iut.c sleefsimddp.c sleefsimdsp.c -o iutclangvec -lm
 
+#
+
+tester2 : tester2clangvec tester2fclangvec
+
+tester2clangvec : sleefsimddp.c sleefsimddp.c helperclangvec.h tester2simd.c
+	$(CC) $(OPT) -DENABLE_CLANGVEC -msse2 tester2simd.c sleefsimddp.c -o tester2clangvec -lm -lmpfr
+
+tester2fclangvec : sleefsimddp.c sleefsimdsp.c helperclangvec.h tester2simd.c
+	$(CC) $(OPT) -DENABLE_CLANGVEC -msse2 tester2fsimd.c sleefsimdsp.c -o tester2fclangvec -lm -lmpfr
+
+#
+
 ../tester/tester :
 	cd ../tester; make tester
 

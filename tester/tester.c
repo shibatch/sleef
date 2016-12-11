@@ -1629,6 +1629,7 @@ void do_test() {
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
       if (!cmpDenorm(child_sin(xa[i]), sinfr(xa[i]))) {
+	fprintf(stderr, "arg = %.20g, test = %.20g, correct = %.20g\n", xa[i], child_sin(xa[i]), sinfr(xa[i]));
 	success = false;
 	break;
       }
@@ -1646,7 +1647,7 @@ void do_test() {
     for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
       double2 q = child_sincos(xa[i]);
       if (!cmpDenorm(q.x, sinfr(xa[i]))) {
-	fprintf(stderr, "xa = %.20g, d = %.20g, c = %.20g\n", xa[i], q.x, sinfr(xa[i]));
+	fprintf(stderr, "arg = %.20g, test = %.20g, correct = %.20g\n", xa[i], q.x, sinfr(xa[i]));
 	success = false;
 	break;
       }
@@ -1663,6 +1664,7 @@ void do_test() {
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
       if (!cmpDenorm(child_cos(xa[i]), cosfr(xa[i]))) {
+	fprintf(stderr, "arg = %.20g, test = %.20g, correct = %.20g\n", xa[i], child_cos(xa[i]), cosfr(xa[i]));
 	success = false;
 	break;
       }
@@ -1696,6 +1698,7 @@ void do_test() {
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
       if (!cmpDenorm(child_tan(xa[i]), tanfr(xa[i]))) {
+	fprintf(stderr, "arg = %.20g, test = %.20g, correct = %.20g\n", xa[i], child_tan(xa[i]), tanfr(xa[i]));
 	success = false;
 	break;
       }
@@ -1707,12 +1710,12 @@ void do_test() {
   {
     fprintf(stderr, "asin denormal/nonnumber test ... ");
 
-    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, 2, -2, 1, -1, +0.0, -0.0 };
+    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, 2, -2, 1, -1, nextafter(1, 2), nextafter(-1, -2), +0.0, -0.0 };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
       if (!cmpDenorm(child_asin(xa[i]), asinfr(xa[i]))) {
-	fprintf(stderr, "xa = %.20g, d = %.20g, c = %.20g\n", xa[i], child_asin(xa[i]), asinfr(xa[i]));
+	fprintf(stderr, "arg = %.20g, test = %.20g, correct = %.20g\n", xa[i], child_asin(xa[i]), asinfr(xa[i]));
 	success = false;
 	break;
       }
@@ -1724,7 +1727,7 @@ void do_test() {
   {
     fprintf(stderr, "acos denormal/nonnumber test ... ");
 
-    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, 2, -2, 1, -1, +0.0, -0.0 };
+    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, 2, -2, 1, -1, nextafter(1, 2), nextafter(-1, -2), +0.0, -0.0 };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
@@ -1756,7 +1759,7 @@ void do_test() {
   {
     fprintf(stderr, "log denormal/nonnumber test ... ");
 
-    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, 0, -1, +0.0, -0.0 };
+    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, 0, nextafter(0, -1), -1, +0.0, -0.0 };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
@@ -1772,7 +1775,7 @@ void do_test() {
   {
     fprintf(stderr, "exp denormal/nonnumber test ... ");
 
-    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, 10000, -10000, +0.0, -0.0 };
+    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, 10000, -10000, +0.0, -0.0, -1e+10, +1e+10 };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
@@ -1972,7 +1975,7 @@ void do_test() {
   {
     fprintf(stderr, "log10 denormal/nonnumber test ... ");
 
-    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, 0, -1, +0.0, -0.0 };
+    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, 0, -1, nextafter(0, -1), +0.0, -0.0 };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
@@ -1988,7 +1991,7 @@ void do_test() {
   {
     fprintf(stderr, "log1p denormal/nonnumber test ... ");
 
-    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, 0, -1, -2, +0.0, -0.0 };
+    double xa[] = { NAN, POSITIVE_INFINITY, NEGATIVE_INFINITY, 0, -1, nextafter(-1, -2), -2, +0.0, -0.0 };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
@@ -2239,7 +2242,7 @@ void do_test() {
     fprintf(stderr, "ilogb : ");
     showResult(success);
   }
-
+  
   {
     double d, max = 0;
 
@@ -2248,46 +2251,41 @@ void do_test() {
       long double c = sinlfr(d);
       double u = countULP(q, c);
       max = fmax(max, u);
-      if (u > 1000) {
-	fprintf(stderr, "q = %.20g\nc = %.20g\nd = %.20g\nulp = %g\n", q, (double)c, d, (double)ulp(c));
-	goto STOP_SIN;
+      if (u > 20) {
+	fprintf(stderr, "arg = %.20g, correct = %.20g, test = %.20g, ulp = %g\n", d, (double)c, q, u);
       }
     }
 
-    for(d = -10000000;d < 10000000;d += 200.1) {
+    for(d = -1e+14;d < 1e+14;d += (1e+9 + 0.1)) {
       double q = child_sin(d);
       long double c = sinlfr(d);
-       double u = countULP(q, c);
+      double u = countULP(q, c);
       max = fmax(max, u);
-      if (u > 1000) {
-	fprintf(stderr, "q = %.20g\nc = %.20g\nd = %.20g\nulp = %g\n", q, (double)c, d, (double)ulp(c));
-	goto STOP_SIN;
+      if (u > 20) {
+	fprintf(stderr, "arg = %.20g, correct = %.20g, test = %.20g, ulp = %g\n", d, (double)c, q, u);
       }
     }
 
-    int i;
+    int64_t i;
 
-    for(i=1;i<10000;i++) {
+    for(i=(int64_t)-1e+14;i<(int64_t)1e+14;i+=(int64_t)1e+11) {
       double start = u2d(d2u(M_PI_4 * i)-20);
       double end = u2d(d2u(M_PI_4 * i)+20);
 
       for(d = start;d <= end;d = u2d(d2u(d)+1)) {
 	double q = child_sin(d);
 	long double c = sinlfr(d);
-	 double u = countULP(q, c);
+	double u = countULP(q, c);
 	max = fmax(max, u);
-	if (u > 1000) {
-	  fprintf(stderr, "q = %.20g\nc = %.20g\nd = %.20g\nulp = %g\n", q, (double)c, d, (double)ulp(c));
-	  goto STOP_SIN;
+	if (u > 20) {
+	  fprintf(stderr, "arg = %.20g, correct = %.20g, test = %.20g, ulp = %g\n", d, (double)c, q, u);
 	}
       }
     }
 
-  STOP_SIN:
-
     fprintf(stderr, "sin : %lf ... ", max);
 
-    showResult(max < 5);
+    showResult(max < 10);
   }
 
   {
@@ -2300,23 +2298,23 @@ void do_test() {
       max = fmax(max, u);
     }
 
-    for(d = -10000000;d < 10000000;d += 200.1) {
+    for(d = -1e+14;d < 1e+14;d += (1e+9 + 0.1)) {
       double q = child_cos(d);
       long double c = coslfr(d);
        double u = countULP(q, c);
       max = fmax(max, u);
     }
 
-    int i;
+    int64_t i;
 
-    for(i=1;i<10000;i++) {
+    for(i=(int64_t)-1e+14;i<(int64_t)1e+14;i+=(int64_t)1e+11) {
       double start = u2d(d2u(M_PI_4 * i)-20);
       double end = u2d(d2u(M_PI_4 * i)+20);
 
       for(d = start;d <= end;d = u2d(d2u(d)+1)) {
 	double q = child_cos(d);
 	long double c = coslfr(d);
-	 double u = countULP(q, c);
+	double u = countULP(q, c);
 	max = fmax(max, u);
       }
     }
@@ -2340,7 +2338,7 @@ void do_test() {
       }
     }
 
-    for(d = -10000000;d < 10000000;d += 200.1) {
+    for(d = -1e+14;d < 1e+14;d += (1e+9 + 0.1)) {
       double2 q = child_sincos(d);
       long double c = sinlfr(d);
       double u = fabs((q.x - c) / ulp(c));
@@ -2386,7 +2384,8 @@ void do_test() {
       max = fmax(max, u);
     }
 
-    for(d = -10000000;d < 10000000;d += 200.1) {
+
+    for(d = -1e+14;d < 1e+14;d += (1e+9 + 0.1)) {
       double2 q = child_sincos(d);
       long double c = coslfr(d);
       double u = fabs((q.y - c) / ulp(c));
@@ -2422,7 +2421,7 @@ void do_test() {
       max = fmax(max, u);
     }
 
-    for(d = -10000000;d < 10000000;d += 200.1) {
+    for(d = -1e+14;d < 1e+14;d += (1e+9 + 0.1)) {
       double q = child_tan(d);
       long double c = tanlfr(d);
        double u = countULP(q, c);

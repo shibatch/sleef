@@ -1,5 +1,7 @@
 #include <stdint.h>
 
+// When you change VECTLENDP, you also need to change the same macro in sleefsimd.h
+
 #ifndef VECTLENDP
 #define VECTLENDP 8
 #endif
@@ -81,6 +83,8 @@ static INLINE vint2 vsel_vi2_vo_vi2_vi2(vopmask o, vint2 x, vint2 y) { return (v
 static INLINE vdouble vcast_vd_vi(vint vi) { return __builtin_convertvector(vi, vdouble); }
 static INLINE vint vtruncate_vi_vd(vdouble vd) { return __builtin_convertvector(vd, vint); }
 static INLINE vint vrint_vi_vd(vdouble vd) { return vtruncate_vi_vd(vsel_vd_vo_vd_vd((vopmask)(vd < 0.0), vd - 0.5, vd + 0.5)); }
+static INLINE vdouble vtruncate_vd_vd(vdouble vd) { return vcast_vd_vi(vtruncate_vi_vd(vd)); }
+static INLINE vdouble vrint_vd_vd(vdouble vd) { return vcast_vd_vi(vrint_vi_vd(vd)); }
 static INLINE vint vcast_vi_i(int i) { return (vint)(i); }
 
 static INLINE vopmask veq64_vo_vm_vm(vmask x, vmask y) {
@@ -187,6 +191,7 @@ static INLINE vfloat vcast_vf_vi2(vint2 vi) { return __builtin_convertvector(vi,
 static INLINE vint2 vtruncate_vi2_vf(vfloat vf) { return __builtin_convertvector(vf, vint2); }
 static INLINE vint2 vrint_vi2_vf(vfloat vf) { return vtruncate_vi2_vf(vsel_vf_vo_vf_vf((vopmask)(vf < 0), vf - 0.5f, vf + 0.5)); }
 static INLINE vint2 vcast_vi2_i(int i) { return (vint2)(i); }
+static INLINE vfloat vtruncate_vf_vf(vfloat vd) { return vcast_vf_vi2(vtruncate_vi2_vf(vd)); }
 
 static INLINE vfloat vcast_vf_f(float f) { return (vfloat)(f); }
 static INLINE vmask vreinterpret_vm_vf(vfloat vf) { return (vmask)vf; }

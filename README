@@ -21,13 +21,24 @@ Main download page : http://shibatch.sourceforge.net/
 The trigonometric functions are tested to return values with specified
 accuracy when the argument is within the following range.
 
-Double precision trigonometric functions : |arg| <= 10000000
-Single precision trigonometric functions : |arg| <= 10000
+Double precision trigonometric functions : [-1e+14, 1e+14]
+Single precision trigonometric functions : [-39000, 39000]
 
 --
 
 
 History
+
+2.110
+* The valid range of argument is extended for trig functions
+* Specification of each functions regarding to the domain and accuracy is added
+* A coefficient generation tool is added
+* New testing tools are introduced
+* Following functions returned incorrect values when the argument is very large or small : exp, pow, asinh, acosh
+* SIMD xsin and xcos returned values more than 1 when FMA is enabled
+* Pure C cbrt returned incorrect values when the argument is negative
+* tan_u1 returned values with more than 1 ulp of error on rare occasions
+* Removed support for Java language(because no one seems using this)
 
 2.100 Added support for AVX-512F and Clang Extended Vectors.
 

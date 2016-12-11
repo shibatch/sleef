@@ -7,6 +7,7 @@
 
 #define VECTLENDP 2
 #define VECTLENSP 4
+#define SLEEF_ARCH "SSE2"
 
 typedef __m128d vdouble;
 typedef __m128i vint;
@@ -38,6 +39,7 @@ static void vstoreui(int32_t *p, vint v) { _mm_storeu_si128((__m128i *)p, (__m12
 
 #define VECTLENDP 4
 #define VECTLENSP 8
+#define SLEEF_ARCH "AVX"
 
 typedef __m256d vdouble;
 typedef __m128i vint;
@@ -78,6 +80,7 @@ static void vstoreui(int32_t *p, vint v) { _mm_storeu_si128((__m128i *)p, (__m12
 
 #define VECTLENDP 4
 #define VECTLENSP 8
+#define SLEEF_ARCH "AVX2"
 
 typedef __m256d vdouble;
 typedef __m128i vint;
@@ -109,6 +112,7 @@ static void vstoreui(int32_t *p, vint v) { _mm_storeu_si128((__m128i *)p, (__m12
 
 #define VECTLENDP 8
 #define VECTLENSP 16
+#define SLEEF_ARCH "AVX512F"
 
 typedef __m512d vdouble;
 typedef __m256i vint;
@@ -140,6 +144,7 @@ static void vstoreui(int32_t *p, vint v) { return _mm256_storeu_si256((__m256i *
 
 #define VECTLENDP 2
 #define VECTLENSP 4
+#define SLEEF_ARCH "NEON32"
 
 //typedef __m128d vdouble;
 typedef int32x4_t vint;
@@ -167,6 +172,7 @@ static void vstoreui2(int32_t *p, vint2 v) { vst1q_s32(p, v); }
 
 #define VECTLENDP 2
 #define VECTLENSP 4
+#define SLEEF_ARCH "NEON64"
 
 //typedef __m128d vdouble;
 typedef int32x4_t vint;
@@ -192,6 +198,7 @@ static void vstoreui2(int32_t *p, vint2 v) { vst1q_s32(p, v); }
 #ifdef ENABLE_CLANGVEC
 #define VECTLENDP 8
 #define VECTLENSP (VECTLENDP*2)
+#define SLEEF_ARCH "CLANGVEC"
 
 typedef double vdouble __attribute__((ext_vector_type(VECTLENDP)));
 typedef int32_t vint __attribute__((ext_vector_type(VECTLENDP)));

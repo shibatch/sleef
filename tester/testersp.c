@@ -1723,7 +1723,7 @@ void do_test() {
   {
     fprintf(stderr, "asinf denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 2, -2, 1, -1, +0.0f, -0.0f };
+    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 2, -2, 1, -1, nextafterf(1, 2), nextafterf(-1, -2), +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -1740,7 +1740,7 @@ void do_test() {
   {
     fprintf(stderr, "acosf denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 2, -2, 1, -1, +0.0f, -0.0f };
+    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 2, -2, 1, -1, nextafterf(1, 2), nextafterf(-1, -2), +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -1773,7 +1773,7 @@ void do_test() {
   {
     fprintf(stderr, "logf denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 0, -1, +0.0f, -0.0f };
+    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 0, flushToZero(nextafterf(0, -1)), -1, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -1988,7 +1988,7 @@ void do_test() {
   {
     fprintf(stderr, "log10f denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 0, -1, +0.0f, -0.0f };
+    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 0, -1, flushToZero(nextafterf(0, -1)), +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -2004,7 +2004,7 @@ void do_test() {
   {
     fprintf(stderr, "log1pf denormal/nonnumber test ... ");
 
-    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 0, -1, -2, +0.0f, -0.0f };
+    float xa[] = { NANf, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, 0, -1, nextafterf(-1, -2), -2, +0.0f, -0.0f };
 
     boolean success = true;
     for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
@@ -2259,7 +2259,7 @@ void do_test() {
       }
     }
 
-    for(d = -10000;d < 10000;d += 0.201) {
+    for(d = -40000;d < 40000;d += 0.201) {
       float q = child_sinf(d);
       double c = sinlfr(flushToZero(d));
       double u = countULP(q, c);
@@ -2272,7 +2272,7 @@ void do_test() {
 
     int i;
 
-    for(i=1;i<10000;i++) {
+    for(i=1;i<40000;i++) {
       float start = u2f(f2u(M_PI_4 * i)-20);
       float end = u2f(f2u(M_PI_4 * i)+20);
 
@@ -2305,7 +2305,7 @@ void do_test() {
       max = fmax(max, u);
     }
 
-    for(d = -10000;d < 10000;d += 0.201) {
+    for(d = -40000;d < 40000;d += 0.201) {
       float q = child_cosf(d);
       double c = coslfr(flushToZero(d));
       double u = countULP(q, c);
@@ -2314,7 +2314,7 @@ void do_test() {
 
     int i;
 
-    for(i=1;i<10000;i++) {
+    for(i=1;i<40000;i++) {
       float start = u2f(f2u(M_PI_4 * i)-20);
       float end = u2f(f2u(M_PI_4 * i)+20);
 
@@ -2345,7 +2345,7 @@ void do_test() {
       }
     }
 
-    for(d = -10000;d < 10000;d += 0.201) {
+    for(d = -40000;d < 40000;d += 0.201) {
       float2 q = child_sincosf(d);
       long double c = sinlfr(d);
       double u = fabs((q.x - c) / ulp(c));
@@ -2358,7 +2358,7 @@ void do_test() {
 
     int i;
 
-    for(i=1;i<10000;i++) {
+    for(i=1;i<40000;i++) {
       float start = u2f(f2u(M_PI_4 * i)-20);
       float end = u2f(f2u(M_PI_4 * i)+20);
 
@@ -2395,7 +2395,7 @@ void do_test() {
       }
     }
 
-    for(d = -10000;d < 10000;d += 0.201) {
+    for(d = -40000;d < 40000;d += 0.201) {
       float2 q = child_sincosf(d);
       double c = coslfr(d);
       double u = fabs((q.y - c) / ulp(c));
@@ -2408,7 +2408,7 @@ void do_test() {
 
     int i;
 
-    for(i=1;i<10000;i++) {
+    for(i=1;i<40000;i++) {
       float start = u2f(f2u(M_PI_4 * i)-20);
       float end = u2f(f2u(M_PI_4 * i)+20);
 
@@ -2437,7 +2437,7 @@ void do_test() {
       max = fmax(max, u);
     }
 
-    for(d = -10000;d < 10000;d += 0.201) {
+    for(d = -40000;d < 40000;d += 0.201) {
       float q = child_tanf(d);
       double c = tanlfr(flushToZero(d));
       double u = countULP(q, c);
@@ -2446,7 +2446,7 @@ void do_test() {
 
     int i;
 
-    for(i=1;i<10000;i++) {
+    for(i=1;i<40000;i++) {
       float start = u2f(f2u(M_PI_4 * i)-20);
       float end = u2f(f2u(M_PI_4 * i)+20);
 

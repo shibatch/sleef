@@ -9,10 +9,16 @@
 
 #include "nonnumber.h"
 
-#define PI4_Af 0.78515625f
-#define PI4_Bf 0.00024187564849853515625f
-#define PI4_Cf 3.7747668102383613586e-08f
-#define PI4_Df 1.2816720341285448015e-12f
+#define PI_Af 3.140625f
+#define PI_Bf 0.0009670257568359375f
+#define PI_Cf 6.2771141529083251953e-07f
+#define PI_Df 1.2154201256553420762e-10f
+
+#define PI_XDf 1.2141754268668591976e-10f
+#define PI_XEf 1.2446743939339977025e-13f
+
+#define TRIGRANGEMAXf 1e+7 // 39000
+#define SQRT_FLT_MAX 18446743523953729536.0
 
 #define L2Uf 0.693145751953125f
 #define L2Lf 1.428606765330187045e-06f
@@ -346,14 +352,14 @@ static inline float2 dfsqrt_f2_f2(float2 d) {
 
 float xsinf(float d) {
   int q;
-  float u, s;
+  float u, s, t = d;
 
   q = (int)xrintf(d * (float)M_1_PI);
 
-  d = mlaf(q, -PI4_Af*4, d);
-  d = mlaf(q, -PI4_Bf*4, d);
-  d = mlaf(q, -PI4_Cf*4, d);
-  d = mlaf(q, -PI4_Df*4, d);
+  d = mlaf(q, -PI_Af, d);
+  d = mlaf(q, -PI_Bf, d);
+  d = mlaf(q, -PI_Cf, d);
+  d = mlaf(q, -PI_Df, d);
 
   s = d * d;
 
@@ -367,8 +373,8 @@ float xsinf(float d) {
 
   u = mlaf(s, u * d, d);
 
-  if (xisinff(d)) u = NANf;
-  if (xisnegzerof(d)) u = -0.0f;
+  if (xisnegzerof(t) || xfabsf(t) > TRIGRANGEMAXf) u = -0.0f;
+  if (xisinff(t)) u = NANf;
 
   return u;
 }
@@ -380,10 +386,10 @@ float xsinf_u1(float d) {
 
   q = (int)xrintf(d * (float)M_1_PI);
 
-  s = dfadd2_f2_f_f(d, q * (-PI4_Af*4));
-  s = dfadd2_f2_f2_f(s, q * (-PI4_Bf*4));
-  s = dfadd2_f2_f2_f(s, q * (-PI4_Cf*4));
-  s = dfadd2_f2_f2_f(s, q * (-PI4_Df*4));
+  s = dfadd2_f2_f_f (d, q * (-PI_Af));
+  s = dfadd2_f2_f2_f(s, q * (-PI_Bf));
+  s = dfadd2_f2_f2_f(s, q * (-PI_Cf));
+  s = dfadd2_f2_f2_f(s, q * (-PI_Df));
 
   t = s;
   s = dfsqu_f2_f2(s);
@@ -398,21 +404,21 @@ float xsinf_u1(float d) {
   u = x.x + x.y;
 
   if ((q & 1) != 0) u = -u;
-  if (xisnegzerof(d)) u = -0.0f;
+  if (!xisinff(d) && (xisnegzerof(d) || xfabsf(d) > TRIGRANGEMAXf)) u = -0.0f;
 
   return u;
 }
 
 float xcosf(float d) {
   int q;
-  float u, s;
+  float u, s, t = d;
 
   q = 1 + 2*(int)xrintf(d * (float)M_1_PI - 0.5f);
 
-  d = mlaf(q, -PI4_Af*2, d);
-  d = mlaf(q, -PI4_Bf*2, d);
-  d = mlaf(q, -PI4_Cf*2, d);
-  d = mlaf(q, -PI4_Df*2, d);
+  d = mlaf(q, -PI_Af*0.5f, d);
+  d = mlaf(q, -PI_Bf*0.5f, d);
+  d = mlaf(q, -PI_Cf*0.5f, d);
+  d = mlaf(q, -PI_Df*0.5f, d);
 
   s = d * d;
 
@@ -425,8 +431,9 @@ float xcosf(float d) {
 
   u = mlaf(s, u * d, d);
 
-  if (xisinff(d)) u = NANf;
-
+  if (xfabsf(t) > TRIGRANGEMAXf) u = 0.0f;
+  if (xisinff(t)) u = NANf;
+  
   return u;
 }
 
@@ -434,14 +441,14 @@ float xcosf_u1(float d) {
   float u, q;
   float2 s, t, x;
 
-  d = fabsf(d);
+  d = xfabsf(d);
 
   q = 1 + 2*(int)xrintf(d * (float)M_1_PI - 0.5f);
 
-  s = dfadd2_f2_f_f(d, q * (-PI4_Af*2));
-  s = dfadd2_f2_f2_f(s, q * (-PI4_Bf*2));
-  s = dfadd2_f2_f2_f(s, q * (-PI4_Cf*2));
-  s = dfadd2_f2_f2_f(s, q * (-PI4_Df*2));
+  s = dfadd2_f2_f_f (d, q * (-PI_Af*0.5f));
+  s = dfadd2_f2_f2_f(s, q * (-PI_Bf*0.5f));
+  s = dfadd2_f2_f2_f(s, q * (-PI_Cf*0.5f));
+  s = dfadd2_f2_f2_f(s, q * (-PI_Df*0.5f));
 
   t = s;
   s = dfsqu_f2_f2(s);
@@ -456,7 +463,7 @@ float xcosf_u1(float d) {
   u = x.x + x.y;
 
   if ((((int)q) & 2) == 0) u = -u;
-
+  if (!xisinff(d) && d > TRIGRANGEMAXf) u = 0.0f;
   return u;
 }
 
@@ -469,10 +476,10 @@ float2 xsincosf(float d) {
 
   s = d;
 
-  s = mlaf(q, -PI4_Af*2, s);
-  s = mlaf(q, -PI4_Bf*2, s);
-  s = mlaf(q, -PI4_Cf*2, s);
-  s = mlaf(q, -PI4_Df*2, s);
+  s = mlaf(q, -PI_Af*0.5f, s);
+  s = mlaf(q, -PI_Bf*0.5f, s);
+  s = mlaf(q, -PI_Cf*0.5f, s);
+  s = mlaf(q, -PI_Df*0.5f, s);
 
   t = s;
 
@@ -499,6 +506,7 @@ float2 xsincosf(float d) {
   if ((q & 2) != 0) { r.x = -r.x; }
   if (((q+1) & 2) != 0) { r.y = -r.y; }
 
+  if (xfabsf(d) > TRIGRANGEMAXf) { r.x = r.y = 0; }
   if (xisinff(d)) { r.x = r.y = NANf; }
 
   return r;
@@ -511,10 +519,10 @@ float2 xsincosf_u1(float d) {
 
   q = (int)xrintf(d * (float)(2 * M_1_PI));
 
-  s = dfadd2_f2_f_f(d, q * (-PI4_Af*2));
-  s = dfadd2_f2_f2_f(s, q * (-PI4_Bf*2));
-  s = dfadd2_f2_f2_f(s, q * (-PI4_Cf*2));
-  s = dfadd2_f2_f2_f(s, q * (-PI4_Df*2));
+  s = dfadd2_f2_f_f (d, q * (-PI_Af*0.5f));
+  s = dfadd2_f2_f2_f(s, q * (-PI_Bf*0.5f));
+  s = dfadd2_f2_f2_f(s, q * (-PI_Cf*0.5f));
+  s = dfadd2_f2_f2_f(s, q * (-PI_Df*0.5f));
 
   t = s;
   s = dfsqu_f2_f2(s);
@@ -543,6 +551,7 @@ float2 xsincosf_u1(float d) {
   if ((q & 2) != 0) { r.x = -r.x; }
   if (((q+1) & 2) != 0) { r.y = -r.y; }
 
+  if (xfabsf(d) > TRIGRANGEMAXf) { r.x = r.y = 0; }
   if (xisinff(d)) { r.x = r.y = NAN; }
 
   return r;
@@ -556,10 +565,10 @@ float xtanf(float d) {
 
   x = d;
 
-  x = mlaf(q, -PI4_Af*2, x);
-  x = mlaf(q, -PI4_Bf*2, x);
-  x = mlaf(q, -PI4_Cf*2, x);
-  x = mlaf(q, -PI4_Df*2, x);
+  x = mlaf(q, -PI_Af*0.5f, x);
+  x = mlaf(q, -PI_Bf*0.5f, x);
+  x = mlaf(q, -PI_Cf*0.5f, x);
+  x = mlaf(q, -PI_Df*0.5f, x);
 
   s = x * x;
 
@@ -587,11 +596,12 @@ float xtanf_u1(float d) {
   float2 s, t, x;
 
   q = (int)xrintf(d * (float)(2 * M_1_PI));
-
-  s = dfadd2_f2_f_f(d, q * (-PI4_Af*2));
-  s = dfadd2_f2_f2_f(s, q * (-PI4_Bf*2));
-  s = dfadd2_f2_f2_f(s, q * (-PI4_Cf*2));
-  s = dfadd2_f2_f2_f(s, q * (-PI4_Df*2));
+  
+  s = dfadd2_f2_f_f  (d, q * (-PI_Af*0.5f));
+  s = dfadd2_f2_f2_f (s, q * (-PI_Bf*0.5f));
+  s = dfadd2_f2_f2_f (s, q * (-PI_Cf*0.5f));
+  s = dfadd2_f2_f2_f (s, q * (-PI_XDf*0.5f));
+  s = dfadd2_f2_f2_f (s, q * (-PI_XEf*0.5f));
 
   if ((q & 1) != 0) s = dfneg_f2_f2(s);
 
@@ -613,7 +623,7 @@ float xtanf_u1(float d) {
 
   u = x.x + x.y;
 
-  if (xisnegzerof(d)) u = -0.0f;
+  if (!xisinff(d) && (xisnegzerof(d) || xfabsf(d) > TRIGRANGEMAXf)) u = -0.0f;
 
   return u;
 }
@@ -709,9 +719,6 @@ static float2 atan2kf_u1(float2 y, float2 x) {
   u = mlaf(u, t.x, -0.142626821994781494140625f);
   u = mlaf(u, t.x, 0.199983194470405578613281f);
 
-  //u = mlaf(u, t.x, -0.333332866430282592773438f);
-  //t = dfmul_f2_f2_f(t, u);
-
   t = dfmul_f2_f2_f2(t, dfadd_f2_f_f(-0.333332866430282592773438f, u * t.x));
   t = dfmul_f2_f2_f2(s, dfadd_f2_f_f2(1, t));
   t = dfadd2_f2_f2_f2(dfmul_f2_f2_f(df(1.5707963705062866211f, -4.3711388286737928865e-08f), q), t);
@@ -785,23 +792,28 @@ float xexpf(float d) {
   s = mlaf(q, -L2Uf, d);
   s = mlaf(q, -L2Lf, s);
 
+#if 0
   u = 0.00136324646882712841033936f;
   u = mlaf(u, s, 0.00836596917361021041870117f);
   u = mlaf(u, s, 0.0416710823774337768554688f);
   u = mlaf(u, s, 0.166665524244308471679688f);
   u = mlaf(u, s, 0.499999850988388061523438f);
-
+#else
+  u = 0.000198527617612853646278381;
+  u = mlaf(u, s, 0.00139304355252534151077271);
+  u = mlaf(u, s, 0.00833336077630519866943359);
+  u = mlaf(u, s, 0.0416664853692054748535156);
+  u = mlaf(u, s, 0.166666671633720397949219);
+  u = mlaf(u, s, 0.5);
+#endif
+  
   u = s * s * u + s + 1.0f;
   u = ldexpkf(u, q);
 
-  if (xisminff(d)) u = 0;
+  if (d < -104) u = 0;
 
   return u;
 }
-
-//#define L2Af 0.693145751953125
-//#define L2Bf 1.4285906217992305756e-06
-//#define L2Cf 1.619850954759360917e-11
 
 static inline float expkf(float2 d) {
   int q = (int)xrintf((d.x + d.y) * R_LN2f);
@@ -810,10 +822,6 @@ static inline float expkf(float2 d) {
 
   s = dfadd2_f2_f2_f(d, q * -L2Uf);
   s = dfadd2_f2_f2_f(s, q * -L2Lf);
-
-  //s = dfadd2_f2_f2_f(d, q * -L2Af);
-  //s = dfadd2_f2_f2_f(s, q * -L2Bf);
-  //s = dfadd2_f2_f2_f(s, q * -L2Cf);
 
   s = dfnormalize_f2_f2(s);
 
@@ -826,7 +834,12 @@ static inline float expkf(float2 d) {
   t = dfadd_f2_f2_f2(s, dfmul_f2_f2_f(dfsqu_f2_f2(s), u));
 
   t = dfadd_f2_f_f2(1, t);
-  return ldexpkf(t.x + t.y, q);
+
+  u = ldexpkf(t.x + t.y, q);
+
+  if (d.x < -104) u = 0;
+  
+  return u;
 }
 
 static inline float2 logkf(float d) {
@@ -836,17 +849,19 @@ static inline float2 logkf(float d) {
 
   e = ilogbkf(d * (1.0f/0.75f));
   m = ldexpkf(d, -e);
-
+  
   x = dfdiv_f2_f2_f2(dfadd2_f2_f_f(-1, m), dfadd2_f2_f_f(1, m));
   x2 = dfsqu_f2_f2(x);
   
-  t = 0.2392828464508056640625f;
-  t = mlaf(t, x2.x, 0.28518211841583251953125f);
-  t = mlaf(t, x2.x, 0.400005877017974853515625f);
-  t = mlaf(t, x2.x, 0.666666686534881591796875f);
+  t = 0.240320354700088500976562;
+  t = mlaf(t, x2.x, 0.285112679004669189453125);
+  t = mlaf(t, x2.x, 0.400007992982864379882812);
+  float2 c = df(0.66666662693023681640625f, 3.69183861259614332084311e-09f);
 
   return dfadd2_f2_f2_f2(dfmul_f2_f2_f(df(0.69314718246459960938f, -1.904654323148236017e-09f), e),
-			 dfadd2_f2_f2_f2(dfscale_f2_f2_f(x, 2), dfmul_f2_f2_f(dfmul_f2_f2_f2(x2, x), t)));
+			 dfadd2_f2_f2_f2(dfscale_f2_f2_f(x, 2),
+					 dfmul_f2_f2_f2(dfmul_f2_f2_f2(x2, x),
+							dfadd2_f2_f2_f2(dfmul_f2_f2_f(x2, t), c))));
 }
 
 float xlogf_u1(float d) {
@@ -877,11 +892,11 @@ static inline float2 expk2f(float2 d) {
   t = dfadd_f2_f2_f2(s, dfmul_f2_f2_f(dfsqu_f2_f2(s), u));
 
   t = dfadd_f2_f_f2(1, t);
-  return dfscale_f2_f2_f(t, pow2if(q));
+  return dfscale_f2_f2_f(dfscale_f2_f2_f(t, 2), pow2if(q-1));
 }
 
 float xpowf(float x, float y) {
-  int yisint = (int)y == y;
+  int yisint = (y == (int)y) || (xfabsf(y) >= (float)(1LL << 23));
   int yisodd = (1 & (int)y) != 0 && yisint;
 
   float result = expkf(dfmul_f2_f2_f(logkf(xfabsf(x)), y));
@@ -932,7 +947,7 @@ float xtanhf(float x) {
   d = dfdiv_f2_f2_f2(dfsub_f2_f2_f2(d, e), dfadd_f2_f2_f2(d, e));
   y = d.x + d.y;
 
-  y = xfabsf(x) > 8.664339742f ? 1.0f : y;
+  y = xfabsf(x) > 18.714973875f ? 1.0f : y;
   y = xisnanf(y) ? 1.0f : y;
   y = mulsignf(y, x);
   y = xisnanf(x) ? NANf : y;
@@ -962,21 +977,27 @@ static inline float2 logk2f(float2 d) {
 
 float xasinhf(float x) {
   float y = xfabsf(x);
-  float2 d = logk2f(dfadd2_f2_f2_f(dfsqrt_f2_f2(dfadd2_f2_f2_f(dfmul_f2_f_f(y, y),  1)), y));
-  y = d.x + d.y;
+  float2 d;
 
-  y = xisinff(x) || xisnanf(y) ? INFINITYf : y;
-  y = mulsignf(y, x);
+  d = y > 1 ? dfrec_f2_f(x) : df(y, 0);
+  d = dfsqrt_f2_f2(dfadd2_f2_f2_f(dfsqu_f2_f2(d), 1));
+  d = y > 1 ? dfmul_f2_f2_f(d, y) : d;
+  
+  d = logk2f(dfnormalize_f2_f2(dfadd_f2_f2_f(d, x)));
+  y = d.x + d.y;
+  
+  y = (xfabsf(x) > SQRT_FLT_MAX || xisnanf(y)) ? mulsignf(INFINITYf, x) : y;
   y = xisnanf(x) ? NANf : y;
+  y = xisnegzerof(x) ? -0.0f : y;
 
   return y;
 }
 
 float xacoshf(float x) {
-  float2 d = logk2f(dfadd2_f2_f2_f(dfsqrt_f2_f2(dfadd2_f2_f2_f(dfmul_f2_f_f(x, x), -1)), x));
+  float2 d = logk2f(dfadd2_f2_f2_f(dfmul_f2_f2_f2(dfsqrt_f2_f2(dfadd2_f2_f_f(x, 1)), dfsqrt_f2_f2(dfadd2_f2_f_f(x, -1))), x));
   float y = d.x + d.y;
 
-  y = xisinff(x) || xisnanf(y) ? INFINITYf : y;
+  y = (x > SQRT_FLT_MAX || xisnanf(y)) ? INFINITYf : y;
   y = x == 1.0f ? 0.0f : y;
   y = x < 1.0f ? NANf : y;
   y = xisnanf(x) ? NANf : y;
@@ -987,7 +1008,7 @@ float xacoshf(float x) {
 float xatanhf(float x) {
   float y = xfabsf(x);
   float2 d = logk2f(dfdiv_f2_f2_f2(dfadd2_f2_f_f(1, y), dfadd2_f2_f_f(1, -y)));
-  y = y > 1.0 ? NANf : (y == 1.0 ? INFINITYf : (d.x + d.y) * 0.5f);
+  y = y > 1.0f ? NANf : (y == 1.0f ? INFINITYf : (d.x + d.y) * 0.5f);
 
   y = xisinff(x) || xisnanf(y) ? NANf : y;
   y = mulsignf(y, x);
@@ -998,14 +1019,14 @@ float xatanhf(float x) {
 
 float xexp2f(float a) {
   float u = expkf(dfmul_f2_f2_f(df(0.69314718246459960938f, -1.904654323148236017e-09f), a));
-  if (xispinff(a)) u = INFINITYf;
+  if (a >= 128) u = INFINITYf;
   if (xisminff(a)) u = 0;
   return u;
 }
 
 float xexp10f(float a) {
   float u = expkf(dfmul_f2_f2_f(df(2.3025851249694824219f, -3.1975436520781386207e-08f), a));
-  if (xispinff(a)) u = INFINITYf;
+  if (a > 38.531839419103626f) u = INFINITYf;
   if (xisminff(a)) u = 0;
   return u;
 }
@@ -1013,8 +1034,8 @@ float xexp10f(float a) {
 float xexpm1f(float a) {
   float2 d = dfadd2_f2_f2_f(expk2f(df(a, 0)), -1.0f);
   float x = d.x + d.y;
-  if (a > 88.0f) x = INFINITYf;
-  if (a < -0.15942385152878742116596338793538061065739925620174e+2f) x = -1;
+  if (a > 88.72283905206835f) x = INFINITYf;
+  if (a < -16.635532333438687426013570f) x = -1;
   if (xisnegzerof(a)) x = -0.0f;
   return x;
 }
@@ -1034,7 +1055,7 @@ float xlog1pf(float a) {
   float2 d = logk2f(dfadd2_f2_f_f(a, 1));
   float x = d.x + d.y;
 
-  if (xisinff(a)) x = INFINITYf;
+  if (a > 1e+38) x = INFINITYf;
   if (a < -1) x = NANf;
   if (a == -1) x = -INFINITYf;
   if (xisnegzerof(a)) x = -0.0f;
@@ -1048,7 +1069,7 @@ float xcbrtf(float d) {
   float x, y, q = 1.0f;
   int e, r;
 
-  e = ilogbkf(d)+1;
+  e = ilogbkf(xfabsf(d))+1;
   d = ldexpkf(d, -e);
   r = (e + 6144) % 3;
   q = (r == 1) ? 1.2599210498948731647672106f : q;
@@ -1076,7 +1097,7 @@ float xcbrtf_u1(float d) {
   float2 q2 = df(1, 0), u, v;
   int e, r;
 
-  e = ilogbkf(d)+1;
+  e = ilogbkf(xfabsf(d))+1;
   d = ldexpkf(d, -e);
   r = (e + 6144) % 3;
   q2 = (r == 1) ? df(1.2599210739135742188, -2.4018701694217270415e-08) : q2;

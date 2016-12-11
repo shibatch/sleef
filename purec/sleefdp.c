@@ -9,16 +9,41 @@
 
 #include "nonnumber.h"
 
-#define PI4_A 0.78539816290140151978
-#define PI4_B 4.9604678871439933374e-10
-#define PI4_C 1.1258708853173288931e-18
-#define PI4_D 1.7607799325916000908e-27
+#define PI_A 3.1415926218032836914
+#define PI_B 3.1786509424591713469e-08
+#define PI_C 1.2246467864107188502e-16
+#define PI_D 1.2736634327021899816e-24
+
+#define M_2_PI_H 0.63661977236758138243
+#define M_2_PI_L -3.9357353350364971764e-17
+
+#define TRIGRANGEMAX 1e+14
+#define SQRT_DBL_MAX 1.3407807929942596355e+154
 
 #define M_4_PI 1.273239544735162542821171882678754627704620361328125
 
 #define L2U .69314718055966295651160180568695068359375
 #define L2L .28235290563031577122588448175013436025525412068e-12
 #define R_LN2 1.442695040888963407359924681001892137426645954152985934135449406931
+
+char frstr[1000];
+char *toBC(double d) {
+  union {
+    double d;
+    uint64_t u64;
+    int64_t i64;
+  } cnv;
+
+  cnv.d = d;
+  
+  int64_t l = cnv.i64;
+  int e = (int)((l >> 52) & ~(-1L << 11));
+  int s = (int)(l >> 63);
+  l = d == 0 ? 0 : ((l & ~((-1L) << 52)) | (1L << 52));
+
+  sprintf(frstr, "%s%lld*2^%d", s != 0 ? "-" : "", (long long int)l, (e-0x3ff-52));
+  return frstr;
+}
 
 static inline int64_t doubleToRawLongBits(double d) {
   union {
@@ -49,12 +74,18 @@ static inline double mulsign(double x, double y) {
 static inline double sign(double d) { return mulsign(1, d); }
 static inline double mla(double x, double y, double z) { return x * y + z; }
 static inline double xrint(double x) { return x < 0 ? (int)(x - 0.5) : (int)(x + 0.5); }
+static inline double xtrunc(double x) { return (double)(int)x; }
 
 static inline int xisnan(double x) { return x != x; }
 static inline int xisinf(double x) { return x == INFINITY || x == -INFINITY; }
 static inline int xisminf(double x) { return x == -INFINITY; }
 static inline int xispinf(double x) { return x == INFINITY; }
 static inline int xisnegzero(double x) { return doubleToRawLongBits(x) == doubleToRawLongBits(-0.0); }
+
+static inline int xisint(double d) {
+  double x = d - (double)(1 << 31) * (int)(d * (1.0 / (1 << 31)));
+  return (x == (int)x) || (xfabs(d) >= (double)(1LL << 52));
+}
 
 static inline double pow2i(int q) {
   return longBitsToDouble(((int64_t)(q + 0x3ff)) << 52);
@@ -149,7 +180,10 @@ static inline double2 ddadd_d2_d_d(double x, double y) {
   double2 r;
 
 #ifndef NDEBUG
-  if (!(checkfp(x) || checkfp(y) || xfabs(x) >= xfabs(y))) fprintf(stderr, "[ddadd_d2_d_d : %g, %g]", x, y);
+  if (!(checkfp(x) || checkfp(y) || xfabs(x) >= xfabs(y))) {
+    fprintf(stderr, "[ddadd_d2_d_d : %g, %g]\n", x, y);
+    fflush(stderr);
+  }
 #endif
 
   r.x = x + y;
@@ -174,7 +208,10 @@ static inline double2 ddadd_d2_d2_d(double2 x, double y) {
   double2 r;
 
 #ifndef NDEBUG
-  if (!(checkfp(x.x) || checkfp(y) || xfabs(x.x) >= xfabs(y))) fprintf(stderr, "[ddadd_d2_d2_d : %g %g]", x.x, y);
+  if (!(checkfp(x.x) || checkfp(y) || xfabs(x.x) >= xfabs(y))) {
+    fprintf(stderr, "[ddadd_d2_d2_d : %g %g]\n", x.x, y);
+    fflush(stderr);
+  }
 #endif
 
   r.x = x.x + y;
@@ -202,7 +239,10 @@ static inline double2 ddadd_d2_d_d2(double x, double2 y) {
   double2 r;
 
 #ifndef NDEBUG
-  if (!(checkfp(x) || checkfp(y.x) || xfabs(x) >= xfabs(y.x))) fprintf(stderr, "[ddadd_d2_d_d2 : %g %g]", x, y.x);
+  if (!(checkfp(x) || checkfp(y.x) || xfabs(x) >= xfabs(y.x))) {
+    fprintf(stderr, "[ddadd_d2_d_d2 : %g %g]\n", x, y.x);
+    fflush(stderr);
+  }
 #endif
 
   r.x = x + y.x;
@@ -227,7 +267,10 @@ static inline double2 ddadd_d2_d2_d2(double2 x, double2 y) {
   double2 r;
 
 #ifndef NDEBUG
-  if (!(checkfp(x.x) || checkfp(y.x) || xfabs(x.x) >= xfabs(y.x))) fprintf(stderr, "[ddadd_d2_d2_d2 : %g %g]", x.x, y.x);
+  if (!(checkfp(x.x) || checkfp(y.x) || xfabs(x.x) >= xfabs(y.x))) {
+    fprintf(stderr, "[ddadd_d2_d2_d2 : %g %g]\n", x.x, y.x);
+    fflush(stderr);
+  }
 #endif
 
   r.x = x.x + y.x;
@@ -253,7 +296,10 @@ static inline double2 ddsub_d2_d2_d2(double2 x, double2 y) {
   double2 r;
 
 #ifndef NDEBUG
-  if (!(checkfp(x.x) || checkfp(y.x) || xfabs(x.x) >= xfabs(y.x))) fprintf(stderr, "[ddsub_d2_d2_d2 : %g %g]", x.x, y.x);
+  if (!(checkfp(x.x) || checkfp(y.x) || xfabs(x.x) >= xfabs(y.x))) {
+    fprintf(stderr, "[ddsub_d2_d2_d2 : %g %g]\n", x.x, y.x);
+    fflush(stderr);
+  }
 #endif
 
   r.x = x.x - y.x;
@@ -481,8 +527,9 @@ static double2 atan2k_u1(double2 y, double2 x) {
 
   t = ddmul_d2_d2_d(t, u);
   t = ddmul_d2_d2_d2(s, ddadd_d2_d_d2(1, t));
+  if (xfabs(s.x) < 1e-200) t = s;
   t = ddadd2_d2_d2_d2(ddmul_d2_d2_d(dd(1.570796326794896557998982, 6.12323399573676603586882e-17), q), t);
-
+  
   return t;
 }
 
@@ -521,19 +568,22 @@ double xatan_u1(double d) {
 }
 
 double xsin(double d) {
-  int q;
-  double u, s;
+  double u, s, t = d;
 
-  q = (int)xrint(d * M_1_PI);
+  int qh = xtrunc(d * (M_1_PI / (1 << 24)));
+  int ql = xrint(d * M_1_PI - qh * (double)(1 << 24));
 
-  d = mla(q, -PI4_A*4, d);
-  d = mla(q, -PI4_B*4, d);
-  d = mla(q, -PI4_C*4, d);
-  d = mla(q, -PI4_D*4, d);
-
+  d = mla(qh, -PI_A * (1 << 24), d);
+  d = mla(ql, -PI_A,             d);
+  d = mla(qh, -PI_B * (1 << 24), d);
+  d = mla(ql, -PI_B,             d);
+  d = mla(qh, -PI_C * (1 << 24), d);
+  d = mla(ql, -PI_C,             d);
+  d = mla((double)qh * (1 << 24) + ql, -PI_D, d);
+  
   s = d * d;
 
-  if ((q & 1) != 0) d = -d;
+  if ((ql & 1) != 0) d = -d;
 
   u = -7.97255955009037868891952e-18;
   u = mla(u, s, 2.81009972710863200091251e-15);
@@ -547,23 +597,26 @@ double xsin(double d) {
 
   u = mla(s, u * d, d);
 
-  if (xisnegzero(d)) u = -0.0;
+  if (!xisinf(t) && (xisnegzero(t) || xfabs(t) > TRIGRANGEMAX)) u = -0.0;
 
   return u;
 }
 
 double xsin_u1(double d) {
-  int q;
   double u;
   double2 s, t, x;
 
-  q = (int)xrint(d * M_1_PI);
+  int qh = xtrunc(d * (M_1_PI / (1 << 24)));
+  int ql = xrint(d * M_1_PI - qh * (double)(1 << 24));
 
-  s = ddadd2_d2_d_d(d, q * (-PI4_A*4));
-  s = ddadd2_d2_d2_d(s, q * (-PI4_B*4));
-  s = ddadd2_d2_d2_d(s, q * (-PI4_C*4));
-  s = ddadd2_d2_d2_d(s, q * (-PI4_D*4));
-
+  s = ddadd2_d2_d_d (d, qh * (-PI_A * (1 << 24)));
+  s = ddadd2_d2_d2_d(s, ql * (-PI_A            ));
+  s = ddadd2_d2_d2_d(s, qh * (-PI_B * (1 << 24)));
+  s = ddadd2_d2_d2_d(s, ql * (-PI_B            ));
+  s = ddadd2_d2_d2_d(s, qh * (-PI_C * (1 << 24)));
+  s = ddadd2_d2_d2_d(s, ql * (-PI_C            ));
+  s = ddadd2_d2_d2_d(s, ((double)qh * (1 << 24) + ql) * -PI_D);
+  
   t = s;
   s = ddsqu_d2_d2(s);
 
@@ -576,30 +629,33 @@ double xsin_u1(double d) {
   u = mla(u, s.x, 0.00833333333333318056201922);
 
   x = ddadd_d2_d_d2(1, ddmul_d2_d2_d2(ddadd_d2_d_d(-0.166666666666666657414808, u * s.x), s));
-
+  
   x = ddmul_d2_d2_d2(t, x);
   u = x.x + x.y;
 
-  if ((q & 1) != 0) u = -u;
-  if (xisnegzero(d)) u = -0.0;
+  if ((ql & 1) != 0) u = -u;
+  if (!xisinf(d) && (xisnegzero(d) || xfabs(d) > TRIGRANGEMAX)) u = -0.0;
 
   return u;
 }
 
 double xcos(double d) {
-  int q;
-  double u, s;
+  double u, s, t = d;
 
-  q = 1 + 2*(int)xrint(d * M_1_PI - 0.5);
+  int qh = xtrunc(d * (M_1_PI / (1LL << 23)) - 0.5 * (M_1_PI / (1LL << 23)));
+  int ql = 2*xrint(d * M_1_PI - 0.5 - qh * (double)(1LL << 23))+1;
 
-  d = mla(q, -PI4_A*2, d);
-  d = mla(q, -PI4_B*2, d);
-  d = mla(q, -PI4_C*2, d);
-  d = mla(q, -PI4_D*2, d);
-
+  d = mla(qh, -PI_A*0.5*(1LL << 24), d);
+  d = mla(ql, -PI_A*0.5,             d);
+  d = mla(qh, -PI_B*0.5*(1LL << 24), d);
+  d = mla(ql, -PI_B*0.5,             d);
+  d = mla(qh, -PI_C*0.5*(1LL << 24), d);
+  d = mla(ql, -PI_C*0.5,             d);
+  d = mla((double)qh*(1LL << 24) + ql , -PI_D*0.5, d);
+  
   s = d * d;
 
-  if ((q & 2) == 0) d = -d;
+  if ((ql & 2) == 0) d = -d;
 
   u = -7.97255955009037868891952e-18;
   u = mla(u, s, 2.81009972710863200091251e-15);
@@ -613,22 +669,28 @@ double xcos(double d) {
 
   u = mla(s, u * d, d);
 
+  if (!xisinf(t) && xfabs(t) > TRIGRANGEMAX) u = 0.0;
+
   return u;
 }
 
 double xcos_u1(double d) {
-  double u, q;
+  double u;
   double2 s, t, x;
 
-  d = fabs(d);
+  d = xfabs(d);
 
-  q = mla(2, xrint(d * M_1_PI - 0.5), 1);
+  int qh = xtrunc(d * (M_1_PI / (1LL << (23))) - 0.5 * (M_1_PI / (1LL << (23))));
+  int ql = 2*xrint(d * M_1_PI - 0.5 - qh * (double)(1LL << (23)))+1;
 
-  s = ddadd2_d2_d_d(d, q * (-PI4_A*2));
-  s = ddadd2_d2_d2_d(s, q * (-PI4_B*2));
-  s = ddadd2_d2_d2_d(s, q * (-PI4_C*2));
-  s = ddadd2_d2_d2_d(s, q * (-PI4_D*2));
-
+  s = ddadd2_d2_d_d (d, qh * (-PI_A*0.5 * (1 << 24)));
+  s = ddadd2_d2_d2_d(s, ql * (-PI_A*0.5            ));
+  s = ddadd2_d2_d2_d(s, qh * (-PI_B*0.5 * (1 << 24)));
+  s = ddadd2_d2_d2_d(s, ql * (-PI_B*0.5            ));
+  s = ddadd2_d2_d2_d(s, qh * (-PI_C*0.5 * (1 << 24)));
+  s = ddadd2_d2_d2_d(s, ql * (-PI_C*0.5            ));
+  s = ddadd2_d2_d2_d(s, ((double)qh * (1 << 24) + ql) * (-PI_D*0.5));
+  
   t = s;
   s = ddsqu_d2_d2(s);
 
@@ -646,25 +708,29 @@ double xcos_u1(double d) {
 
   u = x.x + x.y;
 
-  if ((((int)q) & 2) == 0) u = -u;
+  if ((((int)ql) & 2) == 0) u = -u;
+  if (!xisinf(d) && d > TRIGRANGEMAX) u = 0.0;
 
   return u;
 }
 
 double2 xsincos(double d) {
-  int q;
   double u, s, t;
   double2 r;
 
-  q = (int)xrint(d * (2 * M_1_PI));
-
   s = d;
 
-  s = mla(-q, PI4_A*2, s);
-  s = mla(-q, PI4_B*2, s);
-  s = mla(-q, PI4_C*2, s);
-  s = mla(-q, PI4_D*2, s);
+  int qh = xtrunc(d * ((2 * M_1_PI) / (1 << 24)));
+  int ql = xrint(d * (2 * M_1_PI) - qh * (double)(1 << 24));
 
+  s = mla(qh, -PI_A * 0.5 * (1 << 24), s);
+  s = mla(ql, -PI_A * 0.5,             s);
+  s = mla(qh, -PI_B * 0.5 * (1 << 24), s);
+  s = mla(ql, -PI_B * 0.5,             s);
+  s = mla(qh, -PI_C * 0.5 * (1 << 24), s);
+  s = mla(ql, -PI_C * 0.5,             s);
+  s = mla((double)qh * (1 << 24) + ql, -PI_D * 0.5, s);
+  
   t = s;
 
   s = s * s;
@@ -691,27 +757,31 @@ double2 xsincos(double d) {
 
   r.y = u * s + 1;
 
-  if ((q & 1) != 0) { s = r.y; r.y = r.x; r.x = s; }
-  if ((q & 2) != 0) { r.x = -r.x; }
-  if (((q+1) & 2) != 0) { r.y = -r.y; }
+  if ((ql & 1) != 0) { s = r.y; r.y = r.x; r.x = s; }
+  if ((ql & 2) != 0) { r.x = -r.x; }
+  if (((ql+1) & 2) != 0) { r.y = -r.y; }
 
   if (xisinf(d)) { r.x = r.y = NAN; }
+  if (!xisinf(d) && xfabs(d) > TRIGRANGEMAX) { r.x = r.y = 0; }
 
   return r;
 }
 
 double2 xsincos_u1(double d) {
-  int q;
   double u;
   double2 r, s, t, x;
 
-  q = (int)xrint(d * (2 * M_1_PI));
+  int qh = xtrunc(d * ((2 * M_1_PI) / (1 << 24)));
+  int ql = xrint(d * (2 * M_1_PI) - qh * (double)(1 << 24));
 
-  s = ddadd2_d2_d_d(d, q * (-PI4_A*2));
-  s = ddadd2_d2_d2_d(s, q * (-PI4_B*2));
-  s = ddadd2_d2_d2_d(s, q * (-PI4_C*2));
-  s = ddadd2_d2_d2_d(s, q * (-PI4_D*2));
-
+  s = ddadd2_d2_d_d (d, qh * (-PI_A*0.5 * (1 << 24)));
+  s = ddadd2_d2_d2_d(s, ql * (-PI_A*0.5            ));
+  s = ddadd2_d2_d2_d(s, qh * (-PI_B*0.5 * (1 << 24)));
+  s = ddadd2_d2_d2_d(s, ql * (-PI_B*0.5            ));
+  s = ddadd2_d2_d2_d(s, qh * (-PI_C*0.5 * (1 << 24)));
+  s = ddadd2_d2_d2_d(s, ql * (-PI_C*0.5            ));
+  s = ddadd2_d2_d2_d(s, ((double)qh * (1 << 24) + ql) * (-PI_D*0.5));
+  
   t = s;
   s = ddsqu_d2_d2(s);
   s.x = s.x + s.y;
@@ -741,49 +811,54 @@ double2 xsincos_u1(double d) {
   x = ddadd_d2_d_d2(1, ddmul_d2_d_d(s.x, u));
   r.y = x.x + x.y;
 
-  if ((q & 1) != 0) { u = r.y; r.y = r.x; r.x = u; }
-  if ((q & 2) != 0) { r.x = -r.x; }
-  if (((q+1) & 2) != 0) { r.y = -r.y; }
+  if ((ql & 1) != 0) { u = r.y; r.y = r.x; r.x = u; }
+  if ((ql & 2) != 0) { r.x = -r.x; }
+  if (((ql+1) & 2) != 0) { r.y = -r.y; }
 
   if (xisinf(d)) { r.x = r.y = NAN; }
+  if (!xisinf(d) && xfabs(d) > TRIGRANGEMAX) { r.x = r.y = 0; }
 
   return r;
 }
 
 double xtan(double d) {
-  int q;
   double u, s, x;
 
-  q = (int)xrint(d * (2 * M_1_PI));
+  int qh = xtrunc(d * ((2 * M_1_PI) / (1 << 24)));
+  int ql = xrint(d * (2 * M_1_PI) - qh * (double)(1 << 24));
 
-  x = mla(q, -PI4_A*2, d);
-  x = mla(q, -PI4_B*2, x);
-  x = mla(q, -PI4_C*2, x);
-  x = mla(q, -PI4_D*2, x);
-
+  x = mla(qh, -PI_A * 0.5 * (1 << 24), d);
+  x = mla(ql, -PI_A * 0.5,             x);
+  x = mla(qh, -PI_B * 0.5 * (1 << 24), x);
+  x = mla(ql, -PI_B * 0.5,             x);
+  x = mla(qh, -PI_C * 0.5 * (1 << 24), x);
+  x = mla(ql, -PI_C * 0.5,             x);
+  x = mla((double)qh * (1 << 24) + ql, -PI_D * 0.5, x);
+  
   s = x * x;
 
-  if ((q & 1) != 0) x = -x;
+  if ((ql & 1) != 0) x = -x;
 
-  u = 1.01419718511083373224408e-05;
-  u = mla(u, s, -2.59519791585924697698614e-05);
-  u = mla(u, s, 5.23388081915899855325186e-05);
-  u = mla(u, s, -3.05033014433946488225616e-05);
-  u = mla(u, s, 7.14707504084242744267497e-05);
-  u = mla(u, s, 8.09674518280159187045078e-05);
-  u = mla(u, s, 0.000244884931879331847054404);
-  u = mla(u, s, 0.000588505168743587154904506);
-  u = mla(u, s, 0.00145612788922812427978848);
-  u = mla(u, s, 0.00359208743836906619142924);
-  u = mla(u, s, 0.00886323944362401618113356);
-  u = mla(u, s, 0.0218694882853846389592078);
-  u = mla(u, s, 0.0539682539781298417636002);
-  u = mla(u, s, 0.133333333333125941821962);
-  u = mla(u, s, 0.333333333333334980164153);
-
+  u = 9.99583485362149960784268e-06;
+  u = mla(u, s, -4.31184585467324750724175e-05);
+  u = mla(u, s, 0.000103573238391744000389851);
+  u = mla(u, s, -0.000137892809714281708733524);
+  u = mla(u, s, 0.000157624358465342784274554);
+  u = mla(u, s, -6.07500301486087879295969e-05);
+  u = mla(u, s, 0.000148898734751616411290179);
+  u = mla(u, s, 0.000219040550724571513561967);
+  u = mla(u, s, 0.000595799595197098359744547);
+  u = mla(u, s, 0.00145461240472358871965441);
+  u = mla(u, s, 0.0035923150771440177410343);
+  u = mla(u, s, 0.00886321546662684547901456);
+  u = mla(u, s, 0.0218694899718446938985394);
+  u = mla(u, s, 0.0539682539049961967903002);
+  u = mla(u, s, 0.133333333334818976423364);
+  u = mla(u, s, 0.333333333333320047664472);
+  
   u = mla(s, u * x, x);
 
-  if ((q & 1) != 0) u = 1.0 / u;
+  if ((ql & 1) != 0) u = 1.0 / u;
 
   if (xisinf(d)) u = NAN;
 
@@ -791,18 +866,22 @@ double xtan(double d) {
 }
 
 double xtan_u1(double d) {
-  int q;
   double u;
   double2 s, t, x;
 
-  q = (int)xrint(d * M_2_PI);
-
-  s = ddadd2_d2_d_d(d, q * (-PI4_A*2));
-  s = ddadd2_d2_d2_d(s, q * (-PI4_B*2));
-  s = ddadd2_d2_d2_d(s, q * (-PI4_C*2));
-  s = ddadd2_d2_d2_d(s, q * (-PI4_D*2));
-
-  if ((q & 1) != 0) s = ddneg_d2_d2(s);
+  int qh = xtrunc(d * (M_2_PI / (1 << 24)));
+  s = ddadd2_d2_d2_d(ddmul_d2_d2_d(dd(M_2_PI_H, M_2_PI_L), d), (d < 0 ? -0.5 : 0.5) - qh * (double)(1 << 24));
+  int ql = s.x + s.y;
+  
+  s = ddadd2_d2_d_d (d, qh * (-PI_A*0.5 * (1 << 24)));
+  s = ddadd2_d2_d2_d(s, ql * (-PI_A*0.5            ));
+  s = ddadd2_d2_d2_d(s, qh * (-PI_B*0.5 * (1 << 24)));
+  s = ddadd2_d2_d2_d(s, ql * (-PI_B*0.5            ));
+  s = ddadd2_d2_d2_d(s, qh * (-PI_C*0.5 * (1 << 24)));
+  s = ddadd2_d2_d2_d(s, ql * (-PI_C*0.5            ));
+  s = ddadd2_d2_d2_d(s, ((double)qh * (1 << 24) + ql) * (-PI_D*0.5));
+  
+  if ((ql & 1) != 0) s = ddneg_d2_d2(s);
 
   t = s;
   s = ddsqu_d2_d2(s);
@@ -825,11 +904,11 @@ double xtan_u1(double d) {
   x = ddadd_d2_d_d2(1, ddmul_d2_d2_d2(ddadd_d2_d_d(0.333333333333334980164153, u * s.x), s));
   x = ddmul_d2_d2_d2(t, x);
 
-  if ((q & 1) != 0) x = ddrec_d2_d2(x);
+  if ((ql & 1) != 0) x = ddrec_d2_d2(x);
 
   u = x.x + x.y;
 
-  if (xisnegzero(d)) u = -0.0;
+  if (!xisinf(d) && (xisnegzero(d) || xfabs(d) > TRIGRANGEMAX)) u = -0.0;
   
   return u;
 }
@@ -852,7 +931,7 @@ double xlog(double d) {
   t = mla(t, x2, 0.399999999950799600689777);
   t = mla(t, x2, 0.6666666666667778740063);
   t = mla(t, x2, 2);
-
+  
   x = x * t + 0.693147180559945286226764 * e;
   
   if (xisinf(d)) x = INFINITY;
@@ -884,8 +963,8 @@ double xexp(double d) {
   u = s * s * u + s + 1;
   u = ldexpk(u, q);
 
-  if (xisminf(d)) u = 0;
-
+  if (d < -1000) u = 0;
+  
   return u;
 }
 
@@ -900,17 +979,21 @@ static inline double2 logk(double d) {
   x = dddiv_d2_d2_d2(ddadd2_d2_d_d(-1, m), ddadd2_d2_d_d(1, m));
   x2 = ddsqu_d2_d2(x);
 
-  t = 0.13860436390467167910856;
-  t = mla(t, x2.x, 0.131699838841615374240845);
-  t = mla(t, x2.x, 0.153914168346271945653214);
-  t = mla(t, x2.x, 0.181816523941564611721589);
-  t = mla(t, x2.x, 0.22222224632662035403996);
-  t = mla(t, x2.x, 0.285714285511134091777308);
-  t = mla(t, x2.x, 0.400000000000914013309483);
-  t = mla(t, x2.x, 0.666666666666664853302393);
+  t = 0.116255524079935043668677;
+  t = mla(t, x2.x, 0.103239680901072952701192);
+  t = mla(t, x2.x, 0.117754809412463995466069);
+  t = mla(t, x2.x, 0.13332981086846273921509);
+  t = mla(t, x2.x, 0.153846227114512262845736);
+  t = mla(t, x2.x, 0.181818180850050775676507);
+  t = mla(t, x2.x, 0.222222222230083560345903);
+  t = mla(t, x2.x, 0.285714285714249172087875);
+  t = mla(t, x2.x, 0.400000000000000077715612);
+  double2 c = dd(0.666666666666666629659233, 3.80554962542412056336616e-17);
 
   return ddadd2_d2_d2_d2(ddmul_d2_d2_d(dd(0.693147180559945286226764, 2.319046813846299558417771e-17), e),
-			 ddadd2_d2_d2_d2(ddscale_d2_d2_d(x, 2), ddmul_d2_d2_d(ddmul_d2_d2_d2(x2, x), t)));
+			 ddadd2_d2_d2_d2(ddscale_d2_d2_d(x, 2),
+					 ddmul_d2_d2_d2(ddmul_d2_d2_d2(x2, x),
+							ddadd2_d2_d2_d2(ddmul_d2_d2_d(x2, t), c))));
 }
 
 double xlog_u1(double d) {
@@ -948,17 +1031,22 @@ static inline double expk(double2 d) {
   t = ddadd_d2_d2_d2(s, ddmul_d2_d2_d(ddsqu_d2_d2(s), u));
 
   t = ddadd_d2_d_d2(1, t);
-  return ldexpk(t.x + t.y, q);
+
+  u = ldexpk(t.x + t.y, q);
+
+  if (d.x < -1000) u = 0;
+
+  return u;
 }
 
 double xpow(double x, double y) {
-  int yisint = (int)y == y;
+  int yisint = xisint(y);
   int yisodd = (1 & (int)y) != 0 && yisint;
 
   double result = expk(ddmul_d2_d2_d(logk(xfabs(x)), y));
 
   result = xisnan(result) ? INFINITY : result;
-  result *=  (x >= 0 ? 1 : (!yisint ? NAN : (yisodd ? -1 : 1)));
+  result *= (x > 0 ? 1 : (!yisint ? NAN : (yisodd ? -1 : 1)));
 
   double efx = mulsign(xfabs(x) - 1, y);
   if (xisinf(y)) result = efx < 0 ? 0.0 : (efx == 0 ? 1.0 : INFINITY);
@@ -991,7 +1079,7 @@ static inline double2 expk2(double2 d) {
   t = ddadd_d2_d2_d2(s, ddmul_d2_d2_d(ddsqu_d2_d2(s), u));
 
   t = ddadd_d2_d_d2(1, t);
-  return ddscale_d2_d2_d(t, pow2i(q));
+  return ddscale_d2_d2_d(ddscale_d2_d2_d(t, 2), pow2i(q-1));
 }
 
 double xsinh(double x) {
@@ -1040,13 +1128,13 @@ static inline double2 logk2(double2 d) {
   double2 x, x2, m;
   double t;
   int e;
-
+  
   e = ilogbk(d.x * (1.0/0.75));
   m = ddscale_d2_d2_d(d, pow2i(-e));
 
   x = dddiv_d2_d2_d2(ddadd2_d2_d2_d(m, -1), ddadd2_d2_d2_d(m, 1));
   x2 = ddsqu_d2_d2(x);
-
+  
   t = 0.13860436390467167910856;
   t = mla(t, x2.x, 0.131699838841615374240845);
   t = mla(t, x2.x, 0.153914168346271945653214);
@@ -1062,21 +1150,27 @@ static inline double2 logk2(double2 d) {
 
 double xasinh(double x) {
   double y = xfabs(x);
-  double2 d = logk2(ddadd_d2_d2_d(ddsqrt_d2_d2(ddadd2_d2_d2_d(ddmul_d2_d_d(y, y),  1)), y));
+  double2 d;
+
+  d = y > 1 ? ddrec_d2_d(x) : dd(y, 0);
+  d = ddsqrt_d2_d2(ddadd2_d2_d2_d(ddsqu_d2_d2(d), 1));
+  d = y > 1 ? ddmul_d2_d2_d(d, y) : d;
+  
+  d = logk2(ddnormalize_d2_d2(ddadd_d2_d2_d(d, x)));
   y = d.x + d.y;
 
-  y = xisinf(x) || xisnan(y) ? INFINITY : y;
-  y = mulsign(y, x);
+  y = (xfabs(x) > SQRT_DBL_MAX || xisnan(y)) ? mulsign(INFINITY, x) : y;
   y = xisnan(x) ? NAN : y;
-
+  y = xisnegzero(x) ? -0.0 : y;
+  
   return y;
 }
 
 double xacosh(double x) {
-  double2 d = logk2(ddadd2_d2_d2_d(ddsqrt_d2_d2(ddadd2_d2_d2_d(ddmul_d2_d_d(x, x), -1)), x));
+  double2 d = logk2(ddadd2_d2_d2_d(ddmul_d2_d2_d2(ddsqrt_d2_d2(ddadd2_d2_d_d(x, 1)), ddsqrt_d2_d2(ddadd2_d2_d_d(x, -1))), x));
   double y = d.x + d.y;
 
-  y = xisinf(x) || xisnan(y) ? INFINITY : y;
+  y = (x > SQRT_DBL_MAX || xisnan(y)) ? INFINITY : y;
   y = x == 1.0 ? 0.0 : y;
   y = x < 1.0 ? NAN : y;
   y = xisnan(x) ? NAN : y;
@@ -1149,7 +1243,7 @@ double xcbrt(double d) { // max error : 2 ulps
   double x, y, q = 1.0;
   int e, r;
 
-  e = ilogbk(d)+1;
+  e = ilogbk(xfabs(d))+1;
   d = ldexpk(d, -e);
   r = (e + 6144) % 3;
   q = (r == 1) ? 1.2599210498948731647672106 : q;
@@ -1178,7 +1272,7 @@ double xcbrt_u1(double d) {
   double2 q2 = dd(1, 0), u, v;
   int e, r;
 
-  e = ilogbk(d)+1;
+  e = ilogbk(xfabs(d))+1;
   d = ldexpk(d, -e);
   r = (e + 6144) % 3;
   q2 = (r == 1) ? dd(1.2599210498948731907, -2.5899333753005069177e-17) : q2;
@@ -1218,14 +1312,14 @@ double xcbrt_u1(double d) {
 
 double xexp2(double a) {
   double u = expk(ddmul_d2_d2_d(dd(0.69314718055994528623, 2.3190468138462995584e-17), a));
-  if (a > 1023) u = INFINITY;
+  if (a > 1024) u = INFINITY; // log2(DBL_MAX)
   if (xisminf(a)) u = 0;
   return u;
 }
 
 double xexp10(double a) {
   double u = expk(ddmul_d2_d2_d(dd(2.3025850929940459011, -2.1707562233822493508e-16), a));
-  if (a > 308) u = INFINITY;
+  if (a > 308.254715559916743850652254) u = INFINITY; // log10(DBL_MAX)
   if (xisminf(a)) u = 0;
   return u;
 }
@@ -1233,8 +1327,8 @@ double xexp10(double a) {
 double xexpm1(double a) {
   double2 d = ddadd2_d2_d2_d(expk2(dd(a, 0)), -1.0);
   double x = d.x + d.y;
-  if (a > 700) x = INFINITY;
-  if (a < -0.36043653389117156089696070315825181539851971360337e+2) x = -1;
+  if (a > 709.782712893383996732223) x = INFINITY; // log(DBL_MAX)
+  if (a < -36.736800569677101399113302437) x = -1; // log(1 - nexttoward(1, 0))
   if (xisnegzero(a)) x = -0.0;
   return x;
 }
@@ -1254,7 +1348,7 @@ double xlog1p(double a) {
   double2 d = logk2(ddadd2_d2_d_d(a, 1));
   double x = d.x + d.y;
 
-  if (xisinf(a)) x = INFINITY;
+  if (a > 1e+307) x = INFINITY;
   if (a < -1) x = NAN;
   if (a == -1) x = -INFINITY;
   if (xisnegzero(a)) x = -0.0;
