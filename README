@@ -8,7 +8,7 @@ corresponding languages are contained. You can run "make test" in
 order to test the functions in each directory.
 
 The software is distributed under the Boost Software License, Version
-1.0.  See accompanying file LICENSE_1_0.txt or copy at
+1.0.  See accompanying file LICENSE.txt or copy at
 http://www.boost.org/LICENSE_1_0.txt.
 
 Copyright Naoki Shibata 2010 - 2017.
@@ -29,6 +29,9 @@ Single precision trigonometric functions : [-39000, 39000]
 
 
 History
+
+2.121
+* Renamed LICENSE_1_0.txt to LICENSE.txt
 
 2.120
 * Relicensed to Boost Software License Version 1.0
