@@ -3,6 +3,7 @@
 // Since the original code for simplex algorithm is developed by Haruhiko Okumura and
 // the code is distributed under the Creative Commons Attribution 4.0 International License,
 // the contents under this directory are also distributed under the same license.
+// https://creativecommons.org/licenses/by/4.0/
 
 #include <stdio.h>
 #include <stdlib.h>

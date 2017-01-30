@@ -7,11 +7,12 @@ The package contains a few directories in which implementation in the
 corresponding languages are contained. You can run "make test" in
 order to test the functions in each directory.
 
-The software is in public domain. You can use the software without any
-obligation.
+The software is distributed under the Boost Software License, Version
+1.0.  See accompanying file LICENSE_1_0.txt or copy at
+http://www.boost.org/LICENSE_1_0.txt.
 
+Copyright Naoki Shibata 2010 - 2017.
 
-Author : Naoki Shibata
 
 Main download page : http://shibatch.sourceforge.net/
 
@@ -28,6 +29,9 @@ Single precision trigonometric functions : [-39000, 39000]
 
 
 History
+
+2.120
+* Relicensed to Boost Software License Version 1.0
 
 2.110
 * The valid range of argument is extended for trig functions
