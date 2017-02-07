@@ -1,0 +1,164 @@
+//          Copyright Naoki Shibata 2010 - 2017.
+// Distributed under the Boost Software License, Version 1.0.
+//    (See accompanying file LICENSE.txt or copy at
+//          http://www.boost.org/LICENSE_1_0.txt)
+
+#ifndef __SLEEF_H__
+#define __SLEEF_H__
+
+#include <stddef.h>
+#include <stdint.h>
+
+#if defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)
+#ifdef IMPORT_IS_EXPORT
+#define IMPORT __declspec(dllexport)
+#else
+#define IMPORT __declspec(dllimport)
+#if (defined(_MSC_VER))
+#pragma comment(lib,"libsleef.lib")
+#endif
+#endif
+#else // #if defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)
+#define IMPORT
+#endif // #if defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)
+
+#if (defined(__GNUC__) || defined(__CLANG__)) && (defined(__i386__) || defined(__x86_64__))
+#include <x86intrin.h>
+#endif
+
+#if (defined(_MSC_VER))
+#include <intrin.h>
+#endif
+
+#if defined(__ARM_NEON__)
+#include <arm_neon.h>
+#endif
+
+//
+
+IMPORT void *Sleef_malloc(size_t z);
+IMPORT void Sleef_free(void *ptr);
+IMPORT uint64_t Sleef_currentTimeMicros();
+
+#if defined(__i386__) || defined(__x86_64__) || defined(_MSC_VER)
+IMPORT void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
+#endif
+
+//
+
+#ifndef Sleef_double2_DEFINED
+#define Sleef_double2_DEFINED
+typedef struct {
+  double x, y;
+} Sleef_double2;
+#endif
+
+#ifndef Sleef_float2_DEFINED
+#define Sleef_float2_DEFINED
+typedef struct {
+  float x, y;
+} Sleef_float2;
+#endif
+
+#ifndef Sleef_longdouble2_DEFINED
+#define Sleef_longdouble2_DEFINED
+typedef struct {
+  long double x, y;
+} Sleef_longdouble2;
+#endif
+
+#if defined(ENABLEFLOAT128) && !defined(Sleef_quad2_DEFINED)
+#define Sleef_quad2_DEFINED
+typedef __float128 Sleef_quad;
+typedef struct {
+  __float128 x, y;
+} Sleef_quad2;
+#endif
+
+IMPORT double Sleef_sin_u35(double);
+IMPORT double Sleef_cos_u35(double);
+IMPORT Sleef_double2 Sleef_sincos_u35(double);
+IMPORT double Sleef_tan_u35(double);
+IMPORT double Sleef_asin_u35(double);
+IMPORT double Sleef_acos_u35(double);
+IMPORT double Sleef_atan_u35(double);
+IMPORT double Sleef_atan2_u35(double, double);
+IMPORT double Sleef_log_u35(double);
+IMPORT double Sleef_cbrt_u35(double);
+IMPORT double Sleef_sin_u10(double);
+IMPORT double Sleef_cos_u10(double);
+IMPORT Sleef_double2 Sleef_sincos_u10(double);
+IMPORT double Sleef_tan_u10(double);
+IMPORT double Sleef_asin_u10(double);
+IMPORT double Sleef_acos_u10(double);
+IMPORT double Sleef_atan_u10(double);
+IMPORT double Sleef_atan2_u10(double, double);
+IMPORT double Sleef_log_u10(double);
+IMPORT double Sleef_cbrt_u10(double);
+IMPORT double Sleef_exp_u10(double);
+IMPORT double Sleef_pow_u10(double, double);
+IMPORT double Sleef_sinh_u10(double);
+IMPORT double Sleef_cosh_u10(double);
+IMPORT double Sleef_tanh_u10(double);
+IMPORT double Sleef_asinh_u10(double);
+IMPORT double Sleef_acosh_u10(double);
+IMPORT double Sleef_atanh_u10(double);
+IMPORT double Sleef_exp2_u10(double);
+IMPORT double Sleef_exp10_u10(double);
+IMPORT double Sleef_expm1_u10(double);
+IMPORT double Sleef_log10_u10(double);
+IMPORT double Sleef_log1p_u10(double);
+IMPORT Sleef_double2 Sleef_sincospi_u05(double);
+IMPORT Sleef_double2 Sleef_sincospi_u35(double);
+IMPORT double Sleef_ldexp(double, int);
+IMPORT int Sleef_ilogb(double);
+IMPORT double Sleef_fma(double, double, double);
+IMPORT double Sleef_sqrt_u05(double);
+
+IMPORT float Sleef_sinf_u35(float);
+IMPORT float Sleef_cosf_u35(float);
+IMPORT Sleef_float2 Sleef_sincosf_u35(float);
+IMPORT float Sleef_tanf_u35(float);
+IMPORT float Sleef_asinf_u35(float);
+IMPORT float Sleef_acosf_u35(float);
+IMPORT float Sleef_atanf_u35(float);
+IMPORT float Sleef_atan2f_u35(float, float);
+IMPORT float Sleef_logf_u35(float);
+IMPORT float Sleef_cbrtf_u35(float);
+IMPORT float Sleef_sinf_u10(float);
+IMPORT float Sleef_cosf_u10(float);
+IMPORT Sleef_float2 Sleef_sincosf_u10(float);
+IMPORT float Sleef_tanf_u10(float);
+IMPORT float Sleef_asinf_u10(float);
+IMPORT float Sleef_acosf_u10(float);
+IMPORT float Sleef_atanf_u10(float);
+IMPORT float Sleef_atan2f_u10(float, float);
+IMPORT float Sleef_logf_u10(float);
+IMPORT float Sleef_cbrtf_u10(float);
+IMPORT float Sleef_expf_u10(float);
+IMPORT float Sleef_powf_u10(float, float);
+IMPORT float Sleef_sinhf_u10(float);
+IMPORT float Sleef_coshf_u10(float);
+IMPORT float Sleef_tanhf_u10(float);
+IMPORT float Sleef_asinhf_u10(float);
+IMPORT float Sleef_acoshf_u10(float);
+IMPORT float Sleef_atanhf_u10(float);
+IMPORT float Sleef_exp2f_u10(float);
+IMPORT float Sleef_exp10f_u10(float);
+IMPORT float Sleef_expm1f_u10(float);
+IMPORT float Sleef_log10f_u10(float);
+IMPORT float Sleef_log1pf_u10(float);
+IMPORT Sleef_float2 Sleef_sincospif_u05(float);
+IMPORT Sleef_float2 Sleef_sincospif_u35(float);
+IMPORT float Sleef_ldexpf(float, int);
+IMPORT int Sleef_ilogbf(float);
+IMPORT float Sleef_fmaf(float, float, float);
+IMPORT float Sleef_sqrtf_u05(float);
+
+IMPORT Sleef_longdouble2 Sleef_sincospil_u05(long double);
+IMPORT Sleef_longdouble2 Sleef_sincospil_u35(long double);
+
+#if defined(Sleef_quad2_DEFINED)
+IMPORT Sleef_quad2 Sleef_sincospiq_u05(Sleef_quad);
+IMPORT Sleef_quad2 Sleef_sincospiq_u35(Sleef_quad);
+#endif

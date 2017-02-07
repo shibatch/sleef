@@ -1,0 +1,79 @@
+CC=cl
+CFLAGS+=/TC /I..\common /I..\arch
+OPTFLAGS=/O2
+
+OBJ=sleefdp.obj sleefsp.obj sleefld.obj
+OBJ+=sleefdpsse2.obj sleefdpavx.obj sleefdpavx2.obj
+OBJ+=sleefspsse2.obj sleefspavx.obj sleefspavx2.obj
+
+.PHONY: all
+all : libm.lib sleef.h
+
+libm.lib : $(OBJ)
+	lib /out:libm.lib $(OBJ)
+
+sleef.h : mkrename.exe
+	cp sleeflibm.h.org sleef.h
+	./mkrename.exe sse2 2 4 __m128d __m128 __m128i __m128i __SSE2__ x86intrin.h >> sleef.h
+	./mkrename.exe avx 4 8 __m256d __m256 __m128i 'struct { __m128i x, y; }' __AVX__ x86intrin.h >> sleef.h
+	./mkrename.exe avx2 4 8 __m256d __m256 __m128i __m256i __AVX2__ x86intrin.h >> sleef.h
+	echo '#undef IMPORT' >> sleef.h
+	echo '#endif' >> sleef.h
+	cp sleef.h ../../include
+
+#
+
+sleefdp.obj : sleefdp.c rename.h
+	$(CC) $(CFLAGS) $(OPTFLAGS) -DNDEBUG -DDORENAME /c sleefdp.c 
+
+sleefsp.obj : sleefsp.c rename.h
+	$(CC) $(CFLAGS) $(OPTFLAGS) -DNDEBUG -DDORENAME /c sleefsp.c
+
+sleefld.obj : sleefld.c rename.h
+	$(CC) $(CFLAGS) $(OPTFLAGS) -DNDEBUG -DDORENAME /c sleefld.c
+
+#
+
+mkrename.exe : mkrename.c
+	$(CC) $(CFLAGS) mkrename.c
+	rm -f mkrename.obj
+
+#
+
+sleefdpsse2.obj : sleefsimddp.c renamesse2.h
+	$(CC) $(CFLAGS) $(OPTFLAGS) -DDORENAME -DENABLE_SSE2 sleefsimddp.c /c /Fosleefdpsse2.obj
+
+sleefspsse2.obj : sleefsimdsp.c renamesse2.h
+	$(CC) $(CFLAGS) $(OPTFLAGS) -DDORENAME -DENABLE_SSE2 sleefsimdsp.c /c /Fosleefspsse2.obj
+
+renamesse2.h : mkrename.exe
+	./mkrename.exe sse2 2 4 > renamesse2.h
+
+#
+
+sleefdpavx.obj : sleefsimddp.c renameavx.h
+	$(CC) $(CFLAGS) $(OPTFLAGS) -DDORENAME -DENABLE_AVX /arch:AVX sleefsimddp.c /c /Fosleefdpavx.obj
+
+sleefspavx.obj : sleefsimdsp.c renameavx.h
+	$(CC) $(CFLAGS) $(OPTFLAGS) -DDORENAME -DENABLE_AVX /arch:AVX sleefsimdsp.c /c /Fosleefspavx.obj
+
+renameavx.h : mkrename.exe
+	./mkrename.exe avx 4 8 > renameavx.h
+
+#
+
+sleefdpavx2.obj : sleefsimddp.c renameavx2.h
+	$(CC) $(CFLAGS) $(OPTFLAGS) -DDORENAME -DENABLE_AVX2 /arch:AVX2 sleefsimddp.c /c /Fosleefdpavx2.obj
+
+sleefspavx2.obj : sleefsimdsp.c renameavx2.h
+	$(CC) $(CFLAGS) $(OPTFLAGS) -DDORENAME -DENABLE_AVX2 /arch:AVX2 sleefsimdsp.c /c /Fosleefspavx2.obj
+
+renameavx2.h : mkrename.exe
+	./mkrename.exe avx2 4 8 > renameavx2.h
+
+#
+
+.PHONY: clean
+clean :
+	rm -f *~ *.obj sleef.h
+	rm -f mkrename.exe renamesse2.h renameavx.h renamefma4.h renameavx2.h renameavx512f.h

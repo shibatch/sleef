@@ -1,0 +1,73 @@
+CC=cl
+AVX2FLAG=/arch:AVX2
+
+all : $(OBJ)
+
+%_vecextdp.obj : %_vecextdp.c
+	$(CC) $(CFLAGS) /DENABLE_VECEXT /DBASETYPEID=1 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
+
+%_vecextsp.obj : %_vecextsp.c
+	$(CC) $(CFLAGS) /DENABLE_VECEXT /DBASETYPEID=2 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
+
+%_vecextld.obj : %_vecextld.c
+	$(CC) $(CFLAGS) /DENABLE_VECEXT /DBASETYPEID=3 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
+
+%_vecextqp.obj : %_vecextqp.c
+	$(CC) $(CFLAGS) /DENABLE_VECEXT /DBASETYPEID=4 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
+
+%_purecdp.obj : %_purecdp.c
+	$(CC) $(CFLAGS) /DENABLE_PUREC /DBASETYPEID=1 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
+
+%_purecsp.obj : %_purecsp.c
+	$(CC) $(CFLAGS) /DENABLE_PUREC /DBASETYPEID=2 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
+
+%_purecld.obj : %_purecld.c
+	$(CC) $(CFLAGS) /DENABLE_PUREC /DBASETYPEID=3 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
+
+%_purecqp.obj : %_purecqp.c
+	$(CC) $(CFLAGS) /DENABLE_PUREC /DBASETYPEID=4 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
+
+%_2_sse2dp.obj : %_2_sse2dp.c
+	$(CC) $(CFLAGS) /DENABLE_SSE2 /DBASETYPEID=1 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
+
+%_2_sse2sp.obj : %_2_sse2sp.c
+	$(CC) $(CFLAGS) /DENABLE_SSE2 /DBASETYPEID=2 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
+
+%_3_sse2dp.obj : %_3_sse2dp.c
+	$(CC) $(CFLAGS) /DENABLE_SSE2 /DBASETYPEID=1 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
+
+%_3_sse2sp.obj : %_3_sse2sp.c
+	$(CC) $(CFLAGS) /DENABLE_SSE2 /DBASETYPEID=2 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
+
+%_4_sse2dp.obj : %_4_sse2dp.c
+	$(CC) $(CFLAGS) /DENABLE_SSE2 /DBASETYPEID=1 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
+
+%_4_sse2sp.obj : %_4_sse2sp.c
+	$(CC) $(CFLAGS) /DENABLE_SSE2 /DBASETYPEID=2 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
+
+%_1_avxdp.obj : %_1_avxdp.c
+	$(CC) $(CFLAGS) /arch:AVX /DENABLE_AVX /DBASETYPEID=1 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
+
+%_1_avxsp.obj : %_1_avxsp.c
+	$(CC) $(CFLAGS) /arch:AVX /DENABLE_AVX /DBASETYPEID=2 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
+
+%_1_avx2dp.obj : %_1_avx2dp.c
+	$(CC) $(CFLAGS) $(AVX2FLAG) /DENABLE_AVX2 /DBASETYPEID=1 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
+
+%_1_avx2sp.obj : %_1_avx2sp.c
+	$(CC) $(CFLAGS) $(AVX2FLAG) /DENABLE_AVX2 /DBASETYPEID=2 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
+
+%_1_avx512fdp.obj : %_1_avx512fdp.c
+	$(CC) $(CFLAGS) $(AVX512FLAG) /DENABLE_AVX512F /DBASETYPEID=1 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
+
+%_1_avx512fsp.obj : %_1_avx512fsp.c
+	$(CC) $(CFLAGS) $(AVX512FLAG) /DENABLE_AVX512F /DBASETYPEID=2 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
+
+%_1_neon32sp.obj : %_1_neon32sp.c
+	$(CC) $(CFLAGS) -mfpu=neon /DENABLE_NEON32 /DBASETYPEID=2 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
+
+%_neonsp.obj : %_neonsp.c
+	$(CC) $(CFLAGS) $(MFPUNEON) /DENABLE_NEON32 /DBASETYPEID=2 /c $< /Fo$@
+
+%_neondp.obj : %_neondp.c
+	$(CC) $(CFLAGS) /DENABLE_NEON64 /DBASETYPEID=1 /c $< /Fo$@

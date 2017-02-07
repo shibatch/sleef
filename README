@@ -1,5 +1,5 @@
 In this library, functions for evaluating some elementary functions
-are implemented. The algorithm is intentended for efficient evaluation
+are implemented. The algorithm is intended for efficient evaluation
 utilizing SIMD instruction sets like SSE or AVX, but it is also fast
 using usual scalar operations.
 
@@ -10,26 +10,45 @@ order to test the functions in each directory.
 The software is distributed under the Boost Software License, Version
 1.0.  See accompanying file LICENSE.txt or copy at
 http://www.boost.org/LICENSE_1_0.txt.
-Contributions to this project are accepted under the same license. 
 
 Copyright Naoki Shibata 2010 - 2017.
 
 
 Main download page : http://shibatch.sourceforge.net/
 
-
 --
 
-The trigonometric functions are tested to return values with specified
-accuracy when the argument is within the following range.
+Compiling library with Microsoft Visual C++
 
-Double precision trigonometric functions : [-1e+14, 1e+14]
-Single precision trigonometric functions : [-39000, 39000]
+Below is the instruction for compiling SLEEF with Microsoft Visual
+C++.  Only 64bit architecture is supported. Only DLLs are built.
+
+
+1. Install Visual Studio 2015 or later, along with Cygwin
+2. Copy vcvars64.bat to a working directory.
+   This file is usually in the following directory.
+   C:\Program Files (x86)\MSVCCommunity2015\VC\bin\amd64
+3. Add the following line at the end of vcvars64.bat
+   if "%SHELL%"=="/bin/bash" c:\cygwin64\bin\bash.exe
+4. Execute vcvars64.bat within the Cygwin bash shell.
+5. Go to sleef-3.X directory
+6. Run "make -f Makefile.vc"
 
 --
 
 
 History
+
+3.0
+* New API is defined
+* Functions for DFT are added
+* sincospi functions are added
+* gencoef now supports single, extended and quad precision in addition to double precision
+* Linux, Windows and Mac OS X are supported
+* GCC, Clang, Intel Compiler, Microsoft Visual C++ are supported
+* The library can be compiled as DLLs
+* Files needed for creating a debian package are now included
+
 
 2.121
 * Renamed LICENSE_1_0.txt to LICENSE.txt

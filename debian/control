@@ -1,0 +1,13 @@
+Source: libsleef3
+Maintainer: Naoki Shibata <shibatch@users.sourceforge.net>
+Section: devel
+Priority: optional
+Standards-Version: 3.9.7
+Build-Depends: debhelper (>= 9), libgomp1
+
+Package: libsleef3
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libgomp1
+Description: Portable vectorized math library
+ In this library, some math functions are implemented in a way
+ utilizing SIMD instruction sets like SSE or AVX.

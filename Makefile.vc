@@ -1,0 +1,12 @@
+export FLOCK=flock
+
+.PHONY: all
+all : libsleef libsleef-dft
+
+.PHONY: libsleef
+libsleef :
+	+"$(MAKE)" --directory=./lib -f Makefile.vc libsleef
+
+.PHONY: libsleef-dft
+libsleef-dft :
+	+"$(MAKE)" --directory=./lib -f Makefile.vc libsleefdft

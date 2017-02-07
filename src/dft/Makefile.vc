@@ -1,0 +1,62 @@
+MAXBUTWIDTH=3
+
+CC=cl
+CFLAGS+=/TC /I../common /I../arch -I../../include /DMAXBUTWIDTH=$(MAXBUTWIDTH)
+OPTFLAGS=/O2 /openmp
+
+ISALISTDP=1_purecdp 4_sse2dp 1_avxdp 1_avx2dp
+ISALISTSP=1_purecsp 4_sse2sp 1_avxsp 1_avx2sp
+ISALISTLD=1_purecld
+ISALISTQP=
+
+.PHONY: all
+all : dft.lib
+
+.PHONY: clean
+clean :
+	rm -f *.o *.s *~ *.exe *.out cachegrind.out.* *.lock
+	rm -rf *.dSYM *.obj *.lib *.dll *.exp *.exe
+	rm -f a.out mkunroll mkdispatch dispatchdp.h dispatchsp.h dispatchld.h dispatchqp.h dispatchparam.h dft.lib
+	rm -f unroll_*.c
+
+dft.lib : mkunroll dftdp.obj dftsp.obj dftld.obj dftcommon.obj
+	./mkunroll double $(ISALISTDP)
+	./mkunroll float $(ISALISTSP)
+	./mkunroll longdouble $(ISALISTLD)
+	+"$(MAKE)" -f Makefile.unroll.vc CFLAGS="$(CFLAGS) $(OPTFLAGS)" OBJ="`echo unroll*.c | sed -e 's/\.c/\.obj/g'`"
+	lib /out:dft.lib `echo unroll*.obj` dftdp.obj dftsp.obj dftld.obj dftcommon.obj
+
+dftdp.obj : dft.c dispatchdp.h ../../include/sleef.h
+	$(CC) $(CFLAGS) $(OPTFLAGS) /DBASETYPEID=1 dft.c /c /Fodftdp.obj
+
+dftsp.obj : dft.c dispatchsp.h ../../include/sleef.h
+	$(CC) $(CFLAGS) $(OPTFLAGS) /DBASETYPEID=2 dft.c /c /Fodftsp.obj
+
+dftld.obj : dft.c dispatchld.h ../../include/sleef.h
+	$(CC) $(CFLAGS) $(OPTFLAGS) /DBASETYPEID=3 dft.c /c /Fodftld.obj
+
+dftcommon.obj : dftcommon.c dispatchparam.h ../../include/sleef.h
+	$(CC) $(CFLAGS) $(OPTFLAGS) dftcommon.c /c /Fodftcommon.obj
+
+mkdispatch : mkdispatch.c
+	$(CC) $(CFLAGS) mkdispatch.c
+	rm -f mkdispatch.obj
+
+mkunroll : mkunroll.c
+	$(CC) $(CFLAGS) mkunroll.c
+	rm -f mkunroll.obj
+
+dispatchdp.h : mkdispatch
+	./mkdispatch.exe double $(UNROLLMAX) $(UNROLLMAX2) $(MAXBUTWIDTH) $(ISALISTDP) > dispatchdp.h
+
+dispatchsp.h : mkdispatch
+	./mkdispatch.exe float $(UNROLLMAX) $(UNROLLMAX2) $(MAXBUTWIDTH) $(ISALISTSP) > dispatchsp.h
+
+dispatchld.h : mkdispatch
+	./mkdispatch.exe longdouble $(UNROLLMAX) $(UNROLLMAX2) $(MAXBUTWIDTH) $(ISALISTLD) > dispatchld.h
+
+dispatchparam.h : mkdispatch
+	./mkdispatch.exe paramonly $(UNROLLMAX) $(UNROLLMAX2) $(MAXBUTWIDTH) $(ISALISTDP) > dispatchparam.h
+
+../../include/sleef.h :
+	+"$(MAKE)" --directory=../../include sleef.h

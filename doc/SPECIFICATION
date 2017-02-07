@@ -1,0 +1,128 @@
+
+Below is the specification of each function.
+
+All functions should handle nonnumber arguments correctly. If there is
+an domain error, a non-number is returned according to the
+specification of the math functions in C language, unless otherwise
+noted.
+
+RANGEMAXD is 1e+14, RANGEMAXS is 39000.
+
+
+xsin, xcos, xsincos : If the argument is in [-RANGEMAXD, RANGEMAXD],
+these functions return values with 3.5 ULPs of error bound. If the
+argument is out of this range, the functions return arbitrary
+values. The returned value is in [-1, 1], regardless of the argument.
+
+xsinf, xcosf, xsincosf : If the argument is in [-RANGEMAXS,
+RANGEMAXS], these functions return values with 3.5 ULPs of error
+bound. If the argument is out of this range, the functions return
+arbitrary values. The returned value is in [-1, 1], regardless of the
+argument.
+
+xsin_u1, xcos_u1, xsincos_u1 : If the argument is in [-RANGEMAXD,
+RANGEMAXD], these functions return values with 1 ULP of error
+bound. If the argument is out of this range, the functions return
+arbitrary values. The returned value is in [-1, 1], regardless of the
+argument.
+
+xsinf_u1, xcosf_u1, xsincosf_u1 : If the argument is in [-RANGEMAXS,
+RANGEMAXS], these functions return values with 1 ULP of error
+bound. If the argument is out of this range, the functions return
+arbitrary values. The returned value is in [-1, 1], regardless of the
+argument.
+
+xtan : If the argument is in [-1e+7, 1e+7], xtan returns a value with
+5 ULP of error bound. If the argument is in [-RANGEMAXD, RANGEMAXD],
+xtan returns value with 3.5 ULPs of error bound.  If the argument is
+out of this range, xtan returns an arbitrary value except NaN.
+
+xtanf : If the argument is in [-RANGEMAXS, RANGEMAXS], xtanf returns a
+value with 3.5 ULPs of error bound. If the argument is out of this
+range, xtanf returns an arbitrary value except NaN.
+
+xtan_u1 : If the argument is in [-RANGEMAXD, RANGEMAXD], xtan_u1
+should return value with 1 ULP of error bound. If the argument is out
+of this range, xtan_u1 returns an arbitrary value except NaN.
+
+xtanf_u1 : If the argument is in [-RANGEMAXS, RANGEMAXS], xtanf_u1
+should return value with 1 ULP of error bound. If the argument is out
+of this range, xtanf_u1 returns an arbitrary value except NaN.
+
+xlog, xlogf : These functions should return values with 3.5 ULP of
+error bound.
+
+xlog_u1, xlogf_u1, xlog10, xlog10f : These functions should return
+values with 1 ULP of error bound.
+
+xlog1p : If the argument is in [-1, 1e+307], this function should
+return a value with 1 ULP of error bound. If the argument is higher
+than 1e+307, this function returns either +Inf or a value with 1
+ULP of error bound.
+
+xlog1pf : If the argument is in [-1, 1e+38], this function should
+return a value with 1 ULP of error bound. If the argument is higher
+than 1e+38, this function returns either +Inf or a value with 1 ULP
+of error bound.
+
+xexp, xexpf, xexp2, xexp2f, xexp10, xexp10f, xexpm1, xexpm1f : These
+functions should return values with 1 ULP of error bound.
+
+xpow, xpowf : These functions should return values with 1 ULP of error
+bound.
+
+xcbrt, xcbrtf : These functions should return values with 3.5 ULPs of
+error bound.
+
+xcbrt_u1, xcbrtf_u1 : These functions should return values with 1 ULP
+of error bound.
+
+xasin, xasinf, xacos, xacosf, xatan, xatanf, xatan2, xatan2f : These
+functions should return values with 3.5 ULPs of error bound.
+
+xasin_u1, xasinf_u1, xacos_u1, xacosf_u1, xatan_u1, xatanf_u1 : These
+functions should return values with 1 ULP of error bound.
+
+xatan2_u1 : This function should return a value with max(1 ULP,
+DBL_MIN) of error bound.
+
+xatan2f_u1 : This function should return a value with max(1 ULP,
+FLT_MIN) of error bound.
+
+xsinh, xcosh : If the argument is in [-709, 709], these functions
+should return values with 1 ULP of error bound. If the argument is out
+of this range, these functions return either an infinity with
+correct sign or a value with 1 ULP of error bound. 
+
+xsinhf, xcoshf : If the argument is in [-88.5, 88.5], these functions
+should return values with 1 ULP of error bound. If the argument is out
+of this range, these functions return either an infinity with
+correct sign or a value with 1 ULP of error bound.
+
+xtanh, xatanh : These functions should return values with 1 ULP of
+error bound.
+
+xtanhf, xatanhf : These functions should return values with 1.0001 ULP
+of error bound.
+
+xasinh : If the argument is in [-sqrt(DBL_MAX), sqrt(DBL_MAX)], this
+function should return a value with 1 ULP of error bound. If the
+argument is out of this range, this function returns either an
+infinity with correct sign or a value with 1 ULP of error bound.
+
+xasinhf : If the argument is in [-sqrt(FLT_MAX), sqrt(FLT_MAX)], this
+function should return a value with 1.0001 ULP of error bound. If the
+argument is out of this range, this function returns either an
+infinity with correct sign or a value with 1.0001 ULP of error bound.
+
+xacosh : If the argument is in [-sqrt(DBL_MAX), sqrt(DBL_MAX)], this
+function should return a value with 1 ULP of error bound. If the
+argument is higher than sqrt(DBL_MAX), this function returns either
+an infinity or a value with 1 ULP of error bound.
+
+xacoshf : If the argument is in [-sqrt(FLT_MAX), sqrt(FLT_MAX)], this
+function should return a value with 1.0001 ULP of error bound. If the
+argument is higher than sqrt(FLT_MAX), this function returns either
+an infinity or a value with 1.0001 ULP of error bound.
+
+

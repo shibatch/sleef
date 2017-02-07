@@ -1,0 +1,22 @@
+CC=cl
+CFLAGS+=/I..\common /I..\arch
+
+.PHONY: all
+all : common.lib arraymap.lib
+
+common.lib : common.obj
+	lib /out:common.lib common.obj
+
+arraymap.lib : arraymap.obj
+	lib /out:arraymap.lib arraymap.obj
+
+arraymap.obj : arraymap.c
+	$(CC) $(CFLAGS) arraymap.c /c /Foarraymap.obj
+
+common.obj : common.c
+	$(CC) $(CFLAGS) common.c /c /Focommon.obj
+
+.PHONY: clean
+clean :
+	rm -f *~ *.obj *.lock
+	rm -f common.lib arraymap.lib

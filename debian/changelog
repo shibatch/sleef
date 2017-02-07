@@ -1,0 +1,5 @@
+libsleef3 (3.0-1) xenial; urgency=medium
+
+  * Initial release.
+
+ -- Naoki Shibata <shibatch@users.sourceforge.net>  Sat, 31 Dec 2016 02:45:16 +0900

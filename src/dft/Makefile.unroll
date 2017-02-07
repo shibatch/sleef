@@ -1,0 +1,80 @@
+ifeq "$(ARCH)" "arm"
+	MFPUNEON=-mfpu=neon
+endif
+
+all : $(OBJ)
+
+%_vecextdp.o : %_vecextdp.c
+	$(CC) $(CFLAGS) $(FASTMATHFLAG) -DENABLE_VECEXT -DBASETYPEID=1 -DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` -c $< -o $@
+
+%_vecextsp.o : %_vecextsp.c
+	$(CC) $(CFLAGS) $(FASTMATHFLAG) -DENABLE_VECEXT -DBASETYPEID=2 -DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` -c $< -o $@
+
+%_vecextld.o : %_vecextld.c
+	$(CC) $(CFLAGS) $(FASTMATHFLAG) -DENABLE_VECEXT -DBASETYPEID=3 -DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` -c $< -o $@
+
+%_vecextqp.o : %_vecextqp.c
+	$(CC) $(CFLAGS) $(FASTMATHFLAG) -DENABLE_VECEXT -DBASETYPEID=4 -DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` -c $< -o $@
+
+%_purecdp.o : %_purecdp.c
+	$(CC) $(CFLAGS) $(FASTMATHFLAG) -DENABLE_PUREC -DBASETYPEID=1 -DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` -c $< -o $@
+
+%_purecsp.o : %_purecsp.c
+	$(CC) $(CFLAGS) $(FASTMATHFLAG) -DENABLE_PUREC -DBASETYPEID=2 -DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` -c $< -o $@
+
+%_purecld.o : %_purecld.c
+	$(CC) $(CFLAGS) $(FASTMATHFLAG) -DENABLE_PUREC -DBASETYPEID=3 -DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` -c $< -o $@
+
+%_purecqp.o : %_purecqp.c
+	$(CC) $(CFLAGS) $(FASTMATHFLAG) -DENABLE_PUREC -DBASETYPEID=4 -DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` -c $< -o $@
+
+%_2_sse2dp.o : %_2_sse2dp.c
+	$(CC) $(CFLAGS) $(FASTMATHFLAG) -msse -msse2 -DENABLE_SSE2 -DBASETYPEID=1 -DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` -c $< -o $@
+
+%_2_sse2sp.o : %_2_sse2sp.c
+	$(CC) $(CFLAGS) $(FASTMATHFLAG) -msse -msse2 -DENABLE_SSE2 -DBASETYPEID=2 -DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` -c $< -o $@
+
+%_3_sse2dp.o : %_3_sse2dp.c
+	$(CC) $(CFLAGS) $(FASTMATHFLAG) -msse -msse2 -msse3 -DENABLE_SSE2 -DBASETYPEID=1 -DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` -c $< -o $@
+
+%_3_sse2sp.o : %_3_sse2sp.c
+	$(CC) $(CFLAGS) $(FASTMATHFLAG) -msse -msse2 -msse3 -DENABLE_SSE2 -DBASETYPEID=2 -DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` -c $< -o $@
+
+%_4_sse2dp.o : %_4_sse2dp.c
+	$(CC) $(CFLAGS) $(FASTMATHFLAG) -msse -msse2 -msse3 -msse4.1 -DENABLE_SSE2 -DBASETYPEID=1 -DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` -c $< -o $@
+
+%_4_sse2sp.o : %_4_sse2sp.c
+	$(CC) $(CFLAGS) $(FASTMATHFLAG) -msse -msse2 -msse3 -msse4.1 -DENABLE_SSE2 -DBASETYPEID=2 -DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` -c $< -o $@
+
+%_1_avxdp.o : %_1_avxdp.c
+	$(CC) $(CFLAGS) $(FASTMATHFLAG) -mavx -DENABLE_AVX -DBASETYPEID=1 -DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` -c $< -o $@
+
+%_1_avxsp.o : %_1_avxsp.c
+	$(CC) $(CFLAGS) $(FASTMATHFLAG) -mavx -DENABLE_AVX -DBASETYPEID=2 -DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` -c $< -o $@
+
+%_4_avxdp.o : %_4_avxdp.c
+	$(CC) $(CFLAGS) $(FASTMATHFLAG) -mavx -mfma4 -DENABLE_AVX -DBASETYPEID=1 -DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` -c $< -o $@
+
+%_4_avxsp.o : %_4_avxsp.c
+	$(CC) $(CFLAGS) $(FASTMATHFLAG) -mavx -mfma4 -DENABLE_AVX -DBASETYPEID=2 -DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` -c $< -o $@
+
+%_1_avx2dp.o : %_1_avx2dp.c
+	$(CC) $(CFLAGS) $(FASTMATHFLAG) $(AVX2FLAG) -DENABLE_AVX2 -DBASETYPEID=1 -DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` -c $< -o $@
+
+%_1_avx2sp.o : %_1_avx2sp.c
+	$(CC) $(CFLAGS) $(FASTMATHFLAG) $(AVX2FLAG) -DENABLE_AVX2 -DBASETYPEID=2 -DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` -c $< -o $@
+
+%_1_avx512fdp.o : %_1_avx512fdp.c
+	$(CC) $(CFLAGS) $(FASTMATHFLAG) $(AVX512FLAG) -DENABLE_AVX512F -DBASETYPEID=1 -DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` -c $< -o $@
+
+%_1_avx512fsp.o : %_1_avx512fsp.c
+	$(CC) $(CFLAGS) $(FASTMATHFLAG) $(AVX512FLAG) -DENABLE_AVX512F -DBASETYPEID=2 -DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` -c $< -o $@
+
+%_1_neon32sp.o : %_1_neon32sp.c
+	$(CC) $(CFLAGS) $(FASTMATHFLAG) -mfpu=neon -DENABLE_NEON32 -DBASETYPEID=2 -DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` -c $< -o $@
+
+%_neonsp.o : %_neonsp.c
+	$(CC) $(CFLAGS) $(FASTMATHFLAG) $(MFPUNEON) -DENABLE_NEON32 -DBASETYPEID=2 -c $< -o $@
+
+%_neondp.o : %_neondp.c
+	$(CC) $(CFLAGS) $(FASTMATHFLAG) -DENABLE_NEON64 -DBASETYPEID=1 -c $< -o $@

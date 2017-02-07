@@ -1,0 +1,50 @@
+CC=cl
+
+CFLAGS += /I../../include /I../common
+
+TARGET = naivetestdp naivetestsp tutorial bench1D
+
+ifdef ($(ENABLEFLOAT80)
+TARGET+=naivetestld
+endif
+
+.PHONY: all
+all : $(TARGET)
+
+naivetestdp : naivetest.c ../../lib/libsleef.lib ../../lib/libsleefdft.lib
+	$(CC) $(CFLAGS) -DBASETYPEID=1 naivetest.c /Fenaivetestdp.exe ../../lib/libsleefdft.lib ../../lib/libsleef.lib
+
+naivetestsp : naivetest.c ../../lib/libsleef.lib ../../lib/libsleefdft.lib
+	$(CC) $(CFLAGS) -DBASETYPEID=2 naivetest.c /Fenaivetestsp.exe ../../lib/libsleefdft.lib ../../lib/libsleef.lib
+
+naivetestld : naivetest.c ../../lib/libsleef.lib ../../lib/libsleefdft.lib
+	$(CC) $(CFLAGS) -DBASETYPEID=3 naivetest.c /Fenaivetestld.exe ../../lib/libsleefdft.lib ../../lib/libsleef.lib
+
+pi_fft : pi_fft.c ../../lib/libsleef.lib ../../lib/libsleefdft.lib
+	$(CC) $(CFLAGS) pi_fft.c ../../lib/libsleefdft.lib ../../lib/libsleef.lib
+
+bench1D : bench1D.c ../../lib/libsleef.lib ../../lib/libsleefdft.lib
+	$(CC) $(CFLAGS) bench1D.c ../../lib/libsleefdft.lib ../../lib/libsleef.lib
+
+bench1Dfftw : bench1D.c
+	$(CC) $(CFLAGS) -DUSEFFTW bench1D.c -o bench1Dfftw -lm -lfftw3_threads -lfftw3
+
+tutorial : tutorial.c
+	$(CC) $(CFLAGS) tutorial.c -o tutorial ../../lib/libsleefdft.lib ../../lib/libsleef.lib -lm
+
+../../lib/libsleef.lib :
+	+"$(MAKE)" -f Makefile.vc --directory=../../lib libsleef
+
+ ../../lib/libsleefdft.lib :
+	+"$(MAKE)" -f Makefile.vc --directory=../../lib libsleefdft
+
+.PHONY: clean
+clean :
+	rm -f *~ a.out *.o *.s *.out cachegrind.out.* *.lock
+	rm -rf *.dSYM *.obj *.lib *.dll *.exp *.exe
+	rm -f naivetestdp naivetestsp naivetestld naivetestqp bench1D bench1Dld bench1Dfftw
+	rm -f fftwtest1D fftwtest2D tutorial
+	rm -f pi_fft pi.log pi.dat sleefdftplan.txt plan.txt
+
+.PHONY: distclean
+distclean : clean

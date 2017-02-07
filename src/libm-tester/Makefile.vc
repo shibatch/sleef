@@ -1,0 +1,61 @@
+CC=cl
+CFLAGS+=/fp:strict /I..\common /I..\arch /I../../include /I../libm
+
+#
+
+TARGET = iut.exe iutsse2.exe iutavx.exe iutavx2.exe
+
+.PHONY: all
+all : $(TARGET)
+
+#
+
+iut.exe : ../../lib/libsleef.lib ../../include/sleef.h iut.c ../libm/rename.h ../../include/sleef.h
+	$(CC) $(CFLAGS) iut.c ../../lib/libsleef.lib
+
+iutsse2.exe : ../../lib/libsleef.lib ../../include/sleef.h iutsimd.c ../libm/renamesse2.h ../../include/sleef.h
+	$(CC) $(CFLAGS) /DENABLE_SSE2 /D__SSE2__ /DLOGVECTLENDP=1 /DLOGVECTLENSP=2 iutsimd.c ../../lib/libsleef.lib /Feiutsse2.exe
+
+../libm/renamesse2.h :
+	+"$(MAKE)" --directory=../libm -f Makefile.vc renamesse2.h
+
+#
+
+iutavx.exe : ../../lib/libsleef.lib ../../include/sleef.h iutsimd.c ../libm/renameavx.h ../../include/sleef.h
+	$(CC) $(CFLAGS) /DENABLE_AVX /DLOGVECTLENDP=2 /DLOGVECTLENSP=4 /arch:AVX iutsimd.c ../../lib/libsleef.lib /Feiutavx.exe
+
+../libm/renameavx.h :
+	+"$(MAKE)" --directory=../libm -f Makefile.vc renameavx.h
+
+#
+
+iutavx2.exe : ../../lib/libsleef.lib ../../include/sleef.h iutsimd.c ../libm/renameavx2.h ../../include/sleef.h
+	$(CC) $(CFLAGS) /DENABLE_AVX2 /DLOGVECTLENDP=2 /DLOGVECTLENSP=4 /arch:AVX2 iutsimd.c ../../lib/libsleef.lib /Feiutavx2.exe
+
+../libm/renameavx2.h :
+	+"$(MAKE)" --directory=../libm -f Makefile.vc renameavx2.h
+
+#
+
+iutpurec.exe : ../libm/sleefsimddp.c ../libm/sleefsimdsp.c iutsimd.c
+	$(CC) $(CFLAGS) /DENABLE_PUREC ../libm/sleefsimddp.c ../libm/sleefsimdsp.c iutsimd.c /Feiutpurec.exe
+
+#
+
+../../lib/libsleef.lib :
+	+"$(MAKE)" --directory=../../lib -f Makefile.vc libsleef.lib
+
+../../include/sleef.h :
+	+"$(MAKE)" --directory=../../lib -f Makefile.vc sleef.h
+
+#
+
+.PHONY: clean
+clean :
+	rm -f *~ a.out
+	rm -f iut iutsse2 iutavx iutfma4 iutavx2 iutavx512f
+	rm -f tester testeru1 testersp testerspu1 tester2vecextdp tester2vecextsp iutvecext tester2purecdp tester2purecsp iutpurec
+	rm -f tester2dp tester2sp tester2qp tester2ld tester2sse2dp tester2sse2sp tester2fma4dp tester2fma4sp tester2avxdp tester2avxsp tester2avx2dp tester2avx2sp tester2avx512fdp tester2avx512fsp
+
+.PHONY: distclean
+distclean : clean
