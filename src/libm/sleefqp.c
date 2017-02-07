@@ -26,8 +26,6 @@
 typedef __float128 Sleef_quad;
 #endif
 
-#include <mpfr.h>
-
 static INLINE Sleef_quad mlaq(Sleef_quad x, Sleef_quad y, Sleef_quad z) { return x * y + z; }
 static INLINE int64_t xrintq(Sleef_quad x) { return x < 0 ? (int64_t)(x - 0.5) : (int64_t)(x + 0.5); }
 static INLINE int64_t xceilq(Sleef_quad x) { return (int64_t)x + (x < 0 ? 0 : 1); }
