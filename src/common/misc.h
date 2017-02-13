@@ -75,6 +75,7 @@ typedef struct {
 #if defined (__GNUC__) || defined (__clang__) || defined(__INTEL_COMPILER)
 
 #define INLINE __attribute__((always_inline))
+#define CONST const
 
 #if defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__)
 #define EXPORT __stdcall __declspec(dllexport)
@@ -111,6 +112,7 @@ typedef struct {
 #include <float.h>
 
 #define INLINE __inline
+#define CONST
 #define EXPORT __declspec(dllexport)
 
 #define INFINITYf ((float)INFINITY)

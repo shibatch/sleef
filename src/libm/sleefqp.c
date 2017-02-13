@@ -26,17 +26,17 @@
 typedef __float128 Sleef_quad;
 #endif
 
-static INLINE Sleef_quad mlaq(Sleef_quad x, Sleef_quad y, Sleef_quad z) { return x * y + z; }
-static INLINE int64_t xrintq(Sleef_quad x) { return x < 0 ? (int64_t)(x - 0.5) : (int64_t)(x + 0.5); }
-static INLINE int64_t xceilq(Sleef_quad x) { return (int64_t)x + (x < 0 ? 0 : 1); }
-static INLINE Sleef_quad xtruncq(Sleef_quad x) { return (Sleef_quad)(int64_t)x; }
+static INLINE CONST Sleef_quad mlaq(Sleef_quad x, Sleef_quad y, Sleef_quad z) { return x * y + z; }
+static INLINE CONST int64_t xrintq(Sleef_quad x) { return x < 0 ? (int64_t)(x - 0.5) : (int64_t)(x + 0.5); }
+static INLINE CONST int64_t xceilq(Sleef_quad x) { return (int64_t)x + (x < 0 ? 0 : 1); }
+static INLINE CONST Sleef_quad xtruncq(Sleef_quad x) { return (Sleef_quad)(int64_t)x; }
 
-static INLINE int xisnanq(Sleef_quad x) { return x != x; }
-static INLINE int xisinfq(Sleef_quad x) { return x == INFINITYq || x == -INFINITYq; }
-static INLINE int xisminfq(Sleef_quad x) { return x == -INFINITYq; }
-static INLINE int xispinfq(Sleef_quad x) { return x == INFINITYq; }
+static INLINE CONST int xisnanq(Sleef_quad x) { return x != x; }
+static INLINE CONST int xisinfq(Sleef_quad x) { return x == INFINITYq || x == -INFINITYq; }
+static INLINE CONST int xisminfq(Sleef_quad x) { return x == -INFINITYq; }
+static INLINE CONST int xispinfq(Sleef_quad x) { return x == INFINITYq; }
 
-static INLINE Sleef_quad xfabsq(Sleef_quad x) {
+static INLINE CONST Sleef_quad xfabsq(Sleef_quad x) {
   union {
     Sleef_quad q;
     uint64_t u[2];
@@ -56,7 +56,7 @@ static int checkfp(Sleef_quad x) {
 }
 #endif
 
-static INLINE Sleef_quad upperq(Sleef_quad d) {
+static INLINE CONST Sleef_quad upperq(Sleef_quad d) {
   union {
     Sleef_quad q;
     uint64_t u[2];
@@ -67,13 +67,13 @@ static INLINE Sleef_quad upperq(Sleef_quad d) {
   return cnv.q;
 }
 
-static INLINE Sleef_quad2 dq(Sleef_quad h, Sleef_quad l) {
+static INLINE CONST Sleef_quad2 dq(Sleef_quad h, Sleef_quad l) {
   Sleef_quad2 ret;
   ret.x = h; ret.y = l;
   return ret;
 }
 
-static INLINE Sleef_quad2 dqnormalize_q2_q2(Sleef_quad2 t) {
+static INLINE CONST Sleef_quad2 dqnormalize_q2_q2(Sleef_quad2 t) {
   Sleef_quad2 s;
 
   s.x = t.x + t.y;
@@ -82,7 +82,7 @@ static INLINE Sleef_quad2 dqnormalize_q2_q2(Sleef_quad2 t) {
   return s;
 }
 
-static INLINE Sleef_quad2 dqscale_q2_q2_q(Sleef_quad2 d, Sleef_quad s) {
+static INLINE CONST Sleef_quad2 dqscale_q2_q2_q(Sleef_quad2 d, Sleef_quad s) {
   Sleef_quad2 r;
 
   r.x = d.x * s;
@@ -91,7 +91,7 @@ static INLINE Sleef_quad2 dqscale_q2_q2_q(Sleef_quad2 d, Sleef_quad s) {
   return r;
 }
 
-static INLINE Sleef_quad2 dqneg_q2_q2(Sleef_quad2 d) {
+static INLINE CONST Sleef_quad2 dqneg_q2_q2(Sleef_quad2 d) {
   Sleef_quad2 r;
 
   r.x = -d.x;
@@ -100,7 +100,7 @@ static INLINE Sleef_quad2 dqneg_q2_q2(Sleef_quad2 d) {
   return r;
 }
 
-static INLINE Sleef_quad2 dqadd_q2_q_q(Sleef_quad x, Sleef_quad y) {
+static INLINE CONST Sleef_quad2 dqadd_q2_q_q(Sleef_quad x, Sleef_quad y) {
   // |x| >= |y|
 
   Sleef_quad2 r;
@@ -118,7 +118,7 @@ static INLINE Sleef_quad2 dqadd_q2_q_q(Sleef_quad x, Sleef_quad y) {
   return r;
 }
 
-static INLINE Sleef_quad2 dqadd2_q2_q_q(Sleef_quad x, Sleef_quad y) {
+static INLINE CONST Sleef_quad2 dqadd2_q2_q_q(Sleef_quad x, Sleef_quad y) {
   Sleef_quad2 r;
 
   r.x = x + y;
@@ -128,7 +128,7 @@ static INLINE Sleef_quad2 dqadd2_q2_q_q(Sleef_quad x, Sleef_quad y) {
   return r;
 }
 
-static INLINE Sleef_quad2 dqadd_q2_q2_q(Sleef_quad2 x, Sleef_quad y) {
+static INLINE CONST Sleef_quad2 dqadd_q2_q2_q(Sleef_quad2 x, Sleef_quad y) {
   // |x| >= |y|
 
   Sleef_quad2 r;
@@ -146,7 +146,7 @@ static INLINE Sleef_quad2 dqadd_q2_q2_q(Sleef_quad2 x, Sleef_quad y) {
   return r;
 }
 
-static INLINE Sleef_quad2 dqadd2_q2_q2_q(Sleef_quad2 x, Sleef_quad y) {
+static INLINE CONST Sleef_quad2 dqadd2_q2_q2_q(Sleef_quad2 x, Sleef_quad y) {
   // |x| >= |y|
 
   Sleef_quad2 r;
@@ -159,7 +159,7 @@ static INLINE Sleef_quad2 dqadd2_q2_q2_q(Sleef_quad2 x, Sleef_quad y) {
   return r;
 }
 
-static INLINE Sleef_quad2 dqadd_q2_q_q2(Sleef_quad x, Sleef_quad2 y) {
+static INLINE CONST Sleef_quad2 dqadd_q2_q_q2(Sleef_quad x, Sleef_quad2 y) {
   // |x| >= |y|
 
   Sleef_quad2 r;
@@ -177,7 +177,7 @@ static INLINE Sleef_quad2 dqadd_q2_q_q2(Sleef_quad x, Sleef_quad2 y) {
   return r;
 }
 
-static INLINE Sleef_quad2 dqadd2_q2_q_q2(Sleef_quad x, Sleef_quad2 y) {
+static INLINE CONST Sleef_quad2 dqadd2_q2_q_q2(Sleef_quad x, Sleef_quad2 y) {
   Sleef_quad2 r;
 
   r.x  = x + y.x;
@@ -187,7 +187,7 @@ static INLINE Sleef_quad2 dqadd2_q2_q_q2(Sleef_quad x, Sleef_quad2 y) {
   return r;
 }
 
-static INLINE Sleef_quad2 dqadd_q2_q2_q2(Sleef_quad2 x, Sleef_quad2 y) {
+static INLINE CONST Sleef_quad2 dqadd_q2_q2_q2(Sleef_quad2 x, Sleef_quad2 y) {
   // |x| >= |y|
 
   Sleef_quad2 r;
@@ -205,7 +205,7 @@ static INLINE Sleef_quad2 dqadd_q2_q2_q2(Sleef_quad2 x, Sleef_quad2 y) {
   return r;
 }
 
-static INLINE Sleef_quad2 dqadd2_q2_q2_q2(Sleef_quad2 x, Sleef_quad2 y) {
+static INLINE CONST Sleef_quad2 dqadd2_q2_q2_q2(Sleef_quad2 x, Sleef_quad2 y) {
   Sleef_quad2 r;
 
   r.x  = x.x + y.x;
@@ -216,7 +216,7 @@ static INLINE Sleef_quad2 dqadd2_q2_q2_q2(Sleef_quad2 x, Sleef_quad2 y) {
   return r;
 }
 
-static INLINE Sleef_quad2 dqsub_q2_q2_q2(Sleef_quad2 x, Sleef_quad2 y) {
+static INLINE CONST Sleef_quad2 dqsub_q2_q2_q2(Sleef_quad2 x, Sleef_quad2 y) {
   // |x| >= |y|
 
   Sleef_quad2 r;
@@ -234,7 +234,7 @@ static INLINE Sleef_quad2 dqsub_q2_q2_q2(Sleef_quad2 x, Sleef_quad2 y) {
   return r;
 }
 
-static INLINE Sleef_quad2 dqdiv_q2_q2_q2(Sleef_quad2 n, Sleef_quad2 d) {
+static INLINE CONST Sleef_quad2 dqdiv_q2_q2_q2(Sleef_quad2 n, Sleef_quad2 d) {
   Sleef_quad t = 1.0 / d.x;
   Sleef_quad dh  = upperq(d.x), dl  = d.x - dh;
   Sleef_quad th  = upperq(t  ), tl  = t   - th;
@@ -252,7 +252,7 @@ static INLINE Sleef_quad2 dqdiv_q2_q2_q2(Sleef_quad2 n, Sleef_quad2 d) {
   return q;
 }
 
-static INLINE Sleef_quad2 dqmul_q2_q_q(Sleef_quad x, Sleef_quad y) {
+static INLINE CONST Sleef_quad2 dqmul_q2_q_q(Sleef_quad x, Sleef_quad y) {
   Sleef_quad xh = upperq(x), xl = x - xh;
   Sleef_quad yh = upperq(y), yl = y - yh;
   Sleef_quad2 r;
@@ -263,7 +263,7 @@ static INLINE Sleef_quad2 dqmul_q2_q_q(Sleef_quad x, Sleef_quad y) {
   return r;
 }
 
-static INLINE Sleef_quad2 dqmul_q2_q2_q(Sleef_quad2 x, Sleef_quad y) {
+static INLINE CONST Sleef_quad2 dqmul_q2_q2_q(Sleef_quad2 x, Sleef_quad y) {
   Sleef_quad xh = upperq(x.x), xl = x.x - xh;
   Sleef_quad yh = upperq(y  ), yl = y   - yh;
   Sleef_quad2 r;
@@ -274,7 +274,7 @@ static INLINE Sleef_quad2 dqmul_q2_q2_q(Sleef_quad2 x, Sleef_quad y) {
   return r;
 }
 
-static INLINE Sleef_quad2 dqmul_q2_q2_q2(Sleef_quad2 x, Sleef_quad2 y) {
+static INLINE CONST Sleef_quad2 dqmul_q2_q2_q2(Sleef_quad2 x, Sleef_quad2 y) {
   Sleef_quad xh = upperq(x.x), xl = x.x - xh;
   Sleef_quad yh = upperq(y.x), yl = y.x - yh;
   Sleef_quad2 r;
@@ -285,7 +285,7 @@ static INLINE Sleef_quad2 dqmul_q2_q2_q2(Sleef_quad2 x, Sleef_quad2 y) {
   return r;
 }
 
-static INLINE Sleef_quad2 dqsqu_q2_q2(Sleef_quad2 x) {
+static INLINE CONST Sleef_quad2 dqsqu_q2_q2(Sleef_quad2 x) {
   Sleef_quad xh = upperq(x.x), xl = x.x - xh;
   Sleef_quad2 r;
 
@@ -295,7 +295,7 @@ static INLINE Sleef_quad2 dqsqu_q2_q2(Sleef_quad2 x) {
   return r;
 }
 
-static INLINE Sleef_quad2 dqrec_q2_q(Sleef_quad d) {
+static INLINE CONST Sleef_quad2 dqrec_q2_q(Sleef_quad d) {
   Sleef_quad t = 1.0 / d;
   Sleef_quad dh = upperq(d), dl = d - dh;
   Sleef_quad th = upperq(t), tl = t - th;
@@ -307,7 +307,7 @@ static INLINE Sleef_quad2 dqrec_q2_q(Sleef_quad d) {
   return q;
 }
 
-static INLINE Sleef_quad2 dqrec_q2_q2(Sleef_quad2 d) {
+static INLINE CONST Sleef_quad2 dqrec_q2_q2(Sleef_quad2 d) {
   Sleef_quad t = 1.0 / d.x;
   Sleef_quad dh = upperq(d.x), dl = d.x - dh;
   Sleef_quad th = upperq(t  ), tl = t   - th;
@@ -320,7 +320,7 @@ static INLINE Sleef_quad2 dqrec_q2_q2(Sleef_quad2 d) {
 }
 
 /*
-static INLINE Sleef_quad2 dqsqrt_q2_q2(Sleef_quad2 d) {
+static INLINE CONST Sleef_quad2 dqsqrt_q2_q2(Sleef_quad2 d) {
   Sleef_quad t = sqrt(d.x + d.y);
   return dqscale_q2_q2_q(dqmul_q2_q2_q2(dqadd2_q2_q2_q2(d, dqmul_q2_q_q(t, t)), dqrec_q2_q(t)), 0.5);
 }
@@ -330,7 +330,7 @@ static INLINE Sleef_quad2 dqsqrt_q2_q2(Sleef_quad2 d) {
 
 #define TRIGRANGEMAX2 1e+9
 
-EXPORT Sleef_quad2 xsincospiq_u05(Sleef_quad d) {
+EXPORT CONST Sleef_quad2 xsincospiq_u05(Sleef_quad d) {
   Sleef_quad u, s, t;
   Sleef_quad2 r, x, s2;
 
@@ -392,7 +392,7 @@ EXPORT Sleef_quad2 xsincospiq_u05(Sleef_quad d) {
   return r;
 }
 
-EXPORT Sleef_quad2 xsincospiq_u35(Sleef_quad d) {
+EXPORT CONST Sleef_quad2 xsincospiq_u35(Sleef_quad d) {
   Sleef_quad u, s, t;
   Sleef_quad2 r;
 

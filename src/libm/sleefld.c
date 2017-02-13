@@ -22,17 +22,17 @@
 #pragma fp_contract (off)
 #endif
 
-static INLINE long double mlal(long double x, long double y, long double z) { return x * y + z; }
-static INLINE long double xrintl(long double x) { return x < 0 ? (int)(x - 0.5) : (int)(x + 0.5); }
-static INLINE int64_t xceill(long double x) { return (int64_t)x + (x < 0 ? 0 : 1); }
-static INLINE long double xtruncl(long double x) { return (long double)(int)x; }
+static INLINE CONST long double mlal(long double x, long double y, long double z) { return x * y + z; }
+static INLINE CONST long double xrintl(long double x) { return x < 0 ? (int)(x - 0.5) : (int)(x + 0.5); }
+static INLINE CONST int64_t xceill(long double x) { return (int64_t)x + (x < 0 ? 0 : 1); }
+static INLINE CONST long double xtruncl(long double x) { return (long double)(int)x; }
 
-static INLINE int xisnanl(long double x) { return x != x; }
-static INLINE int xisinfl(long double x) { return x == INFINITYl || x == -INFINITYl; }
-static INLINE int xisminfl(long double x) { return x == -INFINITYl; }
-static INLINE int xispinfl(long double x) { return x == INFINITYl; }
+static INLINE CONST int xisnanl(long double x) { return x != x; }
+static INLINE CONST int xisinfl(long double x) { return x == INFINITYl || x == -INFINITYl; }
+static INLINE CONST int xisminfl(long double x) { return x == -INFINITYl; }
+static INLINE CONST int xispinfl(long double x) { return x == INFINITYl; }
 
-static INLINE long double xfabsl(long double x) { return fabsl(x); }
+static INLINE CONST long double xfabsl(long double x) { return fabsl(x); }
 
 //
 
@@ -43,7 +43,7 @@ static int checkfp(long double x) {
 }
 #endif
 
-static INLINE long double upperl(long double d) {
+static INLINE CONST long double upperl(long double d) {
   union {
     long double ld;
     uint32_t u[4];
@@ -54,13 +54,13 @@ static INLINE long double upperl(long double d) {
   return cnv.ld;
 }
 
-static INLINE Sleef_longdouble2 dl(long double h, long double l) {
+static INLINE CONST Sleef_longdouble2 dl(long double h, long double l) {
   Sleef_longdouble2 ret;
   ret.x = h; ret.y = l;
   return ret;
 }
 
-static INLINE Sleef_longdouble2 dlnormalize_l2_l2(Sleef_longdouble2 t) {
+static INLINE CONST Sleef_longdouble2 dlnormalize_l2_l2(Sleef_longdouble2 t) {
   Sleef_longdouble2 s;
 
   s.x = t.x + t.y;
@@ -69,7 +69,7 @@ static INLINE Sleef_longdouble2 dlnormalize_l2_l2(Sleef_longdouble2 t) {
   return s;
 }
 
-static INLINE Sleef_longdouble2 dlscale_l2_l2_l(Sleef_longdouble2 d, long double s) {
+static INLINE CONST Sleef_longdouble2 dlscale_l2_l2_l(Sleef_longdouble2 d, long double s) {
   Sleef_longdouble2 r;
 
   r.x = d.x * s;
@@ -78,7 +78,7 @@ static INLINE Sleef_longdouble2 dlscale_l2_l2_l(Sleef_longdouble2 d, long double
   return r;
 }
 
-static INLINE Sleef_longdouble2 dlneg_l2_l2(Sleef_longdouble2 d) {
+static INLINE CONST Sleef_longdouble2 dlneg_l2_l2(Sleef_longdouble2 d) {
   Sleef_longdouble2 r;
 
   r.x = -d.x;
@@ -87,7 +87,7 @@ static INLINE Sleef_longdouble2 dlneg_l2_l2(Sleef_longdouble2 d) {
   return r;
 }
 
-static INLINE Sleef_longdouble2 dladd_l2_l_l(long double x, long double y) {
+static INLINE CONST Sleef_longdouble2 dladd_l2_l_l(long double x, long double y) {
   // |x| >= |y|
 
   Sleef_longdouble2 r;
@@ -105,7 +105,7 @@ static INLINE Sleef_longdouble2 dladd_l2_l_l(long double x, long double y) {
   return r;
 }
 
-static INLINE Sleef_longdouble2 dladd2_l2_l_l(long double x, long double y) {
+static INLINE CONST Sleef_longdouble2 dladd2_l2_l_l(long double x, long double y) {
   Sleef_longdouble2 r;
 
   r.x = x + y;
@@ -115,7 +115,7 @@ static INLINE Sleef_longdouble2 dladd2_l2_l_l(long double x, long double y) {
   return r;
 }
 
-static INLINE Sleef_longdouble2 dladd_l2_l2_l(Sleef_longdouble2 x, long double y) {
+static INLINE CONST Sleef_longdouble2 dladd_l2_l2_l(Sleef_longdouble2 x, long double y) {
   // |x| >= |y|
 
   Sleef_longdouble2 r;
@@ -133,7 +133,7 @@ static INLINE Sleef_longdouble2 dladd_l2_l2_l(Sleef_longdouble2 x, long double y
   return r;
 }
 
-static INLINE Sleef_longdouble2 dladd2_l2_l2_l(Sleef_longdouble2 x, long double y) {
+static INLINE CONST Sleef_longdouble2 dladd2_l2_l2_l(Sleef_longdouble2 x, long double y) {
   // |x| >= |y|
 
   Sleef_longdouble2 r;
@@ -146,7 +146,7 @@ static INLINE Sleef_longdouble2 dladd2_l2_l2_l(Sleef_longdouble2 x, long double 
   return r;
 }
 
-static INLINE Sleef_longdouble2 dladd_l2_l_l2(long double x, Sleef_longdouble2 y) {
+static INLINE CONST Sleef_longdouble2 dladd_l2_l_l2(long double x, Sleef_longdouble2 y) {
   // |x| >= |y|
 
   Sleef_longdouble2 r;
@@ -164,7 +164,7 @@ static INLINE Sleef_longdouble2 dladd_l2_l_l2(long double x, Sleef_longdouble2 y
   return r;
 }
 
-static INLINE Sleef_longdouble2 dladd2_l2_l_l2(long double x, Sleef_longdouble2 y) {
+static INLINE CONST Sleef_longdouble2 dladd2_l2_l_l2(long double x, Sleef_longdouble2 y) {
   Sleef_longdouble2 r;
 
   r.x  = x + y.x;
@@ -174,7 +174,7 @@ static INLINE Sleef_longdouble2 dladd2_l2_l_l2(long double x, Sleef_longdouble2 
   return r;
 }
 
-static INLINE Sleef_longdouble2 dladd_l2_l2_l2(Sleef_longdouble2 x, Sleef_longdouble2 y) {
+static INLINE CONST Sleef_longdouble2 dladd_l2_l2_l2(Sleef_longdouble2 x, Sleef_longdouble2 y) {
   // |x| >= |y|
 
   Sleef_longdouble2 r;
@@ -192,7 +192,7 @@ static INLINE Sleef_longdouble2 dladd_l2_l2_l2(Sleef_longdouble2 x, Sleef_longdo
   return r;
 }
 
-static INLINE Sleef_longdouble2 dladd2_l2_l2_l2(Sleef_longdouble2 x, Sleef_longdouble2 y) {
+static INLINE CONST Sleef_longdouble2 dladd2_l2_l2_l2(Sleef_longdouble2 x, Sleef_longdouble2 y) {
   Sleef_longdouble2 r;
 
   r.x  = x.x + y.x;
@@ -203,7 +203,7 @@ static INLINE Sleef_longdouble2 dladd2_l2_l2_l2(Sleef_longdouble2 x, Sleef_longd
   return r;
 }
 
-static INLINE Sleef_longdouble2 dlsub_l2_l2_l2(Sleef_longdouble2 x, Sleef_longdouble2 y) {
+static INLINE CONST Sleef_longdouble2 dlsub_l2_l2_l2(Sleef_longdouble2 x, Sleef_longdouble2 y) {
   // |x| >= |y|
 
   Sleef_longdouble2 r;
@@ -221,7 +221,7 @@ static INLINE Sleef_longdouble2 dlsub_l2_l2_l2(Sleef_longdouble2 x, Sleef_longdo
   return r;
 }
 
-static INLINE Sleef_longdouble2 dldiv_l2_l2_l2(Sleef_longdouble2 n, Sleef_longdouble2 d) {
+static INLINE CONST Sleef_longdouble2 dldiv_l2_l2_l2(Sleef_longdouble2 n, Sleef_longdouble2 d) {
   long double t = 1.0 / d.x;
   long double dh  = upperl(d.x), dl  = d.x - dh;
   long double th  = upperl(t  ), tl  = t   - th;
@@ -239,7 +239,7 @@ static INLINE Sleef_longdouble2 dldiv_l2_l2_l2(Sleef_longdouble2 n, Sleef_longdo
   return q;
 }
 
-static INLINE Sleef_longdouble2 dlmul_l2_l_l(long double x, long double y) {
+static INLINE CONST Sleef_longdouble2 dlmul_l2_l_l(long double x, long double y) {
   long double xh = upperl(x), xl = x - xh;
   long double yh = upperl(y), yl = y - yh;
   Sleef_longdouble2 r;
@@ -250,7 +250,7 @@ static INLINE Sleef_longdouble2 dlmul_l2_l_l(long double x, long double y) {
   return r;
 }
 
-static INLINE Sleef_longdouble2 dlmul_l2_l2_l(Sleef_longdouble2 x, long double y) {
+static INLINE CONST Sleef_longdouble2 dlmul_l2_l2_l(Sleef_longdouble2 x, long double y) {
   long double xh = upperl(x.x), xl = x.x - xh;
   long double yh = upperl(y  ), yl = y   - yh;
   Sleef_longdouble2 r;
@@ -261,7 +261,7 @@ static INLINE Sleef_longdouble2 dlmul_l2_l2_l(Sleef_longdouble2 x, long double y
   return r;
 }
 
-static INLINE Sleef_longdouble2 dlmul_l2_l2_l2(Sleef_longdouble2 x, Sleef_longdouble2 y) {
+static INLINE CONST Sleef_longdouble2 dlmul_l2_l2_l2(Sleef_longdouble2 x, Sleef_longdouble2 y) {
   long double xh = upperl(x.x), xl = x.x - xh;
   long double yh = upperl(y.x), yl = y.x - yh;
   Sleef_longdouble2 r;
@@ -272,7 +272,7 @@ static INLINE Sleef_longdouble2 dlmul_l2_l2_l2(Sleef_longdouble2 x, Sleef_longdo
   return r;
 }
 
-static INLINE Sleef_longdouble2 dlsqu_l2_l2(Sleef_longdouble2 x) {
+static INLINE CONST Sleef_longdouble2 dlsqu_l2_l2(Sleef_longdouble2 x) {
   long double xh = upperl(x.x), xl = x.x - xh;
   Sleef_longdouble2 r;
 
@@ -282,7 +282,7 @@ static INLINE Sleef_longdouble2 dlsqu_l2_l2(Sleef_longdouble2 x) {
   return r;
 }
 
-static INLINE Sleef_longdouble2 dlrec_l2_l(long double d) {
+static INLINE CONST Sleef_longdouble2 dlrec_l2_l(long double d) {
   long double t = 1.0 / d;
   long double dh = upperl(d), dl = d - dh;
   long double th = upperl(t), tl = t - th;
@@ -294,7 +294,7 @@ static INLINE Sleef_longdouble2 dlrec_l2_l(long double d) {
   return q;
 }
 
-static INLINE Sleef_longdouble2 dlrec_l2_l2(Sleef_longdouble2 d) {
+static INLINE CONST Sleef_longdouble2 dlrec_l2_l2(Sleef_longdouble2 d) {
   long double t = 1.0 / d.x;
   long double dh = upperl(d.x), dl = d.x - dh;
   long double th = upperl(t  ), tl = t   - th;
@@ -307,7 +307,7 @@ static INLINE Sleef_longdouble2 dlrec_l2_l2(Sleef_longdouble2 d) {
 }
 
 /*
-static INLINE Sleef_longdouble2 dlsqrt_l2_l2(Sleef_longdouble2 d) {
+static INLINE CONST Sleef_longdouble2 dlsqrt_l2_l2(Sleef_longdouble2 d) {
   long double t = sqrt(d.x + d.y);
   return dlscale_l2_l2_l(dlmul_l2_l2_l2(dladd2_l2_l2_l2(d, dlmul_l2_l_l(t, t)), dlrec_l2_l(t)), 0.5);
 }
@@ -317,7 +317,7 @@ static INLINE Sleef_longdouble2 dlsqrt_l2_l2(Sleef_longdouble2 d) {
 
 #define TRIGRANGEMAX2 1e+9
 
-EXPORT Sleef_longdouble2 xsincospil_u05(long double d) {
+EXPORT CONST Sleef_longdouble2 xsincospil_u05(long double d) {
   long double u, s, t;
   Sleef_longdouble2 r, x, s2;
 
@@ -371,7 +371,7 @@ EXPORT Sleef_longdouble2 xsincospil_u05(long double d) {
   return r;
 }
 
-EXPORT Sleef_longdouble2 xsincospil_u35(long double d) {
+EXPORT CONST Sleef_longdouble2 xsincospil_u35(long double d) {
   long double u, s, t;
   Sleef_longdouble2 r;
 

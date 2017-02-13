@@ -44,17 +44,16 @@ clean :
 	+"$(MAKE)" --directory=src clean
 	rm -f *~
 	rm -f debian/*~
-	rm -f .pc
 
 .PHONY: distclean
 distclean : clean
 	+"$(MAKE)" --directory=include distclean
 	+"$(MAKE)" --directory=lib distclean
 	+"$(MAKE)" --directory=src distclean
-	rm -f debian/debhelper-build-stamp
-	rm -f debian/files
-	rm -f debian/libsleef3.debhelper.log
-	rm -f debian/libsleef3.substvars
-	rm -rf debian/libsleef3 debian/patches debian/.debhelper
+#	rm -f debian/debhelper-build-stamp
+#	rm -f debian/files
+#	rm -f debian/libsleef3.debhelper.log
+#	rm -f debian/libsleef3.substvars
+#	rm -rf debian/libsleef3 debian/patches debian/.debhelper
 
 

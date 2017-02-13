@@ -76,6 +76,16 @@ typedef union {
   __int128 u128;
 } conv_t;
 
+long double rnd() {
+  conv_t c;
+#ifdef ENABLE_SYS_getrandom
+  syscall(SYS_getrandom, &c.u128, sizeof(c.u128), 0);
+#else
+  c.u128 = random() | ((__int128)random() << 31) | ((__int128)random() << (31*2)) | ((__int128)random() << (31*3)) | ((__int128)random() << (31*4));
+#endif
+  return c.d;
+}
+
 long double rnd_fr() {
   conv_t c;
   do {
@@ -134,7 +144,7 @@ int main(int argc,char **argv)
   mpfr_inits(fra, frb, frc, frd, frw, frx, fry, frz, NULL);
 
   conv_t cd;
-  long double d, t;
+  long double d, t, d2, zo;
 
   int cnt;
   
@@ -152,35 +162,23 @@ int main(int argc,char **argv)
   for(cnt = 0;;cnt++) {
     switch(cnt & 7) {
     case 0:
-      d = rnd_zo() * rangemax;
+      d = rnd();
+      d2 = rnd();
+      zo = rnd();
       break;
     case 1:
-      cd.d = rint(rnd_zo() * rangemax) * M_PI_4l;
-      cd.u128 += (random() & 31) - 15;
+      cd.d = rint((2 * (double)random() / RAND_MAX - 1) * 1e+10) * M_PI_4;
+      cd.u128 += (random() & 0xff) - 0x7f;
       d = cd.d;
-      break;
-    case 2:
-      d = rnd_zo() * 1e+7;
-      break;
-    case 3:
-      cd.d = rint(rnd_zo() * 1e+7) * M_PI_4l;
-      cd.u128 += (random() & 31) - 15;
-      d = cd.d;
-      break;
-    case 4:
-      d = rnd_zo() * 10000;
-      break;
-    case 5:
-      cd.d = rint(rnd_zo() * 10000) * M_PI_4l;
-      cd.u128 += (random() & 31) - 15;
-      d = cd.d;
+      d2 = rnd();
+      zo = rnd();
       break;
     default:
       d = rnd_fr();
+      d2 = rnd_fr();
+      zo = rnd_zo();
       break;
     }
-
-    if (!isfinite(d)) continue;
 
     Sleef_longdouble2 sc  = xsincospil_u05(d);
     Sleef_longdouble2 sc2 = xsincospil_u35(d);
@@ -192,13 +190,13 @@ int main(int argc,char **argv)
 
       double u0 = countULP2(t = sc.x, frx);
 
-      if ((fabsl(d) <= rangemax2 && u0 > 0.505) || fabsl(t) > 1 || !isfinite(t)) {
+      if (u0 != 0 && ((fabsl(d) <= rangemax2 && u0 > 0.505) || fabsl(t) > 1 || !isfinite(t))) {
 	printf("Pure C sincospil_u05 sin arg=%.30Lg ulp=%.20g\n", d, u0);
       }
 
       double u1 = countULP2(t = sc2.x, frx);
 
-      if ((fabsl(d) <= rangemax2 && u1 > 1.5) || fabsl(t) > 1 || !isfinite(t)) {
+      if (u1 != 0 && ((fabsl(d) <= rangemax2 && u1 > 1.5) || fabsl(t) > 1 || !isfinite(t))) {
 	printf("Pure C sincospil_u35 sin arg=%.30Lg ulp=%.20g\n", d, u1);
       }
     }
@@ -210,13 +208,13 @@ int main(int argc,char **argv)
 
       double u0 = countULP2(t = sc.y, frx);
 
-      if ((fabsl(d) <= rangemax2 && u0 > 0.505) || fabsl(t) > 1 || !isfinite(t)) {
+      if (u0 != 0 && ((fabsl(d) <= rangemax2 && u0 > 0.505) || fabsl(t) > 1 || !isfinite(t))) {
 	printf("Pure C sincospil_u05 cos arg=%.30Lg ulp=%.20g\n", d, u0);
       }
 
       double u1 = countULP2(t = sc.y, frx);
 
-      if ((fabsl(d) <= rangemax2 && u1 > 1.5) || fabsl(t) > 1 || !isfinite(t)) {
+      if (u1 != 0 && ((fabsl(d) <= rangemax2 && u1 > 1.5) || fabsl(t) > 1 || !isfinite(t))) {
 	printf("Pure C sincospil_u35 cos arg=%.30Lg ulp=%.20g\n", d, u1);
       }
     }

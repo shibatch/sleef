@@ -38,7 +38,7 @@
 #define L2L .28235290563031577122588448175013436025525412068e-12
 #define R_LN2 1.442695040888963407359924681001892137426645954152985934135449406931
 
-static INLINE int64_t doubleToRawLongBits(double d) {
+static INLINE CONST int64_t doubleToRawLongBits(double d) {
   union {
     double f;
     int64_t i;
@@ -47,7 +47,7 @@ static INLINE int64_t doubleToRawLongBits(double d) {
   return tmp.i;
 }
 
-static INLINE double longBitsToDouble(int64_t i) {
+static INLINE CONST double longBitsToDouble(int64_t i) {
   union {
     double f;
     int64_t i;
@@ -56,36 +56,41 @@ static INLINE double longBitsToDouble(int64_t i) {
   return tmp.f;
 }
 
-static INLINE double xfabs(double x) {
+static INLINE CONST double xfabs(double x) {
   return longBitsToDouble(0x7fffffffffffffffLL & doubleToRawLongBits(x));
 }
 
-static INLINE double mulsign(double x, double y) {
+static INLINE CONST double mulsign(double x, double y) {
   return longBitsToDouble(doubleToRawLongBits(x) ^ (doubleToRawLongBits(y) & (1LL << 63)));
 }
 
-static INLINE double sign(double d) { return mulsign(1, d); }
-static INLINE double mla(double x, double y, double z) { return x * y + z; }
-static INLINE double xrint(double x) { return x < 0 ? (int)(x - 0.5) : (int)(x + 0.5); }
-static INLINE int xceil(double x) { return (int)x + (x < 0 ? 0 : 1); }
-static INLINE double xtrunc(double x) { return (double)(int)x; }
+static INLINE CONST double sign(double d) { return mulsign(1, d); }
+static INLINE CONST double mla(double x, double y, double z) { return x * y + z; }
+static INLINE CONST double xrint(double x) { return x < 0 ? (int)(x - 0.5) : (int)(x + 0.5); }
+static INLINE CONST int xceil(double x) { return (int)x + (x < 0 ? 0 : 1); }
+static INLINE CONST double xtrunc(double x) { return (double)(int)x; }
 
-static INLINE int xisnan(double x) { return x != x; }
-static INLINE int xisinf(double x) { return x == INFINITY || x == -INFINITY; }
-static INLINE int xisminf(double x) { return x == -INFINITY; }
-static INLINE int xispinf(double x) { return x == INFINITY; }
-static INLINE int xisnegzero(double x) { return doubleToRawLongBits(x) == doubleToRawLongBits(-0.0); }
+static INLINE CONST int xisnan(double x) { return x != x; }
+static INLINE CONST int xisinf(double x) { return x == INFINITY || x == -INFINITY; }
+static INLINE CONST int xisminf(double x) { return x == -INFINITY; }
+static INLINE CONST int xispinf(double x) { return x == INFINITY; }
+static INLINE CONST int xisnegzero(double x) { return doubleToRawLongBits(x) == doubleToRawLongBits(-0.0); }
 
-static INLINE int xisint(double d) {
+static INLINE CONST int xisint(double d) {
   double x = d - (double)(1 << 31) * (int)(d * (1.0 / (1 << 31)));
   return (x == (int)x) || (xfabs(d) >= (double)(1LL << 52));
 }
 
-static INLINE double pow2i(int q) {
+static INLINE CONST int xisodd(double d) {
+  double x = d - (double)(1 << 31) * (int)(d * (1.0 / (1 << 31)));
+  return (1 & (int)x) != 0;
+}
+
+static INLINE CONST double pow2i(int q) {
   return longBitsToDouble(((int64_t)(q + 0x3ff)) << 52);
 }
 
-static INLINE double ldexpk(double x, int q) {
+static INLINE CONST double ldexpk(double x, int q) {
   double u;
   int m;
   m = q >> 31;
@@ -100,9 +105,9 @@ static INLINE double ldexpk(double x, int q) {
   return x * u;
 }
 
-EXPORT double xldexp(double x, int q) { return ldexpk(x, q); }
+EXPORT CONST double xldexp(double x, int q) { return ldexpk(x, q); }
 
-static INLINE int ilogbk(double d) {
+static INLINE CONST int ilogbk(double d) {
   int m = d < 4.9090934652977266E-91;
   d = m ? 2.037035976334486E90 * d : d;
   int q = (doubleToRawLongBits(d) >> 52) & 0x7ff;
@@ -110,7 +115,7 @@ static INLINE int ilogbk(double d) {
   return q;
 }
 
-EXPORT int xilogb(double d) {
+EXPORT CONST int xilogb(double d) {
   int e = ilogbk(xfabs(d));
   e = d == 0.0  ? FP_ILOGB0 : e;
   e = xisnan(d) ? FP_ILOGBNAN : e;
@@ -127,17 +132,17 @@ static int checkfp(double x) {
 }
 #endif
 
-static INLINE double upper(double d) {
+static INLINE CONST double upper(double d) {
   return longBitsToDouble(doubleToRawLongBits(d) & 0xfffffffff8000000LL);
 }
 
-static INLINE Sleef_double2 dd(double h, double l) {
+static INLINE CONST Sleef_double2 dd(double h, double l) {
   Sleef_double2 ret;
   ret.x = h; ret.y = l;
   return ret;
 }
 
-static INLINE Sleef_double2 ddnormalize_d2_d2(Sleef_double2 t) {
+static INLINE CONST Sleef_double2 ddnormalize_d2_d2(Sleef_double2 t) {
   Sleef_double2 s;
 
   s.x = t.x + t.y;
@@ -146,7 +151,7 @@ static INLINE Sleef_double2 ddnormalize_d2_d2(Sleef_double2 t) {
   return s;
 }
 
-static INLINE Sleef_double2 ddscale_d2_d2_d(Sleef_double2 d, double s) {
+static INLINE CONST Sleef_double2 ddscale_d2_d2_d(Sleef_double2 d, double s) {
   Sleef_double2 r;
 
   r.x = d.x * s;
@@ -155,7 +160,7 @@ static INLINE Sleef_double2 ddscale_d2_d2_d(Sleef_double2 d, double s) {
   return r;
 }
 
-static INLINE Sleef_double2 ddneg_d2_d2(Sleef_double2 d) {
+static INLINE CONST Sleef_double2 ddneg_d2_d2(Sleef_double2 d) {
   Sleef_double2 r;
 
   r.x = -d.x;
@@ -164,7 +169,7 @@ static INLINE Sleef_double2 ddneg_d2_d2(Sleef_double2 d) {
   return r;
 }
 
-static INLINE Sleef_double2 ddadd_d2_d_d(double x, double y) {
+static INLINE CONST Sleef_double2 ddadd_d2_d_d(double x, double y) {
   // |x| >= |y|
 
   Sleef_double2 r;
@@ -182,7 +187,7 @@ static INLINE Sleef_double2 ddadd_d2_d_d(double x, double y) {
   return r;
 }
 
-static INLINE Sleef_double2 ddadd2_d2_d_d(double x, double y) {
+static INLINE CONST Sleef_double2 ddadd2_d2_d_d(double x, double y) {
   Sleef_double2 r;
 
   r.x = x + y;
@@ -192,7 +197,7 @@ static INLINE Sleef_double2 ddadd2_d2_d_d(double x, double y) {
   return r;
 }
 
-static INLINE Sleef_double2 ddadd_d2_d2_d(Sleef_double2 x, double y) {
+static INLINE CONST Sleef_double2 ddadd_d2_d2_d(Sleef_double2 x, double y) {
   // |x| >= |y|
 
   Sleef_double2 r;
@@ -210,7 +215,7 @@ static INLINE Sleef_double2 ddadd_d2_d2_d(Sleef_double2 x, double y) {
   return r;
 }
 
-static INLINE Sleef_double2 ddadd2_d2_d2_d(Sleef_double2 x, double y) {
+static INLINE CONST Sleef_double2 ddadd2_d2_d2_d(Sleef_double2 x, double y) {
   // |x| >= |y|
 
   Sleef_double2 r;
@@ -223,7 +228,7 @@ static INLINE Sleef_double2 ddadd2_d2_d2_d(Sleef_double2 x, double y) {
   return r;
 }
 
-static INLINE Sleef_double2 ddadd_d2_d_d2(double x, Sleef_double2 y) {
+static INLINE CONST Sleef_double2 ddadd_d2_d_d2(double x, Sleef_double2 y) {
   // |x| >= |y|
 
   Sleef_double2 r;
@@ -241,7 +246,7 @@ static INLINE Sleef_double2 ddadd_d2_d_d2(double x, Sleef_double2 y) {
   return r;
 }
 
-static INLINE Sleef_double2 ddadd2_d2_d_d2(double x, Sleef_double2 y) {
+static INLINE CONST Sleef_double2 ddadd2_d2_d_d2(double x, Sleef_double2 y) {
   Sleef_double2 r;
 
   r.x  = x + y.x;
@@ -251,7 +256,7 @@ static INLINE Sleef_double2 ddadd2_d2_d_d2(double x, Sleef_double2 y) {
   return r;
 }
 
-static INLINE Sleef_double2 ddadd_d2_d2_d2(Sleef_double2 x, Sleef_double2 y) {
+static INLINE CONST Sleef_double2 ddadd_d2_d2_d2(Sleef_double2 x, Sleef_double2 y) {
   // |x| >= |y|
 
   Sleef_double2 r;
@@ -269,7 +274,7 @@ static INLINE Sleef_double2 ddadd_d2_d2_d2(Sleef_double2 x, Sleef_double2 y) {
   return r;
 }
 
-static INLINE Sleef_double2 ddadd2_d2_d2_d2(Sleef_double2 x, Sleef_double2 y) {
+static INLINE CONST Sleef_double2 ddadd2_d2_d2_d2(Sleef_double2 x, Sleef_double2 y) {
   Sleef_double2 r;
 
   r.x  = x.x + y.x;
@@ -280,7 +285,7 @@ static INLINE Sleef_double2 ddadd2_d2_d2_d2(Sleef_double2 x, Sleef_double2 y) {
   return r;
 }
 
-static INLINE Sleef_double2 ddsub_d2_d2_d2(Sleef_double2 x, Sleef_double2 y) {
+static INLINE CONST Sleef_double2 ddsub_d2_d2_d2(Sleef_double2 x, Sleef_double2 y) {
   // |x| >= |y|
 
   Sleef_double2 r;
@@ -298,7 +303,7 @@ static INLINE Sleef_double2 ddsub_d2_d2_d2(Sleef_double2 x, Sleef_double2 y) {
   return r;
 }
 
-static INLINE Sleef_double2 dddiv_d2_d2_d2(Sleef_double2 n, Sleef_double2 d) {
+static INLINE CONST Sleef_double2 dddiv_d2_d2_d2(Sleef_double2 n, Sleef_double2 d) {
   double t = 1.0 / d.x;
   double dh  = upper(d.x), dl  = d.x - dh;
   double th  = upper(t  ), tl  = t   - th;
@@ -316,7 +321,7 @@ static INLINE Sleef_double2 dddiv_d2_d2_d2(Sleef_double2 n, Sleef_double2 d) {
   return q;
 }
 
-static INLINE Sleef_double2 ddmul_d2_d_d(double x, double y) {
+static INLINE CONST Sleef_double2 ddmul_d2_d_d(double x, double y) {
   double xh = upper(x), xl = x - xh;
   double yh = upper(y), yl = y - yh;
   Sleef_double2 r;
@@ -327,7 +332,7 @@ static INLINE Sleef_double2 ddmul_d2_d_d(double x, double y) {
   return r;
 }
 
-static INLINE Sleef_double2 ddmul_d2_d2_d(Sleef_double2 x, double y) {
+static INLINE CONST Sleef_double2 ddmul_d2_d2_d(Sleef_double2 x, double y) {
   double xh = upper(x.x), xl = x.x - xh;
   double yh = upper(y  ), yl = y   - yh;
   Sleef_double2 r;
@@ -338,7 +343,7 @@ static INLINE Sleef_double2 ddmul_d2_d2_d(Sleef_double2 x, double y) {
   return r;
 }
 
-static INLINE Sleef_double2 ddmul_d2_d2_d2(Sleef_double2 x, Sleef_double2 y) {
+static INLINE CONST Sleef_double2 ddmul_d2_d2_d2(Sleef_double2 x, Sleef_double2 y) {
   double xh = upper(x.x), xl = x.x - xh;
   double yh = upper(y.x), yl = y.x - yh;
   Sleef_double2 r;
@@ -349,7 +354,7 @@ static INLINE Sleef_double2 ddmul_d2_d2_d2(Sleef_double2 x, Sleef_double2 y) {
   return r;
 }
 
-static INLINE Sleef_double2 ddsqu_d2_d2(Sleef_double2 x) {
+static INLINE CONST Sleef_double2 ddsqu_d2_d2(Sleef_double2 x) {
   double xh = upper(x.x), xl = x.x - xh;
   Sleef_double2 r;
 
@@ -359,7 +364,7 @@ static INLINE Sleef_double2 ddsqu_d2_d2(Sleef_double2 x) {
   return r;
 }
 
-static INLINE Sleef_double2 ddrec_d2_d(double d) {
+static INLINE CONST Sleef_double2 ddrec_d2_d(double d) {
   double t = 1.0 / d;
   double dh = upper(d), dl = d - dh;
   double th = upper(t), tl = t - th;
@@ -371,7 +376,7 @@ static INLINE Sleef_double2 ddrec_d2_d(double d) {
   return q;
 }
 
-static INLINE Sleef_double2 ddrec_d2_d2(Sleef_double2 d) {
+static INLINE CONST Sleef_double2 ddrec_d2_d2(Sleef_double2 d) {
   double t = 1.0 / d.x;
   double dh = upper(d.x), dl = d.x - dh;
   double th = upper(t  ), tl = t   - th;
@@ -383,14 +388,14 @@ static INLINE Sleef_double2 ddrec_d2_d2(Sleef_double2 d) {
   return q;
 }
 
-static INLINE Sleef_double2 ddsqrt_d2_d2(Sleef_double2 d) {
+static INLINE CONST Sleef_double2 ddsqrt_d2_d2(Sleef_double2 d) {
   double t = sqrt(d.x + d.y);
   return ddscale_d2_d2_d(ddmul_d2_d2_d2(ddadd2_d2_d2_d2(d, ddmul_d2_d_d(t, t)), ddrec_d2_d(t)), 0.5);
 }
 
 //
 
-static INLINE double atan2k(double y, double x) {
+static INLINE CONST double atan2k(double y, double x) {
   double s, t, u;
   int q = 0;
 
@@ -426,7 +431,7 @@ static INLINE double atan2k(double y, double x) {
   return t;
 }
 
-EXPORT double xatan2(double y, double x) {
+EXPORT CONST double xatan2(double y, double x) {
   double r = atan2k(xfabs(y), x);
 
   r = mulsign(r, x);
@@ -437,15 +442,15 @@ EXPORT double xatan2(double y, double x) {
   return xisnan(x) || xisnan(y) ? NAN : mulsign(r, y);
 }
 
-EXPORT double xasin(double d) {
+EXPORT CONST double xasin(double d) {
   return mulsign(atan2k(xfabs(d), sqrt((1+d)*(1-d))), d);
 }
 
-EXPORT double xacos(double d) {
+EXPORT CONST double xacos(double d) {
   return mulsign(atan2k(sqrt((1+d)*(1-d)), xfabs(d)), d) + (sign(d) == -1 ? M_PI : 0);
 }
 
-EXPORT double xatan(double s) {
+EXPORT CONST double xatan(double s) {
   double t, u;
   int q = 0;
 
@@ -523,7 +528,7 @@ static Sleef_double2 atan2k_u1(Sleef_double2 y, Sleef_double2 x) {
   return t;
 }
 
-EXPORT double xatan2_u1(double y, double x) {
+EXPORT CONST double xatan2_u1(double y, double x) {
   Sleef_double2 d = atan2k_u1(dd(xfabs(y), 0), dd(x, 0));
   double r = d.x + d.y;
 
@@ -535,14 +540,14 @@ EXPORT double xatan2_u1(double y, double x) {
   return xisnan(x) || xisnan(y) ? NAN : mulsign(r, y);
 }
 
-EXPORT double xasin_u1(double d) {
+EXPORT CONST double xasin_u1(double d) {
   Sleef_double2 d2 = atan2k_u1(dd(xfabs(d), 0), ddsqrt_d2_d2(ddmul_d2_d2_d2(ddadd_d2_d_d(1, d), ddadd_d2_d_d(1,-d))));
   double r = d2.x + d2.y;
   if (xfabs(d) == 1) r = 1.570796326794896557998982;
   return mulsign(r, d);
 }
 
-EXPORT double xacos_u1(double d) {
+EXPORT CONST double xacos_u1(double d) {
   Sleef_double2 d2 = atan2k_u1(ddsqrt_d2_d2(ddmul_d2_d2_d2(ddadd_d2_d_d(1, d), ddadd_d2_d_d(1,-d))), dd(xfabs(d), 0));
   d2 = ddscale_d2_d2_d(d2, mulsign(1, d));
   if (xfabs(d) == 1) d2 = dd(0, 0);
@@ -550,14 +555,14 @@ EXPORT double xacos_u1(double d) {
   return d2.x + d2.y;
 }
 
-EXPORT double xatan_u1(double d) {
+EXPORT CONST double xatan_u1(double d) {
   Sleef_double2 d2 = atan2k_u1(dd(xfabs(d), 0), dd(1, 0));
   double r = d2.x + d2.y;
   if (xisinf(d)) r = 1.570796326794896557998982;
   return mulsign(r, d);
 }
 
-EXPORT double xsin(double d) {
+EXPORT CONST double xsin(double d) {
   double u, s, t = d;
 
   int qh = xtrunc(d * (M_1_PI / (1 << 24)));
@@ -592,7 +597,7 @@ EXPORT double xsin(double d) {
   return u;
 }
 
-EXPORT double xsin_u1(double d) {
+EXPORT CONST double xsin_u1(double d) {
   double u;
   Sleef_double2 s, t, x;
 
@@ -629,7 +634,7 @@ EXPORT double xsin_u1(double d) {
   return u;
 }
 
-EXPORT double xcos(double d) {
+EXPORT CONST double xcos(double d) {
   double u, s, t = d;
 
   int qh = xtrunc(d * (M_1_PI / (1LL << 23)) - 0.5 * (M_1_PI / (1LL << 23)));
@@ -664,7 +669,7 @@ EXPORT double xcos(double d) {
   return u;
 }
 
-EXPORT double xcos_u1(double d) {
+EXPORT CONST double xcos_u1(double d) {
   double u;
   Sleef_double2 s, t, x;
 
@@ -704,7 +709,7 @@ EXPORT double xcos_u1(double d) {
   return u;
 }
 
-EXPORT Sleef_double2 xsincos(double d) {
+EXPORT CONST Sleef_double2 xsincos(double d) {
   double u, s, t;
   Sleef_double2 r;
 
@@ -757,7 +762,7 @@ EXPORT Sleef_double2 xsincos(double d) {
   return r;
 }
 
-EXPORT Sleef_double2 xsincos_u1(double d) {
+EXPORT CONST Sleef_double2 xsincos_u1(double d) {
   double u;
   Sleef_double2 r, s, t, x;
 
@@ -813,7 +818,7 @@ EXPORT Sleef_double2 xsincos_u1(double d) {
 
 #define TRIGRANGEMAX2 1e+9
 
-EXPORT Sleef_double2 xsincospi_u05(double d) {
+EXPORT CONST Sleef_double2 xsincospi_u05(double d) {
   double u, s, t;
   Sleef_double2 r, x, s2;
 
@@ -867,7 +872,7 @@ EXPORT Sleef_double2 xsincospi_u05(double d) {
   return r;
 }
 
-EXPORT Sleef_double2 xsincospi_u35(double d) {
+EXPORT CONST Sleef_double2 xsincospi_u35(double d) {
   double u, s, t;
   Sleef_double2 r;
 
@@ -915,7 +920,7 @@ EXPORT Sleef_double2 xsincospi_u35(double d) {
   return r;
 }
 
-EXPORT double xtan(double d) {
+EXPORT CONST double xtan(double d) {
   double u, s, x;
 
   int qh = xtrunc(d * ((2 * M_1_PI) / (1 << 24)));
@@ -959,7 +964,7 @@ EXPORT double xtan(double d) {
   return u;
 }
 
-EXPORT double xtan_u1(double d) {
+EXPORT CONST double xtan_u1(double d) {
   double u;
   Sleef_double2 s, t, x;
 
@@ -1007,7 +1012,7 @@ EXPORT double xtan_u1(double d) {
   return u;
 }
 
-EXPORT double xlog(double d) {
+EXPORT CONST double xlog(double d) {
   double x, x2, t, m;
   int e;
 
@@ -1035,7 +1040,7 @@ EXPORT double xlog(double d) {
   return x;
 }
 
-EXPORT double xexp(double d) {
+EXPORT CONST double xexp(double d) {
   int q = (int)xrint(d * R_LN2);
   double s, u;
 
@@ -1062,7 +1067,7 @@ EXPORT double xexp(double d) {
   return u;
 }
 
-static INLINE Sleef_double2 logk(double d) {
+static INLINE CONST Sleef_double2 logk(double d) {
   Sleef_double2 x, x2;
   double m, t;
   int e;
@@ -1090,7 +1095,7 @@ static INLINE Sleef_double2 logk(double d) {
 							ddadd2_d2_d2_d2(ddmul_d2_d2_d(x2, t), c))));
 }
 
-EXPORT double xlog_u1(double d) {
+EXPORT CONST double xlog_u1(double d) {
   Sleef_double2 s = logk(d);
   double x = s.x + s.y;
 
@@ -1101,7 +1106,7 @@ EXPORT double xlog_u1(double d) {
   return x;
 }
 
-static INLINE double expk(Sleef_double2 d) {
+static INLINE CONST double expk(Sleef_double2 d) {
   int q = (int)xrint((d.x + d.y) * R_LN2);
   Sleef_double2 s, t;
   double u;
@@ -1133,9 +1138,9 @@ static INLINE double expk(Sleef_double2 d) {
   return u;
 }
 
-EXPORT double xpow(double x, double y) {
+EXPORT CONST double xpow(double x, double y) {
   int yisint = xisint(y);
-  int yisodd = (1 & (int)y) != 0 && yisint;
+  int yisodd = yisint && xisodd(y);
 
   double result = expk(ddmul_d2_d2_d(logk(xfabs(x)), y));
 
@@ -1151,7 +1156,7 @@ EXPORT double xpow(double x, double y) {
   return result;
 }
 
-static INLINE Sleef_double2 expk2(Sleef_double2 d) {
+static INLINE CONST Sleef_double2 expk2(Sleef_double2 d) {
   int q = (int)xrint((d.x + d.y) * R_LN2);
   Sleef_double2 s, t;
   double u;
@@ -1176,7 +1181,7 @@ static INLINE Sleef_double2 expk2(Sleef_double2 d) {
   return ddscale_d2_d2_d(ddscale_d2_d2_d(t, 2), pow2i(q-1));
 }
 
-EXPORT double xsinh(double x) {
+EXPORT CONST double xsinh(double x) {
   double y = xfabs(x);
   Sleef_double2 d = expk2(dd(y, 0));
   d = ddsub_d2_d2_d2(d, ddrec_d2_d2(d));
@@ -1190,7 +1195,7 @@ EXPORT double xsinh(double x) {
   return y;
 }
 
-EXPORT double xcosh(double x) {
+EXPORT CONST double xcosh(double x) {
   double y = xfabs(x);
   Sleef_double2 d = expk2(dd(y, 0));
   d = ddadd_d2_d2_d2(d, ddrec_d2_d2(d));
@@ -1203,7 +1208,7 @@ EXPORT double xcosh(double x) {
   return y;
 }
 
-EXPORT double xtanh(double x) {
+EXPORT CONST double xtanh(double x) {
   double y = xfabs(x);
   Sleef_double2 d = expk2(dd(y, 0));
   Sleef_double2 e = ddrec_d2_d2(d);
@@ -1218,7 +1223,7 @@ EXPORT double xtanh(double x) {
   return y;
 }
 
-static INLINE Sleef_double2 logk2(Sleef_double2 d) {
+static INLINE CONST Sleef_double2 logk2(Sleef_double2 d) {
   Sleef_double2 x, x2, m;
   double t;
   int e;
@@ -1242,7 +1247,7 @@ static INLINE Sleef_double2 logk2(Sleef_double2 d) {
 			 ddadd2_d2_d2_d2(ddscale_d2_d2_d(x, 2), ddmul_d2_d2_d(ddmul_d2_d2_d2(x2, x), t)));
 }
 
-EXPORT double xasinh(double x) {
+EXPORT CONST double xasinh(double x) {
   double y = xfabs(x);
   Sleef_double2 d;
 
@@ -1260,7 +1265,7 @@ EXPORT double xasinh(double x) {
   return y;
 }
 
-EXPORT double xacosh(double x) {
+EXPORT CONST double xacosh(double x) {
   Sleef_double2 d = logk2(ddadd2_d2_d2_d(ddmul_d2_d2_d2(ddsqrt_d2_d2(ddadd2_d2_d_d(x, 1)), ddsqrt_d2_d2(ddadd2_d2_d_d(x, -1))), x));
   double y = d.x + d.y;
 
@@ -1272,7 +1277,7 @@ EXPORT double xacosh(double x) {
   return y;
 }
 
-EXPORT double xatanh(double x) {
+EXPORT CONST double xatanh(double x) {
   double y = xfabs(x);
   Sleef_double2 d = logk2(dddiv_d2_d2_d2(ddadd2_d2_d_d(1, y), ddadd2_d2_d_d(1, -y)));
   y = y > 1.0 ? NAN : (y == 1.0 ? INFINITY : (d.x + d.y) * 0.5);
@@ -1285,7 +1290,7 @@ EXPORT double xatanh(double x) {
 
 //
 
-EXPORT double xfma(double x, double y, double z) {
+EXPORT CONST double xfma(double x, double y, double z) {
   union {
     double f;
     long long int i;
@@ -1311,7 +1316,7 @@ EXPORT double xfma(double x, double y, double z) {
   return h2 + l2;
 }
 
-EXPORT double xsqrt(double d) { // max error : 0.5 ulp
+EXPORT CONST double xsqrt(double d) { // max error : 0.5 ulp
   double q = 1;
 
   if (d < 8.636168555094445E-78) {
@@ -1332,7 +1337,7 @@ EXPORT double xsqrt(double d) { // max error : 0.5 ulp
   return d == INFINITY ? INFINITY : x * q;
 }
 
-EXPORT double xcbrt(double d) { // max error : 2 ulps
+EXPORT CONST double xcbrt(double d) { // max error : 2 ulps
   double x, y, q = 1.0;
   int e, r;
 
@@ -1360,7 +1365,7 @@ EXPORT double xcbrt(double d) { // max error : 2 ulps
   return y;
 }
 
-EXPORT double xcbrt_u1(double d) {
+EXPORT CONST double xcbrt_u1(double d) {
   double x, y, z;
   Sleef_double2 q2 = dd(1, 0), u, v;
   int e, r;
@@ -1403,21 +1408,21 @@ EXPORT double xcbrt_u1(double d) {
   return z;
 }
 
-EXPORT double xexp2(double a) {
+EXPORT CONST double xexp2(double a) {
   double u = expk(ddmul_d2_d2_d(dd(0.69314718055994528623, 2.3190468138462995584e-17), a));
   if (a > 1024) u = INFINITY; // log2(DBL_MAX)
   if (xisminf(a)) u = 0;
   return u;
 }
 
-EXPORT double xexp10(double a) {
+EXPORT CONST double xexp10(double a) {
   double u = expk(ddmul_d2_d2_d(dd(2.3025850929940459011, -2.1707562233822493508e-16), a));
   if (a > 308.254715559916743850652254) u = INFINITY; // log10(DBL_MAX)
   if (xisminf(a)) u = 0;
   return u;
 }
 
-EXPORT double xexpm1(double a) {
+EXPORT CONST double xexpm1(double a) {
   Sleef_double2 d = ddadd2_d2_d2_d(expk2(dd(a, 0)), -1.0);
   double x = d.x + d.y;
   if (a > 709.782712893383996732223) x = INFINITY; // log(DBL_MAX)
@@ -1426,7 +1431,7 @@ EXPORT double xexpm1(double a) {
   return x;
 }
 
-EXPORT double xlog10(double a) {
+EXPORT CONST double xlog10(double a) {
   Sleef_double2 d = ddmul_d2_d2_d2(logk(a), dd(0.43429448190325176116, 6.6494347733425473126e-17));
   double x = d.x + d.y;
 
@@ -1437,7 +1442,7 @@ EXPORT double xlog10(double a) {
   return x;
 }
 
-EXPORT double xlog1p(double a) {
+EXPORT CONST double xlog1p(double a) {
   Sleef_double2 d = logk2(ddadd2_d2_d_d(a, 1));
   double x = d.x + d.y;
 
@@ -1453,8 +1458,11 @@ EXPORT double xlog1p(double a) {
 // gcc -I../common sleefdp.c -lm
 #include <stdlib.h>
 int main(int argc, char **argv) {
-  float d = atof(argv[1]);
-  Sleef_double2 r = xsincospi_u35(d);
-  printf("%g, %g\n", (double)r.x, (double)r.y);
+  double d1 = atof(argv[1]);
+  double d2 = atof(argv[2]);
+  double r = xpow(d1, d2);
+  printf("%g\n", r);
+  //Sleef_double2 r = xsincospi_u35(d);
+  //printf("%g, %g\n", (double)r.x, (double)r.y);
 }
 #endif

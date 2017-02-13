@@ -68,6 +68,12 @@ typedef union {
   uint64_t u[2];
 } conv_t;
 
+Sleef_quad rnd() {
+  conv_t c;
+  syscall(SYS_getrandom, &c.u128, sizeof(c.u128), 0);
+  return c.d;
+}
+
 Sleef_quad rnd_fr() {
   conv_t c;
   do {
@@ -118,7 +124,7 @@ int main(int argc,char **argv)
   mpfr_inits(fra, frb, frc, frd, frw, frx, fry, frz, NULL);
 
   conv_t cd;
-  Sleef_quad d, t;
+  Sleef_quad d, t, d2, zo;
 
   int cnt;
   
@@ -136,35 +142,23 @@ int main(int argc,char **argv)
   for(cnt = 0;;cnt++) {
     switch(cnt & 7) {
     case 0:
-      d = rnd_zo() * rangemax;
+      d = rnd();
+      d2 = rnd();
+      zo = rnd();
       break;
     case 1:
-      cd.d = rintq(rnd_zo() * rangemax) * M_PI_4q;
-      cd.u128 += (random() & 31) - 15;
+      cd.d = rint((2 * (double)random() / RAND_MAX - 1) * 1e+10) * M_PI_4;
+      cd.u128 += (random() & 0xff) - 0x7f;
       d = cd.d;
-      break;
-    case 2:
-      d = rnd_zo() * 1e+7;
-      break;
-    case 3:
-      cd.d = rintq(rnd_zo() * 1e+7) * M_PI_4q;
-      cd.u128 += (random() & 31) - 15;
-      d = cd.d;
-      break;
-    case 4:
-      d = rnd_zo() * 10000;
-      break;
-    case 5:
-      cd.d = rintq(rnd_zo() * 10000) * M_PI_4q;
-      cd.u128 += (random() & 31) - 15;
-      d = cd.d;
+      d2 = rnd();
+      zo = rnd();
       break;
     default:
       d = rnd_fr();
+      d2 = rnd_fr();
+      zo = rnd_zo();
       break;
     }
-
-    if (!xisfiniteq(d)) continue;
 
     Sleef_quad2 sc  = xsincospiq_u05(d);
     Sleef_quad2 sc2 = xsincospiq_u35(d);
@@ -176,13 +170,13 @@ int main(int argc,char **argv)
 
       double u0 = countULP2(t = sc.x, frx);
 
-      if ((fabs(d) <= rangemax2 && u0 > 0.505) || fabs(t) > 1 || !xisfiniteq(t)) {
+      if (u0 != 0 && ((fabs(d) <= rangemax2 && u0 > 0.505) || fabs(t) > 1 || !xisfiniteq(t))) {
 	printf("Pure C sincospiq_u05 sin arg="); printf128(d); printf(" ulp=%.20g\n", u0);
       }
 
       double u1 = countULP2(t = sc2.x, frx);
 
-      if ((fabs(d) <= rangemax2 && u1 > 2.0) || fabs(t) > 1 || !xisfiniteq(t)) {
+      if (u1 != 0 && ((fabs(d) <= rangemax2 && u1 > 2.0) || fabs(t) > 1 || !xisfiniteq(t))) {
 	printf("Pure C sincospiq_u35 sin arg=%.30Lg ulp=%.20g\n", (long double)d, u1);
       }
 
@@ -195,13 +189,13 @@ int main(int argc,char **argv)
 
       double u0 = countULP2(t = sc.y, frx);
 
-      if ((fabs(d) <= rangemax2 && u0 > 0.505) || fabs(t) > 1 || !xisfiniteq(t)) {
+      if (u0 != 0 && ((fabs(d) <= rangemax2 && u0 > 0.505) || fabs(t) > 1 || !xisfiniteq(t))) {
 	printf("Pure C sincospiq_u05 cos arg=%.30Lg ulp=%.20g\n", (long double)d, u0);
       }
 
       double u1 = countULP2(t = sc.y, frx);
 
-      if ((fabs(d) <= rangemax2 && u1 > 2.0) || fabs(t) > 1 || !xisfiniteq(t)) {
+      if (u1 != 0 && ((fabs(d) <= rangemax2 && u1 > 2.0) || fabs(t) > 1 || !xisfiniteq(t))) {
 	printf("Pure C sincospiq_u35 cos arg=%.30Lg ulp=%.20g\n", (long double)d, u1);
       }
 

@@ -1,3 +1,52 @@
+libsleef3 (3.0-4-ubuntu1) xenial; urgency=medium
+
+  * Hello
+
+ -- Naoki Shibata <n-sibata@namihei>  Tue, 07 Feb 2017 19:24:12 +0900
+
+libsleef3 (3.0-3-ubuntu0) xenial; urgency=medium
+
+  * Yeah
+
+ -- Naoki Shibata <n-sibata@namihei>  Tue, 07 Feb 2017 19:17:20 +0900
+
+libsleef3 (3.0-1ubuntu9) xenial; urgency=medium
+
+  * Hello, hello
+
+ -- Naoki Shibata <n-sibata@namihei>  Tue, 07 Feb 2017 18:43:05 +0900
+
+libsleef3 (3.0-1ubuntu8) xenial; urgency=medium
+
+  * It rejects saying contents are same
+
+ -- Naoki Shibata <n-sibata@namihei>  Tue, 07 Feb 2017 18:36:54 +0900
+
+libsleef3 (3.0-1ubuntu7) xenial; urgency=medium
+
+  * Still trying
+
+ -- Naoki Shibata <n-sibata@namihei>  Tue, 07 Feb 2017 18:20:34 +0900
+
+libsleef3 (3.0-1ubuntu6) xenial; urgency=medium
+
+  * Still trying
+  * Changed e-mail address
+
+ -- Naoki Shibata <n-sibata@namihei>  Tue, 07 Feb 2017 18:19:47 +0900
+
+libsleef3 (3.0-1ubuntu3) xenial; urgency=medium
+
+  * It did not upload correctly. I don't know why.
+
+ -- Naoki Shibata <shibatch@users.sourceforge.net>  Tue, 07 Feb 2017 18:11:19 +0900
+
+libsleef3 (3.0-1ubuntu1) xenial; urgency=medium
+
+  * Modified dependency
+
+ -- Naoki Shibata <shibatch@users.sourceforge.net>  Tue, 07 Feb 2017 17:52:12 +0900
+
 libsleef3 (3.0-1) xenial; urgency=medium
 
   * Initial release.

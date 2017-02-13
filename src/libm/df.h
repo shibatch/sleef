@@ -7,71 +7,71 @@ typedef struct {
   vfloat x, y;
 } vfloat2;
 
-static INLINE vfloat vupper_vf_vf(vfloat d) {
+static INLINE CONST vfloat vupper_vf_vf(vfloat d) {
   return vreinterpret_vf_vi2(vand_vi2_vi2_vi2(vreinterpret_vi2_vf(d), vcast_vi2_i(0xfffff000)));
 }
 
-static INLINE vfloat2 vcast_vf2_vf_vf(vfloat h, vfloat l) {
+static INLINE CONST vfloat2 vcast_vf2_vf_vf(vfloat h, vfloat l) {
   vfloat2 ret = {h, l};
   return ret;
 }
 
-static INLINE vfloat2 vcast_vf2_f_f(float h, float l) {
+static INLINE CONST vfloat2 vcast_vf2_f_f(float h, float l) {
   vfloat2 ret = {vcast_vf_f(h), vcast_vf_f(l)};
   return ret;
 }
 
-static INLINE vfloat2 vsel_vf2_vo_vf2_vf2(vopmask m, vfloat2 x, vfloat2 y) {
+static INLINE CONST vfloat2 vsel_vf2_vo_vf2_vf2(vopmask m, vfloat2 x, vfloat2 y) {
   vfloat2 r;
   r.x = vsel_vf_vo_vf_vf(m, x.x, y.x);
   r.y = vsel_vf_vo_vf_vf(m, x.y, y.y);
   return r;
 }
 
-static INLINE vfloat2 vabs_vf2_vf2(vfloat2 x) {
+static INLINE CONST vfloat2 vabs_vf2_vf2(vfloat2 x) {
   return vcast_vf2_vf_vf(vreinterpret_vf_vm(vxor_vm_vm_vm(vand_vm_vm_vm(vreinterpret_vm_vf(vcast_vf_f(-0.0)), vreinterpret_vm_vf(x.x)), vreinterpret_vm_vf(x.x))),
 			 vreinterpret_vf_vm(vxor_vm_vm_vm(vand_vm_vm_vm(vreinterpret_vm_vf(vcast_vf_f(-0.0)), vreinterpret_vm_vf(x.x)), vreinterpret_vm_vf(x.y))));
 }
 
-static INLINE vfloat vadd_vf_3vf(vfloat v0, vfloat v1, vfloat v2) {
+static INLINE CONST vfloat vadd_vf_3vf(vfloat v0, vfloat v1, vfloat v2) {
   return vadd_vf_vf_vf(vadd_vf_vf_vf(v0, v1), v2);
 }
 
-static INLINE vfloat vadd_vf_4vf(vfloat v0, vfloat v1, vfloat v2, vfloat v3) {
+static INLINE CONST vfloat vadd_vf_4vf(vfloat v0, vfloat v1, vfloat v2, vfloat v3) {
   return vadd_vf_3vf(vadd_vf_vf_vf(v0, v1), v2, v3);
 }
 
-static INLINE vfloat vadd_vf_5vf(vfloat v0, vfloat v1, vfloat v2, vfloat v3, vfloat v4) {
+static INLINE CONST vfloat vadd_vf_5vf(vfloat v0, vfloat v1, vfloat v2, vfloat v3, vfloat v4) {
   return vadd_vf_4vf(vadd_vf_vf_vf(v0, v1), v2, v3, v4);
 }
 
-static INLINE vfloat vadd_vf_6vf(vfloat v0, vfloat v1, vfloat v2, vfloat v3, vfloat v4, vfloat v5) {
+static INLINE CONST vfloat vadd_vf_6vf(vfloat v0, vfloat v1, vfloat v2, vfloat v3, vfloat v4, vfloat v5) {
   return vadd_vf_5vf(vadd_vf_vf_vf(v0, v1), v2, v3, v4, v5);
 }
 
-static INLINE vfloat vadd_vf_7vf(vfloat v0, vfloat v1, vfloat v2, vfloat v3, vfloat v4, vfloat v5, vfloat v6) {
+static INLINE CONST vfloat vadd_vf_7vf(vfloat v0, vfloat v1, vfloat v2, vfloat v3, vfloat v4, vfloat v5, vfloat v6) {
   return vadd_vf_6vf(vadd_vf_vf_vf(v0, v1), v2, v3, v4, v5, v6);
 }
 
-static INLINE vfloat vsub_vf_3vf(vfloat v0, vfloat v1, vfloat v2) {
+static INLINE CONST vfloat vsub_vf_3vf(vfloat v0, vfloat v1, vfloat v2) {
   return vsub_vf_vf_vf(vsub_vf_vf_vf(v0, v1), v2);
 }
 
-static INLINE vfloat vsub_vf_4vf(vfloat v0, vfloat v1, vfloat v2, vfloat v3) {
+static INLINE CONST vfloat vsub_vf_4vf(vfloat v0, vfloat v1, vfloat v2, vfloat v3) {
   return vsub_vf_3vf(vsub_vf_vf_vf(v0, v1), v2, v3);
 }
 
-static INLINE vfloat vsub_vf_5vf(vfloat v0, vfloat v1, vfloat v2, vfloat v3, vfloat v4) {
+static INLINE CONST vfloat vsub_vf_5vf(vfloat v0, vfloat v1, vfloat v2, vfloat v3, vfloat v4) {
   return vsub_vf_4vf(vsub_vf_vf_vf(v0, v1), v2, v3, v4);
 }
 
 //
 
-static INLINE vfloat2 dfneg_vf2_vf2(vfloat2 x) {
+static INLINE CONST vfloat2 dfneg_vf2_vf2(vfloat2 x) {
   return vcast_vf2_vf_vf(vneg_vf_vf(x.x), vneg_vf_vf(x.y));
 }
 
-static INLINE vfloat2 dfnormalize_vf2_vf2(vfloat2 t) {
+static INLINE CONST vfloat2 dfnormalize_vf2_vf2(vfloat2 t) {
   vfloat2 s;
 
   s.x = vadd_vf_vf_vf(t.x, t.y);
@@ -80,12 +80,12 @@ static INLINE vfloat2 dfnormalize_vf2_vf2(vfloat2 t) {
   return s;
 }
 
-static INLINE vfloat2 dfscale_vf2_vf2_vf(vfloat2 d, vfloat s) {
+static INLINE CONST vfloat2 dfscale_vf2_vf2_vf(vfloat2 d, vfloat s) {
   vfloat2 r = {vmul_vf_vf_vf(d.x, s), vmul_vf_vf_vf(d.y, s)};
   return r;
 }
 
-static INLINE vfloat2 dfadd_vf2_vf_vf(vfloat x, vfloat y) {
+static INLINE CONST vfloat2 dfadd_vf2_vf_vf(vfloat x, vfloat y) {
   vfloat2 r;
 
   r.x = vadd_vf_vf_vf(x, y);
@@ -94,7 +94,7 @@ static INLINE vfloat2 dfadd_vf2_vf_vf(vfloat x, vfloat y) {
   return r;
 }
 
-static INLINE vfloat2 dfadd2_vf2_vf_vf(vfloat x, vfloat y) {
+static INLINE CONST vfloat2 dfadd2_vf2_vf_vf(vfloat x, vfloat y) {
   vfloat2 r;
 
   r.x = vadd_vf_vf_vf(x, y);
@@ -104,7 +104,7 @@ static INLINE vfloat2 dfadd2_vf2_vf_vf(vfloat x, vfloat y) {
   return r;
 }
 
-static INLINE vfloat2 dfadd2_vf2_vf_vf2(vfloat x, vfloat2 y) {
+static INLINE CONST vfloat2 dfadd2_vf2_vf_vf2(vfloat x, vfloat2 y) {
   vfloat2 r;
 
   r.x  = vadd_vf_vf_vf(x, y.x);
@@ -114,7 +114,7 @@ static INLINE vfloat2 dfadd2_vf2_vf_vf2(vfloat x, vfloat2 y) {
   return r;
 }
 
-static INLINE vfloat2 dfadd_vf2_vf2_vf(vfloat2 x, vfloat y) {
+static INLINE CONST vfloat2 dfadd_vf2_vf2_vf(vfloat2 x, vfloat y) {
   vfloat2 r;
 
   r.x = vadd_vf_vf_vf(x.x, y);
@@ -123,7 +123,7 @@ static INLINE vfloat2 dfadd_vf2_vf2_vf(vfloat2 x, vfloat y) {
   return r;
 }
 
-static INLINE vfloat2 dfadd2_vf2_vf2_vf(vfloat2 x, vfloat y) {
+static INLINE CONST vfloat2 dfadd2_vf2_vf2_vf(vfloat2 x, vfloat y) {
   vfloat2 r;
 
   r.x = vadd_vf_vf_vf(x.x, y);
@@ -134,7 +134,7 @@ static INLINE vfloat2 dfadd2_vf2_vf2_vf(vfloat2 x, vfloat y) {
   return r;
 }
 
-static INLINE vfloat2 dfadd_vf2_vf_vf2(vfloat x, vfloat2 y) {
+static INLINE CONST vfloat2 dfadd_vf2_vf_vf2(vfloat x, vfloat2 y) {
   vfloat2 r;
 
   r.x = vadd_vf_vf_vf(x, y.x);
@@ -143,7 +143,7 @@ static INLINE vfloat2 dfadd_vf2_vf_vf2(vfloat x, vfloat2 y) {
   return r;
 }
 
-static INLINE vfloat2 dfadd_vf2_vf2_vf2(vfloat2 x, vfloat2 y) {
+static INLINE CONST vfloat2 dfadd_vf2_vf2_vf2(vfloat2 x, vfloat2 y) {
   // |x| >= |y|
 
   vfloat2 r;
@@ -154,7 +154,7 @@ static INLINE vfloat2 dfadd_vf2_vf2_vf2(vfloat2 x, vfloat2 y) {
   return r;
 }
 
-static INLINE vfloat2 dfadd2_vf2_vf2_vf2(vfloat2 x, vfloat2 y) {
+static INLINE CONST vfloat2 dfadd2_vf2_vf2_vf2(vfloat2 x, vfloat2 y) {
   vfloat2 r;
 
   r.x  = vadd_vf_vf_vf(x.x, y.x);
@@ -165,7 +165,7 @@ static INLINE vfloat2 dfadd2_vf2_vf2_vf2(vfloat2 x, vfloat2 y) {
   return r;
 }
 
-static INLINE vfloat2 dfsub_vf2_vf_vf(vfloat x, vfloat y) {
+static INLINE CONST vfloat2 dfsub_vf2_vf_vf(vfloat x, vfloat y) {
   // |x| >= |y|
 
   vfloat2 r;
@@ -176,7 +176,7 @@ static INLINE vfloat2 dfsub_vf2_vf_vf(vfloat x, vfloat y) {
   return r;
 }
 
-static INLINE vfloat2 dfsub_vf2_vf2_vf2(vfloat2 x, vfloat2 y) {
+static INLINE CONST vfloat2 dfsub_vf2_vf2_vf2(vfloat2 x, vfloat2 y) {
   // |x| >= |y|
 
   vfloat2 r;
@@ -191,7 +191,7 @@ static INLINE vfloat2 dfsub_vf2_vf2_vf2(vfloat2 x, vfloat2 y) {
 }
 
 #ifdef ENABLE_FMA_SP
-static INLINE vfloat2 dfdiv_vf2_vf2_vf2(vfloat2 n, vfloat2 d) {
+static INLINE CONST vfloat2 dfdiv_vf2_vf2_vf2(vfloat2 n, vfloat2 d) {
   vfloat2 q;
   vfloat t = vrec_vf_vf(d.x), u;
 
@@ -203,7 +203,7 @@ static INLINE vfloat2 dfdiv_vf2_vf2_vf2(vfloat2 n, vfloat2 d) {
   return q;
 }
 
-static INLINE vfloat2 dfmul_vf2_vf_vf(vfloat x, vfloat y) {
+static INLINE CONST vfloat2 dfmul_vf2_vf_vf(vfloat x, vfloat y) {
   vfloat2 r;
 
   r.x = vmul_vf_vf_vf(x, y);
@@ -212,7 +212,7 @@ static INLINE vfloat2 dfmul_vf2_vf_vf(vfloat x, vfloat y) {
   return r;
 }
 
-static INLINE vfloat2 dfsqu_vf2_vf2(vfloat2 x) {
+static INLINE CONST vfloat2 dfsqu_vf2_vf2(vfloat2 x) {
   vfloat2 r;
 
   r.x = vmul_vf_vf_vf(x.x, x.x);
@@ -221,7 +221,7 @@ static INLINE vfloat2 dfsqu_vf2_vf2(vfloat2 x) {
   return r;
 }
 
-static INLINE vfloat2 dfmul_vf2_vf2_vf2(vfloat2 x, vfloat2 y) {
+static INLINE CONST vfloat2 dfmul_vf2_vf2_vf2(vfloat2 x, vfloat2 y) {
   vfloat2 r;
 
   r.x = vmul_vf_vf_vf(x.x, y.x);
@@ -230,7 +230,7 @@ static INLINE vfloat2 dfmul_vf2_vf2_vf2(vfloat2 x, vfloat2 y) {
   return r;
 }
 
-static INLINE vfloat2 dfmul_vf2_vf2_vf(vfloat2 x, vfloat y) {
+static INLINE CONST vfloat2 dfmul_vf2_vf2_vf(vfloat2 x, vfloat y) {
   vfloat2 r;
 
   r.x = vmul_vf_vf_vf(x.x, y);
@@ -239,7 +239,7 @@ static INLINE vfloat2 dfmul_vf2_vf2_vf(vfloat2 x, vfloat y) {
   return r;
 }
 
-static INLINE vfloat2 dfrec_vf2_vf(vfloat d) {
+static INLINE CONST vfloat2 dfrec_vf2_vf(vfloat d) {
   vfloat2 q;
 
   q.x = vrec_vf_vf(d);
@@ -248,7 +248,7 @@ static INLINE vfloat2 dfrec_vf2_vf(vfloat d) {
   return q;
 }
 
-static INLINE vfloat2 dfrec_vf2_vf2(vfloat2 d) {
+static INLINE CONST vfloat2 dfrec_vf2_vf2(vfloat2 d) {
   vfloat2 q;
 
   q.x = vrec_vf_vf(d.x);
@@ -257,7 +257,7 @@ static INLINE vfloat2 dfrec_vf2_vf2(vfloat2 d) {
   return q;
 }
 #else
-static INLINE vfloat2 dfdiv_vf2_vf2_vf2(vfloat2 n, vfloat2 d) {
+static INLINE CONST vfloat2 dfdiv_vf2_vf2_vf2(vfloat2 n, vfloat2 d) {
   vfloat t = vrec_vf_vf(d.x);
   vfloat dh  = vupper_vf_vf(d.x), dl  = vsub_vf_vf_vf(d.x,  dh);
   vfloat th  = vupper_vf_vf(t  ), tl  = vsub_vf_vf_vf(t  ,  th);
@@ -289,7 +289,7 @@ static INLINE vfloat2 dfdiv_vf2_vf2_vf2(vfloat2 n, vfloat2 d) {
   return q;
 }
 
-static INLINE vfloat2 dfmul_vf2_vf_vf(vfloat x, vfloat y) {
+static INLINE CONST vfloat2 dfmul_vf2_vf_vf(vfloat x, vfloat y) {
   vfloat xh = vupper_vf_vf(x), xl = vsub_vf_vf_vf(x, xh);
   vfloat yh = vupper_vf_vf(y), yl = vsub_vf_vf_vf(y, yh);
   vfloat2 r;
@@ -307,7 +307,7 @@ static INLINE vfloat2 dfmul_vf2_vf_vf(vfloat x, vfloat y) {
   return r;
 }
 
-static INLINE vfloat2 dfmul_vf2_vf2_vf(vfloat2 x, vfloat y) {
+static INLINE CONST vfloat2 dfmul_vf2_vf2_vf(vfloat2 x, vfloat y) {
   vfloat xh = vupper_vf_vf(x.x), xl = vsub_vf_vf_vf(x.x, xh);
   vfloat yh = vupper_vf_vf(y  ), yl = vsub_vf_vf_vf(y  , yh);
   vfloat2 r;
@@ -326,7 +326,7 @@ static INLINE vfloat2 dfmul_vf2_vf2_vf(vfloat2 x, vfloat y) {
   return r;
 }
 
-static INLINE vfloat2 dfmul_vf2_vf2_vf2(vfloat2 x, vfloat2 y) {
+static INLINE CONST vfloat2 dfmul_vf2_vf2_vf2(vfloat2 x, vfloat2 y) {
   vfloat xh = vupper_vf_vf(x.x), xl = vsub_vf_vf_vf(x.x, xh);
   vfloat yh = vupper_vf_vf(y.x), yl = vsub_vf_vf_vf(y.x, yh);
   vfloat2 r;
@@ -346,7 +346,7 @@ static INLINE vfloat2 dfmul_vf2_vf2_vf2(vfloat2 x, vfloat2 y) {
   return r;
 }
 
-static INLINE vfloat2 dfsqu_vf2_vf2(vfloat2 x) {
+static INLINE CONST vfloat2 dfsqu_vf2_vf2(vfloat2 x) {
   vfloat xh = vupper_vf_vf(x.x), xl = vsub_vf_vf_vf(x.x, xh);
   vfloat2 r;
 
@@ -363,7 +363,7 @@ static INLINE vfloat2 dfsqu_vf2_vf2(vfloat2 x) {
   return r;
 }
 
-static INLINE vfloat2 dfrec_vf2_vf(vfloat d) {
+static INLINE CONST vfloat2 dfrec_vf2_vf(vfloat d) {
   vfloat t = vrec_vf_vf(d);
   vfloat dh = vupper_vf_vf(d), dl = vsub_vf_vf_vf(d, dh);
   vfloat th = vupper_vf_vf(t), tl = vsub_vf_vf_vf(t, th);
@@ -382,7 +382,7 @@ static INLINE vfloat2 dfrec_vf2_vf(vfloat d) {
   return q;
 }
 
-static INLINE vfloat2 dfrec_vf2_vf2(vfloat2 d) {
+static INLINE CONST vfloat2 dfrec_vf2_vf2(vfloat2 d) {
   vfloat t = vrec_vf_vf(d.x);
   vfloat dh = vupper_vf_vf(d.x), dl = vsub_vf_vf_vf(d.x, dh);
   vfloat th = vupper_vf_vf(t  ), tl = vsub_vf_vf_vf(t  , th);
@@ -403,7 +403,7 @@ static INLINE vfloat2 dfrec_vf2_vf2(vfloat2 d) {
 }
 #endif
 
-static INLINE vfloat2 dfsqrt_vf2_vf2(vfloat2 d) {
+static INLINE CONST vfloat2 dfsqrt_vf2_vf2(vfloat2 d) {
 #ifdef ENABLE_RECSQRT_SP
   vfloat x = vrecsqrt_vf_vf(vadd_vf_vf_vf(d.x, d.y));
   vfloat2 r = dfmul_vf2_vf2_vf(d, x);
