@@ -12,6 +12,8 @@
 #include <limits.h>
 #include <math.h>
 
+#include "misc.h"
+
 #ifdef ENABLE_SYS_getrandom
 #define _GNU_SOURCE
 #include <unistd.h>
@@ -37,10 +39,23 @@ mpfr_t fra, frb, frc, frd, frw, frx, fry, frz;
 #define M_PI_4l .785398163397448309615660845819875721049292L
 #endif
 
+#define POSITIVE_INFINITY INFINITY
+#define NEGATIVE_INFINITY (-INFINITY)
+
+int isnumberl(long double x) { return x != INFINITYl && x != -INFINITYl && x == x; }
+int isPlusZerol(long double x) { return x == 0 && copysignl(1, x) == 1; }
+int isMinusZerol(long double x) { return x == 0 && copysignl(1, x) == -1; }
+
 double countULP(long double d, mpfr_t c) {
   long double c2 = mpfr_get_ld(c, GMP_RNDN);
   if (c2 == 0 && d != 0) return 10000;
-  if (!isfinite(c2) && !isfinite(d)) return 0;
+  //if (isPlusZerol(c2) && !isPlusZerol(d)) return 10003;
+  //if (isMinusZerol(c2) && !isMinusZerol(d)) return 10004;
+  if (isnanl(c2) && isnanl(d)) return 0;
+  if (isnanl(c2) || isnanl(d)) return 10001;
+  if (c2 == POSITIVE_INFINITY && d == POSITIVE_INFINITY) return 0;
+  if (c2 == NEGATIVE_INFINITY && d == NEGATIVE_INFINITY) return 0;
+  if (!isnumberl(c2) && !isnumberl(d)) return 0;
 
   int e;
   frexpl(mpfr_get_ld(c, GMP_RNDN), &e);
@@ -57,7 +72,13 @@ double countULP(long double d, mpfr_t c) {
 double countULP2(long double d, mpfr_t c) {
   long double c2 = mpfr_get_ld(c, GMP_RNDN);
   if (c2 == 0 && d != 0) return 10000;
-  if (!isfinite(c2) && !isfinite(d)) return 0;
+  //if (isPlusZerol(c2) && !isPlusZerol(d)) return 10003;
+  //if (isMinusZerol(c2) && !isMinusZerol(d)) return 10004;
+  if (isnanl(c2) && isnanl(d)) return 0;
+  if (isnanl(c2) || isnanl(d)) return 10001;
+  if (c2 == POSITIVE_INFINITY && d == POSITIVE_INFINITY) return 0;
+  if (c2 == NEGATIVE_INFINITY && d == NEGATIVE_INFINITY) return 0;
+  if (!isnumberl(c2) && !isnumberl(d)) return 0;
 
   int e;
   frexpl(mpfr_get_ld(c, GMP_RNDN), &e);
@@ -78,6 +99,10 @@ typedef union {
 
 long double rnd() {
   conv_t c;
+  switch(random() & 15) {
+  case 0: return  INFINITY;
+  case 1: return -INFINITY;
+  }
 #ifdef ENABLE_SYS_getrandom
   syscall(SYS_getrandom, &c.u128, sizeof(c.u128), 0);
 #else
@@ -94,7 +119,7 @@ long double rnd_fr() {
 #else
     c.u128 = random() | ((__int128)random() << 31) | ((__int128)random() << (31*2)) | ((__int128)random() << (31*3)) | ((__int128)random() << (31*4));
 #endif
-  } while(!isfinite(c.d));
+  } while(!isnumberl(c.d));
   return c.d;
 }
 
@@ -106,7 +131,7 @@ long double rnd_zo() {
 #else
     c.u128 = random() | ((__int128)random() << 31) | ((__int128)random() << (31*2)) | ((__int128)random() << (31*3)) | ((__int128)random() << (31*4));
 #endif
-  } while(!isfinite(c.d) || c.d < -1 || 1 < c.d);
+  } while(!isnumberl(c.d) || c.d < -1 || 1 < c.d);
   return c.d;
 }
 
@@ -190,13 +215,13 @@ int main(int argc,char **argv)
 
       double u0 = countULP2(t = sc.x, frx);
 
-      if (u0 != 0 && ((fabsl(d) <= rangemax2 && u0 > 0.505) || fabsl(t) > 1 || !isfinite(t))) {
+      if (u0 != 0 && ((fabsl(d) <= rangemax2 && u0 > 0.505) || fabsl(t) > 1 || !isnumberl(t))) {
 	printf("Pure C sincospil_u05 sin arg=%.30Lg ulp=%.20g\n", d, u0);
       }
 
       double u1 = countULP2(t = sc2.x, frx);
 
-      if (u1 != 0 && ((fabsl(d) <= rangemax2 && u1 > 1.5) || fabsl(t) > 1 || !isfinite(t))) {
+      if (u1 != 0 && ((fabsl(d) <= rangemax2 && u1 > 1.5) || fabsl(t) > 1 || !isnumberl(t))) {
 	printf("Pure C sincospil_u35 sin arg=%.30Lg ulp=%.20g\n", d, u1);
       }
     }
@@ -208,13 +233,13 @@ int main(int argc,char **argv)
 
       double u0 = countULP2(t = sc.y, frx);
 
-      if (u0 != 0 && ((fabsl(d) <= rangemax2 && u0 > 0.505) || fabsl(t) > 1 || !isfinite(t))) {
+      if (u0 != 0 && ((fabsl(d) <= rangemax2 && u0 > 0.505) || fabsl(t) > 1 || !isnumberl(t))) {
 	printf("Pure C sincospil_u05 cos arg=%.30Lg ulp=%.20g\n", d, u0);
       }
 
       double u1 = countULP2(t = sc.y, frx);
 
-      if (u1 != 0 && ((fabsl(d) <= rangemax2 && u1 > 1.5) || fabsl(t) > 1 || !isfinite(t))) {
+      if (u1 != 0 && ((fabsl(d) <= rangemax2 && u1 > 1.5) || fabsl(t) > 1 || !isnumberl(t))) {
 	printf("Pure C sincospil_u35 cos arg=%.30Lg ulp=%.20g\n", d, u1);
       }
     }
@@ -229,28 +254,28 @@ int main(int argc,char **argv)
 
       double u0 = countULP(t = xsin(d), frx);
       
-      if ((fabsl(d) <= rangemax && u0 > 3.5) || fabsl(t) > 1 || !isfinite(t)) {
+      if ((fabsl(d) <= rangemax && u0 > 3.5) || fabsl(t) > 1 || !isnumberl(t)) {
 	printf("Pure C sin arg=%.20g ulp=%.20g\n", d, u0);
 	fflush(stdout);
       }
 
       double u1 = countULP(sc.x, frx);
       
-      if ((fabsl(d) <= rangemax && u1 > 3.5) || fabsl(t) > 1 || !isfinite(t)) {
+      if ((fabsl(d) <= rangemax && u1 > 3.5) || fabsl(t) > 1 || !isnumberl(t)) {
 	printf("Pure C sincos sin arg=%.20g ulp=%.20g\n", d, u1);
 	fflush(stdout);
       }
 
       double u2 = countULP(t = xsin_u1(d), frx);
       
-      if ((fabsl(d) <= rangemax && u2 > 1) || fabsl(t) > 1 || !isfinite(t)) {
+      if ((fabsl(d) <= rangemax && u2 > 1) || fabsl(t) > 1 || !isnumberl(t)) {
 	printf("Pure C sin_u1 arg=%.20g ulp=%.20g\n", d, u2);
 	fflush(stdout);
       }
 
       double u3 = countULP(t = sc2.x, frx);
       
-      if ((fabsl(d) <= rangemax && u3 > 1) || fabsl(t) > 1 || !isfinite(t)) {
+      if ((fabsl(d) <= rangemax && u3 > 1) || fabsl(t) > 1 || !isnumberl(t)) {
 	printf("Pure C sincos_u1 sin arg=%.20g ulp=%.20g\n", d, u3);
 	fflush(stdout);
       }
@@ -262,28 +287,28 @@ int main(int argc,char **argv)
 
       double u0 = countULP(t = xcos(d), frx);
       
-      if ((fabsl(d) <= rangemax && u0 > 3.5) || fabsl(t) > 1 || !isfinite(t)) {
+      if ((fabsl(d) <= rangemax && u0 > 3.5) || fabsl(t) > 1 || !isnumberl(t)) {
 	printf("Pure C cos arg=%.20g ulp=%.20g\n", d, u0);
 	fflush(stdout);
       }
 
       double u1 = countULP(t = sc.y, frx);
       
-      if ((fabsl(d) <= rangemax && u1 > 3.5) || fabsl(t) > 1 || !isfinite(t)) {
+      if ((fabsl(d) <= rangemax && u1 > 3.5) || fabsl(t) > 1 || !isnumberl(t)) {
 	printf("Pure C sincos cos arg=%.20g ulp=%.20g\n", d, u1);
 	fflush(stdout);
       }
 
       double u2 = countULP(t = xcos_u1(d), frx);
       
-      if ((fabsl(d) <= rangemax && u2 > 1) || fabsl(t) > 1 || !isfinite(t)) {
+      if ((fabsl(d) <= rangemax && u2 > 1) || fabsl(t) > 1 || !isnumberl(t)) {
 	printf("Pure C cos_u1 arg=%.20g ulp=%.20g\n", d, u2);
 	fflush(stdout);
       }
 
       double u3 = countULP(t = sc2.y, frx);
       
-      if ((fabsl(d) <= rangemax && u3 > 1) || fabsl(t) > 1 || !isfinite(t)) {
+      if ((fabsl(d) <= rangemax && u3 > 1) || fabsl(t) > 1 || !isnumberl(t)) {
 	printf("Pure C sincos_u1 cos arg=%.20g ulp=%.20g\n", d, u3);
 	fflush(stdout);
       }

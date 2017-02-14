@@ -85,14 +85,20 @@ mpfr_t fra, frb, frc, frd, frw, frx, fry, frz;
 #define POSITIVE_INFINITYf ((float)INFINITY)
 #define NEGATIVE_INFINITYf (-(float)INFINITY)
 
+int isnumber(double x) { return !isinf(x) && !isnan(x); }
+int isPlusZero(double x) { return x == 0 && copysign(1, x) == 1; }
+int isMinusZero(double x) { return x == 0 && copysign(1, x) == -1; }
+
 double countULP(float d, mpfr_t c) {
   float c2 = mpfr_get_d(c, GMP_RNDN);
   if (c2 == 0 && d != 0) return 10000;
+  //if (isPlusZero(c2) && !isPlusZero(d)) return 10003;
+  //if (isMinusZero(c2) && !isMinusZero(d)) return 10004;
   if (isnan(c2) && isnan(d)) return 0;
   if (isnan(c2) || isnan(d)) return 10001;
   if (c2 == POSITIVE_INFINITYf && d == POSITIVE_INFINITYf) return 0;
   if (c2 == NEGATIVE_INFINITYf && d == NEGATIVE_INFINITYf) return 0;
-  if (!isfinite(c2) || !isfinite(d)) return 10002;
+  if (!isnumber(c2) || !isnumber(d)) return 10002;
 
   //
 
@@ -111,11 +117,13 @@ double countULP(float d, mpfr_t c) {
 double countULP2(float d, mpfr_t c) {
   float c2 = mpfr_get_d(c, GMP_RNDN);
   if (c2 == 0 && d != 0) return 10000;
+  //if (isPlusZero(c2) && !isPlusZero(d)) return 10003;
+  //if (isMinusZero(c2) && !isMinusZero(d)) return 10004;
   if (isnan(c2) && isnan(d)) return 0;
   if (isnan(c2) || isnan(d)) return 10001;
   if (c2 == POSITIVE_INFINITYf && d == POSITIVE_INFINITYf) return 0;
   if (c2 == NEGATIVE_INFINITYf && d == NEGATIVE_INFINITYf) return 0;
-  if (!isfinite(c2) || !isfinite(d)) return 10002;
+  if (!isnumber(c2) || !isnumber(d)) return 10002;
 
   //
   
@@ -145,6 +153,10 @@ typedef union {
 
 float rnd() {
   conv32_t c;
+  switch(random() & 15) {
+  case 0: return  INFINITY;
+  case 1: return -INFINITY;
+  }
 #ifdef ENABLE_SYS_getrandom
   syscall(SYS_getrandom, &c.u32, sizeof(c.u32), 0);
 #else
@@ -161,7 +173,7 @@ float rnd_fr() {
 #else
     c.u32 = (uint32_t)random() | ((uint32_t)random() << 31);
 #endif
-  } while(!isfinite(c.f));
+  } while(!isnumber(c.f));
   return c.f;
 }
 
@@ -173,7 +185,7 @@ float rnd_zo() {
 #else
     c.u32 = (uint32_t)random() | ((uint32_t)random() << 31);
 #endif
-  } while(!isfinite(c.f) || c.f < -1 || 1 < c.f);
+  } while(!isnumber(c.f) || c.f < -1 || 1 < c.f);
   return c.f;
 }
 
@@ -281,13 +293,13 @@ int main(int argc,char **argv)
 
       double u0 = countULP2(t = vget(sc.x, e), frx);
 
-      if (u0 != 0 && ((fabs(d) <= rangemax2 && u0 > 0.505) || fabs(t) > 1 || !isfinite(t))) {
+      if (u0 != 0 && ((fabs(d) <= rangemax2 && u0 > 0.505) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincospif_u05 sin arg=%.20g ulp=%.20g\n", d, u0);
       }
 
       double u1 = countULP2(t = vget(sc2.x, e), frx);
 
-      if (u1 != 0 && ((fabs(d) <= rangemax2 && u1 > 1.6) || fabs(t) > 1 || !isfinite(t))) {
+      if (u1 != 0 && ((fabs(d) <= rangemax2 && u1 > 1.6) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincospif_u35 sin arg=%.20g ulp=%.20g\n", d, u1);
       }
     }
@@ -299,13 +311,13 @@ int main(int argc,char **argv)
 
       double u0 = countULP2(t = vget(sc.y, e), frx);
 
-      if (u0 != 0 && ((fabs(d) <= rangemax2 && u0 > 0.505) || fabs(t) > 1 || !isfinite(t))) {
+      if (u0 != 0 && ((fabs(d) <= rangemax2 && u0 > 0.505) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincospif_u05 cos arg=%.20g ulp=%.20g\n", d, u0);
       }
 
       double u1 = countULP2(t = vget(sc.y, e), frx);
 
-      if (u1 != 0 && ((fabs(d) <= rangemax2 && u1 > 1.5) || fabs(t) > 1 || !isfinite(t))) {
+      if (u1 != 0 && ((fabs(d) <= rangemax2 && u1 > 1.5) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincospif_u35 cos arg=%.20g ulp=%.20g\n", d, u1);
       }
     }
@@ -319,28 +331,28 @@ int main(int argc,char **argv)
 
       float u0 = countULP(t = vget(xsinf(vd), e), frx);
       
-      if (u0 != 0 && ((fabs(d) <= rangemax && u0 > 3.5) || fabs(t) > 1 || !isfinite(t))) {
+      if (u0 != 0 && ((fabs(d) <= rangemax && u0 > 3.5) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sinf arg=%.20g ulp=%.20g\n", d, u0);
 	fflush(stdout);
       }
 
       float u1 = countULP(t = vget(sc.x, e), frx);
       
-      if (u1 != 0 && ((fabs(d) <= rangemax && u1 > 3.5) || fabs(t) > 1 || !isfinite(t))) {
+      if (u1 != 0 && ((fabs(d) <= rangemax && u1 > 3.5) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincosf sin arg=%.20g ulp=%.20g\n", d, u1);
 	fflush(stdout);
       }
 
       float u2 = countULP(t = vget(xsinf_u1(vd), e), frx);
       
-      if (u2 != 0 && ((fabs(d) <= rangemax && u2 > 1) || fabs(t) > 1 || !isfinite(t))) {
+      if (u2 != 0 && ((fabs(d) <= rangemax && u2 > 1) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sinf_u1 arg=%.20g ulp=%.20g\n", d, u2);
 	fflush(stdout);
       }
 
       float u3 = countULP(t = vget(sc2.x, e), frx);
       
-      if (u3 != 0 && ((fabs(d) <= rangemax && u3 > 1) || fabs(t) > 1 || !isfinite(t))) {
+      if (u3 != 0 && ((fabs(d) <= rangemax && u3 > 1) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincosf_u1 sin arg=%.20g ulp=%.20g\n", d, u3);
 	fflush(stdout);
       }
@@ -352,28 +364,28 @@ int main(int argc,char **argv)
 
       float u0 = countULP(t = vget(xcosf(vd), e), frx);
       
-      if (u0 != 0 && ((fabs(d) <= rangemax && u0 > 3.5) || fabs(t) > 1 || !isfinite(t))) {
+      if (u0 != 0 && ((fabs(d) <= rangemax && u0 > 3.5) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " cosf arg=%.20g ulp=%.20g\n", d, u0);
 	fflush(stdout);
       }
 
       float u1 = countULP(t = vget(sc.y, e), frx);
       
-      if (u1 != 0 && ((fabs(d) <= rangemax && u1 > 3.5) || fabs(t) > 1 || !isfinite(t))) {
+      if (u1 != 0 && ((fabs(d) <= rangemax && u1 > 3.5) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincosf cos arg=%.20g ulp=%.20g\n", d, u1);
 	fflush(stdout);
       }
 
       float u2 = countULP(t = vget(xcosf_u1(vd), e), frx);
       
-      if (u2 != 0 && ((fabs(d) <= rangemax && u2 > 1) || fabs(t) > 1 || !isfinite(t))) {
+      if (u2 != 0 && ((fabs(d) <= rangemax && u2 > 1) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " cosf_u1 arg=%.20g ulp=%.20g\n", d, u2);
 	fflush(stdout);
       }
 
       float u3 = countULP(t = vget(sc2.y, e), frx);
       
-      if (u3 != 0 && ((fabs(d) <= rangemax && u3 > 1) || fabs(t) > 1 || !isfinite(t))) {
+      if (u3 != 0 && ((fabs(d) <= rangemax && u3 > 1) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincosf_u1 cos arg=%.20g ulp=%.20g\n", d, u3);
 	fflush(stdout);
       }

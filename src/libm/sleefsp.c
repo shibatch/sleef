@@ -10,6 +10,7 @@
 #include <stdint.h>
 #include <math.h>
 #include <limits.h>
+#include <float.h>
 
 #include "misc.h"
 
@@ -830,6 +831,7 @@ static Sleef_float2 atan2kf_u1(Sleef_float2 y, Sleef_float2 x) {
 }
 
 EXPORT CONST float xatan2f_u1(float y, float x) {
+  if (xfabsf(x) < 2.9387372783541830947e-39f) { y *= (1ULL << 24); x *= (1ULL << 24); } // nexttowardf((1.0 / FLT_MAX), 1)
   Sleef_float2 d = atan2kf_u1(df(xfabsf(y), 0), df(x, 0));
   float r = d.x + d.y;
 
@@ -1235,8 +1237,9 @@ EXPORT CONST float xcbrtf_u1(float d) {
 // gcc -I../common sleefsp.c -lm
 #include <stdlib.h>
 int main(int argc, char **argv) {
-  float d = atof(argv[1]);
-  float c = xexpf(d);
+  float d1 = atof(argv[1]);
+  float d2 = atof(argv[2]);
+  float c = xatan2f_u1(d1, d2);
   printf("%g\n", (double)c);
   //Sleef_float2 r = xsincospif_u35(d);
   //printf("%g, %g\n", (double)r.x, (double)r.y);

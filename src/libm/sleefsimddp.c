@@ -9,6 +9,7 @@
 #include <assert.h>
 #include <math.h>
 #include <limits.h>
+#include <float.h>
 
 #include "misc.h"
 
@@ -907,6 +908,10 @@ EXPORT CONST vdouble xatan2(vdouble y, vdouble x) {
 }
 
 EXPORT CONST vdouble xatan2_u1(vdouble y, vdouble x) {
+  vopmask o = vlt_vo_vd_vd(vabs_vd_vd(x), vcast_vd_d(5.5626846462680083984e-309)); // nexttoward((1.0 / DBL_MAX), 1)
+  x = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(x, vcast_vd_d(1ULL << 53)), x);
+  y = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(y, vcast_vd_d(1ULL << 53)), y);
+
   vdouble2 d = atan2k_u1(vcast_vd2_vd_vd(vabs_vd_vd(y), vcast_vd_d(0)), vcast_vd2_vd_vd(x, vcast_vd_d(0)));
   vdouble r = vadd_vd_vd_vd(d.x, d.y);
 

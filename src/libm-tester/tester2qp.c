@@ -28,10 +28,23 @@
 
 mpfr_t fra, frb, frc, frd, frw, frx, fry, frz;
 
+#define POSITIVE_INFINITY INFINITY
+#define NEGATIVE_INFINITY (-INFINITY)
+
+int isnumberq(Sleef_quad x) { return !isinfq(x) && !isnanq(x); }
+int isPlusZeroq(Sleef_quad x) { return x == 0 && copysignq(1, x) == 1; }
+int isMinusZeroq(Sleef_quad x) { return x == 0 && copysignq(1, x) == -1; }
+
 double countULP(Sleef_quad d, mpfr_t c) {
   Sleef_quad c2 = mpfr_get_f128(c, GMP_RNDN);
   if (c2 == 0 && d != 0) return 10000;
-  if (!xisfiniteq(c2) && !xisfiniteq(d)) return 0;
+  //if (isPlusZeroq(c2) && !isPlusZeroq(d)) return 10003;
+  //if (isMinusZeroq(c2) && !isMinusZeroq(d)) return 10004;
+  if (isnanq(c2) && isnanq(d)) return 0;
+  if (isnanq(c2) || isnanq(d)) return 10001;
+  if (c2 == POSITIVE_INFINITY && d == POSITIVE_INFINITY) return 0;
+  if (c2 == NEGATIVE_INFINITY && d == NEGATIVE_INFINITY) return 0;
+  if (!isnumberq(c2) && !isnumberq(d)) return 0;
 
   int e;
   frexpq(mpfr_get_f128(c, GMP_RNDN), &e);
@@ -48,7 +61,13 @@ double countULP(Sleef_quad d, mpfr_t c) {
 double countULP2(Sleef_quad d, mpfr_t c) {
   Sleef_quad c2 = mpfr_get_f128(c, GMP_RNDN);
   if (c2 == 0 && d != 0) return 10000;
-  if (!xisfiniteq(c2) && !xisfiniteq(d)) return 0;
+  //if (isPlusZeroq(c2) && !isPlusZeroq(d)) return 10003;
+  //if (isMinusZeroq(c2) && !isMinusZeroq(d)) return 10004;
+  if (isnanq(c2) && isnanq(d)) return 0;
+  if (isnanq(c2) || isnanq(d)) return 10001;
+  if (c2 == POSITIVE_INFINITY && d == POSITIVE_INFINITY) return 0;
+  if (c2 == NEGATIVE_INFINITY && d == NEGATIVE_INFINITY) return 0;
+  if (!isnumberq(c2) && !isnumberq(d)) return 0;
 
   int e;
   frexpq(mpfr_get_f128(c, GMP_RNDN), &e);
@@ -70,6 +89,10 @@ typedef union {
 
 Sleef_quad rnd() {
   conv_t c;
+  switch(random() & 15) {
+  case 0: return  INFINITY;
+  case 1: return -INFINITY;
+  }
   syscall(SYS_getrandom, &c.u128, sizeof(c.u128), 0);
   return c.d;
 }
@@ -78,7 +101,7 @@ Sleef_quad rnd_fr() {
   conv_t c;
   do {
     syscall(SYS_getrandom, &c.u128, sizeof(c.u128), 0);
-  } while(!xisfiniteq(c.d));
+  } while(!isnumberq(c.d));
   return c.d;
 }
 
@@ -86,7 +109,7 @@ Sleef_quad rnd_zo() {
   conv_t c;
   do {
     syscall(SYS_getrandom, &c.u128, sizeof(c.u128), 0);
-  } while(!xisfiniteq(c.d) || c.d < -1 || 1 < c.d);
+  } while(!isnumberq(c.d) || c.d < -1 || 1 < c.d);
   return c.d;
 }
 
@@ -170,13 +193,13 @@ int main(int argc,char **argv)
 
       double u0 = countULP2(t = sc.x, frx);
 
-      if (u0 != 0 && ((fabs(d) <= rangemax2 && u0 > 0.505) || fabs(t) > 1 || !xisfiniteq(t))) {
+      if (u0 != 0 && ((fabs(d) <= rangemax2 && u0 > 0.505) || fabs(t) > 1 || !isnumberq(t))) {
 	printf("Pure C sincospiq_u05 sin arg="); printf128(d); printf(" ulp=%.20g\n", u0);
       }
 
       double u1 = countULP2(t = sc2.x, frx);
 
-      if (u1 != 0 && ((fabs(d) <= rangemax2 && u1 > 2.0) || fabs(t) > 1 || !xisfiniteq(t))) {
+      if (u1 != 0 && ((fabs(d) <= rangemax2 && u1 > 2.0) || fabs(t) > 1 || !isnumberq(t))) {
 	printf("Pure C sincospiq_u35 sin arg=%.30Lg ulp=%.20g\n", (long double)d, u1);
       }
 
@@ -189,13 +212,13 @@ int main(int argc,char **argv)
 
       double u0 = countULP2(t = sc.y, frx);
 
-      if (u0 != 0 && ((fabs(d) <= rangemax2 && u0 > 0.505) || fabs(t) > 1 || !xisfiniteq(t))) {
+      if (u0 != 0 && ((fabs(d) <= rangemax2 && u0 > 0.505) || fabs(t) > 1 || !isnumberq(t))) {
 	printf("Pure C sincospiq_u05 cos arg=%.30Lg ulp=%.20g\n", (long double)d, u0);
       }
 
       double u1 = countULP2(t = sc.y, frx);
 
-      if (u1 != 0 && ((fabs(d) <= rangemax2 && u1 > 2.0) || fabs(t) > 1 || !xisfiniteq(t))) {
+      if (u1 != 0 && ((fabs(d) <= rangemax2 && u1 > 2.0) || fabs(t) > 1 || !isnumberq(t))) {
 	printf("Pure C sincospiq_u35 cos arg=%.30Lg ulp=%.20g\n", (long double)d, u1);
       }
 
@@ -211,28 +234,28 @@ int main(int argc,char **argv)
 
       double u0 = countULP(t = xsin(d), frx);
       
-      if ((fabs(d) <= rangemax && u0 > 3.5) || fabs(t) > 1 || !xisfiniteq(t)) {
+      if ((fabs(d) <= rangemax && u0 > 3.5) || fabs(t) > 1 || !isnumberq(t)) {
 	printf("Pure C sin arg=%.20g ulp=%.20g\n", d, u0);
 	fflush(stdout);
       }
 
       double u1 = countULP(sc.x, frx);
       
-      if ((fabs(d) <= rangemax && u1 > 3.5) || fabs(t) > 1 || !xisfiniteq(t)) {
+      if ((fabs(d) <= rangemax && u1 > 3.5) || fabs(t) > 1 || !isnumberq(t)) {
 	printf("Pure C sincos sin arg=%.20g ulp=%.20g\n", d, u1);
 	fflush(stdout);
       }
 
       double u2 = countULP(t = xsin_u1(d), frx);
       
-      if ((fabs(d) <= rangemax && u2 > 1) || fabs(t) > 1 || !xisfiniteq(t)) {
+      if ((fabs(d) <= rangemax && u2 > 1) || fabs(t) > 1 || !isnumberq(t)) {
 	printf("Pure C sin_u1 arg=%.20g ulp=%.20g\n", d, u2);
 	fflush(stdout);
       }
 
       double u3 = countULP(t = sc2.x, frx);
       
-      if ((fabs(d) <= rangemax && u3 > 1) || fabs(t) > 1 || !xisfiniteq(t)) {
+      if ((fabs(d) <= rangemax && u3 > 1) || fabs(t) > 1 || !isnumberq(t)) {
 	printf("Pure C sincos_u1 sin arg=%.20g ulp=%.20g\n", d, u3);
 	fflush(stdout);
       }
@@ -244,28 +267,28 @@ int main(int argc,char **argv)
 
       double u0 = countULP(t = xcos(d), frx);
       
-      if ((fabs(d) <= rangemax && u0 > 3.5) || fabs(t) > 1 || !xisfiniteq(t)) {
+      if ((fabs(d) <= rangemax && u0 > 3.5) || fabs(t) > 1 || !isnumberq(t)) {
 	printf("Pure C cos arg=%.20g ulp=%.20g\n", d, u0);
 	fflush(stdout);
       }
 
       double u1 = countULP(t = sc.y, frx);
       
-      if ((fabs(d) <= rangemax && u1 > 3.5) || fabs(t) > 1 || !xisfiniteq(t)) {
+      if ((fabs(d) <= rangemax && u1 > 3.5) || fabs(t) > 1 || !isnumberq(t)) {
 	printf("Pure C sincos cos arg=%.20g ulp=%.20g\n", d, u1);
 	fflush(stdout);
       }
 
       double u2 = countULP(t = xcos_u1(d), frx);
       
-      if ((fabs(d) <= rangemax && u2 > 1) || fabs(t) > 1 || !xisfiniteq(t)) {
+      if ((fabs(d) <= rangemax && u2 > 1) || fabs(t) > 1 || !isnumberq(t)) {
 	printf("Pure C cos_u1 arg=%.20g ulp=%.20g\n", d, u2);
 	fflush(stdout);
       }
 
       double u3 = countULP(t = sc2.y, frx);
       
-      if ((fabs(d) <= rangemax && u3 > 1) || fabs(t) > 1 || !xisfiniteq(t)) {
+      if ((fabs(d) <= rangemax && u3 > 1) || fabs(t) > 1 || !isnumberq(t)) {
 	printf("Pure C sincos_u1 cos arg=%.20g ulp=%.20g\n", d, u3);
 	fflush(stdout);
       }

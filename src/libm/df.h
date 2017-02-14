@@ -267,9 +267,6 @@ static INLINE CONST vfloat2 dfdiv_vf2_vf2_vf2(vfloat2 n, vfloat2 d) {
 
   q.x = vmul_vf_vf_vf(n.x, t);
 
-  //vfloat u = vadd_vf_5vf(vsub_vf_vf_vf(vmul_vf_vf_vf(nhh, th), q.x), vmul_vf_vf_vf(nhh, tl), vmul_vf_vf_vf(nhl, th), vmul_vf_vf_vf(nhl, tl),
-  //vmul_vf_vf_vf(q.x, vsub_vf_5vf(vcast_vf_f(1), vmul_vf_vf_vf(dh, th), vmul_vf_vf_vf(dh, tl), vmul_vf_vf_vf(dl, th), vmul_vf_vf_vf(dl, tl))));
-
   vfloat u, w;
   w = vcast_vf_f(-1);
   w = vmla_vf_vf_vf_vf(dh, th, w);
@@ -295,7 +292,6 @@ static INLINE CONST vfloat2 dfmul_vf2_vf_vf(vfloat x, vfloat y) {
   vfloat2 r;
 
   r.x = vmul_vf_vf_vf(x, y);
-  //r.y = vadd_vf_5vf(vmul_vf_vf_vf(xh, yh), vneg_vf_vf(r.x), vmul_vf_vf_vf(xl, yh), vmul_vf_vf_vf(xh, yl), vmul_vf_vf_vf(xl, yl));
 
   vfloat t;
   t = vmla_vf_vf_vf_vf(xh, yh, vneg_vf_vf(r.x));
@@ -313,7 +309,6 @@ static INLINE CONST vfloat2 dfmul_vf2_vf2_vf(vfloat2 x, vfloat y) {
   vfloat2 r;
 
   r.x = vmul_vf_vf_vf(x.x, y);
-  //r.y = vadd_vf_6vf(vmul_vf_vf_vf(xh, yh), vneg_vf_vf(r.x), vmul_vf_vf_vf(xl, yh), vmul_vf_vf_vf(xh, yl), vmul_vf_vf_vf(xl, yl), vmul_vf_vf_vf(x.y, y));
 
   vfloat t;
   t = vmla_vf_vf_vf_vf(xh, yh, vneg_vf_vf(r.x));
@@ -332,7 +327,6 @@ static INLINE CONST vfloat2 dfmul_vf2_vf2_vf2(vfloat2 x, vfloat2 y) {
   vfloat2 r;
 
   r.x = vmul_vf_vf_vf(x.x, y.x);
-  //r.y = vadd_vf_7vf(vmul_vf_vf_vf(xh, yh), vneg_vf_vf(r.x), vmul_vf_vf_vf(xl, yh), vmul_vf_vf_vf(xh, yl), vmul_vf_vf_vf(xl, yl), vmul_vf_vf_vf(x.x, y.y), vmul_vf_vf_vf(x.y, y.x));
 
   vfloat t;
   t = vmla_vf_vf_vf_vf(xh, yh, vneg_vf_vf(r.x));
@@ -351,7 +345,6 @@ static INLINE CONST vfloat2 dfsqu_vf2_vf2(vfloat2 x) {
   vfloat2 r;
 
   r.x = vmul_vf_vf_vf(x.x, x.x);
-  //r.y = vadd_vf_5vf(vmul_vf_vf_vf(xh, xh), vneg_vf_vf(r.x), vmul_vf_vf_vf(vadd_vf_vf_vf(xh, xh), xl), vmul_vf_vf_vf(xl, xl), vmul_vf_vf_vf(x.x, vadd_vf_vf_vf(x.y, x.y)));
 
   vfloat t;
   t = vmla_vf_vf_vf_vf(xh, xh, vneg_vf_vf(r.x));
@@ -370,7 +363,6 @@ static INLINE CONST vfloat2 dfrec_vf2_vf(vfloat d) {
   vfloat2 q;
 
   q.x = t;
-  //q.y = vmul_vf_vf_vf(t, vsub_vf_5vf(vcast_vf_f(1), vmul_vf_vf_vf(dh, th), vmul_vf_vf_vf(dh, tl), vmul_vf_vf_vf(dl, th), vmul_vf_vf_vf(dl, tl)));
 
   vfloat u = vcast_vf_f(-1);
   u = vmla_vf_vf_vf_vf(dh, th, u);
@@ -389,7 +381,6 @@ static INLINE CONST vfloat2 dfrec_vf2_vf2(vfloat2 d) {
   vfloat2 q;
 
   q.x = t;
-  //q.y = t * (1 - dh * th - dh * tl - dl * th - dl * tl - d.y * t);
 
   vfloat u = vcast_vf_f(-1);
   u = vmla_vf_vf_vf_vf(dh, th, u);

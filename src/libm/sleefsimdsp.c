@@ -9,6 +9,7 @@
 #include <assert.h>
 #include <math.h>
 #include <limits.h>
+#include <float.h>
 
 #include "misc.h"
 
@@ -772,6 +773,10 @@ static INLINE CONST vfloat2 atan2kf_u1(vfloat2 y, vfloat2 x) {
 }
 
 EXPORT CONST vfloat xatan2f_u1(vfloat y, vfloat x) {
+  vopmask o = vlt_vo_vf_vf(vabs_vf_vf(x), vcast_vf_f(2.9387372783541830947e-39f)); // nexttowardf((1.0 / FLT_MAX), 1)
+  x = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(x, vcast_vf_f(1 << 24)), x);
+  y = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(y, vcast_vf_f(1 << 24)), y);
+  
   vfloat2 d = atan2kf_u1(vcast_vf2_vf_vf(vabs_vf_vf(y), vcast_vf_f(0)), vcast_vf2_vf_vf(x, vcast_vf_f(0)));
   vfloat r = vadd_vf_vf_vf(d.x, d.y);
 

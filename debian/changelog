@@ -1,3 +1,10 @@
+libsleef3 (3.1-1-ubuntu1) xenial; urgency=medium
+
+	* Fixed bug in atan2_u1
+	* Tester2 has better coverage
+
+ -- Naoki Shibata <shibatch@users.sourceforge.net>  Tue, 07 Feb 2017 19:24:12 +0900
+
 libsleef3 (3.1-0-ubuntu1) xenial; urgency=medium
 
   * This is version 3.1
