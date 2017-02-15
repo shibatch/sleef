@@ -1296,55 +1296,6 @@ EXPORT CONST double xatanh(double x) {
 
 //
 
-EXPORT CONST double xfma(double x, double y, double z) {
-  union {
-    double f;
-    long long int i;
-  } tmp;
-
-  tmp.f = x;
-  tmp.i = (tmp.i + 0x4000000) & 0xfffffffff8000000LL;
-  double xh = tmp.f, xl = x - xh;
-
-  tmp.f = y;
-  tmp.i = (tmp.i + 0x4000000) & 0xfffffffff8000000LL;
-  double yh = tmp.f, yl = y - yh;
-
-  double h = x * y;
-  double l = xh * yh - h + xl * yh + xh * yl + xl * yl;
-
-  double h2, l2, v;
-
-  h2 = h + z;
-  v = h2 - h;
-  l2 = (h - (h2 - v)) + (z - v) + l;
-
-  return (xisinf(h2) || xisnan(h2)) ? h2 : (h2 + l2);
-}
-
-EXPORT CONST double xsqrt(double d) { // max error : 0.5 ulp
-  double q = 1;
-
-  d = d < 0 ? NAN : d;
-  
-  if (d < 8.636168555094445E-78) {
-    d *= 1.157920892373162E77;
-    q = 2.9387358770557188E-39;
-  }
-
-  // http://en.wikipedia.org/wiki/Fast_inverse_square_root
-  double x = longBitsToDouble(0x5fe6ec85e7de30da - (doubleToRawLongBits(d + 1e-320) >> 1));
-
-  x = x * (1.5 - 0.5 * d * x * x);
-  x = x * (1.5 - 0.5 * d * x * x);
-  x = x * (1.5 - 0.5 * d * x * x);
-
-  // You can change xfma to fma if fma is correctly implemented
-  x = xfma(d * x, d * x, -d) * (x * -0.5) + d * x;
-
-  return d == INFINITY ? INFINITY : x * q;
-}
-
 EXPORT CONST double xcbrt(double d) { // max error : 2 ulps
   double x, y, q = 1.0;
   int e, r;
@@ -1462,6 +1413,50 @@ EXPORT CONST double xlog1p(double a) {
   return x;
 }
 
+//
+
+EXPORT CONST double xfma(double x, double y, double z) {
+  double h2 = x * y + z, q = 1;
+  if (fabsk(h2) < 1e-300) {
+    const double c0 = 1ULL << 54, c1 = c0 * c0, c2 = c1 * c1;
+    x *= c1;
+    y *= c1;
+    z *= c2;
+    q = 1.0 / c2;
+  }
+  Sleef_double2 d = ddmul_d2_d_d(x, y);
+  d = ddadd2_d2_d2_d(d, z);
+  if (xisinf(z) && !xisinf(x) && !xisnan(x) && !xisinf(y) && !xisnan(y)) h2 = z;
+  return (xisinf(h2) || xisnan(h2)) ? h2 : (d.x + d.y)*q;
+}
+
+EXPORT CONST double xsqrt(double d) {
+  double q = 1;
+
+  d = d < 0 ? NAN : d;
+  
+  if (d < 8.636168555094445E-78) {
+    d *= 1.157920892373162E77;
+    q = 2.9387358770557188E-39;
+  }
+
+  if (d > 1.3407807929942597e+154) {
+    d *= 7.4583407312002070e-155;
+    q = 1.1579208923731620e+77;
+  }
+  
+  // http://en.wikipedia.org/wiki/Fast_inverse_square_root
+  double x = longBitsToDouble(0x5fe6ec85e7de30da - (doubleToRawLongBits(d + 1e-320) >> 1));
+
+  x = x * (1.5 - 0.5 * d * x * x);
+  x = x * (1.5 - 0.5 * d * x * x);
+  x = x * (1.5 - 0.5 * d * x * x) * d;
+
+  Sleef_double2 d2 = ddmul_d2_d2_d2(ddadd2_d2_d_d2(d, ddmul_d2_d_d(x, x)), ddrec_d2_d(x));
+
+  return d == INFINITY ? INFINITY : (d2.x + d2.y) * (0.5 * q);
+}
+
 EXPORT CONST double xfabs(double x) { return fabsk(x); }
 
 EXPORT CONST double xcopysign(double x, double y) { return copysignk(x, y); }
@@ -1512,20 +1507,38 @@ EXPORT CONST double xrint(double d) {
   return (xisinf(x) || fabsk(x) >= (double)(1LL << 52)) ? d : copysignk(x - fr, d);
 }
 
+EXPORT CONST double xhypot(double x, double y) {
+  x = xfabs(x);
+  y = xfabs(y);
+  double min = xfmin(x, y);
+  double max = xfmax(x, y);
+
+  Sleef_double2 t = dddiv_d2_d2_d2(dd(min, 0), dd(max, 0));
+  t = ddmul_d2_d2_d(ddsqrt_d2_d2(ddadd2_d2_d2_d(ddsqu_d2_d2(t), 1)), max);
+  double ret = t.x + t.y;
+  if (isnan(ret)) ret = INFINITY;
+  if (min == 0) ret = max;
+  if (isnan(x) || isnan(y)) ret = NAN;
+  if (max == INFINITY) ret = INFINITY;
+  return ret;
+}
+
 #if 0
 // gcc -I../common sleefdp.c -lm
 #include <stdlib.h>
 int main(int argc, char **argv) {
   double d1 = atof(argv[1]);
   printf("arg1 = %.20g\n", d1);
-#if 0
   double d2 = atof(argv[2]);
   printf("arg2 = %.20g\n", d2);
+#if 0
   double d3 = atof(argv[3]);
   printf("arg3 = %.20g\n", d3);
 #endif
-  double r = xsqrt(d1);
-  printf("%.20g\n", r);
+  double r = xhypot(d1, d2);
+  //double r = xfma(d1, d2, d3);
+  printf("test = %.20g\n", r);
+  printf("corr = %.20g\n", hypot(d1, d2));
   //printf("%.20g %.20g\n", xround(d1), xrint(d1));
   //Sleef_double2 r = xsincospi_u35(d);
   //printf("%g, %g\n", (double)r.x, (double)r.y);

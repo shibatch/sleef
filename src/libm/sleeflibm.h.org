@@ -120,6 +120,7 @@ IMPORT CONST double Sleef_ldexp(double, int);
 IMPORT CONST int Sleef_ilogb(double);
 IMPORT CONST double Sleef_fma(double, double, double);
 IMPORT CONST double Sleef_sqrt_u05(double);
+IMPORT CONST double Sleef_hypot_u05(double, double);
 
 IMPORT CONST double Sleef_fabs(double);
 IMPORT CONST double Sleef_copysign(double, double);

@@ -47,6 +47,7 @@
 #define xilogb Sleef_ilogb
 #define xfma Sleef_fma
 #define xsqrt Sleef_sqrt_u05
+#define xhypot Sleef_hypot_u05
 
 #define xfabs Sleef_fabs
 #define xcopysign Sleef_copysign
