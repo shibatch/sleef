@@ -203,6 +203,7 @@ int main(int argc,char **argv)
       break;
     }
 
+#if 0
     Sleef_double2 sc  = xsincospi_u05(d);
     Sleef_double2 sc2 = xsincospi_u35(d);
 
@@ -616,7 +617,7 @@ int main(int argc,char **argv)
 	fflush(stdout);
       }
     }
-
+#endif
     //
 
     {
@@ -676,6 +677,20 @@ int main(int argc,char **argv)
 
     {
       mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_set_d(fry, d2, GMP_RNDN);
+      mpfr_dim(frx, frx, fry, GMP_RNDN);
+
+      double u0 = countULP(t = xfdim(d, d2), frx);
+      
+      if (u0 > 0.5) {
+	printf("Pure C fdim arg=%.20g, %.20g ulp=%.20g\n", d, d2, u0);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
+	fflush(stdout);
+      }
+    }
+
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
       mpfr_trunc(frx, frx);
 
       double u0 = countULP(t = xtrunc(d), frx);
@@ -721,7 +736,6 @@ int main(int argc,char **argv)
       
       if (u0 != 0) {
 	printf("Pure C round arg=%.24g ulp=%.20g\n", d, u0);
-	printf("Pure C round arg=%.24Lg ulp=%.20g\n", (long double)d, u0);
 	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
 	printf("%.20g\n", xrint(d));
 	fflush(stdout);
@@ -736,7 +750,6 @@ int main(int argc,char **argv)
       
       if (u0 != 0) {
 	printf("Pure C rint arg=%.24g ulp=%.20g\n", d, u0);
-	printf("Pure C rint arg=%.24Lg ulp=%.20g\n", (long double)d, u0);
 	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
 	double debug = xround(d);
 	printf("%.20g\n", debug);
@@ -753,7 +766,7 @@ int main(int argc,char **argv)
       double u0 = countULP2(t = xfma(d, d2, d3), frx);
       double c = mpfr_get_d(frx, GMP_RNDN);
 
-      if ((-1e+307 < c && c < 1e+307 && u0 >= 0.5) ||
+      if ((-1e+306 < c && c < 1e+306 && u0 >= 0.5) ||
 	  !(u0 < 0.5 || isinf(t))) {
 	printf("Pure C fma arg=%.20g, %.20g, %.20g  ulp=%.20g\n", d, d2, d3, u0);
 	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
@@ -779,11 +792,75 @@ int main(int argc,char **argv)
       mpfr_set_d(fry, d2, GMP_RNDN);
       mpfr_hypot(frx, frx, fry, GMP_RNDN);
 
-      double u0 = countULP2(t = xhypot(d, d2), frx);
+      double u0 = countULP2(t = xhypot_u05(d, d2), frx);
       double c = mpfr_get_d(frx, GMP_RNDN);
 
       if (u0 >= 0.5) {
 	printf("Pure C hypot arg=%.20g, %.20g  ulp=%.20g\n", d, d2, u0);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
+	fflush(stdout);
+      }
+    }
+
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_set_d(fry, d2, GMP_RNDN);
+      mpfr_hypot(frx, frx, fry, GMP_RNDN);
+
+      double u0 = countULP2(t = xhypot_u35(d, d2), frx);
+      double c = mpfr_get_d(frx, GMP_RNDN);
+
+      if (u0 >= 3.5) {
+	printf("Pure C hypot arg=%.20g, %.20g  ulp=%.20g\n", d, d2, u0);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
+	fflush(stdout);
+      }
+    }
+
+    {
+      t = xnextafter(d, d2);
+      double c = nextafter(d, d2);
+
+      if (!(isnan(t) && isnan(c)) && t != c) {
+	printf("Pure C nextafter arg=%.20g, %.20g\n", d, d2);
+	fflush(stdout);
+      }
+    }
+
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_set_exp(frx, 0);
+
+      double u0 = countULP(t = xfrfrexp(d), frx);
+
+      if (isnumber(d) && u0 != 0) {
+	printf("Pure C frfrexp arg=%.20g ulp=%.20g\n", d, u0);
+	fflush(stdout);
+      }
+    }
+
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      int cexp = mpfr_get_exp(frx);
+
+      int texp = xexpfrexp(d);
+      
+      if (isnumber(d) && cexp != texp) {
+	printf("Pure C expfrexp arg=%.20g\n", d);
+	fflush(stdout);
+      }
+    }
+
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_set_d(fry, d2, GMP_RNDN);
+      mpfr_fmod(frx, frx, fry, GMP_RNDN);
+
+      double u0 = countULP(t = xfmod(d, d2), frx);
+      long double c = mpfr_get_ld(frx, GMP_RNDN);
+
+      if (fabs(d / d2) < 1e+11 && fabsl(t-c) > fabsl(d2 * (1.0L / (1ULL << 32) / (1ULL << 32))) && fabsl(t-c) > DBL_MIN) {
+	printf("Pure C fmod arg=%.20g, %.20g  ulp=%.20g\n", d, d2, u0);
 	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
 	fflush(stdout);
       }

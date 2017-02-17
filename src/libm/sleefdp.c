@@ -1469,30 +1469,36 @@ EXPORT CONST double xfmin(double x, double y) {
   return y != y ? x : (x < y ? x : y);
 }
 
+EXPORT CONST double xfdim(double x, double y) {
+  double ret = x - y;
+  if (ret < 0 || x == y) ret = 0;
+  return ret;
+}
+
 EXPORT CONST double xtrunc(double x) {
-  double fr = x - (double)(1 << 31) * (int)(x * (1.0 / (1 << 31)));
-  fr = fr - (int)fr;
+  double fr = x - (double)(1 << 31) * (int32_t)(x * (1.0 / (1 << 31)));
+  fr = fr - (int32_t)fr;
   return (xisinf(x) || fabsk(x) >= (double)(1LL << 52)) ? x : copysignk(x - fr, x);
 }
 
 EXPORT CONST double xfloor(double x) {
-  double fr = x - (double)(1 << 31) * (int)(x * (1.0 / (1 << 31)));
-  fr = fr - (int)fr;
+  double fr = x - (double)(1 << 31) * (int32_t)(x * (1.0 / (1 << 31)));
+  fr = fr - (int32_t)fr;
   fr = fr < 0 ? fr+1.0 : fr;
   return (xisinf(x) || fabsk(x) >= (double)(1LL << 52)) ? x : copysignk(x - fr, x);
 }
 
 EXPORT CONST double xceil(double x) {
-  double fr = x - (double)(1 << 31) * (int)(x * (1.0 / (1 << 31)));
-  fr = fr - (int)fr;
+  double fr = x - (double)(1 << 31) * (int32_t)(x * (1.0 / (1 << 31)));
+  fr = fr - (int32_t)fr;
   fr = fr <= 0 ? fr : fr-1.0;
   return (xisinf(x) || fabsk(x) >= (double)(1LL << 52)) ? x : copysignk(x - fr, x);
 }
 
 EXPORT CONST double xround(double d) {
   double x = d + 0.5;
-  double fr = x - (double)(1 << 31) * (int)(x * (1.0 / (1 << 31)));
-  fr = fr - (int)fr;
+  double fr = x - (double)(1 << 31) * (int32_t)(x * (1.0 / (1 << 31)));
+  fr = fr - (int32_t)fr;
   if (fr == 0 && x <= 0) x--;
   fr = fr < 0 ? fr+1.0 : fr;
   return (xisinf(x) || fabsk(x) >= (double)(1LL << 52)) ? d : copysignk(x - fr, d);
@@ -1500,26 +1506,148 @@ EXPORT CONST double xround(double d) {
 
 EXPORT CONST double xrint(double d) {
   double x = d + 0.5;
-  double fr = x - (double)(1 << 31) * (int)(x * (1.0 / (1 << 31)));
-  int isodd = (1 & (int)fr) != 0;
-  fr = fr - (int)fr;
+  double fr = x - (double)(1 << 31) * (int32_t)(x * (1.0 / (1 << 31)));
+  int32_t isodd = (1 & (int32_t)fr) != 0;
+  fr = fr - (int32_t)fr;
   fr = (fr < 0 || (fr == 0 && isodd)) ? fr+1.0 : fr;
   return (xisinf(x) || fabsk(x) >= (double)(1LL << 52)) ? d : copysignk(x - fr, d);
 }
 
-EXPORT CONST double xhypot(double x, double y) {
+EXPORT CONST double xhypot_u05(double x, double y) {
+  x = xfabs(x);
+  y = xfabs(y);
+  double min = xfmin(x, y), n = min;
+  double max = xfmax(x, y), d = max;
+
+  if (max < DBL_MIN) { n *= 1ULL << 54; d *= 1ULL << 54; }
+  Sleef_double2 t = dddiv_d2_d2_d2(dd(n, 0), dd(d, 0));
+  t = ddmul_d2_d2_d(ddsqrt_d2_d2(ddadd2_d2_d2_d(ddsqu_d2_d2(t), 1)), max);
+  double ret = t.x + t.y;
+  if (xisnan(ret)) ret = INFINITY;
+  if (min == 0) ret = max;
+  if (xisnan(x) || xisnan(y)) ret = NAN;
+  if (max == INFINITY) ret = INFINITY;
+  return ret;
+}
+
+EXPORT CONST double xhypot_u35(double x, double y) {
   x = xfabs(x);
   y = xfabs(y);
   double min = xfmin(x, y);
   double max = xfmax(x, y);
 
-  Sleef_double2 t = dddiv_d2_d2_d2(dd(min, 0), dd(max, 0));
-  t = ddmul_d2_d2_d(ddsqrt_d2_d2(ddadd2_d2_d2_d(ddsqu_d2_d2(t), 1)), max);
-  double ret = t.x + t.y;
-  if (isnan(ret)) ret = INFINITY;
+  double t = min / max;
+  double ret = max * sqrt(1 + t*t);
   if (min == 0) ret = max;
-  if (isnan(x) || isnan(y)) ret = NAN;
+  if (xisnan(x) || xisnan(y)) ret = NAN;
   if (max == INFINITY) ret = INFINITY;
+  return ret;
+}
+
+EXPORT CONST double xnextafter(double x, double y) {
+  union {
+    double f;
+    int64_t i;
+  } cx;
+
+  cx.f = x;
+  if (cx.i < 0) cx.i = 0 - (cx.i ^ (1ULL << 63));
+
+  if (y > x) {
+    cx.i++;
+  } else if (y < x) {
+    cx.i--;
+  }
+
+  if (cx.i < 0) cx.i = 0 - (cx.i ^ (1ULL << 63));
+
+  if (cx.f == 0 && x != 0) cx.f = mulsign(0, x);
+  if (x == 0 && y == 0) cx.f = y;
+  if (xisnan(x) || xisnan(y)) cx.f = NAN;
+  
+  return cx.f;
+}
+
+EXPORT CONST double xfrfrexp(double x) {
+  union {
+    double f;
+    uint64_t u;
+  } cx;
+
+  if (fabsk(x) < DBL_MIN) x *= (1ULL << 63);
+  
+  cx.f = x;
+  cx.u &= ~0x7ff0000000000000ULL;
+  cx.u |=  0x3fe0000000000000ULL;
+
+  if (xisinf(x)) cx.f = mulsign(INFINITY, x);
+  if (x == 0) cx.f = x;
+  
+  return cx.f;
+}
+
+EXPORT CONST int xexpfrexp(double x) {
+  union {
+    double f;
+    uint64_t u;
+  } cx;
+
+  int ret = 0;
+  
+  if (fabsk(x) < DBL_MIN) { x *= (1ULL << 63); ret = -63; }
+  
+  cx.f = x;
+  ret += (int32_t)(((cx.u >> 52) & 0x7ff)) - 0x3fe;
+
+  if (x == 0 || xisnan(x) || xisinf(x)) ret = 0;
+  
+  return ret;
+}
+
+static INLINE CONST double nexttoward0(double x) {
+  union {
+    double f;
+    uint64_t u;
+  } cx;
+  cx.f = x;
+  cx.u--;
+  return x == 0 ? 0 : cx.f;
+}
+
+EXPORT CONST double xfmod(double x, double y) {
+  double nu = fabsk(x), de = fabsk(y);
+  if (de < DBL_MIN) { nu *= 1ULL << 54; de *= 1ULL << 54; }
+  
+  Sleef_double2 d = dddiv_d2_d2_d2(dd(nu, 0), dd(de, 0));
+  double dt = d.y < 0 ? nexttoward0(d.x) : d.x;
+  Sleef_double2 fr = d;
+  fr = ddnormalize_d2_d2(ddadd2_d2_d2_d(fr, -(double)(1ULL << 62) * (int32_t)(dt * (1.0 / (1ULL << 62)))));
+  dt = fr.y < 0 ? nexttoward0(fr.x) : fr.x;
+  fr = ddnormalize_d2_d2(ddadd2_d2_d2_d(fr, -(double)(1ULL << 31) * (int32_t)(dt * (1.0 / (1ULL << 31)))));
+  dt = fr.y < 0 ? nexttoward0(fr.x) : fr.x;
+  fr = ddnormalize_d2_d2(ddadd2_d2_d2_d(fr, -(double)(1ULL <<  0) * (int32_t)(dt * (1.0 / (1ULL <<  0)))));
+  
+  fr = ddmul_d2_d2_d(fr, y);
+  double ret = fr.x + fr.y;
+  ret = mulsign(mulsign(ret, x), y);
+  if (fabsk(x) < fabsk(y)) ret = x;
+
+  return ret;
+}
+
+EXPORT CONST double xscalb(double x, int exp) {
+  double p = pow2i(exp);
+  p = exp >=  1024 ? INFINITY : p;
+  p = exp <= -1075 ? 0 : p;
+
+  return x * p;
+}
+
+EXPORT CONST Sleef_double2 xmodf(double x) {
+  double fr = x - (double)(1 << 31) * (int32_t)(x * (1.0 / (1 << 31)));
+  fr = fr - (int32_t)fr;
+  fr = fabsk(x) >= (double)(1LL << 52) ? 0 : fr;
+  Sleef_double2 ret = { copysignk(fr, x), copysignk(x - fr, x) };
   return ret;
 }
 
@@ -1535,7 +1663,7 @@ int main(int argc, char **argv) {
   double d3 = atof(argv[3]);
   printf("arg3 = %.20g\n", d3);
 #endif
-  double r = xhypot(d1, d2);
+  double r = xhypot_u35(d1, d2);
   //double r = xfma(d1, d2, d3);
   printf("test = %.20g\n", r);
   printf("corr = %.20g\n", hypot(d1, d2));
