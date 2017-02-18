@@ -1636,11 +1636,18 @@ EXPORT CONST double xfmod(double x, double y) {
 }
 
 EXPORT CONST double xscalb(double x, int exp) {
-  double p = pow2i(exp);
-  p = exp >=  1024 ? INFINITY : p;
-  p = exp <= -1075 ? 0 : p;
+  if (exp >  2100) exp =  2100;
+  if (exp < -2100) exp = -2100;
+  
+  int e0 = exp >> 2;
+  if (exp < 0) e0++;
+  if (-100 < exp && exp < 100) e0 = 0;
+  int e1 = exp - (e0 << 2);
 
-  return x * p;
+  double p = pow2i(e0);
+  double ret = x * pow2i(e1) * p * p * p * p;
+  
+  return ret;
 }
 
 EXPORT CONST Sleef_double2 xmodf(double x) {

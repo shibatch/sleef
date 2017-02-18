@@ -50,12 +50,12 @@ double countULP(double d, mpfr_t c) {
   
   int e;
   frexpl(mpfr_get_d(c, GMP_RNDN), &e);
-  mpfr_set_ld(frw, fmaxl(ldexpl(1.0, e-53), DENORMAL_DBL_MIN), GMP_RNDN);
+  mpfr_set_ld(frb, fmaxl(ldexpl(1.0, e-53), DENORMAL_DBL_MIN), GMP_RNDN);
 
   mpfr_set_d(frd, d, GMP_RNDN);
-  mpfr_sub(fry, frd, c, GMP_RNDN);
-  mpfr_div(fry, fry, frw, GMP_RNDN);
-  double u = fabs(mpfr_get_d(fry, GMP_RNDN));
+  mpfr_sub(fra, frd, c, GMP_RNDN);
+  mpfr_div(fra, fra, frb, GMP_RNDN);
+  double u = fabs(mpfr_get_d(fra, GMP_RNDN));
 
   return u;
 }
@@ -75,12 +75,12 @@ double countULP2(double d, mpfr_t c) {
 
   int e;
   frexpl(mpfr_get_d(c, GMP_RNDN), &e);
-  mpfr_set_ld(frw, fmaxl(ldexpl(1.0, e-53), DBL_MIN), GMP_RNDN);
+  mpfr_set_ld(frb, fmaxl(ldexpl(1.0, e-53), DBL_MIN), GMP_RNDN);
 
   mpfr_set_d(frd, d, GMP_RNDN);
-  mpfr_sub(fry, frd, c, GMP_RNDN);
-  mpfr_div(fry, fry, frw, GMP_RNDN);
-  double u = fabs(mpfr_get_d(fry, GMP_RNDN));
+  mpfr_sub(fra, frd, c, GMP_RNDN);
+  mpfr_div(fra, fra, frb, GMP_RNDN);
+  double u = fabs(mpfr_get_d(fra, GMP_RNDN));
 
   return u;
 }
@@ -862,6 +862,36 @@ int main(int argc,char **argv)
       if (fabs(d / d2) < 1e+11 && fabsl(t-c) > fabsl(d2 * (1.0L / (1ULL << 32) / (1ULL << 32))) && fabsl(t-c) > DBL_MIN) {
 	printf("Pure C fmod arg=%.20g, %.20g  ulp=%.20g\n", d, d2, u0);
 	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
+	fflush(stdout);
+      }
+    }
+
+    {
+      int exp = (random() & 8191) - 4096;
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_set_exp(frx, mpfr_get_exp(frx) + exp);
+
+      double u0 = countULP(t = xscalb(d, exp), frx);
+
+      if (u0 > 0.5) {
+	printf("Pure C scalb arg=%.20g %d ulp=%.20g\n", d, exp, u0);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
+	fflush(stdout);
+      }
+    }
+
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_modf(fry, frz, frx, GMP_RNDN);
+
+      Sleef_double2 t2 = xmodf(d);
+      double u0 = countULP(t2.x, frz);
+      double u1 = countULP(t2.y, fry);
+
+      if (u0 != 0 || u1 != 0) {
+	printf("Pure C modf arg=%.20g ulp=%.20g %.20g\n", d, u0, u1);
+	printf("correct = %.20g, %.20g\n", mpfr_get_d(frz, GMP_RNDN), mpfr_get_d(fry, GMP_RNDN));
+	printf("test    = %.20g, %.20g\n", t2.x, t2.y);
 	fflush(stdout);
       }
     }
