@@ -1551,15 +1551,12 @@ EXPORT CONST double xnextafter(double x, double y) {
   } cx;
 
   cx.f = x;
-  if (cx.i < 0) cx.i = 0 - (cx.i ^ (1ULL << 63));
+  int c = (cx.i < 0) == (y < x);
+  if (c) cx.i = -(cx.i ^ (1ULL << 63));
 
-  if (y > x) {
-    cx.i++;
-  } else if (y < x) {
-    cx.i--;
-  }
+  if (x != y) cx.i--;
 
-  if (cx.i < 0) cx.i = 0 - (cx.i ^ (1ULL << 63));
+  if (c) cx.i = -(cx.i ^ (1ULL << 63));
 
   if (cx.f == 0 && x != 0) cx.f = mulsign(0, x);
   if (x == 0 && y == 0) cx.f = y;

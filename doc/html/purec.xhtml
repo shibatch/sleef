@@ -1,0 +1,1087 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN" "http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=1024" />
+<link rel="stylesheet" type="text/css" href="default.css"/>
+<title>SLEEF API Reference</title>
+</head>
+<body>
+<h1>SLEEF API Reference - Math library reference</h1>
+
+<h2>Table of contents</h2>
+
+<ul class="none">
+  <li><a href="index.xhtml">Introduction</a></li>
+  <li>&nbsp;</li>
+  <li><a href="purec.xhtml">Math library reference</a>
+  <ul class="disc">
+    <li><a href="purec.xhtml">Data types and functions for all architectures</a></li>
+    <ul class="circle">
+      <li><a href="purec.xhtml#datatypes">Data types</a></li>
+      <li><a href="purec.xhtml#trig">Trigonometric functions</a></li>
+      <li><a href="purec.xhtml#pow">Power, exponential, and logarithmic functions</a></li>
+      <li><a href="purec.xhtml#invtrig">Inverse trigonometric functions</a></li>
+      <li><a href="purec.xhtml#hyp">Hyperbolic functions and inverse hyperbolic functions</a></li>
+      <li><a href="purec.xhtml#other">Other functions</a></li>
+    </ul>
+    <li><a href="x86.xhtml">Data types and functions for x86 architectures</a></li>
+    <li><a href="aarch32.xhtml">Data types and functions for AArch32 architectures</a></li>
+  </ul>
+  </li>
+  <li>&nbsp;</li>
+  <li><a href="dft.xhtml">DFT library reference</a>
+  <li><a href="misc.xhtml">Other tools included in the package</a></li>
+  <li><a href="funcindex.xhtml">Function index</a></li>
+  </li>
+</ul>
+
+
+<h2 id="datatypes">Data types</h2>
+
+<p class="funcname"><b>Sleef_double2</b></p>
+
+<p class="header">Description</p>
+
+<p class="description">
+<b>Sleef_double2</b> is a generic data type for storing two double-precision
+floating point values, which is defined in &lt;sleef.h&gt; as follows:
+</p>
+
+<pre class="white">typedef struct {
+      double x, y;
+} Sleef_double2;
+</pre>
+
+<hr/>
+
+<p class="funcname"><b>Sleef_float2</b></p>
+
+<p class="header">Description</p>
+
+<p class="description">
+<b>Sleef_float2</b> is a generic data type for storing two single-precision
+floating point values, which is defined in &lt;sleef.h&gt; as follows:
+</p>
+
+<pre class="white">typedef struct {
+      float x, y;
+} Sleef_float2;
+</pre>
+
+<hr/>
+
+<p class="funcname"><b>Sleef_longdouble2</b></p>
+
+<p class="header">Description</p>
+
+<p class="description">
+<b>Sleef_longdouble2</b> is a generic data type for storing two
+extended-precision (80-bit) floating point values, which is defined in
+&lt;sleef.h&gt; as follows:
+</p>
+
+<pre class="white">typedef struct {
+      long double x, y;
+} Sleef_longdouble2;
+</pre>
+
+<h2 id="trig">Trigonometric Functions</h2>
+
+<p class="funcname"><b class="func">Sleef_sin_u10</b>, <b class="func">Sleef_sinf_u10</b> - sine functions with 1.0 ULP error bound</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_sin_u10</b>(<b>double</b> <i>a</i>);<br/>
+<b>float</b> <b class="func">Sleef_sinf_u10</b>(<b>float</b> <i>a</i>);<br/>
+<!--<b>long double</b> <b class="func">Sleef_sinl_u10</b>(<b>long double</b> <i>a</i>);<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions evaluates the sine function of a value
+  in <i>a</i>. The error bound of the returned value is 1.0 ULP
+  if <i>a</i> is in [-1e+14, 1e+14]
+  for the double-precision function or [-39000, 39000]
+  for the single-precision function. If <i>a</i> is a finite
+  value out of this range, an arbitrary value within [-1, 1] is
+  returned. These functions treat the non-number arguments and return
+  non-numbers as specified in the C99 specification. These functions
+  do not set errno nor raise an exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_sin_u35</b>, <b class="func">Sleef_sinf_u35</b> - sine functions with 3.5 ULP error bound</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_sin_u35</b>(<b>double</b> <i>a</i>);<br/>
+<b>float</b> <b class="func">Sleef_sinf_u35</b>(<b>float</b> <i>a</i>);<br/>
+<!--<b>long double</b> <b class="func">Sleef_sinl_u35</b>(<b>long double</b> <i>a</i>);<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions evaluates the sine function of a value
+  in <i>a</i>. The error bound of the returned value is 3.5 ULP
+  if <i>a</i> is in [-1e+14, 1e+14]
+  for the double-precision function or [-39000, 39000]
+  for the single-precision function. If <i>a</i> is a finite
+  value out of this range, an arbitrary value within [-1, 1] is
+  returned. These functions treat the non-number arguments and return
+  non-numbers as specified in the C99 specification. These functions
+  do not set errno nor raise an exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_cos_u10</b>, <b class="func">Sleef_cosf_u10</b> - cosine functions with 1.0 ULP error bound</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_cos_u10</b>(<b>double</b> <i>a</i>);<br/>
+<b>float</b> <b class="func">Sleef_cosf_u10</b>(<b>float</b> <i>a</i>);<br/>
+<!--<b>long double</b> <b class="func">Sleef_cosl_u10</b>(<b>long double</b> <i>a</i>);<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions evaluates the cosine function of a value
+  in <i>a</i>. The error bound of the returned value is 1.0 ULP
+  if <i>a</i> is in [-1e+14, 1e+14]
+  for the double-precision function or [-39000, 39000]
+  for the single-precision function. If <i>a</i> is a finite
+  value out of this range, an arbitrary value within [-1, 1] is
+  returned. These functions treat the non-number arguments and return
+  non-numbers as specified in the C99 specification. These functions
+  do not set errno nor raise an exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_cos_u35</b>, <b class="func">Sleef_cosf_u35</b> - cosine functions with 3.5 ULP error bound</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_cos_u35</b>(<b>double</b> <i>a</i>);<br/>
+<b>float</b> <b class="func">Sleef_cosf_u35</b>(<b>float</b> <i>a</i>);<br/>
+<!--<b>long double</b> <b class="func">Sleef_cosl_u35</b>(<b>long double</b> <i>a</i>);<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions evaluates the cosine function of a value
+  in <i>a</i>. The error bound of the returned value is 3.5 ULP
+  if <i>a</i> is in [-1e+14, 1e+14]
+  for the double-precision function or [-39000, 39000]
+  for the single-precision function. If <i>a</i> is a finite
+  value out of this range, an arbitrary value within [-1, 1] is
+  returned. These functions treat the non-number arguments and return
+  non-numbers as specified in the C99 specification. These functions
+  do not set errno nor raise an exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_tan_u10</b>, <b class="func">Sleef_tanf_u10</b> - tangent functions with 1.0 ULP error bound</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_tan_u10</b>(<b>double</b> <i>a</i>);<br/>
+<b>float</b> <b class="func">Sleef_tanf_u10</b>(<b>float</b> <i>a</i>);<br/>
+<!--<b>long double</b> <b class="func">Sleef_tanl_u10</b>(<b>long double</b> <i>a</i>);<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions evaluates the tangent function of a value
+  in <i>a</i>. The error bound of the returned value is 1.0 ULP
+  if <i>a</i> is in [-1e+14, 1e+14]
+  for the double-precision function or [-39000, 39000]
+  for the single-precision function. If <i>a</i> is a finite
+  value out of this range, an arbitrary value within [-1, 1] is
+  returned. These functions treat the non-number arguments and return
+  non-numbers as specified in the C99 specification. These functions
+  do not set errno nor raise an exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_tan_u35</b>, <b class="func">Sleef_tanf_u35</b> - tangent functions with 3.5 ULP error bound</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_tan_u35</b>(<b>double</b> <i>a</i>);<br/>
+<b>float</b> <b class="func">Sleef_tanf_u35</b>(<b>float</b> <i>a</i>);<br/>
+<!--<b>long double</b> <b class="func">Sleef_tanl_u35</b>(<b>long double</b> <i>a</i>);<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions evaluates the tangent function of a value
+  in <i>a</i>. The error bound of the returned value is 3.5 ULP
+  if <i>a</i> is in [-1e+14, 1e+14]
+  for the double-precision function or [-39000, 39000]
+  for the single-precision function. If <i>a</i> is a finite
+  value out of this range, an arbitrary value within [-1, 1] is
+  returned. These functions treat the non-number arguments and return
+  non-numbers as specified in the C99 specification. These functions
+  do not set errno nor raise an exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_sincos_u10</b>, <b class="func">Sleef_sincosf_u10</b> - evaluate sine and cosine functions simultaneously with 1.0 ULP error bound</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>Sleef_double2</b> <b class="func">Sleef_sincos_u10</b>(<b>double</b> <i>a</i>)<br/>
+<b>Sleef_float2</b> <b class="func">Sleef_sincosf_u10</b>(<b>float</b> <i>a</i>)<br/>
+<!--<b>Sleef_longdouble2</b> <b class="func">Sleef_sincosl_u10</b>(<b>long double</b> <i>a</i>)<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  Evaluates the sine and cosine functions of a value in <i>a</i> at a
+  time, and store the two values in <i>x</i> and <i>y</i> elements in
+  the returned value, respectively. The error bound of the returned
+  values is 1.0 ULP if <i>a</i> is in [-1e+14, 1e+14]
+  for the double-precision function or [-39000, 39000]
+  for the single-precision function. If <i>a</i> is a finite
+  value out of this range, an arbitrary value within [-1, 1] is
+  returned. If <i>a</i> is a NaN or infinity, a NaN is returned.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_sincos_u35</b>, <b class="func">Sleef_sincosf_u35</b> - evaluate sine and cosine functions simultaneously with 3.5 ULP error bound</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>Sleef_double2</b> <b class="func">Sleef_sincos_u35</b>(<b>double</b> <i>a</i>)<br/>
+<b>Sleef_float2</b> <b class="func">Sleef_sincosf_u35</b>(<b>float</b> <i>a</i>)<br/>
+<!--<b>Sleef_longdouble2</b> <b class="func">Sleef_sincosl_u35</b>(<b>long double</b> <i>a</i>)<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  Evaluates the sine and cosine functions of a value in <i>a</i> at a
+  time, and store the two values in <i>x</i> and <i>y</i> elements in
+  the returned value, respectively. The error bound of the returned
+  values is 3.5 ULP if <i>a</i> is in [-1e+14, 1e+14]
+  for the double-precision function or [-39000, 39000]
+  for the single-precision function. If <i>a</i> is a finite
+  value out of this range, an arbitrary value within [-1, 1] is
+  returned. If <i>a</i> is a NaN or infinity, a NaN is returned.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_sincospi4_u05</b>, <b class="func">Sleef_sincospi4f_u05</b>, <b class="func">Sleef_sincospi4l_u05</b> - evaluate <i class="math">sin( &pi;<i>a</i>/4 )</i> and <i class="math">cos( &pi;<i>a</i>/4 )</i> for given <i>a</i> simultaneously with 0.505 ULP error bound</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>Sleef_double2</b> <b class="func">Sleef_sincospi4_u05</b>(<b>double</b> <i>a</i>)<br/>
+<b>Sleef_float2</b> <b class="func">Sleef_sincospi4f_u05</b>(<b>float</b> <i>a</i>)<br/>
+<b>Sleef_longdouble2</b> <b class="func">Sleef_sincospi4l_u05</b>(<b>long double</b> <i>a</i>)<br/>
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  Evaluates the sine and cosine functions of <i class="math">
+  &pi;<i>a</i>/4 </i> at a time, and store the two values in <i>x</i>
+  and <i>y</i> elements in the returned value, respectively. The error
+  bound of the returned values is 0.505 ULP if <i>a</i> is in [-1e+9,
+  1e+9] for double-precision function or [-1e+7, 1e+7] for the
+  single-precision function. If <i>a</i> is a finite value out of this
+  range, an arbitrary value within [-1, 1] is returned. If <i>a</i> is
+  a NaN or infinity, a NaN is returned.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_sincospi4_u35</b>, <b class="func">Sleef_sincospi4f_u35</b>, <b class="func">Sleef_sincospi4l_u35</b> - evaluate <i class="math">sin( &pi;<i>a</i>/4 )</i> and <i class="math">cos( &pi;<i>a</i>/4 )</i> for given <i>a</i> simultaneously with 3.5 ULP error bound</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>Sleef_double2</b> <b class="func">Sleef_sincospi4_u35</b>(<b>double</b> <i>a</i>)<br/>
+<b>Sleef_float2</b> <b class="func">Sleef_sincospi4f_u35</b>(<b>float</b> <i>a</i>)<br/>
+<b>Sleef_longdouble2</b> <b class="func">Sleef_sincospi4l_u35</b>(<b>long double</b> <i>a</i>)<br/>
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  Evaluates the sine and cosine functions of <i class="math">
+  &pi;<i>a</i>/4 </i> at a time, and store the two values in <i>x</i>
+  and <i>y</i> elements in the returned value, respectively. The error
+  bound of the returned values is 3.5 ULP if <i>a</i> is in [-1e+9,
+  1e+9] for double-precision function or [-1e+7, 1e+7] for the
+  single-precision function. If <i>a</i> is a finite value out of this
+  range, an arbitrary value within [-1, 1] is returned. If <i>a</i> is
+  a NaN or infinity, a NaN is returned.
+</p>
+
+<h2 id="pow">Power, exponential, and logarithmic functions</h2>
+
+<p class="funcname"><b class="func">Sleef_pow_u10</b>, <b class="func">Sleef_powf_u10</b> - power functions</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_pow_u10</b>(<b>double</b> <i>x</i>, <b>double</b> <i>y</i>);<br/>
+<b>float</b> <b class="func">Sleef_powf_u10</b>(<b>float</b> <i>x</i>, <b>float</b> <i>y</i>);<br/>
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions return the value of <i>x</i> raised to the power
+  of <i>y</i>. The error bound of the returned value is 1.0 ULP. These
+  functions treat the non-number arguments and return non-numbers as
+  specified in the C99 specification. These functions do not set errno
+  nor raise an exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_exp_u10</b>, <b class="func">Sleef_expf_u10</b> - base-<i class="var">e</i> exponential functions</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_exp_u10</b>(<b>double</b> <i>a</i>);<br/>
+<b>float</b> <b class="func">Sleef_expf_u10</b>(<b>float</b> <i>a</i>);<br/>
+<!--<b>long double</b> <b class="func">Sleef_expl_u10</b>(<b>long double</b> <i>a</i>);<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions return the value of <i class="var">e</i> raised
+  to <i>a</i>. The error bound of the returned value is 1.0 ULP.
+  These functions treat the non-number arguments and return
+  non-numbers as specified in the C99 specification. These functions
+  do not set errno nor raise an exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_log_u10</b>, <b class="func">Sleef_logf_u10</b> - natural logarithmic functions with 1.0 ULP error bound</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_log_u10</b>(<b>double</b> <i>a</i>);<br/>
+<b>float</b> <b class="func">Sleef_logf_u10</b>(<b>float</b> <i>a</i>);<br/>
+<!--<b>long double</b> <b class="func">Sleef_logl_u10</b>(<b>long double</b> <i>a</i>);<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions return the natural logarithm of <i>a</i>. The error
+  bound of the returned value is 1.0 ULP.  These functions treat the
+  non-number arguments and return non-numbers as specified in the C99
+  specification. These functions do not set errno nor raise an
+  exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_log_u35</b>, <b class="func">Sleef_logf_u35</b> - natural logarithmic functions with 3.5 ULP error bound</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_log_u35</b>(<b>double</b> <i>a</i>);<br/>
+<b>float</b> <b class="func">Sleef_logf_u35</b>(<b>float</b> <i>a</i>);<br/>
+<!--<b>long double</b> <b class="func">Sleef_logl_u35</b>(<b>long double</b> <i>a</i>);<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions return the natural logarithm of <i>a</i>. The error
+  bound of the returned value is 3.5 ULP.  These functions treat the
+  non-number arguments and return non-numbers as specified in the C99
+  specification. These functions do not set errno nor raise an
+  exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_exp2_u10</b>, <b class="func">Sleef_exp2f_u10</b> - base-2 exponential functions</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_exp2_u10</b>(<b>double</b> <i>a</i>);<br/>
+<b>float</b> <b class="func">Sleef_exp2f_u10</b>(<b>float</b> <i>a</i>);<br/>
+<!--<b>long double</b> <b class="func">Sleef_exp2l_u10</b>(<b>long double</b> <i>a</i>);<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions return 2 raised to <i>a</i>. The error bound of the
+  returned value is 1.0 ULP.  These functions treat the non-number
+  arguments and return non-numbers as specified in the C99
+  specification. These functions do not set errno nor raise an
+  exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_exp10_u10</b>, <b class="func">Sleef_exp10f_u10</b> - base-10 exponential functions</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_exp10_u10</b>(<b>double</b> <i>a</i>);<br/>
+<b>float</b> <b class="func">Sleef_exp10f_u10</b>(<b>float</b> <i>a</i>);<br/>
+<!--<b>long double</b> <b class="func">Sleef_exp10l_u10</b>(<b>long double</b> <i>a</i>);<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions return 10 raised to <i>a</i>. The error bound of the
+  returned value is 1.0 ULP.  These functions treat the non-number
+  arguments and return non-numbers as specified in the C99
+  specification. These functions do not set errno nor raise an
+  exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_expm1_u10</b>, <b class="func">Sleef_expm1f_u10</b> - base-<i class="var">e</i> exponential functions minus 1</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_expm1_u10</b>(<b>double</b> <i>a</i>);<br/>
+<b>float</b> <b class="func">Sleef_expm1f_u10</b>(<b>float</b> <i>a</i>);<br/>
+<!--<b>long double</b> <b class="func">Sleef_expm1l_u10</b>(<b>long double</b> <i>a</i>);<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions return the value one less than <i class="var">e</i>
+  raised to <i>a</i>. The error bound of the returned value is 1.0
+  ULP.  These functions treat the non-number arguments and return
+  non-numbers as specified in the C99 specification. These functions
+  do not set errno nor raise an exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_log10_u10</b>, <b class="func">Sleef_log10f_u10</b> - base-10 logarithmic functions</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_log10_u10</b>(<b>double</b> <i>a</i>);<br/>
+<b>float</b> <b class="func">Sleef_log10f_u10</b>(<b>float</b> <i>a</i>);<br/>
+<!--<b>long double</b> <b class="func">Sleef_logl_u10</b>(<b>long double</b> <i>a</i>);<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions return the base-10 logarithm of <i>a</i>. The error
+  bound of the returned value is 1.0 ULP.  These functions treat the
+  non-number arguments and return non-numbers as specified in the C99
+  specification. These functions do not set errno nor raise an
+  exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_log1p_u10</b>, <b class="func">Sleef_log1pf_u10</b> - logarithm of one plus argument</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_log1p_u10</b>(<b>double</b> <i>a</i>);<br/>
+<b>float</b> <b class="func">Sleef_log1pf_u10</b>(<b>float</b> <i>a</i>);<br/>
+<!--<b>long double</b> <b class="func">Sleef_logl_u10</b>(<b>long double</b> <i>a</i>);<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions return the natural logarithm of (1+<i>a</i>). The error
+  bound of the returned value is 1.0 ULP.  These functions treat the
+  non-number arguments and return non-numbers as specified in the C99
+  specification. These functions do not set errno nor raise an
+  exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_cbrt_u10</b>, <b class="func">Sleef_cbrtf_u10</b> - cube root function with 1.0 ULP error bound</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_cbrt_u10</b>(<b>double</b> <i>a</i>);<br/>
+<b>float</b> <b class="func">Sleef_cbrtf_u10</b>(<b>float</b> <i>a</i>);<br/>
+<!--<b>long double</b> <b class="func">Sleef_logl_u10</b>(<b>long double</b> <i>a</i>);<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions return the real cube root of <i>a</i>. The error
+  bound of the returned value is 1.0 ULP.  These functions treat the
+  non-number arguments and return non-numbers as specified in the C99
+  specification. These functions do not set errno nor raise an
+  exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_cbrt_u35</b>, <b class="func">Sleef_cbrtf_u35</b> - cube root function with 3.5 ULP error bound</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_cbrt_u35</b>(<b>double</b> <i>a</i>);<br/>
+<b>float</b> <b class="func">Sleef_cbrtf_u35</b>(<b>float</b> <i>a</i>);<br/>
+<!--<b>long double</b> <b class="func">Sleef_logl_u35</b>(<b>long double</b> <i>a</i>);<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions return the real cube root of <i>a</i>. The error
+  bound of the returned value is 1.0 ULP.  These functions treat the
+  non-number arguments and return non-numbers as specified in the C99
+  specification. These functions do not set errno nor raise an
+  exception.
+</p>
+
+
+<h2 id="invtrig">Inverse Trigonometric Functions</h2>
+
+<p class="funcname"><b class="func">Sleef_asin_u10</b>, <b class="func">Sleef_asinf_u10</b> - arc sine functions with 1.0 ULP error bound</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_asin_u10</b>(<b>double</b> <i>a</i>);<br/>
+<b>float</b> <b class="func">Sleef_asinf_u10</b>(<b>float</b> <i>a</i>);<br/>
+<!--<b>long double</b> <b class="func">Sleef_asinl_u10</b>(<b>long double</b> <i>a</i>);<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions evaluates the arc sine function of a value
+  in <i>a</i>. The error bound of the returned value is 1.0 ULP. These
+  functions treat the non-number arguments and return non-numbers as
+  specified in the C99 specification. These functions do not set errno
+  nor raise an exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_asin_u35</b>, <b class="func">Sleef_asinf_u35</b> - arc sine functions with 3.5 ULP error bound</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_asin_u35</b>(<b>double</b> <i>a</i>);<br/>
+<b>float</b> <b class="func">Sleef_asinf_u35</b>(<b>float</b> <i>a</i>);<br/>
+<!--<b>long double</b> <b class="func">Sleef_asinl_u35</b>(<b>long double</b> <i>a</i>);<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions evaluates the arc sine function of a value
+  in <i>a</i>. The error bound of the returned value is 3.5 ULP. These
+  functions treat the non-number arguments and return non-numbers as
+  specified in the C99 specification. These functions do not set errno
+  nor raise an exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_acos_u10</b>, <b class="func">Sleef_acosf_u10</b> - arc cosine functions with 1.0 ULP error bound</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_acos_u10</b>(<b>double</b> <i>a</i>);<br/>
+<b>float</b> <b class="func">Sleef_acosf_u10</b>(<b>float</b> <i>a</i>);<br/>
+<!--<b>long double</b> <b class="func">Sleef_acosl_u10</b>(<b>long double</b> <i>a</i>);<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions evaluates the arc cosine function of a value
+  in <i>a</i>. The error bound of the returned value is 1.0 ULP. These
+  functions treat the non-number arguments and return non-numbers as
+  specified in the C99 specification. These functions do not set errno
+  nor raise an exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_acos_u35</b>, <b class="func">Sleef_acosf_u35</b> - arc cosine functions with 3.5 ULP error bound</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_acos_u35</b>(<b>double</b> <i>a</i>);<br/>
+<b>float</b> <b class="func">Sleef_acosf_u35</b>(<b>float</b> <i>a</i>);<br/>
+<!--<b>long double</b> <b class="func">Sleef_acosl_u35</b>(<b>long double</b> <i>a</i>);<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions evaluates the arc cosine function of a value
+  in <i>a</i>. The error bound of the returned value is 3.5 ULP. These
+  functions treat the non-number arguments and return non-numbers as
+  specified in the C99 specification. These functions do not set errno
+  nor raise an exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_atan_u10</b>, <b class="func">Sleef_atanf_u10</b> - arc tangent functions with 1.0 ULP error bound</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_atan_u10</b>(<b>double</b> <i>a</i>);<br/>
+<b>float</b> <b class="func">Sleef_atanf_u10</b>(<b>float</b> <i>a</i>);<br/>
+<!--<b>long double</b> <b class="func">Sleef_atanl_u10</b>(<b>long double</b> <i>a</i>);<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions evaluates the arc tangent function of a value
+  in <i>a</i>. The error bound of the returned value is 1.0 ULP. These
+  functions treat the non-number arguments and return non-numbers as
+  specified in the C99 specification. These functions do not set errno
+  nor raise an exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_atan_u35</b>, <b class="func">Sleef_atanf_u35</b> - arc tangent functions with 3.5 ULP error bound</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_atan_u35</b>(<b>double</b> <i>a</i>);<br/>
+<b>float</b> <b class="func">Sleef_atanf_u35</b>(<b>float</b> <i>a</i>);<br/>
+<!--<b>long double</b> <b class="func">Sleef_atanl_u35</b>(<b>long double</b> <i>a</i>);<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions evaluates the arc tangent function of a value
+  in <i>a</i>. The error bound of the returned value is 3.5 ULP. These
+  functions treat the non-number arguments and return non-numbers as
+  specified in the C99 specification. These functions do not set errno
+  nor raise an exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_atan2_u10</b>, <b class="func">Sleef_atan2f_u10</b> - arc tangent functions of two variables with 1.0 ULP error bound</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_atan2_u10</b>(<b>double</b> <i>y</i>, <b>double</b> <i>x</i>);<br/>
+<b>float</b> <b class="func">Sleef_atan2f_u10</b>(<b>float</b> <i>y</i>, <b>float</b> <i>x</i>);<br/>
+<!--<b>long double</b> <b class="func">Sleef_atan2l_u10</b>(<b>long double</b> <i>y</i>, <b>long double</b> <i>x</i>);<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions evaluates the arc tangent function
+  of <i>y</i>/<i>x</i>.  The quadrant of the result is determined
+  according to the signs of <i>x</i> and <i>y</i>.  The error bound of
+  the returned value is 1.0 ULP. These functions treat the non-number
+  arguments and return non-numbers as specified in the C99
+  specification. These functions do not set errno nor raise an
+  exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_atan2_u35</b>, <b class="func">Sleef_atan2f_u35</b> - arc tangent functions of two variables with 3.5 ULP error bound</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_atan2_u35</b>(<b>double</b> <i>y</i>, <b>double</b> <i>x</i>);<br/>
+<b>float</b> <b class="func">Sleef_atan2f_u35</b>(<b>float</b> <i>y</i>, <b>float</b> <i>x</i>);<br/>
+<!--<b>long double</b> <b class="func">Sleef_atan2l_u35</b>(<b>long double</b> <i>y</i>, <b>long double</b> <i>x</i>);<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions evaluates the arc tangent function
+  of <i>y</i>/<i>x</i>.  The quadrant of the result is determined
+  according to the signs of <i>x</i> and <i>y</i>.  The error bound of
+  the returned value is 3.5 ULP. These functions treat the non-number
+  arguments and return non-numbers as specified in the C99
+  specification. These functions do not set errno nor raise an
+  exception.
+</p>
+
+<h2 id="hyp">Hyperbolic functions and inverse hyperbolic functions</h2>
+
+<p class="funcname"><b class="func">Sleef_sinh_u10</b>, <b class="func">Sleef_sinhf_u10</b> - hyperbolic sine functions</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_sinh_u10</b>(<b>double</b> <i>a</i>);<br/>
+<b>float</b> <b class="func">Sleef_sinhf_u10</b>(<b>float</b> <i>a</i>);<br/>
+<!--<b>long double</b> <b class="func">Sleef_sinhl_u10</b>(<b>long double</b> <i>a</i>);<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions evaluates the hyperbolic sine function of a value
+  in <i>a</i>. The error bound of the returned value is 1.0 ULP
+  if <i>a</i> is in [-709, 709] for the double-precision function or
+  [-88.5, 88.5] for the single-precision function . If <i>a</i> is a
+  finite value out of this range, infinity with a correct sign or a
+  correct value with 1.0 ULP error bound is returned. These functions
+  treat the non-number arguments and return non-numbers as specified
+  in the C99 specification. These functions do not set errno nor raise
+  an exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_cosh_u10</b>, <b class="func">Sleef_coshf_u10</b> - hyperbolic cosine functions</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_cosh_u10</b>(<b>double</b> <i>a</i>);<br/>
+<b>float</b> <b class="func">Sleef_coshf_u10</b>(<b>float</b> <i>a</i>);<br/>
+<!--<b>long double</b> <b class="func">Sleef_coshl_u10</b>(<b>long double</b> <i>a</i>);<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions evaluates the hyperbolic cosine function of a value
+  in <i>a</i>. The error bound of the returned value is 1.0 ULP
+  if <i>a</i> is in [-709, 709] for the double-precision function or
+  [-88.5, 88.5] for the single-precision function . If <i>a</i> is a
+  finite value out of this range, infinity with a correct sign or a
+  correct value with 1.0 ULP error bound is returned. These functions
+  treat the non-number arguments and return non-numbers as specified
+  in the C99 specification. These functions do not set errno nor raise
+  an exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_tanh_u10</b>, <b class="func">Sleef_tanhf_u10</b> - hyperbolic tangent functions</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_tanh_u10</b>(<b>double</b> <i>a</i>);<br/>
+<b>float</b> <b class="func">Sleef_tanhf_u10</b>(<b>float</b> <i>a</i>);<br/>
+<!--<b>long double</b> <b class="func">Sleef_tanhl_u10</b>(<b>long double</b> <i>a</i>);<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions evaluates the hyperbolic tangent function of a value
+  in <i>a</i>. The error bound of the returned value is 1.0 ULP for
+  the double-precision function or 1.0001 ULP for the single-precision
+  function. These functions treat the non-number arguments and return
+  non-numbers as specified in the C99 specification. These functions
+  do not set errno nor raise an exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_asinh_u10</b>, <b class="func">Sleef_asinhf_u10</b> - inverse hyperbolic sine functions</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_asinh_u10</b>(<b>double</b> <i>a</i>);<br/>
+<b>float</b> <b class="func">Sleef_asinhf_u10</b>(<b>float</b> <i>a</i>);<br/>
+<!--<b>long double</b> <b class="func">Sleef_asinhl_u10</b>(<b>long double</b> <i>a</i>);<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions evaluates the inverse hyperbolic sine function of a
+  value in <i>a</i>. The error bound of the returned value is 1.0 ULP
+  if <i>a</i> is in [-1.34e+154, 1.34e+154] for the double-precision
+  function or 1.001 ULP if <i>a</i> is in [-1.84e+19, 1.84e+19] for
+  the single-precision function . If <i>a</i> is a finite value out of
+  this range, infinity with a correct sign or a correct value with 1.0
+  ULP error bound is returned. These functions treat the non-number
+  arguments and return non-numbers as specified in the C99
+  specification. These functions do not set errno nor raise an
+  exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_acosh_u10</b>, <b class="func">Sleef_acoshf_u10</b> - inverse hyperbolic cosine functions</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_acosh_u10</b>(<b>double</b> <i>a</i>);<br/>
+<b>float</b> <b class="func">Sleef_acoshf_u10</b>(<b>float</b> <i>a</i>);<br/>
+<!--<b>long double</b> <b class="func">Sleef_acoshl_u10</b>(<b>long double</b> <i>a</i>);<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions evaluates the inverse hyperbolic cosine function of
+  a value in <i>a</i>. The error bound of the returned value is 1.0
+  ULP if <i>a</i> is in [-1.34e+154, 1.34e+154] for the
+  double-precision function or 1.001 ULP if <i>a</i> is in [-1.84e+19,
+  1.84e+19] for the single-precision function . If <i>a</i> is a
+  finite value out of this range, infinity with a correct sign or a
+  correct value with 1.0 ULP error bound is returned. These functions
+  treat the non-number arguments and return non-numbers as specified
+  in the C99 specification. These functions do not set errno nor raise
+  an exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_atanh_u10</b>, <b class="func">Sleef_atanhf_u10</b> - inverse hyperbolic tangent functions</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_atanh_u10</b>(<b>double</b> <i>a</i>);<br/>
+<b>float</b> <b class="func">Sleef_atanhf_u10</b>(<b>float</b> <i>a</i>);<br/>
+<!--<b>long double</b> <b class="func">Sleef_atanhl_u10</b>(<b>long double</b> <i>a</i>);<br/>-->
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions evaluates the inverse hyperbolic tangent function of
+  a value in <i>a</i>. The error bound of the returned value is 1.0
+  ULP for the double-precision function or 1.0001 ULP for the
+  single-precision function. These functions treat the non-number
+  arguments and return non-numbers as specified in the C99
+  specification. These functions do not set errno nor raise an
+  exception.
+</p>
+
+<h2 id="other">Other functions</h2>
+
+<p class="funcname"><b class="func">Sleef_ldexp</b>, <b class="func">Sleef_ldexpf</b> - multiply by integral power of 2</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_ldexp</b>(<b>double</b> <i>m</i>, <b>int</b> <i>x</i>);<br/>
+<b>float</b> <b class="func">Sleef_ldexpf</b>(<b>float</b> <i>m</i>, <b>int</b> <i>x</i>);<br/>
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  These functions return the result of multiplying <i>m</i> by 2
+  raised to the power <i>x</i>.  These functions treat the non-number
+  arguments and return non-numbers as specified in the C99
+  specification. These functions do not set errno nor raise an
+  exception.
+</p>
+
+</body>
+</html>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN" "http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=1024" />
+<link rel="stylesheet" type="text/css" href="default.css"/>
+<title>SLEEF API Reference</title>
+</head>
+<body>
+<h1>SLEEF API Reference - Introduction</h1>
+
+<h2>Table of contents</h2>
+
+<ul class="none">
+  <li><a href="index.xhtml">Introduction</a></li>
+  <li><a href="purec.xhtml">Math library reference</a></li>
+  <li><a href="dft.xhtml">DFT library reference</a></li>
+  <li>&nbsp;</li>
+  <li><a href="misc.xhtml">Other tools included in the package</a></li>
+    <ul class="disc">
+      <li><a href="misc.xhtml#testerlibm">Testers for libm</a></li>
+      <li><a href="misc.xhtml#testerdft">Testers for DFT</a></li>
+      <li><a href="misc.xhtml#gencoef">Tool for generating coefficients</a></li>
+    </ul>
+  <li>&nbsp;</li>
+  <li><a href="funcindex.xhtml">Function index</a></li>
+</ul>
+
+<h2 id="overview">Overview</h2>
+
+<h3>Gencoef</h3>
+
+<p class="description">
+With this small tool, the coefficients for polynomial approximation
+used in kernels can be generated.
+</p>
+
+<p class="description">
+In order to change the configurations, please edit gencoefdp.c. In the
+beginning of the file, specifications of the parameters for generating
+coefficients are listed. Enable one of them by changing #if. Then, run
+make to compile the source code. Run the gencoef, and it will show the
+generated coefficients in a few minutes.
+</p>
+
+<p class="description">
+There are two phases of the program. The first phase is the regression
+for minimizing the maximum relative error. This problem can be reduced
+to a linear programming problem, and the Simplex method is used in
+this implementation. This requires multi-precision calculation, and
+the implementation uses the MPFR library to do this. In this phase,
+only a small number of values (specified by S macro, usually 40 or so)
+of the function to approximate are sampled within the argument
+range. The function to approximate can be given by FRFUNC
+function. Specifying higher values for S does not always give better
+results.
+</p>
+
+<p class="description">
+The second phase is to optimize the coefficients so that it gives good
+accuracy with double precision calculation. In this phase, it checks
+10000 points (specified by Q macro) within the specified argument
+range to see if the polynomial gives good error bound. In some cases,
+the last few terms have to be calculated in higher precision in order
+to achieve 1 ULP overall accuracy, and this implementation can take
+care of that. The L parameter specifies the number of high precision
+coefficients.
+</p>
+
+<p class="description">
+In some cases, it is desirable to fix the last few coefficients to
+values like 1. This can be specified if you define FIXCOEF0
+macro. This sometimes does not work, however. In this case, you need
+to specify the function to approximate as shown in the definition for
+cos.
+</p>
+
+<p class="description">
+Finding a set of good parameters is not a straightforward process. You
+usually need many iterations of trial and error.
+</p>
+
+</body>
+</html>

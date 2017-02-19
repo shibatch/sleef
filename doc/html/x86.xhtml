@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN" "http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=1024" />
+<link rel="stylesheet" type="text/css" href="default.css"/>
+<title>SLEEF API Reference</title>
+</head>
+<body>
+<h1>SLEEF API Reference - Math library reference</h1>
+
+<h2>Table of contents</h2>
+
+<ul class="none">
+  <li><a href="index.xhtml">Introduction</a></li>
+  <li>&nbsp;</li>
+  <li><a href="purec.xhtml">Math library reference</a>
+  <ul class="disc">
+    <li><a href="purec.xhtml">Data types and functions for all architectures</a></li>
+    <li><a href="x86.xhtml">Data types and functions for x86 architectures</a></li>
+    <ul class="circle">
+      <li><a href="x86.xhtml#datatypes">Data types</a></li>
+      <li><a href="x86.xhtml#trig">Trigonometric functions</a></li>
+      <li><a href="x86.xhtml#pow">Power, exponential, and logarithmic functions</a></li>
+      <li><a href="x86.xhtml#invtrig">Inverse trigonometric functions</a></li>
+      <li><a href="x86.xhtml#hyp">Hyperbolic functions and inverse hyperbolic functions</a></li>
+      <li><a href="x86.xhtml#other">Other functions</a></li>
+    </ul>
+    <li><a href="aarch32.xhtml">Data types and functions for AArch32 architectures</a></li>
+  </ul>
+  </li>
+  <li>&nbsp;</li>
+  <li><a href="dft.xhtml">DFT library reference</a>
+  <li><a href="misc.xhtml">Other tools included in the package</a></li>
+  <li><a href="funcindex.xhtml">Function index</a></li>
+  </li>
+</ul>
+
+<h2>Data types and functions for x86 architectures</h2>
+
+<h3 id="datatypes">Data types</h3>
+
+<p class="funcname"><b>Sleef___m128_2</b></p>
+
+<p class="header">Description</p>
+
+<p class="description">
+<b>Sleef___m128_2</b> is a data type for storing two __m128 values,
+which is defined in &lt;sleef.h&gt; as follows:
+</p>
+
+<pre class="code">typedef struct {
+  __m128 x, y;
+} Sleef___m128_2;
+</pre>
+
+<hr/>
+
+<p class="funcname"><b>Sleef___m128d_2</b></p>
+
+<p class="header">Description</p>
+
+<p class="description">
+<b>Sleef___m128d_2</b> is a data type for storing two __m128d values,
+which is defined in &lt;sleef.h&gt; as follows:
+</p>
+
+<pre class="code">typedef struct {
+  __m128d x, y;
+} Sleef___m128d_2;
+</pre>
+
+<hr/>
+
+<p class="funcname"><b>Sleef___m256_2</b></p>
+
+<p class="header">Description</p>
+
+<p class="description">
+<b>Sleef___m256_2</b> is a data type for storing two __m256 values,
+which is defined in &lt;sleef.h&gt; as follows:
+</p>
+
+<pre class="code">typedef struct {
+  __m256 x, y;
+} Sleef___m256_2;
+</pre>
+
+<hr/>
+
+<p class="funcname"><b>Sleef___m256d_2</b></p>
+
+<p class="header">Description</p>
+
+<p class="description">
+<b>Sleef___m256d_2</b> is a data type for storing two __m256d values,
+which is defined in &lt;sleef.h&gt; as follows:
+</p>
+
+<pre class="code">typedef struct {
+  __m256d x, y;
+} Sleef___m256d_2;
+</pre>
+
+<hr/>
+
+<p class="funcname"><b>Sleef___m512_2</b></p>
+
+<p class="header">Description</p>
+
+<p class="description">
+<b>Sleef___m512_2</b> is a data type for storing two __m512 values,
+which is defined in &lt;sleef.h&gt; as follows:
+</p>
+
+<pre class="code">typedef struct {
+  __m512 x, y;
+} Sleef___m512_2;
+</pre>
+
+<hr/>
+
+<p class="funcname"><b>Sleef___m512d_2</b></p>
+
+<p class="header">Description</p>
+
+<p class="description">
+<b>Sleef___m512d_2</b> is a data type for storing two __m512d values,
+which is defined in &lt;sleef.h&gt; as follows:
+</p>
+
+<pre class="code">typedef struct {
+  __m512d x, y;
+} Sleef___m512d_2;
+</pre>
+
+<h3 id="dpfuncs">SSE2 Double-Precision Functions</h3>
+
+<p class="funcname"><b>__m128d</b> <b class="func">Sleef_sind2_u10sse2</b>(<b>__m128d</b> <i>a</i>)</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+<b>__m128d</b> <b class="func">Sleef_sind2_u10sse2</b>(<b>__m128d</b> <i>a</i>)<br/>
+#include &lt;sleef.h&gt;<br/>
+Required instruction set : SSE2
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  Evaluates the sine function of a packed double-precision values
+  in <i>a</i>.  The error bound for each returned value is 1.0 ULP if
+  the corresponding element in <i>a</i> is in [-1e+14, 1e+14]. If the
+  element in <i>a</i> is out of this range, an arbitrary value within
+  [-1, 1] is returned. If the element in <i>a</i> is a NaN or
+  infinity, a NaN is returned.
+</p>
+
+<hr/>
+
+<p class="funcname"><b>Sleef_double2</b> <b class="func">Sleef_sincos_u10</b>(<b>double</b> <i>a</i>)</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+<b>Sleef___m128d_2</b> <b class="func">Sleef_sincosd2_u10sse2</b>(<b>__m128d</b> <i>a</i>)<br/>
+#include &lt;sleef.h&gt;<br/>
+Required instruction set : SSE2
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+  Evaluates the sine and cosine functions of a packed double-precision
+  values in <i>a</i> at a time, and store the two sets of values
+  in <i>x</i> and <i>y</i> elements in the returned value,
+  respectively. The error bound for the returned values is 1.0 ULP if
+  the corresponding element in <i>a</i> is in [-1e+14, 1e+14]. If the
+  element in <i>a</i> is out of this range, an arbitrary value within
+  [-1, 1] is returned. If the element in <i>a</i> is a NaN or
+  infinity, a NaN is returned.
+</p>
+
+<hr/>
+
+
+</body>
+</html>
