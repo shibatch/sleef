@@ -26,14 +26,14 @@
 #define DORENAME
 #include "rename.h"
 
-mpfr_t fra, frb, frc, frd, frw, frx, fry, frz;
-
 #define POSITIVE_INFINITY INFINITY
 #define NEGATIVE_INFINITY (-INFINITY)
 
 int isnumberq(Sleef_quad x) { return !isinfq(x) && !isnanq(x); }
 int isPlusZeroq(Sleef_quad x) { return x == 0 && copysignq(1, x) == 1; }
 int isMinusZeroq(Sleef_quad x) { return x == 0 && copysignq(1, x) == -1; }
+
+mpfr_t fra, frb, frc, frd;
 
 double countULP(Sleef_quad d, mpfr_t c) {
   Sleef_quad c2 = mpfr_get_f128(c, GMP_RNDN);
@@ -48,12 +48,12 @@ double countULP(Sleef_quad d, mpfr_t c) {
 
   int e;
   frexpq(mpfr_get_f128(c, GMP_RNDN), &e);
-  mpfr_set_f128(frw, fmaxq(ldexpq(1.0, e-113), FLT128_DENORM_MIN), GMP_RNDN);
+  mpfr_set_f128(frb, fmaxq(ldexpq(1.0, e-113), FLT128_DENORM_MIN), GMP_RNDN);
 
   mpfr_set_f128(frd, d, GMP_RNDN);
-  mpfr_sub(fry, frd, c, GMP_RNDN);
-  mpfr_div(fry, fry, frw, GMP_RNDN);
-  double u = fabs(mpfr_get_d(fry, GMP_RNDN));
+  mpfr_sub(fra, frd, c, GMP_RNDN);
+  mpfr_div(fra, fra, frb, GMP_RNDN);
+  double u = fabs(mpfr_get_d(fra, GMP_RNDN));
 
   return u;
 }
@@ -71,12 +71,12 @@ double countULP2(Sleef_quad d, mpfr_t c) {
 
   int e;
   frexpq(mpfr_get_f128(c, GMP_RNDN), &e);
-  mpfr_set_f128(frw, fmaxq(ldexpq(1.0, e-113), FLT128_MIN), GMP_RNDN);
+  mpfr_set_f128(frb, fmaxq(ldexpq(1.0, e-113), FLT128_MIN), GMP_RNDN);
 
   mpfr_set_f128(frd, d, GMP_RNDN);
-  mpfr_sub(fry, frd, c, GMP_RNDN);
-  mpfr_div(fry, fry, frw, GMP_RNDN);
-  double u = fabs(mpfr_get_d(fry, GMP_RNDN));
+  mpfr_sub(fra, frd, c, GMP_RNDN);
+  mpfr_div(fra, fra, frb, GMP_RNDN);
+  double u = fabs(mpfr_get_d(fra, GMP_RNDN));
 
   return u;
 }
@@ -143,6 +143,8 @@ void cospifr(mpfr_t ret, Sleef_quad d) {
 
 int main(int argc,char **argv)
 {
+  mpfr_t frw, frx, fry, frz;
+  
   mpfr_set_default_prec(2048);
   mpfr_inits(fra, frb, frc, frd, frw, frx, fry, frz, NULL);
 

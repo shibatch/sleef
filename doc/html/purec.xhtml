@@ -327,16 +327,16 @@ Link with -lsleef.
 
 <hr/>
 
-<p class="funcname"><b class="func">Sleef_sincospi4_u05</b>, <b class="func">Sleef_sincospi4f_u05</b>, <b class="func">Sleef_sincospi4l_u05</b> - evaluate <i class="math">sin( &pi;<i>a</i>/4 )</i> and <i class="math">cos( &pi;<i>a</i>/4 )</i> for given <i>a</i> simultaneously with 0.505 ULP error bound</p>
+<p class="funcname"><b class="func">Sleef_sincospi_u05</b>, <b class="func">Sleef_sincospif_u05</b>, <b class="func">Sleef_sincospil_u05</b> - evaluate <i class="math">sin( &pi;<i>a</i> )</i> and <i class="math">cos( &pi;<i>a</i> )</i> for given <i>a</i> simultaneously with 0.505 ULP error bound</p>
 
 <p class="header">Synopsis</p>
 
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b>Sleef_double2</b> <b class="func">Sleef_sincospi4_u05</b>(<b>double</b> <i>a</i>)<br/>
-<b>Sleef_float2</b> <b class="func">Sleef_sincospi4f_u05</b>(<b>float</b> <i>a</i>)<br/>
-<b>Sleef_longdouble2</b> <b class="func">Sleef_sincospi4l_u05</b>(<b>long double</b> <i>a</i>)<br/>
+<b>Sleef_double2</b> <b class="func">Sleef_sincospi_u05</b>(<b>double</b> <i>a</i>)<br/>
+<b>Sleef_float2</b> <b class="func">Sleef_sincospif_u05</b>(<b>float</b> <i>a</i>)<br/>
+<b>Sleef_longdouble2</b> <b class="func">Sleef_sincospil_u05</b>(<b>long double</b> <i>a</i>)<br/>
 <br/>
 Link with -lsleef.
 </p>
@@ -345,7 +345,7 @@ Link with -lsleef.
 
 <p class="description">
   Evaluates the sine and cosine functions of <i class="math">
-  &pi;<i>a</i>/4 </i> at a time, and store the two values in <i>x</i>
+  &pi;<i>a</i> </i> at a time, and store the two values in <i>x</i>
   and <i>y</i> elements in the returned value, respectively. The error
   bound of the returned values is 0.505 ULP if <i>a</i> is in [-1e+9,
   1e+9] for double-precision function or [-1e+7, 1e+7] for the
@@ -356,16 +356,16 @@ Link with -lsleef.
 
 <hr/>
 
-<p class="funcname"><b class="func">Sleef_sincospi4_u35</b>, <b class="func">Sleef_sincospi4f_u35</b>, <b class="func">Sleef_sincospi4l_u35</b> - evaluate <i class="math">sin( &pi;<i>a</i>/4 )</i> and <i class="math">cos( &pi;<i>a</i>/4 )</i> for given <i>a</i> simultaneously with 3.5 ULP error bound</p>
+<p class="funcname"><b class="func">Sleef_sincospi_u35</b>, <b class="func">Sleef_sincospif_u35</b>, <b class="func">Sleef_sincospil_u35</b> - evaluate <i class="math">sin( &pi;<i>a</i> )</i> and <i class="math">cos( &pi;<i>a</i> )</i> for given <i>a</i> simultaneously with 3.5 ULP error bound</p>
 
 <p class="header">Synopsis</p>
 
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b>Sleef_double2</b> <b class="func">Sleef_sincospi4_u35</b>(<b>double</b> <i>a</i>)<br/>
-<b>Sleef_float2</b> <b class="func">Sleef_sincospi4f_u35</b>(<b>float</b> <i>a</i>)<br/>
-<b>Sleef_longdouble2</b> <b class="func">Sleef_sincospi4l_u35</b>(<b>long double</b> <i>a</i>)<br/>
+<b>Sleef_double2</b> <b class="func">Sleef_sincospi_u35</b>(<b>double</b> <i>a</i>)<br/>
+<b>Sleef_float2</b> <b class="func">Sleef_sincospif_u35</b>(<b>float</b> <i>a</i>)<br/>
+<b>Sleef_longdouble2</b> <b class="func">Sleef_sincospil_u35</b>(<b>long double</b> <i>a</i>)<br/>
 <br/>
 Link with -lsleef.
 </p>
@@ -374,7 +374,7 @@ Link with -lsleef.
 
 <p class="description">
   Evaluates the sine and cosine functions of <i class="math">
-  &pi;<i>a</i>/4 </i> at a time, and store the two values in <i>x</i>
+  &pi;<i>a</i> </i> at a time, and store the two values in <i>x</i>
   and <i>y</i> elements in the returned value, respectively. The error
   bound of the returned values is 3.5 ULP if <i>a</i> is in [-1e+9,
   1e+9] for double-precision function or [-1e+7, 1e+7] for the
@@ -1060,6 +1060,126 @@ Link with -lsleef.
 
 <h2 id="other">Other functions</h2>
 
+<p class="funcname"><b class="func">Sleef_fabs</b>, <b class="func">Sleef_fabsf</b> - absolute value</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_fabs</b>(<b>double</b> <i>x</i>);<br/>
+<b>float</b> <b class="func">Sleef_fabsf</b>(<b>float</b> <i>x</i>);<br/>
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_fmax</b>, <b class="func">Sleef_fmaxf</b> - maximum of two numbers</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_fmax</b>(<b>double</b> <i>x</i>, <b>double</b> <i>y</i>);<br/>
+<b>float</b> <b class="func">Sleef_fmaxf</b>(<b>float</b> <i>x</i>, <b>float</b> <i>y</i>);<br/>
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_fmin</b>, <b class="func">Sleef_fminf</b> - minimum of two numbers</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_fmin</b>(<b>double</b> <i>x</i>, <b>double</b> <i>y</i>);<br/>
+<b>float</b> <b class="func">Sleef_fminf</b>(<b>float</b> <i>x</i>, <b>float</b> <i>y</i>);<br/>
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_fdim</b>, <b class="func">Sleef_fdimf</b> - positive difference</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_fdim</b>(<b>double</b> <i>x</i>, <b>double</b> <i>y</i>);<br/>
+<b>float</b> <b class="func">Sleef_fdimf</b>(<b>float</b> <i>x</i>, <b>float</b> <i>y</i>);<br/>
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_copysign</b>, <b class="func">Sleef_copysignf</b> - copy sign of a number</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_copysign</b>(<b>double</b> <i>x</i>, <b>double</b> <i>y</i>);<br/>
+<b>float</b> <b class="func">Sleef_copysignf</b>(<b>float</b> <i>x</i>, <b>float</b> <i>y</i>);<br/>
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_nextafter</b>, <b class="func">Sleef_nextafterf</b> - find the next representable FP value</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_nextafter</b>(<b>double</b> <i>x</i>, <b>double</b> <i>y</i>);<br/>
+<b>float</b> <b class="func">Sleef_nextafterf</b>(<b>float</b> <i>x</i>, <b>float</b> <i>y</i>);<br/>
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+</p>
+
+<hr/>
+
 <p class="funcname"><b class="func">Sleef_ldexp</b>, <b class="func">Sleef_ldexpf</b> - multiply by integral power of 2</p>
 
 <p class="header">Synopsis</p>
@@ -1081,6 +1201,266 @@ Link with -lsleef.
   arguments and return non-numbers as specified in the C99
   specification. These functions do not set errno nor raise an
   exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_frfrexp</b>, <b class="func">Sleef_frfrexpf</b> - fractional component of an FP number</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_frfrexp</b>(<b>double</b> <i>x</i>);<br/>
+<b>float</b> <b class="func">Sleef_frfrexpf</b>(<b>float</b> <i>x</i>);<br/>
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_expfrexp</b>, <b class="func">Sleef_expfrexpf</b> - exponent of an FP number</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>int</b> <b class="func">Sleef_expfrexp</b>(<b>double</b> <i>x</i>);<br/>
+<b>int</b> <b class="func">Sleef_expfrexpf</b>(<b>float</b> <i>x</i>);<br/>
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_modf</b>, <b class="func">Sleef_modff</b> - integral and fractional value of FP number</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>Sleef_double2</b> <b class="func">Sleef_modf</b>(<b>double</b> <i>x</i>);<br/>
+<b>Sleef_float2</b> <b class="func">Sleef_modff</b>(<b>float</b> <i>x</i>);<br/>
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_trunc</b>, <b class="func">Sleef_truncf</b> - round to integer towards zero</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_trunc</b>(<b>double</b> <i>x</i>);<br/>
+<b>float</b> <b class="func">Sleef_truncf</b>(<b>float</b> <i>x</i>);<br/>
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_floor</b>, <b class="func">Sleef_floorf</b> - round to integer towards minus infinity</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_floor</b>(<b>double</b> <i>x</i>);<br/>
+<b>float</b> <b class="func">Sleef_floorf</b>(<b>float</b> <i>x</i>);<br/>
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_ceil</b>, <b class="func">Sleef_ceilf</b> - round to integer towards plus infinity</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_ceil</b>(<b>double</b> <i>x</i>);<br/>
+<b>float</b> <b class="func">Sleef_ceilf</b>(<b>float</b> <i>x</i>);<br/>
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_round</b>, <b class="func">Sleef_roundf</b> - round to integer away from zero</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_round</b>(<b>double</b> <i>x</i>);<br/>
+<b>float</b> <b class="func">Sleef_roundf</b>(<b>float</b> <i>x</i>);<br/>
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_rint</b>, <b class="func">Sleef_rintf</b> - round to integer, ties round to even</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_rint</b>(<b>double</b> <i>x</i>);<br/>
+<b>float</b> <b class="func">Sleef_rintf</b>(<b>float</b> <i>x</i>);<br/>
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_fma</b>, <b class="func">Sleef_fmaf</b> - fused multiply and accumulate</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_fma</b>(<b>double</b> <i>x</i>, <b>double</b> <i>y</i>, <b>double</b> <i>z</i>);<br/>
+<b>float</b> <b class="func">Sleef_fmaf</b>(<b>float</b> <i>x</i>, <b>float</b> <i>y</i>, <b>float</b> <i>z</i>);<br/>
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_sqrt_u05</b>, <b class="func">Sleef_sqrtf_u05</b> - square root</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_sqrt_u05</b>(<b>double</b> <i>x</i>);<br/>
+<b>float</b> <b class="func">Sleef_sqrt_u05</b>(<b>float</b> <i>x</i>);<br/>
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_hypot_u05</b>, <b class="func">Sleef_hypotf_u05</b> - find hypotenuse when other two sides are provided with 0.5 ULP error bound</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_hypot_u05</b>(<b>double</b> <i>x</i>, <b>double</b> <i>y</i>);<br/>
+<b>float</b> <b class="func">Sleef_hypot_u05</b>(<b>float</b> <i>x</i>, <b>float</b> <i>y</i>);<br/>
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_hypot_u35</b>, <b class="func">Sleef_hypotf_u35</b> - find hypotenuse when other two sides are provided with 3.5 ULP error bound</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_hypot_u35</b>(<b>double</b> <i>x</i>, <b>double</b> <i>y</i>);<br/>
+<b>float</b> <b class="func">Sleef_hypot_u35</b>(<b>float</b> <i>x</i>, <b>float</b> <i>y</i>);<br/>
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
+</p>
+
+<hr/>
+
+<p class="funcname"><b class="func">Sleef_fmod</b>, <b class="func">Sleef_fmodf</b> - FP remainder</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b>double</b> <b class="func">Sleef_fmod</b>(<b>double</b> <i>x</i>, <b>double</b> <i>y</i>);<br/>
+<b>float</b> <b class="func">Sleef_fmodf</b>(<b>float</b> <i>x</i>, <b>float</b> <i>y</i>);<br/>
+<br/>
+Link with -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="description">
 </p>
 
 </body>

@@ -120,6 +120,7 @@ IMPORT CONST double Sleef_ldexp(double, int);
 IMPORT CONST int Sleef_ilogb(double);
 IMPORT CONST double Sleef_fma(double, double, double);
 IMPORT CONST double Sleef_sqrt_u05(double);
+
 IMPORT CONST double Sleef_hypot_u05(double, double);
 IMPORT CONST double Sleef_hypot_u35(double, double);
 
@@ -137,7 +138,6 @@ IMPORT CONST double Sleef_nextafter(double, double);
 IMPORT CONST double Sleef_frfrexp(double);
 IMPORT CONST int Sleef_expfrexp(double);
 IMPORT CONST double Sleef_fmod(double, double);
-IMPORT CONST double Sleef_scalb(double, int);
 IMPORT CONST Sleef_double2 Sleef_modf(double);
 
 IMPORT CONST float Sleef_sinf_u35(float);
@@ -179,6 +179,25 @@ IMPORT CONST float Sleef_ldexpf(float, int);
 IMPORT CONST int Sleef_ilogbf(float);
 IMPORT CONST float Sleef_fmaf(float, float, float);
 IMPORT CONST float Sleef_sqrtf_u05(float);
+
+IMPORT CONST float Sleef_hypotf_u05(float, float);
+IMPORT CONST float Sleef_hypotf_u35(float, float);
+
+IMPORT CONST float Sleef_fabsf(float);
+IMPORT CONST float Sleef_copysignf(float, float);
+IMPORT CONST float Sleef_fmaxf(float, float);
+IMPORT CONST float Sleef_fminf(float, float);
+IMPORT CONST float Sleef_fdimf(float, float);
+IMPORT CONST float Sleef_truncf(float);
+IMPORT CONST float Sleef_floorf(float);
+IMPORT CONST float Sleef_ceilf(float);
+IMPORT CONST float Sleef_roundf(float);
+IMPORT CONST float Sleef_rintf(float);
+IMPORT CONST float Sleef_nextafterf(float, float);
+IMPORT CONST float Sleef_frfrexpf(float);
+IMPORT CONST int Sleef_expfrexpf(float);
+IMPORT CONST float Sleef_fmodf(float, float);
+IMPORT CONST Sleef_float2 Sleef_modff(float);
 
 IMPORT CONST Sleef_longdouble2 Sleef_sincospil_u05(long double);
 IMPORT CONST Sleef_longdouble2 Sleef_sincospil_u35(long double);

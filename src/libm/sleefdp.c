@@ -110,7 +110,20 @@ static INLINE CONST double ldexpk(double x, int q) {
   return x * u;
 }
 
-EXPORT CONST double xldexp(double x, int q) { return ldexpk(x, q); }
+EXPORT CONST double xldexp(double x, int exp) {
+  if (exp >  2100) exp =  2100;
+  if (exp < -2100) exp = -2100;
+  
+  int e0 = exp >> 2;
+  if (exp < 0) e0++;
+  if (-100 < exp && exp < 100) e0 = 0;
+  int e1 = exp - (e0 << 2);
+
+  double p = pow2i(e0);
+  double ret = x * pow2i(e1) * p * p * p * p;
+  
+  return ret;
+}
 
 static INLINE CONST int ilogbk(double d) {
   int m = d < 4.9090934652977266E-91;
@@ -1478,21 +1491,21 @@ EXPORT CONST double xfdim(double x, double y) {
 EXPORT CONST double xtrunc(double x) {
   double fr = x - (double)(1 << 31) * (int32_t)(x * (1.0 / (1 << 31)));
   fr = fr - (int32_t)fr;
-  return (xisinf(x) || fabsk(x) >= (double)(1LL << 52)) ? x : copysignk(x - fr, x);
+  return (xisinf(x) || fabsk(x) > (double)(1LL << 52)) ? x : copysignk(x - fr, x);
 }
 
 EXPORT CONST double xfloor(double x) {
   double fr = x - (double)(1 << 31) * (int32_t)(x * (1.0 / (1 << 31)));
   fr = fr - (int32_t)fr;
   fr = fr < 0 ? fr+1.0 : fr;
-  return (xisinf(x) || fabsk(x) >= (double)(1LL << 52)) ? x : copysignk(x - fr, x);
+  return (xisinf(x) || fabsk(x) > (double)(1LL << 52)) ? x : copysignk(x - fr, x);
 }
 
 EXPORT CONST double xceil(double x) {
   double fr = x - (double)(1 << 31) * (int32_t)(x * (1.0 / (1 << 31)));
   fr = fr - (int32_t)fr;
   fr = fr <= 0 ? fr : fr-1.0;
-  return (xisinf(x) || fabsk(x) >= (double)(1LL << 52)) ? x : copysignk(x - fr, x);
+  return (xisinf(x) || fabsk(x) > (double)(1LL << 52)) ? x : copysignk(x - fr, x);
 }
 
 EXPORT CONST double xround(double d) {
@@ -1501,7 +1514,7 @@ EXPORT CONST double xround(double d) {
   fr = fr - (int32_t)fr;
   if (fr == 0 && x <= 0) x--;
   fr = fr < 0 ? fr+1.0 : fr;
-  return (xisinf(x) || fabsk(x) >= (double)(1LL << 52)) ? d : copysignk(x - fr, d);
+  return (xisinf(x) || fabsk(x) > (double)(1LL << 52)) ? d : copysignk(x - fr, d);
 }
 
 EXPORT CONST double xrint(double d) {
@@ -1510,7 +1523,7 @@ EXPORT CONST double xrint(double d) {
   int32_t isodd = (1 & (int32_t)fr) != 0;
   fr = fr - (int32_t)fr;
   fr = (fr < 0 || (fr == 0 && isodd)) ? fr+1.0 : fr;
-  return (xisinf(x) || fabsk(x) >= (double)(1LL << 52)) ? d : copysignk(x - fr, d);
+  return (xisinf(x) || fabsk(x) > (double)(1LL << 52)) ? d : copysignk(x - fr, d);
 }
 
 EXPORT CONST double xhypot_u05(double x, double y) {
@@ -1629,21 +1642,6 @@ EXPORT CONST double xfmod(double x, double y) {
   ret = mulsign(mulsign(ret, x), y);
   if (fabsk(x) < fabsk(y)) ret = x;
 
-  return ret;
-}
-
-EXPORT CONST double xscalb(double x, int exp) {
-  if (exp >  2100) exp =  2100;
-  if (exp < -2100) exp = -2100;
-  
-  int e0 = exp >> 2;
-  if (exp < 0) e0++;
-  if (-100 < exp && exp < 100) e0 = 0;
-  int e1 = exp - (e0 << 2);
-
-  double p = pow2i(e0);
-  double ret = x * pow2i(e1) * p * p * p * p;
-  
   return ret;
 }
 

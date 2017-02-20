@@ -26,8 +26,6 @@
 #define DORENAME
 #include "rename.h"
 
-mpfr_t fra, frb, frc, frd, frw, frx, fry, frz;
-
 #define DENORMAL_LDBL_MIN (3.6451995318824746025284059336194e-4951L)
 #define XLDBL_MIN (3.3621031431120935062626778173218e-4932L)
 
@@ -46,6 +44,8 @@ int isnumberl(long double x) { return x != INFINITYl && x != -INFINITYl && x == 
 int isPlusZerol(long double x) { return x == 0 && copysignl(1, x) == 1; }
 int isMinusZerol(long double x) { return x == 0 && copysignl(1, x) == -1; }
 
+mpfr_t fra, frb, frc, frd;
+
 double countULP(long double d, mpfr_t c) {
   long double c2 = mpfr_get_ld(c, GMP_RNDN);
   if (c2 == 0 && d != 0) return 10000;
@@ -59,12 +59,12 @@ double countULP(long double d, mpfr_t c) {
 
   int e;
   frexpl(mpfr_get_ld(c, GMP_RNDN), &e);
-  mpfr_set_ld(frw, fmaxl(ldexpl(1.0, e-64), DENORMAL_LDBL_MIN), GMP_RNDN);
+  mpfr_set_ld(frb, fmaxl(ldexpl(1.0, e-64), DENORMAL_LDBL_MIN), GMP_RNDN);
 
   mpfr_set_ld(frd, d, GMP_RNDN);
-  mpfr_sub(fry, frd, c, GMP_RNDN);
-  mpfr_div(fry, fry, frw, GMP_RNDN);
-  double u = fabs(mpfr_get_d(fry, GMP_RNDN));
+  mpfr_sub(fra, frd, c, GMP_RNDN);
+  mpfr_div(fra, fra, frb, GMP_RNDN);
+  double u = fabs(mpfr_get_d(fra, GMP_RNDN));
 
   return u;
 }
@@ -82,12 +82,12 @@ double countULP2(long double d, mpfr_t c) {
 
   int e;
   frexpl(mpfr_get_ld(c, GMP_RNDN), &e);
-  mpfr_set_ld(frw, fmaxl(ldexpl(1.0, e-64), LDBL_MIN), GMP_RNDN);
+  mpfr_set_ld(frb, fmaxl(ldexpl(1.0, e-64), LDBL_MIN), GMP_RNDN);
 
   mpfr_set_ld(frd, d, GMP_RNDN);
-  mpfr_sub(fry, frd, c, GMP_RNDN);
-  mpfr_div(fry, fry, frw, GMP_RNDN);
-  double u = fabs(mpfr_get_d(fry, GMP_RNDN));
+  mpfr_sub(fra, frd, c, GMP_RNDN);
+  mpfr_div(fra, fra, frb, GMP_RNDN);
+  double u = fabs(mpfr_get_d(fra, GMP_RNDN));
 
   return u;
 }
@@ -165,6 +165,8 @@ void cospifr(mpfr_t ret, long double d) {
 
 int main(int argc,char **argv)
 {
+  mpfr_t frw, frx, fry, frz;
+  
   mpfr_set_default_prec(256);
   mpfr_inits(fra, frb, frc, frd, frw, frx, fry, frz, NULL);
 

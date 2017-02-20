@@ -24,8 +24,6 @@
 #define DORENAME
 #include "rename.h"
 
-mpfr_t fra, frb, frc, frd, frw, frx, fry, frz;
-
 #define DENORMAL_DBL_MIN (4.94066e-324)
 
 #define POSITIVE_INFINITY INFINITY
@@ -34,6 +32,8 @@ mpfr_t fra, frb, frc, frd, frw, frx, fry, frz;
 int isnumber(double x) { return !isinf(x) && !isnan(x); }
 int isPlusZero(double x) { return x == 0 && copysign(1, x) == 1; }
 int isMinusZero(double x) { return x == 0 && copysign(1, x) == -1; }
+
+mpfr_t fra, frb, frc, frd;
 
 double countULP(double d, mpfr_t c) {
   double c2 = mpfr_get_d(c, GMP_RNDN);
@@ -159,6 +159,8 @@ void cospifr(mpfr_t ret, double d) {
 
 int main(int argc,char **argv)
 {
+  mpfr_t frw, frx, fry, frz;
+
   mpfr_set_default_prec(1280);
   mpfr_inits(fra, frb, frc, frd, frw, frx, fry, frz, NULL);
 
@@ -203,7 +205,6 @@ int main(int argc,char **argv)
       break;
     }
 
-#if 0
     Sleef_double2 sc  = xsincospi_u05(d);
     Sleef_double2 sc2 = xsincospi_u35(d);
 
@@ -617,7 +618,7 @@ int main(int argc,char **argv)
 	fflush(stdout);
       }
     }
-#endif
+
     //
 
     {
@@ -871,15 +872,15 @@ int main(int argc,char **argv)
       mpfr_set_d(frx, d, GMP_RNDN);
       mpfr_set_exp(frx, mpfr_get_exp(frx) + exp);
 
-      double u0 = countULP(t = xscalb(d, exp), frx);
+      double u0 = countULP(t = xldexp(d, exp), frx);
 
       if (u0 > 0.5) {
-	printf("Pure C scalb arg=%.20g %d ulp=%.20g\n", d, exp, u0);
+	printf("Pure C ldexp arg=%.20g %d ulp=%.20g\n", d, exp, u0);
 	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
 	fflush(stdout);
       }
     }
-
+    
     {
       mpfr_set_d(frx, d, GMP_RNDN);
       mpfr_modf(fry, frz, frx, GMP_RNDN);

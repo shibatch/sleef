@@ -45,6 +45,7 @@
 
 #define xldexp Sleef_ldexp
 #define xilogb Sleef_ilogb
+
 #define xfma Sleef_fma
 #define xsqrt Sleef_sqrt_u05
 #define xhypot_u05 Sleef_hypot_u05
@@ -64,7 +65,6 @@
 #define xfrfrexp Sleef_frfrexp
 #define xexpfrexp Sleef_expfrexp
 #define xfmod Sleef_fmod
-#define xscalb Sleef_scalb
 #define xmodf Sleef_modf
 
 //
@@ -111,6 +111,27 @@
 
 #define xldexpf Sleef_ldexpf
 #define xilogbf Sleef_ilogbf
+
+#define xfmaf Sleef_fmaf
+#define xsqrtf Sleef_sqrtf_u05
+#define xhypotf_u05 Sleef_hypotf_u05
+#define xhypotf_u35 Sleef_hypotf_u35
+
+#define xfabsf Sleef_fabsf
+#define xcopysignf Sleef_copysignf
+#define xfmaxf Sleef_fmaxf
+#define xfminf Sleef_fminf
+#define xfdimf Sleef_fdimf
+#define xtruncf Sleef_truncf
+#define xfloorf Sleef_floorf
+#define xceilf Sleef_ceilf
+#define xroundf Sleef_roundf
+#define xrintf Sleef_rintf
+#define xnextafterf Sleef_nextafterf
+#define xfrfrexpf Sleef_frfrexpf
+#define xexpfrexpf Sleef_expfrexpf
+#define xfmodf Sleef_fmodf
+#define xmodff Sleef_modff
 
 //
 

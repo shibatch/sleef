@@ -12,7 +12,7 @@ libsleef3 (3.1-1-ubuntu1) xenial; urgency=medium
 
  -- Naoki Shibata <shibatch@users.sourceforge.net>  Tue, 07 Feb 2017 19:24:12 +0900
 
-libsleef3 (3.1-0-ubuntu1) xenial; urgency=medium
+libsleef3 (3.1-0-0) xenial; urgency=medium
 
   * This is version 3.1
 

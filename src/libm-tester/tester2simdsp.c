@@ -79,8 +79,6 @@ typedef Sleef___m512_2 vfloat2;
 #include "norename.h"
 #endif
 
-mpfr_t fra, frb, frc, frd, frw, frx, fry, frz;
-
 #define DENORMAL_FLT_MIN (1.40130e-45f)
 #define POSITIVE_INFINITYf ((float)INFINITY)
 #define NEGATIVE_INFINITYf (-(float)INFINITY)
@@ -88,6 +86,8 @@ mpfr_t fra, frb, frc, frd, frw, frx, fry, frz;
 int isnumber(double x) { return !isinf(x) && !isnan(x); }
 int isPlusZero(double x) { return x == 0 && copysign(1, x) == 1; }
 int isMinusZero(double x) { return x == 0 && copysign(1, x) == -1; }
+
+mpfr_t fra, frb, frc, frd;
 
 double countULP(float d, mpfr_t c) {
   float c2 = mpfr_get_d(c, GMP_RNDN);
@@ -104,12 +104,12 @@ double countULP(float d, mpfr_t c) {
 
   int e;
   frexpl(mpfr_get_d(c, GMP_RNDN), &e);
-  mpfr_set_ld(frw, fmaxl(ldexpl(1.0, e-24), DENORMAL_FLT_MIN), GMP_RNDN);
+  mpfr_set_ld(frb, fmaxl(ldexpl(1.0, e-24), DENORMAL_FLT_MIN), GMP_RNDN);
 
   mpfr_set_d(frd, d, GMP_RNDN);
-  mpfr_sub(fry, frd, c, GMP_RNDN);
-  mpfr_div(fry, fry, frw, GMP_RNDN);
-  double u = fabs(mpfr_get_d(fry, GMP_RNDN));
+  mpfr_sub(fra, frd, c, GMP_RNDN);
+  mpfr_div(fra, fra, frb, GMP_RNDN);
+  double u = fabs(mpfr_get_d(fra, GMP_RNDN));
 
   return u;
 }
@@ -129,12 +129,12 @@ double countULP2(float d, mpfr_t c) {
   
   int e;
   frexpl(mpfr_get_d(c, GMP_RNDN), &e);
-  mpfr_set_ld(frw, fmaxl(ldexpl(1.0, e-24), FLT_MIN), GMP_RNDN);
+  mpfr_set_ld(frb, fmaxl(ldexpl(1.0, e-24), FLT_MIN), GMP_RNDN);
 
   mpfr_set_d(frd, d, GMP_RNDN);
-  mpfr_sub(fry, frd, c, GMP_RNDN);
-  mpfr_div(fry, fry, frw, GMP_RNDN);
-  double u = fabs(mpfr_get_d(fry, GMP_RNDN));
+  mpfr_sub(fra, frd, c, GMP_RNDN);
+  mpfr_div(fra, fra, frb, GMP_RNDN);
+  double u = fabs(mpfr_get_d(fra, GMP_RNDN));
 
   return u;
 }
@@ -232,6 +232,8 @@ float vget(vfloat v, int idx) {
 
 int main(int argc,char **argv)
 {
+  mpfr_t frw, frx, fry, frz;
+
   mpfr_set_default_prec(256);
   mpfr_inits(fra, frb, frc, frd, frw, frx, fry, frz, NULL);
 

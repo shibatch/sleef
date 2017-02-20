@@ -78,7 +78,7 @@ endif
 libsleefstatic.a : ../src/libm/libm.a ../src/common/common.a
 	ar -M < libsleefstatic.mri
 
-libsleefdftstatic.a : ../src/dft/dft.a
+libsleefdftstatic.a : ../src/dft/dft.a ../src/common/arraymap.a
 	ar -M < libsleefdftstatic.mri
 
 ../src/libm/libm.a :
