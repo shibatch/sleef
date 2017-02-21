@@ -73,6 +73,8 @@ static INLINE CONST float signf(float d) { return mulsignf(1, d); }
 static INLINE CONST float mlaf(float x, float y, float z) { return x * y + z; }
 static INLINE CONST float rintfk(float x) { return x < 0 ? (int)(x - 0.5f) : (int)(x + 0.5f); }
 static INLINE CONST int ceilfk(float x) { return (int)x + (x < 0 ? 0 : 1); }
+static INLINE CONST float fminfk(float x, float y) { return x < y ? x : y; }
+static INLINE CONST float fmaxfk(float x, float y) { return x > y ? x : y; }
 
 static INLINE CONST int xisnanf(float x) { return x != x; }
 static INLINE CONST int xisinff(float x) { return x == INFINITYf || x == -INFINITYf; }
@@ -1308,6 +1310,165 @@ EXPORT CONST float xldexpf(float x, int exp) {
   float ret = x * pow2if(e1) * p * p * p * p;
   
   return ret;
+}
+
+EXPORT CONST float xnextafterf(float x, float y) {
+  union {
+    float f;
+    int32_t i;
+  } cx;
+
+  cx.f = x;
+  int c = (cx.i < 0) == (y < x);
+  if (c) cx.i = -(cx.i ^ (1 << 31));
+
+  if (x != y) cx.i--;
+
+  if (c) cx.i = -(cx.i ^ (1 << 31));
+
+  if (cx.f == 0 && x != 0) cx.f = mulsignf(0, x);
+  if (x == 0 && y == 0) cx.f = y;
+  if (xisnanf(x) || xisnanf(y)) cx.f = NANf;
+  
+  return cx.f;
+}
+
+EXPORT CONST float xfrfrexpf(float x) {
+  union {
+    float f;
+    int32_t u;
+  } cx;
+
+  if (fabsfk(x) < FLT_MIN) x *= (1 << 30);
+  
+  cx.f = x;
+  cx.u &= ~0x7f800000U;
+  cx.u |=  0x3f000000U;
+
+  if (xisinff(x)) cx.f = mulsignf(INFINITYf, x);
+  if (x == 0) cx.f = x;
+  
+  return cx.f;
+}
+
+EXPORT CONST int xexpfrexpf(float x) {
+  union {
+    float f;
+    uint32_t u;
+  } cx;
+
+  int ret = 0;
+  
+  if (fabsfk(x) < FLT_MIN) { x *= (1 << 30); ret = -30; }
+  
+  cx.f = x;
+  ret += (int32_t)(((cx.u >> 23) & 0xff)) - 0x7e;
+
+  if (x == 0 || xisnanf(x) || xisinff(x)) ret = 0;
+  
+  return ret;
+}
+
+EXPORT CONST float xhypotf_u05(float x, float y) {
+  x = fabsfk(x);
+  y = fabsfk(y);
+  float min = fminfk(x, y), n = min;
+  float max = fmaxfk(x, y), d = max;
+
+  if (max < FLT_MIN) { n *= 1ULL << 24; d *= 1ULL << 24; }
+  Sleef_float2 t = dfdiv_f2_f2_f2(df(n, 0), df(d, 0));
+  t = dfmul_f2_f2_f(dfsqrt_f2_f2(dfadd2_f2_f2_f(dfsqu_f2_f2(t), 1)), max);
+  float ret = t.x + t.y;
+  if (xisnanf(ret)) ret = INFINITYf;
+  if (min == 0) ret = max;
+  if (xisnanf(x) || xisnanf(y)) ret = NANf;
+  if (x == INFINITYf || y == INFINITYf) ret = INFINITYf;
+  return ret;
+}
+
+EXPORT CONST float xhypotf_u35(float x, float y) {
+  x = fabsfk(x);
+  y = fabsfk(y);
+  float min = fminfk(x, y);
+  float max = fmaxfk(x, y);
+  
+  float t = min / max;
+  float ret = max * sqrtf(1 + t*t);
+  if (min == 0) ret = max;
+  if (xisnanf(x) || xisnanf(y)) ret = NANf;
+  if (x == INFINITYf || y == INFINITYf) ret = INFINITYf;
+  return ret;
+}
+
+static INLINE CONST float nexttoward0(float x) {
+  union {
+    float f;
+    int32_t u;
+  } cx;
+  cx.f = x;
+  cx.u--;
+  return x == 0 ? 0 : cx.f;
+}
+
+EXPORT CONST float xfmodf(float x, float y) {
+  float nu = fabsfk(x), de = fabsfk(y), dt;
+  if (de < FLT_MIN) { nu *= 1ULL << 25; de *= 1ULL << 25; }
+  
+  Sleef_float2 d = dfdiv_f2_f2_f2(df(nu, 0), df(de, 0));
+
+  dt = d.y < 0 ? nexttoward0(d.x) : d.x;
+  d = dfnormalize_f2_f2(dfadd2_f2_f2_f(d, -(float)(1ULL << 31) * (int32_t)(dt * (1.0 / (1ULL << 31)))));
+  dt = d.y < 0 ? nexttoward0(d.x) : d.x;
+  d = dfnormalize_f2_f2(dfadd2_f2_f2_f(d, -(float)(1ULL <<  0) * (int32_t)(dt * (1.0 / (1ULL <<  0)))));
+  
+  d = dfmul_f2_f2_f(d, y);
+  float ret = d.x + d.y;
+  ret = mulsignf(mulsignf(ret, x), y);
+  if (fabsfk(x) < fabsfk(y)) ret = x;
+
+  return ret;
+}
+
+EXPORT CONST float xsqrtf(float d) {
+  float q = 0.5f;
+
+  d = d < 0 ? NANf : d;
+
+  if (d < 5.2939559203393770e-23f) {
+    d *= 1.8889465931478580e+22;
+    q = 7.2759576141834260e-12f * 0.5f;
+  }
+
+  if (d > 1.8446744073709552e+19f) {
+    d *= 5.4210108624275220e-20f;
+    q = 4294967296.0f * 0.5f;
+  }
+  
+  // http://en.wikipedia.org/wiki/Fast_inverse_square_root
+  float x = intBitsToFloat(0x5f375a86 - (floatToRawIntBits(d + 1e-45) >> 1));
+
+  x = x * (1.5f - 0.5f * d * x * x);
+  x = x * (1.5f - 0.5f * d * x * x);
+  x = x * (1.5f - 0.5f * d * x * x) * d;
+
+  Sleef_float2 d2 = dfmul_f2_f2_f2(dfadd2_f2_f_f2(d, dfmul_f2_f_f(x, x)), dfrec_f2_f(x));
+
+  return d == INFINITYf ? INFINITYf : (d2.x + d2.y) * q;
+}
+
+EXPORT CONST float xfmaf(float x, float y, float z) {
+  float h2 = x * y + z, q = 1;
+  if (fabsfk(h2) < 1e-38) {
+    const float c0 = 1 << 25, c1 = c0 * c0, c2 = c1 * c1;
+    x *= c1;
+    y *= c1;
+    z *= c2;
+    q = 1.0 / c2;
+  }
+  Sleef_float2 d = dfmul_f2_f_f(x, y);
+  d = dfadd2_f2_f2_f(d, z);
+  if (xisinff(z) && !xisinff(x) && !xisnanf(x) && !xisinff(y) && !xisnanf(y)) h2 = z;
+  return (xisinff(h2) || xisnanf(h2)) ? h2 : (d.x + d.y)*q;
 }
 
 //

@@ -408,7 +408,6 @@ static INLINE vint2 vgt_vi2_vi2_vi2(vint2 x, vint2 y) {
 
 static INLINE vint2 vsel_vi2_vo_vi2_vi2(vopmask m, vint2 x, vint2 y) {
   vint2 n = vcast_vi2_vm(m);
-  //return vor_vi2_vi2_vi2(vand_vi2_vi2_vi2(n, x), vandnot_vi2_vi2_vi2(n, y));
   vint2 r = { _mm_blendv_epi8(y.x, x.x, n.x), _mm_blendv_epi8(y.y, x.y, n.y) };
   return r;
 }

@@ -74,6 +74,8 @@ static INLINE CONST double mla(double x, double y, double z) { return x * y + z;
 static INLINE CONST double rintk(double x) { return x < 0 ? (int)(x - 0.5) : (int)(x + 0.5); }
 static INLINE CONST int ceilk(double x) { return (int)x + (x < 0 ? 0 : 1); }
 static INLINE CONST double trunck(double x) { return (double)(int)x; }
+static INLINE CONST double fmink(double x, double y) { return x < y ? x : y; }
+static INLINE CONST double fmaxk(double x, double y) { return x > y ? x : y; }
 
 static INLINE CONST int xisnan(double x) { return x != x; }
 static INLINE CONST int xisinf(double x) { return x == INFINITY || x == -INFINITY; }
@@ -1527,10 +1529,10 @@ EXPORT CONST double xrint(double d) {
 }
 
 EXPORT CONST double xhypot_u05(double x, double y) {
-  x = xfabs(x);
-  y = xfabs(y);
-  double min = xfmin(x, y), n = min;
-  double max = xfmax(x, y), d = max;
+  x = fabsk(x);
+  y = fabsk(y);
+  double min = fmink(x, y), n = min;
+  double max = fmaxk(x, y), d = max;
 
   if (max < DBL_MIN) { n *= 1ULL << 54; d *= 1ULL << 54; }
   Sleef_double2 t = dddiv_d2_d2_d2(dd(n, 0), dd(d, 0));
@@ -1539,21 +1541,21 @@ EXPORT CONST double xhypot_u05(double x, double y) {
   if (xisnan(ret)) ret = INFINITY;
   if (min == 0) ret = max;
   if (xisnan(x) || xisnan(y)) ret = NAN;
-  if (max == INFINITY) ret = INFINITY;
+  if (x == INFINITY || y == INFINITY) ret = INFINITY;
   return ret;
 }
 
 EXPORT CONST double xhypot_u35(double x, double y) {
-  x = xfabs(x);
-  y = xfabs(y);
-  double min = xfmin(x, y);
-  double max = xfmax(x, y);
+  x = fabsk(x);
+  y = fabsk(y);
+  double min = fmink(x, y);
+  double max = fmaxk(x, y);
 
   double t = min / max;
   double ret = max * sqrt(1 + t*t);
   if (min == 0) ret = max;
   if (xisnan(x) || xisnan(y)) ret = NAN;
-  if (max == INFINITY) ret = INFINITY;
+  if (x == INFINITY || y == INFINITY) ret = INFINITY;
   return ret;
 }
 

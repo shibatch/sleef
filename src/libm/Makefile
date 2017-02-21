@@ -87,10 +87,10 @@ mkrename : mkrename.c
 #
 
 sleefdpsse2.o : sleefsimddp.c renamesse2.h
-	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_SSE2 -msse2 sleefsimddp.c -c -o sleefdpsse2.o
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_SSE2 -msse2 -msse4.1 sleefsimddp.c -c -o sleefdpsse2.o
 
 sleefspsse2.o : sleefsimdsp.c renamesse2.h
-	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_SSE2 -msse2 sleefsimdsp.c -c -o sleefspsse2.o
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_SSE2 -msse2 -msse4.1 sleefsimdsp.c -c -o sleefspsse2.o
 
 renamesse2.h : mkrename
 	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
