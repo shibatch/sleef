@@ -74,7 +74,7 @@ typedef Sleef___m512_2 vfloat2;
 #include "norename.h"
 #endif
 
-#define DENORMAL_DBL_MIN (4.94066e-324)
+#define DENORMAL_DBL_MIN (4.9406564584124654418e-324)
 
 #define POSITIVE_INFINITY INFINITY
 #define NEGATIVE_INFINITY (-INFINITY)

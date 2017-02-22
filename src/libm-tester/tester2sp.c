@@ -28,7 +28,7 @@
 static int isinff(float x) { return x == __builtin_inff() || x == -__builtin_inff(); }
 #endif
 
-#define DENORMAL_FLT_MIN (1.40130e-45f)
+#define DENORMAL_FLT_MIN (1.4012984643248170709e-45f)
 #define POSITIVE_INFINITYf ((float)INFINITY)
 #define NEGATIVE_INFINITYf (-(float)INFINITY)
 
@@ -864,7 +864,7 @@ int main(int argc,char **argv)
       double u0 = countULP(t = xfmodf(d, d2), frx);
       long double c = mpfr_get_ld(frx, GMP_RNDN);
 
-      if (fabs(d / d2) < 8000 && fabsl(t-c) > fabsl(d2 * (1.0L / (1ULL << 32))) && fabsl(t-c) > FLT_MIN) {
+      if ((!isnumber(d) || !isnumber(d2) || fabs((double)d / d2) < 1e+38) && u0 > 0.5) {
 	printf("Pure C fmodf arg=%.20g, %.20g  ulp=%.20g\n", d, d2, u0);
 	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
 	fflush(stdout);
@@ -881,7 +881,7 @@ int main(int argc,char **argv)
       double c = mpfr_get_d(frx, GMP_RNDN);
 
       if ((-1e+36 < c && c < 1e+36 && u0 > 0.5) ||
-	  !(u0 < 0.5 || isinf(t))) {
+	  !(u0 <= 0.5 || isinf(t))) {
 	printf("Pure C fmaf arg=%.20g, %.20g, %.20g  ulp=%.20g\n", d, d2, d3, u0);
 	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
 	fflush(stdout);

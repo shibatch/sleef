@@ -41,7 +41,9 @@ static void printf128(__float128 f) {
   printf("%s", s);
 }
 
-static char frstr[1000];
+static char frstr[16][1000];
+static int frstrcnt = 0;
+
 static char *toBC(double d) {
   union {
     double d;
@@ -56,8 +58,10 @@ static char *toBC(double d) {
   int s = (int)(l >> 63);
   l = d == 0 ? 0 : ((l & ~((-1L) << 52)) | (1L << 52));
 
-  sprintf(frstr, "%s%lld*2^%d", s != 0 ? "-" : "", (long long int)l, (e-0x3ff-52));
-  return frstr;
+  char *ptr = frstr[(frstrcnt++) & 15];
+  
+  sprintf(ptr, "%s%lld*2^%d", s != 0 ? "-" : "", (long long int)l, (e-0x3ff-52));
+  return ptr;
 }
 
 static char *toBCq(__float128 d) {
@@ -75,13 +79,12 @@ static char *toBCq(__float128 d) {
 
   uint64_t h = m / 10000000000000000000ULL;
   uint64_t l = m % 10000000000000000000ULL;
+
+  char *ptr = frstr[(frstrcnt++) & 15];
   
-  if (h == 0) {
-    sprintf(frstr, "%s%" PRIu64 "*2^%d", s != 0 ? "-" : "", l, (e-0x3fff-112));
-  } else {
-    sprintf(frstr, "%s%" PRIu64 "%" PRIu64 "*2^%d", s != 0 ? "-" : "", h, l, (e-0x3fff-112));
-  }
-  return frstr;
+  sprintf(ptr, "%s%" PRIu64 "%019" PRIu64 "*2^%d", s != 0 ? "-" : "", h, l, (e-0x3fff-112));
+
+  return ptr;
 }
 
 static int xisnanq(Sleef_quad x) { return x != x; }

@@ -1400,7 +1400,7 @@ EXPORT CONST float xhypotf_u35(float x, float y) {
   return ret;
 }
 
-static INLINE CONST float nexttoward0(float x) {
+static INLINE CONST float nexttoward0f(float x) {
   union {
     float f;
     int32_t u;
@@ -1411,19 +1411,17 @@ static INLINE CONST float nexttoward0(float x) {
 }
 
 EXPORT CONST float xfmodf(float x, float y) {
-  float nu = fabsfk(x), de = fabsfk(y), dt;
-  if (de < FLT_MIN) { nu *= 1ULL << 25; de *= 1ULL << 25; }
-  
-  Sleef_float2 d = dfdiv_f2_f2_f2(df(nu, 0), df(de, 0));
+  float nu = fabsfk(x), de = fabsfk(y), s = 1;
+  if (de < FLT_MIN) { nu *= 1ULL << 25; de *= 1ULL << 25; s = 1.0f / (1ULL << 25); }
+  Sleef_float2 q, r = df(nu, 0);
 
-  dt = d.y < 0 ? nexttoward0(d.x) : d.x;
-  d = dfnormalize_f2_f2(dfadd2_f2_f2_f(d, -(float)(1ULL << 31) * (int32_t)(dt * (1.0 / (1ULL << 31)))));
-  dt = d.y < 0 ? nexttoward0(d.x) : d.x;
-  d = dfnormalize_f2_f2(dfadd2_f2_f2_f(d, -(float)(1ULL <<  0) * (int32_t)(dt * (1.0 / (1ULL <<  0)))));
+  for(int i=0;i<6;i++) {
+    q = dfnormalize_f2_f2(dfdiv_f2_f2_f2(r, df(de, 0)));
+    r = dfnormalize_f2_f2(dfadd2_f2_f2_f2(r, dfmul_f2_f_f(-xtruncf(q.y < 0 ? nexttoward0f(q.x) : q.x), de)));
+  }
   
-  d = dfmul_f2_f2_f(d, y);
-  float ret = d.x + d.y;
-  ret = mulsignf(mulsignf(ret, x), y);
+  float ret = (r.x + r.y) * s;
+  ret = mulsignf(ret, x);
   if (fabsfk(x) < fabsfk(y)) ret = x;
 
   return ret;
