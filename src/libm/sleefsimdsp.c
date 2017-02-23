@@ -878,7 +878,7 @@ EXPORT CONST vfloat xexpf(vfloat d) {
 }
 
 #ifdef ENABLE_NEON32
-EXPORT CONST vfloat xsqrtf(vfloat d) {
+EXPORT CONST vfloat xsqrtf_u05(vfloat d) {
   vfloat e = vreinterpret_vf_vi2(vadd_vi2_vi2_vi2(vcast_vi2_i(0x20000000), vand_vi2_vi2_vi2(vcast_vi2_i(0x7f000000), vsrl_vi2_vi2_i(vreinterpret_vi2_vf(d), 1))));
   vfloat m = vreinterpret_vf_vi2(vadd_vi2_vi2_vi2(vcast_vi2_i(0x3f000000), vand_vi2_vi2_vi2(vcast_vi2_i(0x01ffffff), vreinterpret_vi2_vf(d))));
   float32x4_t x = vrsqrteq_f32(m);
@@ -895,13 +895,13 @@ EXPORT CONST vfloat xsqrtf(vfloat d) {
   return u;
 }
 #elif defined(ENABLE_CLANGVEC)
-EXPORT CONST vfloat xsqrtf(vfloat d) {
+EXPORT CONST vfloat xsqrtf_u05(vfloat d) {
   vfloat q = vsqrt_vf_vf(d);
   q = vsel_vf_vo_vf_vf(visnegzero_vo_vf(d), vcast_vf_f(-0.0), q);
   return vsel_vf_vo_vf_vf(vispinf_vo_vf(d), INFINITYf, q);
 }
 #else
-EXPORT CONST vfloat xsqrtf(vfloat d) { return vsqrt_vf_vf(d); }
+EXPORT CONST vfloat xsqrtf_u05(vfloat d) { return vsqrt_vf_vf(d); }
 #endif
 
 EXPORT CONST vfloat xcbrtf(vfloat d) {
@@ -1307,6 +1307,94 @@ EXPORT CONST vfloat xlog1pf(vfloat a) {
   x = vsel_vf_vo_vf_vf(visnegzero_vo_vf(a), vcast_vf_f(-0.0f), x);
 
   return x;
+}
+
+//
+
+EXPORT CONST vfloat xfmaf(vfloat x, vfloat y, vfloat z) {
+  return vcast_vf_f(0.0);
+}
+
+#if 0
+EXPORT CONST vfloat xsqrtf_u05(vfloat d) {
+  return vcast_vf_f(0.0);
+}
+#endif
+
+EXPORT CONST vfloat xfabsf(vfloat x) {
+  return vcast_vf_f(0.0);
+}
+
+EXPORT CONST vfloat xcopysignf(vfloat x, vfloat y) {
+  return vcast_vf_f(0.0);
+}
+
+EXPORT CONST vfloat xfmaxf(vfloat x, vfloat y) {
+  return vcast_vf_f(0.0);
+}
+
+EXPORT CONST vfloat xfminf(vfloat x, vfloat y) {
+  return vcast_vf_f(0.0);
+}
+
+EXPORT CONST vfloat xfdimf(vfloat x, vfloat y) {
+  return vcast_vf_f(0.0);
+}
+
+EXPORT CONST vfloat xtruncf(vfloat x) {
+  return vcast_vf_f(0.0);
+}
+
+EXPORT CONST vfloat xfloorf(vfloat x) {
+  return vcast_vf_f(0.0);
+}
+
+EXPORT CONST vfloat xceilf(vfloat x) {
+  return vcast_vf_f(0.0);
+}
+
+EXPORT CONST vfloat xroundf(vfloat d) {
+  return vcast_vf_f(0.0);
+}
+
+EXPORT CONST vfloat xrintf(vfloat d) {
+  return vcast_vf_f(0.0);
+}
+
+EXPORT CONST vfloat xhypotf_u05(vfloat x, vfloat y) {
+  return vcast_vf_f(0.0);
+}
+
+EXPORT CONST vfloat xhypotf_u35(vfloat x, vfloat y) {
+  return vcast_vf_f(0.0);
+}
+
+EXPORT CONST vfloat xnextafterf(vfloat x, vfloat y) {
+  return vcast_vf_f(0.0);
+}
+
+EXPORT CONST vfloat xfrfrexpf(vfloat x) {
+  return vcast_vf_f(0.0);
+}
+
+EXPORT CONST vint2 xexpfrexpf(vfloat x) {
+  return vcast_vi2_i(0);
+}
+
+static INLINE CONST vfloat nexttoward0f(vfloat x) {
+  return vcast_vf_f(0.0);
+}
+
+static INLINE CONST vfloat upper2f(vfloat d) {
+  return vcast_vf_f(0.0);
+}
+
+EXPORT CONST vfloat xfmodf(vfloat x, vfloat y) {
+  return vcast_vf_f(0.0);
+}
+
+EXPORT CONST vfloat2 xmodff(vfloat x) {
+  return vcast_vf2_f_f(0.0, 0.0);
 }
 
 #if 0

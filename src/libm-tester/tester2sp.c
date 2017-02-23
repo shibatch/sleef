@@ -631,7 +631,7 @@ int main(int argc,char **argv)
 
       double u0 = countULP(t = xldexpf(d, exp), frx);
 
-      if (u0 > 0.5) {
+      if (u0 > 0.5001) {
 	printf("Pure C ldexpf arg=%.20g %d ulp=%.20g\n", d, exp, u0);
 	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
 	fflush(stdout);
@@ -834,7 +834,7 @@ int main(int argc,char **argv)
       double u0 = countULP2(t = xhypotf_u05(d, d2), frx);
       double c = mpfr_get_d(frx, GMP_RNDN);
 
-      if (u0 > 0.5) {
+      if (u0 > 0.5001) {
 	printf("Pure C hypotf_u05 arg=%.20g, %.20g  ulp=%.20g\n", d, d2, u0);
 	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
 	fflush(stdout);
@@ -880,8 +880,8 @@ int main(int argc,char **argv)
       double u0 = countULP2(t = xfmaf(d, d2, d3), frx);
       double c = mpfr_get_d(frx, GMP_RNDN);
 
-      if ((-1e+36 < c && c < 1e+36 && u0 > 0.5) ||
-	  !(u0 <= 0.5 || isinf(t))) {
+      if ((-1e+36 < c && c < 1e+36 && u0 > 0.5001) ||
+	  !(u0 <= 0.5001 || isinf(t))) {
 	printf("Pure C fmaf arg=%.20g, %.20g, %.20g  ulp=%.20g\n", d, d2, d3, u0);
 	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
 	fflush(stdout);

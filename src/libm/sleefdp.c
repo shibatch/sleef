@@ -1641,6 +1641,7 @@ EXPORT CONST double xfmod(double x, double y) {
   }
   
   double ret = (r.x + r.y) * s;
+  if (r.x + r.y == de) ret = 0;
   ret = mulsign(ret, x);
   if (fabsk(x) < fabsk(y)) ret = x;
 

@@ -1498,6 +1498,92 @@ EXPORT CONST vdouble xlog1p(vdouble a) {
   return x;
 }
 
+//
+
+EXPORT CONST vdouble xfma(vdouble x, vdouble y, vdouble z) {
+  return vcast_vd_d(0.0);
+}
+
+EXPORT CONST vdouble xsqrt_u05(vdouble d) {
+  return vcast_vd_d(0.0);
+}
+
+EXPORT CONST vdouble xfabs(vdouble x) {
+  return vcast_vd_d(0.0);
+}
+
+EXPORT CONST vdouble xcopysign(vdouble x, vdouble y) {
+  return vcast_vd_d(0.0);
+}
+
+EXPORT CONST vdouble xfmax(vdouble x, vdouble y) {
+  return vcast_vd_d(0.0);
+}
+
+EXPORT CONST vdouble xfmin(vdouble x, vdouble y) {
+  return vcast_vd_d(0.0);
+}
+
+EXPORT CONST vdouble xfdim(vdouble x, vdouble y) {
+  return vcast_vd_d(0.0);
+}
+
+EXPORT CONST vdouble xtrunc(vdouble x) {
+  return vcast_vd_d(0.0);
+}
+
+EXPORT CONST vdouble xfloor(vdouble x) {
+  return vcast_vd_d(0.0);
+}
+
+EXPORT CONST vdouble xceil(vdouble x) {
+  return vcast_vd_d(0.0);
+}
+
+EXPORT CONST vdouble xround(vdouble d) {
+  return vcast_vd_d(0.0);
+}
+
+EXPORT CONST vdouble xrint(vdouble d) {
+  return vcast_vd_d(0.0);
+}
+
+EXPORT CONST vdouble xhypot_u05(vdouble x, vdouble y) {
+  return vcast_vd_d(0.0);
+}
+
+EXPORT CONST vdouble xhypot_u35(vdouble x, vdouble y) {
+  return vcast_vd_d(0.0);
+}
+
+EXPORT CONST vdouble xnextafter(vdouble x, vdouble y) {
+  return vcast_vd_d(0.0);
+}
+
+EXPORT CONST vdouble xfrfrexp(vdouble x) {
+  return vcast_vd_d(0.0);
+}
+
+EXPORT CONST vint xexpfrexp(vdouble x) {
+  return vcast_vi_i(0);
+}
+
+static INLINE CONST vdouble nexttoward0(vdouble x) {
+  return vcast_vd_d(0.0);
+}
+
+static INLINE CONST vdouble upper2(vdouble d) {
+  return vcast_vd_d(0.0);
+}
+
+EXPORT CONST vdouble xfmod(vdouble x, vdouble y) {
+  return vcast_vd_d(0.0);
+}
+
+EXPORT CONST vdouble2 xmodf(vdouble x) {
+  return vcast_vd2_d_d(0.0, 0.0);
+}
+
 #if 0
 // gcc -Wno-attributes -I../common -I../arch -DENABLE_AVX2 -mavx2 -mfma sleefsimddp.c ../common/common.c -lm
 #include <stdio.h>

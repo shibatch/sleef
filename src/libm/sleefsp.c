@@ -1421,6 +1421,7 @@ EXPORT CONST float xfmodf(float x, float y) {
   }
   
   float ret = (r.x + r.y) * s;
+  if (r.x + r.y == de) ret = 0;
   ret = mulsignf(ret, x);
   if (fabsfk(x) < fabsfk(y)) ret = x;
 

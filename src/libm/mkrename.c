@@ -16,6 +16,8 @@ typedef struct {
 } funcSpec;
 
 /*
+  ulp : (error bound in ulp) * 10
+
   ulpSuffix:
   0 : ""
   1 : "_u1"
@@ -67,10 +69,29 @@ funcSpec funcList[] = {
   { "log1p", 10, 0, 0 },
   { "sincospi", 5, 2, 2 },
   { "sincospi", 35, 3, 2 },
-  { "sqrt", 10, 0, 0 },
   { "ldexp", -1, 0, 3 },
   { "ilogb", -1, 0, 4 },
+
   { "fma", -1, 0, 5 },
+  { "sqrt", 5, 2, 0 },
+  { "hypot", 10, 1, 1 },
+  { "hypot", 35, 3, 1 },
+  { "fabs", -1, 0, 0 },
+  { "copysign", -1, 0, 1 },
+  { "fmax", -1, 0, 1 },
+  { "fmin", -1, 0, 1 },
+  { "fdim", -1, 0, 1 },
+  { "trunc", -1, 0, 0 },
+  { "floor", -1, 0, 0 },
+  { "ceil", -1, 0, 0 },
+  { "round", -1, 0, 0 },
+  { "rint", -1, 0, 0 },
+  { "nextafter", -1, 0, 1 },
+  { "frfrexp", -1, 0, 0 },
+  { "expfrexp", -1, 0, 4 },
+  { "fmod", -1, 0, 1 },
+  { "modf", -1, 0, 2 },
+
   { NULL, -1, 0, 0 },
 };
 
@@ -130,46 +151,94 @@ int main(int argc, char **argv) {
       for(int i=0;funcList[i].name != NULL;i++) {
 	switch(funcList[i].funcType) {
 	case 0:
-	  printf("IMPORT %s Sleef_%sd%d_u%02d%s(%s);\n",
-		 vdoublename,
-		 funcList[i].name, wdp,
-		 funcList[i].ulp, isaname,
-		 vdoublename);
+	  if (funcList[i].ulp >= 0) {
+	    printf("IMPORT %s Sleef_%sd%d_u%02d%s(%s);\n",
+		   vdoublename,
+		   funcList[i].name, wdp,
+		   funcList[i].ulp, isaname,
+		   vdoublename);
+	  } else {
+	    printf("IMPORT %s Sleef_%sd%d_%s(%s);\n",
+		   vdoublename,
+		   funcList[i].name, wdp,
+		   isaname,
+		   vdoublename);
+	  }
 	  break;
 	case 1:
-	  printf("IMPORT %s Sleef_%sd%d_u%02d%s(%s, %s);\n",
-		 vdoublename,
-		 funcList[i].name, wdp,
-		 funcList[i].ulp, isaname,
-		 vdoublename, vdoublename);
+	  if (funcList[i].ulp >= 0) {
+	    printf("IMPORT %s Sleef_%sd%d_u%02d%s(%s, %s);\n",
+		   vdoublename,
+		   funcList[i].name, wdp,
+		   funcList[i].ulp, isaname,
+		   vdoublename, vdoublename);
+	  } else {
+	    printf("IMPORT %s Sleef_%sd%d_%s(%s, %s);\n",
+		   vdoublename,
+		   funcList[i].name, wdp,
+		   isaname,
+		   vdoublename, vdoublename);
+	  }
 	  break;
 	case 2:
-	  printf("IMPORT Sleef_%s_2 Sleef_%sd%d_u%02d%s(%s);\n",
-		 vdoublename,
-		 funcList[i].name, wdp,
-		 funcList[i].ulp, isaname,
-		 vdoublename);
+	  if (funcList[i].ulp >= 0) {
+	    printf("IMPORT Sleef_%s_2 Sleef_%sd%d_u%02d%s(%s);\n",
+		   vdoublename,
+		   funcList[i].name, wdp,
+		   funcList[i].ulp, isaname,
+		   vdoublename);
+	  } else {
+	    printf("IMPORT Sleef_%s_2 Sleef_%sd%d_%s(%s);\n",
+		   vdoublename,
+		   funcList[i].name, wdp,
+		   isaname,
+		   vdoublename);
+	  }
 	  break;
 	case 3:
-	  printf("IMPORT %s Sleef_%sd%d_%s(%s, %s);\n",
-		 vdoublename,
-		 funcList[i].name, wdp,
-		 isaname,
-		 vdoublename, vintname);
+	  if (funcList[i].ulp >= 0) {
+	    printf("IMPORT %s Sleef_%sd%d_u%02d%s(%s, %s);\n",
+		   vdoublename,
+		   funcList[i].name, wdp,
+		   funcList[i].ulp, isaname,
+		   vdoublename, vintname);
+	  } else {
+	    printf("IMPORT %s Sleef_%sd%d_%s(%s, %s);\n",
+		   vdoublename,
+		   funcList[i].name, wdp,
+		   isaname,
+		   vdoublename, vintname);
+	  }
 	  break;
 	case 4:
-	  printf("IMPORT %s Sleef_%sd%d_%s(%s);\n",
-		 vintname,
-		 funcList[i].name, wdp,
-		 isaname,
-		 vdoublename);
+	  if (funcList[i].ulp >= 0) {
+	    printf("IMPORT %s Sleef_%sd%d_u%02d%s(%s);\n",
+		   vintname,
+		   funcList[i].name, wdp,
+		   funcList[i].ulp, isaname,
+		   vdoublename);
+	  } else {
+	    printf("IMPORT %s Sleef_%sd%d_%s(%s);\n",
+		   vintname,
+		   funcList[i].name, wdp,
+		   isaname,
+		   vdoublename);
+	  }
 	  break;
 	case 5:
-	  printf("IMPORT %s Sleef_%sd%d_%s(%s, %s, %s);\n",
-		 vdoublename,
-		 funcList[i].name, wdp,
-		 isaname,
-		 vdoublename, vdoublename, vdoublename);
+	  if (funcList[i].ulp >= 0) {
+	    printf("IMPORT %s Sleef_%sd%d_u%02d%s(%s, %s, %s);\n",
+		   vdoublename,
+		   funcList[i].name, wdp,
+		   funcList[i].ulp, isaname,
+		   vdoublename, vdoublename, vdoublename);
+	  } else {
+	    printf("IMPORT %s Sleef_%sd%d_%s(%s, %s, %s);\n",
+		   vdoublename,
+		   funcList[i].name, wdp,
+		   isaname,
+		   vdoublename, vdoublename, vdoublename);
+	  }
 	  break;
 	}
       }
@@ -190,48 +259,80 @@ int main(int argc, char **argv) {
     for(int i=0;funcList[i].name != NULL;i++) {
       switch(funcList[i].funcType) {
       case 0:
-	printf("IMPORT %s Sleef_%sf%d_u%02d%s(%s);\n",
-	       vfloatname,
-	       funcList[i].name, wsp,
-	       funcList[i].ulp, isaname,
-	       vfloatname);
+	if (funcList[i].ulp >= 0) {
+	  printf("IMPORT %s Sleef_%sf%d_u%02d%s(%s);\n",
+		 vfloatname,
+		 funcList[i].name, wsp,
+		 funcList[i].ulp, isaname,
+		 vfloatname);
+	} else {
+	  printf("IMPORT %s Sleef_%sf%d_%s(%s);\n",
+		 vfloatname,
+		 funcList[i].name, wsp,
+		 isaname,
+		 vfloatname);
+	}
 	break;
       case 1:
-	printf("IMPORT %s Sleef_%sf%d_u%02d%s(%s, %s);\n",
-	       vfloatname,
-	       funcList[i].name, wsp,
-	       funcList[i].ulp, isaname,
-	       vfloatname, vfloatname);
+	if (funcList[i].ulp >= 0) {
+	  printf("IMPORT %s Sleef_%sf%d_u%02d%s(%s, %s);\n",
+		 vfloatname,
+		 funcList[i].name, wsp,
+		 funcList[i].ulp, isaname,
+		 vfloatname, vfloatname);
+	} else {
+	  printf("IMPORT %s Sleef_%sf%d_%s(%s, %s);\n",
+		 vfloatname,
+		 funcList[i].name, wsp,
+		 isaname,
+		 vfloatname, vfloatname);
+	}
 	break;
       case 2:
-	printf("IMPORT Sleef_%s_2 Sleef_%sf%d_u%02d%s(%s);\n",
-	       vfloatname,
-	       funcList[i].name, wsp,
-	       funcList[i].ulp, isaname,
-	       vfloatname);
+	if (funcList[i].ulp >= 0) {
+	  printf("IMPORT Sleef_%s_2 Sleef_%sf%d_u%02d%s(%s);\n",
+		 vfloatname,
+		 funcList[i].name, wsp,
+		 funcList[i].ulp, isaname,
+		 vfloatname);
+	} else {
+	  printf("IMPORT Sleef_%s_2 Sleef_%sf%d_%s(%s);\n",
+		 vfloatname,
+		 funcList[i].name, wsp,
+		 isaname,
+		 vfloatname);
+	}
 	break;
 	/*
-      case 3:
-	printf("IMPORT %s Sleef_%sf%d_%s(%s, vint2_%s);\n",
-	       vfloatname,
-	       funcList[i].name, wsp,
-	       isaname,
-	       vfloatname, isaname);
-	break;
-      case 4:
-	printf("IMPORT vint2_%s Sleef_%sf%d_%s(%s);\n",
-	       isaname,
-	       funcList[i].name, wsp,
-	       isaname,
-	       vfloatname);
-	break;
+	  case 3:
+	  printf("IMPORT %s Sleef_%sf%d_%s(%s, vint2_%s);\n",
+	  vfloatname,
+	  funcList[i].name, wsp,
+	  isaname,
+	  vfloatname, isaname);
+	  break;
+	  case 4:
+	  printf("IMPORT vint2_%s Sleef_%sf%d_%s(%s);\n",
+	  isaname,
+	  funcList[i].name, wsp,
+	  isaname,
+	  vfloatname);
+	  break;
 	*/
       case 5:
-	printf("IMPORT %s Sleef_%sf%d_%s(%s, %s, %s);\n",
-	       vfloatname,
-	       funcList[i].name, wsp,
-	       isaname,
-	       vfloatname, vfloatname, vfloatname);
+	if (funcList[i].ulp >= 0) {
+	  printf("IMPORT %s Sleef_%sf%d_u%02d%s(%s, %s, %s);\n",
+		 vfloatname,
+		 funcList[i].name, wsp,
+		 funcList[i].ulp, isaname,
+		 vfloatname, vfloatname, vfloatname);
+	} else {
+	  printf("IMPORT %s Sleef_%sf%d_%s(%s, %s, %s);\n",
+		 vfloatname,
+		 funcList[i].name, wsp,
+		 isaname,
+		 vfloatname, vfloatname, vfloatname);
+	}
 	break;
       }
     }
