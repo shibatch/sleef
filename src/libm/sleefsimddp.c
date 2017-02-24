@@ -71,6 +71,14 @@ void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
 #endif
 #endif
 
+#ifdef ENABLE_ADVSIMD
+#define CONFIG 1
+#include "helperadvsimd.h"
+#ifdef DORENAME
+#include "renameadvsimd.h"
+#endif
+#endif
+
 //
 
 #include "dd.h"
@@ -1171,8 +1179,15 @@ static INLINE CONST vdouble expk(vdouble2 d) {
 EXPORT CONST vdouble xpow(vdouble x, vdouble y) {
 #if 1
   vopmask yisint = visint(y);
-  //vopmask yisodd = vand_vo_vo_vo(vcast_vo64_vo32(veq_vo_vi_vi(vand_vi_vi_vi(vtruncate_vi_vd(y), vcast_vi_i(1)), vcast_vi_i(1))), yisint);
+#ifdef ENABLE_ADVSIMD
+  vopmask yisodd = vand_vo_vo_vo(vcast_vo64_vo32(veq_vo_vi_vi(vand_vi_vi_vi(vtruncate_vi_vd(y), vcast_vi_i(1)), vcast_vi_i(1))), yisint);
+#else
   vopmask yisodd = vand_vo_vo_vo(visodd(y), yisint);
+#endif
+
+#if defined(ENABLE_ADVSIMD) || (defined (ENABLE_VECEXT) && defined (__aarch64__))
+  yisodd = vandnot_vm_vo64_vm(visinf_vo_vd ( y), yisodd);
+#endif
 
   vdouble2 d = ddmul_vd2_vd2_vd(logk(vabs_vd_vd(x)), y);
   vdouble result = expk(d);

@@ -56,6 +56,7 @@ else ifneq ($(shell $(CC) -v 2>&1 | grep -c "gcc version"), 0)
   export STRICTMATHFLAG=-ffp-contract=off
   export AVX2FLAG=-mavx2 -mfma
   export AVX512FLAG=-mavx512f
+  export ADVSIMDFLAG=-march=armv8-a+simd
   export WALLFLAGS=-fmax-errors=3 -Wall -Wno-unused -Wno-attributes -Wno-psabi
   export CFLAGS=$(WALLFLAGS) -std=gnu99
 endif

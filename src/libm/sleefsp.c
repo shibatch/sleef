@@ -1001,6 +1001,10 @@ EXPORT CONST float xpowf(float x, float y) {
   int yisint = (y == (int)y) || (fabsfk(y) >= (float)(1LL << 23));
   int yisodd = (1 & (int)y) != 0 && yisint;
 
+#if  defined (__aarch64__)
+  yisodd = yisodd & ~isinf(y);
+#endif
+
   float result = expkf(dfmul_f2_f2_f(logkf(fabsfk(x)), y));
 
   result = xisnanf(result) ? INFINITYf : result;

@@ -60,8 +60,8 @@ endif
 else ifeq ($(ARCH), arm)
 TARGET += iutneon32
 else ifeq ($(ARCH), aarch64)
-TARGET += iutneon64
-TARGET2 += tester2neon64dp tester2neon64sp 
+TARGET += iutadvsimd
+TARGET2 += tester2advsimddp tester2advsimdsp
 endif
 
 .PHONY: all
@@ -163,6 +163,18 @@ tester2avx512fsp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2
 iutneon32 : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h iutsimd.c ../libm/renameneon32.h ../../include/sleef.h
 	$(CC) $(CFLAGS) -DENABLE_NEON32 -mfpu=neon iutsimd.c -o iutneon32 -lsleef -lm
 
+
+#
+
+iutadvsimd : ../libm/sleefsimddp.c ../libm/sleefsimdsp.c ../arch/helperadvsimd.h
+	$(CC) $(CFLAGS) -DENABLE_ADVSIMD $(ADVSIMDFLAG) ../libm/sleefsimddp.c ../libm/sleefsimdsp.c iutsimd.c -o iutadvsimd -lm
+
+tester2advsimddp :  ../libm/sleefsimddp.c ../libm/sleefsimdsp.c ../arch/helperadvsimd.h tester2simddp.c
+	$(CC) $(CFLAGS) -DENABLE_ADVSIMD $(ADVSIMDFLAG) ../libm/sleefsimddp.c ../libm/sleefsimdsp.c tester2simddp.c -o tester2advsimddp  -lm -lmpfr
+
+tester2advsimdsp : ../libm/sleefsimddp.c ../libm/sleefsimdsp.c ../arch/helperadvsimd.h tester2simdsp.c
+	$(CC) $(CFLAGS) -DENABLE_ADVSIMD $(ADVSIMDFLAG) ../libm/sleefsimddp.c ../libm/sleefsimdsp.c tester2simdsp.c -o tester2advsimdsp  -lm -lmpfr
+
 #
 
 tester2vecextdp : ../libm/sleefsimddp.c tester2simddp.c
@@ -214,7 +226,7 @@ clean :
 	rm -f *~ a.out *.obj *.lib *.dll *.exp *.exe *.stackdump
 	rm -rf *.dSYM *.dylib
 	rm -f *.so *.so.* *.a
-	rm -f iut iutsse2 iutavx iutfma4 iutavx2 iutavx512f iutneon32
+	rm -f iut iutsse2 iutavx iutfma4 iutavx2 iutavx512f iutneon32 iutadvsimd
 	rm -f tester testeru1 testersp testerspu1 tester2vecextdp tester2vecextsp iutvecext tester2purecdp tester2purecsp iutpurec
 	rm -f tester2dp tester2sp tester2qp tester2ld tester2sse2dp tester2sse2sp tester2fma4dp tester2fma4sp tester2avxdp tester2avxsp tester2avx2dp tester2avx2sp tester2avx512fdp tester2avx512fsp
 

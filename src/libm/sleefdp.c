@@ -1163,6 +1163,10 @@ EXPORT CONST double xpow(double x, double y) {
   int yisint = xisint(y);
   int yisodd = yisint && xisodd(y);
 
+#if  defined (__aarch64__)
+  yisodd = yisodd & ~isinf(y);
+#endif
+
   double result = expk(ddmul_d2_d2_d(logk(fabsk(x)), y));
 
   result = xisnan(result) ? INFINITY : result;

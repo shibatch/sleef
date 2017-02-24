@@ -74,6 +74,12 @@ typedef Sleef___m512_2 vfloat2;
 #include "norename.h"
 #endif
 
+#ifdef ENABLE_ADVSIMD
+#define CONFIG 1
+#include "helperadvsimd.h"
+#include "norename.h"
+#endif
+
 #define DENORMAL_DBL_MIN (4.9406564584124654418e-324)
 
 #define POSITIVE_INFINITY INFINITY
@@ -83,7 +89,7 @@ int isnumber(double x) { return !isinf(x) && !isnan(x); }
 int isPlusZero(double x) { return x == 0 && copysign(1, x) == 1; }
 int isMinusZero(double x) { return x == 0 && copysign(1, x) == -1; }
 
-mpfr_t fra, frb, frc, frd;
+mpfr_t fra, frb, frc, frd, frw, frx, fry, frz;
 
 double countULP(double d, mpfr_t c) {
   double c2 = mpfr_get_d(c, GMP_RNDN);

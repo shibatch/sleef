@@ -8,6 +8,15 @@ then
     exit 1
 fi
 
+./runtestersub2.sh ./iutadvsimd
+rc=$?
+if [ $rc != 0 ]
+then
+    echo "Not all tests were passed."
+    exit 1
+fi
+
+
 ./runtestersub2.sh ./iutavx512f sde64 --
 rc=$?
 if [ $rc != 0 ]

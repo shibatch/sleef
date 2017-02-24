@@ -4,6 +4,12 @@ CFLAGS+=$(STRICTMATHFLAG) -O3 -I../common -I../arch
 
 OBJ=sleefdp.o sleefsp.o
 
+
+ifeq ($(ARCH), aarch64)
+OBJ+=sleefdpadvsimd.o
+OBJ+=sleefspadvsimd.o
+endif
+
 ifdef ENABLEFLOAT80
 OBJ+=sleefld.o
 endif
@@ -24,11 +30,10 @@ OBJ+=sleefdpavx512f.o
 OBJ+=sleefspavx512f.o
 endif
 
-else ifeq ($(ARCH), arm)
+ifeq ($(ARCH), arm)
 OBJ+=sleefspneon32.o
-# else ifeq($(ARCH), aarch64)
-# OBJ+=sleefdpneon64.o
-# OBJ+=sleefspneon64.o
+endif
+
 endif
 
 .PHONY: all
@@ -155,8 +160,15 @@ renameneon32.h : mkrename
 
 #
 
+sleefspadvsimd.o : sleefsimdsp.c  ../arch/helperadvsimd.h
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) $(ADVSIMDFLAG)  -DENABLE_ADVSIMD  sleefsimdsp.c -c -o sleefspadvsimd.o
+sleefdpadvsimd.o : sleefsimddp.c ../arch/helperadvsimd.h
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) $(ADVSIMDFLAG)  -DENABLE_ADVSIMD  sleefsimddp.c -c -o sleefdpadvsimd.o
+
+#
+
 .PHONY: clean
 clean :
 	rm -f *~ *.o *.s libm.a sleef.h a.out *.lock
 	rm -f *.obj *.lib *.dll *.exp *.exe
-	rm -f mkrename renamesse2.h renameavx.h renamefma4.h renameavx2.h renameavx512f.h renameneon32.h
+	rm -f mkrename renamesse2.h renameavx.h renamefma4.h renameavx2.h renameavx512f.h renameneon32.h renameadvsimd.h
