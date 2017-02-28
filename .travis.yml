@@ -1,0 +1,11 @@
+language: c
+
+compiler:
+    - gcc
+
+before_script:
+    - make
+    - cd src
+    - cd libm-tester
+
+script: make
