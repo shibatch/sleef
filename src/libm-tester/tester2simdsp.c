@@ -93,7 +93,7 @@ int isnumber(double x) { return !isinf(x) && !isnan(x); }
 int isPlusZero(double x) { return x == 0 && copysign(1, x) == 1; }
 int isMinusZero(double x) { return x == 0 && copysign(1, x) == -1; }
 
-mpfr_t fra, frb, frc, frd, frw, frx, fry, frz;
+mpfr_t fra, frb, frc, frd;
 
 double countULP(float d, mpfr_t c) {
   float c2 = mpfr_get_d(c, GMP_RNDN);

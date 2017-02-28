@@ -1091,7 +1091,7 @@ EXPORT CONST vfloat xpowf(vfloat x, vfloat y) {
 #if 1
   vopmask yisint = vor_vo_vo_vo(veq_vo_vf_vf(vtruncate_vf_vf(y), y), vgt_vo_vf_vf(vabs_vf_vf(y), vcast_vf_f(1 << 23)));
   vopmask yisodd = vand_vo_vo_vo(veq_vo_vi2_vi2(vand_vi2_vi2_vi2(vtruncate_vi2_vf(y), vcast_vi2_i(1)), vcast_vi2_i(1)), yisint);
-
+  
 #if defined(ENABLE_NEON32) || defined(ENABLE_ADVSIMD) || (defined (ENABLE_VECEXT) && defined (__aarch64__))
   yisodd = vandnot_vm_vo32_vm(visinf_vo_vf(y), yisodd);
 #endif
@@ -1284,7 +1284,7 @@ EXPORT CONST vfloat xexp10f(vfloat a) {
 EXPORT CONST vfloat xexpm1f(vfloat a) {
   vfloat2 d = dfadd2_vf2_vf2_vf(expk2f(vcast_vf2_vf_vf(a, vcast_vf_f(0))), vcast_vf_f(-1.0));
   vfloat x = vadd_vf_vf_vf(d.x, d.y);
-  x = vsel_vf_vo_vf_vf(vgt_vo_vf_vf(a, vcast_vf_f(88.72283905206835f)), vcast_vf_f(INFINITYf), x);
+  x = vsel_vf_vo_vf_vf(vgt_vo_vf_vf(a, vcast_vf_f(88.72283172607421875f)), vcast_vf_f(INFINITYf), x);
   x = vsel_vf_vo_vf_vf(vlt_vo_vf_vf(a, vcast_vf_f(-16.635532333438687426013570f)), vcast_vf_f(-1), x);
   x = vsel_vf_vo_vf_vf(visnegzero_vo_vf(a), vcast_vf_f(-0.0f), x);
   return x;

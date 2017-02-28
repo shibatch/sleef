@@ -53,6 +53,30 @@ vdouble xcbrt_u1(vdouble d);
 
 vdouble2 xsincospi_u05(vdouble d);
 vdouble2 xsincospi_u35(vdouble d);
+
+vdouble xldexp(vdouble, vint);
+vint xilogb(vdouble);
+vdouble xfma(vdouble, vdouble, vdouble);
+vdouble xsqrt_u05(vdouble);
+
+vdouble xhypot_u05(vdouble, vdouble);
+vdouble xhypot_u35(vdouble, vdouble);
+
+vdouble xfabs(vdouble);
+vdouble xcopysign(vdouble, vdouble);
+vdouble xfmax(vdouble, vdouble);
+vdouble xfmin(vdouble, vdouble);
+vdouble xfdim(vdouble, vdouble);
+vdouble xtrunc(vdouble);
+vdouble xfloor(vdouble);
+vdouble xceil(vdouble);
+vdouble xround(vdouble);
+vdouble xrint(vdouble);
+vdouble xnextafter(vdouble, vdouble);
+vdouble xfrfrexp(vdouble);
+vint xexpfrexp(vdouble);
+vdouble xfmod(vdouble, vdouble);
+vdouble2 xmodf(vdouble);
 #endif
 
 //
@@ -76,7 +100,7 @@ vfloat xatan2f(vfloat y, vfloat x);
 vfloat xlogf(vfloat d);
 vfloat xexpf(vfloat d);
 vfloat xcbrtf(vfloat s);
-vfloat xsqrtf(vfloat s);
+vfloat xsqrtf_u05(vfloat s);
 
 vfloat xpowf(vfloat x, vfloat y);
 vfloat xsinhf(vfloat x);

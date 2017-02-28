@@ -738,7 +738,6 @@ int main(int argc,char **argv)
       if (u0 != 0) {
 	printf("Pure C round arg=%.24g ulp=%.20g\n", d, u0);
 	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
-	printf("%.20g\n", xrint(d));
 	fflush(stdout);
       }
     }
@@ -752,8 +751,6 @@ int main(int argc,char **argv)
       if (u0 != 0) {
 	printf("Pure C rint arg=%.24g ulp=%.20g\n", d, u0);
 	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
-	double debug = xround(d);
-	printf("%.20g\n", debug);
 	fflush(stdout);
       }
     }

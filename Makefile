@@ -20,7 +20,11 @@ all : libsleef libsleef-dft
 .PHONY: libsleef
 libsleef :
 	+"$(MAKE)" --directory=./lib libsleef
-#	+"$(MAKE)" --directory=./src/libm-tester
+	+"$(MAKE)" --directory=./src/libm-tester
+
+.PHONY: test
+test : libsleef
+	+"$(MAKE)" --directory=./src/libm-tester test
 
 # TODO: reactivate DFT builds for AArch64
 ifneq ($(ARCH),aarch64)

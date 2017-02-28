@@ -1001,10 +1001,6 @@ EXPORT CONST float xpowf(float x, float y) {
   int yisint = (y == (int)y) || (fabsfk(y) >= (float)(1LL << 23));
   int yisodd = (1 & (int)y) != 0 && yisint;
 
-#if  defined (__aarch64__)
-  yisodd = yisodd & ~isinf(y);
-#endif
-
   float result = expkf(dfmul_f2_f2_f(logkf(fabsfk(x)), y));
 
   result = xisnanf(result) ? INFINITYf : result;
@@ -1140,7 +1136,7 @@ EXPORT CONST float xexp10f(float a) {
 EXPORT CONST float xexpm1f(float a) {
   Sleef_float2 d = dfadd2_f2_f2_f(expk2f(df(a, 0)), -1.0f);
   float x = d.x + d.y;
-  if (a > 88.72283905206835f) x = INFINITYf;
+  if (a > 88.72283172607421875f) x = INFINITYf;
   if (a < -16.635532333438687426013570f) x = -1;
   if (xisnegzerof(a)) x = -0.0f;
   return x;
@@ -1482,10 +1478,10 @@ EXPORT CONST float xfmaf(float x, float y, float z) {
 int main(int argc, char **argv) {
   float d1 = atof(argv[1]);
   //float d2 = atof(argv[2]);
-  float i2 = atoi(argv[2]);
+  //float i2 = atoi(argv[2]);
   //float c = xatan2f_u1(d1, d2);
-  printf("test    = %g\n", (double)xldexpf(d1, i2));
-  printf("correct = %g\n", (double)ldexpf(d1, i2));
+  printf("test    = %g\n", (double)xexpm1f(d1));
+  printf("correct = %g\n", (double)expm1f(d1));
   //Sleef_float2 r = xsincospif_u35(d);
   //printf("%g, %g\n", (double)r.x, (double)r.y);
 }

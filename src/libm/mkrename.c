@@ -74,7 +74,7 @@ funcSpec funcList[] = {
 
   { "fma", -1, 0, 5 },
   { "sqrt", 5, 2, 0 },
-  { "hypot", 10, 1, 1 },
+  { "hypot", 5, 2, 1 },
   { "hypot", 35, 3, 1 },
   { "fabs", -1, 0, 0 },
   { "copysign", -1, 0, 1 },

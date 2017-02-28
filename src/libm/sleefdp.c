@@ -84,12 +84,12 @@ static INLINE CONST int xispinf(double x) { return x == INFINITY; }
 static INLINE CONST int xisnegzero(double x) { return doubleToRawLongBits(x) == doubleToRawLongBits(-0.0); }
 
 static INLINE CONST int xisint(double d) {
-  double x = d - (double)(1 << 31) * (int)(d * (1.0 / (1 << 31)));
+  double x = d - (double)(1LL << 31) * (int)(d * (1.0 / (1LL << 31)));
   return (x == (int)x) || (fabsk(d) >= (double)(1LL << 52));
 }
 
 static INLINE CONST int xisodd(double d) {
-  double x = d - (double)(1 << 31) * (int)(d * (1.0 / (1 << 31)));
+  double x = d - (double)(1LL << 31) * (int)(d * (1.0 / (1LL << 31)));
   return (1 & (int)x) != 0;
 }
 
@@ -1163,10 +1163,6 @@ EXPORT CONST double xpow(double x, double y) {
   int yisint = xisint(y);
   int yisodd = yisint && xisodd(y);
 
-#if  defined (__aarch64__)
-  yisodd = yisodd & ~isinf(y);
-#endif
-
   double result = expk(ddmul_d2_d2_d(logk(fabsk(x)), y));
 
   result = xisnan(result) ? INFINITY : result;
@@ -1495,20 +1491,20 @@ EXPORT CONST double xfdim(double x, double y) {
 }
 
 EXPORT CONST double xtrunc(double x) {
-  double fr = x - (double)(1 << 31) * (int32_t)(x * (1.0 / (1 << 31)));
+  double fr = x - (double)(1LL << 31) * (int32_t)(x * (1.0 / (1LL << 31)));
   fr = fr - (int32_t)fr;
   return (xisinf(x) || fabsk(x) > (double)(1LL << 52)) ? x : copysignk(x - fr, x);
 }
 
 EXPORT CONST double xfloor(double x) {
-  double fr = x - (double)(1 << 31) * (int32_t)(x * (1.0 / (1 << 31)));
+  double fr = x - (double)(1LL << 31) * (int32_t)(x * (1.0 / (1LL << 31)));
   fr = fr - (int32_t)fr;
   fr = fr < 0 ? fr+1.0 : fr;
   return (xisinf(x) || fabsk(x) > (double)(1LL << 52)) ? x : copysignk(x - fr, x);
 }
 
 EXPORT CONST double xceil(double x) {
-  double fr = x - (double)(1 << 31) * (int32_t)(x * (1.0 / (1 << 31)));
+  double fr = x - (double)(1LL << 31) * (int32_t)(x * (1.0 / (1LL << 31)));
   fr = fr - (int32_t)fr;
   fr = fr <= 0 ? fr : fr-1.0;
   return (xisinf(x) || fabsk(x) > (double)(1LL << 52)) ? x : copysignk(x - fr, x);
@@ -1516,7 +1512,7 @@ EXPORT CONST double xceil(double x) {
 
 EXPORT CONST double xround(double d) {
   double x = d + 0.5;
-  double fr = x - (double)(1 << 31) * (int32_t)(x * (1.0 / (1 << 31)));
+  double fr = x - (double)(1LL << 31) * (int32_t)(x * (1.0 / (1LL << 31)));
   fr = fr - (int32_t)fr;
   if (fr == 0 && x <= 0) x--;
   fr = fr < 0 ? fr+1.0 : fr;
@@ -1525,7 +1521,7 @@ EXPORT CONST double xround(double d) {
 
 EXPORT CONST double xrint(double d) {
   double x = d + 0.5;
-  double fr = x - (double)(1 << 31) * (int32_t)(x * (1.0 / (1 << 31)));
+  double fr = x - (double)(1LL << 31) * (int32_t)(x * (1.0 / (1LL << 31)));
   int32_t isodd = (1 & (int32_t)fr) != 0;
   fr = fr - (int32_t)fr;
   fr = (fr < 0 || (fr == 0 && isodd)) ? fr+1.0 : fr;
@@ -1653,7 +1649,7 @@ EXPORT CONST double xfmod(double x, double y) {
 }
 
 EXPORT CONST Sleef_double2 xmodf(double x) {
-  double fr = x - (double)(1 << 31) * (int32_t)(x * (1.0 / (1 << 31)));
+  double fr = x - (double)(1LL << 31) * (int32_t)(x * (1.0 / (1LL << 31)));
   fr = fr - (int32_t)fr;
   fr = fabsk(x) >= (double)(1LL << 52) ? 0 : fr;
   Sleef_double2 ret = { copysignk(fr, x), copysignk(x - fr, x) };

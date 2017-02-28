@@ -69,7 +69,7 @@ all : $(TARGET) $(TARGET2)
 
 .PHONY: test
 test : $(TARGET)
-	./runtester.sh
+	bash -c ./runtester.sh
 
 #
 

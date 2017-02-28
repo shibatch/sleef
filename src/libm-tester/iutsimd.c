@@ -1032,7 +1032,7 @@ float xxsqrtf(float d) {
   s[idx] = d;
 
   vfloat a = vloadu_vf_p(s);
-  a = xsqrtf(a);
+  a = xsqrtf_u05(a);
   vstoreu_v_p_vf(s, a);
 
   return s[idx];
