@@ -901,6 +901,7 @@ int main(int argc,char **argv)
 
       if (!(isnan(t) && isnan(c)) && t != c) {
 	printf(ISANAME " nextafter arg=%.20g, %.20g\n", d, d2);
+	printf("correct = %.20g, test = %.20g\n", c, t);
 	fflush(stdout);
       }
     }

@@ -208,7 +208,7 @@ static INLINE vopmask visnan_vo_vd(vdouble d) {
 static INLINE vint vilogbk_vi_vd(vdouble d) { return vrint_vi_vd(_mm512_getexp_pd(d)); }
 
 static INLINE double vcast_d_vd(vdouble v) {
-  double s[4];
+  double s[VECTLENDP];
   _mm512_storeu_pd(s, v);
   return s[0];
 }
@@ -316,7 +316,7 @@ static INLINE vopmask visnan_vo_vf(vfloat d) { return vneq_vo_vf_vf(d, d); }
 static INLINE vint2 vilogbk_vi2_vf(vfloat d) { return vrint_vi2_vf(_mm512_getexp_ps(d)); }
 
 static INLINE float vcast_f_vf(vfloat v) {
-  float s[8];
+  float s[VECTLENSP];
   _mm512_storeu_ps(s, v);
   return s[0];
 }

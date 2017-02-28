@@ -1618,14 +1618,17 @@ EXPORT CONST vdouble xnextafter(vdouble x, vdouble y) {
 
   t = vadd_vi2_vi2_vi2(vxor_vi2_vi2_vi2(xi2, vcast_vi2_i_i(0x7fffffff, 0xffffffff)), vcast_vi2_i_i(0, 1));
   t = vsub_vi2_vi2_vi2(t, vrev21_vi2_vi2(veq_vi2_vi2_vi2(t, vcast_vi2_i_i(-1, 0))));
-  xi2 = vsel_vi2_vo_vi2_vi2(c, t, xi2);
+  xi2 = vreinterpret_vi2_vd(vsel_vd_vo_vd_vd(c, vreinterpret_vd_vi2(t), vreinterpret_vd_vi2(xi2)));
 
-  xi2 = vsub_vi2_vi2_vi2(xi2, vand_vi2_vo_vi2(vneq_vo_vd_vd(x, y), vcast_vi2_i_i(0, 1)));
-  xi2 = vsel_vi2_vo_vi2_vi2(vneq_vo_vd_vd(x, y), vadd_vi2_vi2_vi2(xi2, vrev21_vi2_vi2(veq_vi2_vi2_vi2(xi2, vcast_vi2_i_i(-1, -1)))), xi2);
+  xi2 = vsub_vi2_vi2_vi2(xi2, vcast_vi2_vm(vand_vm_vo64_vm(vneq_vo_vd_vd(x, y), vcast_vm_i_i(0, 1))));
 
+  xi2 = vreinterpret_vi2_vd(vsel_vd_vo_vd_vd(vneq_vo_vd_vd(x, y),
+					     vreinterpret_vd_vi2(vadd_vi2_vi2_vi2(xi2, vrev21_vi2_vi2(veq_vi2_vi2_vi2(xi2, vcast_vi2_i_i(-1, -1))))),
+					     vreinterpret_vd_vi2(xi2)));
+  
   t = vadd_vi2_vi2_vi2(vxor_vi2_vi2_vi2(xi2, vcast_vi2_i_i(0x7fffffff, 0xffffffff)), vcast_vi2_i_i(0, 1));
   t = vsub_vi2_vi2_vi2(t, vrev21_vi2_vi2(veq_vi2_vi2_vi2(t, vcast_vi2_i_i(-1, 0))));
-  xi2 = vsel_vi2_vo_vi2_vi2(c, t, xi2);
+  xi2 = vreinterpret_vi2_vd(vsel_vd_vo_vd_vd(c, vreinterpret_vd_vi2(t), vreinterpret_vd_vi2(xi2)));
   
   vdouble ret = vreinterpret_vd_vi2(xi2);
 
@@ -1788,14 +1791,14 @@ EXPORT CONST vdouble xfmod(vdouble x, vdouble y) {
 #include <stdlib.h>
 int main(int argc, char **argv) {
   vdouble d1 = vcast_vd_d(atof(argv[1]));
-  //vdouble d2 = vcast_vd_d(atof(argv[2]));
+  vdouble d2 = vcast_vd_d(atof(argv[2]));
   //vdouble d3 = vcast_vd_d(atof(argv[3]));
   //vdouble r = xnextafter(d1, d2);
   //int i;
   //double fr = frexp(atof(argv[1]), &i);
-  printf("%.20g\n", vcast_d_vd(xrint(d1)));
+  printf("%.20g\n", xnextafter(d1, d2)[1]);
   //printf("%.20g\n", vcast_d_vd(xhypot_u05(d1, d2)));
-  printf("%.20g\n", rint(atof(argv[1])));
+  printf("%.20g\n", nextafter(atof(argv[1]), atof(argv[2])));
   //printf("%.20g\n", fmod(atof(argv[1]), atof(argv[2])));
   //printf("%.20g\n", vcast_d_vd(xfmod(d1, d2)));
   //vdouble2 r = xsincospi_u35(a);
