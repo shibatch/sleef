@@ -73,8 +73,14 @@ all : $(OBJ)
 %_1_neon32sp.o : %_1_neon32sp.c
 	$(CC) $(CFLAGS) $(FASTMATHFLAG) -mfpu=neon -DENABLE_NEON32 -DBASETYPEID=2 -DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` -c $< -o $@
 
-%_neonsp.o : %_neonsp.c
-	$(CC) $(CFLAGS) $(FASTMATHFLAG) $(MFPUNEON) -DENABLE_NEON32 -DBASETYPEID=2 -c $< -o $@
+%_1_advsimddp.o : %_1_advsimddp.c
+	$(CC) $(CFLAGS) $(FASTMATHFLAG) -DENABLE_ADVSIMD -DBASETYPEID=1 -DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` -c $< -o $@
 
-%_neondp.o : %_neondp.c
-	$(CC) $(CFLAGS) $(FASTMATHFLAG) -DENABLE_NEON64 -DBASETYPEID=1 -c $< -o $@
+%_1_advsimdsp.o : %_1_advsimdsp.c
+	$(CC) $(CFLAGS) $(FASTMATHFLAG) -DENABLE_ADVSIMD -DBASETYPEID=2 -DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` -c $< -o $@
+
+# %_neonsp.o : %_neonsp.c
+# 	$(CC) $(CFLAGS) $(FASTMATHFLAG) $(MFPUNEON) -DENABLE_NEON32 -DBASETYPEID=2 -c $< -o $@
+
+# %_neondp.o : %_neondp.c
+# 	$(CC) $(CFLAGS) $(FASTMATHFLAG) -DENABLE_NEON64 -DBASETYPEID=1 -c $< -o $@

@@ -4,12 +4,6 @@ CFLAGS+=$(STRICTMATHFLAG) -O3 -I../common -I../arch
 
 OBJ=sleefdp.o sleefsp.o
 
-
-ifeq ($(ARCH), aarch64)
-OBJ+=sleefdpadvsimd.o
-OBJ+=sleefspadvsimd.o
-endif
-
 ifdef ENABLEFLOAT80
 OBJ+=sleefld.o
 endif
@@ -18,27 +12,41 @@ ifdef ENABLEFLOAT128
 OBJ+=sleefqp.o
 endif
 
-ifeq ($(ARCH), x86_64)
-OBJ+=sleefdpsse2.o sleefdpavx.o
-OBJ+=sleefspsse2.o sleefspavx.o
-ifeq ($(ENABLEAVX2), 1)
-OBJ+=sleefdpavx2.o
-OBJ+=sleefspavx2.o
-endif
-ifdef ENABLEFMA4
-OBJ+=sleefdpfma4.o
-OBJ+=sleefspfma4.o
-endif
-ifeq ($(ENABLEAVX512F), 1)
-OBJ+=sleefdpavx512f.o
-OBJ+=sleefspavx512f.o
+#
+
+ifeq ($(ARCH), aarch64)
+OBJ+=sleefdpadvsimd.o
+OBJ+=sleefspadvsimd.o
 endif
 
 ifeq ($(ARCH), arm)
 OBJ+=sleefspneon32.o
 endif
 
+#
+
+ifeq ($(ARCH), x86_64)
+OBJ+=sleefdpsse2.o sleefdpavx.o
+OBJ+=sleefspsse2.o sleefspavx.o
+
+ifeq ($(ENABLEAVX2), 1)
+OBJ+=sleefdpavx2.o
+OBJ+=sleefspavx2.o
 endif
+
+ifdef ENABLEFMA4
+OBJ+=sleefdpfma4.o
+OBJ+=sleefspfma4.o
+endif
+
+ifeq ($(ENABLEAVX512F), 1)
+OBJ+=sleefdpavx512f.o
+OBJ+=sleefspavx512f.o
+endif
+
+endif
+
+#
 
 .PHONY: all
 all : libm.a sleef.h
@@ -63,6 +71,14 @@ sleef.h : mkrename
 	cp sleeflibm.h.org sleef.h
 	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
 	./mkrename neon 2 4 - float32x4_t int32x4_t int32x4_t __ARM_NEON__ >> sleef.h
+	echo '#undef IMPORT' >> sleef.h
+	echo '#endif' >> sleef.h
+	cp sleef.h ../../include
+else ifeq ($(ARCH), aarch64)
+sleef.h : mkrename
+	cp sleeflibm.h.org sleef.h
+	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
+	./mkrename advsimd 2 4 - float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON >> sleef.h
 	echo '#undef IMPORT' >> sleef.h
 	echo '#endif' >> sleef.h
 	cp sleef.h ../../include
@@ -166,8 +182,13 @@ renameneon32.h : mkrename
 
 sleefspadvsimd.o : sleefsimdsp.c  ../arch/helperadvsimd.h
 	$(CC) $(CFLAGS) $(SHAREDFLAGS) $(ADVSIMDFLAG)  -DENABLE_ADVSIMD  sleefsimdsp.c -c -o sleefspadvsimd.o
+
 sleefdpadvsimd.o : sleefsimddp.c ../arch/helperadvsimd.h
 	$(CC) $(CFLAGS) $(SHAREDFLAGS) $(ADVSIMDFLAG)  -DENABLE_ADVSIMD  sleefsimddp.c -c -o sleefdpadvsimd.o
+
+renameadvsimd.h : mkrename
+	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
+	./mkrename advsimd 2 4 > renameadvsimd.h
 
 #
 

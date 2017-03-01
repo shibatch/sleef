@@ -109,7 +109,7 @@ int check_cf(int n) {
 
   forward(ts, fs, n);
 
-  struct SleefDFT *p = SleefDFT_init(n, NULL, NULL, SLEEF_MODE_DEBUG);
+  struct SleefDFT *p = SleefDFT_init(n, NULL, NULL, SLEEF_MODE_DEBUG | SLEEF_MODE_VERBOSE);
   //struct SleefDFT *p = SleefDFT_init(SLEEF_MODE_MEASURE, n);
   //struct SleefDFT *p = SleefDFT_init(SLEEF_MODE_FORWARD, n);
 

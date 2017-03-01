@@ -28,6 +28,10 @@
 #include "helperneon32.h"
 #endif
 
+#ifdef ENABLE_ADVSIMD
+#include "helperadvsimd.h"
+#endif
+
 #ifdef ENABLE_VECEXT
 #include "helpervecext.h"
 #endif

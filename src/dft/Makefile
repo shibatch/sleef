@@ -25,6 +25,9 @@ endif
 else ifeq ($(ARCH), arm)
 ISALISTDP=1_vecextdp
 ISALISTSP=1_vecextsp 1_neon32sp
+else ifeq ($(ARCH), aarch64)
+ISALISTDP=1_vecextdp 1_advsimddp
+ISALISTSP=1_vecextsp 1_advsimdsp
 else
 ISALISTDP=1_vecextdp
 ISALISTSP=1_vecextsp

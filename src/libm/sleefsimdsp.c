@@ -1092,8 +1092,8 @@ EXPORT CONST vfloat xpowf(vfloat x, vfloat y) {
   vopmask yisint = vor_vo_vo_vo(veq_vo_vf_vf(vtruncate_vf_vf(y), y), vgt_vo_vf_vf(vabs_vf_vf(y), vcast_vf_f(1 << 24)));
   vopmask yisodd = vand_vo_vo_vo(vand_vo_vo_vo(veq_vo_vi2_vi2(vand_vi2_vi2_vi2(vtruncate_vi2_vf(y), vcast_vi2_i(1)), vcast_vi2_i(1)), yisint),
 				 vlt_vo_vf_vf(vabs_vf_vf(y), vcast_vf_f(1 << 24)));
-  
-#if defined(ENABLE_NEON32) || defined(ENABLE_ADVSIMD) || (defined (ENABLE_VECEXT) && defined (__aarch64__))
+
+#ifdef ENABLE_NEON32
   yisodd = vandnot_vm_vo32_vm(visinf_vo_vf(y), yisodd);
 #endif
 
