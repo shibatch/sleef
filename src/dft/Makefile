@@ -9,13 +9,18 @@ ISALISTLD=1_purecld
 ISALISTQP=1_purecqp
 else ifeq ($(ARCH), x86_64)
 
+ISALISTDP=1_vecextdp 4_sse2dp 1_avxdp
+ISALISTSP=1_vecextsp 4_sse2sp 1_avxsp
+
+ifdef ENABLEAVX2
+ISALISTDP+=1_avx2dp
+ISALISTSP+=1_avx2sp
+endif
+
 ifdef ENABLEAVX512F
-ISALISTDP=1_vecextdp 4_sse2dp 1_avxdp 1_avx2dp 1_avx512fdp
-ISALISTSP=1_vecextsp 4_sse2sp 1_avxsp 1_avx2sp 1_avx512fsp
-else # ifdef ENABLEAVX512F
-ISALISTDP=1_vecextdp 4_sse2dp 1_avxdp 1_avx2dp
-ISALISTSP=1_vecextsp 4_sse2sp 1_avxsp 1_avx2sp
-endif # ifdef ENABLEAVX512F
+ISALISTDP+=1_avx512fdp
+ISALISTSP+=1_avx512fsp
+endif
 
 else ifeq ($(ARCH), arm)
 ISALISTDP=1_vecextdp

@@ -34,6 +34,7 @@ ifneq ($(shell $(CC) -v 2>&1 | grep -c "clang"), 0)
 
   export FASTMATHFLAG=-ffast-math
   export STRICTMATHFLAG=-ffp-contract=off
+  export ENABLEAVX2=1
   export AVX2FLAG=-mavx2 -mfma
   export AVX512FLAG=-mavx512f
   export WALLFLAGS=-ferror-limit=3 -Wno-shift-negative-value -Wall -Wno-unused -Wno-attributes
@@ -44,6 +45,7 @@ else ifneq ($(shell $(CC) -v 2>&1 | grep -c "icc version"), 0)
 
   export FASTMATHFLAG=-fp-model fast=2
   export STRICTMATHFLAG=-fp-model strict
+  export ENABLEAVX2=1
   export AVX2FLAG=-march=core-avx2
   export AVX512FLAG=-xCOMMON-AVX512
   export WALLFLAGS=-fmax-errors=3 -Wall -Wno-unused -Wno-attributes
@@ -54,6 +56,7 @@ else ifneq ($(shell $(CC) -v 2>&1 | grep -c "gcc version"), 0)
 
   export FASTMATHFLAG=-ffast-math
   export STRICTMATHFLAG=-ffp-contract=off
+  export ENABLEAVX2= $(shell expr `gcc -dumpversion | sed 's/\..*//g'` '>=' 5)
   export AVX2FLAG=-mavx2 -mfma
   export AVX512FLAG=-mavx512f
   export ADVSIMDFLAG=-march=armv8-a+simd

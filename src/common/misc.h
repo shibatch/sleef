@@ -75,7 +75,12 @@ typedef struct {
 #if defined (__GNUC__) || defined (__clang__) || defined(__INTEL_COMPILER)
 
 #define INLINE __attribute__((always_inline))
+
+#ifndef __INTEL_COMPILER
 #define CONST const
+#else
+#define CONST
+#endif
 
 #if defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__)
 #define EXPORT __stdcall __declspec(dllexport)

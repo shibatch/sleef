@@ -1586,8 +1586,6 @@ EXPORT CONST vdouble xround(vdouble d) {
   return vsel_vd_vo_vd_vd(vor_vo_vo_vo(visinf_vo_vd(x), vgt_vo_vd_vd(vabs_vd_vd(x), vcast_vd_d(1LL << 52))), d, vcopysign_vd_vd_vd(vsub_vd_vd_vd(x, fr), d));
 }
 
-#include <stdio.h>
-
 EXPORT CONST vdouble xrint(vdouble d) {
   vdouble x = vadd_vd_vd_vd(d, vcast_vd_d(0.5));
   vdouble fr = vsub_vd_vd_vd(x, vmul_vd_vd_vd(vcast_vd_d(1LL << 31), vcast_vd_vi(vtruncate_vi_vd(vmul_vd_vd_vd(x, vcast_vd_d(1.0 / (1LL << 31)))))));

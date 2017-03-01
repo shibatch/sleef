@@ -19,8 +19,12 @@ OBJ+=sleefqp.o
 endif
 
 ifeq ($(ARCH), x86_64)
-OBJ+=sleefdpsse2.o sleefdpavx.o sleefdpavx2.o
-OBJ+=sleefspsse2.o sleefspavx.o sleefspavx2.o
+OBJ+=sleefdpsse2.o sleefdpavx.o
+OBJ+=sleefspsse2.o sleefspavx.o
+ifdef ENABLEAVX2
+OBJ+=sleefdpavx2.o
+OBJ+=sleefspavx2.o
+endif
 ifdef ENABLEFMA4
 OBJ+=sleefdpfma4.o
 OBJ+=sleefspfma4.o
