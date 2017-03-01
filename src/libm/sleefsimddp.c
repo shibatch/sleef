@@ -175,14 +175,15 @@ static INLINE CONST vopmask visint(vdouble d) {
   vdouble x = vtruncate_vd_vd(vmul_vd_vd_vd(d, vcast_vd_d(1.0 / (1LL << 31))));
   x = vmla_vd_vd_vd_vd(vcast_vd_d(-(double)(1LL << 31)), x, d);
   return vor_vo_vo_vo(veq_vo_vd_vd(vtruncate_vd_vd(x), x),
-		      vgt_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(1LL << 52)));
+		      vgt_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(1LL << 53)));
 }
 
 static INLINE CONST vopmask visodd(vdouble d) {
   vdouble x = vtruncate_vd_vd(vmul_vd_vd_vd(d, vcast_vd_d(1.0 / (1LL << 31))));
   x = vmla_vd_vd_vd_vd(vcast_vd_d(-(double)(1LL << 31)), x, d);
 
-  return vcast_vo64_vo32(veq_vo_vi_vi(vand_vi_vi_vi(vtruncate_vi_vd(x), vcast_vi_i(1)), vcast_vi_i(1)));
+  return vand_vo_vo_vo(vcast_vo64_vo32(veq_vo_vi_vi(vand_vi_vi_vi(vtruncate_vi_vd(x), vcast_vi_i(1)), vcast_vi_i(1))),
+		       vlt_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(1LL << 53)));
 }
 
 //
@@ -1184,15 +1185,15 @@ static INLINE CONST vdouble expk(vdouble2 d) {
 EXPORT CONST vdouble xpow(vdouble x, vdouble y) {
 #if 1
   vopmask yisint = visint(y);
-#ifdef ENABLE_ADVSIMD
-  vopmask yisodd = vand_vo_vo_vo(vcast_vo64_vo32(veq_vo_vi_vi(vand_vi_vi_vi(vtruncate_vi_vd(y), vcast_vi_i(1)), vcast_vi_i(1))), yisint);
-#else
+  //#ifdef ENABLE_ADVSIMD
+  //vopmask yisodd = vand_vo_vo_vo(vcast_vo64_vo32(veq_vo_vi_vi(vand_vi_vi_vi(vtruncate_vi_vd(y), vcast_vi_i(1)), vcast_vi_i(1))), yisint);
+  //#else
   vopmask yisodd = vand_vo_vo_vo(visodd(y), yisint);
-#endif
+  //#endif
 
-#if defined(ENABLE_ADVSIMD) || (defined (ENABLE_VECEXT) && defined (__aarch64__))
-  yisodd = vandnot_vm_vo64_vm(visinf_vo_vd ( y), yisodd);
-#endif
+  //#if defined(ENABLE_ADVSIMD) || (defined (ENABLE_VECEXT) && defined (__aarch64__))
+  //  yisodd = vandnot_vm_vo64_vm(visinf_vo_vd ( y), yisodd);
+  //#endif
 
   vdouble2 d = ddmul_vd2_vd2_vd(logk(vabs_vd_vd(x)), y);
   vdouble result = expk(d);
@@ -1789,14 +1790,14 @@ EXPORT CONST vdouble xfmod(vdouble x, vdouble y) {
 #include <stdlib.h>
 int main(int argc, char **argv) {
   vdouble d1 = vcast_vd_d(atof(argv[1]));
-  vdouble d2 = vcast_vd_d(atof(argv[2]));
+  //vdouble d2 = vcast_vd_d(atof(argv[2]));
   //vdouble d3 = vcast_vd_d(atof(argv[3]));
   //vdouble r = xnextafter(d1, d2);
-  //int i;
-  //double fr = frexp(atof(argv[1]), &i);
-  printf("%.20g\n", xnextafter(d1, d2)[1]);
+  int i;
+  double fr = frexp(atof(argv[1]), &i);
+  printf("%.20g\n", xfrfrexp(d1)[0]);
   //printf("%.20g\n", vcast_d_vd(xhypot_u05(d1, d2)));
-  printf("%.20g\n", nextafter(atof(argv[1]), atof(argv[2])));
+  printf("%.20g\n", fr);
   //printf("%.20g\n", fmod(atof(argv[1]), atof(argv[2])));
   //printf("%.20g\n", vcast_d_vd(xfmod(d1, d2)));
   //vdouble2 r = xsincospi_u35(a);

@@ -85,12 +85,12 @@ static INLINE CONST int xisnegzero(double x) { return doubleToRawLongBits(x) == 
 
 static INLINE CONST int xisint(double d) {
   double x = d - (double)(1LL << 31) * (int)(d * (1.0 / (1LL << 31)));
-  return (x == (int)x) || (fabsk(d) >= (double)(1LL << 52));
+  return (x == (int)x) || (fabsk(d) >= (double)(1LL << 53));
 }
 
 static INLINE CONST int xisodd(double d) {
   double x = d - (double)(1LL << 31) * (int)(d * (1.0 / (1LL << 31)));
-  return (1 & (int)x) != 0;
+  return (1 & (int)x) != 0 && fabsk(d) < (double)(1LL << 53);
 }
 
 static INLINE CONST double pow2i(int q) {
@@ -1656,7 +1656,7 @@ EXPORT CONST Sleef_double2 xmodf(double x) {
   return ret;
 }
 
-#if 0
+#if 1
 // gcc -I../common sleefdp.c -lm
 #include <stdlib.h>
 int main(int argc, char **argv) {
@@ -1664,14 +1664,15 @@ int main(int argc, char **argv) {
   printf("arg1 = %.20g\n", d1);
   double d2 = atof(argv[2]);
   printf("arg2 = %.20g\n", d2);
+  printf("%d\n", (int)d2);
 #if 0
   double d3 = atof(argv[3]);
   printf("arg3 = %.20g\n", d3);
 #endif
-  double r = xhypot_u35(d1, d2);
+  double r = xpow(d1, d2);
   //double r = xfma(d1, d2, d3);
   printf("test = %.20g\n", r);
-  printf("corr = %.20g\n", hypot(d1, d2));
+  printf("corr = %.20g\n", pow(d1, d2));
   //printf("%.20g %.20g\n", xround(d1), xrint(d1));
   //Sleef_double2 r = xsincospi_u35(d);
   //printf("%g, %g\n", (double)r.x, (double)r.y);

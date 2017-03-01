@@ -998,8 +998,8 @@ static INLINE CONST Sleef_float2 expk2f(Sleef_float2 d) {
 }
 
 EXPORT CONST float xpowf(float x, float y) {
-  int yisint = (y == (int)y) || (fabsfk(y) >= (float)(1LL << 23));
-  int yisodd = (1 & (int)y) != 0 && yisint;
+  int yisint = (y == (int)y) || (fabsfk(y) >= (float)(1LL << 24));
+  int yisodd = (1 & (int)y) != 0 && yisint && fabsfk(y) < (float)(1LL << 24);
 
   float result = expkf(dfmul_f2_f2_f(logkf(fabsfk(x)), y));
 
@@ -1477,11 +1477,12 @@ EXPORT CONST float xfmaf(float x, float y, float z) {
 #include <stdlib.h>
 int main(int argc, char **argv) {
   float d1 = atof(argv[1]);
-  //float d2 = atof(argv[2]);
+  float d2 = atof(argv[2]);
+  printf("%.20g, %.20g\n", (double)d1, (double)d2);
   //float i2 = atoi(argv[2]);
   //float c = xatan2f_u1(d1, d2);
-  printf("test    = %g\n", (double)xexpm1f(d1));
-  printf("correct = %g\n", (double)expm1f(d1));
+  printf("test    = %g\n", (double)xpowf(d1, d2));
+  printf("correct = %g\n", (double)powf(d1, d2));
   //Sleef_float2 r = xsincospif_u35(d);
   //printf("%g, %g\n", (double)r.x, (double)r.y);
 }

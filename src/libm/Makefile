@@ -21,7 +21,7 @@ endif
 ifeq ($(ARCH), x86_64)
 OBJ+=sleefdpsse2.o sleefdpavx.o
 OBJ+=sleefspsse2.o sleefspavx.o
-ifdef ENABLEAVX2
+ifeq ($(ENABLEAVX2), 1)
 OBJ+=sleefdpavx2.o
 OBJ+=sleefspavx2.o
 endif
@@ -29,7 +29,7 @@ ifdef ENABLEFMA4
 OBJ+=sleefdpfma4.o
 OBJ+=sleefspfma4.o
 endif
-ifdef ENABLEAVX512F
+ifeq ($(ENABLEAVX512F), 1)
 OBJ+=sleefdpavx512f.o
 OBJ+=sleefspavx512f.o
 endif

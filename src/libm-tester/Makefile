@@ -229,6 +229,7 @@ clean :
 	rm -f iut iutsse2 iutavx iutfma4 iutavx2 iutavx512f iutneon32 iutadvsimd
 	rm -f tester testeru1 testersp testerspu1 tester2vecextdp tester2vecextsp iutvecext tester2purecdp tester2purecsp iutpurec
 	rm -f tester2dp tester2sp tester2qp tester2ld tester2sse2dp tester2sse2sp tester2fma4dp tester2fma4sp tester2avxdp tester2avxsp tester2avx2dp tester2avx2sp tester2avx512fdp tester2avx512fsp
+	rm -f tester2advsimddp tester2advsimdsp
 
 .PHONY: distclean
 distclean : clean

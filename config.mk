@@ -56,7 +56,7 @@ else ifneq ($(shell $(CC) -v 2>&1 | grep -c "gcc version"), 0)
 
   export FASTMATHFLAG=-ffast-math
   export STRICTMATHFLAG=-ffp-contract=off
-  export ENABLEAVX2= $(shell expr `gcc -dumpversion | sed 's/\..*//g'` '>=' 5)
+  export ENABLEAVX2= $(shell expr `$(CC) -dumpversion | sed 's/\..*//g'` '>=' 5)
   export AVX2FLAG=-mavx2 -mfma
   export AVX512FLAG=-mavx512f
   export ADVSIMDFLAG=-march=armv8-a+simd
@@ -92,7 +92,7 @@ else ifeq ($(OS),Linux)
 
     ifeq ($(ARCH),x86_64)
       export ENABLEFMA4=1
-      export ENABLEAVX512F=1
+      export ENABLEAVX512F= $(shell expr `$(CC) -dumpversion | sed 's/\..*//g'` '>=' 5)
       export ENABLEFLOAT80=1
       export ENABLEFLOAT128=1
       export CFLAGS+=-DENABLEFLOAT128
