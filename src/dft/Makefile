@@ -12,12 +12,12 @@ else ifeq ($(ARCH), x86_64)
 ISALISTDP=1_vecextdp 4_sse2dp 1_avxdp
 ISALISTSP=1_vecextsp 4_sse2sp 1_avxsp
 
-ifdef ENABLEAVX2
+ifeq ($(ENABLEAVX2), 1)
 ISALISTDP+=1_avx2dp
 ISALISTSP+=1_avx2sp
 endif
 
-ifdef ENABLEAVX512F
+ifeq ($(ENABLEAVX512F), 1)
 ISALISTDP+=1_avx512fdp
 ISALISTSP+=1_avx512fsp
 endif

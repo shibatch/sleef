@@ -46,7 +46,7 @@ clean :
 	+"$(MAKE)" --directory=include clean
 	+"$(MAKE)" --directory=lib clean
 	+"$(MAKE)" --directory=src clean
-	rm -f *~
+	rm -f *~ .*~
 	rm -f debian/*~
 
 .PHONY: distclean
