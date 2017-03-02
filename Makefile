@@ -15,7 +15,18 @@ endif
 endif
 
 .PHONY: all
-all : libsleef libsleef-dft
+all : displayVars libsleef libsleef-dft
+
+.PHONY: displayVars
+displayVars :
+	@echo OS = $(OS)
+	@echo ARCH = $(ARCH)
+	@echo COMPILER = $(COMPILER)
+	@echo ENABLEAVX2 = $(ENABLEAVX2)
+	@echo ENABLEAVX512f = $(ENABLEAVX512F)
+	@echo ENABLEFMA4 = $(ENABLEFMA4)
+	@echo ENABLEFLOAT80 = $(ENABLEFLOAT80)
+	@echo ENABLEFLOAT128 = $(ENABLEFLOAT128)
 
 .PHONY: libsleef
 libsleef :
