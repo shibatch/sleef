@@ -82,18 +82,18 @@ static INLINE vint vcastu_vi_vi2(vint2 vi2) { return (vint){ vi2[1], vi2[3] }; }
 static INLINE vint vreinterpretFirstHalf_vi_vi2(vint2 vi2) { return (vint){ vi2[0], vi2[1] }; }
 static INLINE vint2 vreinterpretFirstHalf_vi2_vi(vint vi) { return (vint2){ vi[0], vi[1], 0, 0 }; }
 
-static inline vdouble vrev21_vd_vd(vdouble vd) { return (vdouble) { vd[1], vd[0] }; }
-static inline vdouble vreva2_vd_vd(vdouble vd) { return vd; }
-static inline vfloat vrev21_vf_vf(vfloat vd) { return (vfloat) { vd[1], vd[0], vd[3], vd[2] }; }
-static inline vfloat vreva2_vf_vf(vfloat vd) { return (vfloat) { vd[2], vd[3], vd[0], vd[1] }; }
-static inline vlongdouble vrev21_vl_vl(vlongdouble vd) { return (vlongdouble) { vd[1], vd[0] }; }
-static inline vlongdouble vreva2_vl_vl(vlongdouble vd) { return vd; }
+static INLINE vdouble vrev21_vd_vd(vdouble vd) { return (vdouble) { vd[1], vd[0] }; }
+static INLINE vdouble vreva2_vd_vd(vdouble vd) { return vd; }
+static INLINE vfloat vrev21_vf_vf(vfloat vd) { return (vfloat) { vd[1], vd[0], vd[3], vd[2] }; }
+static INLINE vfloat vreva2_vf_vf(vfloat vd) { return (vfloat) { vd[2], vd[3], vd[0], vd[1] }; }
+static INLINE vlongdouble vrev21_vl_vl(vlongdouble vd) { return (vlongdouble) { vd[1], vd[0] }; }
+static INLINE vlongdouble vreva2_vl_vl(vlongdouble vd) { return vd; }
 static INLINE vlongdouble vposneg_vl_vl(vlongdouble vd) { return (vlongdouble) { +vd[0], -vd[1] }; }
 static INLINE vlongdouble vnegpos_vl_vl(vlongdouble vd) { return (vlongdouble) { -vd[0], +vd[1] }; }
 
 #ifdef Sleef_quad2_DEFINED
-static inline vquad vrev21_vq_vq(vquad vd) { return (vquad) { vd[1], vd[0] }; }
-static inline vquad vreva2_vq_vq(vquad vd) { return vd; }
+static INLINE vquad vrev21_vq_vq(vquad vd) { return (vquad) { vd[1], vd[0] }; }
+static INLINE vquad vreva2_vq_vq(vquad vd) { return vd; }
 static INLINE vquad vposneg_vq_vq(vquad vd) { return (vquad) { +vd[0], -vd[1] }; }
 static INLINE vquad vnegpos_vq_vq(vquad vd) { return (vquad) { -vd[0], +vd[1] }; }
 #endif
@@ -134,12 +134,12 @@ static INLINE vdouble vnegpos_vd_vd(vdouble d) { return (vdouble)((vmask)d ^ (vm
 static INLINE vfloat vposneg_vf_vf(vfloat d) { return (vfloat)((vmask)d ^ (vmask)PNMASKf); }
 static INLINE vfloat vnegpos_vf_vf(vfloat d) { return (vfloat)((vmask)d ^ (vmask)NPMASKf); }
 
-static inline vdouble vrev21_vd_vd(vdouble vd) { return (vdouble) { vd[1], vd[0], vd[3], vd[2] }; }
-static inline vdouble vreva2_vd_vd(vdouble vd) { return (vdouble) { vd[2], vd[3], vd[0], vd[1] }; }
-static inline vfloat vrev21_vf_vf(vfloat vd) { return (vfloat) { vd[1], vd[0], vd[3], vd[2], vd[5], vd[4], vd[7], vd[6] }; }
-static inline vfloat vreva2_vf_vf(vfloat vd) { return (vfloat) { vd[6], vd[7], vd[4], vd[5], vd[2], vd[3], vd[0], vd[1] }; }
-static inline vlongdouble vrev21_vl_vl(vlongdouble vd) { return (vlongdouble) { vd[1], vd[0], vd[3], vd[2] }; }
-static inline vlongdouble vreva2_vl_vl(vlongdouble vd) { return (vlongdouble) { vd[2], vd[3], vd[0], vd[1] }; }
+static INLINE vdouble vrev21_vd_vd(vdouble vd) { return (vdouble) { vd[1], vd[0], vd[3], vd[2] }; }
+static INLINE vdouble vreva2_vd_vd(vdouble vd) { return (vdouble) { vd[2], vd[3], vd[0], vd[1] }; }
+static INLINE vfloat vrev21_vf_vf(vfloat vd) { return (vfloat) { vd[1], vd[0], vd[3], vd[2], vd[5], vd[4], vd[7], vd[6] }; }
+static INLINE vfloat vreva2_vf_vf(vfloat vd) { return (vfloat) { vd[6], vd[7], vd[4], vd[5], vd[2], vd[3], vd[0], vd[1] }; }
+static INLINE vlongdouble vrev21_vl_vl(vlongdouble vd) { return (vlongdouble) { vd[1], vd[0], vd[3], vd[2] }; }
+static INLINE vlongdouble vreva2_vl_vl(vlongdouble vd) { return (vlongdouble) { vd[2], vd[3], vd[0], vd[1] }; }
 static INLINE vlongdouble vposneg_vl_vl(vlongdouble vd) { return (vlongdouble) { +vd[0], -vd[1], +vd[2], -vd[3] }; }
 static INLINE vlongdouble vnegpos_vl_vl(vlongdouble vd) { return (vlongdouble) { -vd[0], +vd[1], -vd[2], +vd[3] }; }
 #elif VECTLENDP == 8
@@ -169,20 +169,20 @@ static INLINE vdouble vnegpos_vd_vd(vdouble d) { return (vdouble)((vmask)d ^ (vm
 static INLINE vfloat vposneg_vf_vf(vfloat d) { return (vfloat)((vmask)d ^ (vmask)PNMASKf); }
 static INLINE vfloat vnegpos_vf_vf(vfloat d) { return (vfloat)((vmask)d ^ (vmask)NPMASKf); }
 
-static inline vdouble vrev21_vd_vd(vdouble vd) { return (vdouble) { vd[1], vd[0], vd[3], vd[2], vd[5], vd[4], vd[7], vd[6] }; }
-static inline vdouble vreva2_vd_vd(vdouble vd) { return (vdouble) { vd[6], vd[7], vd[4], vd[5], vd[2], vd[3], vd[0], vd[1] }; }
-static inline vfloat vrev21_vf_vf(vfloat vd) {
+static INLINE vdouble vrev21_vd_vd(vdouble vd) { return (vdouble) { vd[1], vd[0], vd[3], vd[2], vd[5], vd[4], vd[7], vd[6] }; }
+static INLINE vdouble vreva2_vd_vd(vdouble vd) { return (vdouble) { vd[6], vd[7], vd[4], vd[5], vd[2], vd[3], vd[0], vd[1] }; }
+static INLINE vfloat vrev21_vf_vf(vfloat vd) {
   return (vfloat) {
     vd[1], vd[0], vd[3], vd[2], vd[5], vd[4], vd[7], vd[6],
       vd[9], vd[8], vd[11], vd[10], vd[13], vd[12], vd[15], vd[14] };
 }
-static inline vfloat vreva2_vf_vf(vfloat vd) {
+static INLINE vfloat vreva2_vf_vf(vfloat vd) {
   return (vfloat) {
     vd[14], vd[15], vd[12], vd[13], vd[10], vd[11], vd[8], vd[9],
       vd[6], vd[7], vd[4], vd[5], vd[2], vd[3], vd[0], vd[1]};
 }
-static inline vlongdouble vrev21_vl_vl(vlongdouble vd) { return (vlongdouble) { vd[1], vd[0], vd[3], vd[2], vd[5], vd[4], vd[7], vd[6] }; }
-static inline vlongdouble vreva2_vl_vl(vlongdouble vd) { return (vlongdouble) { vd[6], vd[7], vd[4], vd[5], vd[2], vd[3], vd[0], vd[1] }; }
+static INLINE vlongdouble vrev21_vl_vl(vlongdouble vd) { return (vlongdouble) { vd[1], vd[0], vd[3], vd[2], vd[5], vd[4], vd[7], vd[6] }; }
+static INLINE vlongdouble vreva2_vl_vl(vlongdouble vd) { return (vlongdouble) { vd[6], vd[7], vd[4], vd[5], vd[2], vd[3], vd[0], vd[1] }; }
 static INLINE vlongdouble vposneg_vl_vl(vlongdouble vd) { return (vlongdouble) { +vd[0], -vd[1], +vd[2], -vd[3], +vd[4], -vd[5], +vd[6], -vd[7] }; }
 static INLINE vlongdouble vnegpos_vl_vl(vlongdouble vd) { return (vlongdouble) { -vd[0], +vd[1], -vd[2], +vd[3], -vd[4], +vd[5], -vd[6], +vd[7] }; }
 #else
@@ -377,7 +377,7 @@ static INLINE vlongdouble vnegpos_vl_vl(vlongdouble d0) {
 
 //
 
-static inline int vavailability_i(int name) { return -1; }
+static INLINE int vavailability_i(int name) { return -1; }
 static INLINE void vprefetch_v_p(const void *ptr) { }
 
 //

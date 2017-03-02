@@ -50,7 +50,7 @@ static int cpuSupportsAVX512F() {
 }
 
 #if CONFIG == 1 && defined(__AVX512F__)
-static inline int vavailability_i(int name) {
+static INLINE int vavailability_i(int name) {
   int d = cpuSupportsAVX512F();
   return d ? 3 : 0;
 }
@@ -345,11 +345,11 @@ static INLINE vfloat vsubadd_vf_vf_vf(vfloat x, vfloat y) { return vadd_vf_vf_vf
 static INLINE vdouble vmlsubadd_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return _mm512_fmaddsub_pd(x, y, z); }
 static INLINE vfloat vmlsubadd_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return _mm512_fmaddsub_ps(x, y, z); }
 
-static inline vdouble vrev21_vd_vd(vdouble vd) {
+static INLINE vdouble vrev21_vd_vd(vdouble vd) {
   return (vdouble)_mm512_permutexvar_epi32(_mm512_set_epi32(13, 12, 15, 14, 9, 8, 11, 10, 5, 4, 7, 6, 1, 0, 3, 2), (__m512i)vd);
 }
 
-static inline vdouble vreva2_vd_vd(vdouble vd) {
+static INLINE vdouble vreva2_vd_vd(vdouble vd) {
   return (vdouble)_mm512_permutexvar_epi32(_mm512_set_epi32(3, 2, 1, 0, 7, 6, 5, 4, 11, 10, 9, 8, 15, 14, 13, 12), (__m512i)vd);
 }
 
@@ -371,11 +371,11 @@ static INLINE void vsscatter2_v_p_i_i_vd(double *ptr, int offset, int step, vdou
 
 //
 
-static inline vfloat vrev21_vf_vf(vfloat vf) {
+static INLINE vfloat vrev21_vf_vf(vfloat vf) {
   return (vfloat)_mm512_permutexvar_epi32(_mm512_set_epi32(14, 15, 12, 13, 10, 11, 8, 9, 6, 7, 4, 5, 2, 3, 0, 1), (__m512i)vf);
 }
 
-static inline vfloat vreva2_vf_vf(vfloat vf) {
+static INLINE vfloat vreva2_vf_vf(vfloat vf) {
   return (vfloat)_mm512_permutexvar_epi32(_mm512_set_epi32(1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14), (__m512i)vf);
 }
 

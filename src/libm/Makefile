@@ -4,11 +4,11 @@ CFLAGS+=$(STRICTMATHFLAG) -O3 -I../common -I../arch
 
 OBJ=sleefdp.o sleefsp.o
 
-ifdef ENABLEFLOAT80
+ifeq ($(ENABLEFLOAT80), 1)
 OBJ+=sleefld.o
 endif
 
-ifdef ENABLEFLOAT128
+ifeq ($(ENABLEFLOAT128), 1)
 OBJ+=sleefqp.o
 endif
 

@@ -79,7 +79,7 @@ static int cpuSupportsSSE4_1() {
 }
 
 #if defined(__SSE2__) && defined(__SSE3__) && defined(__SSE4_1__)
-static inline int vavailability_i(int name) {
+static INLINE int vavailability_i(int name) {
   //int d = __builtin_cpu_supports("sse2") && __builtin_cpu_supports("sse3") && __builtin_cpu_supports("sse4.1");
   int d = cpuSupportsSSE2() && cpuSupportsSSE3() && cpuSupportsSSE4_1();
   return d ? 3 : 0;
@@ -87,7 +87,7 @@ static inline int vavailability_i(int name) {
 #define ISANAME "SSE4.1"
 #define DFTPRIORITY 12
 #elif defined(__SSE2__) && defined(__SSE3__)
-static inline int vavailability_i(int name) {
+static INLINE int vavailability_i(int name) {
   //int d = __builtin_cpu_supports("sse2") && __builtin_cpu_supports("sse3");
   int d = cpuSupportsSSE2() && cpuSupportsSSE3();
   return d ? 3 : 0;
@@ -95,7 +95,7 @@ static inline int vavailability_i(int name) {
 #define ISANAME "SSE3"
 #define DFTPRIORITY 11
 #else
-static inline int vavailability_i(int name) {
+static INLINE int vavailability_i(int name) {
   int d = cpuSupportsSSE2();
   return d ? 3 : 0;
 }
@@ -367,8 +367,8 @@ static INLINE vfloat vsubadd_vf_vf_vf(vfloat x, vfloat y) { return vadd_vf_vf_vf
 static INLINE vdouble vmlsubadd_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return vsubadd_vd_vd_vd(vmul_vd_vd_vd(x, y), z); }
 static INLINE vfloat vmlsubadd_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vsubadd_vf_vf_vf(vmul_vf_vf_vf(x, y), z); }
 
-static inline vdouble vrev21_vd_vd(vdouble d0) { return _mm_shuffle_pd(d0, d0, 1); }
-static inline vdouble vreva2_vd_vd(vdouble vd) { return vd; }
+static INLINE vdouble vrev21_vd_vd(vdouble d0) { return _mm_shuffle_pd(d0, d0, 1); }
+static INLINE vdouble vreva2_vd_vd(vdouble vd) { return vd; }
 
 static INLINE void vstream_v_p_vd(double *ptr, vdouble v) { _mm_stream_pd(ptr, v); }
 static INLINE void vscatter2_v_p_i_i_vd(double *ptr, int offset, int step, vdouble v) { vstore_v_p_vd((double *)(&ptr[2*offset]), v); }
@@ -376,8 +376,8 @@ static INLINE void vsscatter2_v_p_i_i_vd(double *ptr, int offset, int step, vdou
 
 //
 
-static inline vfloat vrev21_vf_vf(vfloat d0) { return _mm_shuffle_ps(d0, d0, (2 << 6) | (3 << 4) | (0 << 2) | (1 << 0)); }
-static inline vfloat vreva2_vf_vf(vfloat d0) { return _mm_shuffle_ps(d0, d0, (1 << 6) | (0 << 4) | (3 << 2) | (2 << 0)); }
+static INLINE vfloat vrev21_vf_vf(vfloat d0) { return _mm_shuffle_ps(d0, d0, (2 << 6) | (3 << 4) | (0 << 2) | (1 << 0)); }
+static INLINE vfloat vreva2_vf_vf(vfloat d0) { return _mm_shuffle_ps(d0, d0, (1 << 6) | (0 << 4) | (3 << 2) | (2 << 0)); }
 
 static INLINE void vstream_v_p_vf(float *ptr, vfloat v) { _mm_stream_ps(ptr, v); }
 

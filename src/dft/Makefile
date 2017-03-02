@@ -36,10 +36,10 @@ ISALISTSP=1_vecextsp
 endif
 
 ifneq ($(COMPILER), icc)
-ifdef ENABLEFLOAT80
+ifeq ($(ENABLEFLOAT80), 1)
 ISALISTLD=1_vecextld
 endif
-ifdef ENABLEFLOAT128
+ifeq ($(ENABLEFLOAT128), 1)
 ISALISTQP=1_vecextqp
 endif
 endif # ifneq ($(COMPILER), icc)
@@ -54,8 +54,8 @@ clean :
 	rm -f a.out mkunroll mkdispatch dispatchdp.h dispatchsp.h dispatchld.h dispatchqp.h dispatchparam.h dft.a
 	rm -f unroll_*.c
 
-ifdef ENABLEFLOAT80
-ifdef ENABLEFLOAT128
+ifeq ($(ENABLEFLOAT80), 1)
+ifeq ($(ENABLEFLOAT128), 1)
 dft.a : mkunroll dftdp.o dftsp.o dftld.o dftqp.o dftcommon.o
 	./mkunroll double $(ISALISTDP)
 	./mkunroll float $(ISALISTSP)

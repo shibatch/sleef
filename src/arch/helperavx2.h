@@ -56,7 +56,7 @@ static int cpuSupportsFMA() {
 }
 
 #if CONFIG == 1 && defined(__AVX2__)
-static inline int vavailability_i(int name) {
+static INLINE int vavailability_i(int name) {
   int d = cpuSupportsAVX2() && cpuSupportsFMA();
   return d ? 3 : 0;
 }
@@ -326,8 +326,8 @@ static INLINE vfloat vsubadd_vf_vf_vf(vfloat x, vfloat y) { return _mm256_addsub
 static INLINE vdouble vmlsubadd_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return vmla_vd_vd_vd_vd(x, y, vnegpos_vd_vd(z)); }
 static INLINE vfloat vmlsubadd_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vmla_vf_vf_vf_vf(x, y, vnegpos_vf_vf(z)); }
 
-static inline vdouble vrev21_vd_vd(vdouble d0) { return  _mm256_shuffle_pd(d0, d0, (0 << 3) | (1 << 2) | (0 << 1) | (1 << 0)); }
-static inline vdouble vreva2_vd_vd(vdouble d0) { d0 = _mm256_permute2f128_pd(d0, d0, 1); return _mm256_shuffle_pd(d0, d0, (1 << 3) | (0 << 2) | (1 << 1) | (0 << 0)); }
+static INLINE vdouble vrev21_vd_vd(vdouble d0) { return  _mm256_shuffle_pd(d0, d0, (0 << 3) | (1 << 2) | (0 << 1) | (1 << 0)); }
+static INLINE vdouble vreva2_vd_vd(vdouble d0) { d0 = _mm256_permute2f128_pd(d0, d0, 1); return _mm256_shuffle_pd(d0, d0, (1 << 3) | (0 << 2) | (1 << 1) | (0 << 0)); }
 
 static INLINE void vstream_v_p_vd(double *ptr, vdouble v) { _mm256_stream_pd(ptr, v); }
 static INLINE void vscatter2_v_p_i_i_vd(double *ptr, int offset, int step, vdouble v) {
@@ -342,8 +342,8 @@ static INLINE void vsscatter2_v_p_i_i_vd(double *ptr, int offset, int step, vdou
 
 //
 
-static inline vfloat vrev21_vf_vf(vfloat d0) { return _mm256_shuffle_ps(d0, d0, (2 << 6) | (3 << 4) | (0 << 2) | (1 << 0)); }
-static inline vfloat vreva2_vf_vf(vfloat d0) { d0 = _mm256_permute2f128_ps(d0, d0, 1); return _mm256_shuffle_ps(d0, d0, (1 << 6) | (0 << 4) | (3 << 2) | (2 << 0)); }
+static INLINE vfloat vrev21_vf_vf(vfloat d0) { return _mm256_shuffle_ps(d0, d0, (2 << 6) | (3 << 4) | (0 << 2) | (1 << 0)); }
+static INLINE vfloat vreva2_vf_vf(vfloat d0) { d0 = _mm256_permute2f128_ps(d0, d0, 1); return _mm256_shuffle_ps(d0, d0, (1 << 6) | (0 << 4) | (3 << 2) | (2 << 0)); }
 
 static INLINE void vstream_v_p_vf(float *ptr, vfloat v) { _mm256_stream_ps(ptr, v); }
 
