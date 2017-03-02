@@ -1445,7 +1445,7 @@ EXPORT CONST double xfma(double x, double y, double z) {
   return (xisinf(h2) || xisnan(h2)) ? h2 : (d.x + d.y)*q;
 }
 
-EXPORT CONST double xsqrt(double d) {
+EXPORT CONST double xsqrt_u05(double d) {
   double q = 1;
 
   d = d < 0 ? NAN : d;

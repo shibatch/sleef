@@ -100,7 +100,6 @@ vfloat xatan2f(vfloat y, vfloat x);
 vfloat xlogf(vfloat d);
 vfloat xexpf(vfloat d);
 vfloat xcbrtf(vfloat s);
-vfloat xsqrtf_u05(vfloat s);
 
 vfloat xpowf(vfloat x, vfloat y);
 vfloat xsinhf(vfloat x);
@@ -128,4 +127,30 @@ vfloat xcbrtf_u1(vfloat s);
 
 vfloat2 xsincospif_u05(vfloat d);
 vfloat2 xsincospif_u35(vfloat d);
+
+
+vfloat xldexpf(vfloat, vint2);
+vint2 xilogbf(vfloat);
+vfloat xfmaf(vfloat, vfloat, vfloat);
+vfloat xsqrtf_u05(vfloat s);
+vfloat xsqrtf_u35(vfloat s);
+
+vfloat xhypotf_u05(vfloat, vfloat);
+vfloat xhypotf_u35(vfloat, vfloat);
+
+vfloat xfabsf(vfloat);
+vfloat xcopysignf(vfloat, vfloat);
+vfloat xfmaxf(vfloat, vfloat);
+vfloat xfminf(vfloat, vfloat);
+vfloat xfdimf(vfloat, vfloat);
+vfloat xtruncf(vfloat);
+vfloat xfloorf(vfloat);
+vfloat xceilf(vfloat);
+vfloat xroundf(vfloat);
+vfloat xrintf(vfloat);
+vfloat xnextafterf(vfloat, vfloat);
+vfloat xfrfrexpf(vfloat);
+vint2 xexpfrexpf(vfloat);
+vfloat xfmodf(vfloat, vfloat);
+vfloat2 xmodff(vfloat);
 #endif

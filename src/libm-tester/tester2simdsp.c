@@ -245,13 +245,14 @@ int main(int argc,char **argv)
 
   conv32_t cd;
   float d, t;
-  float d2, zo;
+  float d2, d3, zo;
   vfloat vd = vcast_vf_f(0);
   vfloat vd2 = vcast_vf_f(0);
+  vfloat vd3 = vcast_vf_f(0);
   vfloat vzo = vcast_vf_f(0);
   vfloat vad = vcast_vf_f(0);
   vfloat2 sc, sc2;
-  int cnt;
+  int cnt, ecnt = 0;
   
   srandom(time(NULL));
 
@@ -264,12 +265,13 @@ int main(int argc,char **argv)
 
   const float rangemax = 39000;
   
-  for(cnt = 0;;cnt++) {
+  for(cnt = 0;ecnt < 1000;cnt++) {
     int e = cnt % VECTLENSP;
     switch(cnt & 7) {
     case 0:
       d = rnd();
       d2 = rnd();
+      d3 = rnd();
       zo = rnd();
       break;
     case 1:
@@ -277,17 +279,20 @@ int main(int argc,char **argv)
       cd.i32 += (random() & 0xff) - 0x7f;
       d = cd.f;
       d2 = rnd();
+      d3 = rnd();
       zo = rnd();
       break;
     default:
       d = rnd_fr();
       d2 = rnd_fr();
+      d3 = rnd_fr();
       zo = rnd_zo();
       break;
     }
 
     vd = vset(vd, e, d);
     vd2 = vset(vd2, e, d2);
+    vd3 = vset(vd3, e, d3);
     vzo = vset(vzo, e, zo);
     vad = vset(vad, e, fabs(d));
 
@@ -303,12 +308,14 @@ int main(int argc,char **argv)
 
       if (u0 != 0 && ((fabs(d) <= rangemax2 && u0 > 0.505) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincospif_u05 sin arg=%.20g ulp=%.20g\n", d, u0);
+	fflush(stdout); ecnt++;
       }
 
       double u1 = countULP2(t = vget(sc2.x, e), frx);
 
       if (u1 != 0 && ((fabs(d) <= rangemax2 && u1 > 1.6) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincospif_u35 sin arg=%.20g ulp=%.20g\n", d, u1);
+	fflush(stdout); ecnt++;
       }
     }
 
@@ -321,12 +328,14 @@ int main(int argc,char **argv)
 
       if (u0 != 0 && ((fabs(d) <= rangemax2 && u0 > 0.505) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincospif_u05 cos arg=%.20g ulp=%.20g\n", d, u0);
+	fflush(stdout); ecnt++;
       }
 
       double u1 = countULP2(t = vget(sc.y, e), frx);
 
       if (u1 != 0 && ((fabs(d) <= rangemax2 && u1 > 1.5) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincospif_u35 cos arg=%.20g ulp=%.20g\n", d, u1);
+	fflush(stdout); ecnt++;
       }
     }
     
@@ -341,28 +350,28 @@ int main(int argc,char **argv)
       
       if (u0 != 0 && ((fabs(d) <= rangemax && u0 > 3.5) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sinf arg=%.20g ulp=%.20g\n", d, u0);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
 
       float u1 = countULP(t = vget(sc.x, e), frx);
       
       if (u1 != 0 && ((fabs(d) <= rangemax && u1 > 3.5) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincosf sin arg=%.20g ulp=%.20g\n", d, u1);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
 
       float u2 = countULP(t = vget(xsinf_u1(vd), e), frx);
       
       if (u2 != 0 && ((fabs(d) <= rangemax && u2 > 1) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sinf_u1 arg=%.20g ulp=%.20g\n", d, u2);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
 
       float u3 = countULP(t = vget(sc2.x, e), frx);
       
       if (u3 != 0 && ((fabs(d) <= rangemax && u3 > 1) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincosf_u1 sin arg=%.20g ulp=%.20g\n", d, u3);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
     }
 
@@ -374,28 +383,28 @@ int main(int argc,char **argv)
       
       if (u0 != 0 && ((fabs(d) <= rangemax && u0 > 3.5) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " cosf arg=%.20g ulp=%.20g\n", d, u0);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
 
       float u1 = countULP(t = vget(sc.y, e), frx);
       
       if (u1 != 0 && ((fabs(d) <= rangemax && u1 > 3.5) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincosf cos arg=%.20g ulp=%.20g\n", d, u1);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
 
       float u2 = countULP(t = vget(xcosf_u1(vd), e), frx);
       
       if (u2 != 0 && ((fabs(d) <= rangemax && u2 > 1) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " cosf_u1 arg=%.20g ulp=%.20g\n", d, u2);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
 
       float u3 = countULP(t = vget(sc2.y, e), frx);
       
       if (u3 != 0 && ((fabs(d) <= rangemax && u3 > 1) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincosf_u1 cos arg=%.20g ulp=%.20g\n", d, u3);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
     }
 
@@ -407,14 +416,14 @@ int main(int argc,char **argv)
       
       if (u0 != 0 && ((fabs(d) < rangemax && u0 > 3.5) || isnan(t))) {
 	printf(ISANAME " tanf arg=%.20g ulp=%.20g\n", d, u0);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
 
       float u1 = countULP(t = vget(xtanf_u1(vd), e), frx);
       
       if (u1 != 0 && ((fabs(d) <= rangemax && u1 > 1) || isnan(t))) {
 	printf(ISANAME " tanf_u1 arg=%.20g ulp=%.20g\n", d, u1);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
     }
 
@@ -426,14 +435,14 @@ int main(int argc,char **argv)
       
       if (u0 > 3.5) {
 	printf(ISANAME " logf arg=%.20g ulp=%.20g\n", d, u0);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
 
       double u1 = countULP(t = vget(xlogf_u1(vad), e), frx);
       
       if (u1 > 1) {
 	printf(ISANAME " logf_u1 arg=%.20g ulp=%.20g\n", d, u1);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
     }
 
@@ -445,7 +454,7 @@ int main(int argc,char **argv)
       
       if (u0 > 1) {
 	printf(ISANAME " log10f arg=%.20g ulp=%.20g\n", d, u0);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
     }
     
@@ -459,7 +468,7 @@ int main(int argc,char **argv)
 	  (d < -1 && !isnan(t)) ||
 	  (d > 1e+38 && !(u0 <= 1 || isinf(t)))) {
 	printf(ISANAME " log1pf arg=%.20g ulp=%.20g\n", d, u0);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
     }
     
@@ -471,7 +480,7 @@ int main(int argc,char **argv)
       
       if (u0 > 1) {
 	printf(ISANAME " expf arg=%.20g ulp=%.20g\n", d, u0);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
     }
     
@@ -483,7 +492,7 @@ int main(int argc,char **argv)
       
       if (u0 > 1) {
 	printf(ISANAME " exp2f arg=%.20g ulp=%.20g\n", d, u0);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
     }
     
@@ -495,7 +504,7 @@ int main(int argc,char **argv)
       
       if (u0 > 1) {
 	printf(ISANAME " exp10f arg=%.20g ulp=%.20g\n", d, u0);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
     }
     
@@ -507,7 +516,7 @@ int main(int argc,char **argv)
       
       if (u0 > 1) {
 	printf(ISANAME " expm1f arg=%.20g ulp=%.20g\n", d, u0);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
     }
     
@@ -521,7 +530,7 @@ int main(int argc,char **argv)
       if (u0 > 1) {
 	printf(ISANAME " powf arg=%.20g, %.20g ulp=%.20g\n", d2, d, u0);
 	printf("correct = %g, test = %g\n", mpfr_get_d(frx, GMP_RNDN), t);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
     }
     
@@ -533,14 +542,14 @@ int main(int argc,char **argv)
       
       if (u0 > 3.5) {
 	printf(ISANAME " cbrtf arg=%.20g ulp=%.20g\n", d, u0);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
 
       double u1 = countULP(t = vget(xcbrtf_u1(vd), e), frx);
       
       if (u1 > 1) {
 	printf(ISANAME " cbrtf_u1 arg=%.20g ulp=%.20g\n", d, u1);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
     }
     
@@ -552,14 +561,14 @@ int main(int argc,char **argv)
       
       if (u0 > 3.5) {
 	printf(ISANAME " asinf arg=%.20g ulp=%.20g\n", d, u0);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
 
       double u1 = countULP(t = vget(xasinf_u1(vzo), e), frx);
       
       if (u1 > 1) {
 	printf(ISANAME " asinf_u1 arg=%.20g ulp=%.20g\n", d, u1);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
     }
     
@@ -571,14 +580,14 @@ int main(int argc,char **argv)
       
       if (u0 > 3.5) {
 	printf(ISANAME " acosf arg=%.20g ulp=%.20g\n", d, u0);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
 
       double u1 = countULP(t = vget(xacosf_u1(vzo), e), frx);
       
       if (u1 > 1) {
 	printf(ISANAME " acosf_u1 arg=%.20g ulp=%.20g\n", d, u1);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
     }
     
@@ -590,14 +599,14 @@ int main(int argc,char **argv)
       
       if (u0 > 3.5) {
 	printf(ISANAME " atanf arg=%.20g ulp=%.20g\n", d, u0);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
 
       double u1 = countULP(t = vget(xatanf_u1(vd), e), frx);
       
       if (u1 > 1) {
 	printf(ISANAME " atanf_u1 arg=%.20g ulp=%.20g\n", d, u1);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
     }
     
@@ -610,14 +619,14 @@ int main(int argc,char **argv)
       
       if (u0 > 3.5) {
 	printf(ISANAME " atan2f arg=%.20g, %.20g ulp=%.20g\n", d2, d, u0);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
 
       double u1 = countULP2(t = vget(xatan2f_u1(vd2, vd), e), frx);
       
       if (u1 > 1) {
 	printf(ISANAME " atan2f_u1 arg=%.20g, %.20g ulp=%.20g\n", d2, d, u1);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
     }
     
@@ -631,7 +640,7 @@ int main(int argc,char **argv)
 	  (d >  88.5 && !(u0 <= 1 || (isinf(t) && t > 0))) ||
 	  (d < -88.5 && !(u0 <= 1 || (isinf(t) && t < 0)))) {
 	printf(ISANAME " sinhf arg=%.20g ulp=%.20g\n", d, u0);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
     }
     
@@ -643,7 +652,7 @@ int main(int argc,char **argv)
       
       if ((fabs(d) <= 88.5 && u0 > 1) || !(u0 <= 1 || (isinf(t) && t > 0))) {
 	printf(ISANAME " coshf arg=%.20g ulp=%.20g\n", d, u0);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
     }
     
@@ -655,7 +664,7 @@ int main(int argc,char **argv)
       
       if (u0 > 1.0001) {
 	printf(ISANAME " tanhf arg=%.20g ulp=%.20g\n", d, u0);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
     }
     
@@ -669,7 +678,7 @@ int main(int argc,char **argv)
 	  (d >=  sqrt(FLT_MAX) && !(u0 <= 1.0001 || (isinf(t) && t > 0))) ||
 	  (d <= -sqrt(FLT_MAX) && !(u0 <= 1.0001 || (isinf(t) && t < 0)))) {
 	printf(ISANAME " asinhf arg=%.20g ulp=%.20g\n", d, u0);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
     }
     
@@ -683,7 +692,7 @@ int main(int argc,char **argv)
 	  (d >=  sqrt(FLT_MAX) && !(u0 <= 1.0001 || (isinff(t) && t > 0))) ||
 	  (d <= -sqrt(FLT_MAX) && !isnan(t))) {
 	printf(ISANAME " acoshf arg=%.20g ulp=%.20g\n", d, u0);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
       }
     }
     
@@ -695,7 +704,299 @@ int main(int argc,char **argv)
       
       if (u0 > 1.0001) {
 	printf(ISANAME " atanhf arg=%.20g ulp=%.20g\n", d, u0);
-	fflush(stdout);
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    //
+
+    /*
+    {
+      int exp = (random() & 8191) - 4096;
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_set_exp(frx, mpfr_get_exp(frx) + exp);
+
+      double u0 = countULP(t = vget(xldexpf(d, exp)), frx);
+
+      if (u0 > 0.5001) {
+	printf("Pure C ldexpf arg=%.20g %d ulp=%.20g\n", d, exp, u0);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
+	fflush(stdout); ecnt++;
+      }
+    }
+    */
+
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_abs(frx, frx, GMP_RNDN);
+
+      double u0 = countULP(t = vget(xfabsf(vd), e), frx);
+      
+      if (u0 != 0) {
+	printf("Pure C fabsf arg=%.20g ulp=%.20g\n", d, u0);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
+	fflush(stdout); ecnt++;
+      }
+    }
+    
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_set_d(fry, d2, GMP_RNDN);
+      mpfr_copysign(frx, frx, fry, GMP_RNDN);
+
+      double u0 = countULP(t = vget(xcopysignf(vd, vd2), e), frx);
+      
+      if (u0 != 0 && !isnan(d2)) {
+	printf("Pure C copysignf arg=%.20g, %.20g ulp=%.20g\n", d, d2, u0);
+	printf("correct = %g, test = %g\n", mpfr_get_d(frx, GMP_RNDN), t);
+	fflush(stdout); ecnt++;
+      }
+    }
+    
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_set_d(fry, d2, GMP_RNDN);
+      mpfr_max(frx, frx, fry, GMP_RNDN);
+
+      double u0 = countULP(t = vget(xfmaxf(vd, vd2), e), frx);
+      
+      if (u0 != 0) {
+	printf("Pure C fmaxf arg=%.20g, %.20g ulp=%.20g\n", d, d2, u0);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
+	fflush(stdout); ecnt++;
+      }
+    }
+    
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_set_d(fry, d2, GMP_RNDN);
+      mpfr_min(frx, frx, fry, GMP_RNDN);
+
+      double u0 = countULP(t = vget(xfminf(vd, vd2), e), frx);
+      
+      if (u0 != 0) {
+	printf("Pure C fminf arg=%.20g, %.20g ulp=%.20g\n", d, d2, u0);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_set_d(fry, d2, GMP_RNDN);
+      mpfr_dim(frx, frx, fry, GMP_RNDN);
+
+      double u0 = countULP(t = vget(xfdimf(vd, vd2), e), frx);
+      
+      if (u0 > 0.5) {
+	printf("Pure C fdimf arg=%.20g, %.20g ulp=%.20g\n", d, d2, u0);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_trunc(frx, frx);
+
+      double u0 = countULP(t = vget(xtruncf(vd), e), frx);
+      
+      if (u0 != 0) {
+	printf("Pure C truncf arg=%.20g ulp=%.20g\n", d, u0);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
+	fflush(stdout); ecnt++;
+      }
+    }
+    
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_floor(frx, frx);
+
+      double u0 = countULP(t = vget(xfloorf(vd), e), frx);
+      
+      if (u0 != 0) {
+	printf("Pure C floorf arg=%.20g ulp=%.20g\n", d, u0);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
+	fflush(stdout); ecnt++;
+      }
+    }
+    
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_ceil(frx, frx);
+
+      double u0 = countULP(t = vget(xceilf(vd), e), frx);
+      
+      if (u0 != 0) {
+	printf("Pure C ceilf arg=%.20g ulp=%.20g\n", d, u0);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
+	fflush(stdout); ecnt++;
+      }
+    }
+    
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_round(frx, frx);
+
+      double u0 = countULP(t = vget(xroundf(vd), e), frx);
+      
+      if (u0 != 0) {
+	printf("Pure C roundf arg=%.24g ulp=%.20g\n", d, u0);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
+	fflush(stdout); ecnt++;
+      }
+    }
+    
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_rint(frx, frx, GMP_RNDN);
+
+      double u0 = countULP(t = vget(xrintf(vd), e), frx);
+      
+      if (u0 != 0) {
+	printf("Pure C rintf arg=%.24g ulp=%.20g\n", d, u0);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_modf(fry, frz, frx, GMP_RNDN);
+
+      vfloat2 t2 = xmodff(vd);
+      double u0 = countULP(vget(t2.x, e), frz);
+      double u1 = countULP(vget(t2.y, e), fry);
+
+      if (u0 != 0 || u1 != 0) {
+	printf("Pure C modff arg=%.20g ulp=%.20g %.20g\n", d, u0, u1);
+	printf("correct = %.20g, %.20g\n", mpfr_get_d(frz, GMP_RNDN), mpfr_get_d(fry, GMP_RNDN));
+	printf("test    = %.20g, %.20g\n", vget(t2.x, e), vget(t2.y, e));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      t = vget(xnextafterf(vd, vd2), e);
+      double c = nextafterf(d, d2);
+
+      if (!(isnan(t) && isnan(c)) && t != c) {
+	printf("Pure C nextafterf arg=%.20g, %.20g\n", d, d2);
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_set_exp(frx, 0);
+
+      double u0 = countULP(t = vget(xfrfrexpf(vd), e), frx);
+
+      if (isnumber(d) && u0 != 0) {
+	printf("Pure C frfrexpf arg=%.20g ulp=%.20g\n", d, u0);
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    /*
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      int cexp = mpfr_get_exp(frx);
+
+      int texp = xexpfrexpf(d);
+      
+      if (isnumber(d) && cexp != texp) {
+	printf("Pure C expfrexpf arg=%.20g\n", d);
+	fflush(stdout); ecnt++;
+      }
+    }
+    */
+
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_set_d(fry, d2, GMP_RNDN);
+      mpfr_hypot(frx, frx, fry, GMP_RNDN);
+
+      double u0 = countULP2(t = vget(xhypotf_u05(vd, vd2), e), frx);
+      double c = mpfr_get_d(frx, GMP_RNDN);
+
+      if (u0 > 0.5001) {
+	printf("Pure C hypotf_u05 arg=%.20g, %.20g  ulp=%.20g\n", d, d2, u0);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_set_d(fry, d2, GMP_RNDN);
+      mpfr_hypot(frx, frx, fry, GMP_RNDN);
+
+      double u0 = countULP2(t = vget(xhypotf_u35(vd, vd2), e), frx);
+      double c = mpfr_get_d(frx, GMP_RNDN);
+
+      if (u0 >= 3.5) {
+	printf("Pure C hypotf_u35 arg=%.20g, %.20g  ulp=%.20g\n", d, d2, u0);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_set_d(fry, d2, GMP_RNDN);
+      mpfr_fmod(frx, frx, fry, GMP_RNDN);
+
+      double u0 = countULP(t = vget(xfmodf(vd, vd2), e), frx);
+      long double c = mpfr_get_ld(frx, GMP_RNDN);
+
+      if (fabs((double)d / d2) < 1e+38 && u0 > 0.5) {
+	printf("Pure C fmodf arg=%.20g, %.20g  ulp=%.20g\n", d, d2, u0);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_set_d(fry, d2, GMP_RNDN);
+      mpfr_set_d(frz, d3, GMP_RNDN);
+      mpfr_fma(frx, frx, fry, frz, GMP_RNDN);
+
+      double u0 = countULP2(t = vget(xfmaf(vd, vd2, vd3), e), frx);
+      double c = mpfr_get_d(frx, GMP_RNDN);
+
+      if ((-1e+36 < c && c < 1e+36 && u0 > 0.5001) ||
+	  !(u0 <= 0.5001 || isinf(t))) {
+	printf("Pure C fmaf arg=%.20g, %.20g, %.20g  ulp=%.20g\n", d, d2, d3, u0);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_sqrt(frx, frx, GMP_RNDN);
+
+      double u0 = countULP(t = vget(xsqrtf_u05(vd), e), frx);
+      
+      if (u0 > 0.5001) {
+	printf("Pure C sqrtf_u05 arg=%.20g ulp=%.20g\n", d, u0);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
+	fflush(stdout); ecnt++;
+      }
+    }
+    
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_sqrt(frx, frx, GMP_RNDN);
+
+      double u0 = countULP(t = vget(xsqrtf_u35(vd), e), frx);
+      
+      if (u0 > 3.5) {
+	printf("Pure C sqrtf_u35 arg=%.20g ulp=%.20g\n", d, u0);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
+	fflush(stdout); ecnt++;
       }
     }
   }

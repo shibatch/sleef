@@ -14,13 +14,15 @@
 
 #include "misc.h"
 
-#define ENABLE_SP
-#define LOG2VECTLENSP 2
-#define VECTLENSP (1 << LOG2VECTLENSP)
-
 #define ENABLE_DP
 #define LOG2VECTLENDP 1
 #define VECTLENDP (1 << LOG2VECTLENDP)
+#define ENABLE_FMA_DP
+
+#define ENABLE_SP
+#define LOG2VECTLENSP 2
+#define VECTLENSP (1 << LOG2VECTLENSP)
+#define ENABLE_FMA_SP
 
 #define ISANAME "AArch64 AdvSIMD"
 
@@ -285,24 +287,33 @@ static INLINE vdouble vmlapn_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) {
   return vsub_vd_vd_vd(vmul_vd_vd_vd(x, y), z);
 }
 
-#ifdef ENABLE_FMA_DP // Note: this is not working yet
-static INLINE vdouble vfmanp_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) {
-  return vsub_vd_vd_vd(z, vmul_vd_vd_vd(x, y)); // z = -(x * y) + z
-}
-
-static INLINE vdouble vfmapn_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) {
-  return vsub_vd_vd_vd(vmul_vd_vd_vd(x, y), z); // z = x * y - z
-}
-
-static INLINE vdouble vfma_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) {
-  return vadd_vd_vd_vd(vmul_vd_vd_vd(x, y), z);
-}
-#else
-// Multiply subtract: z = z - x * y
 static INLINE vdouble vmlanp_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) {
   return vfmsq_f64(z, x, y);
 }
-#endif
+
+static INLINE vdouble vfma_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { // z + x * y
+  return vfmaq_f64(z, x, y);
+}
+
+static INLINE vdouble vfmanp_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { // z - x * y
+  return vfmsq_f64(z, x, y);
+}
+
+static INLINE vdouble vfmapn_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { // x * y - z
+  return vneg_vd_vd(vfmanp_vd_vd_vd_vd(x, y, z));
+}
+
+static INLINE vfloat vfma_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { // z + x * y
+  return vfmaq_f32(z, x, y);
+}
+
+static INLINE vfloat vfmanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { // z - x * y
+  return vfmsq_f32(z, x, y);
+}
+
+static INLINE vfloat vfmapn_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { // x * y - z
+  return vneg_vf_vf(vfmanp_vf_vf_vf_vf(x, y, z));
+}
 
 /* Comparisons */
 static INLINE vopmask veq_vo_vd_vd(vdouble x, vdouble y) {

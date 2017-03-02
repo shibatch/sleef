@@ -1,5 +1,5 @@
 sleef.h :
-	cd ../src/libm; make sleef.h
+	+"$(MAKE)" --directory=../src/libm sleef.h
 
 .PHONY: install
 install : sleef.h sleefdft.h

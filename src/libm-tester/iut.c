@@ -248,7 +248,7 @@ int main(int argc, char **argv) {
     } else if (startsWith(buf, "sqrt ")) {
       uint64_t u;
       sscanf(buf, "sqrt %" PRIx64, &u);
-      u = d2u(xsqrt(u2d(u)));
+      u = d2u(xsqrt_u05(u2d(u)));
       printf("%" PRIx64 "\n", u);
     } else if (startsWith(buf, "cbrt ")) {
       uint64_t u;

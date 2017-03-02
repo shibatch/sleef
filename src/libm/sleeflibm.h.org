@@ -179,6 +179,7 @@ IMPORT CONST float Sleef_ldexpf(float, int);
 IMPORT CONST int Sleef_ilogbf(float);
 IMPORT CONST float Sleef_fmaf(float, float, float);
 IMPORT CONST float Sleef_sqrtf_u05(float);
+IMPORT CONST float Sleef_sqrtf_u35(float);
 
 IMPORT CONST float Sleef_hypotf_u05(float, float);
 IMPORT CONST float Sleef_hypotf_u35(float, float);

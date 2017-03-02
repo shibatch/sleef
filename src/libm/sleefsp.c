@@ -1165,8 +1165,6 @@ EXPORT CONST float xlog1pf(float a) {
   return x;
 }
 
-//float xsqrtf(float f) { return sqrtf(f); }
-
 EXPORT CONST float xcbrtf(float d) {
   float x, y, q = 1.0f;
   int e, r;
@@ -1428,13 +1426,13 @@ EXPORT CONST float xfmodf(float x, float y) {
   return ret;
 }
 
-EXPORT CONST float xsqrtf(float d) {
+EXPORT CONST float xsqrtf_u05(float d) {
   float q = 0.5f;
 
   d = d < 0 ? NANf : d;
 
   if (d < 5.2939559203393770e-23f) {
-    d *= 1.8889465931478580e+22;
+    d *= 1.8889465931478580e+22f;
     q = 7.2759576141834260e-12f * 0.5f;
   }
 
@@ -1444,7 +1442,7 @@ EXPORT CONST float xsqrtf(float d) {
   }
   
   // http://en.wikipedia.org/wiki/Fast_inverse_square_root
-  float x = intBitsToFloat(0x5f375a86 - (floatToRawIntBits(d + 1e-45) >> 1));
+  float x = intBitsToFloat(0x5f375a86 - (floatToRawIntBits(d + 1e-45f) >> 1));
 
   x = x * (1.5f - 0.5f * d * x * x);
   x = x * (1.5f - 0.5f * d * x * x);
@@ -1453,6 +1451,32 @@ EXPORT CONST float xsqrtf(float d) {
   Sleef_float2 d2 = dfmul_f2_f2_f2(dfadd2_f2_f_f2(d, dfmul_f2_f_f(x, x)), dfrec_f2_f(x));
 
   return d == INFINITYf ? INFINITYf : (d2.x + d2.y) * q;
+}
+
+EXPORT CONST float xsqrtf_u35(float d) {
+  float q = 1.0f;
+
+  d = d < 0 ? NANf : d;
+
+  if (d < 5.2939559203393770e-23f) {
+    d *= 1.8889465931478580e+22f;
+    q = 7.2759576141834260e-12f;
+  }
+
+  if (d > 1.8446744073709552e+19f) {
+    d *= 5.4210108624275220e-20f;
+    q = 4294967296.0f;
+  }
+  
+  // http://en.wikipedia.org/wiki/Fast_inverse_square_root
+  float x = intBitsToFloat(0x5f375a86 - (floatToRawIntBits(d + 1e-45) >> 1));
+
+  x = x * (1.5f - 0.5f * d * x * x);
+  x = x * (1.5f - 0.5f * d * x * x);
+  x = x * (1.5f - 0.5f * d * x * x);
+  x = x * (1.5f - 0.5f * d * x * x);
+
+  return d == INFINITYf ? INFINITYf : (x * d * q);
 }
 
 EXPORT CONST float xfmaf(float x, float y, float z) {
@@ -1477,12 +1501,12 @@ EXPORT CONST float xfmaf(float x, float y, float z) {
 #include <stdlib.h>
 int main(int argc, char **argv) {
   float d1 = atof(argv[1]);
-  float d2 = atof(argv[2]);
-  printf("%.20g, %.20g\n", (double)d1, (double)d2);
+  //float d2 = atof(argv[2]);
+  //printf("%.20g, %.20g\n", (double)d1, (double)d2);
   //float i2 = atoi(argv[2]);
   //float c = xatan2f_u1(d1, d2);
-  printf("test    = %g\n", (double)xpowf(d1, d2));
-  printf("correct = %g\n", (double)powf(d1, d2));
+  printf("test    = %.20g\n", (double)xsqrtf_u35(d1));
+  printf("correct = %.20g\n", (double)sqrtf(d1));
   //Sleef_float2 r = xsincospif_u35(d);
   //printf("%g, %g\n", (double)r.x, (double)r.y);
 }
