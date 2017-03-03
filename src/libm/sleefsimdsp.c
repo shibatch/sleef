@@ -1401,7 +1401,7 @@ EXPORT CONST vfloat xfmaf(vfloat x, vfloat y, vfloat z) {
   }
   vfloat2 d = dfmul_vf2_vf_vf(x, y);
   d = dfadd2_vf2_vf2_vf(d, z);
-
+  vfloat ret = vsel_vf_vo_vf_vf(vor_vo_vo_vo(veq_vo_vf_vf(x, vcast_vf_f(0)), veq_vo_vf_vf(y, vcast_vf_f(0))), z, vadd_vf_vf_vf(d.x, d.y));
   o = visinf_vo_vf(z);
   o = vandnot_vo_vo_vo(visinf_vo_vf(x), o);
   o = vandnot_vo_vo_vo(visnan_vo_vf(x), o);
@@ -1411,7 +1411,7 @@ EXPORT CONST vfloat xfmaf(vfloat x, vfloat y, vfloat z) {
 
   o = vor_vo_vo_vo(visinf_vo_vf(h2), visnan_vo_vf(h2));
   
-  return vsel_vf_vo_vf_vf(o, h2, vmul_vf_vf_vf(vadd_vf_vf_vf(d.x, d.y), q));
+  return vsel_vf_vo_vf_vf(o, h2, vmul_vf_vf_vf(ret, q));
 }
 
 static INLINE CONST vint2 vcast_vi2_i_i(int i0, int i1) { return vcast_vi2_vm(vcast_vm_i_i(i0, i1)); }
@@ -1420,7 +1420,7 @@ EXPORT CONST vfloat xsqrtf_u05(vfloat d) {
   vfloat q;
   vopmask o;
   
-  d = vsel_vf_vo_vf_vf(vsignbit_vo_vf(d), vcast_vf_f(NANf), d);
+  d = vsel_vf_vo_vf_vf(vlt_vo_vf_vf(d, vcast_vf_f(0)), vcast_vf_f(NANf), d);
 
   o = vlt_vo_vf_vf(d, vcast_vf_f(5.2939559203393770e-23f));
   d = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(d, vcast_vf_f(1.8889465931478580e+22f)), d);
@@ -1441,7 +1441,10 @@ EXPORT CONST vfloat xsqrtf_u05(vfloat d) {
 
   x = vmul_vf_vf_vf(vadd_vf_vf_vf(d2.x, d2.y), q);
 
-  return vsel_vf_vo_vf_vf(vispinf_vo_vf(d), vcast_vf_f(INFINITYf), x);
+  x = vsel_vf_vo_vf_vf(vispinf_vo_vf(d), vcast_vf_f(INFINITYf), x);
+  x = vsel_vf_vo_vf_vf(veq_vo_vf_vf(d, vcast_vf_f(0)), d, x);
+  
+  return x;
 }
 
 EXPORT CONST vfloat xhypotf_u05(vfloat x, vfloat y) {
@@ -1481,9 +1484,9 @@ EXPORT CONST vfloat xhypotf_u35(vfloat x, vfloat y) {
 }
 
 EXPORT CONST vfloat xnextafterf(vfloat x, vfloat y) {
+  x = vsel_vf_vo_vf_vf(veq_vo_vf_vf(x, vcast_vf_f(0)), vmulsign_vf_vf_vf(vcast_vf_f(0), y), x);
+  vint2 t, xi2 = vreinterpret_vi2_vf(x);
   vopmask c = vxor_vo_vo_vo(vsignbit_vo_vf(x), vge_vo_vf_vf(y, x));
-
-  vint2 xi2 = vreinterpret_vi2_vf(x), t;
 
   xi2 = vsel_vi2_vo_vi2_vi2(c, vsub_vi2_vi2_vi2(vcast_vi2_i(0), vxor_vi2_vi2_vi2(xi2, vcast_vi2_i(1 << 31))), xi2);
 
@@ -1573,10 +1576,11 @@ EXPORT CONST vfloat xfmodf(vfloat x, vfloat y) {
 #include <stdlib.h>
 int main(int argc, char **argv) {
   vfloat vf1 = vcast_vf_f(atof(argv[1]));
-  //vfloat vf2 = vcast_vf_f(atof(argv[2]));
+  vfloat vf2 = vcast_vf_f(atof(argv[2]));
 
   //vfloat r = xpowf(vf1, vf2);
-  vfloat r = xsqrtf_u05(vf1);
-  printf("%g\n", (double)vcast_f_vf(r));
+  //vfloat r = xsqrtf_u05(vf1);
+  printf("%g\n", xnextafterf(vf1, vf2)[0]);
+  printf("%g\n", nextafterf(atof(argv[1]), atof(argv[2])));
 }
 #endif

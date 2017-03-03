@@ -91,11 +91,23 @@ typedef union {
   int64_t i64;
 } conv_t;
 
+double nexttoward0(double x, int n) {
+  union {
+    double f;
+    uint64_t u;
+  } cx;
+  cx.f = x;
+  cx.u -=n ;
+  return cx.f;
+}
+
 double rnd() {
   conv_t c;
-  switch(random() & 15) {
-  case 0: return  INFINITY;
-  case 1: return -INFINITY;
+  switch(random() & 63) {
+  case 0: return nexttoward0( 0.0, -(random() & ((1 << (random() & 31)) - 1)));
+  case 1: return nexttoward0(-0.0, -(random() & ((1 << (random() & 31)) - 1)));
+  case 2: return nexttoward0( INFINITY, (random() & ((1 << (random() & 31)) - 1)));
+  case 3: return nexttoward0(-INFINITY, (random() & ((1 << (random() & 31)) - 1)));
   }
 #ifdef ENABLE_SYS_getrandom
   syscall(SYS_getrandom, &c.u64, sizeof(c.u64), 0);
@@ -831,8 +843,9 @@ int main(int argc,char **argv)
 
       double u0 = countULP(t = xfrfrexp(d), frx);
 
-      if (isnumber(d) && u0 != 0) {
+      if (d != 0 && isnumber(d) && u0 != 0) {
 	printf("Pure C frfrexp arg=%.20g ulp=%.20g\n", d, u0);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
 	fflush(stdout); ecnt++;
       }
     }
@@ -843,8 +856,9 @@ int main(int argc,char **argv)
 
       int texp = xexpfrexp(d);
       
-      if (isnumber(d) && cexp != texp) {
+      if (d != 0 && isnumber(d) && cexp != texp) {
 	printf("Pure C expfrexp arg=%.20g\n", d);
+	printf("correct = %d, test = %d\n", cexp, texp);
 	fflush(stdout); ecnt++;
       }
     }

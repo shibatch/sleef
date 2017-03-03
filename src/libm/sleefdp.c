@@ -1441,23 +1441,24 @@ EXPORT CONST double xfma(double x, double y, double z) {
   }
   Sleef_double2 d = ddmul_d2_d_d(x, y);
   d = ddadd2_d2_d2_d(d, z);
-  if (xisinf(z) && !xisinf(x) && !xisnan(x) && !xisinf(y) && !xisnan(y)) h2 = z;
-  return (xisinf(h2) || xisnan(h2)) ? h2 : (d.x + d.y)*q;
+  double ret = (x == 0 || y == 0) ? z : (d.x + d.y);
+  if ((xisinf(z) && !xisinf(x) && !xisnan(x) && !xisinf(y) && !xisnan(y))) h2 = z;
+  return (xisinf(h2) || xisnan(h2)) ? h2 : ret*q;
 }
 
 EXPORT CONST double xsqrt_u05(double d) {
-  double q = 1;
+  double q = 0.5;
 
   d = d < 0 ? NAN : d;
   
   if (d < 8.636168555094445E-78) {
     d *= 1.157920892373162E77;
-    q = 2.9387358770557188E-39;
+    q = 2.9387358770557188E-39 * 0.5;
   }
 
   if (d > 1.3407807929942597e+154) {
     d *= 7.4583407312002070e-155;
-    q = 1.1579208923731620e+77;
+    q = 1.1579208923731620e+77 * 0.5;
   }
   
   // http://en.wikipedia.org/wiki/Fast_inverse_square_root
@@ -1469,7 +1470,12 @@ EXPORT CONST double xsqrt_u05(double d) {
 
   Sleef_double2 d2 = ddmul_d2_d2_d2(ddadd2_d2_d_d2(d, ddmul_d2_d_d(x, x)), ddrec_d2_d(x));
 
-  return d == INFINITY ? INFINITY : (d2.x + d2.y) * (0.5 * q);
+  double ret = (d2.x + d2.y) * q;
+
+  ret = d == INFINITY ? INFINITY : ret;
+  ret = d == 0 ? d : ret;
+
+  return ret;
 }
 
 EXPORT CONST double xfabs(double x) { return fabsk(x); }
@@ -1548,10 +1554,10 @@ EXPORT CONST double xhypot_u05(double x, double y) {
 EXPORT CONST double xhypot_u35(double x, double y) {
   x = fabsk(x);
   y = fabsk(y);
-  double min = fmink(x, y);
-  double max = fmaxk(x, y);
+  double min = fmink(x, y), n = min;
+  double max = fmaxk(x, y), d = max;
 
-  double t = min / max;
+  double t = n / d;
   double ret = max * sqrt(1 + t*t);
   if (min == 0) ret = max;
   if (xisnan(x) || xisnan(y)) ret = NAN;
@@ -1565,6 +1571,7 @@ EXPORT CONST double xnextafter(double x, double y) {
     int64_t i;
   } cx;
 
+  x = x == 0 ? mulsign(0, y) : x;
   cx.f = x;
   int c = (cx.i < 0) == (y < x);
   if (c) cx.i = -(cx.i ^ (1ULL << 63));
@@ -1656,7 +1663,7 @@ EXPORT CONST Sleef_double2 xmodf(double x) {
   return ret;
 }
 
-#if 1
+#if 0
 // gcc -I../common sleefdp.c -lm
 #include <stdlib.h>
 int main(int argc, char **argv) {
@@ -1664,15 +1671,17 @@ int main(int argc, char **argv) {
   printf("arg1 = %.20g\n", d1);
   double d2 = atof(argv[2]);
   printf("arg2 = %.20g\n", d2);
-  printf("%d\n", (int)d2);
+  //printf("%d\n", (int)d2);
 #if 0
   double d3 = atof(argv[3]);
   printf("arg3 = %.20g\n", d3);
 #endif
-  double r = xpow(d1, d2);
+  //int exp = xexpfrexp(d1);
+  //double r = xnextafter(d1, d2);
   //double r = xfma(d1, d2, d3);
-  printf("test = %.20g\n", r);
-  printf("corr = %.20g\n", pow(d1, d2));
+  printf("test = %.20g\n", xhypot_u35(d1, d2));
+  //r = nextafter(d1, d2);
+  printf("corr = %.20g\n", hypot(d1, d2));
   //printf("%.20g %.20g\n", xround(d1), xrint(d1));
   //Sleef_double2 r = xsincospi_u35(d);
   //printf("%g, %g\n", (double)r.x, (double)r.y);

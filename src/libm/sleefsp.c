@@ -1316,7 +1316,7 @@ EXPORT CONST float xnextafterf(float x, float y) {
     int32_t i;
   } cx;
 
-  cx.f = x;
+  cx.f = x == 0 ? mulsignf(0, y) : x;
   int c = (cx.i < 0) == (y < x);
   if (c) cx.i = -(cx.i ^ (1 << 31));
 
@@ -1450,7 +1450,12 @@ EXPORT CONST float xsqrtf_u05(float d) {
 
   Sleef_float2 d2 = dfmul_f2_f2_f2(dfadd2_f2_f_f2(d, dfmul_f2_f_f(x, x)), dfrec_f2_f(x));
 
-  return d == INFINITYf ? INFINITYf : (d2.x + d2.y) * q;
+  double ret = (d2.x + d2.y) * q;
+
+  ret = d == INFINITYf ? INFINITYf : ret;
+  ret = d == 0 ? d : ret;
+
+  return ret;
 }
 
 EXPORT CONST float xsqrtf_u35(float d) {
@@ -1490,8 +1495,9 @@ EXPORT CONST float xfmaf(float x, float y, float z) {
   }
   Sleef_float2 d = dfmul_f2_f_f(x, y);
   d = dfadd2_f2_f2_f(d, z);
+  float ret = (x == 0 || y == 0) ? z : (d.x + d.y);
   if (xisinff(z) && !xisinff(x) && !xisnanf(x) && !xisinff(y) && !xisnanf(y)) h2 = z;
-  return (xisinff(h2) || xisnanf(h2)) ? h2 : (d.x + d.y)*q;
+  return (xisinff(h2) || xisnanf(h2)) ? h2 : ret*q;
 }
 
 //

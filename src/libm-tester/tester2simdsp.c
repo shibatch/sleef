@@ -157,11 +157,23 @@ typedef union {
   int32_t i32;
 } conv32_t;
 
+static float nexttoward0f(float x, int n) {
+  union {
+    float f;
+    int32_t u;
+  } cx;
+  cx.f = x;
+  cx.u -= n;
+  return x == 0 ? 0 : cx.f;
+}
+
 float rnd() {
   conv32_t c;
-  switch(random() & 15) {
-  case 0: return  INFINITY;
-  case 1: return -INFINITY;
+  switch(random() & 63) {
+  case 0: return nexttoward0f( 0.0, -(random() & ((1 << (random() & 31)) - 1)));
+  case 1: return nexttoward0f(-0.0, -(random() & ((1 << (random() & 31)) - 1)));
+  case 2: return nexttoward0f( INFINITY, (random() & ((1 << (random() & 31)) - 1)));
+  case 3: return nexttoward0f(-INFINITY, (random() & ((1 << (random() & 31)) - 1)));
   }
 #ifdef ENABLE_SYS_getrandom
   syscall(SYS_getrandom, &c.u32, sizeof(c.u32), 0);
@@ -313,7 +325,7 @@ int main(int argc,char **argv)
 
       double u1 = countULP2(t = vget(sc2.x, e), frx);
 
-      if (u1 != 0 && ((fabs(d) <= rangemax2 && u1 > 1.6) || fabs(t) > 1 || !isnumber(t))) {
+      if (u1 != 0 && ((fabs(d) <= rangemax2 && u1 > 2.0) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincospif_u35 sin arg=%.20g ulp=%.20g\n", d, u1);
 	fflush(stdout); ecnt++;
       }
@@ -333,7 +345,7 @@ int main(int argc,char **argv)
 
       double u1 = countULP2(t = vget(sc.y, e), frx);
 
-      if (u1 != 0 && ((fabs(d) <= rangemax2 && u1 > 1.5) || fabs(t) > 1 || !isnumber(t))) {
+      if (u1 != 0 && ((fabs(d) <= rangemax2 && u1 > 2.0) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincospif_u35 cos arg=%.20g ulp=%.20g\n", d, u1);
 	fflush(stdout); ecnt++;
       }
@@ -892,7 +904,7 @@ int main(int argc,char **argv)
 
       double u0 = countULP(t = vget(xfrfrexpf(vd), e), frx);
 
-      if (isnumber(d) && u0 != 0) {
+      if (d != 0 && isnumber(d) && u0 != 0) {
 	printf("Pure C frfrexpf arg=%.20g ulp=%.20g\n", d, u0);
 	fflush(stdout); ecnt++;
       }
@@ -905,7 +917,7 @@ int main(int argc,char **argv)
 
       int texp = xexpfrexpf(d);
       
-      if (isnumber(d) && cexp != texp) {
+      if (d != 0 && isnumber(d) && cexp != texp) {
 	printf("Pure C expfrexpf arg=%.20g\n", d);
 	fflush(stdout); ecnt++;
       }
