@@ -1486,12 +1486,19 @@ EXPORT CONST float xsqrtf_u35(float d) {
 
 EXPORT CONST float xfmaf(float x, float y, float z) {
   float h2 = x * y + z, q = 1;
-  if (fabsfk(h2) < 1e-38) {
+  if (fabsfk(h2) < 1e-38f) {
     const float c0 = 1 << 25, c1 = c0 * c0, c2 = c1 * c1;
     x *= c1;
     y *= c1;
     z *= c2;
-    q = 1.0 / c2;
+    q = 1.0f / c2;
+  }
+  if (fabsfk(h2) > 1e+38f) {
+    const float c0 = 1 << 25, c1 = c0 * c0, c2 = c1 * c1;
+    x *= 1.0 / c1;
+    y *= 1.0 / c1;
+    z *= 1.0 / c2;
+    q = c2;
   }
   Sleef_float2 d = dfmul_f2_f_f(x, y);
   d = dfadd2_f2_f2_f(d, z);
@@ -1502,17 +1509,18 @@ EXPORT CONST float xfmaf(float x, float y, float z) {
 
 //
 
-#if 0
+#if 1
 // gcc -I../common sleefsp.c -lm
 #include <stdlib.h>
 int main(int argc, char **argv) {
   float d1 = atof(argv[1]);
-  //float d2 = atof(argv[2]);
+  float d2 = atof(argv[2]);
+  float d3 = atof(argv[3]);
   //printf("%.20g, %.20g\n", (double)d1, (double)d2);
   //float i2 = atoi(argv[2]);
   //float c = xatan2f_u1(d1, d2);
-  printf("test    = %.20g\n", (double)xsqrtf_u35(d1));
-  printf("correct = %.20g\n", (double)sqrtf(d1));
+  printf("test    = %.20g\n", (double)xfmaf(d1, d2, d3));
+  printf("correct = %.20g\n", (double)fmaf(d1, d2, d3));
   //Sleef_float2 r = xsincospif_u35(d);
   //printf("%g, %g\n", (double)r.x, (double)r.y);
 }

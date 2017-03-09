@@ -94,18 +94,21 @@ mpfr_t fra, frb, frc, frd;
 double countULP(double d, mpfr_t c) {
   double c2 = mpfr_get_d(c, GMP_RNDN);
   if (c2 == 0 && d != 0) return 10000;
-  //if (isPlusZero(c2) && !isPlusZero(d)) return 10003;
-  //if (isMinusZero(c2) && !isMinusZero(d)) return 10004;
   if (isnan(c2) && isnan(d)) return 0;
   if (isnan(c2) || isnan(d)) return 10001;
   if (c2 == POSITIVE_INFINITY && d == POSITIVE_INFINITY) return 0;
   if (c2 == NEGATIVE_INFINITY && d == NEGATIVE_INFINITY) return 0;
-  if (!isnumber(c2) || !isnumber(d)) return 10002;
+
+  double v = 0;
+  if (isinf(d) && !isinfl(mpfr_get_ld(c, GMP_RNDN))) {
+    d = copysign(DBL_MAX, c2);
+    v = 1;
+  }
 
   //
   
   int e;
-  frexpl(mpfr_get_d(c, GMP_RNDN), &e);
+  frexpl(mpfr_get_ld(c, GMP_RNDN), &e);
   mpfr_set_ld(frb, fmaxl(ldexpl(1.0, e-53), DENORMAL_DBL_MIN), GMP_RNDN);
 
   mpfr_set_d(frd, d, GMP_RNDN);
@@ -113,7 +116,7 @@ double countULP(double d, mpfr_t c) {
   mpfr_div(fra, fra, frb, GMP_RNDN);
   double u = fabs(mpfr_get_d(fra, GMP_RNDN));
 
-  return u;
+  return u + v;
 }
 
 double countULP2(double d, mpfr_t c) {
@@ -125,12 +128,17 @@ double countULP2(double d, mpfr_t c) {
   if (isnan(c2) || isnan(d)) return 10001;
   if (c2 == POSITIVE_INFINITY && d == POSITIVE_INFINITY) return 0;
   if (c2 == NEGATIVE_INFINITY && d == NEGATIVE_INFINITY) return 0;
-  if (!isnumber(c2) || !isnumber(d)) return 10002;
+
+  double v = 0;
+  if (isinf(d) && !isinfl(mpfr_get_ld(c, GMP_RNDN))) {
+    d = copysign(DBL_MAX, c2);
+    v = 1;
+  }
 
   //
 
   int e;
-  frexpl(mpfr_get_d(c, GMP_RNDN), &e);
+  frexpl(mpfr_get_ld(c, GMP_RNDN), &e);
   mpfr_set_ld(frb, fmaxl(ldexpl(1.0, e-53), DBL_MIN), GMP_RNDN);
 
   mpfr_set_d(frd, d, GMP_RNDN);
@@ -138,7 +146,7 @@ double countULP2(double d, mpfr_t c) {
   mpfr_div(fra, fra, frb, GMP_RNDN);
   double u = fabs(mpfr_get_d(fra, GMP_RNDN));
 
-  return u;
+  return u + v;
 }
 
 typedef union {

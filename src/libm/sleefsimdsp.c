@@ -1391,13 +1391,21 @@ EXPORT CONST vfloat2 xmodff(vfloat x) {
 
 EXPORT CONST vfloat xfmaf(vfloat x, vfloat y, vfloat z) {
   vfloat h2 = vadd_vf_vf_vf(vmul_vf_vf_vf(x, y), z), q = vcast_vf_f(1);
-  vopmask o = vlt_vo_vf_vf(vabs_vf_vf(h2), vcast_vf_f(1e-38));
+  vopmask o = vlt_vo_vf_vf(vabs_vf_vf(h2), vcast_vf_f(1e-38f));
   {
     const float c0 = 1ULL << 25, c1 = c0 * c0, c2 = c1 * c1;
     x = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(x, vcast_vf_f(c1)), x);
     y = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(y, vcast_vf_f(c1)), y);
     z = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(z, vcast_vf_f(c2)), z);
-    q = vsel_vf_vo_vf_vf(o, vcast_vf_f(1.0 / c2), vcast_vf_f(1));
+    q = vsel_vf_vo_vf_vf(o, vcast_vf_f(1.0f / c2), q);
+  }
+  o = vgt_vo_vf_vf(vabs_vf_vf(h2), vcast_vf_f(1e+38f));
+  {
+    const float c0 = 1ULL << 25, c1 = c0 * c0, c2 = c1 * c1;
+    x = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(x, vcast_vf_f(1.0f / c1)), x);
+    y = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(y, vcast_vf_f(1.0f / c1)), y);
+    z = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(z, vcast_vf_f(1.0f / c2)), z);
+    q = vsel_vf_vo_vf_vf(o, vcast_vf_f(c2), q);
   }
   vfloat2 d = dfmul_vf2_vf_vf(x, y);
   d = dfadd2_vf2_vf2_vf(d, z);

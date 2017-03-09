@@ -1439,6 +1439,13 @@ EXPORT CONST double xfma(double x, double y, double z) {
     z *= c2;
     q = 1.0 / c2;
   }
+  if (fabsk(h2) > 1e+300) {
+    const double c0 = 1ULL << 54, c1 = c0 * c0, c2 = c1 * c1;
+    x *= 1.0 / c1;
+    y *= 1.0 / c1;
+    z *= 1. / c2;
+    q = c2;
+  }
   Sleef_double2 d = ddmul_d2_d_d(x, y);
   d = ddadd2_d2_d2_d(d, z);
   double ret = (x == 0 || y == 0) ? z : (d.x + d.y);
@@ -1672,16 +1679,16 @@ int main(int argc, char **argv) {
   double d2 = atof(argv[2]);
   printf("arg2 = %.20g\n", d2);
   //printf("%d\n", (int)d2);
-#if 0
+#if 1
   double d3 = atof(argv[3]);
   printf("arg3 = %.20g\n", d3);
 #endif
   //int exp = xexpfrexp(d1);
   //double r = xnextafter(d1, d2);
   //double r = xfma(d1, d2, d3);
-  printf("test = %.20g\n", xhypot_u35(d1, d2));
+  printf("test = %.20g\n", xfma(d1, d2, d3));
   //r = nextafter(d1, d2);
-  printf("corr = %.20g\n", hypot(d1, d2));
+  printf("corr = %.20g\n", fma(d1, d2, d3));
   //printf("%.20g %.20g\n", xround(d1), xrint(d1));
   //Sleef_double2 r = xsincospi_u35(d);
   //printf("%g, %g\n", (double)r.x, (double)r.y);

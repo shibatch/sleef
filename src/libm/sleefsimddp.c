@@ -1667,7 +1667,15 @@ EXPORT CONST vdouble xfma(vdouble x, vdouble y, vdouble z) {
     x = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(x, vcast_vd_d(c1)), x);
     y = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(y, vcast_vd_d(c1)), y);
     z = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(z, vcast_vd_d(c2)), z);
-    q = vsel_vd_vo_vd_vd(o, vcast_vd_d(1.0 / c2), vcast_vd_d(1));
+    q = vsel_vd_vo_vd_vd(o, vcast_vd_d(1.0 / c2), q);
+  }
+  o = vgt_vo_vd_vd(vabs_vd_vd(h2), vcast_vd_d(1e+300));
+  {
+    const double c0 = 1ULL << 54, c1 = c0 * c0, c2 = c1 * c1;
+    x = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(x, vcast_vd_d(1.0 / c1)), x);
+    y = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(y, vcast_vd_d(1.0 / c1)), y);
+    z = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(z, vcast_vd_d(1.0 / c2)), z);
+    q = vsel_vd_vo_vd_vd(o, vcast_vd_d(c2), q);
   }
   vdouble2 d = ddmul_vd2_vd_vd(x, y);
   d = ddadd2_vd2_vd2_vd(d, z);
