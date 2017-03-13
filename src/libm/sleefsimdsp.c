@@ -280,9 +280,8 @@ EXPORT CONST vfloat2 xsincosf(vfloat d) {
   u = vcast_vf_f(-0.000195169282960705459117889f);
   u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(0.00833215750753879547119141f));
   u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(-0.166666537523269653320312f));
-  u = vmul_vf_vf_vf(vmul_vf_vf_vf(u, s), t);
 
-  rx = vadd_vf_vf_vf(t, u);
+  rx = vmla_vf_vf_vf_vf(vmul_vf_vf_vf(u, s), t, t);
   rx = vsel_vf_vo_vf_vf(visnegzero_vo_vf(d), vcast_vf_f(-0.0f), rx);
 
   u = vcast_vf_f(-2.71811842367242206819355e-07f);
@@ -362,10 +361,10 @@ EXPORT CONST vfloat xsinf_u1(vfloat d) {
   q = vrint_vi2_vf(vmul_vf_vf_vf(d, vcast_vf_f(M_1_PI)));
   u = vcast_vf_vi2(q);
 
-  s = dfadd2_vf2_vf_vf (d, vmul_vf_vf_vf(u, vcast_vf_f(-PI_Af)));
-  s = dfadd2_vf2_vf2_vf(s, vmul_vf_vf_vf(u, vcast_vf_f(-PI_Bf)));
-  s = dfadd2_vf2_vf2_vf(s, vmul_vf_vf_vf(u, vcast_vf_f(-PI_Cf)));
-  s = dfadd2_vf2_vf2_vf(s, vmul_vf_vf_vf(u, vcast_vf_f(-PI_Df)));
+  s = dfadd_vf2_vf_vf (d, vmul_vf_vf_vf(u, vcast_vf_f(-PI_Af)));
+  s = dfadd_vf2_vf2_vf(s, vmul_vf_vf_vf(u, vcast_vf_f(-PI_Bf)));
+  s = dfadd_vf2_vf2_vf(s, vmul_vf_vf_vf(u, vcast_vf_f(-PI_Cf)));
+  s = dfadd_vf2_vf2_vf(s, vmul_vf_vf_vf(u, vcast_vf_f(-PI_Df)));
 
   t = s;
   s = dfsqu_vf2_vf2(s);
@@ -376,8 +375,7 @@ EXPORT CONST vfloat xsinf_u1(vfloat d) {
 
   x = dfadd_vf2_vf_vf2(vcast_vf_f(1), dfmul_vf2_vf2_vf2(dfadd_vf2_vf_vf(vcast_vf_f(-0.166666597127914428710938f), vmul_vf_vf_vf(u, s.x)), s));
 
-  x = dfmul_vf2_vf2_vf2(t, x);
-  u = vadd_vf_vf_vf(x.x, x.y);
+  u = dfmul_vf_vf2_vf2(t, x);
 
   u = vreinterpret_vf_vm(vxor_vm_vm_vm(vand_vm_vo32_vm(veq_vo_vi2_vi2(vand_vi2_vi2_vi2(q, vcast_vi2_i(1)), vcast_vi2_i(1)), vreinterpret_vm_vf(vcast_vf_f(-0.0))), vreinterpret_vm_vf(u)));
   u = vsel_vf_vo_vf_vf(vandnot_vo_vo_vo(visinf_vo_vf(d), vor_vo_vo_vo(visnegzero_vo_vf(d),
@@ -410,8 +408,7 @@ EXPORT CONST vfloat xcosf_u1(vfloat d) {
 
   x = dfadd_vf2_vf_vf2(vcast_vf_f(1), dfmul_vf2_vf2_vf2(dfadd_vf2_vf_vf(vcast_vf_f(-0.166666597127914428710938f), vmul_vf_vf_vf(u, s.x)), s));
 
-  x = dfmul_vf2_vf2_vf2(t, x);
-  u = vadd_vf_vf_vf(x.x, x.y);
+  u = dfmul_vf_vf2_vf2(t, x);
 
   u = vreinterpret_vf_vm(vxor_vm_vm_vm(vand_vm_vo32_vm(veq_vo_vi2_vi2(vand_vi2_vi2_vi2(q, vcast_vi2_i(2)), vcast_vi2_i(0)), vreinterpret_vm_vf(vcast_vf_f(-0.0))), vreinterpret_vm_vf(u)));
 
@@ -430,15 +427,14 @@ EXPORT CONST vfloat2 xsincosf_u1(vfloat d) {
   q = vrint_vi2_vf(vmul_vf_vf_vf(d, vcast_vf_f(2 * M_1_PI)));
   u = vcast_vf_vi2(q);
 
-  s = dfadd2_vf2_vf_vf (d, vmul_vf_vf_vf(u, vcast_vf_f(-PI_Af*0.5f)));
-  s = dfadd2_vf2_vf2_vf(s, vmul_vf_vf_vf(u, vcast_vf_f(-PI_Bf*0.5f)));
-  s = dfadd2_vf2_vf2_vf(s, vmul_vf_vf_vf(u, vcast_vf_f(-PI_Cf*0.5f)));
-  s = dfadd2_vf2_vf2_vf(s, vmul_vf_vf_vf(u, vcast_vf_f(-PI_Df*0.5f)));
+  s = dfadd_vf2_vf_vf (d, vmul_vf_vf_vf(u, vcast_vf_f(-PI_Af*0.5f)));
+  s = dfadd_vf2_vf2_vf(s, vmul_vf_vf_vf(u, vcast_vf_f(-PI_Bf*0.5f)));
+  s = dfadd_vf2_vf2_vf(s, vmul_vf_vf_vf(u, vcast_vf_f(-PI_Cf*0.5f)));
+  s = dfadd_vf2_vf2_vf(s, vmul_vf_vf_vf(u, vcast_vf_f(-PI_Df*0.5f)));
 
   t = s;
 
-  s = dfsqu_vf2_vf2(s);
-  s.x = vadd_vf_vf_vf(s.x, s.y);
+  s.x = dfsqu_vf_vf2(s);
 
   u = vcast_vf_f(-0.000195169282960705459117889f);
   u = vmla_vf_vf_vf_vf(u, s.x, vcast_vf_f(0.00833215750753879547119141f));
@@ -604,11 +600,11 @@ EXPORT CONST vfloat xtanf_u1(vfloat d) {
   q = vrint_vi2_vf(vmul_vf_vf_vf(d, vcast_vf_f(M_2_PI)));
   u = vcast_vf_vi2(q);
 
-  s = dfadd2_vf2_vf_vf (d, vmul_vf_vf_vf(u, vcast_vf_f(-PI_Af*0.5f)));
-  s = dfadd2_vf2_vf2_vf(s, vmul_vf_vf_vf(u, vcast_vf_f(-PI_Bf*0.5f)));
-  s = dfadd2_vf2_vf2_vf(s, vmul_vf_vf_vf(u, vcast_vf_f(-PI_Cf*0.5f)));
-  s = dfadd2_vf2_vf2_vf(s, vmul_vf_vf_vf(u, vcast_vf_f(-PI_XDf*0.5f)));
-  s = dfadd2_vf2_vf2_vf(s, vmul_vf_vf_vf(u, vcast_vf_f(-PI_XEf*0.5f)));
+  s = dfadd_vf2_vf_vf (d, vmul_vf_vf_vf(u, vcast_vf_f(-PI_Af*0.5f)));
+  s = dfadd_vf2_vf2_vf(s, vmul_vf_vf_vf(u, vcast_vf_f(-PI_Bf*0.5f)));
+  s = dfadd_vf2_vf2_vf(s, vmul_vf_vf_vf(u, vcast_vf_f(-PI_Cf*0.5f)));
+  s = dfadd_vf2_vf2_vf(s, vmul_vf_vf_vf(u, vcast_vf_f(-PI_XDf*0.5f)));
+  s = dfadd_vf2_vf2_vf(s, vmul_vf_vf_vf(u, vcast_vf_f(-PI_XEf*0.5f)));
 
   o = veq_vo_vi2_vi2(vand_vi2_vi2_vi2(q, vcast_vi2_i(1)), vcast_vi2_i(1));
   vmask n = vand_vm_vo32_vm(o, vreinterpret_vm_vf(vcast_vf_f(-0.0)));

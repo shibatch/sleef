@@ -236,8 +236,6 @@ static INLINE CONST Sleef_double2 ddadd_d2_d2_d(Sleef_double2 x, double y) {
 }
 
 static INLINE CONST Sleef_double2 ddadd2_d2_d2_d(Sleef_double2 x, double y) {
-  // |x| >= |y|
-
   Sleef_double2 r;
 
   r.x  = x.x + y;
@@ -247,6 +245,8 @@ static INLINE CONST Sleef_double2 ddadd2_d2_d2_d(Sleef_double2 x, double y) {
 
   return r;
 }
+
+static INLINE CONST double ddadd2_d_d2_d(Sleef_double2 x, double y) { return x.y + x.x + y; }
 
 static INLINE CONST Sleef_double2 ddadd_d2_d_d2(double x, Sleef_double2 y) {
   // |x| >= |y|
@@ -276,6 +276,8 @@ static INLINE CONST Sleef_double2 ddadd2_d2_d_d2(double x, Sleef_double2 y) {
   return r;
 }
 
+static INLINE CONST double ddadd2_d_d_d2(double x, Sleef_double2 y) { return y.y + y.x + x; }
+
 static INLINE CONST Sleef_double2 ddadd_d2_d2_d2(Sleef_double2 x, Sleef_double2 y) {
   // |x| >= |y|
 
@@ -304,6 +306,8 @@ static INLINE CONST Sleef_double2 ddadd2_d2_d2_d2(Sleef_double2 x, Sleef_double2
 
   return r;
 }
+
+static INLINE CONST double ddadd2_d_d2_d2(Sleef_double2 x, Sleef_double2 y) { return x.y + y.y + x.x + y.x; }
 
 static INLINE CONST Sleef_double2 ddsub_d2_d2_d2(Sleef_double2 x, Sleef_double2 y) {
   // |x| >= |y|
@@ -374,6 +378,13 @@ static INLINE CONST Sleef_double2 ddmul_d2_d2_d2(Sleef_double2 x, Sleef_double2 
   return r;
 }
 
+static INLINE CONST double ddmul_d_d2_d2(Sleef_double2 x, Sleef_double2 y) {
+  double xh = upper(x.x), xl = x.x - xh;
+  double yh = upper(y.x), yl = y.x - yh;
+  
+  return x.y * yh + xh * y.y + xl * yl + xh * yl + xl * yh + xh * yh;
+}
+
 static INLINE CONST Sleef_double2 ddsqu_d2_d2(Sleef_double2 x) {
   double xh = upper(x.x), xl = x.x - xh;
   Sleef_double2 r;
@@ -382,6 +393,12 @@ static INLINE CONST Sleef_double2 ddsqu_d2_d2(Sleef_double2 x) {
   r.y = xh * xh - r.x + (xh + xh) * xl + xl * xl + x.x * (x.y + x.y);
 
   return r;
+}
+
+static INLINE CONST double ddsqu_d_d2(Sleef_double2 x) {
+  double xh = upper(x.x), xl = x.x - xh;
+
+  return xh * x.y + xh * x.y + xl * xl + (xh * xl + xh * xl) + xh * xh;
 }
 
 static INLINE CONST Sleef_double2 ddrec_d2_d(double d) {
@@ -625,13 +642,13 @@ EXPORT CONST double xsin_u1(double d) {
   int qh = trunck(d * (M_1_PI / (1 << 24)));
   int ql = rintk(d * M_1_PI - qh * (double)(1 << 24));
 
-  s = ddadd2_d2_d_d (d, qh * (-PI_A * (1 << 24)));
-  s = ddadd2_d2_d2_d(s, ql * (-PI_A            ));
-  s = ddadd2_d2_d2_d(s, qh * (-PI_B * (1 << 24)));
-  s = ddadd2_d2_d2_d(s, ql * (-PI_B            ));
-  s = ddadd2_d2_d2_d(s, qh * (-PI_C * (1 << 24)));
-  s = ddadd2_d2_d2_d(s, ql * (-PI_C            ));
-  s = ddadd2_d2_d2_d(s, ((double)qh * (1 << 24) + ql) * -PI_D);
+  s = ddadd_d2_d_d (d, qh * (-PI_A * (1 << 24)));
+  s = ddadd_d2_d2_d(s, ql * (-PI_A            ));
+  s = ddadd_d2_d2_d(s, qh * (-PI_B * (1 << 24)));
+  s = ddadd_d2_d2_d(s, ql * (-PI_B            ));
+  s = ddadd_d2_d2_d(s, qh * (-PI_C * (1 << 24)));
+  s = ddadd_d2_d2_d(s, ql * (-PI_C            ));
+  s = ddadd_d2_d2_d(s, ((double)qh * (1 << 24) + ql) * -PI_D);
   
   t = s;
   s = ddsqu_d2_d2(s);
@@ -645,10 +662,9 @@ EXPORT CONST double xsin_u1(double d) {
   u = mla(u, s.x, 0.00833333333333318056201922);
 
   x = ddadd_d2_d_d2(1, ddmul_d2_d2_d2(ddadd_d2_d_d(-0.166666666666666657414808, u * s.x), s));
-  
-  x = ddmul_d2_d2_d2(t, x);
-  u = x.x + x.y;
 
+  u = ddmul_d_d2_d2(t, x);
+  
   if ((ql & 1) != 0) u = -u;
   if (!xisinf(d) && (xisnegzero(d) || fabsk(d) > TRIGRANGEMAX)) u = -0.0;
 
@@ -720,10 +736,8 @@ EXPORT CONST double xcos_u1(double d) {
 
   x = ddadd_d2_d_d2(1, ddmul_d2_d2_d2(ddadd_d2_d_d(-0.166666666666666657414808, u * s.x), s));
 
-  x = ddmul_d2_d2_d2(t, x);
-
-  u = x.x + x.y;
-
+  u = ddmul_d_d2_d2(t, x);
+  
   if ((((int)ql) & 2) == 0) u = -u;
   if (!xisinf(d) && d > TRIGRANGEMAX) u = 0.0;
 
@@ -790,18 +804,18 @@ EXPORT CONST Sleef_double2 xsincos_u1(double d) {
   int qh = trunck(d * ((2 * M_1_PI) / (1 << 24)));
   int ql = rintk(d * (2 * M_1_PI) - qh * (double)(1 << 24));
 
-  s = ddadd2_d2_d_d (d, qh * (-PI_A*0.5 * (1 << 24)));
-  s = ddadd2_d2_d2_d(s, ql * (-PI_A*0.5            ));
-  s = ddadd2_d2_d2_d(s, qh * (-PI_B*0.5 * (1 << 24)));
-  s = ddadd2_d2_d2_d(s, ql * (-PI_B*0.5            ));
-  s = ddadd2_d2_d2_d(s, qh * (-PI_C*0.5 * (1 << 24)));
-  s = ddadd2_d2_d2_d(s, ql * (-PI_C*0.5            ));
-  s = ddadd2_d2_d2_d(s, ((double)qh * (1 << 24) + ql) * (-PI_D*0.5));
+  s = ddadd_d2_d_d (d, qh * (-PI_A*0.5 * (1 << 24)));
+  s = ddadd_d2_d2_d(s, ql * (-PI_A*0.5            ));
+  s = ddadd_d2_d2_d(s, qh * (-PI_B*0.5 * (1 << 24)));
+  s = ddadd_d2_d2_d(s, ql * (-PI_B*0.5            ));
+  s = ddadd_d2_d2_d(s, qh * (-PI_C*0.5 * (1 << 24)));
+  s = ddadd_d2_d2_d(s, ql * (-PI_C*0.5            ));
+  s = ddadd_d2_d2_d(s, ((double)qh * (1 << 24) + ql) * (-PI_D*0.5));
   
   t = s;
-  s = ddsqu_d2_d2(s);
-  s.x = s.x + s.y;
 
+  s.x = ddsqu_d_d2(s);
+  
   u = 1.58938307283228937328511e-10;
   u = mla(u, s.x, -2.50506943502539773349318e-08);
   u = mla(u, s.x, 2.75573131776846360512547e-06);
@@ -813,7 +827,7 @@ EXPORT CONST Sleef_double2 xsincos_u1(double d) {
 
   x = ddadd_d2_d2_d(t, u);
   r.x = x.x + x.y;
-
+  
   if (xisnegzero(d)) r.x = -0.0;
 
   u = -1.13615350239097429531523e-11;
@@ -826,7 +840,7 @@ EXPORT CONST Sleef_double2 xsincos_u1(double d) {
 
   x = ddadd_d2_d_d2(1, ddmul_d2_d_d(s.x, u));
   r.y = x.x + x.y;
-
+  
   if ((ql & 1) != 0) { u = r.y; r.y = r.x; r.x = u; }
   if ((ql & 2) != 0) { r.x = -r.x; }
   if (((ql+1) & 2) != 0) { r.y = -r.y; }
@@ -862,9 +876,13 @@ EXPORT CONST Sleef_double2 xsincospi_u05(double d) {
   x = ddadd2_d2_d_d2(u * s, dd(-0.0807455121882807852484731, 3.61852475067037104849987e-18));
   x = ddadd2_d2_d2_d2(ddmul_d2_d2_d2(s2, x), dd(0.785398163397448278999491, 3.06287113727155002607105e-17));
 
+#if 1
   x = ddmul_d2_d2_d(x, t);
   r.x = x.x + x.y;
-
+#else
+  r.x = ddmul_d_d2_d(x, t);
+#endif
+  
   if (xisnegzero(d)) r.x = -0.0;
   
   //
@@ -880,7 +898,7 @@ EXPORT CONST Sleef_double2 xsincospi_u05(double d) {
 
   x = ddadd2_d2_d2_d(ddmul_d2_d2_d2(x, s2), 1);
   r.y = x.x + x.y;
-
+  
   //
 
   if ((q & 2) != 0) { s = r.y; r.y = r.x; r.x = s; }
@@ -993,13 +1011,13 @@ EXPORT CONST double xtan_u1(double d) {
   s = ddadd2_d2_d2_d(ddmul_d2_d2_d(dd(M_2_PI_H, M_2_PI_L), d), (d < 0 ? -0.5 : 0.5) - qh * (double)(1 << 24));
   int ql = s.x + s.y;
   
-  s = ddadd2_d2_d_d (d, qh * (-PI_A*0.5 * (1 << 24)));
-  s = ddadd2_d2_d2_d(s, ql * (-PI_A*0.5            ));
-  s = ddadd2_d2_d2_d(s, qh * (-PI_B*0.5 * (1 << 24)));
-  s = ddadd2_d2_d2_d(s, ql * (-PI_B*0.5            ));
-  s = ddadd2_d2_d2_d(s, qh * (-PI_C*0.5 * (1 << 24)));
-  s = ddadd2_d2_d2_d(s, ql * (-PI_C*0.5            ));
-  s = ddadd2_d2_d2_d(s, ((double)qh * (1 << 24) + ql) * (-PI_D*0.5));
+  s = ddadd_d2_d_d (d, qh * (-PI_A*0.5 * (1 << 24)));
+  s = ddadd_d2_d2_d(s, ql * (-PI_A*0.5            ));
+  s = ddadd_d2_d2_d(s, qh * (-PI_B*0.5 * (1 << 24)));
+  s = ddadd_d2_d2_d(s, ql * (-PI_B*0.5            ));
+  s = ddadd_d2_d2_d(s, qh * (-PI_C*0.5 * (1 << 24)));
+  s = ddadd_d2_d2_d(s, ql * (-PI_C*0.5            ));
+  s = ddadd_d2_d2_d(s, ((double)qh * (1 << 24) + ql) * (-PI_D*0.5));
   
   if ((ql & 1) != 0) s = ddneg_d2_d2(s);
 

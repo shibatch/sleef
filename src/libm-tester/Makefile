@@ -221,9 +221,35 @@ testerspu1 : testerspu1.c
 
 #
 
-bench : bench.c
-	$(CC) bench.c -Wall -fimf-max-error=3.5 -fimf-domain-exclusion=0 -O0 -march=native -I../common -I../arch -I../../include -I../libm -L../../lib -Wno-attributes -I../libm -lsleef -lm -o bench_35
-#	$(CC) bench.c -Wall -fimf-max-error=1.0 -fimf-domain-exclusion=0 -O0 -march=native -I../common -I../arch -I../../include -I../libm -L../../lib -Wno-attributes -I../libm -lsleef -lm -o bench_10
+.PHONY: bench
+bench : bench_s0_10 bench_s0_50 bench_s1_10 bench_s1_50 bench_s2_10 bench_s2_50 bench_a0_10 bench_a0_50
+
+bench_s0_10 : bench_s0.c
+	icc bench_s0.c -Wall -fimf-max-error=1.0 -fimf-domain-exclusion=0 -O0 -march=native -I../common -I../arch -I../../include -I../libm -L../../lib -Wno-attributes -I../libm -lsleef -lm -o bench_s0_10
+
+bench_s0_50 : bench_s0.c
+	icc bench_s0.c -Wall -fimf-max-error=5.0 -fimf-domain-exclusion=0 -O0 -march=native -I../common -I../arch -I../../include -I../libm -L../../lib -Wno-attributes -I../libm -lsleef -lm -o bench_s0_50
+
+bench_s1_10 : bench_s1.c
+	icc -DSVMLULP='"(1ulp)"' bench_s1.c -Wall -fimf-max-error=1.0 -fimf-domain-exclusion=0 -O0 -march=native -I../common -I../arch -I../../include -I../libm -L../../lib -Wno-attributes -I../libm -lsleef -lm -o bench_s1_10
+
+bench_s1_50 : bench_s1.c
+	icc -DSVMLULP='"(5ulp)"' -DSVMLONLY bench_s1.c -Wall -fimf-max-error=5.0 -fimf-domain-exclusion=0 -O0 -march=native -I../common -I../arch -I../../include -I../libm -L../../lib -Wno-attributes -I../libm -lsleef -lm -o bench_s1_50
+
+bench_s2_10 : bench_s2.c doNothing.o
+	icc -DSVMLULP='"(1ulp)"' bench_s2.c doNothing.o -Wall -fimf-max-error=1.0 -fimf-domain-exclusion=0 -O0 -march=native -I../common -I../arch -I../../include -I../libm -L../../lib -Wno-attributes -I../libm -lsleef -lm -o bench_s2_10
+
+bench_s2_50 : bench_s2.c doNothing.o
+	icc -DSVMLULP='"(5ulp)"' -DSVMLONLY bench_s2.c doNothing.o -Wall -fimf-max-error=5.0 -fimf-domain-exclusion=0 -O0 -march=native -I../common -I../arch -I../../include -I../libm -L../../lib -Wno-attributes -I../libm -lsleef -lm -o bench_s2_50
+
+doNothing.o : doNothing.c
+	icc doNothing.c -Wall -march=native -I../common -I../arch -I../../include -I../libm -L../../lib -Wno-attributes -I../libm -lsleef -lm -c
+
+bench_a0_10 : bench_a0.c
+	icc -DSVMLULP='"(1ulp)"' bench_a0.c -march=native -Wall -fimf-max-error=1.0 -fimf-domain-exclusion=0 -I../common -I../arch -I../../include -I../libm -L../../lib -Wno-attributes -I../libm -lm -lmpfr -lsleef -o bench_a0_10
+
+bench_a0_50 : bench_a0.c
+	icc -DSVMLULP='"(5ulp)"' -DSVMLONLY bench_a0.c -march=native -Wall -fimf-max-error=5.0 -fimf-domain-exclusion=0 -I../common -I../arch -I../../include -I../libm -L../../lib -Wno-attributes -I../libm -lm -lmpfr -lsleef -o bench_a0_50
 
 #
 
@@ -231,12 +257,13 @@ bench : bench.c
 clean :
 	rm -f *~ a.out *.obj *.lib *.dll *.exp *.exe *.stackdump
 	rm -rf *.dSYM *.dylib
-	rm -f *.so *.so.* *.a *.s
+	rm -f *.so *.so.* *.a *.s *.o
 	rm -f iut iutsse2 iutavx iutfma4 iutavx2 iutavx512f iutneon32 iutadvsimd
 	rm -f tester testeru1 testersp testerspu1 tester2vecextdp tester2vecextsp iutvecext tester2purecdp tester2purecsp iutpurec
 	rm -f tester2dp tester2sp tester2qp tester2ld tester2sse2dp tester2sse2sp tester2fma4dp tester2fma4sp tester2avxdp tester2avxsp tester2avx2dp tester2avx2sp tester2avx512fdp tester2avx512fsp
 	rm -f tester2advsimddp tester2advsimdsp
-	rm -f bench_10 bench_35
+	rm -f bench_s0_10 bench_s0_50 bench_s1_10 bench_s1_50 bench_s2_10 bench_s2_50 bench_a0_10 bench_a0_50
+	rm -f *.csv *.xlsx
 
 .PHONY: distclean
 distclean : clean

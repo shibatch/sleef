@@ -336,6 +336,13 @@ static INLINE CONST Sleef_float2 dfmul_f2_f2_f2(Sleef_float2 x, Sleef_float2 y) 
   return r;
 }
 
+static INLINE CONST float dfmul_f_f2_f2(Sleef_float2 x, Sleef_float2 y) {
+  float xh = upperf(x.x), xl = x.x - xh;
+  float yh = upperf(y.x), yl = y.x - yh;
+
+  return x.y * yh + xh * y.y + xl * yl + xh * yl + xl * yh + xh * yh;
+}
+
 static INLINE CONST Sleef_float2 dfsqu_f2_f2(Sleef_float2 x) {
   float xh = upperf(x.x), xl = x.x - xh;
   Sleef_float2 r;
@@ -344,6 +351,12 @@ static INLINE CONST Sleef_float2 dfsqu_f2_f2(Sleef_float2 x) {
   r.y = xh * xh - r.x + (xh + xh) * xl + xl * xl + x.x * (x.y + x.y);
 
   return r;
+}
+
+static INLINE CONST float dfsqu_f_f2(Sleef_float2 x) {
+  float xh = upperf(x.x), xl = x.x - xh;
+
+  return xh * x.y + xh * x.y + xl * xl + (xh * xl + xh * xl) + xh * xh;
 }
 
 static INLINE CONST Sleef_float2 dfrec_f2_f(float d) {
@@ -413,10 +426,10 @@ EXPORT CONST float xsinf_u1(float d) {
 
   q = (int)rintfk(d * (float)M_1_PI);
 
-  s = dfadd2_f2_f_f (d, q * (-PI_Af));
-  s = dfadd2_f2_f2_f(s, q * (-PI_Bf));
-  s = dfadd2_f2_f2_f(s, q * (-PI_Cf));
-  s = dfadd2_f2_f2_f(s, q * (-PI_Df));
+  s = dfadd_f2_f_f (d, q * (-PI_Af));
+  s = dfadd_f2_f2_f(s, q * (-PI_Bf));
+  s = dfadd_f2_f2_f(s, q * (-PI_Cf));
+  s = dfadd_f2_f2_f(s, q * (-PI_Df));
 
   t = s;
   s = dfsqu_f2_f2(s);
@@ -427,8 +440,7 @@ EXPORT CONST float xsinf_u1(float d) {
 
   x = dfadd_f2_f_f2(1, dfmul_f2_f2_f2(dfadd_f2_f_f(-0.166666597127914428710938f, u * s.x), s));
 
-  x = dfmul_f2_f2_f2(t, x);
-  u = x.x + x.y;
+  u = dfmul_f_f2_f2(t, x);
 
   if ((q & 1) != 0) u = -u;
   if (!xisinff(d) && (xisnegzerof(d) || fabsfk(d) > TRIGRANGEMAXf)) u = -0.0f;
@@ -486,8 +498,7 @@ EXPORT CONST float xcosf_u1(float d) {
 
   x = dfadd_f2_f_f2(1, dfmul_f2_f2_f2(dfadd_f2_f_f(-0.166666597127914428710938f, u * s.x), s));
 
-  x = dfmul_f2_f2_f2(t, x);
-  u = x.x + x.y;
+  u = dfmul_f_f2_f2(t, x);
 
   if ((((int)q) & 2) == 0) u = -u;
   if (!xisinff(d) && d > TRIGRANGEMAXf) u = 0.0f;
@@ -546,14 +557,13 @@ EXPORT CONST Sleef_float2 xsincosf_u1(float d) {
 
   q = (int)rintfk(d * (float)(2 * M_1_PI));
 
-  s = dfadd2_f2_f_f (d, q * (-PI_Af*0.5f));
-  s = dfadd2_f2_f2_f(s, q * (-PI_Bf*0.5f));
-  s = dfadd2_f2_f2_f(s, q * (-PI_Cf*0.5f));
-  s = dfadd2_f2_f2_f(s, q * (-PI_Df*0.5f));
+  s = dfadd_f2_f_f (d, q * (-PI_Af*0.5f));
+  s = dfadd_f2_f2_f(s, q * (-PI_Bf*0.5f));
+  s = dfadd_f2_f2_f(s, q * (-PI_Cf*0.5f));
+  s = dfadd_f2_f2_f(s, q * (-PI_Df*0.5f));
 
   t = s;
-  s = dfsqu_f2_f2(s);
-  s.x = s.x + s.y;
+  s.x = dfsqu_f_f2(s);
 
   u = -0.000195169282960705459117889f;
   u = mlaf(u, s.x, 0.00833215750753879547119141f);
@@ -705,11 +715,11 @@ EXPORT CONST float xtanf_u1(float d) {
 
   q = (int)rintfk(d * (float)(2 * M_1_PI));
   
-  s = dfadd2_f2_f_f  (d, q * (-PI_Af*0.5f));
-  s = dfadd2_f2_f2_f (s, q * (-PI_Bf*0.5f));
-  s = dfadd2_f2_f2_f (s, q * (-PI_Cf*0.5f));
-  s = dfadd2_f2_f2_f (s, q * (-PI_XDf*0.5f));
-  s = dfadd2_f2_f2_f (s, q * (-PI_XEf*0.5f));
+  s = dfadd_f2_f_f  (d, q * (-PI_Af*0.5f));
+  s = dfadd_f2_f2_f (s, q * (-PI_Bf*0.5f));
+  s = dfadd_f2_f2_f (s, q * (-PI_Cf*0.5f));
+  s = dfadd_f2_f2_f (s, q * (-PI_XDf*0.5f));
+  s = dfadd_f2_f2_f (s, q * (-PI_XEf*0.5f));
 
   if ((q & 1) != 0) s = dfneg_f2_f2(s);
 

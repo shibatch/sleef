@@ -63,45 +63,77 @@ int main(int argc, char **argv) {
   callFunc1_1(Sleef_sind2_u35sse2, ((__m128d){a, a}));
   callFunc1_1(Sleef_sind4_u35avx, ((__m256d){a, a, a, a}));
   callFunc1_1(Sleef_sind4_u35avx2, ((__m256d){a, a, a, a}));
-  callFunc1_1(Sleef_sin_u10, a);
-  callFunc1_1(Sleef_sind2_u10sse2, ((__m128d){a, a}));
-  callFunc1_1(Sleef_sind4_u10avx, ((__m256d){a, a, a, a}));
-  callFunc1_1(Sleef_sind4_u10avx2, ((__m256d){a, a, a, a}));
 
-  callFunc1_1(sin, a);
-  
+  printf("\n");
+
 #ifdef __INTEL_COMPILER
   callFunc1_1(_mm_sin_pd, ((__m128d){a, a}));
   callFunc1_1(_mm256_sin_pd, ((__m256d){a, a, a, a}));
 #endif
 
+  printf("\n");
+  
+  callFunc1_1(Sleef_sin_u10, a);
+  callFunc1_1(Sleef_sind2_u10sse2, ((__m128d){a, a}));
+  callFunc1_1(Sleef_sind4_u10avx, ((__m256d){a, a, a, a}));
+  callFunc1_1(Sleef_sind4_u10avx2, ((__m256d){a, a, a, a}));
+
+  printf("\n");
+  
+  callFunc1_1(sin, a);
+
+  printf("\n");
+  
   callFunc1_1(Sleef_sincos_u35, a);
   callFunc1_1(Sleef_sincosd2_u35sse2, ((__m128d){a, a}));
   callFunc1_1(Sleef_sincosd4_u35avx, ((__m256d){a, a, a, a}));
   callFunc1_1(Sleef_sincosd4_u35avx2, ((__m256d){a, a, a, a}));
-  callFunc1_1(Sleef_sincos_u10, a);
-  callFunc1_1(Sleef_sincosd2_u10sse2, ((__m128d){a, a}));
-  callFunc1_1(Sleef_sincosd4_u10avx, ((__m256d){a, a, a, a}));
-  callFunc1_1(Sleef_sincosd4_u10avx2, ((__m256d){a, a, a, a}));
 
-  //callFunc3(sincos, a);
+  printf("\n");
   
 #ifdef __INTEL_COMPILER
   callFunc2_1(_mm_sincos_pd, ((__m128d){a, a}), __m128d);
   callFunc2_1(_mm256_sincos_pd, ((__m256d){a, a, a, a}), __m256d);
 #endif
 
+  printf("\n");
+  
+  callFunc1_1(Sleef_sincos_u10, a);
+  callFunc1_1(Sleef_sincosd2_u10sse2, ((__m128d){a, a}));
+  callFunc1_1(Sleef_sincosd4_u10avx, ((__m256d){a, a, a, a}));
+  callFunc1_1(Sleef_sincosd4_u10avx2, ((__m256d){a, a, a, a}));
+  
+  printf("\n");
+
+  callFunc1_1(Sleef_sincospi_u35, a);
+  callFunc1_1(Sleef_sincospid2_u35sse2, ((__m128d){a, a}));
+  callFunc1_1(Sleef_sincospid4_u35avx, ((__m256d){a, a, a, a}));
+  callFunc1_1(Sleef_sincospid4_u35avx2, ((__m256d){a, a, a, a}));
+
+  printf("\n");
+
+  callFunc1_1(Sleef_sincospi_u05, a);
+  callFunc1_1(Sleef_sincospid2_u05sse2, ((__m128d){a, a}));
+  callFunc1_1(Sleef_sincospid4_u05avx, ((__m256d){a, a, a, a}));
+  callFunc1_1(Sleef_sincospid4_u05avx2, ((__m256d){a, a, a, a}));
+
+  printf("\n");
+  
   callFunc1_2(Sleef_pow_u10, a, b);
   callFunc1_2(Sleef_powd2_u10sse2, ((__m128d){a, a}), ((__m128d){b, b}));
   callFunc1_2(Sleef_powd4_u10avx, ((__m256d){a, a, a, a}), ((__m256d){b, b, b, b}));
   callFunc1_2(Sleef_powd4_u10avx2, ((__m256d){a, a, a, a}), ((__m256d){b, b, b, b}));
 
+  printf("\n");
+  
   callFunc1_2(pow, a, b);
   
 #ifdef __INTEL_COMPILER
   callFunc1_2(_mm_pow_pd, ((__m128d){a, a}), ((__m128d){b, b}));
   callFunc1_2(_mm256_pow_pd, ((__m256d){a, a, a, a}), ((__m256d){b, b, b, b}));
 #endif
+
+  printf("\n\n");
   
   exit(0);
 }
