@@ -170,15 +170,9 @@ static INLINE vopmask vispinf_vo_vf(vfloat d) { return veq_vo_vf_vf(d, vcast_vf_
 static INLINE vopmask visminf_vo_vf(vfloat d) { return veq_vo_vf_vf(d, vcast_vf_f(-INFINITYf)); }
 static INLINE vopmask visnan_vo_vf(vfloat d) { return vneq_vo_vf_vf(d, d); }
 
-static INLINE float vcast_f_vf(vfloat v) {
-  float p[4];
-  vst1q_f32 (p, v);
-  return p[0];
-}
-
 static INLINE int vavailability_i(int name) {
   if (name != 2) return 0;
-  return vcast_f_vf(vadd_vf_vf_vf(vcast_vf_f(name), vcast_vf_f(name))) != 0.0;
+  return vgetq_lane_f32(vadd_vf_vf_vf(vcast_vf_f(name), vcast_vf_f(name)),0) != 0.0;
 }
 
 
