@@ -367,8 +367,6 @@ static INLINE vint2   vgt_vi2_vi2_vi2(vint2 x, vint2 y) { vopmask ret; for(int i
 
 static INLINE vfloat vsqrt_vf_vf(vfloat x) { vfloat ret; for(int i=0;i<VECTLENSP;i++) ret.f[i] = sqrtf(x.f[i]); return ret; }
 
-static INLINE float vcast_f_vf(vfloat v) { return v.f[0]; }
-
 static INLINE vfloat vload_vf_p(const float *ptr) { return *(vfloat *)ptr; }
 static INLINE vfloat vloadu_vf_p(const float *ptr) {
   vfloat vf;

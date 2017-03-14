@@ -427,12 +427,6 @@ static INLINE vfloat vloadu_vf_p(const float *ptr) { return _mm256_loadu_ps(ptr)
 static INLINE void vstore_v_p_vf(float *ptr, vfloat v) { _mm256_store_ps(ptr, v); }
 static INLINE void vstoreu_v_p_vf(float *ptr, vfloat v) { _mm256_storeu_ps(ptr, v); }
 
-static INLINE float vcast_f_vf(vfloat v) {
-  float a[VECTLENSP];
-  vstoreu_v_p_vf(a, v);
-  return a[0];
-}
-
 //
 
 #define PNMASK ((vdouble) { +0.0, -0.0, +0.0, -0.0 })
