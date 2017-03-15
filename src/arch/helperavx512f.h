@@ -315,11 +315,14 @@ static INLINE vopmask visnan_vo_vf(vfloat d) { return vneq_vo_vf_vf(d, d); }
 
 static INLINE vint2 vilogbk_vi2_vf(vfloat d) { return vrint_vi2_vf(_mm512_getexp_ps(d)); }
 
+#ifdef _MSC_VER
+// This function is needed when debugging on MSVC.
 static INLINE float vcast_f_vf(vfloat v) {
   float s[VECTLENSP];
   _mm512_storeu_ps(s, v);
   return s[0];
 }
+#endif
 
 static INLINE vfloat vload_vf_p(const float *ptr) { return _mm512_load_ps(ptr); }
 static INLINE vfloat vloadu_vf_p(const float *ptr) { return _mm512_loadu_ps(ptr); }
