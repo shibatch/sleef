@@ -207,6 +207,8 @@ static INLINE vopmask visnan_vo_vd(vdouble d) {
 
 static INLINE vint vilogbk_vi_vd(vdouble d) { return vrint_vi_vd(_mm512_getexp_pd(d)); }
 
+static INLINE vint vilogb2k_vi_vd(vdouble d) { return vrint_vi_vd(_mm512_getexp_pd(d)); }
+
 static INLINE double vcast_d_vd(vdouble v) {
   double s[VECTLENDP];
   _mm512_storeu_pd(s, v);

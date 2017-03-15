@@ -112,6 +112,14 @@ static INLINE CONST double ldexpk(double x, int q) {
   return x * u;
 }
 
+static INLINE CONST double ldexp2k(double d, int e) { // faster than ldexpk, short reach
+  return d * pow2i(e >> 1) * pow2i(e - (e >> 1));
+}
+
+static INLINE CONST double ldexp3k(double d, int e) { // very fast, no denormal
+  return longBitsToDouble(doubleToRawLongBits(d) + (((int64_t)e) << 52));
+}
+
 EXPORT CONST double xldexp(double x, int exp) {
   if (exp >  2100) exp =  2100;
   if (exp < -2100) exp = -2100;
@@ -133,6 +141,10 @@ static INLINE CONST int ilogbk(double d) {
   int q = (doubleToRawLongBits(d) >> 52) & 0x7ff;
   q = m ? q - (300 + 0x03ff) : q - 0x03ff;
   return q;
+}
+
+static INLINE CONST int ilogb2k(double d) { // no denormal
+  return ((doubleToRawLongBits(d) >> 52) & 0x7ff) - 0x3ff;
 }
 
 EXPORT CONST int xilogb(double d) {
@@ -246,8 +258,6 @@ static INLINE CONST Sleef_double2 ddadd2_d2_d2_d(Sleef_double2 x, double y) {
   return r;
 }
 
-static INLINE CONST double ddadd2_d_d2_d(Sleef_double2 x, double y) { return x.y + x.x + y; }
-
 static INLINE CONST Sleef_double2 ddadd_d2_d_d2(double x, Sleef_double2 y) {
   // |x| >= |y|
 
@@ -306,8 +316,6 @@ static INLINE CONST Sleef_double2 ddadd2_d2_d2_d2(Sleef_double2 x, Sleef_double2
 
   return r;
 }
-
-static INLINE CONST double ddadd2_d_d2_d2(Sleef_double2 x, Sleef_double2 y) { return x.y + y.y + x.x + y.x; }
 
 static INLINE CONST Sleef_double2 ddsub_d2_d2_d2(Sleef_double2 x, Sleef_double2 y) {
   // |x| >= |y|
@@ -1055,9 +1063,14 @@ EXPORT CONST double xlog(double d) {
   double x, x2, t, m;
   int e;
 
-  e = ilogbk(d * (1.0/0.75));
-  m = ldexpk(d, -e);
+  int o = d < DBL_MIN;
+  if (o) d *= (double)(1LL << 32) * (double)(1LL << 32);
+  
+  e = ilogb2k(d * (1.0/0.75));
+  m = ldexp3k(d, -e);
 
+  if (o) e -= 64;
+  
   x = (m-1) / (m+1);
   x2 = x * x;
 
@@ -1073,7 +1086,7 @@ EXPORT CONST double xlog(double d) {
   x = x * t + 0.693147180559945286226764 * e;
   
   if (xisinf(d)) x = INFINITY;
-  if (d < 0) x = NAN;
+  if (d < 0 || xisnan(d)) x = NAN;
   if (d == 0) x = -INFINITY;
 
   return x;
@@ -1085,7 +1098,7 @@ EXPORT CONST double xexp(double d) {
 
   s = mla(q, -L2U, d);
   s = mla(q, -L2L, s);
-
+  
   u = 2.08860621107283687536341e-09;
   u = mla(u, s, 2.51112930892876518610661e-08);
   u = mla(u, s, 2.75573911234900471893338e-07);
@@ -1099,8 +1112,9 @@ EXPORT CONST double xexp(double d) {
   u = mla(u, s, 0.5);
 
   u = s * s * u + s + 1;
-  u = ldexpk(u, q);
+  u = ldexp2k(u, q);
 
+  if (d > 709.78271114955742909217217426) u = INFINITY;
   if (d < -1000) u = 0;
   
   return u;
@@ -1111,9 +1125,14 @@ static INLINE CONST Sleef_double2 logk(double d) {
   double m, t;
   int e;
 
-  e = ilogbk(d * (1.0/0.75));
-  m = ldexpk(d, -e);
+  int o = d < DBL_MIN;
+  if (o) d *= (double)(1LL << 32) * (double)(1LL << 32);
+  
+  e = ilogb2k(d * (1.0/0.75));
+  m = ldexp3k(d, -e);
 
+  if (o) e -= 64;
+  
   x = dddiv_d2_d2_d2(ddadd2_d2_d_d(-1, m), ddadd2_d2_d_d(1, m));
   x2 = ddsqu_d2_d2(x);
 
@@ -1135,14 +1154,39 @@ static INLINE CONST Sleef_double2 logk(double d) {
 }
 
 EXPORT CONST double xlog_u1(double d) {
-  Sleef_double2 s = logk(d);
-  double x = s.x + s.y;
+  Sleef_double2 x;
+  double m, t, x2;
+  int e;
 
-  if (xisinf(d)) x = INFINITY;
-  if (d < 0) x = NAN;
-  if (d == 0) x = -INFINITY;
+  int o = d < DBL_MIN;
+  if (o) d *= (double)(1LL << 32) * (double)(1LL << 32);
+      
+  e = ilogb2k(d * (1.0/0.75));
+  m = ldexp3k(d, -e);
 
-  return x;
+  if (o) e -= 64;
+  
+  x = dddiv_d2_d2_d2(ddadd2_d2_d_d(-1, m), ddadd2_d2_d_d(1, m));
+  x2 = x.x * x.x;
+
+  t = 0.1532076988502701353e+0;
+  t = mla(t, x2, 0.1525629051003428716e+0);
+  t = mla(t, x2, 0.1818605932937785996e+0);
+  t = mla(t, x2, 0.2222214519839380009e+0);
+  t = mla(t, x2, 0.2857142932794299317e+0);
+  t = mla(t, x2, 0.3999999999635251990e+0);
+  t = mla(t, x2, 0.6666666666667333541e+0);
+  
+  Sleef_double2 s = ddadd2_d2_d2_d2(ddmul_d2_d2_d(dd(0.693147180559945286226764, 2.319046813846299558417771e-17), (double)e),
+				    ddadd2_d2_d2_d(ddscale_d2_d2_d(x, 2), t * x2 * x.x));
+
+  double r = s.x + s.y;
+  
+  if (xisinf(d)) r = INFINITY;
+  if (d < 0 || xisnan(d)) r = NAN;
+  if (d == 0) r = -INFINITY;
+
+  return r;
 }
 
 static INLINE CONST double expk(Sleef_double2 d) {
@@ -1181,7 +1225,9 @@ EXPORT CONST double xpow(double x, double y) {
   int yisint = xisint(y);
   int yisodd = yisint && xisodd(y);
 
-  double result = expk(ddmul_d2_d2_d(logk(fabsk(x)), y));
+  Sleef_double2 d = ddmul_d2_d2_d(logk(fabsk(x)), y);
+  double result = expk(d);
+  if (d.x > 709.78271114955742909217217426) result = INFINITY;
 
   result = xisnan(result) ? INFINITY : result;
   result *= (x > 0 ? 1 : (!yisint ? NAN : (yisodd ? -1 : 1)));
@@ -1334,11 +1380,11 @@ EXPORT CONST double xcbrt(double d) { // max error : 2 ulps
   int e, r;
 
   e = ilogbk(fabsk(d))+1;
-  d = ldexpk(d, -e);
+  d = ldexp2k(d, -e);
   r = (e + 6144) % 3;
   q = (r == 1) ? 1.2599210498948731647672106 : q;
   q = (r == 2) ? 1.5874010519681994747517056 : q;
-  q = ldexpk(q, (e + 6144) / 3 - 2048);
+  q = ldexp2k(q, (e + 6144) / 3 - 2048);
 
   q = mulsign(q, d);
   d = fabsk(d);
@@ -1363,7 +1409,7 @@ EXPORT CONST double xcbrt_u1(double d) {
   int e, r;
 
   e = ilogbk(fabsk(d))+1;
-  d = ldexpk(d, -e);
+  d = ldexp2k(d, -e);
   r = (e + 6144) % 3;
   q2 = (r == 1) ? dd(1.2599210498948731907, -2.5899333753005069177e-17) : q2;
   q2 = (r == 2) ? dd(1.5874010519681995834, -1.0869008194197822986e-16) : q2;
@@ -1392,7 +1438,7 @@ EXPORT CONST double xcbrt_u1(double d) {
   v = ddadd2_d2_d2_d(ddmul_d2_d_d(z, z), y);
   v = ddmul_d2_d2_d(v, d);
   v = ddmul_d2_d2_d2(v, q2);
-  z = ldexpk(v.x + v.y, (e + 6144) / 3 - 2048);
+  z = ldexp2k(v.x + v.y, (e + 6144) / 3 - 2048);
 
   if (xisinf(d)) { z = mulsign(INFINITY, q2.x); }
   if (d == 0) { z = mulsign(0, q2.x); }
@@ -1428,7 +1474,7 @@ EXPORT CONST double xlog10(double a) {
   double x = d.x + d.y;
 
   if (xisinf(a)) x = INFINITY;
-  if (a < 0) x = NAN;
+  if (a < 0 || xisnan(a)) x = NAN;
   if (a == 0) x = -INFINITY;
 
   return x;
@@ -1693,20 +1739,23 @@ EXPORT CONST Sleef_double2 xmodf(double x) {
 #include <stdlib.h>
 int main(int argc, char **argv) {
   double d1 = atof(argv[1]);
-  printf("arg1 = %.20g\n", d1);
-  double d2 = atof(argv[2]);
-  printf("arg2 = %.20g\n", d2);
+  //printf("arg1 = %.20g\n", d1);
+  //int i1 = atoi(argv[1]);
+  //double d2 = atof(argv[2]);
+  //printf("arg2 = %.20g\n", d2);
   //printf("%d\n", (int)d2);
-#if 1
+#if 0
   double d3 = atof(argv[3]);
   printf("arg3 = %.20g\n", d3);
 #endif
+  //printf("%g\n", pow2i(i1));
   //int exp = xexpfrexp(d1);
   //double r = xnextafter(d1, d2);
   //double r = xfma(d1, d2, d3);
-  printf("test = %.20g\n", xfma(d1, d2, d3));
+  printf("test = %.20g\n", xlog_u1(d1));
+  printf("test = %.20g\n", xlog(d1));
   //r = nextafter(d1, d2);
-  printf("corr = %.20g\n", fma(d1, d2, d3));
+  printf("corr = %.20g\n", log(d1));
   //printf("%.20g %.20g\n", xround(d1), xrint(d1));
   //Sleef_double2 r = xsincospi_u35(d);
   //printf("%g, %g\n", (double)r.x, (double)r.y);
