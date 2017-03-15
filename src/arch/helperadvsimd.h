@@ -97,8 +97,6 @@ static INLINE vint2 vreinterpret_vi2_vd(vdouble vd) {
 /****************************************/
 // Broadcast
 static INLINE vfloat vcast_vf_f(float f) { return vdupq_n_f32(f); }
-// Extract lane 0
-static INLINE float vcast_f_vf(vfloat v) { return vgetq_lane_f32(v, 0); }
 
 // Add, Sub, Mul, Reciprocal 1/x, Division, Square root
 static INLINE vfloat vadd_vf_vf_vf(vfloat x, vfloat y) {
