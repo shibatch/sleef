@@ -653,9 +653,9 @@ EXPORT CONST double xsin_u1(double d) {
   int ql = rintk(d * M_1_PI - qh * (double)(1 << 24));
 
   s = ddadd_d2_d_d (d, qh * (-PI_A * (1 << 24)));
-  s = ddadd_d2_d2_d(s, ql * (-PI_A            ));
-  s = ddadd_d2_d2_d(s, qh * (-PI_B * (1 << 24)));
-  s = ddadd_d2_d2_d(s, ql * (-PI_B            ));
+  s = ddadd2_d2_d2_d(s, ql * (-PI_A            ));
+  s = ddadd2_d2_d2_d(s, qh * (-PI_B * (1 << 24)));
+  s = ddadd2_d2_d2_d(s, ql * (-PI_B            ));
   s = ddadd_d2_d2_d(s, qh * (-PI_C * (1 << 24)));
   s = ddadd_d2_d2_d(s, ql * (-PI_C            ));
   s = ddadd_d2_d2_d(s, ((double)qh * (1 << 24) + ql) * -PI_D);
@@ -725,13 +725,13 @@ EXPORT CONST double xcos_u1(double d) {
   int qh = trunck(d * (M_1_PI / (1LL << (23))) - 0.5 * (M_1_PI / (1LL << (23))));
   int ql = 2*rintk(d * M_1_PI - 0.5 - qh * (double)(1LL << (23)))+1;
 
-  s = ddadd2_d2_d_d (d, qh * (-PI_A*0.5 * (1 << 24)));
+  s = ddadd_d2_d_d (d, qh * (-PI_A*0.5 * (1 << 24)));
   s = ddadd2_d2_d2_d(s, ql * (-PI_A*0.5            ));
   s = ddadd2_d2_d2_d(s, qh * (-PI_B*0.5 * (1 << 24)));
   s = ddadd2_d2_d2_d(s, ql * (-PI_B*0.5            ));
-  s = ddadd2_d2_d2_d(s, qh * (-PI_C*0.5 * (1 << 24)));
-  s = ddadd2_d2_d2_d(s, ql * (-PI_C*0.5            ));
-  s = ddadd2_d2_d2_d(s, ((double)qh * (1 << 24) + ql) * (-PI_D*0.5));
+  s = ddadd_d2_d2_d(s, qh * (-PI_C*0.5 * (1 << 24)));
+  s = ddadd_d2_d2_d(s, ql * (-PI_C*0.5            ));
+  s = ddadd_d2_d2_d(s, ((double)qh * (1 << 24) + ql) * (-PI_D*0.5));
   
   t = s;
   s = ddsqu_d2_d2(s);
@@ -815,9 +815,9 @@ EXPORT CONST Sleef_double2 xsincos_u1(double d) {
   int ql = rintk(d * (2 * M_1_PI) - qh * (double)(1 << 24));
 
   s = ddadd_d2_d_d (d, qh * (-PI_A*0.5 * (1 << 24)));
-  s = ddadd_d2_d2_d(s, ql * (-PI_A*0.5            ));
-  s = ddadd_d2_d2_d(s, qh * (-PI_B*0.5 * (1 << 24)));
-  s = ddadd_d2_d2_d(s, ql * (-PI_B*0.5            ));
+  s = ddadd2_d2_d2_d(s, ql * (-PI_A*0.5            ));
+  s = ddadd2_d2_d2_d(s, qh * (-PI_B*0.5 * (1 << 24)));
+  s = ddadd2_d2_d2_d(s, ql * (-PI_B*0.5            ));
   s = ddadd_d2_d2_d(s, qh * (-PI_C*0.5 * (1 << 24)));
   s = ddadd_d2_d2_d(s, ql * (-PI_C*0.5            ));
   s = ddadd_d2_d2_d(s, ((double)qh * (1 << 24) + ql) * (-PI_D*0.5));
@@ -1022,9 +1022,9 @@ EXPORT CONST double xtan_u1(double d) {
   int ql = s.x + s.y;
   
   s = ddadd_d2_d_d (d, qh * (-PI_A*0.5 * (1 << 24)));
-  s = ddadd_d2_d2_d(s, ql * (-PI_A*0.5            ));
-  s = ddadd_d2_d2_d(s, qh * (-PI_B*0.5 * (1 << 24)));
-  s = ddadd_d2_d2_d(s, ql * (-PI_B*0.5            ));
+  s = ddadd2_d2_d2_d(s, ql * (-PI_A*0.5            ));
+  s = ddadd2_d2_d2_d(s, qh * (-PI_B*0.5 * (1 << 24)));
+  s = ddadd2_d2_d2_d(s, ql * (-PI_B*0.5            ));
   s = ddadd_d2_d2_d(s, qh * (-PI_C*0.5 * (1 << 24)));
   s = ddadd_d2_d2_d(s, ql * (-PI_C*0.5            ));
   s = ddadd_d2_d2_d(s, ((double)qh * (1 << 24) + ql) * (-PI_D*0.5));
