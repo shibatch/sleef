@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/shibatch/sleef.svg?branch=master)](https://travis-ci.org/shibatch/sleef)
+
 In this library, functions for evaluating some elementary functions
 are implemented. The algorithm is intended for efficient evaluation
 utilizing SIMD instruction sets like SSE or AVX, but it is also fast

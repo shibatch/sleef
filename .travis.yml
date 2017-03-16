@@ -13,3 +13,9 @@ before_script:
     - cd libm-tester
 
 script: make
+
+# safelist
+branches:
+  only:
+  - master
+  - travis
