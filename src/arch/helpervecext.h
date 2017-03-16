@@ -703,8 +703,6 @@ static INLINE vfloat vsqrt_vf_vf(vfloat d) {
   return x * q;
 }
 
-static INLINE float vcast_f_vf(vfloat v) { return v[0]; }
-
 static INLINE vfloat vload_vf_p(const float *ptr) { return *(vfloat *)ptr; }
 static INLINE vfloat vloadu_vf_p(const float *ptr) {
   vfloat vf;

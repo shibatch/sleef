@@ -339,12 +339,14 @@ static INLINE vfloat vloadu_vf_p(const float *ptr) { return _mm_loadu_ps(ptr); }
 static INLINE void vstore_v_p_vf(float *ptr, vfloat v) { _mm_store_ps(ptr, v); }
 static INLINE void vstoreu_v_p_vf(float *ptr, vfloat v) { _mm_storeu_ps(ptr, v); }
 
+#ifdef _MSC_VER
+// This function is useful when debugging on MSVC.
 static INLINE float vcast_f_vf(vfloat v) {
   float a[VECTLENSP];
   vstoreu_v_p_vf(a, v);
   return a[0];
 }
-
+#endif
 //
 
 #define PNMASK ((vdouble) { +0.0, -0.0 })
