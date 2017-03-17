@@ -203,13 +203,31 @@ static INLINE CONST Sleef_double2 ddneg_d2_d2(Sleef_double2 d) {
   return r;
 }
 
+/*
+ * ddadd and ddadd2 are functions for double-double addition.  ddadd
+ * is simpler and faster than ddadd2, but it requires the absolute
+ * value of first argument to be larger than the second argument. The
+ * exact condition that should be met is checked if NDEBUG macro is
+ * not defined.
+ *
+ * Please note that if the results won't be used, it is no problem to
+ * feed arguments that do not meet this condition. You will see
+ * warning messages if you turn off NDEBUG macro and run tester2, but
+ * this is normal.
+ * 
+ * Please see :
+ * Jonathan Richard Shewchuk, Adaptive Precision Floating-Point
+ * Arithmetic and Fast Robust Geometric Predicates, Discrete &
+ * Computational Geometry 18:305-363, 1997.
+ */
+
 static INLINE CONST Sleef_double2 ddadd_d2_d_d(double x, double y) {
   // |x| >= |y|
 
   Sleef_double2 r;
 
 #ifndef NDEBUG
-  if (!(checkfp(x) || checkfp(y) || fabsk(x) >= fabsk(y))) {
+  if (!(checkfp(x) || checkfp(y) || fabsk(x) >= fabsk(y) || (fabs(x+y) <= fabs(x) && fabs(x+y) <= fabs(y)))) {
     fprintf(stderr, "[ddadd_d2_d_d : %g, %g]\n", x, y);
     fflush(stderr);
   }
@@ -237,7 +255,7 @@ static INLINE CONST Sleef_double2 ddadd_d2_d2_d(Sleef_double2 x, double y) {
   Sleef_double2 r;
 
 #ifndef NDEBUG
-  if (!(checkfp(x.x) || checkfp(y) || fabsk(x.x) >= fabsk(y))) {
+  if (!(checkfp(x.x) || checkfp(y) || fabsk(x.x) >= fabsk(y) || (fabs(x.x+y) <= fabs(x.x) && fabs(x.x+y) <= fabs(y)))) {
     fprintf(stderr, "[ddadd_d2_d2_d : %g %g]\n", x.x, y);
     fflush(stderr);
   }
@@ -266,7 +284,7 @@ static INLINE CONST Sleef_double2 ddadd_d2_d_d2(double x, Sleef_double2 y) {
   Sleef_double2 r;
 
 #ifndef NDEBUG
-  if (!(checkfp(x) || checkfp(y.x) || fabsk(x) >= fabsk(y.x))) {
+  if (!(checkfp(x) || checkfp(y.x) || fabsk(x) >= fabsk(y.x) || (fabs(x+y.x) <= fabs(x) && fabs(x+y.x) <= fabs(y.x)))) {
     fprintf(stderr, "[ddadd_d2_d_d2 : %g %g]\n", x, y.x);
     fflush(stderr);
   }
@@ -296,7 +314,7 @@ static INLINE CONST Sleef_double2 ddadd_d2_d2_d2(Sleef_double2 x, Sleef_double2 
   Sleef_double2 r;
 
 #ifndef NDEBUG
-  if (!(checkfp(x.x) || checkfp(y.x) || fabsk(x.x) >= fabsk(y.x))) {
+  if (!(checkfp(x.x) || checkfp(y.x) || fabsk(x.x) >= fabsk(y.x) || (fabs(x.x+y.x) <= fabs(x.x) && fabs(x.x+y.x) <= fabs(y.x)))) {
     fprintf(stderr, "[ddadd_d2_d2_d2 : %g %g]\n", x.x, y.x);
     fflush(stderr);
   }
@@ -325,7 +343,7 @@ static INLINE CONST Sleef_double2 ddsub_d2_d2_d2(Sleef_double2 x, Sleef_double2 
   Sleef_double2 r;
 
 #ifndef NDEBUG
-  if (!(checkfp(x.x) || checkfp(y.x) || fabsk(x.x) >= fabsk(y.x))) {
+  if (!(checkfp(x.x) || checkfp(y.x) || fabsk(x.x) >= fabsk(y.x) || (fabs(x-y) <= fabs(x) && fabs(x-y) <= fabs(y)))) {
     fprintf(stderr, "[ddsub_d2_d2_d2 : %g %g]\n", x.x, y.x);
     fflush(stderr);
   }
@@ -652,12 +670,12 @@ EXPORT CONST double xsin_u1(double d) {
   int qh = trunck(d * (M_1_PI / (1 << 24)));
   int ql = rintk(d * M_1_PI - qh * (double)(1 << 24));
 
-  s = ddadd_d2_d_d (d, qh * (-PI_A * (1 << 24)));
-  s = ddadd2_d2_d2_d(s, ql * (-PI_A            ));
+  u = mla(qh, -PI_A * (1 << 24), d);
+  s = ddadd_d2_d_d(u, ql * (-PI_A            ));
   s = ddadd2_d2_d2_d(s, qh * (-PI_B * (1 << 24)));
   s = ddadd2_d2_d2_d(s, ql * (-PI_B            ));
-  s = ddadd_d2_d2_d(s, qh * (-PI_C * (1 << 24)));
-  s = ddadd_d2_d2_d(s, ql * (-PI_C            ));
+  s = ddadd2_d2_d2_d(s, qh * (-PI_C * (1 << 24)));
+  s = ddadd2_d2_d2_d(s, ql * (-PI_C            ));
   s = ddadd_d2_d2_d(s, ((double)qh * (1 << 24) + ql) * -PI_D);
   
   t = s;
@@ -725,12 +743,12 @@ EXPORT CONST double xcos_u1(double d) {
   int qh = trunck(d * (M_1_PI / (1LL << (23))) - 0.5 * (M_1_PI / (1LL << (23))));
   int ql = 2*rintk(d * M_1_PI - 0.5 - qh * (double)(1LL << (23)))+1;
 
-  s = ddadd_d2_d_d (d, qh * (-PI_A*0.5 * (1 << 24)));
-  s = ddadd2_d2_d2_d(s, ql * (-PI_A*0.5            ));
+  u = mla(qh, -PI_A*0.5 * (1 << 24), d);
+  s = ddadd2_d2_d_d(u, ql * (-PI_A*0.5            ));
   s = ddadd2_d2_d2_d(s, qh * (-PI_B*0.5 * (1 << 24)));
   s = ddadd2_d2_d2_d(s, ql * (-PI_B*0.5            ));
-  s = ddadd_d2_d2_d(s, qh * (-PI_C*0.5 * (1 << 24)));
-  s = ddadd_d2_d2_d(s, ql * (-PI_C*0.5            ));
+  s = ddadd2_d2_d2_d(s, qh * (-PI_C*0.5 * (1 << 24)));
+  s = ddadd2_d2_d2_d(s, ql * (-PI_C*0.5            ));
   s = ddadd_d2_d2_d(s, ((double)qh * (1 << 24) + ql) * (-PI_D*0.5));
   
   t = s;
@@ -814,12 +832,12 @@ EXPORT CONST Sleef_double2 xsincos_u1(double d) {
   int qh = trunck(d * ((2 * M_1_PI) / (1 << 24)));
   int ql = rintk(d * (2 * M_1_PI) - qh * (double)(1 << 24));
 
-  s = ddadd_d2_d_d (d, qh * (-PI_A*0.5 * (1 << 24)));
-  s = ddadd2_d2_d2_d(s, ql * (-PI_A*0.5            ));
+  u = mla(qh, -PI_A*0.5 * (1 << 24), d);
+  s = ddadd_d2_d_d(u, ql * (-PI_A*0.5            ));
   s = ddadd2_d2_d2_d(s, qh * (-PI_B*0.5 * (1 << 24)));
   s = ddadd2_d2_d2_d(s, ql * (-PI_B*0.5            ));
-  s = ddadd_d2_d2_d(s, qh * (-PI_C*0.5 * (1 << 24)));
-  s = ddadd_d2_d2_d(s, ql * (-PI_C*0.5            ));
+  s = ddadd2_d2_d2_d(s, qh * (-PI_C*0.5 * (1 << 24)));
+  s = ddadd2_d2_d2_d(s, ql * (-PI_C*0.5            ));
   s = ddadd_d2_d2_d(s, ((double)qh * (1 << 24) + ql) * (-PI_D*0.5));
   
   t = s;
@@ -1021,12 +1039,12 @@ EXPORT CONST double xtan_u1(double d) {
   s = ddadd2_d2_d2_d(ddmul_d2_d2_d(dd(M_2_PI_H, M_2_PI_L), d), (d < 0 ? -0.5 : 0.5) - qh * (double)(1 << 24));
   int ql = s.x + s.y;
   
-  s = ddadd_d2_d_d (d, qh * (-PI_A*0.5 * (1 << 24)));
-  s = ddadd2_d2_d2_d(s, ql * (-PI_A*0.5            ));
+  u = mla(qh, -PI_A*0.5 * (1 << 24), d);
+  s = ddadd_d2_d_d(u, ql * (-PI_A*0.5            ));
   s = ddadd2_d2_d2_d(s, qh * (-PI_B*0.5 * (1 << 24)));
   s = ddadd2_d2_d2_d(s, ql * (-PI_B*0.5            ));
-  s = ddadd_d2_d2_d(s, qh * (-PI_C*0.5 * (1 << 24)));
-  s = ddadd_d2_d2_d(s, ql * (-PI_C*0.5            ));
+  s = ddadd2_d2_d2_d(s, qh * (-PI_C*0.5 * (1 << 24)));
+  s = ddadd2_d2_d2_d(s, ql * (-PI_C*0.5            ));
   s = ddadd_d2_d2_d(s, ((double)qh * (1 << 24) + ql) * (-PI_D*0.5));
   
   if ((ql & 1) != 0) s = ddneg_d2_d2(s);
