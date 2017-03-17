@@ -13,8 +13,6 @@
 
 #include "misc.h"
 
-void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
-
 #if (defined(_MSC_VER))
 #pragma fp_contract (off)
 #endif
@@ -752,7 +750,7 @@ EXPORT CONST vdouble xtan(vdouble d) {
   u = vreinterpret_vd_vm(vor_vm_vo64_vm(visinf_vo_vd(d), vreinterpret_vm_vd(u)));
   u = vsel_vd_vo_vd_vd(visnegzero_vo_vd(d), vcast_vd_d(-0.0), u);
 #else
-  u = _mm512_fixupimm_pd(u, d, vcast_vi2_i((3 << (4*4)) | (3 << (5*4))), 0);
+  u = vfixup_vd_vd_vd_vi2_i(u, d, vcast_vi2_i((3 << (4*4)) | (3 << (5*4))), 0);
 #endif
   
   return u;
@@ -1052,9 +1050,9 @@ EXPORT CONST vdouble xlog(vdouble d) {
   m = vldexp3_vd_vd_vi(d, vneg_vi_vi(e));
   e = vsel_vi_vo_vi_vi(vcast_vo32_vo64(o), vsub_vi_vi_vi(e, vcast_vi_i(64)), e);
 #else
-  vdouble e = _mm512_getexp_pd(vmul_vd_vd_vd(d, vcast_vd_d(1.0/0.75)));
+  vdouble e = vgetexp_vd_vd(vmul_vd_vd_vd(d, vcast_vd_d(1.0/0.75)));
   e = vsel_vd_vo_vd_vd(vispinf_vo_vd(e), vcast_vd_d(1024.0), e);
-  m = _mm512_getmant_pd(d, _MM_MANT_NORM_p75_1p5, _MM_MANT_SIGN_nan);
+  m = vgetmant_vd_vd(d);
 #endif
   
   x = vdiv_vd_vd_vd(vadd_vd_vd_vd(vcast_vd_d(-1), m), vadd_vd_vd_vd(vcast_vd_d(1), m));
@@ -1077,7 +1075,7 @@ EXPORT CONST vdouble xlog(vdouble d) {
   x = vsel_vd_vo_vd_vd(veq_vo_vd_vd(d, vcast_vd_d(0)), vcast_vd_d(-INFINITY), x);
 #else
   x = vmla_vd_vd_vd_vd(x, t, vmul_vd_vd_vd(vcast_vd_d(0.693147180559945286226764), e));
-  x = _mm512_fixupimm_pd(x, d, vcast_vi2_i((5 << (5*4))), 0);
+  x = vfixup_vd_vd_vd_vi2_i(x, d, vcast_vi2_i((5 << (5*4))), 0);
 #endif
 
   return x;
@@ -1123,9 +1121,9 @@ static INLINE CONST vdouble2 logk(vdouble d) {
   m = vldexp3_vd_vd_vi(d, vneg_vi_vi(e));
   e = vsel_vi_vo_vi_vi(vcast_vo32_vo64(o), vsub_vi_vi_vi(e, vcast_vi_i(64)), e);
 #else
-  vdouble e = _mm512_getexp_pd(vmul_vd_vd_vd(d, vcast_vd_d(1.0/0.75)));
+  vdouble e = vgetexp_vd_vd(vmul_vd_vd_vd(d, vcast_vd_d(1.0/0.75)));
   e = vsel_vd_vo_vd_vd(vispinf_vo_vd(e), vcast_vd_d(1024.0), e);
-  m = _mm512_getmant_pd(d, _MM_MANT_NORM_p75_1p5, _MM_MANT_SIGN_nan);
+  m = vgetmant_vd_vd(d);
 #endif
 
   x = dddiv_vd2_vd2_vd2(ddadd2_vd2_vd_vd(vcast_vd_d(-1), m), ddadd2_vd2_vd_vd(vcast_vd_d(1), m));
@@ -1166,9 +1164,9 @@ EXPORT CONST vdouble xlog_u1(vdouble d) {
   m = vldexp3_vd_vd_vi(d, vneg_vi_vi(e));
   e = vsel_vi_vo_vi_vi(vcast_vo32_vo64(o), vsub_vi_vi_vi(e, vcast_vi_i(64)), e);
 #else
-  vdouble e = _mm512_getexp_pd(vmul_vd_vd_vd(d, vcast_vd_d(1.0/0.75)));
+  vdouble e = vgetexp_vd_vd(vmul_vd_vd_vd(d, vcast_vd_d(1.0/0.75)));
   e = vsel_vd_vo_vd_vd(vispinf_vo_vd(e), vcast_vd_d(1024.0), e);
-  m = _mm512_getmant_pd(d, _MM_MANT_NORM_p75_1p5, _MM_MANT_SIGN_nan);
+  m = vgetmant_vd_vd(d);
 #endif
 
   x = dddiv_vd2_vd2_vd2(ddadd2_vd2_vd_vd(vcast_vd_d(-1), m), ddadd2_vd2_vd_vd(vcast_vd_d(1), m));
@@ -1197,7 +1195,7 @@ EXPORT CONST vdouble xlog_u1(vdouble d) {
   r = vsel_vd_vo_vd_vd(vor_vo_vo_vo(vlt_vo_vd_vd(d, vcast_vd_d(0)), visnan_vo_vd(d)), vcast_vd_d(NAN), r);
   r = vsel_vd_vo_vd_vd(veq_vo_vd_vd(d, vcast_vd_d(0)), vcast_vd_d(-INFINITY), r);
 #else
-  r = _mm512_fixupimm_pd(r, d, vcast_vi2_i((4 << (2*4)) | (3 << (4*4)) | (5 << (5*4)) | (2 << (6*4))), 0);
+  r = vfixup_vd_vd_vd_vi2_i(r, d, vcast_vi2_i((4 << (2*4)) | (3 << (4*4)) | (5 << (5*4)) | (2 << (6*4))), 0);
 #endif
   
   return r;
@@ -1344,11 +1342,7 @@ static INLINE CONST vdouble2 logk2(vdouble2 d) {
   vdouble t;
   vint e;
   
-#ifndef ENABLE_AVX512F
   e = vilogbk_vi_vd(vmul_vd_vd_vd(d.x, vcast_vd_d(1.0/0.75)));
-#else
-  e = vrint_vi_vd(_mm512_getexp_pd(vmul_vd_vd_vd(d.x, vcast_vd_d(1.0/0.75))));
-#endif
   m = ddscale_vd2_vd2_vd(d, vpow2i_vd_vi(vneg_vi_vi(e)));
 
   x = dddiv_vd2_vd2_vd2(ddadd2_vd2_vd2_vd(m, vcast_vd_d(-1)), ddadd2_vd2_vd2_vd(m, vcast_vd_d(1)));
@@ -1546,7 +1540,7 @@ EXPORT CONST vdouble xlog10(vdouble a) {
   x = vsel_vd_vo_vd_vd(vor_vo_vo_vo(vlt_vo_vd_vd(a, vcast_vd_d(0)), visnan_vo_vd(a)), vcast_vd_d(NAN), x);
   x = vsel_vd_vo_vd_vd(veq_vo_vd_vd(a, vcast_vd_d(0)), vcast_vd_d(-INFINITY), x);
 #else
-  x = _mm512_fixupimm_pd(x, a, vcast_vi2_i((4 << (2*4)) | (3 << (4*4)) | (5 << (5*4)) | (2 << (6*4))), 0);
+  x = vfixup_vd_vd_vd_vi2_i(x, a, vcast_vi2_i((4 << (2*4)) | (3 << (4*4)) | (5 << (5*4)) | (2 << (6*4))), 0);
 #endif
 
   return x;
@@ -1840,7 +1834,7 @@ EXPORT CONST vdouble xfmod(vdouble x, vdouble y) {
   return ret;
 }
 
-#if 0
+#ifdef ENABLE_MAIN
 // gcc -Wno-attributes -I../common -I../arch -DENABLE_AVX2 -mavx2 -mfma sleefsimddp.c ../common/common.c -lm
 #include <stdio.h>
 #include <stdlib.h>

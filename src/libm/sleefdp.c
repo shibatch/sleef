@@ -143,7 +143,9 @@ static INLINE CONST int ilogbk(double d) {
   return q;
 }
 
-static INLINE CONST int ilogb2k(double d) { // no denormal
+// vilogb2k_vi_vd is similar to vilogbk_vi_vd, but the argument has to
+// be a normalized FP value.
+static INLINE CONST int ilogb2k(double d) {
   return ((doubleToRawLongBits(d) >> 52) & 0x7ff) - 0x3ff;
 }
 
@@ -1734,7 +1736,7 @@ EXPORT CONST Sleef_double2 xmodf(double x) {
   return ret;
 }
 
-#if 0
+#ifdef ENABLE_MAIN
 // gcc -I../common sleefdp.c -lm
 #include <stdlib.h>
 int main(int argc, char **argv) {
@@ -1752,10 +1754,10 @@ int main(int argc, char **argv) {
   //int exp = xexpfrexp(d1);
   //double r = xnextafter(d1, d2);
   //double r = xfma(d1, d2, d3);
-  printf("test = %.20g\n", xlog_u1(d1));
-  printf("test = %.20g\n", xlog(d1));
+  printf("test = %.20g\n", xcos_u1(d1));
+  //printf("test = %.20g\n", xlog(d1));
   //r = nextafter(d1, d2);
-  printf("corr = %.20g\n", log(d1));
+  printf("corr = %.20g\n", cos(d1));
   //printf("%.20g %.20g\n", xround(d1), xrint(d1));
   //Sleef_double2 r = xsincospi_u35(d);
   //printf("%g, %g\n", (double)r.x, (double)r.y);

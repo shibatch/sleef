@@ -1,6 +1,6 @@
 include ../../config.mk
 
-CFLAGS+=$(STRICTMATHFLAG) -O3 -I../common -I../arch
+CFLAGS+=$(STRICTMATHFLAG) -O3 -I../common -I../arch -DNDEBUG
 
 OBJ=sleefdp.o sleefsp.o
 
@@ -93,16 +93,16 @@ endif
 #
 
 sleefdp.o : sleefdp.c rename.h
-	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DNDEBUG -DDORENAME sleefdp.c -c -o sleefdp.o
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME sleefdp.c -c -o sleefdp.o
 
 sleefsp.o : sleefsp.c rename.h
-	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DNDEBUG -DDORENAME sleefsp.c -c -o sleefsp.o
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME sleefsp.c -c -o sleefsp.o
 
 sleefld.o : sleefld.c rename.h
-	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DNDEBUG -DDORENAME sleefld.c -c -o sleefld.o
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME sleefld.c -c -o sleefld.o
 
 sleefqp.o : sleefqp.c rename.h
-	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DNDEBUG -DDORENAME sleefqp.c -c -o sleefqp.o
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME sleefqp.c -c -o sleefqp.o
 
 #
 

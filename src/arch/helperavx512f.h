@@ -43,6 +43,8 @@ typedef __m512i vint2;
 
 //
 
+void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
+
 static int cpuSupportsAVX512F() {
     int32_t reg[4];
     Sleef_x86CpuID(reg, 7, 0);
@@ -207,7 +209,18 @@ static INLINE vopmask visnan_vo_vd(vdouble d) {
 
 static INLINE vint vilogbk_vi_vd(vdouble d) { return vrint_vi_vd(_mm512_getexp_pd(d)); }
 
+// vilogb2k_vi_vd is similar to vilogbk_vi_vd, but the argument has to
+// be a normalized FP value.
 static INLINE vint vilogb2k_vi_vd(vdouble d) { return vrint_vi_vd(_mm512_getexp_pd(d)); }
+
+static INLINE vdouble vgetexp_vd_vd(vdouble d) { return _mm512_getexp_pd(d); }
+static INLINE vfloat vgetexp_vf_vf(vfloat d) { return _mm512_getexp_ps(d); }
+
+static INLINE vdouble vgetmant_vd_vd(vdouble d) { return _mm512_getmant_pd(d, _MM_MANT_NORM_p75_1p5, _MM_MANT_SIGN_nan); }
+static INLINE vfloat vgetmant_vf_vf(vfloat d) { return _mm512_getmant_ps(d, _MM_MANT_NORM_p75_1p5, _MM_MANT_SIGN_nan); }
+
+static INLINE vdouble vfixup_vd_vd_vd_vi2_i(vdouble a, vdouble b, vint2 c, int imm) { return _mm512_fixupimm_pd(a, b, c, imm); }
+static INLINE vfloat vfixup_vf_vf_vf_vi2_i(vfloat a, vfloat b, vint2 c, int imm) { return _mm512_fixupimm_ps(a, b, c, imm); }
 
 static INLINE double vcast_d_vd(vdouble v) {
   double s[VECTLENDP];
