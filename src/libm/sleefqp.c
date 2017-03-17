@@ -452,7 +452,7 @@ EXPORT CONST Sleef_quad2 xsincospiq_u35(Sleef_quad d) {
 
 // 
 
-#if 0
+#ifdef ENABLE_MAIN
 #include <stdio.h>
 #include <stdlib.h>
 int main(int argc, char **argv) {

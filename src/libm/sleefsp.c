@@ -1519,7 +1519,7 @@ EXPORT CONST float xfmaf(float x, float y, float z) {
 
 //
 
-#if 1
+#ifdef ENABLE_MAIN
 // gcc -I../common sleefsp.c -lm
 #include <stdlib.h>
 int main(int argc, char **argv) {

@@ -47,6 +47,8 @@ typedef struct { __m128i x, y; } vint2;
 
 //
 
+void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
+
 static int cpuSupportsAVX() {
     int32_t reg[4];
     Sleef_x86CpuID(reg, 1, 0);

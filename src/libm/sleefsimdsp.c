@@ -347,7 +347,7 @@ EXPORT CONST vfloat xtanf(vfloat d) {
 #ifndef ENABLE_AVX512F
   u = vreinterpret_vf_vm(vor_vm_vo32_vm(visinf_vo_vf(d), vreinterpret_vm_vf(u)));
 #else
-  u = _mm512_fixupimm_ps(u, d, vcast_vi2_i((3 << (4*4)) | (3 << (5*4))), 0);
+  u = vfixup_vf_vf_vf_vi2_i(u, d, vcast_vi2_i((3 << (4*4)) | (3 << (5*4))), 0);
 #endif
   
   return u;
@@ -835,9 +835,9 @@ EXPORT CONST vfloat xlogf(vfloat d) {
   vint2 e = vilogbk_vi2_vf(vmul_vf_vf_vf(d, vcast_vf_f(1.0f/0.75f)));
   m = vldexp_vf_vf_vi2(d, vneg_vi2_vi2(e));
 #else
-  vfloat e = _mm512_getexp_ps(vmul_vf_vf_vf(d, vcast_vf_f(1.0f/0.75f)));
+  vfloat e = vgetexp_vf_vf(vmul_vf_vf_vf(d, vcast_vf_f(1.0f/0.75f)));
   e = vsel_vf_vo_vf_vf(vispinf_vo_vf(e), vcast_vf_f(128.0f), e);
-  m = _mm512_getmant_ps(d, _MM_MANT_NORM_p75_1p5, _MM_MANT_SIGN_nan);
+  m = vgetmant_vf_vf(d);
 #endif
   
   x = vdiv_vf_vf_vf(vadd_vf_vf_vf(vcast_vf_f(-1.0f), m), vadd_vf_vf_vf(vcast_vf_f(1.0f), m));
@@ -856,7 +856,7 @@ EXPORT CONST vfloat xlogf(vfloat d) {
   x = vsel_vf_vo_vf_vf(veq_vo_vf_vf(d, vcast_vf_f(0)), vcast_vf_f(-INFINITYf), x);
 #else
   x = vmla_vf_vf_vf_vf(x, t, vmul_vf_vf_vf(vcast_vf_f(0.693147180559945286226764f), e));
-  x = _mm512_fixupimm_ps(x, d, vcast_vi2_i((5 << (5*4))), 0);
+  x = vfixup_vf_vf_vf_vi2_i(x, d, vcast_vi2_i((5 << (5*4))), 0);
 #endif
   
   return x;
@@ -1015,9 +1015,9 @@ static INLINE CONST vfloat2 logkf(vfloat d) {
   vint2 e = vilogbk_vi2_vf(vmul_vf_vf_vf(d, vcast_vf_f(1.0f/0.75f)));
   m = vldexp_vf_vf_vi2(d, vneg_vi2_vi2(e));
 #else
-  vfloat e = _mm512_getexp_ps(vmul_vf_vf_vf(d, vcast_vf_f(1.0f/0.75f)));
+  vfloat e = vgetexp_vf_vf(vmul_vf_vf_vf(d, vcast_vf_f(1.0f/0.75f)));
   e = vsel_vf_vo_vf_vf(vispinf_vo_vf(e), vcast_vf_f(128.0f), e);
-  m = _mm512_getmant_ps(d, _MM_MANT_NORM_p75_1p5, _MM_MANT_SIGN_nan);
+  m = vgetmant_vf_vf(d);
 #endif
 
   x = dfdiv_vf2_vf2_vf2(dfadd2_vf2_vf_vf(vcast_vf_f(-1), m), dfadd2_vf2_vf_vf(vcast_vf_f(1), m));
@@ -1055,7 +1055,7 @@ EXPORT CONST vfloat xlogf_u1(vfloat d) {
 #endif
   x = vreinterpret_vf_vm(vor_vm_vo32_vm(vgt_vo_vf_vf(vcast_vf_f(0), d), vreinterpret_vm_vf(x)));
 #else
-  x = _mm512_fixupimm_ps(x, d, vcast_vi2_i((4 << (2*4)) | (3 << (4*4)) | (5 << (5*4)) | (2 << (6*4))), 0);
+  x = vfixup_vf_vf_vf_vi2_i(x, d, vcast_vi2_i((4 << (2*4)) | (3 << (4*4)) | (5 << (5*4)) | (2 << (6*4))), 0);
 #endif
   
   return x;
@@ -1203,7 +1203,7 @@ static INLINE CONST vfloat2 logk2f(vfloat2 d) {
 #ifndef ENABLE_AVX512F
   e = vilogbk_vi2_vf(vmul_vf_vf_vf(d.x, vcast_vf_f(1.0f/0.75f)));
 #else
-  e = vrint_vi2_vf(_mm512_getexp_ps(vmul_vf_vf_vf(d.x, vcast_vf_f(1.0f/0.75f))));
+  e = vrint_vi2_vf(vgetexp_vf_vf(vmul_vf_vf_vf(d.x, vcast_vf_f(1.0f/0.75f))));
 #endif
   m = dfscale_vf2_vf2_vf(d, vpow2i_vf_vi2(vneg_vi2_vi2(e)));
 
@@ -1301,7 +1301,7 @@ EXPORT CONST vfloat xlog10f(vfloat a) {
   x = vreinterpret_vf_vm(vor_vm_vo32_vm(vgt_vo_vf_vf(vcast_vf_f(0), a), vreinterpret_vm_vf(x)));
   x = vsel_vf_vo_vf_vf(veq_vo_vf_vf(a, vcast_vf_f(0)), vcast_vf_f(-INFINITYf), x);
 #else
-  x = _mm512_fixupimm_ps(x, a, vcast_vi2_i((4 << (2*4)) | (3 << (4*4)) | (5 << (5*4)) | (2 << (6*4))), 0);
+  x = vfixup_vf_vf_vf_vi2_i(x, a, vcast_vi2_i((4 << (2*4)) | (3 << (4*4)) | (5 << (5*4)) | (2 << (6*4))), 0);
 #endif
 
   return x;
@@ -1574,7 +1574,7 @@ EXPORT CONST vfloat xfmodf(vfloat x, vfloat y) {
   return ret;
 }
 
-#if 0
+#ifdef ENABLE_MAIN
 // gcc -Wno-attributes -I../common -I../arch -DENABLE_AVX2 -mavx2 -mfma sleefsimdsp.c ../common/common.c -lm
 #include <stdio.h>
 #include <stdlib.h>
