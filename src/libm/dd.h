@@ -112,6 +112,15 @@ static INLINE CONST vdouble2 ddadd_vd2_vd2_vd(vdouble2 x, vdouble y) {
   return r;
 }
 
+static INLINE CONST vdouble2 ddsub_vd2_vd2_vd(vdouble2 x, vdouble y) {
+  vdouble2 r;
+
+  r.x = vsub_vd_vd_vd(x.x, y);
+  r.y = vadd_vd_vd_vd(vsub_vd_vd_vd(vsub_vd_vd_vd(x.x, r.x), y), x.y);
+
+  return r;
+}
+
 static INLINE CONST vdouble2 ddadd2_vd2_vd2_vd(vdouble2 x, vdouble y) {
   vdouble2 r;
 
@@ -366,4 +375,9 @@ static INLINE CONST vdouble2 ddrec_vd2_vd2(vdouble2 d) {
 static INLINE CONST vdouble2 ddsqrt_vd2_vd2(vdouble2 d) {
   vdouble t = vsqrt_vd_vd(vadd_vd_vd_vd(d.x, d.y));
   return ddscale_vd2_vd2_vd(ddmul_vd2_vd2_vd2(ddadd2_vd2_vd2_vd2(d, ddmul_vd2_vd_vd(t, t)), ddrec_vd2_vd(t)), vcast_vd_d(0.5));
+}
+
+static INLINE CONST vdouble2 ddsqrt_vd2_vd(vdouble d) {
+  vdouble t = vsqrt_vd_vd(d);
+  return ddscale_vd2_vd2_vd(ddmul_vd2_vd2_vd2(ddadd2_vd2_vd_vd2(d, ddmul_vd2_vd_vd(t, t)), ddrec_vd2_vd(t)), vcast_vd_d(0.5));
 }

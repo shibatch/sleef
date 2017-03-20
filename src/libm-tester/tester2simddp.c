@@ -322,7 +322,7 @@ int main(int argc,char **argv)
 
       double u0 = countULP2(t = vget(sc.x, e), frx);
 
-      if (u0 != 0 && ((fabs(d) <= rangemax2 && u0 > 0.505) || fabs(t) > 1 || !isnumber(t))) {
+      if (u0 != 0 && ((fabs(d) <= rangemax2 && u0 > 0.506) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincospi_u05 sin arg=%.20g ulp=%.20g\n", d, u0);
 	fflush(stdout); ecnt++;
       }
@@ -342,7 +342,7 @@ int main(int argc,char **argv)
 
       double u0 = countULP2(t = vget(sc.y, e), frx);
 
-      if (u0 != 0 && ((fabs(d) <= rangemax2 && u0 > 0.505) || fabs(t) > 1 || !isnumber(t))) {
+      if (u0 != 0 && ((fabs(d) <= rangemax2 && u0 > 0.506) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincospi_u05 cos arg=%.20g ulp=%.20g\n", d, u0);
 	fflush(stdout); ecnt++;
       }
@@ -575,14 +575,14 @@ int main(int argc,char **argv)
       double u0 = countULP(t = vget(xasin(vzo), e), frx);
       
       if (u0 > 3.5) {
-	printf(ISANAME " asin arg=%.20g ulp=%.20g\n", d, u0);
+	printf(ISANAME " asin arg=%.20g ulp=%.20g\n", zo, u0);
 	fflush(stdout); ecnt++;
       }
 
       double u1 = countULP(t = vget(xasin_u1(vzo), e), frx);
       
       if (u1 > 1) {
-	printf(ISANAME " asin_u1 arg=%.20g ulp=%.20g\n", d, u1);
+	printf(ISANAME " asin_u1 arg=%.20g ulp=%.20g\n", zo, u1);
 	fflush(stdout); ecnt++;
       }
     }
@@ -594,14 +594,14 @@ int main(int argc,char **argv)
       double u0 = countULP(t = vget(xacos(vzo), e), frx);
       
       if (u0 > 3.5) {
-	printf(ISANAME " acos arg=%.20g ulp=%.20g\n", d, u0);
+	printf(ISANAME " acos arg=%.20g ulp=%.20g\n", zo, u0);
 	fflush(stdout); ecnt++;
       }
 
       double u1 = countULP(t = vget(xacos_u1(vzo), e), frx);
       
       if (u1 > 1) {
-	printf(ISANAME " acos_u1 arg=%.20g ulp=%.20g\n", d, u1);
+	printf(ISANAME " acos_u1 arg=%.20g ulp=%.20g\n", zo, u1);
 	fflush(stdout); ecnt++;
       }
     }

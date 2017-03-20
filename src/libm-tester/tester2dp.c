@@ -233,7 +233,7 @@ int main(int argc,char **argv)
 
       double u0 = countULP2(t = sc.x, frx);
 
-      if (u0 != 0 && ((fabs(d) <= rangemax2 && u0 > 0.505) || fabs(t) > 1 || !isnumber(t))) {
+      if (u0 != 0 && ((fabs(d) <= rangemax2 && u0 > 0.506) || fabs(t) > 1 || !isnumber(t))) {
 	printf("Pure C sincospi_u05 sin arg=%.20g ulp=%.20g\n", d, u0);
 	fflush(stdout); ecnt++;
       }
@@ -253,7 +253,7 @@ int main(int argc,char **argv)
 
       double u0 = countULP2(t = sc.y, frx);
 
-      if (u0 != 0 && ((fabs(d) <= rangemax2 && u0 > 0.505) || fabs(t) > 1 || !isnumber(t))) {
+      if (u0 != 0 && ((fabs(d) <= rangemax2 && u0 > 0.506) || fabs(t) > 1 || !isnumber(t))) {
 	printf("Pure C sincospi_u05 cos arg=%.20g ulp=%.20g\n", d, u0);
 	fflush(stdout); ecnt++;
       }
@@ -488,14 +488,16 @@ int main(int argc,char **argv)
       double u0 = countULP(t = xasin(zo), frx);
       
       if (u0 > 3.5) {
-	printf("Pure C asin arg=%.20g ulp=%.20g\n", d, u0);
+	printf("Pure C asin arg=%.20g ulp=%.20g\n", zo, u0);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
 	fflush(stdout); ecnt++;
       }
 
       double u1 = countULP(t = xasin_u1(zo), frx);
       
       if (u1 > 1) {
-	printf("Pure C asin_u1 arg=%.20g ulp=%.20g\n", d, u1);
+	printf("Pure C asin_u1 arg=%.20g ulp=%.20g\n", zo, u1);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
 	fflush(stdout); ecnt++;
       }
     }
@@ -507,14 +509,14 @@ int main(int argc,char **argv)
       double u0 = countULP(t = xacos(zo), frx);
       
       if (u0 > 3.5) {
-	printf("Pure C acos arg=%.20g ulp=%.20g\n", d, u0);
+	printf("Pure C acos arg=%.20g ulp=%.20g\n", zo, u0);
 	fflush(stdout); ecnt++;
       }
 
       double u1 = countULP(t = xacos_u1(zo), frx);
       
       if (u1 > 1) {
-	printf("Pure C acos_u1 arg=%.20g ulp=%.20g\n", d, u1);
+	printf("Pure C acos_u1 arg=%.20g ulp=%.20g\n", zo, u1);
 	fflush(stdout); ecnt++;
       }
     }

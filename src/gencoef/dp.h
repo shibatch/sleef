@@ -179,3 +179,18 @@ void TARGET(mpfr_t ret, mpfr_t a) { mpfr_atan(ret, a, GMP_RNDN); }
 void CFUNC(mpfr_t dst, mpfr_t src) { mpfr_set(dst, src, GMP_RNDN); }
 #define FIXCOEF0 1.0
 #endif
+
+#if 0
+#define N 20
+#define S 100
+#define L 0
+#define P 1.54
+#define MIN 0.0
+#define MAX 0.708
+#define PMUL 2
+#define PADD 1
+
+void TARGET(mpfr_t ret, mpfr_t a) { mpfr_asin(ret, a, GMP_RNDN); }
+void CFUNC(mpfr_t dst, mpfr_t src) { mpfr_set(dst, src, GMP_RNDN); }
+#define FIXCOEF0 1.0
+#endif
