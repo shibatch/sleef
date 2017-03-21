@@ -578,14 +578,14 @@ int main(int argc,char **argv)
       double u0 = countULP(t = vget(xasinf(vzo), e), frx);
       
       if (u0 > 3.5) {
-	printf(ISANAME " asinf arg=%.20g ulp=%.20g\n", d, u0);
+	printf(ISANAME " asinf arg=%.20g ulp=%.20g\n", zo, u0);
 	fflush(stdout); ecnt++;
       }
 
       double u1 = countULP(t = vget(xasinf_u1(vzo), e), frx);
       
       if (u1 > 1) {
-	printf(ISANAME " asinf_u1 arg=%.20g ulp=%.20g\n", d, u1);
+	printf(ISANAME " asinf_u1 arg=%.20g ulp=%.20g\n", zo, u1);
 	fflush(stdout); ecnt++;
       }
     }
@@ -597,14 +597,14 @@ int main(int argc,char **argv)
       double u0 = countULP(t = vget(xacosf(vzo), e), frx);
       
       if (u0 > 3.5) {
-	printf(ISANAME " acosf arg=%.20g ulp=%.20g\n", d, u0);
+	printf(ISANAME " acosf arg=%.20g ulp=%.20g\n", zo, u0);
 	fflush(stdout); ecnt++;
       }
 
       double u1 = countULP(t = vget(xacosf_u1(vzo), e), frx);
       
       if (u1 > 1) {
-	printf(ISANAME " acosf_u1 arg=%.20g ulp=%.20g\n", d, u1);
+	printf(ISANAME " acosf_u1 arg=%.20g ulp=%.20g\n", zo, u1);
 	fflush(stdout); ecnt++;
       }
     }

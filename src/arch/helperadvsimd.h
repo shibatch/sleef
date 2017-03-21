@@ -338,6 +338,10 @@ static INLINE vdouble vsel_vd_vo_vd_vd(vopmask mask, vdouble x, vdouble y) {
   return vbslq_f64(vreinterpretq_u64_u32(mask), x, y);
 }
 
+static INLINE vdouble vrint_vd_vd(vdouble d) {
+  return vrndnq_f64(d);
+}
+
 /****************************************/
 /* int <--> float conversions           */
 /****************************************/
