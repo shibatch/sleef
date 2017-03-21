@@ -272,7 +272,10 @@ static INLINE vopmask visnan_vo_vd(vdouble d)  { vopmask ret; for(int i=0;i<VECT
 
 static INLINE vdouble vsqrt_vd_vd(vdouble d) { vdouble ret; for(int i=0;i<VECTLENDP;i++) ret.d[i] = sqrt(d.d[i]); return ret; }
 
+#if defined(_MSC_VER)
+// This function is needed when debugging on MSVC.
 static INLINE double vcast_d_vd(vdouble v) { return v.d[0]; }
+#endif
 
 static INLINE vdouble vload_vd_p(const double *ptr) { return *(vdouble *)ptr; }
 static INLINE vdouble vloadu_vd_p(const double *ptr) { vdouble vd; for(int i=0;i<VECTLENDP;i++) vd.d[i] = ptr[i]; return vd; }

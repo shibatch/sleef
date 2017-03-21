@@ -343,7 +343,7 @@ static INLINE CONST Sleef_double2 ddsub_d2_d2_d2(Sleef_double2 x, Sleef_double2 
   Sleef_double2 r;
 
 #ifndef NDEBUG
-  if (!(checkfp(x.x) || checkfp(y.x) || fabsk(x.x) >= fabsk(y.x) || (fabs(x-y) <= fabs(x) && fabs(x-y) <= fabs(y)))) {
+  if (!(checkfp(x.x) || checkfp(y.x) || fabsk(x.x) >= fabsk(y.x) || (fabs(x.x-y.x) <= fabs(x.x) && fabs(x.x-y.x) <= fabs(y.x)))) {
     fprintf(stderr, "[ddsub_d2_d2_d2 : %g %g]\n", x.x, y.x);
     fflush(stderr);
   }
@@ -1699,21 +1699,21 @@ EXPORT CONST double xfdim(double x, double y) {
 EXPORT CONST double xtrunc(double x) {
   double fr = x - (double)(1LL << 31) * (int32_t)(x * (1.0 / (1LL << 31)));
   fr = fr - (int32_t)fr;
-  return (xisinf(x) || fabsk(x) > (double)(1LL << 52)) ? x : copysignk(x - fr, x);
+  return (xisinf(x) || fabsk(x) >= (double)(1LL << 52)) ? x : copysignk(x - fr, x);
 }
 
 EXPORT CONST double xfloor(double x) {
   double fr = x - (double)(1LL << 31) * (int32_t)(x * (1.0 / (1LL << 31)));
   fr = fr - (int32_t)fr;
   fr = fr < 0 ? fr+1.0 : fr;
-  return (xisinf(x) || fabsk(x) > (double)(1LL << 52)) ? x : copysignk(x - fr, x);
+  return (xisinf(x) || fabsk(x) >= (double)(1LL << 52)) ? x : copysignk(x - fr, x);
 }
 
 EXPORT CONST double xceil(double x) {
   double fr = x - (double)(1LL << 31) * (int32_t)(x * (1.0 / (1LL << 31)));
   fr = fr - (int32_t)fr;
   fr = fr <= 0 ? fr : fr-1.0;
-  return (xisinf(x) || fabsk(x) > (double)(1LL << 52)) ? x : copysignk(x - fr, x);
+  return (xisinf(x) || fabsk(x) >= (double)(1LL << 52)) ? x : copysignk(x - fr, x);
 }
 
 EXPORT CONST double xround(double d) {
@@ -1722,7 +1722,7 @@ EXPORT CONST double xround(double d) {
   fr = fr - (int32_t)fr;
   if (fr == 0 && x <= 0) x--;
   fr = fr < 0 ? fr+1.0 : fr;
-  return (xisinf(x) || fabsk(x) > (double)(1LL << 52)) ? d : copysignk(x - fr, d);
+  return (xisinf(d) || fabsk(d) >= (double)(1LL << 52)) ? d : copysignk(x - fr, d);
 }
 
 EXPORT CONST double xrint(double d) {
@@ -1731,7 +1731,7 @@ EXPORT CONST double xrint(double d) {
   int32_t isodd = (1 & (int32_t)fr) != 0;
   fr = fr - (int32_t)fr;
   fr = (fr < 0 || (fr == 0 && isodd)) ? fr+1.0 : fr;
-  return (xisinf(x) || fabsk(x) > (double)(1LL << 52)) ? d : copysignk(x - fr, d);
+  return (xisinf(d) || fabsk(d) >= (double)(1LL << 52)) ? d : copysignk(x - fr, d);
 }
 
 EXPORT CONST double xhypot_u05(double x, double y) {
@@ -1864,7 +1864,7 @@ EXPORT CONST Sleef_double2 xmodf(double x) {
 }
 
 #ifdef ENABLE_MAIN
-// gcc -I../common sleefdp.c -lm
+// gcc -w -DENABLE_MAIN -I../common sleefdp.c -lm
 #include <stdlib.h>
 int main(int argc, char **argv) {
   double d1 = atof(argv[1]);
@@ -1881,10 +1881,10 @@ int main(int argc, char **argv) {
   //int exp = xexpfrexp(d1);
   //double r = xnextafter(d1, d2);
   //double r = xfma(d1, d2, d3);
-  printf("test = %.20g\n", xcos_u1(d1));
+  printf("test = %.20g\n", xrint(d1));
   //printf("test = %.20g\n", xlog(d1));
   //r = nextafter(d1, d2);
-  printf("corr = %.20g\n", cos(d1));
+  printf("corr = %.20g\n", rint(d1));
   //printf("%.20g %.20g\n", xround(d1), xrint(d1));
   //Sleef_double2 r = xsincospi_u35(d);
   //printf("%g, %g\n", (double)r.x, (double)r.y);

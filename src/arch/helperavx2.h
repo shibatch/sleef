@@ -211,11 +211,14 @@ static INLINE vopmask visnan_vo_vd(vdouble d) {
   return vreinterpret_vm_vd(_mm256_cmp_pd(d, d, _CMP_NEQ_UQ));
 }
 
+#if defined(_MSC_VER)
+// This function is needed when debugging on MSVC.
 static INLINE double vcast_d_vd(vdouble v) {
   double s[4];
   _mm256_storeu_pd(s, v);
   return s[0];
 }
+#endif
 
 static INLINE vdouble vload_vd_p(const double *ptr) { return _mm256_load_pd(ptr); }
 static INLINE vdouble vloadu_vd_p(const double *ptr) { return _mm256_loadu_pd(ptr); }
