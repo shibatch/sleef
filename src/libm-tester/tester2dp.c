@@ -25,7 +25,6 @@
 #include "rename.h"
 
 #define DENORMAL_DBL_MIN (4.9406564584124654418e-324)
-
 #define POSITIVE_INFINITY INFINITY
 #define NEGATIVE_INFINITY (-INFINITY)
 
@@ -828,7 +827,8 @@ int main(int argc,char **argv)
       double u0 = countULP2(t = xhypot_u35(d, d2), frx);
       double c = mpfr_get_d(frx, GMP_RNDN);
 
-      if (u0 >= 3.5) {
+      if ((-1e+308 < c && c < 1e+308 && u0 > 3.5) ||
+	  !(u0 <= 3.5 || isinf(t))) {
 	printf("Pure C hypot arg=%.20g, %.20g  ulp=%.20g\n", d, d2, u0);
 	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
 	fflush(stdout); ecnt++;

@@ -8,7 +8,7 @@ endif
 
 #
 
-TARGET=tester testeru1 testersp testerspu1 iut
+TARGET=tester iut
 TARGET2=tester2dp tester2sp
 
 ifeq ($(COMPILER), gcc)
@@ -66,10 +66,6 @@ endif
 
 .PHONY: all
 all : $(TARGET) $(TARGET2)
-
-.PHONY: test
-test : $(TARGET)
-	bash -c ./runtester.sh
 
 #
 
@@ -207,17 +203,8 @@ iutpurec : ../libm/sleefsimddp.c ../libm/sleefsimdsp.c iutsimd.c
 
 #
 
-tester : tester.c
-	$(CC) $(CFLAGS) -Wno-unused-result tester.c -lm -lmpfr -o tester
-
-testeru1 : testeru1.c
-	$(CC) $(CFLAGS) -Wno-unused-result testeru1.c -lm -lmpfr -o testeru1
-
-testersp : testersp.c
-	$(CC) $(CFLAGS) -Wno-unused-result testersp.c -lm -lmpfr -o testersp
-
-testerspu1 : testerspu1.c
-	$(CC) $(CFLAGS) -Wno-unused-result testerspu1.c -lm -lmpfr -o testerspu1
+tester : tester.c testerutil.c
+	$(CC) $(CFLAGS) -Wno-unused-result tester.c testerutil.c -lm -lmpfr -o tester
 
 #
 
@@ -259,7 +246,7 @@ clean :
 	rm -rf *.dSYM *.dylib
 	rm -f *.so *.so.* *.a *.s *.o
 	rm -f iut iutsse2 iutavx iutfma4 iutavx2 iutavx512f iutneon32 iutadvsimd
-	rm -f tester testeru1 testersp testerspu1 tester2vecextdp tester2vecextsp iutvecext tester2purecdp tester2purecsp iutpurec
+	rm -f tester tester2vecextdp tester2vecextsp iutvecext tester2purecdp tester2purecsp iutpurec
 	rm -f tester2dp tester2sp tester2qp tester2ld tester2sse2dp tester2sse2sp tester2fma4dp tester2fma4sp tester2avxdp tester2avxsp tester2avx2dp tester2avx2sp tester2avx512fdp tester2avx512fsp
 	rm -f tester2advsimddp tester2advsimdsp
 	rm -f bench_s0_10 bench_s0_50 bench_s1_10 bench_s1_50 bench_s2_10 bench_s2_50 bench_a0_10 bench_a0_50

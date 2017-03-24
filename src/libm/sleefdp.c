@@ -1754,10 +1754,10 @@ EXPORT CONST double xhypot_u05(double x, double y) {
 EXPORT CONST double xhypot_u35(double x, double y) {
   x = fabsk(x);
   y = fabsk(y);
-  double min = fmink(x, y), n = min;
-  double max = fmaxk(x, y), d = max;
+  double min = fmink(x, y);
+  double max = fmaxk(x, y);
 
-  double t = n / d;
+  double t = min / max;
   double ret = max * sqrt(1 + t*t);
   if (min == 0) ret = max;
   if (xisnan(x) || xisnan(y)) ret = NAN;
@@ -1870,7 +1870,7 @@ int main(int argc, char **argv) {
   double d1 = atof(argv[1]);
   //printf("arg1 = %.20g\n", d1);
   //int i1 = atoi(argv[1]);
-  //double d2 = atof(argv[2]);
+  double d2 = atof(argv[2]);
   //printf("arg2 = %.20g\n", d2);
   //printf("%d\n", (int)d2);
 #if 0
@@ -1881,10 +1881,10 @@ int main(int argc, char **argv) {
   //int exp = xexpfrexp(d1);
   //double r = xnextafter(d1, d2);
   //double r = xfma(d1, d2, d3);
-  printf("test = %.20g\n", xrint(d1));
+  printf("test = %.20g\n", xcopysign(d1, d2));
   //printf("test = %.20g\n", xlog(d1));
   //r = nextafter(d1, d2);
-  printf("corr = %.20g\n", rint(d1));
+  printf("corr = %.20g\n", copysign(d1, d2));
   //printf("%.20g %.20g\n", xround(d1), xrint(d1));
   //Sleef_double2 r = xsincospi_u35(d);
   //printf("%g, %g\n", (double)r.x, (double)r.y);

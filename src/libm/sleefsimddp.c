@@ -1794,12 +1794,8 @@ EXPORT CONST vdouble xhypot_u05(vdouble x, vdouble y) {
 EXPORT CONST vdouble xhypot_u35(vdouble x, vdouble y) {
   x = vabs_vd_vd(x);
   y = vabs_vd_vd(y);
-  vdouble min = vmin_vd_vd_vd(x, y), n = min;
-  vdouble max = vmax_vd_vd_vd(x, y), d = max;
-
-  vopmask o = vlt_vo_vd_vd(max, vcast_vd_d(DBL_MIN));
-  n = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(n, vcast_vd_d(1ULL << 54)), n);
-  d = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(d, vcast_vd_d(1ULL << 54)), d);
+  vdouble min = vmin_vd_vd_vd(x, y);
+  vdouble max = vmax_vd_vd_vd(x, y);
 
   vdouble t = vdiv_vd_vd_vd(min, max);
   vdouble ret = vmul_vd_vd_vd(max, vsqrt_vd_vd(vmla_vd_vd_vd_vd(t, t, vcast_vd_d(1))));
