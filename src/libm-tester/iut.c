@@ -20,70 +20,10 @@
 #endif
 
 #include "sleef.h"
+#include "testerutil.h"
 
 #define DORENAME
 #include "rename.h"
-
-int readln(int fd, char *buf, int cnt) {
-  int i, rcnt = 0;
-
-  if (cnt < 1) return -1;
-
-  while(cnt >= 2) {
-    i = read(fd, buf, 1);
-    if (i != 1) return i;
-
-    if (*buf == '\n') break;
-
-    rcnt++;
-    buf++;
-    cnt--;
-  }
-
-  *++buf = '\0';
-  rcnt++;
-  return rcnt;
-}
-
-int startsWith(char *str, char *prefix) {
-  return strncmp(str, prefix, strlen(prefix)) == 0;
-}
-
-double u2d(uint64_t u) {
-  union {
-    double f;
-    uint64_t i;
-  } tmp;
-  tmp.i = u;
-  return tmp.f;
-}
-
-uint64_t d2u(double d) {
-  union {
-    double f;
-    uint64_t i;
-  } tmp;
-  tmp.f = d;
-  return tmp.i;
-}
-
-float u2f(uint32_t u) {
-  union {
-    float f;
-    uint32_t i;
-  } tmp;
-  tmp.i = u;
-  return tmp.f;
-}
-
-uint32_t f2u(float d) {
-  union {
-    float f;
-    uint32_t i;
-  } tmp;
-  tmp.f = d;
-  return tmp.i;
-}
 
 #define BUFSIZE 1024
 
@@ -433,6 +373,11 @@ int main(int argc, char **argv) {
       uint32_t u;
       sscanf(buf, "sqrtf_u05 %x", &u);
       u = f2u(xsqrtf_u05(u2f(u)));
+      printf("%x\n", u);
+    } else if (startsWith(buf, "sqrtf_u35 ")) {
+      uint32_t u;
+      sscanf(buf, "sqrtf_u35 %x", &u);
+      u = f2u(xsqrtf_u35(u2f(u)));
       printf("%x\n", u);
     } else if (startsWith(buf, "ldexpf ")) {
       uint32_t u, v;

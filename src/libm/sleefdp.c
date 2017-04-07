@@ -143,8 +143,8 @@ static INLINE CONST int ilogbk(double d) {
   return q;
 }
 
-// vilogb2k_vi_vd is similar to vilogbk_vi_vd, but the argument has to
-// be a normalized FP value.
+// ilogb2k is similar to ilogbk, but the argument has to be a
+// normalized FP value.
 static INLINE CONST int ilogb2k(double d) {
   return ((doubleToRawLongBits(d) >> 52) & 0x7ff) - 0x3ff;
 }
@@ -667,7 +667,7 @@ EXPORT CONST double xasin_u1(double d) {
   int o = fabsk(d) < 0.707;
   double x2 = o ? (d*d) : ((1-fabsk(d))*0.5), u;
   Sleef_double2 x = o ? dd(fabsk(d), 0) : ddsqrt_d2_d(x2);
-  x = fabs(d) == 1.0 ? dd(0, 0) : x;
+  x = fabsk(d) == 1.0 ? dd(0, 0) : x;
 
   u = +0.1093739490681073789e+1;
   u = mla(u, x2, -0.4285569429699107147e+1);

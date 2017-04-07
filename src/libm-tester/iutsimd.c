@@ -24,6 +24,7 @@
 
 #include "misc.h"
 #include "sleef.h"
+#include "testerutil.h"
 
 #define DORENAME
 
@@ -129,67 +130,6 @@ int detectFeature() {
   }
 }
 
-int readln(int fd, char *buf, int cnt) {
-  int i, rcnt = 0;
-
-  if (cnt < 1) return -1;
-
-  while(cnt >= 2) {
-    i = read(fd, buf, 1);
-    if (i != 1) return i;
-
-    if (*buf == '\n') break;
-
-    rcnt++;
-    buf++;
-    cnt--;
-  }
-
-  *++buf = '\0';
-  rcnt++;
-  return rcnt;
-}
-
-int startsWith(char *str, char *prefix) {
-  return strncmp(str, prefix, strlen(prefix)) == 0;
-}
-
-double u2d(uint64_t u) {
-  union {
-    double f;
-    uint64_t i;
-  } tmp;
-  tmp.i = u;
-  return tmp.f;
-}
-
-uint64_t d2u(double d) {
-  union {
-    double f;
-    uint64_t i;
-  } tmp;
-  tmp.f = d;
-  return tmp.i;
-}
-
-float u2f(uint32_t u) {
-  union {
-    float f;
-    uint32_t i;
-  } tmp;
-  tmp.i = u;
-  return tmp.f;
-}
-
-uint32_t f2u(float d) {
-  union {
-    float f;
-    uint32_t i;
-  } tmp;
-  tmp.f = d;
-  return tmp.i;
-}
-
 //
 
 #define func_d_d(funcStr, funcName) {		\
@@ -266,26 +206,20 @@ uint32_t f2u(float d) {
 
 #define func_d_d_i(funcStr, funcName) {	\
     if (startsWith(buf, funcStr " ")) {	\
-      uint64_t u, v;					\
+      uint64_t u, v;							\
       sscanf(buf, funcStr " %" PRIx64 " %" PRIx64, &u, &v);		\
-      union {								\
-	double s[VECTLENDP];						\
-	vdouble vd;							\
-      } ud;								\
-      union {								\
-	int t[VECTLENDP*2];						\
-	vint vi;							\
-      } ui;								\
+      double s[VECTLENDP];						\
+      int t[VECTLENDP];							\
       int i;								\
       for(i=0;i<VECTLENDP;i++) {					\
-	ud.s[i] = rand()/(double)RAND_MAX*20000-10000;			\
-	ui.t[i*2+0] = ui.t[i*2+1] = (int)(rand()/(double)RAND_MAX*20000-10000); \
+	s[i] = rand()/(double)RAND_MAX*20000-10000;			\
+	t[i] = (int)(rand()/(double)RAND_MAX*20000-10000);		\
       }									\
       int idx = rand() & (VECTLENDP-1);					\
-      ud.s[idx] = u2d(u);						\
-      ui.t[idx] = (int)u2d(v);						\
-      ud.vd = funcName(ud.vd, ui.vi);					\
-      u = d2u(ud.s[idx]);						\
+      s[idx] = u2d(u);							\
+      t[idx] = (int)u2d(v);						\
+      vstoreu_v_p_vd(s, funcName(vloadu_vd_p(s), vloadu_vi_p(t)));	\
+      u = d2u(s[idx]);							\
       printf("%" PRIx64 "\n", u);  					\
       fflush(stdout);							\
       continue;								\
@@ -505,6 +439,7 @@ int main(int argc, char **argv) {
     func_f_f("expf", xexpf);
 
     func_f_f("sqrtf_u05", xsqrtf_u05);
+    func_f_f("sqrtf_u35", xsqrtf_u35);
     func_f_f("cbrtf", xcbrtf);
     func_f_f("cbrtf_u1", xcbrtf_u1);
 

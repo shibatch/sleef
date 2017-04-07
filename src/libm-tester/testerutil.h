@@ -23,6 +23,15 @@ int isMinusZerof(float x);
 int xisnanf(float x);
 float signf(float d);
 
+double u2d(uint64_t u);
+uint64_t d2u(double d);
+float u2f(uint32_t u);
+uint32_t f2u(float d);
+
+int readln(int fd, char *buf, int cnt);
+int startsWith(char *str, char *prefix);
+
+#ifdef USEMPFR
 int cmpDenormdp(double x, mpfr_t fry);
 double countULPdp(double d, mpfr_t c);
 double countULP2dp(double d, mpfr_t c);
@@ -33,3 +42,4 @@ double countULP2sp(float d, mpfr_t c);
 
 void mpfr_sinpi(mpfr_t ret, mpfr_t arg, mpfr_rnd_t rnd);
 void mpfr_cospi(mpfr_t ret, mpfr_t arg, mpfr_rnd_t rnd);
+#endif

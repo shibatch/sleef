@@ -1,11 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <mpfr.h>
+#include <string.h>
 #include <time.h>
 #include <float.h>
 #include <limits.h>
 #include <math.h>
+
+#if defined(__MINGW32__) || defined(__MINGW64__) || defined(_MSC_VER)
+#define STDIN_FILENO 0
+#else
+#include <unistd.h>
+#include <sys/types.h>
+#include <signal.h>
+#endif
 
 #define DENORMAL_DBL_MIN (4.9406564584124654418e-324)
 #define POSITIVE_INFINITY INFINITY
@@ -33,6 +41,76 @@ double flushToZero(double y) {
   if (enableFlushToZero && fabs(y) < FLT_MIN) y = copysign(0.0, y);
   return y;
 }
+
+//
+
+double u2d(uint64_t u) {
+  union {
+    double f;
+    uint64_t i;
+  } tmp;
+  tmp.i = u;
+  return tmp.f;
+}
+
+uint64_t d2u(double d) {
+  union {
+    double f;
+    uint64_t i;
+  } tmp;
+  tmp.f = d;
+  return tmp.i;
+}
+
+float u2f(uint32_t u) {
+  union {
+    float f;
+    uint32_t i;
+  } tmp;
+  tmp.i = u;
+  return tmp.f;
+}
+
+uint32_t f2u(float d) {
+  union {
+    float f;
+    uint32_t i;
+  } tmp;
+  tmp.f = d;
+  return tmp.i;
+}
+
+//
+
+int readln(int fd, char *buf, int cnt) {
+  int i, rcnt = 0;
+
+  if (cnt < 1) return -1;
+
+  while(cnt >= 2) {
+    i = read(fd, buf, 1);
+    if (i != 1) return i;
+
+    if (*buf == '\n') break;
+
+    rcnt++;
+    buf++;
+    cnt--;
+  }
+
+  *++buf = '\0';
+  rcnt++;
+  return rcnt;
+}
+
+int startsWith(char *str, char *prefix) {
+  return strncmp(str, prefix, strlen(prefix)) == 0;
+}
+
+//
+
+#ifdef USEMPFR
+#include <mpfr.h>
 
 int cmpDenormsp(float x, mpfr_t fry) {
   float y = mpfr_get_d(fry, GMP_RNDN);
@@ -68,14 +146,10 @@ int cmpDenormdp(double x, mpfr_t fry) {
   return 0;
 }
 
-int firstTime = 1;
-mpfr_t fra, frb, frc, frd;
-
 double countULPdp(double d, mpfr_t c) {
-  if (firstTime) {
-    mpfr_inits(fra, frb, frc, frd, NULL);
-    firstTime = 0;
-  }
+  mpfr_t fra, frb, frc, frd;
+  mpfr_inits(fra, frb, frc, frd, NULL);
+
   double c2 = mpfr_get_d(c, GMP_RNDN);
   if (c2 == 0 && d != 0) return 10000;
   if (isnan(c2) && isnan(d)) return 0;
@@ -100,14 +174,15 @@ double countULPdp(double d, mpfr_t c) {
   mpfr_div(fra, fra, frb, GMP_RNDN);
   double u = fabs(mpfr_get_d(fra, GMP_RNDN));
 
+  mpfr_clears(fra, frb, frc, frd, NULL);
+  
   return u + v;
 }
 
 double countULP2dp(double d, mpfr_t c) {
-  if (firstTime) {
-    mpfr_inits(fra, frb, frc, frd, NULL);
-    firstTime = 0;
-  }
+  mpfr_t fra, frb, frc, frd;
+  mpfr_inits(fra, frb, frc, frd, NULL);
+
   double c2 = mpfr_get_d(c, GMP_RNDN);
   if (c2 == 0 && d != 0) return 10000;
   if (isnan(c2) && isnan(d)) return 0;
@@ -132,14 +207,15 @@ double countULP2dp(double d, mpfr_t c) {
   mpfr_div(fra, fra, frb, GMP_RNDN);
   double u = fabs(mpfr_get_d(fra, GMP_RNDN));
 
+  mpfr_clears(fra, frb, frc, frd, NULL);
+  
   return u + v;
 }
 
 double countULPsp(float d, mpfr_t c) {
-  if (firstTime) {
-    mpfr_inits(fra, frb, frc, frd, NULL);
-    firstTime = 0;
-  }
+  mpfr_t fra, frb, frc, frd;
+  mpfr_inits(fra, frb, frc, frd, NULL);
+
   d = flushToZero(d);
   float c2 = flushToZero(mpfr_get_d(c, GMP_RNDN));
   if (c2 == 0 && d != 0) return 10000;
@@ -165,14 +241,15 @@ double countULPsp(float d, mpfr_t c) {
   mpfr_div(fra, fra, frb, GMP_RNDN);
   double u = fabs(mpfr_get_d(fra, GMP_RNDN));
 
+  mpfr_clears(fra, frb, frc, frd, NULL);
+  
   return u + v;
 }
 
 double countULP2sp(float d, mpfr_t c) {
-  if (firstTime) {
-    mpfr_inits(fra, frb, frc, frd, NULL);
-    firstTime = 0;
-  }
+  mpfr_t fra, frb, frc, frd;
+  mpfr_inits(fra, frb, frc, frd, NULL);
+
   d = flushToZero(d);
   float c2 = flushToZero(mpfr_get_d(c, GMP_RNDN));
   if (c2 == 0 && d != 0) return 10000;
@@ -198,6 +275,8 @@ double countULP2sp(float d, mpfr_t c) {
   mpfr_div(fra, fra, frb, GMP_RNDN);
   double u = fabs(mpfr_get_d(fra, GMP_RNDN));
 
+  mpfr_clears(fra, frb, frc, frd, NULL);
+  
   return u + v;
 }
 
@@ -228,3 +307,4 @@ void mpfr_cospi(mpfr_t ret, mpfr_t arg, mpfr_rnd_t rnd) {
 
   mpfr_clears(frpi, frd, NULL);
 }
+#endif // #define USEMPFR
