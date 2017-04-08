@@ -251,11 +251,14 @@ static INLINE vdouble vloadu_vd_p(const double *ptr) { return _mm_loadu_pd(ptr);
 static INLINE void vstore_v_p_vd(double *ptr, vdouble v) { _mm_store_pd(ptr, v); }
 static INLINE void vstoreu_v_p_vd(double *ptr, vdouble v) { _mm_storeu_pd(ptr, v); }
 
+#if defined(_MSC_VER)
+// This function is needed when debugging on MSVC.
 static INLINE double vcast_d_vd(vdouble v) {
   double a[VECTLENDP];
   vstoreu_v_p_vd(a, v);
   return a[0];
 }
+#endif
 
 //
 

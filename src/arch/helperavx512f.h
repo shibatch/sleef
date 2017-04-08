@@ -222,11 +222,14 @@ static INLINE vfloat vgetmant_vf_vf(vfloat d) { return _mm512_getmant_ps(d, _MM_
 static INLINE vdouble vfixup_vd_vd_vd_vi2_i(vdouble a, vdouble b, vint2 c, int imm) { return _mm512_fixupimm_pd(a, b, c, imm); }
 static INLINE vfloat vfixup_vf_vf_vf_vi2_i(vfloat a, vfloat b, vint2 c, int imm) { return _mm512_fixupimm_ps(a, b, c, imm); }
 
+#if defined(_MSC_VER)
+// This function is needed when debugging on MSVC.
 static INLINE double vcast_d_vd(vdouble v) {
   double s[VECTLENDP];
   _mm512_storeu_pd(s, v);
   return s[0];
 }
+#endif
 
 static INLINE vdouble vload_vd_p(const double *ptr) { return _mm512_load_pd(ptr); }
 static INLINE vdouble vloadu_vd_p(const double *ptr) { return _mm512_loadu_pd(ptr); }

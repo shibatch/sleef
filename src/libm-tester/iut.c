@@ -20,70 +20,10 @@
 #endif
 
 #include "sleef.h"
+#include "testerutil.h"
 
 #define DORENAME
 #include "rename.h"
-
-int readln(int fd, char *buf, int cnt) {
-  int i, rcnt = 0;
-
-  if (cnt < 1) return -1;
-
-  while(cnt >= 2) {
-    i = read(fd, buf, 1);
-    if (i != 1) return i;
-
-    if (*buf == '\n') break;
-
-    rcnt++;
-    buf++;
-    cnt--;
-  }
-
-  *++buf = '\0';
-  rcnt++;
-  return rcnt;
-}
-
-int startsWith(char *str, char *prefix) {
-  return strncmp(str, prefix, strlen(prefix)) == 0;
-}
-
-double u2d(uint64_t u) {
-  union {
-    double f;
-    uint64_t i;
-  } tmp;
-  tmp.i = u;
-  return tmp.f;
-}
-
-uint64_t d2u(double d) {
-  union {
-    double f;
-    uint64_t i;
-  } tmp;
-  tmp.f = d;
-  return tmp.i;
-}
-
-float u2f(uint32_t u) {
-  union {
-    float f;
-    uint32_t i;
-  } tmp;
-  tmp.i = u;
-  return tmp.f;
-}
-
-uint32_t f2u(float d) {
-  union {
-    float f;
-    uint32_t i;
-  } tmp;
-  tmp.f = d;
-  return tmp.i;
-}
 
 #define BUFSIZE 1024
 
@@ -245,9 +185,9 @@ int main(int argc, char **argv) {
       sscanf(buf, "fma %" PRIx64 " %" PRIx64 " %" PRIx64, &u, &v, &w);
       u = d2u(xfma(u2d(u), u2d(v), u2d(w)));
       printf("%" PRIx64 "\n", u);
-    } else if (startsWith(buf, "sqrt ")) {
+    } else if (startsWith(buf, "sqrt_u05 ")) {
       uint64_t u;
-      sscanf(buf, "sqrt %" PRIx64, &u);
+      sscanf(buf, "sqrt_u05 %" PRIx64, &u);
       u = d2u(xsqrt_u05(u2d(u)));
       printf("%" PRIx64 "\n", u);
     } else if (startsWith(buf, "cbrt ")) {
@@ -290,7 +230,91 @@ int main(int argc, char **argv) {
       sscanf(buf, "ldexp %" PRIx64 " %" PRIx64, &u, &v);
       u = d2u(xldexp(u2d(u), (int)u2d(v)));
       printf("%" PRIx64 "\n", u);
-    } else if (startsWith(buf, "sinf ")) {
+    }
+
+    else if (startsWith(buf, "hypot_u05 ")) {
+      uint64_t u, v;
+      sscanf(buf, "hypot_u05 %" PRIx64 " %" PRIx64, &u, &v);
+      u = d2u(xhypot_u05(u2d(u), u2d(v)));
+      printf("%" PRIx64 "\n", u);
+    } else if (startsWith(buf, "hypot_u35 ")) {
+      uint64_t u, v;
+      sscanf(buf, "hypot_u35 %" PRIx64 " %" PRIx64, &u, &v);
+      u = d2u(xhypot_u35(u2d(u), u2d(v)));
+      printf("%" PRIx64 "\n", u);
+    } else if (startsWith(buf, "copysign ")) {
+      uint64_t u, v;
+      sscanf(buf, "copysign %" PRIx64 " %" PRIx64, &u, &v);
+      u = d2u(xcopysign(u2d(u), u2d(v)));
+      printf("%" PRIx64 "\n", u);
+    } else if (startsWith(buf, "fmax ")) {
+      uint64_t u, v;
+      sscanf(buf, "fmax %" PRIx64 " %" PRIx64, &u, &v);
+      u = d2u(xfmax(u2d(u), u2d(v)));
+      printf("%" PRIx64 "\n", u);
+    } else if (startsWith(buf, "fmin ")) {
+      uint64_t u, v;
+      sscanf(buf, "fmin %" PRIx64 " %" PRIx64, &u, &v);
+      u = d2u(xfmin(u2d(u), u2d(v)));
+      printf("%" PRIx64 "\n", u);
+    } else if (startsWith(buf, "fdim ")) {
+      uint64_t u, v;
+      sscanf(buf, "fdim %" PRIx64 " %" PRIx64, &u, &v);
+      u = d2u(xfdim(u2d(u), u2d(v)));
+      printf("%" PRIx64 "\n", u);
+    } else if (startsWith(buf, "nextafter ")) {
+      uint64_t u, v;
+      sscanf(buf, "nextafter %" PRIx64 " %" PRIx64, &u, &v);
+      u = d2u(xnextafter(u2d(u), u2d(v)));
+      printf("%" PRIx64 "\n", u);
+    } else if (startsWith(buf, "fmod ")) {
+      uint64_t u, v;
+      sscanf(buf, "fmod %" PRIx64 " %" PRIx64, &u, &v);
+      u = d2u(xfmod(u2d(u), u2d(v)));
+      printf("%" PRIx64 "\n", u);
+    } else if (startsWith(buf, "fabs ")) {
+      uint64_t u;
+      sscanf(buf, "fabs %" PRIx64, &u);
+      u = d2u(xfabs(u2d(u)));
+      printf("%" PRIx64 "\n", u);
+    } else if (startsWith(buf, "trunc ")) {
+      uint64_t u;
+      sscanf(buf, "trunc %" PRIx64, &u);
+      u = d2u(xtrunc(u2d(u)));
+      printf("%" PRIx64 "\n", u);
+    } else if (startsWith(buf, "floor ")) {
+      uint64_t u;
+      sscanf(buf, "floor %" PRIx64, &u);
+      u = d2u(xfloor(u2d(u)));
+      printf("%" PRIx64 "\n", u);
+    } else if (startsWith(buf, "ceil ")) {
+      uint64_t u;
+      sscanf(buf, "ceil %" PRIx64, &u);
+      u = d2u(xceil(u2d(u)));
+      printf("%" PRIx64 "\n", u);
+    } else if (startsWith(buf, "round ")) {
+      uint64_t u;
+      sscanf(buf, "round %" PRIx64, &u);
+      u = d2u(xround(u2d(u)));
+      printf("%" PRIx64 "\n", u);
+    } else if (startsWith(buf, "rint ")) {
+      uint64_t u;
+      sscanf(buf, "rint %" PRIx64, &u);
+      u = d2u(xrint(u2d(u)));
+      printf("%" PRIx64 "\n", u);
+    } else if (startsWith(buf, "frfrexp ")) {
+      uint64_t u;
+      sscanf(buf, "frfrexp %" PRIx64, &u);
+      u = d2u(xfrfrexp(u2d(u)));
+      printf("%" PRIx64 "\n", u);
+    } else if (startsWith(buf, "modf ")) {
+      uint64_t u;
+      sscanf(buf, "modf %" PRIx64, &u);
+      Sleef_double2 x = xmodf(u2d(u));
+      printf("%" PRIx64 " %" PRIx64 "\n", d2u(x.x), d2u(x.y));
+    }
+
+    else if (startsWith(buf, "sinf ")) {
       uint32_t u;
       sscanf(buf, "sinf %x", &u);
       u = f2u(xsinf(u2f(u)));
@@ -345,15 +369,20 @@ int main(int argc, char **argv) {
       sscanf(buf, "cbrtf %x", &u);
       u = f2u(xcbrtf(u2f(u)));
       printf("%x\n", u);
-    } else if (startsWith(buf, "sqrtf ")) {
+    } else if (startsWith(buf, "sqrtf_u05 ")) {
       uint32_t u;
-      sscanf(buf, "sqrtf %x", &u);
-      u = f2u(sqrt(u2f(u)));
+      sscanf(buf, "sqrtf_u05 %x", &u);
+      u = f2u(xsqrtf_u05(u2f(u)));
+      printf("%x\n", u);
+    } else if (startsWith(buf, "sqrtf_u35 ")) {
+      uint32_t u;
+      sscanf(buf, "sqrtf_u35 %x", &u);
+      u = f2u(xsqrtf_u35(u2f(u)));
       printf("%x\n", u);
     } else if (startsWith(buf, "ldexpf ")) {
       uint32_t u, v;
       sscanf(buf, "ldexpf %x %x", &u, &v);
-      u = f2u(xldexpf(u2f(u), (int)u2f(v)));
+      u = f2u(xldexpf(u2f(u), u2f(v)));
       printf("%x\n", u);
     } else if (startsWith(buf, "powf ")) {
       uint32_t u, v;
@@ -487,7 +516,91 @@ int main(int argc, char **argv) {
       sscanf(buf, "ilogbf %x", &u);
       i = xilogbf(u2f(u));
       printf("%d\n", i);
-    } else {
+    }
+    
+    else if (startsWith(buf, "hypotf_u05 ")) {
+      uint32_t u, v;
+      sscanf(buf, "hypotf_u05 %x %x", &u, &v);
+      u = f2u(xhypotf_u05(u2f(u), u2f(v)));
+      printf("%x\n", u);
+    } else if (startsWith(buf, "hypotf_u35 ")) {
+      uint32_t u, v;
+      sscanf(buf, "hypotf_u35 %x %x", &u, &v);
+      u = f2u(xhypotf_u35(u2f(u), u2f(v)));
+      printf("%x\n", u);
+    } else if (startsWith(buf, "copysignf ")) {
+      uint32_t u, v;
+      sscanf(buf, "copysignf %x %x", &u, &v);
+      u = f2u(xcopysignf(u2f(u), u2f(v)));
+      printf("%x\n", u);
+    } else if (startsWith(buf, "fmaxf ")) {
+      uint32_t u, v;
+      sscanf(buf, "fmaxf %x %x", &u, &v);
+      u = f2u(xfmaxf(u2f(u), u2f(v)));
+      printf("%x\n", u);
+    } else if (startsWith(buf, "fminf ")) {
+      uint32_t u, v;
+      sscanf(buf, "fminf %x %x", &u, &v);
+      u = f2u(xfminf(u2f(u), u2f(v)));
+      printf("%x\n", u);
+    } else if (startsWith(buf, "fdimf ")) {
+      uint32_t u, v;
+      sscanf(buf, "fdimf %x %x", &u, &v);
+      u = f2u(xfdimf(u2f(u), u2f(v)));
+      printf("%x\n", u);
+    } else if (startsWith(buf, "nextafterf ")) {
+      uint32_t u, v;
+      sscanf(buf, "nextafterf %x %x", &u, &v);
+      u = f2u(xnextafterf(u2f(u), u2f(v)));
+      printf("%x\n", u);
+    } else if (startsWith(buf, "fmodf ")) {
+      uint32_t u, v;
+      sscanf(buf, "fmodf %x %x", &u, &v);
+      u = f2u(xfmodf(u2f(u), u2f(v)));
+      printf("%x\n", u);
+    } else if (startsWith(buf, "fabsf ")) {
+      uint32_t u;
+      sscanf(buf, "fabsf %x", &u);
+      u = f2u(xfabsf(u2f(u)));
+      printf("%x\n", u);
+    } else if (startsWith(buf, "truncf ")) {
+      uint32_t u;
+      sscanf(buf, "truncf %x", &u);
+      u = f2u(xtruncf(u2f(u)));
+      printf("%x\n", u);
+    } else if (startsWith(buf, "floorf ")) {
+      uint32_t u;
+      sscanf(buf, "floorf %x", &u);
+      u = f2u(xfloorf(u2f(u)));
+      printf("%x\n", u);
+    } else if (startsWith(buf, "ceilf ")) {
+      uint32_t u;
+      sscanf(buf, "ceilf %x", &u);
+      u = f2u(xceilf(u2f(u)));
+      printf("%x\n", u);
+    } else if (startsWith(buf, "roundf ")) {
+      uint32_t u;
+      sscanf(buf, "roundf %x", &u);
+      u = f2u(xroundf(u2f(u)));
+      printf("%x\n", u);
+    } else if (startsWith(buf, "rintf ")) {
+      uint32_t u;
+      sscanf(buf, "rintf %x", &u);
+      u = f2u(xrintf(u2f(u)));
+      printf("%x\n", u);
+    } else if (startsWith(buf, "frfrexpf ")) {
+      uint32_t u;
+      sscanf(buf, "frfrexpf %x", &u);
+      u = f2u(xfrfrexpf(u2f(u)));
+      printf("%x\n", u);
+    } else if (startsWith(buf, "modff ")) {
+      uint32_t u;
+      sscanf(buf, "modff %x", &u);
+      Sleef_float2 x = xmodff(u2f(u));
+      printf("%x %x\n", f2u(x.x), f2u(x.y));
+    }
+
+    else {
       break;
     }
 
