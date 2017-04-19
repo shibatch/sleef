@@ -1,20 +1,13 @@
 language: c
 
 before_install:
-    - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
     - sudo apt-get -qq update
     - sudo apt-get install -y libmpfr-dev
-    - sudo apt-get install -y gcc-6
     
 compiler:
-    - gcc-6
+    - gcc
 
-before_script:
-    - make
-    - cd src
-    - cd libm-tester
-
-script: make
+script: make test
 
 # safelist
 branches:

@@ -15,6 +15,10 @@
 
 #include <mpfr.h>
 
+// This define is needed to prevent the `execvpe` function to raise a
+// warning at compile time. For more information, see
+// https://linux.die.net/man/3/execvp.
+#define _GNU_SOURCE
 #include <unistd.h>
 #include <assert.h>
 #include <sys/types.h>
@@ -30,6 +34,8 @@ void stop(char *mes) {
 
 int ptoc[2], ctop[2];
 int pid;
+
+extern char **environ;
 
 void startChild(const char *path, char *const argv[]) {
   pipe(ptoc);
@@ -59,7 +65,7 @@ void startChild(const char *path, char *const argv[]) {
     fflush(stdin);
     fflush(stdout);
 
-    execvp(path, argv);
+    execvpe(path, argv, environ);
 
     fprintf(stderr, "execvp in startChild : %s\n", strerror(errno));
 

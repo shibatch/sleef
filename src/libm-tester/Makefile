@@ -11,7 +11,7 @@ endif
 TARGET=tester iut
 TARGET2=tester2dp tester2sp
 
-ifeq ($(COMPILER), gcc)
+ifeq ($(ENABLEVECEXT), 1)
 TARGET+=iutvecext
 TARGET2+=tester2vecextdp tester2vecextsp
 endif
@@ -36,15 +36,20 @@ endif
 
 ifeq ($(ARCH), x86_64)
 
-TARGET += iutsse2 iutavx iutavx2
-TARGET2 += tester2sse2dp tester2sse2sp tester2avxdp tester2avxsp tester2avx2dp tester2avx2sp
+TARGET += iutsse2 iutavx
+TARGET2 += tester2sse2dp tester2sse2sp tester2avxdp tester2avxsp
+
+ifeq ($(ENABLEAVX2), 1)
+TARGET+=iutavx2
+TARGET2+=tester2avx2dp tester2avx2sp
+endif
 
 ifdef ENABLEFMA4
 TARGET += iutfma4
 TARGET2 += tester2fma4dp tester2fma4sp
 endif
 
-ifdef ENABLEAVX512F
+ifeq ($(ENABLEAVX512F),1)
 TARGET += iutavx512f
 TARGET2 += tester2avx512fdp tester2avx512fsp
 endif
@@ -64,8 +69,11 @@ TARGET += iutadvsimd
 TARGET2 += tester2advsimddp tester2advsimdsp
 endif
 
-.PHONY: all
+.PHONY: all test
 all : $(TARGET) $(TARGET2)
+
+test: $(TARGET) tester
+	$(foreach var,$(TARGET), LD_LIBRARY_PATH=../../lib:$LD_LIBRARY_PATH ./tester ./$(var);)
 
 #
 
