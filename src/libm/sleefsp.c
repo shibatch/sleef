@@ -1267,19 +1267,19 @@ EXPORT CONST float xfdimf(float x, float y) {
 
 EXPORT CONST float xtruncf(float x) {
   float fr = x - (int32_t)x;
-  return (xisinff(x) || fabsfk(x) > (float)(1LL << 23)) ? x : copysignfk(x - fr, x);
+  return (xisinff(x) || fabsfk(x) >= (float)(1LL << 23)) ? x : copysignfk(x - fr, x);
 }
 
 EXPORT CONST float xfloorf(float x) {
   float fr = x - (int32_t)x;
   fr = fr < 0 ? fr+1.0f : fr;
-  return (xisinff(x) || fabsfk(x) > (float)(1LL << 23)) ? x : copysignfk(x - fr, x);
+  return (xisinff(x) || fabsfk(x) >= (float)(1LL << 23)) ? x : copysignfk(x - fr, x);
 }
 
 EXPORT CONST float xceilf(float x) {
   float fr = x - (int32_t)x;
   fr = fr <= 0 ? fr : fr-1.0f;
-  return (xisinff(x) || fabsfk(x) > (float)(1LL << 23)) ? x : copysignfk(x - fr, x);
+  return (xisinff(x) || fabsfk(x) >= (float)(1LL << 23)) ? x : copysignfk(x - fr, x);
 }
 
 EXPORT CONST float xroundf(float d) {
@@ -1287,7 +1287,7 @@ EXPORT CONST float xroundf(float d) {
   float fr = x - (int32_t)x;
   if (fr == 0 && x <= 0) x--;
   fr = fr < 0 ? fr+1.0f : fr;
-  return (xisinff(x) || fabsfk(x) > (float)(1LL << 23)) ? d : copysignfk(x - fr, d);
+  return (xisinff(d) || fabsfk(d) >= (float)(1LL << 23)) ? d : copysignfk(x - fr, d);
 }
 
 EXPORT CONST float xrintf(float d) {
@@ -1295,7 +1295,7 @@ EXPORT CONST float xrintf(float d) {
   int32_t isodd = (1 & (int32_t)x) != 0;
   float fr = x - (int32_t)x;
   fr = (fr < 0 || (fr == 0 && isodd)) ? fr+1.0f : fr;
-  return (xisinff(x) || fabsfk(x) > (float)(1LL << 23)) ? d : copysignfk(x - fr, d);
+  return (xisinff(d) || fabsfk(d) >= (float)(1LL << 23)) ? d : copysignfk(x - fr, d);
 }
 
 EXPORT CONST Sleef_float2 xmodff(float x) {
@@ -1520,17 +1520,21 @@ EXPORT CONST float xfmaf(float x, float y, float z) {
 //
 
 #ifdef ENABLE_MAIN
-// gcc -I../common sleefsp.c -lm
+// gcc -w -DENABLE_MAIN -I../common sleefsp.c -lm
 #include <stdlib.h>
 int main(int argc, char **argv) {
   float d1 = atof(argv[1]);
-  float d2 = atof(argv[2]);
-  float d3 = atof(argv[3]);
+  //float d2 = atof(argv[2]);
+  //float d3 = atof(argv[3]);
   //printf("%.20g, %.20g\n", (double)d1, (double)d2);
   //float i2 = atoi(argv[2]);
   //float c = xatan2f_u1(d1, d2);
-  printf("test    = %.20g\n", (double)xfmaf(d1, d2, d3));
-  printf("correct = %.20g\n", (double)fmaf(d1, d2, d3));
+  //printf("round %.20g\n", (double)d1);
+  //printf("test    = %.20g\n", (double)xroundf(d1));
+  //printf("correct = %.20g\n", (double)roundf(d1));
+  //printf("rint %.20g\n", (double)d1);
+  //printf("test    = %.20g\n", (double)xrintf(d1));
+  //printf("correct = %.20g\n", (double)rintf(d1));
   //Sleef_float2 r = xsincospif_u35(d);
   //printf("%g, %g\n", (double)r.x, (double)r.y);
 }
