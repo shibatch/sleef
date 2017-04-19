@@ -94,7 +94,7 @@ else ifeq ($(OS),Linux)
       export ENABLEFMA4=1
       export ENABLEAVX512F= $(shell expr `$(CC) -dumpversion | sed 's/\..*//g'` '>=' 5)
       export ENABLEFLOAT80= $(shell expr `$(CC) -dumpversion | sed 's/\..*//g'` '>=' 5)
-      export ENABLEFLOAT128= $(shell expr `$(CC) -dumpversion | sed 's/\..*//g'` '>=' 5)
+      export ENABLEFLOAT128= $(shell expr `$(CC) -dumpversion | sed 's/\..*//g'` '>=' 7)
       ifeq ($(ENABLEFLOAT128), 1)
         export CFLAGS+=-DENABLEFLOAT128
       endif
