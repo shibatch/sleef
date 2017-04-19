@@ -109,7 +109,7 @@ tester2sse2sp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2sim
 #
 
 iutavx : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h iutsimd.c testerutil.c ../libm/renameavx.h ../../include/sleef.h
-	$(CC) $(CFLAGS) -DENABLE_AVX -mavx iutsimd.c testerutil.c -o iutavx -lsleef -lm
+	$(CC) $(CFLAGS) -DENABLE_AVX -mavx iutsimd.c testerutil.c -o iutavx -lsleef -lm -ltr
 
 tester2avxdp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2simddp.c testerutil.c ../libm/renameavx.h ../../include/sleef.h
 	$(CC) $(CFLAGS) -DENABLE_AVX -mavx -DUSEMPFR tester2simddp.c testerutil.c -o tester2avxdp -lsleef -lm -lmpfr -lrt
