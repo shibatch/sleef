@@ -78,7 +78,7 @@ test: $(TARGET) tester
 #
 
 iut : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h iut.c testerutil.c ../libm/rename.h ../../include/sleef.h
-	$(CC) $(CFLAGS) iut.c testerutil.c -o iut -lsleef -lm
+	$(CC) $(CFLAGS) iut.c testerutil.c -o iut -lsleef -lm -lrt
 
 tester2dp : testerutil.c ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2dp.c ../libm/rename.h ../../include/sleef.h
 	$(CC) $(CFLAGS) -DUSEMPFR tester2dp.c testerutil.c -o tester2dp -lsleef -lm -lmpfr

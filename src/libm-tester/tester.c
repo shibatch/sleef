@@ -3,6 +3,11 @@
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
+// This define is needed to prevent the `execvpe` function to raise a
+// warning at compile time. For more information, see
+// https://linux.die.net/man/3/execvp.
+#define _GNU_SOURCE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -15,10 +20,6 @@
 
 #include <mpfr.h>
 
-// This define is needed to prevent the `execvpe` function to raise a
-// warning at compile time. For more information, see
-// https://linux.die.net/man/3/execvp.
-#define _GNU_SOURCE
 #include <unistd.h>
 #include <assert.h>
 #include <sys/types.h>
