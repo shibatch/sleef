@@ -4,10 +4,10 @@ before_install:
     - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
     - sudo apt-get -qq update
     - sudo apt-get install -y libmpfr-dev
-    - sudo apt-get install -y gcc-7
+    - sudo apt-get install -y gcc-6
     
 compiler:
-    - gcc-7
+    - gcc-6
 
 before_script:
     - make
