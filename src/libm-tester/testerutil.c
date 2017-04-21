@@ -1,3 +1,8 @@
+//          Copyright Naoki Shibata 2010 - 2017.
+// Distributed under the Boost Software License, Version 1.0.
+//    (See accompanying file LICENSE.txt or copy at
+//          http://www.boost.org/LICENSE_1_0.txt)
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -151,11 +156,26 @@ double countULPdp(double d, mpfr_t c) {
   mpfr_inits(fra, frb, frc, frd, NULL);
 
   double c2 = mpfr_get_d(c, GMP_RNDN);
-  if (c2 == 0 && d != 0) return 10000;
-  if (isnan(c2) && isnan(d)) return 0;
-  if (isnan(c2) || isnan(d)) return 10001;
-  if (c2 == POSITIVE_INFINITY && d == POSITIVE_INFINITY) return 0;
-  if (c2 == NEGATIVE_INFINITY && d == NEGATIVE_INFINITY) return 0;
+  if (c2 == 0 && d != 0) {
+    mpfr_clears(fra, frb, frc, frd, NULL);
+    return 10000;
+  }
+  if (isnan(c2) && isnan(d)) {
+    mpfr_clears(fra, frb, frc, frd, NULL);
+    return 0;
+  }
+  if (isnan(c2) || isnan(d)) {
+    mpfr_clears(fra, frb, frc, frd, NULL);
+    return 10001;
+  }
+  if (c2 == POSITIVE_INFINITY && d == POSITIVE_INFINITY) {
+    mpfr_clears(fra, frb, frc, frd, NULL);
+    return 0;
+  }
+  if (c2 == NEGATIVE_INFINITY && d == NEGATIVE_INFINITY) {
+    mpfr_clears(fra, frb, frc, frd, NULL);
+    return 0;
+  }
 
   double v = 0;
   if (isinf(d) && !isinfl(mpfr_get_ld(c, GMP_RNDN))) {
@@ -184,11 +204,26 @@ double countULP2dp(double d, mpfr_t c) {
   mpfr_inits(fra, frb, frc, frd, NULL);
 
   double c2 = mpfr_get_d(c, GMP_RNDN);
-  if (c2 == 0 && d != 0) return 10000;
-  if (isnan(c2) && isnan(d)) return 0;
-  if (isnan(c2) || isnan(d)) return 10001;
-  if (c2 == POSITIVE_INFINITY && d == POSITIVE_INFINITY) return 0;
-  if (c2 == NEGATIVE_INFINITY && d == NEGATIVE_INFINITY) return 0;
+  if (c2 == 0 && d != 0) {
+    mpfr_clears(fra, frb, frc, frd, NULL);
+    return 10000;
+  }
+  if (isnan(c2) && isnan(d)) {
+    mpfr_clears(fra, frb, frc, frd, NULL);
+    return 0;
+  }
+  if (isnan(c2) || isnan(d)) {
+    mpfr_clears(fra, frb, frc, frd, NULL);
+    return 10001;
+  }
+  if (c2 == POSITIVE_INFINITY && d == POSITIVE_INFINITY) {
+    mpfr_clears(fra, frb, frc, frd, NULL);
+    return 0;
+  }
+  if (c2 == NEGATIVE_INFINITY && d == NEGATIVE_INFINITY) {
+    mpfr_clears(fra, frb, frc, frd, NULL);
+    return 0;
+  }
 
   double v = 0;
   if (isinf(d) && !isinfl(mpfr_get_ld(c, GMP_RNDN))) {
@@ -218,11 +253,26 @@ double countULPsp(float d, mpfr_t c) {
 
   d = flushToZero(d);
   float c2 = flushToZero(mpfr_get_d(c, GMP_RNDN));
-  if (c2 == 0 && d != 0) return 10000;
-  if (isnan(c2) && isnan(d)) return 0;
-  if (isnan(c2) || isnan(d)) return 10001;
-  if (c2 == POSITIVE_INFINITYf && d == POSITIVE_INFINITYf) return 0;
-  if (c2 == NEGATIVE_INFINITYf && d == NEGATIVE_INFINITYf) return 0;
+  if (c2 == 0 && d != 0) {
+    mpfr_clears(fra, frb, frc, frd, NULL);
+    return 10000;
+  }
+  if (isnan(c2) && isnan(d)) {
+    mpfr_clears(fra, frb, frc, frd, NULL);
+    return 0;
+  }
+  if (isnan(c2) || isnan(d)) {
+    mpfr_clears(fra, frb, frc, frd, NULL);
+    return 10001;
+  }
+  if (c2 == POSITIVE_INFINITYf && d == POSITIVE_INFINITYf) {
+    mpfr_clears(fra, frb, frc, frd, NULL);
+    return 0;
+  }
+  if (c2 == NEGATIVE_INFINITYf && d == NEGATIVE_INFINITYf) {
+    mpfr_clears(fra, frb, frc, frd, NULL);
+    return 0;
+  }
 
   double v = 0;
   if (isinf(d) && !isinfl(mpfr_get_ld(c, GMP_RNDN))) {
@@ -252,11 +302,26 @@ double countULP2sp(float d, mpfr_t c) {
 
   d = flushToZero(d);
   float c2 = flushToZero(mpfr_get_d(c, GMP_RNDN));
-  if (c2 == 0 && d != 0) return 10000;
-  if (isnan(c2) && isnan(d)) return 0;
-  if (isnan(c2) || isnan(d)) return 10001;
-  if (c2 == POSITIVE_INFINITYf && d == POSITIVE_INFINITYf) return 0;
-  if (c2 == NEGATIVE_INFINITYf && d == NEGATIVE_INFINITYf) return 0;
+  if (c2 == 0 && d != 0) {
+    mpfr_clears(fra, frb, frc, frd, NULL);
+    return 10000;
+  }
+  if (isnan(c2) && isnan(d)) {
+    mpfr_clears(fra, frb, frc, frd, NULL);
+    return 0;
+  }
+  if (isnan(c2) || isnan(d)) {
+    mpfr_clears(fra, frb, frc, frd, NULL);
+    return 10001;
+  }
+  if (c2 == POSITIVE_INFINITYf && d == POSITIVE_INFINITYf) {
+    mpfr_clears(fra, frb, frc, frd, NULL);
+    return 0;
+  }
+  if (c2 == NEGATIVE_INFINITYf && d == NEGATIVE_INFINITYf) {
+    mpfr_clears(fra, frb, frc, frd, NULL);
+    return 0;
+  }
 
   double v = 0;
   if (isinf(d) && !isinfl(mpfr_get_ld(c, GMP_RNDN))) {
