@@ -7,9 +7,4 @@ before_install:
 compiler:
     - gcc
 
-before_script:
-    - make
-    - cd src
-    - cd libm-tester
-
-script: make
+script: make test

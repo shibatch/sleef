@@ -11,7 +11,7 @@ endif
 TARGET=tester iut
 TARGET2=tester2dp tester2sp
 
-ifeq ($(COMPILER), gcc)
+ifeq ($(ENABLEVECEXT), 1)
 TARGET+=iutvecext
 TARGET2+=tester2vecextdp tester2vecextsp
 endif
@@ -36,15 +36,20 @@ endif
 
 ifeq ($(ARCH), x86_64)
 
-TARGET += iutsse2 iutavx iutavx2
-TARGET2 += tester2sse2dp tester2sse2sp tester2avxdp tester2avxsp tester2avx2dp tester2avx2sp
+TARGET += iutsse2 iutavx
+TARGET2 += tester2sse2dp tester2sse2sp tester2avxdp tester2avxsp
+
+ifeq ($(ENABLEAVX2), 1)
+TARGET+=iutavx2
+TARGET2+=tester2avx2dp tester2avx2sp
+endif
 
 ifdef ENABLEFMA4
 TARGET += iutfma4
 TARGET2 += tester2fma4dp tester2fma4sp
 endif
 
-ifdef ENABLEAVX512F
+ifeq ($(ENABLEAVX512F),1)
 TARGET += iutavx512f
 TARGET2 += tester2avx512fdp tester2avx512fsp
 endif
@@ -64,36 +69,39 @@ TARGET += iutadvsimd
 TARGET2 += tester2advsimddp tester2advsimdsp
 endif
 
-.PHONY: all
+.PHONY: all test
 all : $(TARGET) $(TARGET2)
+
+test: $(TARGET) tester
+	$(foreach var,$(TARGET), LD_LIBRARY_PATH=../../lib:$LD_LIBRARY_PATH ./tester ./$(var);)
 
 #
 
 iut : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h iut.c testerutil.c ../libm/rename.h ../../include/sleef.h
-	$(CC) $(CFLAGS) iut.c testerutil.c -o iut -lsleef -lm
+	$(CC) $(CFLAGS) iut.c testerutil.c -o iut -lsleef -lm -lrt
 
 tester2dp : testerutil.c ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2dp.c ../libm/rename.h ../../include/sleef.h
-	$(CC) $(CFLAGS) -DUSEMPFR tester2dp.c testerutil.c -o tester2dp -lsleef -lm -lmpfr
+	$(CC) $(CFLAGS) -DUSEMPFR tester2dp.c testerutil.c -o tester2dp -lsleef -lm -lmpfr -lrt
 
 tester2sp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2sp.c testerutil.c ../libm/rename.h ../../include/sleef.h
-	$(CC) $(CFLAGS) -DUSEMPFR tester2sp.c testerutil.c -o tester2sp -lsleef -lm -lmpfr
+	$(CC) $(CFLAGS) -DUSEMPFR tester2sp.c testerutil.c -o tester2sp -lsleef -lm -lmpfr -lrt
 
 tester2ld : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2ld.c ../libm/rename.h ../../include/sleef.h
-	$(CC) $(CFLAGS) tester2ld.c -o tester2ld -lsleef -lm -lmpfr
+	$(CC) $(CFLAGS) tester2ld.c -o tester2ld -lsleef -lm -lmpfr -lrt
 
 tester2qp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2qp.c ../libm/rename.h ../../include/sleef.h
-	$(CC) $(CFLAGS) tester2qp.c -o tester2qp -lsleef -lmpfr -lquadmath -lm
+	$(CC) $(CFLAGS) tester2qp.c -o tester2qp -lsleef -lmpfr -lquadmath -lm  -lrt
 
 #
 
 iutsse2 : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h iutsimd.c testerutil.c ../libm/renamesse2.h ../../include/sleef.h
-	$(CC) $(CFLAGS) -DENABLE_SSE2 -msse2 iutsimd.c testerutil.c -o iutsse2 -lsleef -lm
+	$(CC) $(CFLAGS) -DENABLE_SSE2 -msse2 iutsimd.c testerutil.c -o iutsse2 -lsleef -lm  -lrt
 
 tester2sse2dp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2simddp.c testerutil.c ../libm/renamesse2.h ../../include/sleef.h
-	$(CC) $(CFLAGS) -DENABLE_SSE2 -msse2 -DUSEMPFR tester2simddp.c testerutil.c -o tester2sse2dp -lsleef -lm -lmpfr
+	$(CC) $(CFLAGS) -DENABLE_SSE2 -msse2 -DUSEMPFR tester2simddp.c testerutil.c -o tester2sse2dp -lsleef -lm -lmpfr -lrt
 
 tester2sse2sp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2simdsp.c testerutil.c ../libm/renamesse2.h ../../include/sleef.h
-	$(CC) $(CFLAGS) -DENABLE_SSE2 -msse2 -DUSEMPFR tester2simdsp.c testerutil.c -o tester2sse2sp -lsleef -lm -lmpfr
+	$(CC) $(CFLAGS) -DENABLE_SSE2 -msse2 -DUSEMPFR tester2simdsp.c testerutil.c -o tester2sse2sp -lsleef -lm -lmpfr -lrt
 
 ../libm/renamesse2.h :
 	+"$(MAKE)" --directory=../libm renamesse2.h
@@ -101,13 +109,13 @@ tester2sse2sp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2sim
 #
 
 iutavx : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h iutsimd.c testerutil.c ../libm/renameavx.h ../../include/sleef.h
-	$(CC) $(CFLAGS) -DENABLE_AVX -mavx iutsimd.c testerutil.c -o iutavx -lsleef -lm
+	$(CC) $(CFLAGS) -DENABLE_AVX -mavx iutsimd.c testerutil.c -o iutavx -lsleef -lm -lrt
 
 tester2avxdp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2simddp.c testerutil.c ../libm/renameavx.h ../../include/sleef.h
-	$(CC) $(CFLAGS) -DENABLE_AVX -mavx -DUSEMPFR tester2simddp.c testerutil.c -o tester2avxdp -lsleef -lm -lmpfr
+	$(CC) $(CFLAGS) -DENABLE_AVX -mavx -DUSEMPFR tester2simddp.c testerutil.c -o tester2avxdp -lsleef -lm -lmpfr -lrt
 
 tester2avxsp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2simdsp.c testerutil.c ../libm/renameavx.h ../../include/sleef.h
-	$(CC) $(CFLAGS) -DENABLE_AVX -mavx -DUSEMPFR tester2simdsp.c testerutil.c -o tester2avxsp -lsleef -lm -lmpfr
+	$(CC) $(CFLAGS) -DENABLE_AVX -mavx -DUSEMPFR tester2simdsp.c testerutil.c -o tester2avxsp -lsleef -lm -lmpfr -lrt
 
 ../libm/renameavx.h :
 	+"$(MAKE)" --directory=../libm renameavx.h
@@ -115,13 +123,13 @@ tester2avxsp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2simd
 #
 
 iutfma4 : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h iutsimd.c testerutil.c ../libm/renamefma4.h ../../include/sleef.h
-	$(CC) $(CFLAGS) -DENABLE_FMA4 -mavx -mfma4 iutsimd.c testerutil.c -o iutfma4 -lsleef -lm
+	$(CC) $(CFLAGS) -DENABLE_FMA4 -mavx -mfma4 iutsimd.c testerutil.c -o iutfma4 -lsleef -lm -lrt
 
 tester2fma4dp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2simddp.c testerutil.c ../libm/renamefma4.h ../../include/sleef.h
-	$(CC) $(CFLAGS) -DENABLE_FMA4 -mfma4 -DUSEMPFR tester2simddp.c testerutil.c -o tester2fma4dp -lsleef -lm -lmpfr
+	$(CC) $(CFLAGS) -DENABLE_FMA4 -mfma4 -DUSEMPFR tester2simddp.c testerutil.c -o tester2fma4dp -lsleef -lm -lmpfr -lrt
 
 tester2fma4sp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2simdsp.c testerutil.c ../libm/renamefma4.h ../../include/sleef.h
-	$(CC) $(CFLAGS) -DENABLE_FMA4 -mfma4 -DUSEMPFR tester2simdsp.c testerutil.c -o tester2fma4sp -lsleef -lm -lmpfr
+	$(CC) $(CFLAGS) -DENABLE_FMA4 -mfma4 -DUSEMPFR tester2simdsp.c testerutil.c -o tester2fma4sp -lsleef -lm -lmpfr -lrt
 
 ../libm/renamefma4.h :
 	+"$(MAKE)" --directory=../libm renamefma4.h
@@ -132,10 +140,10 @@ iutavx2 : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h iutsimd.c tester
 	$(CC) $(CFLAGS) -DENABLE_AVX2 $(AVX2FLAG) iutsimd.c testerutil.c -o iutavx2 -lsleef -lm
 
 tester2avx2dp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2simddp.c testerutil.c ../libm/renameavx2.h ../../include/sleef.h
-	$(CC) $(CFLAGS) -DENABLE_AVX2 $(AVX2FLAG) -DUSEMPFR tester2simddp.c testerutil.c -o tester2avx2dp -lsleef -lm -lmpfr
+	$(CC) $(CFLAGS) -DENABLE_AVX2 $(AVX2FLAG) -DUSEMPFR tester2simddp.c testerutil.c -o tester2avx2dp -lsleef -lm -lmpfr -lrt
 
 tester2avx2sp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2simdsp.c testerutil.c ../libm/renameavx2.h ../../include/sleef.h
-	$(CC) $(CFLAGS) -DENABLE_AVX2 $(AVX2FLAG) -DUSEMPFR tester2simdsp.c testerutil.c -o tester2avx2sp -lsleef -lm -lmpfr
+	$(CC) $(CFLAGS) -DENABLE_AVX2 $(AVX2FLAG) -DUSEMPFR tester2simdsp.c testerutil.c -o tester2avx2sp -lsleef -lm -lmpfr -lrt
 
 ../libm/renameavx2.h :
 	+"$(MAKE)" --directory=../libm renameavx2.h
@@ -143,10 +151,10 @@ tester2avx2sp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2sim
 #
 
 iutavx512f : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h iutsimd.c testerutil.c ../libm/renameavx512f.h ../../include/sleef.h
-	$(CC) $(CFLAGS) -DENABLE_AVX512F $(AVX512FLAG) iutsimd.c testerutil.c -o iutavx512f -lsleef -lm
+	$(CC) $(CFLAGS) -DENABLE_AVX512F $(AVX512FLAG) iutsimd.c testerutil.c -o iutavx512f -lsleef -lm -lrt
 
 tester2avx512fdp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2simddp.c testerutil.c ../libm/renameavx512f.h ../../include/sleef.h
-	$(CC) $(CFLAGS) -DENABLE_AVX512F $(AVX512FLAG) -DUSEMPFR tester2simddp.c testerutil.c -o tester2avx512fdp -lsleef -lm -lmpfr
+	$(CC) $(CFLAGS) -DENABLE_AVX512F $(AVX512FLAG) -DUSEMPFR tester2simddp.c testerutil.c -o tester2avx512fdp -lsleef -lm -lmpfr -lrt
 
 tester2avx512fsp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2simdsp.c testerutil.c ../libm/renameavx512f.h ../../include/sleef.h
 	$(CC) $(CFLAGS) -DENABLE_AVX512F $(AVX512FLAG) -DUSEMPFR tester2simdsp.c testerutil.c -o tester2avx512fsp -lsleef -lm -lmpfr
@@ -157,41 +165,41 @@ tester2avx512fsp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2
 #
 
 iutneon32 : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h iutsimd.c testerutil.c ../libm/renameneon32.h ../../include/sleef.h
-	$(CC) $(CFLAGS) -DENABLE_NEON32 -mfpu=neon iutsimd.c testerutil.c -o iutneon32 -lsleef -lm
+	$(CC) $(CFLAGS) -DENABLE_NEON32 -mfpu=neon iutsimd.c testerutil.c -o iutneon32 -lsleef -lm -lrt
 
 
 #
 
 iutadvsimd : ../libm/sleefsimddp.c ../libm/sleefsimdsp.c ../arch/helperadvsimd.h
-	$(CC) $(CFLAGS) -DENABLE_ADVSIMD $(ADVSIMDFLAG) ../libm/sleefsimddp.c ../libm/sleefsimdsp.c iutsimd.c testerutil.c -o iutadvsimd -lm
+	$(CC) $(CFLAGS) -DENABLE_ADVSIMD $(ADVSIMDFLAG) ../libm/sleefsimddp.c ../libm/sleefsimdsp.c iutsimd.c testerutil.c -o iutadvsimd -lm  -lrt
 
 tester2advsimddp :  ../libm/sleefsimddp.c ../libm/sleefsimdsp.c ../arch/helperadvsimd.h tester2simddp.c testerutil.c
-	$(CC) $(CFLAGS) -DENABLE_ADVSIMD $(ADVSIMDFLAG) -DUSEMPFR ../libm/sleefsimddp.c ../libm/sleefsimdsp.c tester2simddp.c testerutil.c -o tester2advsimddp  -lm -lmpfr
+	$(CC) $(CFLAGS) -DENABLE_ADVSIMD $(ADVSIMDFLAG) -DUSEMPFR ../libm/sleefsimddp.c ../libm/sleefsimdsp.c tester2simddp.c testerutil.c -o tester2advsimddp  -lm -lmpfr -lrt
 
 tester2advsimdsp : ../libm/sleefsimddp.c ../libm/sleefsimdsp.c ../arch/helperadvsimd.h tester2simdsp.c testerutil.c
-	$(CC) $(CFLAGS) -DENABLE_ADVSIMD $(ADVSIMDFLAG) -DUSEMPFR ../libm/sleefsimddp.c ../libm/sleefsimdsp.c tester2simdsp.c testerutil.c -o tester2advsimdsp  -lm -lmpfr
+	$(CC) $(CFLAGS) -DENABLE_ADVSIMD $(ADVSIMDFLAG) -DUSEMPFR ../libm/sleefsimddp.c ../libm/sleefsimdsp.c tester2simdsp.c testerutil.c -o tester2advsimdsp  -lm -lmpfr -lrt
 
 #
 
 tester2vecextdp : ../libm/sleefsimddp.c tester2simddp.c testerutil.c
-	$(CC) $(CFLAGS) -Wno-attributes -I../libm -DENABLE_VECEXT -DUSEMPFR ../libm/sleefsimddp.c tester2simddp.c testerutil.c -lm -lmpfr -o tester2vecextdp
+	$(CC) $(CFLAGS) -Wno-attributes -I../libm -DENABLE_VECEXT -DUSEMPFR ../libm/sleefsimddp.c tester2simddp.c testerutil.c -lm -lmpfr -lrt -o tester2vecextdp
 
 tester2vecextsp : ../libm/sleefsimdsp.c tester2simdsp.c testerutil.c
-	$(CC) $(CFLAGS) -Wno-attributes -I../libm -DENABLE_VECEXT -DUSEMPFR ../libm/sleefsimdsp.c tester2simdsp.c testerutil.c -lm -lmpfr -o tester2vecextsp
+	$(CC) $(CFLAGS) -Wno-attributes -I../libm -DENABLE_VECEXT -DUSEMPFR ../libm/sleefsimdsp.c tester2simdsp.c testerutil.c -lm -lmpfr -lrt -o tester2vecextsp
 
 iutvecext : ../libm/sleefsimddp.c ../libm/sleefsimdsp.c iutsimd.c testerutil.c
-	$(CC) $(CFLAGS) -Wno-attributes -I../libm -DENABLE_VECEXT ../libm/sleefsimddp.c ../libm/sleefsimdsp.c iutsimd.c testerutil.c -lm -o iutvecext
+	$(CC) $(CFLAGS) -Wno-attributes -I../libm -DENABLE_VECEXT ../libm/sleefsimddp.c ../libm/sleefsimdsp.c iutsimd.c testerutil.c -lm -lrt -o iutvecext
 
 #
 
 tester2purecdp : ../libm/sleefsimddp.c tester2simddp.c testerutil.c
-	$(CC) $(CFLAGS) -Wno-attributes -I../libm -DENABLE_PUREC -DUSEMPFR ../libm/sleefsimddp.c tester2simddp.c testerutil.c -lm -lmpfr -o tester2purecdp
+	$(CC) $(CFLAGS) -Wno-attributes -I../libm -DENABLE_PUREC -DUSEMPFR ../libm/sleefsimddp.c tester2simddp.c testerutil.c -lm -lmpfr -lrt -o tester2purecdp
 
 tester2purecsp : ../libm/sleefsimdsp.c tester2simdsp.c testerutil.c
-	$(CC) $(CFLAGS) -Wno-attributes -I../libm -DENABLE_PUREC -DUSEMPFR ../libm/sleefsimdsp.c tester2simdsp.c testerutil.c -lm -lmpfr -o tester2purecsp
+	$(CC) $(CFLAGS) -Wno-attributes -I../libm -DENABLE_PUREC -DUSEMPFR ../libm/sleefsimdsp.c tester2simdsp.c testerutil.c -lm -lmpfr -lrt -o tester2purecsp
 
 iutpurec : ../libm/sleefsimddp.c ../libm/sleefsimdsp.c iutsimd.c testerutil.c
-	$(CC) $(CFLAGS) -Wno-attributes -I../libm -DENABLE_PUREC ../libm/sleefsimddp.c ../libm/sleefsimdsp.c iutsimd.c testerutil.c -lm -o iutpurec
+	$(CC) $(CFLAGS) -Wno-attributes -I../libm -DENABLE_PUREC ../libm/sleefsimddp.c ../libm/sleefsimdsp.c iutsimd.c testerutil.c -lm -lrt -o iutpurec
 
 #
 
@@ -204,7 +212,7 @@ iutpurec : ../libm/sleefsimddp.c ../libm/sleefsimdsp.c iutsimd.c testerutil.c
 #
 
 tester : tester.c testerutil.c
-	$(CC) $(CFLAGS) -Wno-unused-result -DUSEMPFR tester.c testerutil.c -lm -lmpfr -o tester
+	$(CC) $(CFLAGS) -Wno-unused-result -DUSEMPFR tester.c testerutil.c -lm -lmpfr -lrt -o tester
 
 #
 
