@@ -1532,9 +1532,10 @@ EXPORT CONST float xfmodf(float x, float y) {
   if (de < FLT_MIN) { nu *= 1ULL << 25; de *= 1ULL << 25; s = 1.0f / (1ULL << 25); }
   Sleef_float2 q, r = df(nu, 0);
 
-  for(int i=0;i<6;i++) {
+  for(int i=0;i<10;i++) {
     q = dfnormalize_f2_f2(dfdiv_f2_f2_f2(r, df(de, 0)));
     r = dfnormalize_f2_f2(dfadd2_f2_f2_f2(r, dfmul_f2_f_f(-xtruncf(q.y < 0 ? nexttoward0f(q.x) : q.x), de)));
+    if (r.x < y) break;
   }
   
   float ret = (r.x + r.y) * s;

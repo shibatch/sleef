@@ -107,6 +107,9 @@ static INLINE int vavailability_i(int name) {
 
 static INLINE void vprefetch_v_p(const void *ptr) { _mm_prefetch(ptr, _MM_HINT_T0); }
 
+static INLINE int vtestallones_i_vo32(vopmask g) { return _mm_movemask_epi8(g) == 0xFFFF; }
+static INLINE int vtestallones_i_vo64(vopmask g) { return _mm_movemask_epi8(g) == 0xFFFF; }
+
 //
 
 static vint2 vloadu_vi2_p(int32_t *p) { return _mm_loadu_si128((__m128i *)p); }

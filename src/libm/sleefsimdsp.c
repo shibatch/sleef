@@ -1647,9 +1647,10 @@ EXPORT CONST vfloat xfmodf(vfloat x, vfloat y) {
 
   vfloat2 q, r = vcast_vf2_vf_vf(nu, vcast_vf_f(0));
 
-  for(int i=0;i<6;i++) {
+  for(int i=0;i<10;i++) {
     q = dfnormalize_vf2_vf2(dfdiv_vf2_vf2_vf2(r, vcast_vf2_vf_vf(de, vcast_vf_f(0))));
     r = dfnormalize_vf2_vf2(dfadd2_vf2_vf2_vf2(r, dfmul_vf2_vf_vf(xtruncf(vsel_vf_vo_vf_vf(vlt_vo_vf_vf(q.y, vcast_vf_f(0)), vnexttoward0f(q.x), q.x)), vmul_vf_vf_vf(de, vcast_vf_f(-1)))));
+    if (vtestallones_i_vo32(vlt_vo_vf_vf(r.x, y))) break;
   }
   
   vfloat ret = vmul_vf_vf_vf(vadd_vf_vf_vf(r.x, r.y), s);

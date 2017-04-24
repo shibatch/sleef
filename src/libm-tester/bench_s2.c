@@ -109,7 +109,7 @@ Sleef___m128d_2 doNothing2_1_m128d(__m128d);
 Sleef___m256d_2 doNothing2_1_m256d(__m256d);
 
 int main(int argc, char **argv) {
-  const int niter1 = 10000, niter2 = 1000, niter = niter1 * niter2;
+  const int niter1 = 10000, niter2 = 10000, niter = niter1 * niter2;
   
   double a = 0.0, b = 6.28;
   if (argc >= 2) a = atof(argv[1]);
