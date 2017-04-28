@@ -44,11 +44,15 @@ static INLINE int vavailability_i(int name) { return 3; }
 static INLINE void vprefetch_v_p(const void *ptr) { }
 
 static INLINE int vtestallones_i_vo32(vopmask g) {
-  return vget_lane_u32(vpmin_u32(vand_u32(vget_low_u32(g), vget_high_u32(g)), vand_u32(vget_low_u32(g), vget_high_u32(g))), 0);
+  uint32x2_t x0 = vand_u32(vget_low_u32(g), vget_high_u32(g));
+  uint32x2_t x1 = vpmin_u32(x0, x0);
+  return vget_lane_u32(x1, 0);
 }
 
 static INLINE int vtestallones_i_vo64(vopmask g) {
-  return vget_lane_u32(vpmin_u32(vand_u32(vget_low_u32(g), vget_high_u32(g)), vand_u32(vget_low_u32(g), vget_high_u32(g))), 0);
+  uint32x2_t x0 = vand_u32(vget_low_u32(g), vget_high_u32(g));
+  uint32x2_t x1 = vpmin_u32(x0, x0);
+  return vget_lane_u32(x1, 0);
 }
 
 // Vector load / store
