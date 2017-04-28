@@ -97,29 +97,6 @@ void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
 
 //
 
-#define PI4_Af 0.78515625f
-#define PI4_Bf 0.00024187564849853515625f
-#define PI4_Cf 3.7747668102383613586e-08f
-#define PI4_Df 1.2816720341285448015e-12f
-
-#define PI_Af 3.140625f
-#define PI_Bf 0.0009670257568359375f
-#define PI_Cf 6.2771141529083251953e-07f
-#define PI_Df 1.2154201256553420762e-10f
-
-#define PI_XDf 1.2141754268668591976e-10f
-#define PI_XEf 1.2446743939339977025e-13f
-
-#define TRIGRANGEMAXf 1e+7 // 39000
-#define SQRT_FLT_MAX 18446743523953729536.0
-
-#define L2Uf 0.693145751953125f
-#define L2Lf 1.428606765330187045e-06f
-#define R_LN2f 1.442695040888963407359924681001892137426645954152985934135449406931f
-#define M_PIf ((float)M_PI)
-
-//
-
 static INLINE CONST vopmask visnegzero_vo_vf(vfloat d) {
   return veq_vo_vi2_vi2(vreinterpret_vi2_vf(d), vreinterpret_vi2_vf(vcast_vf_f(-0.0)));
 }
@@ -1647,7 +1624,7 @@ EXPORT CONST vfloat xfmodf(vfloat x, vfloat y) {
 
   vfloat2 q, r = vcast_vf2_vf_vf(nu, vcast_vf_f(0));
 
-  for(int i=0;i<10;i++) {
+  for(int i=0;i<6;i++) { // ceil(log2(FLT_MAX) / 23)
     q = dfnormalize_vf2_vf2(dfdiv_vf2_vf2_vf2(r, vcast_vf2_vf_vf(de, vcast_vf_f(0))));
     r = dfnormalize_vf2_vf2(dfadd2_vf2_vf2_vf2(r, dfmul_vf2_vf_vf(xtruncf(vsel_vf_vo_vf_vf(vlt_vo_vf_vf(q.y, vcast_vf_f(0)), vnexttoward0f(q.x), q.x)), vmul_vf_vf_vf(de, vcast_vf_f(-1)))));
     if (vtestallones_i_vo32(vlt_vo_vf_vf(r.x, y))) break;

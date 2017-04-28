@@ -328,8 +328,6 @@ static INLINE CONST Sleef_quad2 dqsqrt_q2_q2(Sleef_quad2 d) {
 
 //
 
-#define TRIGRANGEMAX2 1e+9
-
 EXPORT CONST Sleef_quad2 xsincospiq_u05(Sleef_quad d) {
   Sleef_quad u, s, t;
   Sleef_quad2 r, x, s2;

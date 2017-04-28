@@ -22,26 +22,6 @@
 #pragma fp_contract (off)
 #endif
 
-#define PI_A 3.1415926218032836914
-#define PI_B 3.1786509424591713469e-08
-#define PI_C 1.2246467864107188502e-16
-#define PI_D 1.2736634327021899816e-24
-
-#define PI_A2 3.141592653589793116
-#define PI_B2 1.2246467991473532072e-16
-
-#define M_2_PI_H 0.63661977236758138243
-#define M_2_PI_L -3.9357353350364971764e-17
-
-#define TRIGRANGEMAX 1e+14
-#define SQRT_DBL_MAX 1.3407807929942596355e+154
-
-#define M_4_PI 1.273239544735162542821171882678754627704620361328125
-
-#define L2U .69314718055966295651160180568695068359375
-#define L2L .28235290563031577122588448175013436025525412068e-12
-#define R_LN2 1.442695040888963407359924681001892137426645954152985934135449406931
-
 static INLINE CONST int64_t doubleToRawLongBits(double d) {
   union {
     double f;
@@ -782,12 +762,12 @@ EXPORT CONST double xsin_u1(double d) {
   Sleef_double2 s, t, x;
   int ql;
   
-  if (fabsk(d) < 15) {
+  if (fabsk(d) < TRIGRANGEMAX2) {
     ql = rintk(d * M_1_PI);
     u = mla(ql, -PI_A2, d);
     s = ddadd_d2_d_d (u,  ql * -PI_B2);
   } else {
-    double dqh = trunck(d * (M_1_PI / (1 << 24))) * (double)(1 << 24);
+    const double dqh = trunck(d * (M_1_PI / (1 << 24))) * (double)(1 << 24);
     ql = rintk(mla(d, M_1_PI, -dqh));
 
     u = mla(dqh, -PI_A, d);
@@ -863,7 +843,7 @@ EXPORT CONST double xcos_u1(double d) {
   
   d = fabsk(d);
 
-  if (d < 15) {
+  if (d < TRIGRANGEMAX2) {
     ql = mla(2, rintk(d * M_1_PI - 0.5), 1);
     s = ddadd2_d2_d_d(d, ql * (-PI_A2*0.5));
     s = ddadd_d2_d2_d(s, ql * (-PI_B2*0.5));
@@ -960,12 +940,12 @@ EXPORT CONST Sleef_double2 xsincos_u1(double d) {
   Sleef_double2 r, s, t, x;
   int ql;
   
-  if (fabsk(d) < 15) {
+  if (fabsk(d) < TRIGRANGEMAX2) {
     ql = rintk(d * (2 * M_1_PI));
     u = mla(ql, -PI_A2*0.5, d);
     s = ddadd_d2_d_d (u,  ql * (-PI_B2*0.5));
   } else {
-    double dqh = trunck(d * ((2 * M_1_PI) / (1 << 24))) * (double)(1 << 24);
+    const double dqh = trunck(d * ((2 * M_1_PI) / (1 << 24))) * (double)(1 << 24);
     ql = rintk(d * (2 * M_1_PI) - dqh);
 
     u = mla(dqh, -PI_A*0.5, d);
@@ -1016,8 +996,6 @@ EXPORT CONST Sleef_double2 xsincos_u1(double d) {
   return r;
 }
 
-#define TRIGRANGEMAX2 1e+9
-
 EXPORT CONST Sleef_double2 xsincospi_u05(double d) {
   double u, s, t;
   Sleef_double2 r, x, s2;
@@ -1066,7 +1044,7 @@ EXPORT CONST Sleef_double2 xsincospi_u05(double d) {
   if ((q & 4) != 0) { r.x = -r.x; }
   if (((q+2) & 4) != 0) { r.y = -r.y; }
 
-  if (fabsk(d) > TRIGRANGEMAX2/4) { r.x = r.y = 0; }
+  if (fabsk(d) > TRIGRANGEMAX3/4) { r.x = r.y = 0; }
   if (xisinf(d)) { r.x = r.y = NAN; }
 
   return r;
@@ -1114,7 +1092,7 @@ EXPORT CONST Sleef_double2 xsincospi_u35(double d) {
   if ((q & 4) != 0) { r.x = -r.x; }
   if (((q+2) & 4) != 0) { r.y = -r.y; }
 
-  if (fabsk(d) > TRIGRANGEMAX2/4) { r.x = r.y = 0; }
+  if (fabsk(d) > TRIGRANGEMAX3/4) { r.x = r.y = 0; }
   if (xisinf(d)) { r.x = r.y = NAN; }
 
   return r;
@@ -1169,12 +1147,12 @@ EXPORT CONST double xtan_u1(double d) {
   Sleef_double2 s, t, x;
   int ql;
   
-  if (fabsk(d) < 15) {
+  if (fabsk(d) < TRIGRANGEMAX2) {
     ql = rintk(d * (2 * M_1_PI));
     u = mla(ql, -PI_A2*0.5, d);
     s = ddadd_d2_d_d(u,  ql * (-PI_B2*0.5));
   } else {
-    double dqh = trunck(d * (M_2_PI / (1 << 24))) * (double)(1 << 24);
+    const double dqh = trunck(d * (M_2_PI / (1 << 24))) * (double)(1 << 24);
     s = ddadd2_d2_d2_d(ddmul_d2_d2_d(dd(M_2_PI_H, M_2_PI_L), d), (d < 0 ? -0.5 : 0.5) - dqh);
     ql = s.x + s.y;
 
@@ -1873,7 +1851,7 @@ EXPORT CONST double xfmod(double x, double y) {
   if (de < DBL_MIN) { nu *= 1ULL << 54; de *= 1ULL << 54; s = 1.0 / (1ULL << 54); }
   Sleef_double2 q, r = dd(nu, 0);
 
-  for(int i=0;i < 20;i++) {
+  for(int i=0;i < 20;i++) { // ceil(log2(DBL_MAX) / 52)
     q = ddnormalize_d2_d2(dddiv_d2_d2_d2(r, dd(de, 0)));
     r = ddnormalize_d2_d2(ddadd2_d2_d2_d2(r, ddmul_d2_d_d(upper2(xtrunc(q.y < 0 ? nexttoward0(q.x) : q.x)), -de)));
     if (r.x < y) break;

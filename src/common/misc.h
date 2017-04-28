@@ -3,6 +3,8 @@
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
+//
+
 #ifndef M_PI
 #define M_PI 3.141592653589793238462643383279502884
 #endif
@@ -26,6 +28,78 @@
 #ifndef M_2_PIl
 #define M_2_PIl 0.636619772367581343075535053490057448L
 #endif
+
+//
+
+/*
+  PI_A to PI_D are constants that satisfy the following two conditions.
+
+  * For PI_A, PI_B and PI_C, the last 28 bits are zero.
+  * PI_A + PI_B + PI_C + PI_D is close to PI as much as possible.
+
+  The argument of a trig function is multiplied by 1/PI, and the
+  integral part is divided into two parts, each has at most 28
+  bits. So, the maximum argument that could be correctly reduced
+  should be 2^(28*2-1) PI = 1.1e+17. However, due to internal
+  double precision calculation, the actual maximum argument that can
+  be correctly reduced is around 2^50 = 1.1e+15.
+ */
+
+#define PI_A 3.1415926218032836914
+#define PI_B 3.1786509424591713469e-08
+#define PI_C 1.2246467864107188502e-16
+#define PI_D 1.2736634327021899816e-24
+#define TRIGRANGEMAX 1e+15
+
+/*
+  PI_A2 and PI_B2 are constants that satisfy the following two conditions.
+
+  * The last 3 bits of PI_A2 are zero.
+  * PI_A2 + PI_B2 is close to PI as much as possible.
+
+  The argument of a trig function is multiplied by 1/PI, and the
+  integral part is multiplied by PI_A2. So, the maximum argument that
+  could be correctly reduced should be 2^(3-1) PI = 12.6. By testing,
+  we confirmed that it correctly reduces the argument up to around 15.
+ */
+
+#define PI_A2 3.141592653589793116
+#define PI_B2 1.2246467991473532072e-16
+#define TRIGRANGEMAX2 15
+
+#define M_2_PI_H 0.63661977236758138243
+#define M_2_PI_L -3.9357353350364971764e-17
+
+#define SQRT_DBL_MAX 1.3407807929942596355e+154
+
+#define TRIGRANGEMAX3 1e+9
+
+#define M_4_PI 1.273239544735162542821171882678754627704620361328125
+
+#define L2U .69314718055966295651160180568695068359375
+#define L2L .28235290563031577122588448175013436025525412068e-12
+#define R_LN2 1.442695040888963407359924681001892137426645954152985934135449406931
+
+//
+
+#define PI_Af 3.140625f
+#define PI_Bf 0.0009670257568359375f
+#define PI_Cf 6.2771141529083251953e-07f
+#define PI_Df 1.2154201256553420762e-10f
+
+#define PI_XDf 1.2141754268668591976e-10f
+#define PI_XEf 1.2446743939339977025e-13f
+
+#define TRIGRANGEMAXf 1e+7 // 39000
+#define SQRT_FLT_MAX 18446743523953729536.0
+
+#define L2Uf 0.693145751953125f
+#define L2Lf 1.428606765330187045e-06f
+
+#define R_LN2f 1.442695040888963407359924681001892137426645954152985934135449406931f
+#define M_PIf ((float)M_PI)
+
+//
 
 #ifndef MIN
 #define MIN(x, y) ((x) < (y) ? (x) : (y))

@@ -22,23 +22,6 @@
 #pragma fp_contract (off)
 #endif
 
-#define PI_Af 3.140625f
-#define PI_Bf 0.0009670257568359375f
-#define PI_Cf 6.2771141529083251953e-07f
-#define PI_Df 1.2154201256553420762e-10f
-
-#define PI_XDf 1.2141754268668591976e-10f
-#define PI_XEf 1.2446743939339977025e-13f
-
-#define TRIGRANGEMAXf 1e+7 // 39000
-#define SQRT_FLT_MAX 18446743523953729536.0
-
-#define L2Uf 0.693145751953125f
-#define L2Lf 1.428606765330187045e-06f
-
-#define R_LN2f 1.442695040888963407359924681001892137426645954152985934135449406931f
-#define M_PIf ((float)M_PI)
-
 static INLINE CONST int32_t floatToRawIntBits(float d) {
   union {
     float f;
@@ -1532,7 +1515,7 @@ EXPORT CONST float xfmodf(float x, float y) {
   if (de < FLT_MIN) { nu *= 1ULL << 25; de *= 1ULL << 25; s = 1.0f / (1ULL << 25); }
   Sleef_float2 q, r = df(nu, 0);
 
-  for(int i=0;i<10;i++) {
+  for(int i=0;i<6;i++) { // ceil(log2(FLT_MAX) / 23)
     q = dfnormalize_f2_f2(dfdiv_f2_f2_f2(r, df(de, 0)));
     r = dfnormalize_f2_f2(dfadd2_f2_f2_f2(r, dfmul_f2_f_f(-xtruncf(q.y < 0 ? nexttoward0f(q.x) : q.x), de)));
     if (r.x < y) break;
