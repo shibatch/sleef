@@ -207,6 +207,18 @@ static INLINE vmask vxor_vm_vo32_vm(vopmask x, vmask y)      { vmask   ret; for(
 static INLINE vdouble vsel_vd_vo_vd_vd   (vopmask o, vdouble x, vdouble y) { vdouble ret; for(int i=0;i<VECTLENDP*2;i++) ret.u[i] = (o.u[i] & x.u[i]) | (y.u[i] & ~o.u[i]); return ret; }
 static INLINE vint2   vsel_vi2_vo_vi2_vi2(vopmask o, vint2 x, vint2 y)     { vint2 ret;   for(int i=0;i<VECTLENDP*2;i++) ret.u[i] = (o.u[i] & x.u[i]) | (y.u[i] & ~o.u[i]); return ret; }
 
+static INLINE CONST vdouble vsel_vd_vo_d_d(vopmask o, double v1, double v0) {
+  return vsel_vd_vo_vd_vd(o, vcast_vd_d(v1), vcast_vd_d(v0));
+}
+
+static INLINE vdouble vsel_vd_vo_vo_d_d_d(vopmask o0, vopmask o1, double d0, double d1, double d2) {
+  return vsel_vd_vo_vd_vd(o0, vcast_vd_d(d0), vsel_vd_vo_d_d(o1, d1, d2));
+}
+
+static INLINE vdouble vsel_vd_vo_vo_vo_d_d_d_d(vopmask o0, vopmask o1, vopmask o2, double d0, double d1, double d2, double d3) {
+  return vsel_vd_vo_vd_vd(o0, vcast_vd_d(d0), vsel_vd_vo_vd_vd(o1, vcast_vd_d(d1), vsel_vd_vo_d_d(o2, d2, d3)));
+}
+
 static INLINE vdouble vcast_vd_vi(vint vi) { vdouble ret; for(int i=0;i<VECTLENDP;i++) ret.d[i] = vi.i[i]; return ret; }
 static INLINE vint vtruncate_vi_vd(vdouble vd) { vint ret; for(int i=0;i<VECTLENDP;i++) ret.i[i] = (int)vd.d[i]; return ret; }
 static INLINE vint vrint_vi_vd(vdouble vd) { vint ret; for(int i=0;i<VECTLENDP;i++) ret.i[i] = vd.d[i] > 0 ? (int)(vd.d[i] + 0.5) : (int)(vd.d[i] - 0.5); return ret; }

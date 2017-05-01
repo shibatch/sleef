@@ -80,6 +80,11 @@ int main(int argc, char **argv) {
       sscanf(buf, "sincospi_u35 %" PRIx64, &u);
       Sleef_double2 x = xsincospi_u35(u2d(u));
       printf("%" PRIx64 " %" PRIx64 "\n", d2u(x.x), d2u(x.y));
+    } else if (startsWith(buf, "sinpi_u05 ")) {
+      uint64_t u;
+      sscanf(buf, "sinpi_u05 %" PRIx64, &u);
+      u = d2u(xsinpi_u05(u2d(u)));
+      printf("%" PRIx64 "\n", u);
     } else if (startsWith(buf, "tan ")) {
       uint64_t u;
       sscanf(buf, "tan %" PRIx64, &u);
@@ -312,6 +317,28 @@ int main(int argc, char **argv) {
       sscanf(buf, "modf %" PRIx64, &u);
       Sleef_double2 x = xmodf(u2d(u));
       printf("%" PRIx64 " %" PRIx64 "\n", d2u(x.x), d2u(x.y));
+    }
+
+    else if (startsWith(buf, "tgamma_u1 ")) {
+      uint64_t u;
+      sscanf(buf, "tgamma_u1 %" PRIx64, &u);
+      u = d2u(xtgamma_u1(u2d(u)));
+      printf("%" PRIx64 "\n", u);
+    } else if (startsWith(buf, "lgamma_u1 ")) {
+      uint64_t u;
+      sscanf(buf, "lgamma_u1 %" PRIx64, &u);
+      u = d2u(xlgamma_u1(u2d(u)));
+      printf("%" PRIx64 "\n", u);
+    } else if (startsWith(buf, "erf_u1 ")) {
+      uint64_t u;
+      sscanf(buf, "erf_u1 %" PRIx64, &u);
+      u = d2u(xerf_u1(u2d(u)));
+      printf("%" PRIx64 "\n", u);
+    } else if (startsWith(buf, "erfc_u15 ")) {
+      uint64_t u;
+      sscanf(buf, "erfc_u15 %" PRIx64, &u);
+      u = d2u(xerfc_u15(u2d(u)));
+      printf("%" PRIx64 "\n", u);
     }
 
     else if (startsWith(buf, "sinf ")) {

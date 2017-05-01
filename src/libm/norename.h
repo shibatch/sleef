@@ -53,6 +53,7 @@ vdouble xcbrt_u1(vdouble d);
 
 vdouble2 xsincospi_u05(vdouble d);
 vdouble2 xsincospi_u35(vdouble d);
+vdouble xsinpi_u05(vdouble d);
 
 vdouble xldexp(vdouble, vint);
 vint xilogb(vdouble);
@@ -77,6 +78,12 @@ vdouble xfrfrexp(vdouble);
 vint xexpfrexp(vdouble);
 vdouble xfmod(vdouble, vdouble);
 vdouble2 xmodf(vdouble);
+
+vdouble xlgamma_u1(vdouble);
+vdouble xtgamma_u1(vdouble);
+
+vdouble xerf_u1(vdouble);
+vdouble xerfc_u15(vdouble);
 #endif
 
 //

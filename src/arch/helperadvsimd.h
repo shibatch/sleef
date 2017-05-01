@@ -130,11 +130,11 @@ static INLINE vfloat vsqrt_vf_vf(vfloat d) { return vsqrtq_f32(d); }
 
 // Multiply accumulate: z = z + x * y
 static INLINE vfloat vmla_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) {
-  return vmlaq_f32(z, x, y);
+  return vfmaq_f32(z, x, y);
 }
 // Multiply subtract: z = z = x * y
 static INLINE vfloat vmlanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) {
-  return vmlsq_f32(z, x, y);
+  return vfmsq_f32(z, x, y);
 }
 
 // |x|, -x
@@ -290,11 +290,7 @@ static INLINE vdouble vmin_vd_vd_vd(vdouble x, vdouble y) {
 
 // Multiply accumulate: z = z + x * y
 static INLINE vdouble vmla_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) {
-  return vmlaq_f64(z, x, y);
-}
-//[z = x * y - z]
-static INLINE vdouble vmlapn_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) {
-  return vsub_vd_vd_vd(vmul_vd_vd_vd(x, y), z);
+  return vfmaq_f64(z, x, y);
 }
 
 static INLINE vdouble vmlanp_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) {
@@ -307,6 +303,11 @@ static INLINE vdouble vfma_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { // z +
 
 static INLINE vdouble vfmanp_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { // z - x * y
   return vfmsq_f64(z, x, y);
+}
+
+//[z = x * y - z]
+static INLINE vdouble vmlapn_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) {
+  return vneg_vd_vd(vfmanp_vd_vd_vd_vd(x, y, z));
 }
 
 static INLINE vdouble vfmapn_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { // x * y - z
@@ -348,6 +349,28 @@ static INLINE vopmask vge_vo_vd_vd(vdouble x, vdouble y) {
 // Conditional select
 static INLINE vdouble vsel_vd_vo_vd_vd(vopmask mask, vdouble x, vdouble y) {
   return vbslq_f64(vreinterpretq_u64_u32(mask), x, y);
+}
+
+static INLINE CONST vdouble vsel_vd_vo_d_d(vopmask o, double d0, double d1) {
+  uint8x16_t idx = vbslq_u8(vreinterpretq_u8_u32(o), (uint8x16_t) { 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7 },
+			    (uint8x16_t) { 8, 9, 10, 11, 12, 13, 14, 15, 8, 9, 10, 11, 12, 13, 14, 15 });
+  
+  uint8x16_t tab = (uint8x16_t) (float64x2_t) { d0, d1 };
+  return (vdouble) vqtbl1q_u8(tab, idx);
+}
+
+static INLINE vdouble vsel_vd_vo_vo_vo_d_d_d_d(vopmask o0, vopmask o1, vopmask o2, double d0, double d1, double d2, double d3) {
+  uint8x16_t idx = vbslq_u8(vreinterpretq_u8_u32(o0), (uint8x16_t) { 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7 },
+			    vbslq_u8(vreinterpretq_u8_u32(o1), (uint8x16_t) { 8, 9, 10, 11, 12, 13, 14, 15, 8, 9, 10, 11, 12, 13, 14, 15 },
+				     vbslq_u8(vreinterpretq_u8_u32(o2), (uint8x16_t) { 16, 17, 18, 19, 20, 21, 22, 23, 16, 17, 18, 19, 20, 21, 22, 23 },
+					      (uint8x16_t) { 24, 25, 26, 27, 28, 29, 30, 31, 24, 25, 26, 27, 28, 29, 30, 31 })));
+  
+  uint8x16x2_t tab = { { (uint8x16_t) (float64x2_t) { d0, d1 }, (uint8x16_t) (float64x2_t) { d2, d3 } } }; 
+  return (vdouble) vqtbl2q_u8(tab, idx);
+}
+
+static INLINE vdouble vsel_vd_vo_vo_d_d_d(vopmask o0, vopmask o1, double d0, double d1, double d2) {
+  return vsel_vd_vo_vo_vo_d_d_d_d(o0, o1, o1, d0, d1, d2, d2);
 }
 
 static INLINE vdouble vrint_vd_vd(vdouble d) {

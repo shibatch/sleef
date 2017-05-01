@@ -437,6 +437,18 @@ static INLINE vmask vxor_vm_vo32_vm(vopmask x, vmask y) { return x ^ y; }
 static INLINE vdouble vsel_vd_vo_vd_vd(vopmask o, vdouble x, vdouble y) { return (vdouble)(((vmask)o & (vmask)x) | ((vmask)y & ~(vmask)o)); }
 static INLINE vint2 vsel_vi2_vo_vi2_vi2(vopmask o, vint2 x, vint2 y) { return (vint2)(((vmask)o & (vmask)x) | ((vmask)y & ~(vmask)o)); }
 
+static INLINE CONST vdouble vsel_vd_vo_d_d(vopmask o, double v1, double v0) {
+  return vsel_vd_vo_vd_vd(o, vcast_vd_d(v1), vcast_vd_d(v0));
+}
+
+static INLINE vdouble vsel_vd_vo_vo_d_d_d(vopmask o0, vopmask o1, double d0, double d1, double d2) {
+  return vsel_vd_vo_vd_vd(o0, vcast_vd_d(d0), vsel_vd_vo_d_d(o1, d1, d2));
+}
+
+static INLINE vdouble vsel_vd_vo_vo_vo_d_d_d_d(vopmask o0, vopmask o1, vopmask o2, double d0, double d1, double d2, double d3) {
+  return vsel_vd_vo_vd_vd(o0, vcast_vd_d(d0), vsel_vd_vo_vd_vd(o1, vcast_vd_d(d1), vsel_vd_vo_d_d(o2, d2, d3)));
+}
+
 static INLINE vdouble vcast_vd_vi(vint vi) {
 #if defined(__clang__)
   return __builtin_convertvector(vi, vdouble);

@@ -199,6 +199,18 @@ static INLINE vdouble vsel_vd_vo_vd_vd(vopmask mask, vdouble x, vdouble y) {
   return _mm512_mask_blend_pd(mask, y, x);
 }
 
+static INLINE CONST vdouble vsel_vd_vo_d_d(vopmask o, double v1, double v0) {
+  return vsel_vd_vo_vd_vd(o, vcast_vd_d(v1), vcast_vd_d(v0));
+}
+
+static INLINE vdouble vsel_vd_vo_vo_d_d_d(vopmask o0, vopmask o1, double d0, double d1, double d2) {
+  return vsel_vd_vo_vd_vd(o0, vcast_vd_d(d0), vsel_vd_vo_d_d(o1, d1, d2));
+}
+
+static INLINE vdouble vsel_vd_vo_vo_vo_d_d_d_d(vopmask o0, vopmask o1, vopmask o2, double d0, double d1, double d2, double d3) {
+  return vsel_vd_vo_vd_vd(o0, vcast_vd_d(d0), vsel_vd_vo_vd_vd(o1, vcast_vd_d(d1), vsel_vd_vo_d_d(o2, d2, d3)));
+}
+
 static INLINE vopmask visinf_vo_vd(vdouble d) {
   return _mm512_cmp_pd_mask(vabs_vd_vd(d), _mm512_set1_pd(INFINITY), _CMP_EQ_OQ);
 }
