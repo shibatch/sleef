@@ -785,7 +785,7 @@ int main(int argc,char **argv)
       double u0 = countULPdp(t = xfmod(d, d2), frx);
       long double c = mpfr_get_ld(frx, GMP_RNDN);
 
-      if (fabsl((long double)d / d2) < 1e+60 && u0 > 0.5) {
+      if (fabsl((long double)d / d2) < 1e+300 && u0 > 0.5) {
 	printf("Pure C fmod arg=%.20g, %.20g  ulp=%.20g\n", d, d2, u0);
 	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
 	fflush(stdout); ecnt++;

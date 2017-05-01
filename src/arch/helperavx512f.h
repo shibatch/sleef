@@ -62,6 +62,14 @@ static INLINE int vavailability_i(int name) {
 
 static INLINE void vprefetch_v_p(const void *ptr) { _mm_prefetch(ptr, _MM_HINT_T0); }
 
+#ifdef __INTEL_COMPILER
+static INLINE int vtestallones_i_vo64(vopmask g) { return _mm512_mask2int(g) == 0xff; }
+static INLINE int vtestallones_i_vo32(vopmask g) { return _mm512_mask2int(g) == 0xffff; }
+#else
+static INLINE int vtestallones_i_vo64(vopmask g) { return g == 0xff; }
+static INLINE int vtestallones_i_vo32(vopmask g) { return g == 0xffff; }
+#endif
+
 //
 
 static vint2 vloadu_vi2_p(int32_t *p) { return _mm512_loadu_si512((__m512i const *)p); }

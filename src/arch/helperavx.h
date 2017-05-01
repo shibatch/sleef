@@ -88,6 +88,14 @@ static INLINE int vavailability_i(int name) {
 
 static INLINE void vprefetch_v_p(const void *ptr) { _mm_prefetch(ptr, _MM_HINT_T0); }
 
+static INLINE int vtestallones_i_vo32(vopmask g) {
+  return _mm_test_all_ones(_mm_and_si128(_mm256_extractf128_si256(g, 0), _mm256_extractf128_si256(g, 1)));
+}
+
+static INLINE int vtestallones_i_vo64(vopmask g) {
+  return _mm_test_all_ones(_mm_and_si128(_mm256_extractf128_si256(g, 0), _mm256_extractf128_si256(g, 1)));
+}
+
 //
 
 static INLINE vdouble vcast_vd_d(double d) { return _mm256_set1_pd(d); }

@@ -315,8 +315,6 @@ static INLINE CONST Sleef_longdouble2 dlsqrt_l2_l2(Sleef_longdouble2 d) {
 
 //
 
-#define TRIGRANGEMAX2 1e+9
-
 EXPORT CONST Sleef_longdouble2 xsincospil_u05(long double d) {
   long double u, s, t;
   Sleef_longdouble2 r, x, s2;

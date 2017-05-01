@@ -380,6 +380,14 @@ static INLINE vlongdouble vnegpos_vl_vl(vlongdouble d0) {
 static INLINE int vavailability_i(int name) { return -1; }
 static INLINE void vprefetch_v_p(const void *ptr) { }
 
+static INLINE int vtestallones_i_vo64(vopmask g) {
+  int ret = 1; for(int i=0;i<VECTLENDP*2;i++) ret = ret && g[i]; return ret;
+}
+
+static INLINE int vtestallones_i_vo32(vopmask g) {
+  int ret = 1; for(int i=0;i<VECTLENDP*2;i++) ret = ret && g[i]; return ret;
+}
+
 //
 
 static vint2 vloadu_vi2_p(int32_t *p) {

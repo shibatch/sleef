@@ -60,6 +60,14 @@ typedef quadVector vquad;
 static INLINE int vavailability_i(int name) { return -1; }
 static INLINE void vprefetch_v_p(const void *ptr) { }
 
+static INLINE int vtestallones_i_vo64(vopmask g) {
+  int ret = 1; for(int i=0;i<VECTLENDP;i++) ret = ret && g.x[i]; return ret;
+}
+
+static INLINE int vtestallones_i_vo32(vopmask g) {
+  int ret = 1; for(int i=0;i<VECTLENSP;i++) ret = ret && g.u[i]; return ret;
+}
+
 //
 
 static vint2 vloadu_vi2_p(int32_t *p) {
@@ -170,6 +178,8 @@ static INLINE vfloat vreva2_vf_vf(vfloat d0) {
   return r;
 }
 
+static INLINE vdouble vcast_vd_d(double d) { vdouble ret; for(int i=0;i<VECTLENDP;i++) ret.d[i] = d; return ret; }
+
 //
 
 static INLINE vopmask vand_vo_vo_vo   (vopmask x, vopmask y) { vopmask ret; for(int i=0;i<VECTLENDP*2;i++) ret.u[i] = x.u[i] &  y.u[i]; return ret; }
@@ -208,7 +218,6 @@ static INLINE vopmask veq64_vo_vm_vm(vmask x, vmask y) { vopmask ret; for(int i=
 
 //
 
-static INLINE vdouble vcast_vd_d(double d) { vdouble ret; for(int i=0;i<VECTLENDP;i++) ret.d[i] = d; return ret; }
 static INLINE vmask vreinterpret_vm_vd(vdouble vd) { union { vdouble vd; vmask vm; } cnv; cnv.vd = vd; return cnv.vm; }
 static INLINE vint2 vreinterpret_vi2_vd(vdouble vd) { union { vdouble vd; vint2 vi2; } cnv; cnv.vd = vd; return cnv.vi2; }
 static INLINE vdouble vreinterpret_vd_vi2(vint2 vi) { union { vint2 vi2; vdouble vd; } cnv; cnv.vi2 = vi; return cnv.vd; }
