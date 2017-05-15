@@ -6,6 +6,7 @@
 #ifndef __VECTORTYPE_H__
 #define __VECTORTYPE_H__
 
+#include <math.h>
 #include "sleef.h"
 
 #ifdef ENABLE_SSE2

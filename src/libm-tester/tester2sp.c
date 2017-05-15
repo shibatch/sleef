@@ -805,7 +805,7 @@ int main(int argc,char **argv)
       double u0 = countULP2sp(t = xfmaf(d, d2, d3), frx);
       double c = mpfr_get_d(frx, GMP_RNDN);
 
-      if ((-1e+34 < c && c < 1e+34 && u0 > 0.5001) ||
+      if ((-1e+34 < c && c < 1e+33 && u0 > 0.5001) ||
 	  !(u0 <= 0.5001 || isinf(t))) {
 	printf("Pure C fmaf arg=%.20g, %.20g, %.20g  ulp=%.20g\n", d, d2, d3, u0);
 	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);

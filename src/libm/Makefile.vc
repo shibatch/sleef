@@ -6,11 +6,24 @@ OBJ=sleefdp.obj sleefsp.obj sleefld.obj
 OBJ+=sleefdpsse2.obj sleefdpavx.obj sleefdpavx2.obj
 OBJ+=sleefspsse2.obj sleefspavx.obj sleefspavx2.obj
 
+OBJ2=sleefgdpsse2.obj sleefgdpavx.obj sleefgdpavx2.obj sleefgspsse2.obj sleefgspavx.obj sleefgspavx2.obj
+
 .PHONY: all
 all : libm.lib sleef.h
 
 libm.lib : $(OBJ)
 	lib /out:libm.lib $(OBJ)
+
+libgm.lib : $(OBJ2)
+	lib /out:libgm.lib $(OBJ2)
+
+OBJ.txt : $(OBJ)
+	rm -rf OBJ.txt
+	for i in `echo $(OBJ)`; do ../script/abspath.sh $(@D) $$i >> OBJ.txt; done
+
+OBJ2.txt : $(OBJ2)
+	rm -rf OBJ2.txt
+	for i in `echo $(OBJ2)`; do ../script/abspath.sh $(@D) $$i >> OBJ2.txt; done
 
 sleef.h : mkrename.exe
 	cp sleeflibm.h.org sleef.h
@@ -38,18 +51,33 @@ mkrename.exe : mkrename.c
 	$(CC) $(CFLAGS) mkrename.c
 	rm -f mkrename.obj
 
-#
+mkrename_gnuabi.exe : mkrename_gnuabi.c
+	$(CC) $(CFLAGS) mkrename_gnuabi.c
+	rm -f mkrename_gnuabi.obj
+
+##
 
 sleefdpsse2.obj : sleefsimddp.c renamesse2.h
-	$(CC) $(CFLAGS) $(OPTFLAGS) -DDORENAME -DENABLE_SSE2 sleefsimddp.c /c /Fosleefdpsse2.obj
+	$(CC) $(CFLAGS) $(OPTFLAGS) -DDORENAME -DENABLE_SSE2 -D__SSE2__ sleefsimddp.c /c /Fosleefdpsse2.obj
 
 sleefspsse2.obj : sleefsimdsp.c renamesse2.h
-	$(CC) $(CFLAGS) $(OPTFLAGS) -DDORENAME -DENABLE_SSE2 sleefsimdsp.c /c /Fosleefspsse2.obj
+	$(CC) $(CFLAGS) $(OPTFLAGS) -DDORENAME -DENABLE_SSE2 -D__SSE2__ sleefsimdsp.c /c /Fosleefspsse2.obj
 
 renamesse2.h : mkrename.exe
 	./mkrename.exe sse2 2 4 > renamesse2.h
 
 #
+
+sleefgdpsse2.obj : sleefsimddp.c renamesse2_gnuabi.h
+	$(CC) $(CFLAGS) $(OPTFLAGS) -DDORENAME -DENABLE_SSE2 -D__SSE2__ -DENABLE_GNUABI sleefsimddp.c /c /Fosleefgdpsse2.obj
+
+sleefgspsse2.obj : sleefsimdsp.c renamesse2_gnuabi.h
+	$(CC) $(CFLAGS) $(OPTFLAGS) -DDORENAME -DENABLE_SSE2 -D__SSE2__ -DENABLE_GNUABI sleefsimdsp.c /c /Fosleefgspsse2.obj
+
+renamesse2_gnuabi.h : mkrename_gnuabi.exe
+	./mkrename_gnuabi.exe sse2 b 2 4 _mm128d _mm128 _mm128i _mm128i '__SSE2__' > renamesse2_gnuabi.h
+
+##
 
 sleefdpavx.obj : sleefsimddp.c renameavx.h
 	$(CC) $(CFLAGS) $(OPTFLAGS) -DDORENAME -DENABLE_AVX /arch:AVX sleefsimddp.c /c /Fosleefdpavx.obj
@@ -62,6 +90,17 @@ renameavx.h : mkrename.exe
 
 #
 
+sleefgdpavx.obj : sleefsimddp.c renameavx_gnuabi.h
+	$(CC) $(CFLAGS) $(OPTFLAGS) -DDORENAME -DENABLE_AVX -DENABLE_GNUABI /arch:AVX sleefsimddp.c /c /Fosleefgdpavx.obj
+
+sleefgspavx.obj : sleefsimdsp.c renameavx_gnuabi.h
+	$(CC) $(CFLAGS) $(OPTFLAGS) -DDORENAME -DENABLE_AVX -DENABLE_GNUABI /arch:AVX sleefsimdsp.c /c /Fosleefgspavx.obj
+
+renameavx_gnuabi.h : mkrename_gnuabi.exe
+	./mkrename_gnuabi.exe avx c 4 8 __m256d __m256 __m128i 'struct { __m128i x, y; }' __AVX__ > renameavx_gnuabi.h
+
+##
+
 sleefdpavx2.obj : sleefsimddp.c renameavx2.h
 	$(CC) $(CFLAGS) $(OPTFLAGS) -DDORENAME -DENABLE_AVX2 /arch:AVX2 sleefsimddp.c /c /Fosleefdpavx2.obj
 
@@ -72,6 +111,17 @@ renameavx2.h : mkrename.exe
 	./mkrename.exe avx2 4 8 > renameavx2.h
 
 #
+
+sleefgdpavx2.obj : sleefsimddp.c renameavx2_gnuabi.h
+	$(CC) $(CFLAGS) $(OPTFLAGS) -DDORENAME -DENABLE_AVX2 -DENABLE_GNUABI /arch:AVX2 sleefsimddp.c /c /Fosleefgdpavx2.obj
+
+sleefgspavx2.obj : sleefsimdsp.c renameavx2_gnuabi.h
+	$(CC) $(CFLAGS) $(OPTFLAGS) -DDORENAME -DENABLE_AVX2 -DENABLE_GNUABI /arch:AVX2 sleefsimdsp.c /c /Fosleefgspavx2.obj
+
+renameavx2_gnuabi.h : mkrename_gnuabi.exe
+	./mkrename_gnuabi.exe avx2 d 4 8 __m256d __m256 __m128i __m256i __AVX2__ > renameavx2_gnuabi.h
+
+##
 
 .PHONY: clean
 clean :

@@ -184,7 +184,9 @@ double vget(vdouble v, int idx) {
 }
 
 int vgeti(vint v, int idx) {
-  return v[idx];
+  int a[VECTLENDP*2];
+  vstoreu_v_p_vi(a, v);
+  return a[idx];
 }
 
 int main(int argc,char **argv)

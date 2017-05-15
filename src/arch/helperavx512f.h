@@ -43,7 +43,9 @@ typedef __m512i vint2;
 
 //
 
+#ifndef __SLEEF_H__
 void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
+#endif
 
 static int cpuSupportsAVX512F() {
     int32_t reg[4];
@@ -254,8 +256,13 @@ static INLINE vfloat vgetexp_vf_vf(vfloat d) { return _mm512_getexp_ps(d); }
 static INLINE vdouble vgetmant_vd_vd(vdouble d) { return _mm512_getmant_pd(d, _MM_MANT_NORM_p75_1p5, _MM_MANT_SIGN_nan); }
 static INLINE vfloat vgetmant_vf_vf(vfloat d) { return _mm512_getmant_ps(d, _MM_MANT_NORM_p75_1p5, _MM_MANT_SIGN_nan); }
 
+#if defined(__clang__)
+#define vfixup_vd_vd_vd_vi2_i(a, b, c, imm) ({ _mm512_fixupimm_pd((a), (b), (c), (imm)); })
+#define vfixup_vf_vf_vf_vi2_i(a, b, c, imm) ({ _mm512_fixupimm_ps((a), (b), (c), (imm)); })
+#else
 static INLINE vdouble vfixup_vd_vd_vd_vi2_i(vdouble a, vdouble b, vint2 c, int imm) { return _mm512_fixupimm_pd(a, b, c, imm); }
 static INLINE vfloat vfixup_vf_vf_vf_vi2_i(vfloat a, vfloat b, vint2 c, int imm) { return _mm512_fixupimm_ps(a, b, c, imm); }
+#endif
 
 #if defined(_MSC_VER)
 // This function is needed when debugging on MSVC.

@@ -20,20 +20,36 @@
 #ifdef ENABLE_SSE2
 #define CONFIG 2
 #include "helpersse2.h"
+#ifdef DORENAME
+#ifdef ENABLE_GNUABI
+#include "renamesse2_gnuabi.h"
+#else
 #include "renamesse2.h"
+#endif
+#endif
 #endif
 
 #ifdef ENABLE_AVX
 #define CONFIG 1
 #include "helperavx.h"
+#ifdef DORENAME
+#ifdef ENABLE_GNUABI
+#include "renameavx_gnuabi.h"
+#else
 #include "renameavx.h"
+#endif
+#endif
 #endif
 
 #ifdef ENABLE_FMA4
 #define CONFIG 4
 #include "helperavx.h"
 #ifdef DORENAME
+#ifdef ENABLE_GNUABI
+#include "renamefma4_gnuabi.h"
+#else
 #include "renamefma4.h"
+#endif
 #endif
 #endif
 
@@ -41,7 +57,11 @@
 #define CONFIG 1
 #include "helperavx2.h"
 #ifdef DORENAME
+#ifdef ENABLE_GNUABI
+#include "renameavx2_gnuabi.h"
+#else
 #include "renameavx2.h"
+#endif
 #endif
 #endif
 
@@ -49,9 +69,27 @@
 #define CONFIG 1
 #include "helperavx512f.h"
 #ifdef DORENAME
+#ifdef ENABLE_GNUABI
+#include "renameavx512f_gnuabi.h"
+#else
 #include "renameavx512f.h"
 #endif
 #endif
+#endif
+
+#ifdef ENABLE_ADVSIMD
+#define CONFIG 1
+#include "helperadvsimd.h"
+#ifdef DORENAME
+#ifdef ENABLE_GNUABI
+#include "renameadvsimd_gnuabi.h"
+#else
+#include "renameadvsimd.h"
+#endif
+#endif
+#endif
+
+//
 
 #ifdef ENABLE_VECEXT
 #define CONFIG 1
@@ -66,14 +104,6 @@
 #include "helperpurec.h"
 #ifdef DORENAME
 #include "renamepurec.h"
-#endif
-#endif
-
-#ifdef ENABLE_ADVSIMD
-#define CONFIG 1
-#include "helperadvsimd.h"
-#ifdef DORENAME
-#include "renameadvsimd.h"
 #endif
 #endif
 
@@ -377,6 +407,7 @@ EXPORT CONST vdouble xcos_u1(vdouble d) {
   return u;
 }
 
+#ifndef ENABLE_GNUABI
 EXPORT CONST vdouble2 xsincos(vdouble d) {
   vopmask o;
   vdouble u, s, t, rx, ry;
@@ -642,6 +673,7 @@ EXPORT CONST vdouble2 xsincospi_u35(vdouble d) {
 
   return r;
 }
+#endif // #ifndef ENABLE_GNUABI
 
 static INLINE CONST vdouble2 sinpik(vdouble d) {
   vopmask o;
@@ -1739,6 +1771,7 @@ EXPORT CONST vdouble xrint(vdouble d) {
   return ret;
 }
 
+#ifndef ENABLE_GNUABI
 EXPORT CONST vdouble2 xmodf(vdouble x) {
   vdouble fr = vsub_vd_vd_vd(x, vmul_vd_vd_vd(vcast_vd_d(1LL << 31), vcast_vd_vi(vtruncate_vi_vd(vmul_vd_vd_vd(x, vcast_vd_d(1.0 / (1LL << 31)))))));
   fr = vsub_vd_vd_vd(fr, vcast_vd_vi(vtruncate_vi_vd(fr)));
@@ -1751,6 +1784,7 @@ EXPORT CONST vdouble2 xmodf(vdouble x) {
 
   return ret;
 }
+#endif
 
 EXPORT CONST vdouble xnextafter(vdouble x, vdouble y) {
   x = vsel_vd_vo_vd_vd(veq_vo_vd_vd(x, vcast_vd_d(0)), vmulsign_vd_vd_vd(vcast_vd_d(0), y), x);
