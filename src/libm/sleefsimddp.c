@@ -1909,6 +1909,7 @@ EXPORT CONST vdouble xhypot_u35(vdouble x, vdouble y) {
   return ret;
 }
 
+/* TODO AArch64: potential optimization by using `vfmad_lane_f64` */
 EXPORT CONST vdouble xfmod(vdouble x, vdouble y) {
   vdouble nu = vabs_vd_vd(x), de = vabs_vd_vd(y), s = vcast_vd_d(1);
   vopmask o = vlt_vo_vd_vd(de, vcast_vd_d(DBL_MIN));
@@ -1938,6 +1939,7 @@ typedef struct {
   vdouble2 a, b;
 } dd2;
 
+/* TODO AArch64: potential optimization by using `vfmad_lane_f64` */
 static CONST dd2 gammak(vdouble a) {
   vdouble2 clc = vcast_vd2_d_d(0, 0), clln = vcast_vd2_d_d(1, 0), clld = vcast_vd2_d_d(1, 0);
   vdouble2 v = vcast_vd2_d_d(1, 0), x, y, z;
@@ -2053,6 +2055,7 @@ EXPORT CONST vdouble xlgamma_u1(vdouble a) {
   return r;
 }
 
+/* TODO AArch64: potential optimization by using `vfmad_lane_f64` */
 EXPORT CONST vdouble xerf_u1(vdouble a) {
   vdouble s = a, t, u;
   vdouble2 d;
@@ -2095,6 +2098,7 @@ EXPORT CONST vdouble xerf_u1(vdouble a) {
   return u;
 }
 
+/* TODO AArch64: potential optimization by using `vfmad_lane_f64` */
 EXPORT CONST vdouble xerfc_u15(vdouble a) {
   vdouble s = a, r = vcast_vd_d(0), t;
   vdouble2 u, d, x;
