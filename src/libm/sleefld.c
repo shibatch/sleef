@@ -364,7 +364,7 @@ EXPORT CONST Sleef_longdouble2 xsincospil_u05(long double d) {
   if (((q+2) & 4) != 0) { r.y = -r.y; }
 
   if (xisinfl(d)) { r.x = r.y = NAN; }
-  if (!xisinfl(d) && xfabsl(d) > TRIGRANGEMAX2) { r.x = r.y = 0; }
+  if (!xisinfl(d) && xfabsl(d) > TRIGRANGEMAX3) { r.x = r.y = 0; }
 
   return r;
 }
@@ -414,7 +414,7 @@ EXPORT CONST Sleef_longdouble2 xsincospil_u35(long double d) {
   if (((q+2) & 4) != 0) { r.y = -r.y; }
 
   if (xisinfl(d)) { r.x = r.y = NAN; }
-  if (!xisinfl(d) && xfabsl(d) > TRIGRANGEMAX2) { r.x = r.y = 0; }
+  if (!xisinfl(d) && xfabsl(d) > TRIGRANGEMAX3) { r.x = r.y = 0; }
 
   return r;
 }

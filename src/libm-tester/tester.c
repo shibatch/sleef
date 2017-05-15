@@ -156,6 +156,7 @@ double child_expm1(double x) { child_d_d("expm1", x); }
 
 Sleef_double2 child_sincospi_u05(double x) { child_d2_d("sincospi_u05", x); }
 Sleef_double2 child_sincospi_u35(double x) { child_d2_d("sincospi_u35", x); }
+double child_sinpi_u05(double x) { child_d_d("sinpi_u05", x); }
 
 double child_hypot_u05(double x, double y) { child_d_d_d("hypot_u05", x, y); }
 double child_hypot_u35(double x, double y) { child_d_d_d("hypot_u35", x, y); }
@@ -173,6 +174,11 @@ double child_round(double x) { child_d_d("round", x); }
 double child_rint(double x) { child_d_d("rint", x); }
 double child_frfrexp(double x) { child_d_d("frfrexp", x); }
 Sleef_double2 child_modf(double x) { child_d2_d("modf", x); }
+
+double child_tgamma_u1(double x) { child_d_d("tgamma_u1", x); }
+double child_lgamma_u1(double x) { child_d_d("lgamma_u1", x); }
+double child_erf_u1(double x) { child_d_d("erf_u1", x); }
+double child_erfc_u15(double x) { child_d_d("erfc_u15", x); }
 
 //
 
@@ -2212,6 +2218,13 @@ void do_test() {
       showResult(success);
     }
 
+    {
+      fprintf(stderr, "sinpi_u05 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_sinpi, child_sinpi_u05, xa[i]);
+      showResult(success);
+    }
+
     //
   
     {
@@ -2617,6 +2630,35 @@ void do_test() {
       fprintf(stderr, "rint denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_rint, child_rint, xa[i]);
+      showResult(success);
+    }
+
+    
+    {
+      fprintf(stderr, "lgamma_u1 denormal/nonnumber test : ");
+      double xa[] = { -4, -3, -2, -1, +0.0, -0.0, +1, +2, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_lgamma_nosign, child_lgamma_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "tgamma_u1 denormal/nonnumber test : ");
+      double xa[] = { -4, -3, -2, -1, +0.0, -0.0, +1, +2, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_gamma, child_tgamma_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "erf_u1 denormal/nonnumber test : ");
+      double xa[] = { -1, +0.0, -0.0, +1, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_erf, child_erf_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "erfc_u15 denormal/nonnumber test : ");
+      double xa[] = { -1, +0.0, -0.0, +1, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_erfc, child_erfc_u15, xa[i]);
       showResult(success);
     }
   }
@@ -3339,6 +3381,17 @@ void do_test() {
     }
     showResult(success);
 
+    //
+
+    fprintf(stderr, "sinpi_u05 : ");
+    for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracy_d(mpfr_sinpi, child_sinpi_u05, d, 0.506);
+    for(d = -1e+8-0.1;d < 1e+8 && success;d += (1e+10 + 0.1)) checkAccuracy_d(mpfr_sinpi, child_sinpi_u05, d, 0.506);
+    for(i=1;i<10000 && success;i+=31) {
+      double start = u2d(d2u(i)-20), end = u2d(d2u(i)+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracy_d(mpfr_sinpi, child_sinpi_u05, d, 0.506);
+    }
+    showResult(success);
+    
     mpfr_set_default_prec(128);
   
     //
@@ -3633,6 +3686,30 @@ void do_test() {
 
     fprintf(stderr, "log1p : ");
     for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_d(mpfr_log1p, child_log1p, d, 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "lgamma_u1 : ");
+    for(d = -5000;d < 5000 && success;d += 1.1) checkAccuracy_d(mpfr_lgamma_nosign, child_lgamma_u1, d, 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "tgamma_u1 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_gamma, child_tgamma_u1, d, 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "erf_u1 : ");
+    for(d = -100;d < 100 && success;d += 0.02) checkAccuracy_d(mpfr_erf, child_erf_u1, d, 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "erfc_u15 : ");
+    for(d = -1;d < 100 && success;d += 0.01) checkAccuracy_d(mpfr_erfc, child_erfc_u15, d, 1.5);
     showResult(success);
 
     //

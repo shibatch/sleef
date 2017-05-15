@@ -385,7 +385,7 @@ EXPORT CONST Sleef_quad2 xsincospiq_u05(Sleef_quad d) {
   if (((q+2) & 4) != 0) { r.y = -r.y; }
 
   if (xisinfq(d)) { r.x = r.y = NANq; }
-  if (!xisinfq(d) && xfabsq(d) > TRIGRANGEMAX2) { r.x = r.y = 0; }
+  if (!xisinfq(d) && xfabsq(d) > TRIGRANGEMAX3) { r.x = r.y = 0; }
 
   return r;
 }
@@ -443,7 +443,7 @@ EXPORT CONST Sleef_quad2 xsincospiq_u35(Sleef_quad d) {
   if (((q+2) & 4) != 0) { r.y = -r.y; }
 
   if (xisinfq(d)) { r.x = r.y = NANq; }
-  if (!xisinfq(d) && xfabsq(d) > TRIGRANGEMAX2) { r.x = r.y = 0; }
+  if (!xisinfq(d) && xfabsq(d) > TRIGRANGEMAX3) { r.x = r.y = 0; }
 
   return r;
 }

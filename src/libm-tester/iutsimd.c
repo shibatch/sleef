@@ -377,6 +377,7 @@ int main(int argc, char **argv) {
     func_d_d("sin_u1", xsin_u1);
     func_d_d("cos_u1", xcos_u1);
     func_d_d("tan_u1", xtan_u1);
+    func_d_d("sinpi_u05", xsinpi_u05);
     func_d_d("asin_u1", xasin_u1);
     func_d_d("acos_u1", xacos_u1);
     func_d_d("atan_u1", xatan_u1);
@@ -426,6 +427,11 @@ int main(int argc, char **argv) {
     func_d_d_d("fmod", xfmod);
 
     func_d2_d("modf", xmodf);
+
+    func_d_d("tgamma_u1", xtgamma_u1);
+    func_d_d("lgamma_u1", xlgamma_u1);
+    func_d_d("erf_u1", xerf_u1);
+    func_d_d("erfc_u15", xerfc_u15);
 #endif
 
 #ifdef ENABLE_SP

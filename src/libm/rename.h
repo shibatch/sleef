@@ -42,6 +42,7 @@
 
 #define xsincospi_u05 Sleef_sincospi_u05
 #define xsincospi_u35 Sleef_sincospi_u35
+#define xsinpi_u05 Sleef_sinpi_u05
 
 #define xldexp Sleef_ldexp
 #define xilogb Sleef_ilogb
@@ -66,6 +67,11 @@
 #define xexpfrexp Sleef_expfrexp
 #define xfmod Sleef_fmod
 #define xmodf Sleef_modf
+
+#define xlgamma_u1 Sleef_lgamma_u10
+#define xtgamma_u1 Sleef_tgamma_u10
+#define xerf_u1 Sleef_erf_u10
+#define xerfc_u15 Sleef_erfc_u15
 
 //
 

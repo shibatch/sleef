@@ -372,4 +372,9 @@ void mpfr_cospi(mpfr_t ret, mpfr_t arg, mpfr_rnd_t rnd) {
 
   mpfr_clears(frpi, frd, NULL);
 }
+
+void mpfr_lgamma_nosign(mpfr_t ret, mpfr_t arg, mpfr_rnd_t rnd) {
+  int s;
+  mpfr_lgamma(ret, &s, arg, rnd);
+}
 #endif // #define USEMPFR

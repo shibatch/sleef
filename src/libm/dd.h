@@ -28,6 +28,13 @@ static INLINE CONST vdouble2 vsel_vd2_vo_vd2_vd2(vopmask m, vdouble2 x, vdouble2
   return r;
 }
 
+static INLINE CONST vdouble2 vsel_vd2_vo_d_d_d_d(vopmask o, double x1, double y1, double x0, double y0) {
+  vdouble2 r;
+  r.x = vsel_vd_vo_d_d(o, x1, x0);
+  r.y = vsel_vd_vo_d_d(o, y1, y0);
+  return r;
+}
+
 static INLINE CONST vdouble vadd_vd_3vd(vdouble v0, vdouble v1, vdouble v2) {
   return vadd_vd_vd_vd(vadd_vd_vd_vd(v0, v1), v2);
 }
@@ -68,6 +75,11 @@ static INLINE CONST vdouble vsub_vd_6vd(vdouble v0, vdouble v1, vdouble v2, vdou
 
 static INLINE CONST vdouble2 ddneg_vd2_vd2(vdouble2 x) {
   return vcast_vd2_vd_vd(vneg_vd_vd(x.x), vneg_vd_vd(x.y));
+}
+
+static INLINE CONST vdouble2 ddabs_vd2_vd2(vdouble2 x) {
+  return vcast_vd2_vd_vd(vabs_vd_vd(x.x),
+			 vreinterpret_vd_vm(vxor_vm_vm_vm(vreinterpret_vm_vd(x.y), vand_vm_vm_vm(vreinterpret_vm_vd(x.x), vreinterpret_vm_vd(vcast_vd_d(-0.0))))));
 }
 
 static INLINE CONST vdouble2 ddnormalize_vd2_vd2(vdouble2 t) {

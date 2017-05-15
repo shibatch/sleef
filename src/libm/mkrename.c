@@ -23,6 +23,7 @@ typedef struct {
   1 : "_u1"
   2 : "_u05"
   3 : "_u35"
+  4 : "_u15"
 
   funcType:
   0 : double func(double);
@@ -69,6 +70,7 @@ funcSpec funcList[] = {
   { "log1p", 10, 0, 0 },
   { "sincospi", 5, 2, 2 },
   { "sincospi", 35, 3, 2 },
+  { "sinpi", 5, 2, 0 },
   { "ldexp", -1, 0, 3 },
   { "ilogb", -1, 0, 4 },
 
@@ -93,6 +95,11 @@ funcSpec funcList[] = {
   { "fmod", -1, 0, 1 },
   { "modf", -1, 0, 2 },
 
+  { "lgamma", 10, 1, 0 },
+  { "tgamma", 10, 1, 0 },
+  { "erf", 10, 1, 0 },
+  { "erfc", 15, 4, 0 },
+  
   { NULL, -1, 0, 0 },
 };
 
@@ -106,7 +113,7 @@ int main(int argc, char **argv) {
   int wdp = atoi(argv[2]);
   int wsp = atoi(argv[3]);
 
-  static char *ulpSuffixStr[] = { "", "_u1", "_u05", "_u35" };
+  static char *ulpSuffixStr[] = { "", "_u1", "_u05", "_u35", "_u15" };
   
   if (argc == 4) {
     for(int i=0;funcList[i].name != NULL;i++) {
