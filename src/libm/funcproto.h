@@ -23,10 +23,11 @@ typedef struct {
   funcType:
   0 : double func(double);
   1 : double func(double, double);
-  2 : double2 func(double);
+  2 : double2 func(double);   GNUABI : void func(double, double *, double *);
   3 : double func(double, int);
   4 : int func(double);
   5 : double func(double, double, double);
+  6 : double2 func(double);   GNUABI : double func(double, double *);
  */
 
 funcSpec funcList[] = {
@@ -88,7 +89,7 @@ funcSpec funcList[] = {
   { "frfrexp", -1, 0, 0 },
   { "expfrexp", -1, 0, 4 },
   { "fmod", -1, 0, 1 },
-  { "modf", -1, 0, 2 },
+  { "modf", -1, 0, 6 },
 
   { "lgamma", 10, 1, 0 },
   { "tgamma", 10, 1, 0 },

@@ -93,11 +93,7 @@
 #define CONFIG 1
 #include "helperneon32.h"
 #ifdef DORENAME
-#ifdef ENABLE_GNUABI
-#include "renameneon32_gnuabi.h"
-#else
 #include "renameneon32.h"
-#endif
 #endif
 #endif
 
@@ -382,8 +378,25 @@ EXPORT CONST vfloat xcosf_u1(vfloat d) {
   return u;
 }
 
-#ifndef ENABLE_GNUABI
-EXPORT CONST vfloat2 xsincosf(vfloat d) {
+#ifdef ENABLE_GNUABI
+#define TYPE2_FUNCATR static INLINE CONST 
+#define TYPE6_FUNCATR static INLINE CONST 
+#define XSINCOSF sincosfk
+#define XSINCOSF_U1 sincosfk_u1
+#define XSINCOSPIF_U05 sincospifk_u05
+#define XSINCOSPIF_U35 sincospifk_u35
+#define XMODFF modffk
+#else
+#define TYPE2_FUNCATR EXPORT CONST
+#define TYPE6_FUNCATR EXPORT
+#define XSINCOSF xsincosf
+#define XSINCOSF_U1 xsincosf_u1
+#define XSINCOSPIF_U05 xsincospif_u05
+#define XSINCOSPIF_U35 xsincospif_u35
+#define XMODFF xmodff
+#endif
+
+TYPE2_FUNCATR vfloat2 XSINCOSF(vfloat d) {
   vint2 q;
   vopmask o;
   vfloat u, s, t, rx, ry;
@@ -439,7 +452,7 @@ EXPORT CONST vfloat2 xsincosf(vfloat d) {
   return r;
 }
 
-EXPORT CONST vfloat2 xsincosf_u1(vfloat d) {
+TYPE2_FUNCATR vfloat2 XSINCOSF_U1(vfloat d) {
   vint2 q;
   vopmask o;
   vfloat u, rx, ry;
@@ -498,7 +511,7 @@ EXPORT CONST vfloat2 xsincosf_u1(vfloat d) {
   return r;
 }
 
-EXPORT CONST vfloat2 xsincospif_u05(vfloat d) {
+TYPE2_FUNCATR vfloat2 XSINCOSPIF_U05(vfloat d) {
   vopmask o;
   vfloat u, s, t, rx, ry;
   vfloat2 r, x, s2;
@@ -558,7 +571,7 @@ EXPORT CONST vfloat2 xsincospif_u05(vfloat d) {
   return r;
 }
 
-EXPORT CONST vfloat2 xsincospif_u35(vfloat d) {
+TYPE2_FUNCATR vfloat2 XSINCOSPIF_U35(vfloat d) {
   vopmask o;
   vfloat u, s, t, rx, ry;
   vfloat2 r;
@@ -611,7 +624,50 @@ EXPORT CONST vfloat2 xsincospif_u35(vfloat d) {
 
   return r;
 }
-#endif // #ifndef ENABLE_GNUABI
+
+TYPE6_FUNCATR vfloat2 XMODFF(vfloat x) {
+  vfloat fr = vsub_vf_vf_vf(x, vcast_vf_vi2(vtruncate_vi2_vf(x)));
+  fr = vsel_vf_vo_vf_vf(vgt_vo_vf_vf(vabs_vf_vf(x), vcast_vf_f(1LL << 23)), vcast_vf_f(0), fr);
+
+  vfloat2 ret;
+
+  ret.x = vcopysign_vf_vf_vf(fr, x);
+  ret.y = vcopysign_vf_vf_vf(vsub_vf_vf_vf(x, fr), x);
+
+  return ret;
+}
+
+#ifdef ENABLE_GNUABI
+EXPORT void xsincosf(vfloat a, float *ps, float *pc) {
+  vfloat2 r = sincosfk(a);
+  vstoreu_v_p_vf(ps, r.x);
+  vstoreu_v_p_vf(pc, r.y);
+}
+
+EXPORT void xsincosf_u1(vfloat a, float *ps, float *pc) {
+  vfloat2 r = sincosfk_u1(a);
+  vstoreu_v_p_vf(ps, r.x);
+  vstoreu_v_p_vf(pc, r.y);
+}
+
+EXPORT void xsincospif_u05(vfloat a, float *ps, float *pc) {
+  vfloat2 r = sincospifk_u05(a);
+  vstoreu_v_p_vf(ps, r.x);
+  vstoreu_v_p_vf(pc, r.y);
+}
+
+EXPORT void xsincospif_u35(vfloat a, float *ps, float *pc) {
+  vfloat2 r = sincospifk_u35(a);
+  vstoreu_v_p_vf(ps, r.x);
+  vstoreu_v_p_vf(pc, r.y);
+}
+
+EXPORT CONST vfloat xmodff(vfloat a, float *iptr) {
+  vfloat2 r = modffk(a);
+  vstoreu_v_p_vf(iptr, r.y);
+  return r.x;
+}
+#endif // #ifdef ENABLE_GNUABI
 
 EXPORT CONST vfloat xtanf_u1(vfloat d) {
   vint2 q;
@@ -1465,20 +1521,6 @@ EXPORT CONST vfloat xrintf(vfloat d) {
   vfloat ret = vsel_vf_vo_vf_vf(vor_vo_vo_vo(visinf_vo_vf(d), vge_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(1LL << 23))), d, vcopysign_vf_vf_vf(vsub_vf_vf_vf(x, fr), d));
   return ret;
 }
-
-#ifndef ENABLE_GNUABI
-EXPORT CONST vfloat2 xmodff(vfloat x) {
-  vfloat fr = vsub_vf_vf_vf(x, vcast_vf_vi2(vtruncate_vi2_vf(x)));
-  fr = vsel_vf_vo_vf_vf(vgt_vo_vf_vf(vabs_vf_vf(x), vcast_vf_f(1LL << 23)), vcast_vf_f(0), fr);
-
-  vfloat2 ret;
-
-  ret.x = vcopysign_vf_vf_vf(fr, x);
-  ret.y = vcopysign_vf_vf_vf(vsub_vf_vf_vf(x, fr), x);
-
-  return ret;
-}
-#endif
 
 EXPORT CONST vfloat xfmaf(vfloat x, vfloat y, vfloat z) {
   vfloat h2 = vadd_vf_vf_vf(vmul_vf_vf_vf(x, y), z), q = vcast_vf_f(1);

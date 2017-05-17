@@ -22,20 +22,21 @@ int main(int argc, char **argv) {
   int wsp = atoi(argv[4]);
 
   static char *ulpSuffixStr[] = { "", "_u1", "_u05", "_u35", "_u15" };
-  static char *vparameterStr[] = { "v", "vv", "vpp", "vv", "v", "vvv" };
+  static char *vparameterStrDP[] = { "v", "vv", "vl8l8", "vv", "v", "vvv", "vl8" };
+  static char *vparameterStrSP[] = { "v", "vv", "vl4l4", "vv", "v", "vvv", "vl4" };
   
   for(int i=0;funcList[i].name != NULL;i++) {
     if (funcList[i].ulp < 0) {
       printf("#define x%s _ZGV%sN%d%s_%s\n", funcList[i].name,
-	     mangledisa, wdp, vparameterStr[funcList[i].funcType], funcList[i].name);
+	     mangledisa, wdp, vparameterStrDP[funcList[i].funcType], funcList[i].name);
     } else if (funcList[i].ulp < 20) {
       printf("#define x%s%s _ZGV%sN%d%s_%s\n", 
 	     funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
-	     mangledisa, wdp, vparameterStr[funcList[i].funcType], funcList[i].name);
+	     mangledisa, wdp, vparameterStrDP[funcList[i].funcType], funcList[i].name);
     } else {
       printf("#define x%s%s _ZGV%sN%d%s_%s_u%d\n", 
 	     funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
-	     mangledisa, wdp, vparameterStr[funcList[i].funcType], funcList[i].name, funcList[i].ulp);
+	     mangledisa, wdp, vparameterStrDP[funcList[i].funcType], funcList[i].name, funcList[i].ulp);
     }
   }
 
@@ -44,15 +45,15 @@ int main(int argc, char **argv) {
   for(int i=0;funcList[i].name != NULL;i++) {
     if (funcList[i].ulp < 0) {
       printf("#define x%sf _ZGV%sN%d%s_%sf\n", funcList[i].name,
-	     mangledisa, wsp, vparameterStr[funcList[i].funcType], funcList[i].name);
+	     mangledisa, wsp, vparameterStrSP[funcList[i].funcType], funcList[i].name);
     } else if (funcList[i].ulp < 20) {
       printf("#define x%sf%s _ZGV%sN%d%s_%sf\n", 
 	     funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
-	     mangledisa, wsp, vparameterStr[funcList[i].funcType], funcList[i].name);
+	     mangledisa, wsp, vparameterStrSP[funcList[i].funcType], funcList[i].name);
     } else {
       printf("#define x%sf%s _ZGV%sN%d%s_%sf_u%d\n", 
 	     funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
-	     mangledisa, wsp, vparameterStr[funcList[i].funcType], funcList[i].name, funcList[i].ulp);
+	     mangledisa, wsp, vparameterStrSP[funcList[i].funcType], funcList[i].name, funcList[i].ulp);
     }
   }
   

@@ -96,6 +96,7 @@ int main(int argc, char **argv) {
 	  }
 	  break;
 	case 2:
+	case 6:
 	  if (funcList[i].ulp >= 0) {
 	    printf("IMPORT Sleef_%s_2 Sleef_%sd%d_u%02d%s(%s);\n",
 		   vdoublename,
@@ -204,6 +205,7 @@ int main(int argc, char **argv) {
 	}
 	break;
       case 2:
+      case 6:
 	if (funcList[i].ulp >= 0) {
 	  printf("IMPORT Sleef_%s_2 Sleef_%sf%d_u%02d%s(%s);\n",
 		 vfloatname,
