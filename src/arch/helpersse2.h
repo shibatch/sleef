@@ -3,12 +3,6 @@
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#if defined(_MSC_VER)
-#define __SSE2__
-#define __SSE3__
-#define __SSE4_1__
-#endif
-
 #if CONFIG == 2
 
 #if !defined(__SSE2__)
@@ -46,7 +40,6 @@
 #endif
 
 #include <stdint.h>
-
 #include "misc.h"
 
 typedef __m128i vmask;
@@ -60,7 +53,9 @@ typedef __m128i vint2;
 
 //
 
+#ifndef __SLEEF_H__
 void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
+#endif
 
 static int cpuSupportsSSE2() {
     int32_t reg[4];

@@ -20,20 +20,36 @@
 #ifdef ENABLE_SSE2
 #define CONFIG 2
 #include "helpersse2.h"
+#ifdef DORENAME
+#ifdef ENABLE_GNUABI
+#include "renamesse2_gnuabi.h"
+#else
 #include "renamesse2.h"
+#endif
+#endif
 #endif
 
 #ifdef ENABLE_AVX
 #define CONFIG 1
 #include "helperavx.h"
+#ifdef DORENAME
+#ifdef ENABLE_GNUABI
+#include "renameavx_gnuabi.h"
+#else
 #include "renameavx.h"
+#endif
+#endif
 #endif
 
 #ifdef ENABLE_FMA4
 #define CONFIG 4
 #include "helperavx.h"
 #ifdef DORENAME
+#ifdef ENABLE_GNUABI
+#include "renamefma4_gnuabi.h"
+#else
 #include "renamefma4.h"
+#endif
 #endif
 #endif
 
@@ -41,7 +57,11 @@
 #define CONFIG 1
 #include "helperavx2.h"
 #ifdef DORENAME
+#ifdef ENABLE_GNUABI
+#include "renameavx2_gnuabi.h"
+#else
 #include "renameavx2.h"
+#endif
 #endif
 #endif
 
@@ -49,9 +69,27 @@
 #define CONFIG 1
 #include "helperavx512f.h"
 #ifdef DORENAME
+#ifdef ENABLE_GNUABI
+#include "renameavx512f_gnuabi.h"
+#else
 #include "renameavx512f.h"
 #endif
 #endif
+#endif
+
+#ifdef ENABLE_ADVSIMD
+#define CONFIG 1
+#include "helperadvsimd.h"
+#ifdef DORENAME
+#ifdef ENABLE_GNUABI
+#include "renameadvsimd_gnuabi.h"
+#else
+#include "renameadvsimd.h"
+#endif
+#endif
+#endif
+
+//
 
 #ifdef ENABLE_VECEXT
 #define CONFIG 1
@@ -66,14 +104,6 @@
 #include "helperpurec.h"
 #ifdef DORENAME
 #include "renamepurec.h"
-#endif
-#endif
-
-#ifdef ENABLE_ADVSIMD
-#define CONFIG 1
-#include "helperadvsimd.h"
-#ifdef DORENAME
-#include "renameadvsimd.h"
 #endif
 #endif
 
@@ -377,7 +407,25 @@ EXPORT CONST vdouble xcos_u1(vdouble d) {
   return u;
 }
 
-EXPORT CONST vdouble2 xsincos(vdouble d) {
+#ifdef ENABLE_GNUABI
+#define TYPE2_FUNCATR static INLINE CONST 
+#define TYPE6_FUNCATR static INLINE CONST 
+#define XSINCOS sincosk
+#define XSINCOS_U1 sincosk_u1
+#define XSINCOSPI_U05 sincospik_u05
+#define XSINCOSPI_U35 sincospik_u35
+#define XMODF modfk
+#else
+#define TYPE2_FUNCATR EXPORT
+#define TYPE6_FUNCATR EXPORT CONST
+#define XSINCOS xsincos
+#define XSINCOS_U1 xsincos_u1
+#define XSINCOSPI_U05 xsincospi_u05
+#define XSINCOSPI_U35 xsincospi_u35
+#define XMODF xmodf
+#endif
+
+TYPE2_FUNCATR vdouble2 XSINCOS(vdouble d) {
   vopmask o;
   vdouble u, s, t, rx, ry;
   vdouble2 r;
@@ -441,7 +489,7 @@ EXPORT CONST vdouble2 xsincos(vdouble d) {
   return r;
 }
 
-EXPORT CONST vdouble2 xsincos_u1(vdouble d) {
+TYPE2_FUNCATR vdouble2 XSINCOS_U1(vdouble d) {
   vopmask o;
   vdouble u, rx, ry;
   vdouble2 r, s, t, x;
@@ -517,7 +565,7 @@ EXPORT CONST vdouble2 xsincos_u1(vdouble d) {
   return r;
 }
 
-EXPORT CONST vdouble2 xsincospi_u05(vdouble d) {
+TYPE2_FUNCATR vdouble2 XSINCOSPI_U05(vdouble d) {
   vopmask o;
   vdouble u, s, t, rx, ry;
   vdouble2 r, x, s2;
@@ -583,7 +631,7 @@ EXPORT CONST vdouble2 xsincospi_u05(vdouble d) {
   return r;
 }
 
-EXPORT CONST vdouble2 xsincospi_u35(vdouble d) {
+TYPE2_FUNCATR vdouble2 XSINCOSPI_U35(vdouble d) {
   vopmask o;
   vdouble u, s, t, rx, ry;
   vdouble2 r;
@@ -642,6 +690,51 @@ EXPORT CONST vdouble2 xsincospi_u35(vdouble d) {
 
   return r;
 }
+
+TYPE6_FUNCATR vdouble2 XMODF(vdouble x) {
+  vdouble fr = vsub_vd_vd_vd(x, vmul_vd_vd_vd(vcast_vd_d(1LL << 31), vcast_vd_vi(vtruncate_vi_vd(vmul_vd_vd_vd(x, vcast_vd_d(1.0 / (1LL << 31)))))));
+  fr = vsub_vd_vd_vd(fr, vcast_vd_vi(vtruncate_vi_vd(fr)));
+  fr = vsel_vd_vo_vd_vd(vgt_vo_vd_vd(vabs_vd_vd(x), vcast_vd_d(1LL << 52)), vcast_vd_d(0), fr);
+
+  vdouble2 ret;
+
+  ret.x = vcopysign_vd_vd_vd(fr, x);
+  ret.y = vcopysign_vd_vd_vd(vsub_vd_vd_vd(x, fr), x);
+
+  return ret;
+}
+
+#ifdef ENABLE_GNUABI
+EXPORT void xsincos(vdouble a, double *ps, double *pc) {
+  vdouble2 r = sincosk(a);
+  vstoreu_v_p_vd(ps, r.x);
+  vstoreu_v_p_vd(pc, r.y);
+}
+
+EXPORT void xsincos_u1(vdouble a, double *ps, double *pc) {
+  vdouble2 r = sincosk_u1(a);
+  vstoreu_v_p_vd(ps, r.x);
+  vstoreu_v_p_vd(pc, r.y);
+}
+
+EXPORT void xsincospi_u05(vdouble a, double *ps, double *pc) {
+  vdouble2 r = sincospik_u05(a);
+  vstoreu_v_p_vd(ps, r.x);
+  vstoreu_v_p_vd(pc, r.y);
+}
+
+EXPORT void xsincospi_u35(vdouble a, double *ps, double *pc) {
+  vdouble2 r = sincospik_u35(a);
+  vstoreu_v_p_vd(ps, r.x);
+  vstoreu_v_p_vd(pc, r.y);
+}
+
+EXPORT CONST vdouble xmodf(vdouble a, double *iptr) {
+  vdouble2 r = modfk(a);
+  vstoreu_v_p_vd(iptr, r.y);
+  return r.x;
+}
+#endif // #ifdef ENABLE_GNUABI
 
 static INLINE CONST vdouble2 sinpik(vdouble d) {
   vopmask o;
@@ -1736,19 +1829,6 @@ EXPORT CONST vdouble xrint(vdouble d) {
   fr = vsub_vd_vd_vd(fr, vcast_vd_vi(vtruncate_vi_vd(fr)));
   fr = vsel_vd_vo_vd_vd(vor_vo_vo_vo(vlt_vo_vd_vd(fr, vcast_vd_d(0)), vand_vo_vo_vo(veq_vo_vd_vd(fr, vcast_vd_d(0)), isodd)), vadd_vd_vd_vd(fr, vcast_vd_d(1.0)), fr);
   vdouble ret = vsel_vd_vo_vd_vd(vor_vo_vo_vo(visinf_vo_vd(d), vge_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(1LL << 52))), d, vcopysign_vd_vd_vd(vsub_vd_vd_vd(x, fr), d));
-  return ret;
-}
-
-EXPORT CONST vdouble2 xmodf(vdouble x) {
-  vdouble fr = vsub_vd_vd_vd(x, vmul_vd_vd_vd(vcast_vd_d(1LL << 31), vcast_vd_vi(vtruncate_vi_vd(vmul_vd_vd_vd(x, vcast_vd_d(1.0 / (1LL << 31)))))));
-  fr = vsub_vd_vd_vd(fr, vcast_vd_vi(vtruncate_vi_vd(fr)));
-  fr = vsel_vd_vo_vd_vd(vgt_vo_vd_vd(vabs_vd_vd(x), vcast_vd_d(1LL << 52)), vcast_vd_d(0), fr);
-
-  vdouble2 ret;
-
-  ret.x = vcopysign_vd_vd_vd(fr, x);
-  ret.y = vcopysign_vd_vd_vd(vsub_vd_vd_vd(x, fr), x);
-
   return ret;
 }
 

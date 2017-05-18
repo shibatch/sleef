@@ -66,7 +66,11 @@ void startChild(const char *path, char *const argv[]) {
     fflush(stdin);
     fflush(stdout);
 
+#if !defined(__APPLE__)
     execvpe(path, argv, environ);
+#else
+    execvp(path, argv);
+#endif
 
     fprintf(stderr, "execvp in startChild : %s\n", strerror(errno));
 
@@ -2455,10 +2459,12 @@ void do_test() {
     
       for(i=-10000;i<=10000 && success;i++) {
 	d = child_ldexp(1.0, i);
-	double c = ldexp(1.0, i);
+	mpfr_set_d(frx, 1.0, GMP_RNDN);
+	mpfr_set_exp(frx, mpfr_get_exp(frx) + i);
+	double c = mpfr_get_d(frx, GMP_RNDN);
 
 	if (c != d) {
-	  fprintf(stderr, "arg = %.20g, correct = %.20g, test = %.20g\n", (double)i, d, c);
+	  fprintf(stderr, "arg = %.20g, correct = %.20g, test = %.20g\n", (double)i, c, d);
 	  success = 0;
 	  break;
 	}
@@ -4377,10 +4383,11 @@ int main(int argc, char **argv) {
   char *argv2[argc];
   int i, a2s;
 
+  printf("\n\n*** Now testing %s\n", argv[1]);
+  
   for(a2s=1;a2s<argc;a2s++) {
     if (strcmp(argv[a2s], "--flushtozero") == 0) {
       enableFlushToZero = 1;
-      fprintf(stderr, "\n\n*** Flush to zero enabled\n");
     } else {
       break;
     }
@@ -4406,7 +4413,10 @@ int main(int argc, char **argv) {
 
     enableDP = (u & 1) != 0;
     enableSP = (u & 2) != 0;
+    enableFlushToZero |= ((u & 4) != 0);
   }
+
+  if (enableFlushToZero) fprintf(stderr, "\n\n*** Flush to zero enabled\n");
   
   do_test();
 

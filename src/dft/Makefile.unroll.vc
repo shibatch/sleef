@@ -28,22 +28,22 @@ all : $(OBJ)
 	$(CC) $(CFLAGS) /DENABLE_PUREC /DBASETYPEID=4 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
 
 %_2_sse2dp.obj : %_2_sse2dp.c
-	$(CC) $(CFLAGS) /DENABLE_SSE2 /DBASETYPEID=1 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
+	$(CC) $(CFLAGS) /DENABLE_SSE2 /D__SSE2__ /DBASETYPEID=1 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
 
 %_2_sse2sp.obj : %_2_sse2sp.c
-	$(CC) $(CFLAGS) /DENABLE_SSE2 /DBASETYPEID=2 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
+	$(CC) $(CFLAGS) /DENABLE_SSE2 /D__SSE2__ /DBASETYPEID=2 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
 
 %_3_sse2dp.obj : %_3_sse2dp.c
-	$(CC) $(CFLAGS) /DENABLE_SSE2 /DBASETYPEID=1 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
+	$(CC) $(CFLAGS) /DENABLE_SSE2 /D__SSE2__ /D__SSE3__ /DBASETYPEID=1 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
 
 %_3_sse2sp.obj : %_3_sse2sp.c
-	$(CC) $(CFLAGS) /DENABLE_SSE2 /DBASETYPEID=2 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
+	$(CC) $(CFLAGS) /DENABLE_SSE2 /D__SSE2__ /D__SSE3__ /DBASETYPEID=2 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
 
 %_4_sse2dp.obj : %_4_sse2dp.c
-	$(CC) $(CFLAGS) /DENABLE_SSE2 /DBASETYPEID=1 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
+	$(CC) $(CFLAGS) /DENABLE_SSE2 /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /DBASETYPEID=1 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
 
 %_4_sse2sp.obj : %_4_sse2sp.c
-	$(CC) $(CFLAGS) /DENABLE_SSE2 /DBASETYPEID=2 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
+	$(CC) $(CFLAGS) /DENABLE_SSE2 /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /DBASETYPEID=2 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@
 
 %_1_avxdp.obj : %_1_avxdp.c
 	$(CC) $(CFLAGS) /arch:AVX /DENABLE_AVX /DBASETYPEID=1 /DCONFIG=`echo $< | perl -pe 's|.*_(.*)_.*|\1|'` /c $< /Fo$@

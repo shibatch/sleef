@@ -92,7 +92,7 @@ else ifeq ($(OS),Linux)
 
     ifeq ($(ARCH),x86_64)
       export ENABLEFMA4=1
-      export ENABLEAVX512F= $(shell expr `$(CC) -dumpversion | sed 's/\..*//g'` '>=' 6)
+      export ENABLEAVX512F= $(shell expr `$(CC) -dumpversion | sed 's/\..*//g'` '>=' 5)
       export ENABLEFLOAT80= $(shell expr `$(CC) -dumpversion | sed 's/\..*//g'` '>=' 5)
       export ENABLEFLOAT128= $(shell expr `$(CC) -dumpversion | sed 's/\..*//g'` '>=' 5)
       export ENABLEVECEXT= $(shell expr `$(CC) -dumpversion | sed 's/\..*//g'` '>=' 5)
@@ -118,4 +118,16 @@ else ifeq ($(OS),Linux)
     export ENABLEFLOAT128=1
     export CFLAGS+=-DENABLEFLOAT128
   endif
+endif
+
+ifeq ($(ARCH),x86_64)
+  export ENABLEGNUABI=1
+endif
+
+ifeq ($(ARCH),x86_64)
+  export ENABLEGNUABI=1
+endif
+
+ifeq ($(ARCH), aarch64)
+  export ENABLEGNUABI=1
 endif

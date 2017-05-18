@@ -5,6 +5,9 @@
 
 //
 
+#ifndef __MISC_H__
+#define __MISC_H__
+
 #ifndef M_PI
 #define M_PI 3.141592653589793238462643383279502884
 #endif
@@ -187,12 +190,13 @@ typedef struct {
 
 #elif defined(_MSC_VER)
 
-#include <math.h>
-#include <float.h>
-
 #define INLINE __inline
 #define CONST
 #define EXPORT __declspec(dllexport)
+
+#if (defined(__GNUC__) || defined(__CLANG__)) && (defined(__i386__) || defined(__x86_64__))
+#include <x86intrin.h>
+#endif
 
 #define INFINITYf ((float)INFINITY)
 #define NANf ((float)NAN)
@@ -217,4 +221,18 @@ typedef struct {
 #endif
 #endif
 
+static INLINE CONST int isinff(float x) { return x == INFINITYf || x == -INFINITYf; }
+static INLINE CONST int isinfl(long double x) { return x == INFINITYl || x == -INFINITYl; }
+static INLINE CONST int isnanf(float x) { return x != x; }
+static INLINE CONST int isnanl(long double x) { return x != x; }
+
 #endif // defined(_MSC_VER)
+
+#ifdef __APPLE__
+static INLINE CONST int isinff(float x) { return x == INFINITYf || x == -INFINITYf; }
+static INLINE CONST int isinfl(long double x) { return x == INFINITYl || x == -INFINITYl; }
+static INLINE CONST int isnanf(float x) { return x != x; }
+static INLINE CONST int isnanl(long double x) { return x != x; }
+#endif
+
+#endif // #ifndef __MISC_H__

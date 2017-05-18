@@ -10,18 +10,24 @@ export FLOCK=flock
 endif
 ifeq ($(UNAME),Darwin)
 export OS=Darwin
-export FLOCK=$(shell pwd)/noflock.sh
+export FLOCK=$(shell pwd)/src/script/noflock.sh
 endif
 endif
 
+ifdef ENABLEGNUABI
+.PHONY: all
+all : displayVars libsleef libsleefgnuabi libsleef-dft
+else
 .PHONY: all
 all : displayVars libsleef libsleef-dft
+endif
 
 .PHONY: displayVars
 displayVars :
 	@echo OS = $(OS)
 	@echo ARCH = $(ARCH)
 	@echo COMPILER = $(COMPILER)
+	@echo ENABLEGNUABI = $(ENABLEGNUABI)
 	@echo ENABLEAVX2 = $(ENABLEAVX2)
 	@echo ENABLEAVX512f = $(ENABLEAVX512F)
 	@echo ENABLEFMA4 = $(ENABLEFMA4)
@@ -32,6 +38,10 @@ displayVars :
 libsleef :
 	+"$(MAKE)" --directory=./lib libsleef
 #	+"$(MAKE)" --directory=./src/libm-tester
+
+.PHONY: libsleefgnuabi
+libsleefgnuabi :
+	+"$(MAKE)" --directory=./lib libsleefgnuabi
 
 .PHONY: test
 test : libsleef

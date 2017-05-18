@@ -12,8 +12,6 @@
 #include "misc.h"
 
 #if defined(__MINGW32__) || defined(__MINGW64__) || defined(_MSC_VER)
-#include <windows.h>
-#include <sys/types.h>
 #include <sys/timeb.h>
 
 EXPORT void *Sleef_malloc(size_t z) { return _aligned_malloc(z, 256); }

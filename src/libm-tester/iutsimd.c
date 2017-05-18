@@ -8,8 +8,6 @@
 #include <stdint.h>
 #include <string.h>
 #include <time.h>
-#include <signal.h>
-#include <setjmp.h>
 #include <inttypes.h>
 #include <math.h>
 #include <assert.h>
@@ -93,42 +91,39 @@ typedef Sleef_float32x4_t_2 vfloat2;
 #include "norename.h"
 #endif
 
-static jmp_buf sigjmp;
+//
 
-static void sighandler(int signum) {
-  longjmp(sigjmp, 1);
-}
-
-int detectFeature() {
-  signal(SIGILL, sighandler);
-
-  if (setjmp(sigjmp) == 0) {
 #ifdef ENABLE_DP
-    double s[VECTLENDP];
-    int i;
-    for(i=0;i<VECTLENDP;i++) {
-      s[i] = 1.0;
-    }
-    vdouble a = vloadu_vd_p(s);
-    a = xpow(a, a);
-    vstoreu_v_p_vd(s, a);
-#elif defined(ENABLE_SP)
-    float s[VECTLENSP];
-    int i;
-    for(i=0;i<VECTLENSP;i++) {
-      s[i] = 1.0;
-    }
-    vfloat a = vloadu_vf_p(s);
-    a = xpowf(a, a);
-    vstoreu_v_p_vf(s, a);
-#endif
-    signal(SIGILL, SIG_DFL);
-    return 1;
-  } else {
-    signal(SIGILL, SIG_DFL);
-    return 0;
+void check_featureDP() {
+  double s[VECTLENDP];
+  int i;
+  for(i=0;i<VECTLENDP;i++) {
+    s[i] = 1.0;
   }
+  vdouble a = vloadu_vd_p(s);
+  a = xpow(a, a);
+  vstoreu_v_p_vd(s, a);
 }
+#else
+void check_featureDP() {
+}
+#endif
+
+#ifdef ENABLE_SP
+void check_featureSP() {
+  float s[VECTLENSP];
+  int i;
+  for(i=0;i<VECTLENSP;i++) {
+    s[i] = 1.0;
+  }
+  vfloat a = vloadu_vf_p(s);
+  a = xpowf(a, a);
+  vstoreu_v_p_vf(s, a);
+}
+#else
+void check_featureSP() {
+}
+#endif
 
 //
 
@@ -209,7 +204,7 @@ int detectFeature() {
       uint64_t u, v;							\
       sscanf(buf, funcStr " %" PRIx64 " %" PRIx64, &u, &v);		\
       double s[VECTLENDP];						\
-      int t[VECTLENDP];							\
+      int t[VECTLENDP*2];						\
       int i;								\
       for(i=0;i<VECTLENDP;i++) {					\
 	s[i] = rand()/(double)RAND_MAX*20000-10000;			\
@@ -326,15 +321,8 @@ int detectFeature() {
 
 #define BUFSIZE 1024
 
-int main(int argc, char **argv) {
+int do_test(int argc, char **argv) {
   srand(time(NULL));
-
-  if (!detectFeature()) {
-    fprintf(stderr, "\n\n***** This host does not support the necessary CPU features to execute this program *****\n\n\n");
-    printf("0\n");
-    fclose(stdout);
-    exit(-1);
-  }
 
   {
     int k = 0;
@@ -343,6 +331,9 @@ int main(int argc, char **argv) {
 #endif
 #ifdef ENABLE_SP
     k += 2;
+#endif
+#ifdef ENABLE_NEON32
+    k += 4; // flush to zero
 #endif
     printf("%d\n", k);
     fflush(stdout);

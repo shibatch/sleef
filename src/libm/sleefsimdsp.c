@@ -13,8 +13,6 @@
 
 #include "misc.h"
 
-void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
-
 #if (defined(_MSC_VER))
 #pragma fp_contract (off)
 #endif
@@ -23,7 +21,11 @@ void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
 #define CONFIG 2
 #include "helpersse2.h"
 #ifdef DORENAME
+#ifdef ENABLE_GNUABI
+#include "renamesse2_gnuabi.h"
+#else
 #include "renamesse2.h"
+#endif
 #endif
 #endif
 
@@ -31,7 +33,11 @@ void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
 #define CONFIG 1
 #include "helperavx.h"
 #ifdef DORENAME
+#ifdef ENABLE_GNUABI
+#include "renameavx_gnuabi.h"
+#else
 #include "renameavx.h"
+#endif
 #endif
 #endif
 
@@ -39,7 +45,11 @@ void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
 #define CONFIG 4
 #include "helperavx.h"
 #ifdef DORENAME
+#ifdef ENABLE_GNUABI
+#include "renamefma4_gnuabi.h"
+#else
 #include "renamefma4.h"
+#endif
 #endif
 #endif
 
@@ -47,7 +57,11 @@ void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
 #define CONFIG 1
 #include "helperavx2.h"
 #ifdef DORENAME
+#ifdef ENABLE_GNUABI
+#include "renameavx2_gnuabi.h"
+#else
 #include "renameavx2.h"
+#endif
 #endif
 #endif
 
@@ -55,9 +69,35 @@ void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
 #define CONFIG 1
 #include "helperavx512f.h"
 #ifdef DORENAME
+#ifdef ENABLE_GNUABI
+#include "renameavx512f_gnuabi.h"
+#else
 #include "renameavx512f.h"
 #endif
 #endif
+#endif
+
+#ifdef ENABLE_ADVSIMD
+#define CONFIG 1
+#include "helperadvsimd.h"
+#ifdef DORENAME
+#ifdef ENABLE_GNUABI
+#include "renameadvsimd_gnuabi.h"
+#else
+#include "renameadvsimd.h"
+#endif
+#endif
+#endif
+
+#ifdef ENABLE_NEON32
+#define CONFIG 1
+#include "helperneon32.h"
+#ifdef DORENAME
+#include "renameneon32.h"
+#endif
+#endif
+
+//
 
 #ifdef ENABLE_VECEXT
 #define CONFIG 1
@@ -75,27 +115,9 @@ void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
 #endif
 #endif
 
-#ifdef ENABLE_NEON32
-#define CONFIG 1
-#include "helperneon32.h"
-#ifdef DORENAME
-#include "renameneon32.h"
-#endif
-#endif
-
-#ifdef ENABLE_ADVSIMD
-#define CONFIG 1
-#include "helperadvsimd.h"
-#ifdef DORENAME
-#include "renameadvsimd.h"
-#endif
-#endif
-
 //
 
 #include "df.h"
-
-//
 
 static INLINE CONST vopmask visnegzero_vo_vf(vfloat d) {
   return veq_vo_vi2_vi2(vreinterpret_vi2_vf(d), vreinterpret_vi2_vf(vcast_vf_f(-0.0)));
@@ -251,62 +273,6 @@ EXPORT CONST vfloat xcosf(vfloat d) {
   return u;
 }
 
-EXPORT CONST vfloat2 xsincosf(vfloat d) {
-  vint2 q;
-  vopmask o;
-  vfloat u, s, t, rx, ry;
-  vfloat2 r;
-
-  q = vrint_vi2_vf(vmul_vf_vf_vf(d, vcast_vf_f((float)M_2_PI)));
-
-  s = d;
-
-  u = vcast_vf_vi2(q);
-  s = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Af*0.5f), s);
-  s = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Bf*0.5f), s);
-  s = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Cf*0.5f), s);
-  s = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Df*0.5f), s);
-
-  t = s;
-
-  s = vmul_vf_vf_vf(s, s);
-
-  u = vcast_vf_f(-0.000195169282960705459117889f);
-  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(0.00833215750753879547119141f));
-  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(-0.166666537523269653320312f));
-
-  rx = vmla_vf_vf_vf_vf(vmul_vf_vf_vf(u, s), t, t);
-  rx = vsel_vf_vo_vf_vf(visnegzero_vo_vf(d), vcast_vf_f(-0.0f), rx);
-
-  u = vcast_vf_f(-2.71811842367242206819355e-07f);
-  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(2.47990446951007470488548e-05f));
-  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(-0.00138888787478208541870117f));
-  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(0.0416666641831398010253906f));
-  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(-0.5));
-
-  ry = vmla_vf_vf_vf_vf(s, u, vcast_vf_f(1));
-
-  o = veq_vo_vi2_vi2(vand_vi2_vi2_vi2(q, vcast_vi2_i(1)), vcast_vi2_i(0));
-  r.x = vsel_vf_vo_vf_vf(o, rx, ry);
-  r.y = vsel_vf_vo_vf_vf(o, ry, rx);
-
-  o = veq_vo_vi2_vi2(vand_vi2_vi2_vi2(q, vcast_vi2_i(2)), vcast_vi2_i(2));
-  r.x = vreinterpret_vf_vm(vxor_vm_vm_vm(vand_vm_vo32_vm(o, vreinterpret_vm_vf(vcast_vf_f(-0.0))), vreinterpret_vm_vf(r.x)));
-
-  o = veq_vo_vi2_vi2(vand_vi2_vi2_vi2(vadd_vi2_vi2_vi2(q, vcast_vi2_i(1)), vcast_vi2_i(2)), vcast_vi2_i(2));
-  r.y = vreinterpret_vf_vm(vxor_vm_vm_vm(vand_vm_vo32_vm(o, vreinterpret_vm_vf(vcast_vf_f(-0.0))), vreinterpret_vm_vf(r.y)));
-
-  o = vgt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(TRIGRANGEMAXf));
-  r.x = vreinterpret_vf_vm(vandnot_vm_vo32_vm(o, vreinterpret_vm_vf(r.x)));
-  r.y = vreinterpret_vf_vm(vandnot_vm_vo32_vm(o, vreinterpret_vm_vf(r.y)));
-  
-  o = visinf_vo_vf(d);
-  r.x = vreinterpret_vf_vm(vor_vm_vo32_vm(o, vreinterpret_vm_vf(r.x)));
-  r.y = vreinterpret_vf_vm(vor_vm_vo32_vm(o, vreinterpret_vm_vf(r.y)));
-
-  return r;
-}
-
 EXPORT CONST vfloat xtanf(vfloat d) {
   vint2 q;
   vopmask o;
@@ -412,7 +378,81 @@ EXPORT CONST vfloat xcosf_u1(vfloat d) {
   return u;
 }
 
-EXPORT CONST vfloat2 xsincosf_u1(vfloat d) {
+#ifdef ENABLE_GNUABI
+#define TYPE2_FUNCATR static INLINE CONST 
+#define TYPE6_FUNCATR static INLINE CONST 
+#define XSINCOSF sincosfk
+#define XSINCOSF_U1 sincosfk_u1
+#define XSINCOSPIF_U05 sincospifk_u05
+#define XSINCOSPIF_U35 sincospifk_u35
+#define XMODFF modffk
+#else
+#define TYPE2_FUNCATR EXPORT CONST
+#define TYPE6_FUNCATR EXPORT
+#define XSINCOSF xsincosf
+#define XSINCOSF_U1 xsincosf_u1
+#define XSINCOSPIF_U05 xsincospif_u05
+#define XSINCOSPIF_U35 xsincospif_u35
+#define XMODFF xmodff
+#endif
+
+TYPE2_FUNCATR vfloat2 XSINCOSF(vfloat d) {
+  vint2 q;
+  vopmask o;
+  vfloat u, s, t, rx, ry;
+  vfloat2 r;
+
+  q = vrint_vi2_vf(vmul_vf_vf_vf(d, vcast_vf_f((float)M_2_PI)));
+
+  s = d;
+
+  u = vcast_vf_vi2(q);
+  s = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Af*0.5f), s);
+  s = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Bf*0.5f), s);
+  s = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Cf*0.5f), s);
+  s = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Df*0.5f), s);
+
+  t = s;
+
+  s = vmul_vf_vf_vf(s, s);
+
+  u = vcast_vf_f(-0.000195169282960705459117889f);
+  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(0.00833215750753879547119141f));
+  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(-0.166666537523269653320312f));
+
+  rx = vmla_vf_vf_vf_vf(vmul_vf_vf_vf(u, s), t, t);
+  rx = vsel_vf_vo_vf_vf(visnegzero_vo_vf(d), vcast_vf_f(-0.0f), rx);
+
+  u = vcast_vf_f(-2.71811842367242206819355e-07f);
+  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(2.47990446951007470488548e-05f));
+  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(-0.00138888787478208541870117f));
+  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(0.0416666641831398010253906f));
+  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(-0.5));
+
+  ry = vmla_vf_vf_vf_vf(s, u, vcast_vf_f(1));
+
+  o = veq_vo_vi2_vi2(vand_vi2_vi2_vi2(q, vcast_vi2_i(1)), vcast_vi2_i(0));
+  r.x = vsel_vf_vo_vf_vf(o, rx, ry);
+  r.y = vsel_vf_vo_vf_vf(o, ry, rx);
+
+  o = veq_vo_vi2_vi2(vand_vi2_vi2_vi2(q, vcast_vi2_i(2)), vcast_vi2_i(2));
+  r.x = vreinterpret_vf_vm(vxor_vm_vm_vm(vand_vm_vo32_vm(o, vreinterpret_vm_vf(vcast_vf_f(-0.0))), vreinterpret_vm_vf(r.x)));
+
+  o = veq_vo_vi2_vi2(vand_vi2_vi2_vi2(vadd_vi2_vi2_vi2(q, vcast_vi2_i(1)), vcast_vi2_i(2)), vcast_vi2_i(2));
+  r.y = vreinterpret_vf_vm(vxor_vm_vm_vm(vand_vm_vo32_vm(o, vreinterpret_vm_vf(vcast_vf_f(-0.0))), vreinterpret_vm_vf(r.y)));
+
+  o = vgt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(TRIGRANGEMAXf));
+  r.x = vreinterpret_vf_vm(vandnot_vm_vo32_vm(o, vreinterpret_vm_vf(r.x)));
+  r.y = vreinterpret_vf_vm(vandnot_vm_vo32_vm(o, vreinterpret_vm_vf(r.y)));
+  
+  o = visinf_vo_vf(d);
+  r.x = vreinterpret_vf_vm(vor_vm_vo32_vm(o, vreinterpret_vm_vf(r.x)));
+  r.y = vreinterpret_vf_vm(vor_vm_vo32_vm(o, vreinterpret_vm_vf(r.y)));
+
+  return r;
+}
+
+TYPE2_FUNCATR vfloat2 XSINCOSF_U1(vfloat d) {
   vint2 q;
   vopmask o;
   vfloat u, rx, ry;
@@ -471,7 +511,7 @@ EXPORT CONST vfloat2 xsincosf_u1(vfloat d) {
   return r;
 }
 
-EXPORT CONST vfloat2 xsincospif_u05(vfloat d) {
+TYPE2_FUNCATR vfloat2 XSINCOSPIF_U05(vfloat d) {
   vopmask o;
   vfloat u, s, t, rx, ry;
   vfloat2 r, x, s2;
@@ -531,7 +571,7 @@ EXPORT CONST vfloat2 xsincospif_u05(vfloat d) {
   return r;
 }
 
-EXPORT CONST vfloat2 xsincospif_u35(vfloat d) {
+TYPE2_FUNCATR vfloat2 XSINCOSPIF_U35(vfloat d) {
   vopmask o;
   vfloat u, s, t, rx, ry;
   vfloat2 r;
@@ -584,6 +624,50 @@ EXPORT CONST vfloat2 xsincospif_u35(vfloat d) {
 
   return r;
 }
+
+TYPE6_FUNCATR vfloat2 XMODFF(vfloat x) {
+  vfloat fr = vsub_vf_vf_vf(x, vcast_vf_vi2(vtruncate_vi2_vf(x)));
+  fr = vsel_vf_vo_vf_vf(vgt_vo_vf_vf(vabs_vf_vf(x), vcast_vf_f(1LL << 23)), vcast_vf_f(0), fr);
+
+  vfloat2 ret;
+
+  ret.x = vcopysign_vf_vf_vf(fr, x);
+  ret.y = vcopysign_vf_vf_vf(vsub_vf_vf_vf(x, fr), x);
+
+  return ret;
+}
+
+#ifdef ENABLE_GNUABI
+EXPORT void xsincosf(vfloat a, float *ps, float *pc) {
+  vfloat2 r = sincosfk(a);
+  vstoreu_v_p_vf(ps, r.x);
+  vstoreu_v_p_vf(pc, r.y);
+}
+
+EXPORT void xsincosf_u1(vfloat a, float *ps, float *pc) {
+  vfloat2 r = sincosfk_u1(a);
+  vstoreu_v_p_vf(ps, r.x);
+  vstoreu_v_p_vf(pc, r.y);
+}
+
+EXPORT void xsincospif_u05(vfloat a, float *ps, float *pc) {
+  vfloat2 r = sincospifk_u05(a);
+  vstoreu_v_p_vf(ps, r.x);
+  vstoreu_v_p_vf(pc, r.y);
+}
+
+EXPORT void xsincospif_u35(vfloat a, float *ps, float *pc) {
+  vfloat2 r = sincospifk_u35(a);
+  vstoreu_v_p_vf(ps, r.x);
+  vstoreu_v_p_vf(pc, r.y);
+}
+
+EXPORT CONST vfloat xmodff(vfloat a, float *iptr) {
+  vfloat2 r = modffk(a);
+  vstoreu_v_p_vf(iptr, r.y);
+  return r.x;
+}
+#endif // #ifdef ENABLE_GNUABI
 
 EXPORT CONST vfloat xtanf_u1(vfloat d) {
   vint2 q;
@@ -940,11 +1024,11 @@ EXPORT CONST vfloat xsqrtf_u35(vfloat d) {
 
   return u;
 }
-#elif defined(ENABLE_CLANGVEC)
+#elif defined(ENABLE_VECEXT)
 EXPORT CONST vfloat xsqrtf_u35(vfloat d) {
   vfloat q = vsqrt_vf_vf(d);
   q = vsel_vf_vo_vf_vf(visnegzero_vo_vf(d), vcast_vf_f(-0.0), q);
-  return vsel_vf_vo_vf_vf(vispinf_vo_vf(d), INFINITYf, q);
+  return vsel_vf_vo_vf_vf(vispinf_vo_vf(d), vcast_vf_f(INFINITYf), q);
 }
 #else
 EXPORT CONST vfloat xsqrtf_u35(vfloat d) { return vsqrt_vf_vf(d); }
@@ -1435,18 +1519,6 @@ EXPORT CONST vfloat xrintf(vfloat d) {
   vfloat fr = vsub_vf_vf_vf(x, vcast_vf_vi2(vtruncate_vi2_vf(x)));
   fr = vsel_vf_vo_vf_vf(vor_vo_vo_vo(vlt_vo_vf_vf(fr, vcast_vf_f(0)), vand_vo_vo_vo(veq_vo_vf_vf(fr, vcast_vf_f(0)), isodd)), vadd_vf_vf_vf(fr, vcast_vf_f(1.0f)), fr);
   vfloat ret = vsel_vf_vo_vf_vf(vor_vo_vo_vo(visinf_vo_vf(d), vge_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(1LL << 23))), d, vcopysign_vf_vf_vf(vsub_vf_vf_vf(x, fr), d));
-  return ret;
-}
-
-EXPORT CONST vfloat2 xmodff(vfloat x) {
-  vfloat fr = vsub_vf_vf_vf(x, vcast_vf_vi2(vtruncate_vi2_vf(x)));
-  fr = vsel_vf_vo_vf_vf(vgt_vo_vf_vf(vabs_vf_vf(x), vcast_vf_f(1LL << 23)), vcast_vf_f(0), fr);
-
-  vfloat2 ret;
-
-  ret.x = vcopysign_vf_vf_vf(fr, x);
-  ret.y = vcopysign_vf_vf_vf(vsub_vf_vf_vf(x, fr), x);
-
   return ret;
 }
 
