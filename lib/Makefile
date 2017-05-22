@@ -35,7 +35,7 @@ endif
 
 .PHONY: test
 test : libsleefgnuabi
-	nm -g libsleefgnuabi.$(DLLSUFFIX) | grep '_ZGV' | sed 's/ __ZGV/ _ZGV/g' | awk '{ print $$3 }' | LC_COLLATE=POSIX sort > symbols.txt
+	nm -g libsleefgnuabi.$(DLLSUFFIX) | grep '_ZGV' | sed 's/_//g' | awk '{ print $$3 }' | LC_COLLATE=POSIX sort > symbols.txt
 	diff --ignore-all-space -c symbols.txt $(ORGFN)
 endif
 
