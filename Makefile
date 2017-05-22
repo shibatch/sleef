@@ -44,7 +44,7 @@ libsleefgnuabi :
 	+"$(MAKE)" --directory=./lib libsleefgnuabi
 
 .PHONY: test
-test : libsleef
+test : displayVars libsleef
 	+"$(MAKE)" --directory=./src/libm-tester test
 
 .PHONY: libsleef-dft
