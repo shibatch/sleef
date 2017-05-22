@@ -9,6 +9,7 @@ libsleef :
 
 .PHONY: test
 test : libsleef
+	+"$(MAKE)" --directory=./lib -f Makefile.vc test
 	+"$(MAKE)" --directory=./src/libm-tester -f Makefile.vc test
 
 .PHONY: libsleefgnuabi

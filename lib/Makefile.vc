@@ -10,6 +10,11 @@ libsleefgnuabi : libsleefgnuabi.dll
 .PHONY: libsleef-dft
 libsleefdft : libsleefdft.dll
 
+.PHONY: test
+test : libsleefgnuabi
+	dumpbin /EXPORTS libsleefgnuabi.dll |grep ' _ZGV' |awk '{ print $$4 }' | sort > symbols.txt
+	diff symbols.txt symbols.x86_64.org
+
 libsleef.dll : ../src/libm/libm.lib ../src/libm/OBJ.txt ../src/common/common.lib
 	link /DLL /OUT:libsleef.dll `cat ../src/libm/OBJ.txt` ../src/common/common.obj
 

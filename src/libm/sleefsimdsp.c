@@ -23,8 +23,22 @@
 #ifdef DORENAME
 #ifdef ENABLE_GNUABI
 #include "renamesse2_gnuabi.h"
+#elif defined(ENABLE_LLVMABI)
+#include "renamesse2_llvm.h"
 #else
 #include "renamesse2.h"
+#endif
+#endif
+#endif
+
+#ifdef ENABLE_SSE4
+#define CONFIG 4
+#include "helpersse2.h"
+#ifdef DORENAME
+#ifdef ENABLE_LLVMABI
+#include "renamesse4_llvm.h"
+#else
+#include "renamesse4.h"
 #endif
 #endif
 #endif
@@ -35,6 +49,8 @@
 #ifdef DORENAME
 #ifdef ENABLE_GNUABI
 #include "renameavx_gnuabi.h"
+#elif defined(ENABLE_LLVMABI)
+#include "renameavx_llvm.h"
 #else
 #include "renameavx.h"
 #endif
@@ -45,8 +61,8 @@
 #define CONFIG 4
 #include "helperavx.h"
 #ifdef DORENAME
-#ifdef ENABLE_GNUABI
-#include "renamefma4_gnuabi.h"
+#ifdef ENABLE_LLVMABI
+#include "renamefma4_llvm.h"
 #else
 #include "renamefma4.h"
 #endif
@@ -59,6 +75,8 @@
 #ifdef DORENAME
 #ifdef ENABLE_GNUABI
 #include "renameavx2_gnuabi.h"
+#elif defined(ENABLE_LLVMABI)
+#include "renameavx2_llvm.h"
 #else
 #include "renameavx2.h"
 #endif
@@ -71,6 +89,8 @@
 #ifdef DORENAME
 #ifdef ENABLE_GNUABI
 #include "renameavx512f_gnuabi.h"
+#elif defined(ENABLE_LLVMABI)
+#include "renameavx512f_llvm.h"
 #else
 #include "renameavx512f.h"
 #endif
@@ -83,17 +103,11 @@
 #ifdef DORENAME
 #ifdef ENABLE_GNUABI
 #include "renameadvsimd_gnuabi.h"
+#elif defined(ENABLE_LLVMABI)
+#include "renameadvsimd_llvm.h"
 #else
 #include "renameadvsimd.h"
 #endif
-#endif
-#endif
-
-#ifdef ENABLE_NEON32
-#define CONFIG 1
-#include "helperneon32.h"
-#ifdef DORENAME
-#include "renameneon32.h"
 #endif
 #endif
 
@@ -1711,6 +1725,27 @@ EXPORT CONST vfloat xfmodf(vfloat x, vfloat y) {
 
   return ret;
 }
+
+EXPORT CONST vfloat xsinpif_u05(vfloat d) {
+  return vcast_vf_f(0);
+}
+
+EXPORT CONST vfloat xtgammaf_u1(vfloat a) {
+  return vcast_vf_f(0);
+}
+
+EXPORT CONST vfloat xlgammaf_u1(vfloat a) {
+  return vcast_vf_f(0);
+}
+
+EXPORT CONST vfloat xerff_u1(vfloat a) {
+  return vcast_vf_f(0);
+}
+
+EXPORT CONST vfloat xerfcf_u15(vfloat a) {
+  return vcast_vf_f(0);
+}
+
 
 #ifdef ENABLE_MAIN
 // gcc -DENABLE_MAIN -Wno-attributes -I../common -I../arch -DENABLE_AVX2 -mavx2 -mfma sleefsimdsp.c ../common/common.c -lm

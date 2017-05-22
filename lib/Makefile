@@ -16,13 +16,28 @@ libsleefdft : libsleefdft.$(DLLSUFFIX)
 
 .PHONY: clean
 clean :
-	rm -f *~
+	rm -f *~ symbols.txt
 
 .PHONY: distclean
 distclean : clean
 	rm -f *.so *.so.* *.a
 	rm -f *.obj *.lib *.dll *.exp *.exe
 	rm -rf *.dSYM *.dylib
+
+#
+
+ifeq ($(ENABLEGNUABI),1)
+ifeq ($(ENABLEAVX512F),1)
+ORGFN=symbols.$(ARCH).withavx512f.org
+else
+ORGFN=symbols.$(ARCH).org
+endif
+
+.PHONY: test
+test : libsleefgnuabi
+	nm -g libsleefgnuabi.$(DLLSUFFIX) | grep '_ZGV' | sed 's/ __ZGV/ _ZGV/g' | awk '{ print $$3 }' | sort > symbols.txt
+	diff symbols.txt $(ORGFN)
+endif
 
 #
 

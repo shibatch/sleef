@@ -15,7 +15,11 @@
 #include "misc.h"
 
 #ifdef DORENAME
+#ifdef ENABLE_LLVMABI
+#include "rename_llvm.h"
+#else
 #include "rename.h"
+#endif
 #endif
 
 #if (defined(_MSC_VER))

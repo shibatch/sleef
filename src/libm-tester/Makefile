@@ -42,8 +42,8 @@ endif
 
 ifeq ($(ARCH), x86_64)
 
-TARGET_IUT += iutsse2 iutavx
-TARGET_TESTER += tester2sse2dp tester2sse2sp tester2avxdp tester2avxsp
+TARGET_IUT += iutsse2 iutsse4 iutavx iutdsp128 iutdsp256
+TARGET_TESTER += tester2sse2dp tester2sse2sp tester2sse4dp tester2sse4sp tester2avxdp tester2avxsp
 
 ifeq ($(ENABLEAVX2), 1)
 TARGET_IUT+=iutavx2
@@ -119,6 +119,20 @@ tester2sse2sp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2sim
 
 #
 
+iutsse4 : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h iutsimdmain.o iutsimd.c testerutil.c ../libm/renamesse4.h ../../include/sleef.h
+	$(CC) $(CFLAGS) -DENABLE_SSE4 -msse2 -msse4.1 iutsimdmain.o iutsimd.c testerutil.c -o iutsse4 -lsleef -lm $(LIB)
+
+tester2sse4dp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2simddp.c testerutil.c ../libm/renamesse4.h ../../include/sleef.h
+	$(CC) $(CFLAGS) -DENABLE_SSE4 -msse2 -msse4.1 -DUSEMPFR tester2simddp.c testerutil.c -o tester2sse4dp -lsleef -lm -lmpfr $(LIB)
+
+tester2sse4sp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2simdsp.c testerutil.c ../libm/renamesse4.h ../../include/sleef.h
+	$(CC) $(CFLAGS) -DENABLE_SSE4 -msse2 -msse4.1 -DUSEMPFR tester2simdsp.c testerutil.c -o tester2sse4sp -lsleef -lm -lmpfr $(LIB)
+
+../libm/renamesse4.h :
+	+"$(MAKE)" --directory=../libm renamesse4.h
+
+#
+
 iutavx : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h iutsimdmain.o iutsimd.c testerutil.c ../libm/renameavx.h ../../include/sleef.h
 	$(CC) $(CFLAGS) -DENABLE_AVX -mavx iutsimdmain.o iutsimd.c testerutil.c -o iutavx -lsleef -lm $(LIB)
 
@@ -172,6 +186,20 @@ tester2avx512fsp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2
 
 ../libm/renameavx512f.h :
 	+"$(MAKE)" --directory=../libm renameavx512f.h
+
+#
+
+iutdsp128 : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h iutsimdmain.o iutsimd.c testerutil.c ../libm/renamedsp128.h ../../include/sleef.h
+	$(CC) $(CFLAGS) -DENABLE_DSP128 iutsimdmain.o iutsimd.c testerutil.c -o iutdsp128 -lsleef -lm $(LIB)
+
+../libm/renamedsp128.h :
+	+"$(MAKE)" --directory=../libm renamedsp128.h
+
+iutdsp256 : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h iutsimdmain.o iutsimd.c testerutil.c ../libm/renamedsp256.h ../../include/sleef.h
+	$(CC) $(CFLAGS) -DENABLE_DSP256 -mavx iutsimdmain.o iutsimd.c testerutil.c -o iutdsp256 -lsleef -lm $(LIB)
+
+../libm/renamedsp256.h :
+	+"$(MAKE)" --directory=../libm renamedsp256.h
 
 #
 
@@ -261,12 +289,13 @@ bench_a0_50 : bench_a0.c
 
 .PHONY: clean
 clean :
-	rm -f *~ a.out *.obj *.lib *.dll *.exp *.exe *.stackdump
+	rm -f *~ a.out *.obj *.lib *.dll *.exp *.exe *.stackdump nohup.out
 	rm -rf *.dSYM *.dylib
 	rm -f *.so *.so.* *.a *.s *.o
-	rm -f iut iutsse2 iutavx iutfma4 iutavx2 iutavx512f iutneon32 iutadvsimd
+	rm -f iut iutsse2 iutsse4 iutavx iutfma4 iutavx2 iutavx512f iutneon32 iutadvsimd iutdsp128 iutdsp256
 	rm -f tester tester2vecextdp tester2vecextsp iutvecext tester2purecdp tester2purecsp iutpurec
-	rm -f tester2dp tester2sp tester2qp tester2ld tester2sse2dp tester2sse2sp tester2fma4dp tester2fma4sp tester2avxdp tester2avxsp tester2avx2dp tester2avx2sp tester2avx512fdp tester2avx512fsp
+	rm -f tester2dp tester2sp tester2qp tester2ld tester2sse2dp tester2sse2sp tester2sse4dp tester2sse4sp
+	rm -f tester2fma4dp tester2fma4sp tester2avxdp tester2avxsp tester2avx2dp tester2avx2sp tester2avx512fdp tester2avx512fsp
 	rm -f tester2advsimddp tester2advsimdsp
 	rm -f bench_s0_10 bench_s0_50 bench_s1_10 bench_s1_50 bench_s2_10 bench_s2_50 bench_a0_10 bench_a0_50
 	rm -f *.csv *.xlsx

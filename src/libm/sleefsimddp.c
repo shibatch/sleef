@@ -23,8 +23,22 @@
 #ifdef DORENAME
 #ifdef ENABLE_GNUABI
 #include "renamesse2_gnuabi.h"
+#elif defined(ENABLE_LLVMABI)
+#include "renamesse2_llvm.h"
 #else
 #include "renamesse2.h"
+#endif
+#endif
+#endif
+
+#ifdef ENABLE_SSE4
+#define CONFIG 4
+#include "helpersse2.h"
+#ifdef DORENAME
+#ifdef ENABLE_LLVMABI
+#include "renamesse4_llvm.h"
+#else
+#include "renamesse4.h"
 #endif
 #endif
 #endif
@@ -35,6 +49,8 @@
 #ifdef DORENAME
 #ifdef ENABLE_GNUABI
 #include "renameavx_gnuabi.h"
+#elif defined(ENABLE_LLVMABI)
+#include "renameavx_llvm.h"
 #else
 #include "renameavx.h"
 #endif
@@ -45,8 +61,8 @@
 #define CONFIG 4
 #include "helperavx.h"
 #ifdef DORENAME
-#ifdef ENABLE_GNUABI
-#include "renamefma4_gnuabi.h"
+#ifdef ENABLE_LLVMABI
+#include "renamefma4_llvm.h"
 #else
 #include "renamefma4.h"
 #endif
@@ -59,6 +75,8 @@
 #ifdef DORENAME
 #ifdef ENABLE_GNUABI
 #include "renameavx2_gnuabi.h"
+#elif defined(ENABLE_LLVMABI)
+#include "renameavx2_llvm.h"
 #else
 #include "renameavx2.h"
 #endif
@@ -71,6 +89,8 @@
 #ifdef DORENAME
 #ifdef ENABLE_GNUABI
 #include "renameavx512f_gnuabi.h"
+#elif defined(ENABLE_LLVMABI)
+#include "renameavx512f_llvm.h"
 #else
 #include "renameavx512f.h"
 #endif
@@ -83,6 +103,8 @@
 #ifdef DORENAME
 #ifdef ENABLE_GNUABI
 #include "renameadvsimd_gnuabi.h"
+#elif defined(ENABLE_LLVMABI)
+#include "renameadvsimd_llvm.h"
 #else
 #include "renameadvsimd.h"
 #endif
@@ -1952,6 +1974,8 @@ EXPORT CONST vdouble xsqrt_u05(vdouble d) {
   
   return x;
 }
+
+EXPORT CONST vdouble xsqrt_u35(vdouble d) { return xsqrt_u05(d); }
 
 EXPORT CONST vdouble xhypot_u05(vdouble x, vdouble y) {
   x = vabs_vd_vd(x);
