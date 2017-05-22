@@ -26,21 +26,6 @@ distclean : clean
 
 #
 
-ifeq ($(ENABLEGNUABI),1)
-ifeq ($(ENABLEAVX512F),1)
-ORGFN=symbols.$(ARCH).withavx512f.org
-else
-ORGFN=symbols.$(ARCH).org
-endif
-
-.PHONY: test
-test : libsleefgnuabi
-	nm -g libsleefgnuabi.$(DLLSUFFIX) | grep '_ZGV' | sed 's/_//g' | awk '{ print $$3 }' | LC_COLLATE=POSIX sort > symbols.txt
-	diff --ignore-all-space -c symbols.txt $(ORGFN)
-endif
-
-#
-
 ifeq ($(OS),Linux)
 libsleef.so : ../src/libm/libm.a ../src/common/common.a
 	$(FLOCK) ../src/libm/libm.a.lock -c '$(CC) -fPIC -shared -o libsleef.so.$(SOVERSION).$(MINORVERSION) -Wl,-soname,libsleef.so.$(SOVERSION) -Wl,--whole-archive ../src/libm/libm.a ../src/common/common.a -Wl,--no-whole-archive -lm'
