@@ -12,7 +12,7 @@ libsleefdft : libsleefdft.dll
 
 .PHONY: test
 test : libsleefgnuabi
-	dumpbin /EXPORTS libsleefgnuabi.dll |grep ' _ZGV' |awk '{ print $$4 }' | sort > symbols.txt
+	dumpbin /EXPORTS libsleefgnuabi.dll |grep ' _ZGV' |awk '{ print $$4 }' | LC_COLLATE=C sort > symbols.txt
 	diff --ignore-all-space -c symbols.txt symbols.x86_64.org
 
 libsleef.dll : ../src/libm/libm.lib ../src/libm/OBJ.txt ../src/common/common.lib
