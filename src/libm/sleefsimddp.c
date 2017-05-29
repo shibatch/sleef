@@ -83,6 +83,18 @@
 #endif
 #endif
 
+#ifdef ENABLE_AVX2128
+#define CONFIG 1
+#include "helperavx2_128.h"
+#ifdef DORENAME
+#if defined(ENABLE_LLVMABI)
+#include "renameavx2128_llvm.h"
+#else
+#include "renameavx2128.h"
+#endif
+#endif
+#endif
+
 #ifdef ENABLE_AVX512F
 #define CONFIG 1
 #include "helperavx512f.h"

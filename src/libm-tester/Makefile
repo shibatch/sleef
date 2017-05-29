@@ -46,7 +46,7 @@ TARGET_IUT += iutsse2 iutsse4 iutavx iutdsp128 iutdsp256
 TARGET_TESTER += tester2sse2dp tester2sse2sp tester2sse4dp tester2sse4sp tester2avxdp tester2avxsp
 
 ifeq ($(ENABLEAVX2), 1)
-TARGET_IUT+=iutavx2
+TARGET_IUT+=iutavx2 iutavx2128
 TARGET_TESTER+=tester2avx2dp tester2avx2sp
 endif
 
@@ -175,6 +175,11 @@ tester2avx2sp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2sim
 
 #
 
+iutavx2128 : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h iutsimdmain.o iutsimd.c testerutil.c ../libm/renameavx2128.h ../../include/sleef.h
+	$(CC) $(CFLAGS) -DENABLE_AVX2128 $(AVX2FLAG) iutsimdmain.o iutsimd.c testerutil.c -o iutavx2128 -lsleef -lm $(LIB)
+
+#
+
 iutavx512f : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h iutsimdmain.o iutsimd.c testerutil.c ../libm/renameavx512f.h ../../include/sleef.h
 	$(CC) $(CFLAGS) -DENABLE_AVX512F $(AVX512FLAG) iutsimdmain.o iutsimd.c testerutil.c -o iutavx512f -lsleef -lm $(LIB)
 
@@ -292,7 +297,7 @@ clean :
 	rm -f *~ a.out *.obj *.lib *.dll *.exp *.exe *.stackdump nohup.out
 	rm -rf *.dSYM *.dylib
 	rm -f *.so *.so.* *.a *.s *.o
-	rm -f iut iutsse2 iutsse4 iutavx iutfma4 iutavx2 iutavx512f iutneon32 iutadvsimd iutdsp128 iutdsp256
+	rm -f iut iutsse2 iutsse4 iutavx iutfma4 iutavx2 iutavx2128 iutavx512f iutneon32 iutadvsimd iutdsp128 iutdsp256
 	rm -f tester tester2vecextdp tester2vecextsp iutvecext tester2purecdp tester2purecsp iutpurec
 	rm -f tester2dp tester2sp tester2qp tester2ld tester2sse2dp tester2sse2sp tester2sse4dp tester2sse4sp
 	rm -f tester2fma4dp tester2fma4sp tester2avxdp tester2avxsp tester2avx2dp tester2avx2sp tester2avx512fdp tester2avx512fsp

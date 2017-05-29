@@ -3,7 +3,7 @@ CFLAGS+=/fp:strict /I..\common /I..\arch /I../../include /I../libm
 
 #
 
-TARGET_IUT = iut.exe iutsse2.exe iutsse4.exe iutavx.exe iutavx2.exe iutdsp128.exe iutdsp256.exe
+TARGET_IUT = iut.exe iutsse2.exe iutsse4.exe iutavx.exe iutavx2.exe iutavx2128.exe iutdsp128.exe iutdsp256.exe
 
 .PHONY: all
 all : $(TARGET_IUT)
@@ -26,13 +26,13 @@ iut.exe : ../../lib/libsleef.lib ../../include/sleef.h iut.c testerutil.c ../lib
 	$(CC) $(CFLAGS) iut.c testerutil.c ../../lib/libsleef.lib
 
 iutsse2.exe : ../../lib/libsleef.lib ../../include/sleef.h iutsimdmain.obj iutsimd.c testerutil.c ../libm/renamesse2.h ../../include/sleef.h
-	$(CC) $(CFLAGS) /DENABLE_SSE2 /D__SSE2__ /DLOGVECTLENDP=1 /DLOGVECTLENSP=2 iutsimdmain.obj iutsimd.c testerutil.c ../../lib/libsleef.lib /Feiutsse2.exe
+	$(CC) $(CFLAGS) /DENABLE_SSE2 /D__SSE2__ /DLOGVECTLENDP=1 iutsimdmain.obj iutsimd.c testerutil.c ../../lib/libsleef.lib /Feiutsse2.exe
 
 ../libm/renamesse2.h :
 	+"$(MAKE)" --directory=../libm -f Makefile.vc renamesse2.h
 
 iutsse4.exe : ../../lib/libsleef.lib ../../include/sleef.h iutsimdmain.obj iutsimd.c testerutil.c ../libm/renamesse4.h ../../include/sleef.h
-	$(CC) $(CFLAGS) /DENABLE_SSE4 /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /DLOGVECTLENDP=1 /DLOGVECTLENSP=2 iutsimdmain.obj iutsimd.c testerutil.c ../../lib/libsleef.lib /Feiutsse4.exe
+	$(CC) $(CFLAGS) /DENABLE_SSE4 /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /DLOGVECTLENDP=1 iutsimdmain.obj iutsimd.c testerutil.c ../../lib/libsleef.lib /Feiutsse4.exe
 
 ../libm/renamesse4.h :
 	+"$(MAKE)" --directory=../libm -f Makefile.vc renamesse4.h
@@ -40,7 +40,7 @@ iutsse4.exe : ../../lib/libsleef.lib ../../include/sleef.h iutsimdmain.obj iutsi
 #
 
 iutavx.exe : ../../lib/libsleef.lib ../../include/sleef.h iutsimdmain.obj iutsimd.c testerutil.c ../libm/renameavx.h ../../include/sleef.h
-	$(CC) $(CFLAGS) /DENABLE_AVX /DLOGVECTLENDP=2 /DLOGVECTLENSP=4 /arch:AVX iutsimdmain.obj iutsimd.c testerutil.c ../../lib/libsleef.lib /Feiutavx.exe
+	$(CC) $(CFLAGS) /DENABLE_AVX /DLOGVECTLENDP=2 /arch:AVX iutsimdmain.obj iutsimd.c testerutil.c ../../lib/libsleef.lib /Feiutavx.exe
 
 ../libm/renameavx.h :
 	+"$(MAKE)" --directory=../libm -f Makefile.vc renameavx.h
@@ -48,21 +48,26 @@ iutavx.exe : ../../lib/libsleef.lib ../../include/sleef.h iutsimdmain.obj iutsim
 #
 
 iutavx2.exe : ../../lib/libsleef.lib ../../include/sleef.h iutsimdmain.obj iutsimd.c testerutil.c ../libm/renameavx2.h ../../include/sleef.h
-	$(CC) $(CFLAGS) /DENABLE_AVX2 /DLOGVECTLENDP=2 /DLOGVECTLENSP=4 /arch:AVX2 iutsimdmain.obj iutsimd.c testerutil.c ../../lib/libsleef.lib /Feiutavx2.exe
+	$(CC) $(CFLAGS) /DENABLE_AVX2 /DLOGVECTLENDP=2 /arch:AVX2 iutsimdmain.obj iutsimd.c testerutil.c ../../lib/libsleef.lib /Feiutavx2.exe
 
 ../libm/renameavx2.h :
 	+"$(MAKE)" --directory=../libm -f Makefile.vc renameavx2.h
 
 #
 
+iutavx2128.exe : ../../lib/libsleef.lib ../../include/sleef.h iutsimdmain.obj iutsimd.c testerutil.c ../libm/renameavx2128.h ../../include/sleef.h
+	$(CC) $(CFLAGS) /DENABLE_AVX2128 /DLOGVECTLENDP=1 /arch:AVX2 iutsimdmain.obj iutsimd.c testerutil.c ../../lib/libsleef.lib /Feiutavx2128.exe
+
+#
+
 iutdsp128.exe : ../../lib/libsleef.lib ../../include/sleef.h iutsimdmain.obj iutsimd.c testerutil.c ../libm/renamedsp128.h ../../include/sleef.h
-	$(CC) $(CFLAGS) /DENABLE_DSP128 /D__SSE2__ /DLOGVECTLENDP=1 /DLOGVECTLENSP=2 iutsimdmain.obj iutsimd.c testerutil.c ../../lib/libsleef.lib /Feiutdsp128.exe
+	$(CC) $(CFLAGS) /DENABLE_DSP128 /D__SSE2__ /DLOGVECTLENDP=1 iutsimdmain.obj iutsimd.c testerutil.c ../../lib/libsleef.lib /Feiutdsp128.exe
 
 ../libm/renamedsp128.h :
 	+"$(MAKE)" --directory=../libm -f Makefile.vc renamedsp128.h
 
 iutdsp256.exe : ../../lib/libsleef.lib ../../include/sleef.h iutsimdmain.obj iutsimd.c testerutil.c ../libm/renamedsp256.h ../../include/sleef.h
-	$(CC) $(CFLAGS) /DENABLE_DSP256 /DLOGVECTLENDP=2 /DLOGVECTLENSP=4 /arch:AVX iutsimdmain.obj iutsimd.c testerutil.c ../../lib/libsleef.lib /Feiutdsp256.exe
+	$(CC) $(CFLAGS) /DENABLE_DSP256 /DLOGVECTLENDP=2 /arch:AVX iutsimdmain.obj iutsimd.c testerutil.c ../../lib/libsleef.lib /Feiutdsp256.exe
 
 ../libm/renamedsp256.h :
 	+"$(MAKE)" --directory=../libm -f Makefile.vc renamedsp256.h
@@ -85,7 +90,7 @@ iutpurec.exe : ../libm/sleefsimddp.c ../libm/sleefsimdsp.c iutsimdmain.obj iutsi
 .PHONY: clean
 clean :
 	rm -f *~ a.out
-	rm -f iut iutsse2 iutsse4 iutavx iutfma4 iutavx2 iutavx512f
+	rm -f iut iutsse2 iutsse4 iutavx iutfma4 iutavx2 iutavx2128 iutavx512f
 	rm -f tester tester2vecextdp tester2vecextsp iutvecext tester2purecdp tester2purecsp iutpurec
 	rm -f tester2dp tester2sp tester2qp tester2ld tester2sse2dp tester2sse2sp tester2fma4dp tester2fma4sp tester2avxdp tester2avxsp tester2avx2dp tester2avx2sp tester2avx512fdp tester2avx512fsp
 

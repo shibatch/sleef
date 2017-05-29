@@ -40,7 +40,7 @@ OBJ3+=sleefldpfma4.o sleeflspfma4.o
 endif
 
 ifeq ($(ENABLEAVX2), 1)
-OBJ+=sleefdpavx2.o sleefspavx2.o
+OBJ+=sleefdpavx2.o sleefspavx2.o sleefdpavx2128.o sleefspavx2128.o
 OBJ2+=sleefgdpavx2.o sleefgspavx2.o
 OBJ3+=sleefldpavx2.o sleeflspavx2.o
 endif
@@ -82,6 +82,7 @@ sleef.h : mkrename
 	./mkrename 2 4 __m128d __m128 __m128i __m128i __SSE2__ >> sleef.h
 	./mkrename 2 4 __m128d __m128 __m128i __m128i __SSE2__ sse2 >> sleef.h
 	./mkrename 2 4 __m128d __m128 __m128i __m128i __SSE2__ sse4 >> sleef.h
+	./mkrename 2 4 __m128d __m128 __m128i __m128i __SSE2__ avx2128 >> sleef.h
 	./mkrename 4 8 __m256d __m256 __m128i 'struct { __m128i x, y; }' __AVX__ >> sleef.h
 	./mkrename 4 8 __m256d __m256 __m128i 'struct { __m128i x, y; }' __AVX__ avx >> sleef.h
 	./mkrename 4 8 __m256d __m256 __m128i 'struct { __m128i x, y; }' __AVX__ fma4 >> sleef.h
@@ -215,17 +216,6 @@ renamesse4_llvm.h : mkrename_llvm
 
 ##
 
-dispavx.c : mkdisp
-	cp dispavx.c.org dispavx.c
-	./mkdisp 4 8 __m256d __m256 __m128i avx fma4 avx2 >> dispavx.c
-
-dispsse.c : mkdisp
-	cp dispsse.c.org dispsse.c
-	./mkdisp 2 4 __m128d __m128 __m128i sse2 sse4 >> dispsse.c
-
-mkdisp : mkdisp.c
-	$(CC) $(CFLAGS) -Wall mkdisp.c -o mkdisp
-
 DISPAVXOPT=
 ifdef ENABLEFMA4
 DISPAVXOPT+=-DENABLE_FMA4
@@ -234,11 +224,22 @@ ifeq ($(ENABLEAVX2), 1)
 DISPAVXOPT+=-DENABLE_AVX2
 endif
 
+dispavx.c : mkdisp
+	cp dispavx.c.org dispavx.c
+	./mkdisp 4 8 __m256d __m256 __m128i avx fma4 avx2 >> dispavx.c
+
+dispsse.c : mkdisp
+	cp dispsse.c.org dispsse.c
+	./mkdisp 2 4 __m128d __m128 __m128i sse2 sse4 avx2128 >> dispsse.c
+
+mkdisp : mkdisp.c
+	$(CC) $(CFLAGS) -Wall mkdisp.c -o mkdisp
+
 dispavx.o : dispavx.c sleef.h
 	$(CC) $(CFLAGS) $(SHAREDFLAGS) $(DISPAVXOPT) -mavx dispavx.c -c -o dispavx.o
 
 dispsse.o : dispsse.c sleef.h
-	$(CC) $(CFLAGS) $(SHAREDFLAGS) dispsse.c -c -o dispsse.o
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) $(DISPAVXOPT) dispsse.c -c -o dispsse.o
 
 #
 
@@ -338,6 +339,30 @@ renameavx2_llvm.h : mkrename_llvm
 
 ##
 
+sleefdpavx2128.o : sleefsimddp.c renameavx2128.h
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_AVX2128 $(AVX2FLAG) sleefsimddp.c -c -o sleefdpavx2128.o
+
+sleefspavx2128.o : sleefsimdsp.c renameavx2128.h
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_AVX2128 $(AVX2FLAG) sleefsimdsp.c -c -o sleefspavx2128.o
+
+renameavx2128.h : mkrename
+	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
+	./mkrename 2 4 avx2128 > renameavx2128.h
+
+#
+
+sleefldpavx2128.o : sleefsimddp.c renameavx2128_llvm.h
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_AVX2128 -DENABLE_LLVMABI $(AVX2FLAG) sleefsimddp.c -c -o sleefldpavx2128.o
+
+sleeflspavx2128.o : sleefsimdsp.c renameavx2128_llvm.h
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_AVX2128 -DENABLE_LLVMABI $(AVX2FLAG) sleefsimdsp.c -c -o sleeflspavx2128.o
+
+renameavx2128_llvm.h : mkrename_llvm
+	$(FLOCK) mkrename_llvm.c -c 'echo Acquiring lock for mkrename_llvm'
+	./mkrename_llvm avx2128 2 4 > renameavx2128_llvm.h
+
+##
+
 sleefdpavx512f.o : sleefsimddp.c renameavx512f.h
 	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_AVX512F $(AVX512FLAG) sleefsimddp.c -c -o sleefdpavx512f.o
 
@@ -433,7 +458,7 @@ renamedsp256.h : mkrename
 clean :
 	rm -f *~ *.o *.s libm.a libgm.a sleefllvm.a sleef.h a.out *.lock OBJ.txt OBJ2.txt
 	rm -f *.obj *.lib *.dll *.exp *.exe
-	rm -f mkrename renamesse2.h renamesse4.h renameavx.h renamefma4.h renameavx2.h renameavx512f.h renameneon32.h renameadvsimd.h renamedsp128.h renamedsp256.h
+	rm -f mkrename renamesse2.h renamesse4.h renameavx.h renamefma4.h renameavx2.h renameavx2128.h renameavx512f.h renameneon32.h renameadvsimd.h renamedsp128.h renamedsp256.h
 	rm -f mkdisp dispavx.c dispsse.c
 	rm -f mkrename_gnuabi renamesse2_gnuabi.h renameavx_gnuabi.h renameavx2_gnuabi.h renameavx512f_gnuabi.h renameneon32_gnuabi.h renameadvsimd_gnuabi.h
-	rm -f mkrename_llvm renamesse2_llvm.h renamesse4_llvm.h renameavx_llvm.h renamefma4_llvm.h renameavx2_llvm.h renameavx512f_llvm.h renameneon32_llvm.h renameadvsimd_llvm.h
+	rm -f mkrename_llvm renamesse2_llvm.h renamesse4_llvm.h renameavx_llvm.h renamefma4_llvm.h renameavx2_llvm.h renameavx2128_llvm.h renameavx512f_llvm.h renameneon32_llvm.h renameadvsimd_llvm.h

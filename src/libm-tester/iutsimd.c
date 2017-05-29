@@ -66,6 +66,14 @@ typedef Sleef___m256d_2 vdouble2;
 typedef Sleef___m256_2 vfloat2;
 #endif
 
+#ifdef ENABLE_AVX2128
+#define CONFIG 1
+#include "helperavx2_128.h"
+#include "renameavx2128.h"
+typedef Sleef___m128d_2 vdouble2;
+typedef Sleef___m128_2 vfloat2;
+#endif
+
 #ifdef ENABLE_AVX512F
 #define CONFIG 1
 #include "helperavx512f.h"
