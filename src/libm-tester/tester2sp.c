@@ -111,6 +111,7 @@ int main(int argc,char **argv)
   srandom(time(NULL));
 
   const float rangemax = 39000;
+  const float rangemax3 = 5e+9;
   
   for(cnt = 0;ecnt < 1000;cnt++) {
     switch(cnt & 7) {
@@ -204,14 +205,14 @@ int main(int argc,char **argv)
 
       float u2 = countULPsp(t = xsinf_u1(d), frx);
       
-      if (u2 != 0 && ((fabs(d) <= rangemax && u2 > 1) || fabs(t) > 1 || !isnumber(t))) {
+      if (u2 != 0 && ((fabs(d) <= rangemax3 && u2 > 1) || fabs(t) > 1 || !isnumber(t))) {
 	printf("Pure C sinf_u1 arg=%.20g ulp=%.20g\n", d, u2);
 	fflush(stdout); ecnt++;
       }
 
       float u3 = countULPsp(t = sc2.x, frx);
       
-      if (u3 != 0 && ((fabs(d) <= rangemax && u3 > 1) || fabs(t) > 1 || !isnumber(t))) {
+      if (u3 != 0 && ((fabs(d) <= rangemax3 && u3 > 1) || fabs(t) > 1 || !isnumber(t))) {
 	printf("Pure C sincosf_u1 sin arg=%.20g ulp=%.20g\n", d, u3);
 	fflush(stdout); ecnt++;
       }
@@ -237,14 +238,14 @@ int main(int argc,char **argv)
 
       float u2 = countULPsp(t = xcosf_u1(d), frx);
       
-      if (u2 != 0 && ((fabs(d) <= rangemax && u2 > 1) || fabs(t) > 1 || !isnumber(t))) {
+      if (u2 != 0 && ((fabs(d) <= rangemax3 && u2 > 1) || fabs(t) > 1 || !isnumber(t))) {
 	printf("Pure C cosf_u1 arg=%.20g ulp=%.20g\n", d, u2);
 	fflush(stdout); ecnt++;
       }
 
       float u3 = countULPsp(t = sc2.y, frx);
       
-      if (u3 != 0 && ((fabs(d) <= rangemax && u3 > 1) || fabs(t) > 1 || !isnumber(t))) {
+      if (u3 != 0 && ((fabs(d) <= rangemax3 && u3 > 1) || fabs(t) > 1 || !isnumber(t))) {
 	printf("Pure C sincosf_u1 cos arg=%.20g ulp=%.20g\n", d, u3);
 	fflush(stdout); ecnt++;
       }
@@ -263,7 +264,7 @@ int main(int argc,char **argv)
 
       float u1 = countULPsp(t = xtanf_u1(d), frx);
       
-      if (u1 != 0 && ((fabs(d) <= rangemax && u1 > 1) || isnan(t))) {
+      if (u1 != 0 && ((fabs(d) <= rangemax3 && u1 > 1) || isnan(t))) {
 	printf("Pure C tanf_u1 arg=%.20g ulp=%.20g\n", d, u1);
 	fflush(stdout); ecnt++;
       }

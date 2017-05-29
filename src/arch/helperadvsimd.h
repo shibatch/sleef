@@ -389,9 +389,8 @@ static INLINE vdouble vsel_vd_vo_vo_d_d_d(vopmask o0, vopmask o1, double d0, dou
 }
 #endif
 
-static INLINE vdouble vrint_vd_vd(vdouble d) {
-  return vrndnq_f64(d);
-}
+static INLINE vdouble vrint_vd_vd(vdouble d) { return vrndnq_f64(d); }
+static INLINE vfloat vrint_vf_vf(vfloat d) { return vrndnq_f32(d); }
 
 /****************************************/
 /* int <--> float conversions           */

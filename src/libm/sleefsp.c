@@ -426,13 +426,31 @@ EXPORT CONST float xsinf_u1(float d) {
   float u;
   Sleef_float2 s, t, x;
 
-  q = (int)rintfk(d * (float)M_1_PI);
+  if (fabsfk(d) < TRIGRANGEMAX2f) {
+    q = (int)rintfk(d * (float)M_1_PI);
+    u = mlaf(q, -PI_A2f, d);
+    s = dfadd2_f2_f_f(u, q * (-PI_B2f));
+    s = dfadd_f2_f2_f(s, q * (-PI_C2f));
+  } else {
+    Sleef_float2 dfq = dfmul_f2_f2_f(df(M_1_PI, M_1_PI - (float)M_1_PI), d);
+    float t = rintfk(dfq.x * (1.0f / (1 << 16)));
+    dfq.y = rintfk(dfq.x - t * (1 << 16) + dfq.y);
+    q = (int)dfq.y;
+    dfq.x = t * (1 << 16);
+    dfq = dfnormalize_f2_f2(dfq);
 
-  s = dfadd_f2_f_f (d, q * (-PI_Af));
-  s = dfadd_f2_f2_f(s, q * (-PI_Bf));
-  s = dfadd_f2_f2_f(s, q * (-PI_Cf));
-  s = dfadd_f2_f2_f(s, q * (-PI_Df));
-
+    s = dfadd2_f2_f_f2 (d, dfmul_f2_f2_f(dfq, -PI_A3f));
+    s = dfnormalize_f2_f2(s);
+    s = dfadd2_f2_f2_f2(s, dfmul_f2_f2_f(dfq, -PI_B3f));
+    s = dfnormalize_f2_f2(s);
+    s = dfadd2_f2_f2_f2(s, dfmul_f2_f2_f(dfq, -PI_C3f));
+    s = dfnormalize_f2_f2(s);
+    s = dfadd2_f2_f2_f2(s, dfmul_f2_f2_f(dfq, -PI_D3f));
+    s = dfnormalize_f2_f2(s);
+    s = dfadd2_f2_f2_f2(s, dfmul_f2_f2_f(dfq, -PI_E3f));
+    s = dfnormalize_f2_f2(s);
+  }
+  
   t = s;
   s = dfsqu_f2_f2(s);
 
@@ -445,7 +463,7 @@ EXPORT CONST float xsinf_u1(float d) {
   u = dfmul_f_f2_f2(t, x);
 
   if ((q & 1) != 0) u = -u;
-  if (!xisinff(d) && (xisnegzerof(d) || fabsfk(d) > TRIGRANGEMAXf)) u = -0.0f;
+  if (!xisinff(d) && (xisnegzerof(d) || fabsfk(d) > TRIGRANGEMAX3f)) u = -0.0f;
 
   return u;
 }
@@ -479,18 +497,38 @@ EXPORT CONST float xcosf(float d) {
 }
 
 EXPORT CONST float xcosf_u1(float d) {
-  float u, q;
+  float u;
   Sleef_float2 s, t, x;
+  int q;
 
   d = fabsfk(d);
 
-  q = 1 + 2*(int)rintfk(d * (float)M_1_PI - 0.5f);
+  if (d < TRIGRANGEMAX2f) {
+    float dq = mlaf(rintfk(d * (float)M_1_PI - 0.5f), 2, 1);
+    q = (int)dq;
+    s = dfadd2_f2_f_f (d, dq * (-PI_A2f*0.5f));
+    s = dfadd2_f2_f2_f(s, dq * (-PI_B2f*0.5f));
+    s = dfadd2_f2_f2_f(s, dq * (-PI_C2f*0.5f));
+  } else {
+    Sleef_float2 dfq = dfadd2_f2_f2_f(dfmul_f2_f2_f(df(M_1_PI, M_1_PI - (float)M_1_PI), d), -0.5f);
+    float t = rintfk(dfq.x * (1.0f / (1 << 16)));
+    dfq.y = rintfk(dfq.x - t * (1 << 16) + dfq.y) * 2 + 1;
+    q = (int)dfq.y;
+    dfq.x = t * (1 << 17);
+    dfq = dfnormalize_f2_f2(dfq);
 
-  s = dfadd2_f2_f_f (d, q * (-PI_Af*0.5f));
-  s = dfadd2_f2_f2_f(s, q * (-PI_Bf*0.5f));
-  s = dfadd2_f2_f2_f(s, q * (-PI_Cf*0.5f));
-  s = dfadd2_f2_f2_f(s, q * (-PI_Df*0.5f));
-
+    s = dfadd2_f2_f_f2 (d, dfmul_f2_f2_f(dfq, -PI_A3f*0.5f));
+    s = dfnormalize_f2_f2(s);
+    s = dfadd2_f2_f2_f2(s, dfmul_f2_f2_f(dfq, -PI_B3f*0.5f));
+    s = dfnormalize_f2_f2(s);
+    s = dfadd2_f2_f2_f2(s, dfmul_f2_f2_f(dfq, -PI_C3f*0.5f));
+    s = dfnormalize_f2_f2(s);
+    s = dfadd2_f2_f2_f2(s, dfmul_f2_f2_f(dfq, -PI_D3f*0.5f));
+    s = dfnormalize_f2_f2(s);
+    s = dfadd2_f2_f2_f2(s, dfmul_f2_f2_f(dfq, -PI_E3f*0.5f));
+    s = dfnormalize_f2_f2(s);
+  }
+  
   t = s;
   s = dfsqu_f2_f2(s);
 
@@ -503,7 +541,7 @@ EXPORT CONST float xcosf_u1(float d) {
   u = dfmul_f_f2_f2(t, x);
 
   if ((((int)q) & 2) == 0) u = -u;
-  if (!xisinff(d) && d > TRIGRANGEMAXf) u = 0.0f;
+  if (!xisinff(d) && d > TRIGRANGEMAX3f) u = 0.0f;
   return u;
 }
 
@@ -557,13 +595,31 @@ EXPORT CONST Sleef_float2 xsincosf_u1(float d) {
   float u;
   Sleef_float2 r, s, t, x;
 
-  q = (int)rintfk(d * (float)(2 * M_1_PI));
+  if (fabsfk(d) < TRIGRANGEMAX2f) {
+    q = (int)rintfk(d * (float)(2 * M_1_PI));
+    u = mlaf(q, -PI_A2f*0.5f, d);
+    s = dfadd2_f2_f_f(u, q * (-PI_B2f*0.5f));
+    s = dfadd_f2_f2_f(s, q * (-PI_C2f*0.5f));
+  } else {
+    Sleef_float2 dfq = dfmul_f2_f2_f(df((2 * M_1_PI), (2 * M_1_PI) - (float)(2 * M_1_PI)), d);
+    float t = rintfk(dfq.x * (1.0f / (1 << 16)));
+    dfq.y = rintfk(dfq.x - t * (1 << 16) + dfq.y);
+    q = (int)dfq.y;
+    dfq.x = t * (1 << 16);
+    dfq = dfnormalize_f2_f2(dfq);
 
-  s = dfadd_f2_f_f (d, q * (-PI_Af*0.5f));
-  s = dfadd_f2_f2_f(s, q * (-PI_Bf*0.5f));
-  s = dfadd_f2_f2_f(s, q * (-PI_Cf*0.5f));
-  s = dfadd_f2_f2_f(s, q * (-PI_Df*0.5f));
-
+    s = dfadd2_f2_f_f2 (d, dfmul_f2_f2_f(dfq, -PI_A3f*0.5f));
+    s = dfnormalize_f2_f2(s);
+    s = dfadd2_f2_f2_f2(s, dfmul_f2_f2_f(dfq, -PI_B3f*0.5f));
+    s = dfnormalize_f2_f2(s);
+    s = dfadd2_f2_f2_f2(s, dfmul_f2_f2_f(dfq, -PI_C3f*0.5f));
+    s = dfnormalize_f2_f2(s);
+    s = dfadd2_f2_f2_f2(s, dfmul_f2_f2_f(dfq, -PI_D3f*0.5f));
+    s = dfnormalize_f2_f2(s);
+    s = dfadd2_f2_f2_f2(s, dfmul_f2_f2_f(dfq, -PI_E3f*0.5f));
+    s = dfnormalize_f2_f2(s);
+  }
+  
   t = s;
   s.x = dfsqu_f_f2(s);
 
@@ -590,7 +646,7 @@ EXPORT CONST Sleef_float2 xsincosf_u1(float d) {
   if ((q & 2) != 0) { r.x = -r.x; }
   if (((q+1) & 2) != 0) { r.y = -r.y; }
 
-  if (fabsfk(d) > TRIGRANGEMAXf) { r.x = r.y = 0; }
+  if (fabsfk(d) > TRIGRANGEMAX3f) { r.x = r.y = 0; }
   if (xisinff(d)) { r.x = r.y = NAN; }
 
   return r;
@@ -715,13 +771,30 @@ EXPORT CONST float xtanf_u1(float d) {
   float u;
   Sleef_float2 s, t, x;
 
-  q = (int)rintfk(d * (float)(2 * M_1_PI));
-  
-  s = dfadd_f2_f_f  (d, q * (-PI_Af*0.5f));
-  s = dfadd_f2_f2_f (s, q * (-PI_Bf*0.5f));
-  s = dfadd_f2_f2_f (s, q * (-PI_Cf*0.5f));
-  s = dfadd_f2_f2_f (s, q * (-PI_XDf*0.5f));
-  s = dfadd_f2_f2_f (s, q * (-PI_XEf*0.5f));
+  if (fabsfk(d) < TRIGRANGEMAX2f) {
+    q = (int)rintfk(d * (float)(2 * M_1_PI));
+    u = mlaf(q, -PI_A2f*0.5f, d);
+    s = dfadd2_f2_f_f(u, q * (-PI_B2f*0.5f));
+    s = dfadd_f2_f2_f(s, q * (-PI_C2f*0.5f));
+  } else {
+    Sleef_float2 dfq = dfmul_f2_f2_f(df((2 * M_1_PI), (2 * M_1_PI) - (float)(2 * M_1_PI)), d);
+    float t = rintfk(dfq.x * (1.0f / (1 << 16)));
+    dfq.y = rintfk(dfq.x - t * (1 << 16) + dfq.y);
+    q = (int)dfq.y;
+    dfq.x = t * (1 << 16);
+    dfq = dfnormalize_f2_f2(dfq);
+
+    s = dfadd2_f2_f_f2 (d, dfmul_f2_f2_f(dfq, -PI_A3f*0.5f));
+    s = dfnormalize_f2_f2(s);
+    s = dfadd2_f2_f2_f2(s, dfmul_f2_f2_f(dfq, -PI_B3f*0.5f));
+    s = dfnormalize_f2_f2(s);
+    s = dfadd2_f2_f2_f2(s, dfmul_f2_f2_f(dfq, -PI_C3f*0.5f));
+    s = dfnormalize_f2_f2(s);
+    s = dfadd2_f2_f2_f2(s, dfmul_f2_f2_f(dfq, -PI_D3f*0.5f));
+    s = dfnormalize_f2_f2(s);
+    s = dfadd2_f2_f2_f2(s, dfmul_f2_f2_f(dfq, -PI_E3f*0.5f));
+    s = dfnormalize_f2_f2(s);
+  }
 
   if ((q & 1) != 0) s = dfneg_f2_f2(s);
 
@@ -743,7 +816,7 @@ EXPORT CONST float xtanf_u1(float d) {
 
   u = x.x + x.y;
 
-  if (!xisinff(d) && (xisnegzerof(d) || fabsfk(d) > TRIGRANGEMAXf)) u = -0.0f;
+  if (!xisinff(d) && (xisnegzerof(d) || fabsfk(d) > TRIGRANGEMAX3f)) u = -0.0f;
 
   return u;
 }
@@ -1379,6 +1452,7 @@ EXPORT CONST float xroundf(float d) {
   float fr = x - (int32_t)x;
   if (fr == 0 && x <= 0) x--;
   fr = fr < 0 ? fr+1.0f : fr;
+  x = d == 0.4999999701976776123f ? 0 : x;  // nextafterf(0.5, 0)
   return (xisinff(d) || fabsfk(d) >= (float)(1LL << 23)) ? d : copysignfk(x - fr, d);
 }
 
@@ -1387,6 +1461,7 @@ EXPORT CONST float xrintf(float d) {
   int32_t isodd = (1 & (int32_t)x) != 0;
   float fr = x - (int32_t)x;
   fr = (fr < 0 || (fr == 0 && isodd)) ? fr+1.0f : fr;
+  x = d == 0.50000005960464477539f ? 0 : x;  // nextafterf(0.5, 1)
   return (xisinff(d) || fabsfk(d) >= (float)(1LL << 23)) ? d : copysignfk(x - fr, d);
 }
 

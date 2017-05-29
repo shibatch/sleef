@@ -91,9 +91,12 @@ static INLINE vint2 vrint_vi2_vf(vfloat d) {
 }
 static INLINE vint2 vtruncate_vi2_vf(vfloat vf) { return vcvtq_s32_f32(vf); }
 static INLINE vfloat vcast_vf_vi2(vint2 vi) { return vcvtq_f32_s32(vi); }
+
+static INLINE vfloat vtruncate_vf_vf(vfloat vd) { return vcast_vf_vi2(vtruncate_vi2_vf(vd)); }
+static INLINE vfloat vrint_vf_vf(vfloat vd) { return vcast_vf_vi2(vrint_vi2_vf(vd)); }
+
 static INLINE vfloat vcast_vf_f(float f) { return vdupq_n_f32(f); }
 static INLINE vint2 vcast_vi2_i(int i) { return vdupq_n_s32(i); }
-static INLINE vfloat vtruncate_vf_vf(vfloat vd) { return vcast_vf_vi2(vtruncate_vi2_vf(vd)); }
 static INLINE vmask vreinterpret_vm_vf(vfloat vf) { return (vmask)vf; }
 static INLINE vfloat vreinterpret_vf_vm(vmask vm) { return (vfloat)vm; }
 static INLINE vfloat vreinterpret_vf_vi2(vint2 vm) { return (vfloat)vm; }

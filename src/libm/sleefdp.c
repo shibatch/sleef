@@ -1791,6 +1791,7 @@ EXPORT CONST double xround(double d) {
   fr = fr - (int32_t)fr;
   if (fr == 0 && x <= 0) x--;
   fr = fr < 0 ? fr+1.0 : fr;
+  x = d == 0.49999999999999994449 ? 0 : x;  // nextafter(0.5, 0)
   return (xisinf(d) || fabsk(d) >= (double)(1LL << 52)) ? d : copysignk(x - fr, d);
 }
 
@@ -1800,6 +1801,7 @@ EXPORT CONST double xrint(double d) {
   int32_t isodd = (1 & (int32_t)fr) != 0;
   fr = fr - (int32_t)fr;
   fr = (fr < 0 || (fr == 0 && isodd)) ? fr+1.0 : fr;
+  x = d == 0.50000000000000011102 ? 0 : x;  // nextafter(0.5, 1)
   return (xisinf(d) || fabsk(d) >= (double)(1LL << 52)) ? d : copysignk(x - fr, d);
 }
 

@@ -637,6 +637,7 @@ static INLINE vint2 vtruncate_vi2_vf(vfloat vf) {
 
 static INLINE vint2 vrint_vi2_vf(vfloat vf) { return vtruncate_vi2_vf(vsel_vf_vo_vf_vf((vopmask)(vf < 0), vf - 0.5f, vf + 0.5)); }
 static INLINE vfloat vtruncate_vf_vf(vfloat vd) { return vcast_vf_vi2(vtruncate_vi2_vf(vd)); }
+static INLINE vfloat vrint_vf_vf(vfloat vd) { return vcast_vf_vi2(vrint_vi2_vf(vd)); }
 
 static INLINE vmask vreinterpret_vm_vf(vfloat vf) { return (vmask)vf; }
 static INLINE vfloat vreinterpret_vf_vm(vmask vm) { return (vfloat)vm; }
