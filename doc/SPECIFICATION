@@ -6,7 +6,8 @@ an domain error, a non-number is returned according to the
 specification of the math functions in C language, unless otherwise
 noted.
 
-RANGEMAXD is 1e+14, RANGEMAXS is 39000.
+RANGEMAXD, RANGEMAXS and RANGEMAXS2 are 1e+14, 5e+9 and 39000,
+respectively.
 
 
 xsin, xcos, xsincos : If the argument is in [-RANGEMAXD, RANGEMAXD],
@@ -14,8 +15,8 @@ these functions return values with 3.5 ULPs of error bound. If the
 argument is out of this range, the functions return arbitrary
 values. The returned value is in [-1, 1], regardless of the argument.
 
-xsinf, xcosf, xsincosf : If the argument is in [-RANGEMAXS,
-RANGEMAXS], these functions return values with 3.5 ULPs of error
+xsinf, xcosf, xsincosf : If the argument is in [-RANGEMAXS2,
+RANGEMAXS2], these functions return values with 3.5 ULPs of error
 bound. If the argument is out of this range, the functions return
 arbitrary values. The returned value is in [-1, 1], regardless of the
 argument.
@@ -37,7 +38,7 @@ xtan : If the argument is in [-1e+7, 1e+7], xtan returns a value with
 xtan returns value with 3.5 ULPs of error bound.  If the argument is
 out of this range, xtan returns an arbitrary value except NaN.
 
-xtanf : If the argument is in [-RANGEMAXS, RANGEMAXS], xtanf returns a
+xtanf : If the argument is in [-RANGEMAXS2, RANGEMAXS2], xtanf returns a
 value with 3.5 ULPs of error bound. If the argument is out of this
 range, xtanf returns an arbitrary value except NaN.
 
