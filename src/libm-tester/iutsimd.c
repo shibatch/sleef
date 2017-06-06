@@ -366,6 +366,8 @@ int do_test(int argc, char **argv) {
 #endif
 #ifdef ENABLE_NEON32
     k += 4; // flush to zero
+#elif defined(ENABLE_VECEXT)
+    if (vcast_f_vf(xpowf(vcast_vf_f(0.5f), vcast_vf_f(140))) == 0) k += 4;
 #endif
     printf("%d\n", k);
     fflush(stdout);

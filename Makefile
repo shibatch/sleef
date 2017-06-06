@@ -16,10 +16,10 @@ endif
 
 ifdef ENABLEGNUABI
 .PHONY: all
-all : displayVars libsleef libsleefgnuabi libsleef-dft
+all : displayVars libsleef libsleefgnuabi libsleef-dft libsleefllvm
 else
 .PHONY: all
-all : displayVars libsleef libsleef-dft
+all : displayVars libsleef libsleef-dft libsleefllvm
 endif
 
 .PHONY: displayVars
@@ -28,6 +28,7 @@ displayVars :
 	@echo ARCH = $(ARCH)
 	@echo COMPILER = $(COMPILER)
 	@echo ENABLEGNUABI = $(ENABLEGNUABI)
+	@echo ENABLE256X86 = $(ENABLE256X86)
 	@echo ENABLEAVX2 = $(ENABLEAVX2)
 	@echo ENABLEAVX512f = $(ENABLEAVX512F)
 	@echo ENABLEFMA4 = $(ENABLEFMA4)
@@ -43,14 +44,25 @@ libsleef :
 libsleefgnuabi :
 	+"$(MAKE)" --directory=./lib libsleefgnuabi
 
+.PHONY: libsleefllvm
+libsleefllvm :
+	+"$(MAKE)" --directory=./lib libsleefllvm
+
 .PHONY: test
 test : displayVars libsleef
 	+"$(MAKE)" --directory=./src/libm-tester test
+
+.PHONY: testdft
+testdft : displayVars libsleef
+	+"$(MAKE)" --directory=./src/dft-tester test
 
 .PHONY: libsleef-dft
 libsleef-dft :
 	+"$(MAKE)" --directory=./lib libsleefdft
 #	+"$(MAKE)" --directory=./src/dft-tester
+
+.PHONY: testall
+testall : displayVars test testdft
 
 .PHONY: install
 install :

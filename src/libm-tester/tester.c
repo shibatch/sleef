@@ -29,7 +29,7 @@
 #include "testerutil.h"
 
 void stop(char *mes) {
-  fprintf(stderr, "%s\n", mes);
+  printf("%s\n", mes);
   exit(-1);
 }
 
@@ -332,10 +332,10 @@ int allTestsPassed = 1;
 
 void showResult(int success) {
   if (!success) allTestsPassed = 0;
-  fprintf(stderr, "%s\n", success ? "OK" : "NG **************");
+  printf("%s\n", success ? "OK" : "NG **************");
 
   if (!success) {
-    fprintf(stderr, "\n\n*** Test failed\n");
+    printf("\n\n*** Test failed\n");
     exit(-1);
   }
 }
@@ -352,34 +352,34 @@ void do_test() {
   int success = 1;
 
   if (enableDP) {
-    fprintf(stderr, "Denormal/nonnumber test atan2(y, x)\n\n");
+    printf("Denormal/nonnumber test atan2(y, x)\n\n");
 
-    fprintf(stderr, "If y is +0 and x is -0, +pi is returned : ");
+    printf("If y is +0 and x is -0, +pi is returned : ");
     showResult(child_atan2(+0.0, -0.0) == M_PI);
 
-    fprintf(stderr, "If y is -0 and x is -0, -pi is returned : ");
+    printf("If y is -0 and x is -0, -pi is returned : ");
     showResult(child_atan2(-0.0, -0.0) == -M_PI);
 
-    fprintf(stderr, "If y is +0 and x is +0, +0 is returned : ");
+    printf("If y is +0 and x is +0, +0 is returned : ");
     showResult(isPlusZero(child_atan2(+0.0, +0.0)));
 
-    fprintf(stderr, "If y is -0 and x is +0, -0 is returned : ");
+    printf("If y is -0 and x is +0, -0 is returned : ");
     showResult(isMinusZero(child_atan2(-0.0, +0.0)));
 
-    fprintf(stderr, "If y is positive infinity and x is negative infinity, +3*pi/4 is returned : ");
+    printf("If y is positive infinity and x is negative infinity, +3*pi/4 is returned : ");
     showResult(child_atan2(POSITIVE_INFINITY, NEGATIVE_INFINITY) == 3*M_PI/4);
 
-    fprintf(stderr, "If y is negative infinity and x is negative infinity, -3*pi/4 is returned : ");
+    printf("If y is negative infinity and x is negative infinity, -3*pi/4 is returned : ");
     showResult(child_atan2(NEGATIVE_INFINITY, NEGATIVE_INFINITY) == -3*M_PI/4);
 
-    fprintf(stderr, "If y is positive infinity and x is positive infinity, +pi/4 is returned : ");
+    printf("If y is positive infinity and x is positive infinity, +pi/4 is returned : ");
     showResult(child_atan2(POSITIVE_INFINITY, POSITIVE_INFINITY) == M_PI/4);
 
-    fprintf(stderr, "If y is negative infinity and x is positive infinity, -pi/4 is returned : ");
+    printf("If y is negative infinity and x is positive infinity, -pi/4 is returned : ");
     showResult(child_atan2(NEGATIVE_INFINITY, POSITIVE_INFINITY) == -M_PI/4);
 
     {
-      fprintf(stderr, "If y is +0 and x is less than 0, +pi is returned : ");
+      printf("If y is +0 and x is less than 0, +pi is returned : ");
 
       double ya[] = { +0.0 };
       double xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
@@ -394,7 +394,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is -0 and x is less than 0, -pi is returned : ");
+      printf("If y is -0 and x is less than 0, -pi is returned : ");
 
       double ya[] = { -0.0 };
       double xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
@@ -409,7 +409,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is less than 0 and x is 0, -pi/2 is returned : ");
+      printf("If y is less than 0 and x is 0, -pi/2 is returned : ");
 
       double ya[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
       double xa[] = { +0.0, -0.0 };
@@ -424,7 +424,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is greater than 0 and x is 0, pi/2 is returned : ");
+      printf("If y is greater than 0 and x is 0, pi/2 is returned : ");
 
       double ya[] = { 100000.5, 100000, 3, 2.5, 2, 1.5, 1.0, 0.5 };
       double xa[] = { +0.0, -0.0 };
@@ -439,7 +439,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is greater than 0 and x is -0, pi/2 is returned : ");
+      printf("If y is greater than 0 and x is -0, pi/2 is returned : ");
 
       double ya[] = { 100000.5, 100000, 3, 2.5, 2, 1.5, 1.0, 0.5 };
       double xa[] = { -0.0 };
@@ -454,7 +454,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is positive infinity, and x is finite, pi/2 is returned : ");
+      printf("If y is positive infinity, and x is finite, pi/2 is returned : ");
 
       double ya[] = { POSITIVE_INFINITY };
       double xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
@@ -469,7 +469,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is negative infinity, and x is finite, -pi/2 is returned : ");
+      printf("If y is negative infinity, and x is finite, -pi/2 is returned : ");
 
       double ya[] = { NEGATIVE_INFINITY };
       double xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
@@ -484,7 +484,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is a finite value greater than 0, and x is negative infinity, +pi is returned : ");
+      printf("If y is a finite value greater than 0, and x is negative infinity, +pi is returned : ");
 
       double ya[] = { 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
       double xa[] = { NEGATIVE_INFINITY };
@@ -499,7 +499,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is a finite value less than 0, and x is negative infinity, -pi is returned : ");
+      printf("If y is a finite value less than 0, and x is negative infinity, -pi is returned : ");
 
       double ya[] = { -0.5, -1.5, -2.0, -2.5, -3.0, -100000, -100000.5 };
       double xa[] = { NEGATIVE_INFINITY };
@@ -514,7 +514,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is a finite value greater than 0, and x is positive infinity, +0 is returned : ");
+      printf("If y is a finite value greater than 0, and x is positive infinity, +0 is returned : ");
 
       double ya[] = { 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
       double xa[] = { POSITIVE_INFINITY };
@@ -529,7 +529,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is a finite value less than 0, and x is positive infinity, -0 is returned : ");
+      printf("If y is a finite value less than 0, and x is positive infinity, -0 is returned : ");
 
       double ya[] = { -0.5, -1.5, -2.0, -2.5, -3.0, -100000, -100000.5 };
       double xa[] = { POSITIVE_INFINITY };
@@ -544,7 +544,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If x is NaN, a NaN is returned : ");
+      printf("If x is NaN, a NaN is returned : ");
 
       double ya[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5, NAN };
       double xa[] = { NAN };
@@ -559,7 +559,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is a NaN, the result is a NaN : ");
+      printf("If y is a NaN, the result is a NaN : ");
 
       double ya[] = { NAN };
       double xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5, NAN };
@@ -573,38 +573,38 @@ void do_test() {
       showResult(success);
     }
 
-    fprintf(stderr, "\nend of atan2 denormal/nonnumber test\n");
+    printf("\nend of atan2 denormal/nonnumber test\n");
 
     //
 
-    fprintf(stderr, "\nDenormal/nonnumber test atan2_u1(y, x)\n\n");
+    printf("\nDenormal/nonnumber test atan2_u1(y, x)\n\n");
 
-    fprintf(stderr, "If y is +0 and x is -0, +pi is returned : ");
+    printf("If y is +0 and x is -0, +pi is returned : ");
     showResult(child_atan2_u1(+0.0, -0.0) == M_PI);
 
-    fprintf(stderr, "If y is -0 and x is -0, -pi is returned : ");
+    printf("If y is -0 and x is -0, -pi is returned : ");
     showResult(child_atan2_u1(-0.0, -0.0) == -M_PI);
 
-    fprintf(stderr, "If y is +0 and x is +0, +0 is returned : ");
+    printf("If y is +0 and x is +0, +0 is returned : ");
     showResult(isPlusZero(child_atan2_u1(+0.0, +0.0)));
 
-    fprintf(stderr, "If y is -0 and x is +0, -0 is returned : ");
+    printf("If y is -0 and x is +0, -0 is returned : ");
     showResult(isMinusZero(child_atan2_u1(-0.0, +0.0)));
 
-    fprintf(stderr, "If y is positive infinity and x is negative infinity, +3*pi/4 is returned : ");
+    printf("If y is positive infinity and x is negative infinity, +3*pi/4 is returned : ");
     showResult(child_atan2_u1(POSITIVE_INFINITY, NEGATIVE_INFINITY) == 3*M_PI/4);
 
-    fprintf(stderr, "If y is negative infinity and x is negative infinity, -3*pi/4 is returned : ");
+    printf("If y is negative infinity and x is negative infinity, -3*pi/4 is returned : ");
     showResult(child_atan2_u1(NEGATIVE_INFINITY, NEGATIVE_INFINITY) == -3*M_PI/4);
 
-    fprintf(stderr, "If y is positive infinity and x is positive infinity, +pi/4 is returned : ");
+    printf("If y is positive infinity and x is positive infinity, +pi/4 is returned : ");
     showResult(child_atan2_u1(POSITIVE_INFINITY, POSITIVE_INFINITY) == M_PI/4);
 
-    fprintf(stderr, "If y is negative infinity and x is positive infinity, -pi/4 is returned : ");
+    printf("If y is negative infinity and x is positive infinity, -pi/4 is returned : ");
     showResult(child_atan2_u1(NEGATIVE_INFINITY, POSITIVE_INFINITY) == -M_PI/4);
 
     {
-      fprintf(stderr, "If y is +0 and x is less than 0, +pi is returned : ");
+      printf("If y is +0 and x is less than 0, +pi is returned : ");
 
       double ya[] = { +0.0 };
       double xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
@@ -619,7 +619,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is -0 and x is less than 0, -pi is returned : ");
+      printf("If y is -0 and x is less than 0, -pi is returned : ");
 
       double ya[] = { -0.0 };
       double xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
@@ -634,7 +634,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is less than 0 and x is 0, -pi/2 is returned : ");
+      printf("If y is less than 0 and x is 0, -pi/2 is returned : ");
 
       double ya[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
       double xa[] = { +0.0, -0.0 };
@@ -649,7 +649,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is greater than 0 and x is 0, pi/2 is returned : ");
+      printf("If y is greater than 0 and x is 0, pi/2 is returned : ");
 
 
       double ya[] = { 100000.5, 100000, 3, 2.5, 2, 1.5, 1.0, 0.5 };
@@ -665,7 +665,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is greater than 0 and x is -0, pi/2 is returned : ");
+      printf("If y is greater than 0 and x is -0, pi/2 is returned : ");
 
       double ya[] = { 100000.5, 100000, 3, 2.5, 2, 1.5, 1.0, 0.5 };
       double xa[] = { -0.0 };
@@ -680,7 +680,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is positive infinity, and x is finite, pi/2 is returned : ");
+      printf("If y is positive infinity, and x is finite, pi/2 is returned : ");
 
       double ya[] = { POSITIVE_INFINITY };
       double xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
@@ -695,7 +695,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is negative infinity, and x is finite, -pi/2 is returned : ");
+      printf("If y is negative infinity, and x is finite, -pi/2 is returned : ");
 
       double ya[] = { NEGATIVE_INFINITY };
       double xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
@@ -710,7 +710,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is a finite value greater than 0, and x is negative infinity, +pi is returned : ");
+      printf("If y is a finite value greater than 0, and x is negative infinity, +pi is returned : ");
 
       double ya[] = { 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
       double xa[] = { NEGATIVE_INFINITY };
@@ -725,7 +725,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is a finite value less than 0, and x is negative infinity, -pi is returned : ");
+      printf("If y is a finite value less than 0, and x is negative infinity, -pi is returned : ");
 
       double ya[] = { -0.5, -1.5, -2.0, -2.5, -3.0, -100000, -100000.5 };
       double xa[] = { NEGATIVE_INFINITY };
@@ -740,7 +740,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is a finite value greater than 0, and x is positive infinity, +0 is returned : ");
+      printf("If y is a finite value greater than 0, and x is positive infinity, +0 is returned : ");
 
       double ya[] = { 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
       double xa[] = { POSITIVE_INFINITY };
@@ -755,7 +755,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is a finite value less than 0, and x is positive infinity, -0 is returned : ");
+      printf("If y is a finite value less than 0, and x is positive infinity, -0 is returned : ");
 
       double ya[] = { -0.5, -1.5, -2.0, -2.5, -3.0, -100000, -100000.5 };
       double xa[] = { POSITIVE_INFINITY };
@@ -770,7 +770,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If x is NaN, a NaN is returned : ");
+      printf("If x is NaN, a NaN is returned : ");
 
       double ya[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5, NAN };
       double xa[] = { NAN };
@@ -785,7 +785,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is a NaN, the result is a NaN : ");
+      printf("If y is a NaN, the result is a NaN : ");
 
       double ya[] = { NAN };
       double xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5, NAN };
@@ -799,26 +799,26 @@ void do_test() {
       showResult(success);
     }
 
-    fprintf(stderr, "\nend of atan2_u1 denormal/nonnumber test\n");
+    printf("\nend of atan2_u1 denormal/nonnumber test\n");
   
     //
 
-    fprintf(stderr, "\nDenormal/nonnumber test pow(x, y)\n\n");
+    printf("\nDenormal/nonnumber test pow(x, y)\n\n");
 
-    fprintf(stderr, "If x is +1 and y is a NaN, the result is 1.0 : ");
+    printf("If x is +1 and y is a NaN, the result is 1.0 : ");
     showResult(child_pow(1, NAN) == 1.0);
 
-    fprintf(stderr, "If y is 0 and x is a NaN, the result is 1.0 : ");
+    printf("If y is 0 and x is a NaN, the result is 1.0 : ");
     showResult(child_pow(NAN, 0) == 1.0);
 
-    fprintf(stderr, "If x is -1, and y is positive infinity, the result is 1.0 : ");
+    printf("If x is -1, and y is positive infinity, the result is 1.0 : ");
     showResult(child_pow(-1, POSITIVE_INFINITY) == 1.0);
 
-    fprintf(stderr, "If x is -1, and y is negative infinity, the result is 1.0 : ");
+    printf("If x is -1, and y is negative infinity, the result is 1.0 : ");
     showResult(child_pow(-1, NEGATIVE_INFINITY) == 1.0);
 
     {
-      fprintf(stderr, "If x is a finite value less than 0, and y is a finite non-integer, a NaN is returned : ");
+      printf("If x is a finite value less than 0, and y is a finite non-integer, a NaN is returned : ");
 
       double xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
       double ya[] = { -100000.5, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5, 100000.5 };
@@ -833,7 +833,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If x is a NaN, the result is a NaN : ");
+      printf("If x is a NaN, the result is a NaN : ");
 
       double xa[] = { NAN };
       double ya[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
@@ -848,7 +848,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is a NaN, the result is a NaN : ");
+      printf("If y is a NaN, the result is a NaN : ");
 
       double xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
       double ya[] = { NAN };
@@ -863,7 +863,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If x is +0, and y is an odd integer greater than 0, the result is +0 : ");
+      printf("If x is +0, and y is an odd integer greater than 0, the result is +0 : ");
 
       double xa[] = { +0.0 };
       double ya[] = { 1, 3, 5, 7, 100001 };
@@ -878,7 +878,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If x is -0, and y is an odd integer greater than 0, the result is -0 : ");
+      printf("If x is -0, and y is an odd integer greater than 0, the result is -0 : ");
 
       double xa[] = { -0.0 };
       double ya[] = { 1, 3, 5, 7, 100001 };
@@ -887,7 +887,7 @@ void do_test() {
 	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
 	  double test = child_pow(xa[i], ya[j]);
 	  if (!isMinusZero(test)) {
-	    fprintf(stderr, "arg = %.20g, %.20g, test = %.20g, correct = %.20g\n", xa[i], ya[j], test, -0.0);
+	    printf("arg = %.20g, %.20g, test = %.20g, correct = %.20g\n", xa[i], ya[j], test, -0.0);
 	    success = 0;
 	  }
 	}
@@ -897,7 +897,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If x is 0, and y greater than 0 and not an odd integer, the result is +0 : ");
+      printf("If x is 0, and y greater than 0 and not an odd integer, the result is +0 : ");
 
       double xa[] = { +0.0, -0.0 };
       double ya[] = { 0.5, 1.5, 2.0, 2.5, 4.0, 100000, 100000.5 };
@@ -912,7 +912,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If the absolute value of x is less than 1, and y is negative infinity, the result is positive infinity : ");
+      printf("If the absolute value of x is less than 1, and y is negative infinity, the result is positive infinity : ");
 
       double xa[] = { -0.999, -0.5, -0.0, +0.0, +0.5, +0.999 };
       double ya[] = { NEGATIVE_INFINITY };
@@ -927,7 +927,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If the absolute value of x is greater than 1, and y is negative infinity, the result is +0 : ");
+      printf("If the absolute value of x is greater than 1, and y is negative infinity, the result is +0 : ");
 
       double xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
       double ya[] = { NEGATIVE_INFINITY };
@@ -942,7 +942,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If the absolute value of x is less than 1, and y is positive infinity, the result is +0 : ");
+      printf("If the absolute value of x is less than 1, and y is positive infinity, the result is +0 : ");
 
       double xa[] = { -0.999, -0.5, -0.0, +0.0, +0.5, +0.999 };
       double ya[] = { POSITIVE_INFINITY };
@@ -957,7 +957,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If the absolute value of x is greater than 1, and y is positive infinity, the result is positive infinity : ");
+      printf("If the absolute value of x is greater than 1, and y is positive infinity, the result is positive infinity : ");
 
       double xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
       double ya[] = { POSITIVE_INFINITY };
@@ -972,7 +972,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If x is negative infinity, and y is an odd integer less than 0, the result is -0 : ");
+      printf("If x is negative infinity, and y is an odd integer less than 0, the result is -0 : ");
 
       double xa[] = { NEGATIVE_INFINITY };
       double ya[] = { -100001, -5, -3, -1 };
@@ -987,7 +987,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If x is negative infinity, and y less than 0 and not an odd integer, the result is +0 : ");
+      printf("If x is negative infinity, and y less than 0 and not an odd integer, the result is +0 : ");
 
       double xa[] = { NEGATIVE_INFINITY };
       double ya[] = { -100000.5, -100000, -4, -2.5, -2, -1.5, -0.5 };
@@ -1002,7 +1002,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If x is negative infinity, and y is an odd integer greater than 0, the result is negative infinity : ");
+      printf("If x is negative infinity, and y is an odd integer greater than 0, the result is negative infinity : ");
 
       double xa[] = { NEGATIVE_INFINITY };
       double ya[] = { 1, 3, 5, 7, 100001 };
@@ -1017,7 +1017,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If x is negative infinity, and y greater than 0 and not an odd integer, the result is positive infinity : ");
+      printf("If x is negative infinity, and y greater than 0 and not an odd integer, the result is positive infinity : ");
 
       double xa[] = { NEGATIVE_INFINITY };
       double ya[] = { 0.5, 1.5, 2, 2.5, 3.5, 4, 100000, 100000.5 };
@@ -1032,7 +1032,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If x is positive infinity, and y less than 0, the result is +0 : ");
+      printf("If x is positive infinity, and y less than 0, the result is +0 : ");
 
       double xa[] = { POSITIVE_INFINITY };
       double ya[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
@@ -1047,7 +1047,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If x is positive infinity, and y greater than 0, the result is positive infinity : ");
+      printf("If x is positive infinity, and y greater than 0, the result is positive infinity : ");
 
       double xa[] = { POSITIVE_INFINITY };
       double ya[] = { 0.5, 1, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
@@ -1062,7 +1062,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If x is +0, and y is an odd integer less than 0, +HUGE_VAL is returned : ");
+      printf("If x is +0, and y is an odd integer less than 0, +HUGE_VAL is returned : ");
 
       double xa[] = { +0.0 };
       double ya[] = { -100001, -5, -3, -1 };
@@ -1077,7 +1077,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If x is -0, and y is an odd integer less than 0, -HUGE_VAL is returned : ");
+      printf("If x is -0, and y is an odd integer less than 0, -HUGE_VAL is returned : ");
 
       double xa[] = { -0.0 };
       double ya[] = { -100001, -5, -3, -1 };
@@ -1092,7 +1092,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If x is 0, and y is less than 0 and not an odd integer, +HUGE_VAL is returned : ");
+      printf("If x is 0, and y is less than 0 and not an odd integer, +HUGE_VAL is returned : ");
 
       double xa[] = { +0.0, -0.0 };
       double ya[] = { -100000.5, -100000, -4, -2.5, -2, -1.5, -0.5 };
@@ -1113,7 +1113,7 @@ void do_test() {
     mpfr_set_d(frx, (float)flushToZero(argx), GMP_RNDN);		\
     mpfrFunc(frc, frx, GMP_RNDN);					\
     if (!cmpDenormsp(childFunc((float)flushToZero(argx)), frc)) {	\
-      fprintf(stderr, "arg = %.20g, test = %.20g, correct = %.20g\n",	\
+      printf("arg = %.20g, test = %.20g, correct = %.20g\n",	\
 	      (float)flushToZero(argx), childFunc((float)flushToZero(argx)), flushToZero(mpfr_get_d(frc, GMP_RNDN))); \
       success = 0;							\
       break;								\
@@ -1124,7 +1124,7 @@ void do_test() {
     mpfr_set_d(frx, (float)flushToZero(argx), GMP_RNDN);		\
     mpfrFunc(frc, frx);							\
     if (!cmpDenormsp(childFunc((float)flushToZero(argx)), frc)) {	\
-      fprintf(stderr, "arg = %.20g, test = %.20g, correct = %.20g\n",	\
+      printf("arg = %.20g, test = %.20g, correct = %.20g\n",	\
 	      (float)flushToZero(argx), childFunc((float)flushToZero(argx)), mpfr_get_d(frc, GMP_RNDN)); \
       success = 0;							\
       break;								\
@@ -1136,7 +1136,7 @@ void do_test() {
     mpfr_set_d(fry, (float)flushToZero(argy), GMP_RNDN);		\
     mpfrFunc(frc, frx, fry, GMP_RNDN);					\
     if (!cmpDenormsp(childFunc((float)flushToZero(argx), (float)flushToZero(argy)), frc)) { \
-      fprintf(stderr, "arg = %.20g, %.20g, test = %.20g, correct = %.20g\n", \
+      printf("arg = %.20g, %.20g, test = %.20g, correct = %.20g\n", \
 	      (float)flushToZero(argx), (float)flushToZero(argy), childFunc((float)flushToZero(argx), (float)flushToZero(argy)), mpfr_get_d(frc, GMP_RNDN)); \
       success = 0;							\
       break;								\
@@ -1148,7 +1148,7 @@ void do_test() {
     mpfrFunc(frc, frx, GMP_RNDN);					\
     Sleef_float2 d2 = childFunc((float)flushToZero(argx));		\
     if (!cmpDenormsp(d2.x, frc)) {					\
-      fprintf(stderr, "arg = %.20g, test = %.20g, correct = %.20g\n",	\
+      printf("arg = %.20g, test = %.20g, correct = %.20g\n",	\
 	      (float)flushToZero(argx), d2.x, mpfr_get_d(frc, GMP_RNDN)); \
       success = 0;							\
       break;								\
@@ -1160,7 +1160,7 @@ void do_test() {
     mpfrFunc(frc, frx, GMP_RNDN);					\
     Sleef_float2 d2 = childFunc((float)flushToZero(argx));		\
     if (!cmpDenormsp(d2.y, frc)) {					\
-      fprintf(stderr, "arg = %.20g, test = %.20g, correct = %.20g\n",	\
+      printf("arg = %.20g, test = %.20g, correct = %.20g\n",	\
 	      (float)flushToZero(argx), d2.y, mpfr_get_d(frc, GMP_RNDN)); \
       success = 0;							\
       break;								\
@@ -1170,34 +1170,34 @@ void do_test() {
   //
 
   if (enableSP) {
-    fprintf(stderr, "\nDenormal/nonnumber test atan2f(y, x)\n\n");
+    printf("\nDenormal/nonnumber test atan2f(y, x)\n\n");
 
-    fprintf(stderr, "If y is +0 and x is -0, +pi is returned ... ");
+    printf("If y is +0 and x is -0, +pi is returned ... ");
     showResult(child_atan2f(+0.0, -0.0) == M_PIf);
 
-    fprintf(stderr, "If y is -0 and x is -0, -pi is returned ... ");
+    printf("If y is -0 and x is -0, -pi is returned ... ");
     showResult(child_atan2f(-0.0, -0.0) == -M_PIf);
 
-    fprintf(stderr, "If y is +0 and x is +0, +0 is returned ... ");
+    printf("If y is +0 and x is +0, +0 is returned ... ");
     showResult(isPlusZerof(child_atan2f(+0.0, +0.0)));
 
-    fprintf(stderr, "If y is -0 and x is +0, -0 is returned ... ");
+    printf("If y is -0 and x is +0, -0 is returned ... ");
     showResult(isMinusZerof(child_atan2f(-0.0, +0.0)));
 
-    fprintf(stderr, "If y is positive infinity and x is negative infinity, +3*pi/4 is returned ... ");
+    printf("If y is positive infinity and x is negative infinity, +3*pi/4 is returned ... ");
     showResult(child_atan2f(POSITIVE_INFINITYf, NEGATIVE_INFINITYf) == 3*M_PIf/4);
 
-    fprintf(stderr, "If y is negative infinity and x is negative infinity, -3*pi/4 is returned ... ");
+    printf("If y is negative infinity and x is negative infinity, -3*pi/4 is returned ... ");
     showResult(child_atan2f(NEGATIVE_INFINITYf, NEGATIVE_INFINITYf) == -3*M_PIf/4);
 
-    fprintf(stderr, "If y is positive infinity and x is positive infinity, +pi/4 is returned ... ");
+    printf("If y is positive infinity and x is positive infinity, +pi/4 is returned ... ");
     showResult(child_atan2f(POSITIVE_INFINITYf, POSITIVE_INFINITYf) == M_PIf/4);
 
-    fprintf(stderr, "If y is negative infinity and x is positive infinity, -pi/4 is returned ... ");
+    printf("If y is negative infinity and x is positive infinity, -pi/4 is returned ... ");
     showResult(child_atan2f(NEGATIVE_INFINITYf, POSITIVE_INFINITYf) == -M_PIf/4);
 
     {
-      fprintf(stderr, "If y is +0 and x is less than 0, +pi is returned ... ");
+      printf("If y is +0 and x is less than 0, +pi is returned ... ");
 
       float ya[] = { +0.0 };
       float xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
@@ -1217,7 +1217,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is -0 and x is less than 0, -pi is returned ... ");
+      printf("If y is -0 and x is less than 0, -pi is returned ... ");
 
       float ya[] = { -0.0 };
       float xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
@@ -1236,7 +1236,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is less than 0 and x is 0, -pi/2 is returned ... ");
+      printf("If y is less than 0 and x is 0, -pi/2 is returned ... ");
 
       float ya[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
       float xa[] = { +0.0, -0.0 };
@@ -1255,7 +1255,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is greater than 0 and x is 0, pi/2 is returned ... ");
+      printf("If y is greater than 0 and x is 0, pi/2 is returned ... ");
 
 
       float ya[] = { 100000.5, 100000, 3, 2.5, 2, 1.5, 1.0, 0.5 };
@@ -1275,7 +1275,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is greater than 0 and x is -0, pi/2 is returned ... ");
+      printf("If y is greater than 0 and x is -0, pi/2 is returned ... ");
 
       float ya[] = { 100000.5, 100000, 3, 2.5, 2, 1.5, 1.0, 0.5 };
       float xa[] = { -0.0 };
@@ -1294,7 +1294,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is positive infinity, and x is finite, pi/2 is returned ... ");
+      printf("If y is positive infinity, and x is finite, pi/2 is returned ... ");
 
       float ya[] = { POSITIVE_INFINITYf };
       float xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
@@ -1313,7 +1313,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is negative infinity, and x is finite, -pi/2 is returned ... ");
+      printf("If y is negative infinity, and x is finite, -pi/2 is returned ... ");
 
       float ya[] = { NEGATIVE_INFINITYf };
       float xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
@@ -1332,7 +1332,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is a finite value greater than 0, and x is negative infinity, +pi is returned ... ");
+      printf("If y is a finite value greater than 0, and x is negative infinity, +pi is returned ... ");
 
       float ya[] = { 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
       float xa[] = { NEGATIVE_INFINITYf };
@@ -1351,7 +1351,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is a finite value less than 0, and x is negative infinity, -pi is returned ... ");
+      printf("If y is a finite value less than 0, and x is negative infinity, -pi is returned ... ");
 
       float ya[] = { -0.5, -1.5, -2.0, -2.5, -3.0, -100000, -100000.5 };
       float xa[] = { NEGATIVE_INFINITYf };
@@ -1370,7 +1370,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is a finite value greater than 0, and x is positive infinity, +0 is returned ... ");
+      printf("If y is a finite value greater than 0, and x is positive infinity, +0 is returned ... ");
 
       float ya[] = { 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
       float xa[] = { POSITIVE_INFINITYf };
@@ -1389,7 +1389,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is a finite value less than 0, and x is positive infinity, -0 is returned ... ");
+      printf("If y is a finite value less than 0, and x is positive infinity, -0 is returned ... ");
 
       float ya[] = { -0.5, -1.5, -2.0, -2.5, -3.0, -100000, -100000.5 };
       float xa[] = { POSITIVE_INFINITYf };
@@ -1408,7 +1408,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If x is NaN, a NaN is returned ... ");
+      printf("If x is NaN, a NaN is returned ... ");
 
       float ya[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5, NANf };
       float xa[] = { NANf };
@@ -1427,7 +1427,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is a NaN, the result is a NaN ... ");
+      printf("If y is a NaN, the result is a NaN ... ");
 
       float ya[] = { NANf };
       float xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5, NANf };
@@ -1445,38 +1445,38 @@ void do_test() {
       showResult(success);
     }
 
-    fprintf(stderr, "\nend of atan2f denormal/nonnumber test\n\n");
+    printf("\nend of atan2f denormal/nonnumber test\n\n");
 
     //
 
-    fprintf(stderr, "\nDenormal/nonnumber test atan2f_u1(y, x)\n\n");
+    printf("\nDenormal/nonnumber test atan2f_u1(y, x)\n\n");
 
-    fprintf(stderr, "If y is +0 and x is -0, +pi is returned ... ");
+    printf("If y is +0 and x is -0, +pi is returned ... ");
     showResult(child_atan2f_u1(+0.0, -0.0) == M_PIf);
 
-    fprintf(stderr, "If y is -0 and x is -0, -pi is returned ... ");
+    printf("If y is -0 and x is -0, -pi is returned ... ");
     showResult(child_atan2f_u1(-0.0, -0.0) == -M_PIf);
 
-    fprintf(stderr, "If y is +0 and x is +0, +0 is returned ... ");
+    printf("If y is +0 and x is +0, +0 is returned ... ");
     showResult(isPlusZerof(child_atan2f_u1(+0.0, +0.0)));
 
-    fprintf(stderr, "If y is -0 and x is +0, -0 is returned ... ");
+    printf("If y is -0 and x is +0, -0 is returned ... ");
     showResult(isMinusZerof(child_atan2f_u1(-0.0, +0.0)));
 
-    fprintf(stderr, "If y is positive infinity and x is negative infinity, +3*pi/4 is returned ... ");
+    printf("If y is positive infinity and x is negative infinity, +3*pi/4 is returned ... ");
     showResult(child_atan2f_u1(POSITIVE_INFINITYf, NEGATIVE_INFINITYf) == 3*M_PIf/4);
 
-    fprintf(stderr, "If y is negative infinity and x is negative infinity, -3*pi/4 is returned ... ");
+    printf("If y is negative infinity and x is negative infinity, -3*pi/4 is returned ... ");
     showResult(child_atan2f_u1(NEGATIVE_INFINITYf, NEGATIVE_INFINITYf) == -3*M_PIf/4);
 
-    fprintf(stderr, "If y is positive infinity and x is positive infinity, +pi/4 is returned ... ");
+    printf("If y is positive infinity and x is positive infinity, +pi/4 is returned ... ");
     showResult(child_atan2f_u1(POSITIVE_INFINITYf, POSITIVE_INFINITYf) == M_PIf/4);
 
-    fprintf(stderr, "If y is negative infinity and x is positive infinity, -pi/4 is returned ... ");
+    printf("If y is negative infinity and x is positive infinity, -pi/4 is returned ... ");
     showResult(child_atan2f_u1(NEGATIVE_INFINITYf, POSITIVE_INFINITYf) == -M_PIf/4);
 
     {
-      fprintf(stderr, "If y is +0 and x is less than 0, +pi is returned ... ");
+      printf("If y is +0 and x is less than 0, +pi is returned ... ");
 
       float ya[] = { +0.0 };
       float xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
@@ -1496,7 +1496,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is -0 and x is less than 0, -pi is returned ... ");
+      printf("If y is -0 and x is less than 0, -pi is returned ... ");
 
       float ya[] = { -0.0 };
       float xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
@@ -1515,7 +1515,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is less than 0 and x is 0, -pi/2 is returned ... ");
+      printf("If y is less than 0 and x is 0, -pi/2 is returned ... ");
 
       float ya[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
       float xa[] = { +0.0, -0.0 };
@@ -1534,7 +1534,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is greater than 0 and x is 0, pi/2 is returned ... ");
+      printf("If y is greater than 0 and x is 0, pi/2 is returned ... ");
 
 
       float ya[] = { 100000.5, 100000, 3, 2.5, 2, 1.5, 1.0, 0.5 };
@@ -1554,7 +1554,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is greater than 0 and x is -0, pi/2 is returned ... ");
+      printf("If y is greater than 0 and x is -0, pi/2 is returned ... ");
 
       float ya[] = { 100000.5, 100000, 3, 2.5, 2, 1.5, 1.0, 0.5 };
       float xa[] = { -0.0 };
@@ -1573,7 +1573,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is positive infinity, and x is finite, pi/2 is returned ... ");
+      printf("If y is positive infinity, and x is finite, pi/2 is returned ... ");
 
       float ya[] = { POSITIVE_INFINITYf };
       float xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
@@ -1592,7 +1592,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is negative infinity, and x is finite, -pi/2 is returned ... ");
+      printf("If y is negative infinity, and x is finite, -pi/2 is returned ... ");
 
       float ya[] = { NEGATIVE_INFINITYf };
       float xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
@@ -1611,7 +1611,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is a finite value greater than 0, and x is negative infinity, +pi is returned ... ");
+      printf("If y is a finite value greater than 0, and x is negative infinity, +pi is returned ... ");
 
       float ya[] = { 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
       float xa[] = { NEGATIVE_INFINITYf };
@@ -1630,7 +1630,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is a finite value less than 0, and x is negative infinity, -pi is returned ... ");
+      printf("If y is a finite value less than 0, and x is negative infinity, -pi is returned ... ");
 
       float ya[] = { -0.5, -1.5, -2.0, -2.5, -3.0, -100000, -100000.5 };
       float xa[] = { NEGATIVE_INFINITYf };
@@ -1649,7 +1649,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is a finite value greater than 0, and x is positive infinity, +0 is returned ... ");
+      printf("If y is a finite value greater than 0, and x is positive infinity, +0 is returned ... ");
 
       float ya[] = { 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
       float xa[] = { POSITIVE_INFINITYf };
@@ -1668,7 +1668,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is a finite value less than 0, and x is positive infinity, -0 is returned ... ");
+      printf("If y is a finite value less than 0, and x is positive infinity, -0 is returned ... ");
 
       float ya[] = { -0.5, -1.5, -2.0, -2.5, -3.0, -100000, -100000.5 };
       float xa[] = { POSITIVE_INFINITYf };
@@ -1687,7 +1687,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If x is NaN, a NaN is returned ... ");
+      printf("If x is NaN, a NaN is returned ... ");
 
       float ya[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5, NANf };
       float xa[] = { NANf };
@@ -1706,7 +1706,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is a NaN, the result is a NaN ... ");
+      printf("If y is a NaN, the result is a NaN ... ");
 
       float ya[] = { NANf };
       float xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5, NANf };
@@ -1724,26 +1724,26 @@ void do_test() {
       showResult(success);
     }
 
-    fprintf(stderr, "\nend of atan2f_u1 denormal/nonnumber test\n\n");
+    printf("\nend of atan2f_u1 denormal/nonnumber test\n\n");
   
     //
 
-    fprintf(stderr, "\nDenormal/nonnumber test powf(x, y)\n\n");
+    printf("\nDenormal/nonnumber test powf(x, y)\n\n");
 
-    fprintf(stderr, "If x is +1 and y is a NaN, the result is 1.0 ... ");
+    printf("If x is +1 and y is a NaN, the result is 1.0 ... ");
     showResult(child_powf(1, NANf) == 1.0);
 
-    fprintf(stderr, "If y is 0 and x is a NaN, the result is 1.0 ... ");
+    printf("If y is 0 and x is a NaN, the result is 1.0 ... ");
     showResult(child_powf(NANf, 0) == 1.0);
 
-    fprintf(stderr, "If x is -1, and y is positive infinity, the result is 1.0 ... ");
+    printf("If x is -1, and y is positive infinity, the result is 1.0 ... ");
     showResult(child_powf(-1, POSITIVE_INFINITYf) == 1.0);
 
-    fprintf(stderr, "If x is -1, and y is negative infinity, the result is 1.0 ... ");
+    printf("If x is -1, and y is negative infinity, the result is 1.0 ... ");
     showResult(child_powf(-1, NEGATIVE_INFINITYf) == 1.0);
 
     {
-      fprintf(stderr, "If x is a finite value less than 0, and y is a finite non-integer, a NaN is returned ... ");
+      printf("If x is a finite value less than 0, and y is a finite non-integer, a NaN is returned ... ");
 
       float xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
       float ya[] = { -100000.5, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5, 100000.5 };
@@ -1762,7 +1762,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If x is a NaN, the result is a NaN ... ");
+      printf("If x is a NaN, the result is a NaN ... ");
 
       float xa[] = { NANf };
       float ya[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
@@ -1781,7 +1781,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If y is a NaN, the result is a NaN ... ");
+      printf("If y is a NaN, the result is a NaN ... ");
 
       float xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
       float ya[] = { NANf };
@@ -1800,7 +1800,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If x is +0, and y is an odd integer greater than 0, the result is +0 ... ");
+      printf("If x is +0, and y is an odd integer greater than 0, the result is +0 ... ");
 
       float xa[] = { +0.0 };
       float ya[] = { 1, 3, 5, 7, 100001 };
@@ -1819,7 +1819,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If x is -0, and y is an odd integer greater than 0, the result is -0 ... ");
+      printf("If x is -0, and y is an odd integer greater than 0, the result is -0 ... ");
 
       float xa[] = { -0.0 };
       float ya[] = { 1, 3, 5, 7, 100001 };
@@ -1838,7 +1838,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If x is 0, and y greater than 0 and not an odd integer, the result is +0 ... ");
+      printf("If x is 0, and y greater than 0 and not an odd integer, the result is +0 ... ");
 
       float xa[] = { +0.0, -0.0 };
       float ya[] = { 0.5, 1.5, 2.0, 2.5, 4.0, 100000, 100000.5 };
@@ -1857,7 +1857,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If the absolute value of x is less than 1, and y is negative infinity, the result is positive infinity ... ");
+      printf("If the absolute value of x is less than 1, and y is negative infinity, the result is positive infinity ... ");
 
       float xa[] = { -0.999, -0.5, -0.0, +0.0, +0.5, +0.999 };
       float ya[] = { NEGATIVE_INFINITYf };
@@ -1876,7 +1876,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If the absolute value of x is greater than 1, and y is negative infinity, the result is +0 ... ");
+      printf("If the absolute value of x is greater than 1, and y is negative infinity, the result is +0 ... ");
 
       float xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
       float ya[] = { NEGATIVE_INFINITYf };
@@ -1895,7 +1895,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If the absolute value of x is less than 1, and y is positive infinity, the result is +0 ... ");
+      printf("If the absolute value of x is less than 1, and y is positive infinity, the result is +0 ... ");
 
       float xa[] = { -0.999, -0.5, -0.0, +0.0, +0.5, +0.999 };
       float ya[] = { POSITIVE_INFINITYf };
@@ -1914,7 +1914,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If the absolute value of x is greater than 1, and y is positive infinity, the result is positive infinity ... ");
+      printf("If the absolute value of x is greater than 1, and y is positive infinity, the result is positive infinity ... ");
 
       float xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
       float ya[] = { POSITIVE_INFINITYf };
@@ -1933,7 +1933,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If x is negative infinity, and y is an odd integer less than 0, the result is -0 ... ");
+      printf("If x is negative infinity, and y is an odd integer less than 0, the result is -0 ... ");
 
       float xa[] = { NEGATIVE_INFINITYf };
       float ya[] = { -100001, -5, -3, -1 };
@@ -1952,7 +1952,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If x is negative infinity, and y less than 0 and not an odd integer, the result is +0 ... ");
+      printf("If x is negative infinity, and y less than 0 and not an odd integer, the result is +0 ... ");
 
       float xa[] = { NEGATIVE_INFINITYf };
       float ya[] = { -100000.5, -100000, -4, -2.5, -2, -1.5, -0.5 };
@@ -1971,7 +1971,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If x is negative infinity, and y is an odd integer greater than 0, the result is negative infinity ... ");
+      printf("If x is negative infinity, and y is an odd integer greater than 0, the result is negative infinity ... ");
 
       float xa[] = { NEGATIVE_INFINITYf };
       float ya[] = { 1, 3, 5, 7, 100001 };
@@ -1990,7 +1990,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If x is negative infinity, and y greater than 0 and not an odd integer, the result is positive infinity ... ");
+      printf("If x is negative infinity, and y greater than 0 and not an odd integer, the result is positive infinity ... ");
 
       float xa[] = { NEGATIVE_INFINITYf };
       float ya[] = { 0.5, 1.5, 2, 2.5, 3.5, 4, 100000, 100000.5 };
@@ -2009,7 +2009,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If x is positive infinity, and y less than 0, the result is +0 ... ");
+      printf("If x is positive infinity, and y less than 0, the result is +0 ... ");
 
       float xa[] = { POSITIVE_INFINITYf };
       float ya[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
@@ -2028,7 +2028,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If x is positive infinity, and y greater than 0, the result is positive infinity ... ");
+      printf("If x is positive infinity, and y greater than 0, the result is positive infinity ... ");
 
       float xa[] = { POSITIVE_INFINITYf };
       float ya[] = { 0.5, 1, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
@@ -2047,7 +2047,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If x is +0, and y is an odd integer less than 0, +HUGE_VAL is returned ... ");
+      printf("If x is +0, and y is an odd integer less than 0, +HUGE_VAL is returned ... ");
 
       float xa[] = { +0.0 };
       float ya[] = { -100001, -5, -3, -1 };
@@ -2066,7 +2066,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If x is -0, and y is an odd integer less than 0, -HUGE_VAL is returned ... ");
+      printf("If x is -0, and y is an odd integer less than 0, -HUGE_VAL is returned ... ");
 
       float xa[] = { -0.0 };
       float ya[] = { -100001, -5, -3, -1 };
@@ -2085,7 +2085,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If x is 0, and y is less than 0 and not an odd integer, +HUGE_VAL is returned ... ");
+      printf("If x is 0, and y is less than 0 and not an odd integer, +HUGE_VAL is returned ... ");
 
       float xa[] = { +0.0, -0.0 };
       float ya[] = { -100000.5, -100000, -4, -2.5, -2, -1.5, -0.5 };
@@ -2104,7 +2104,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "If the result overflows, the functions return HUGE_VAL with the mathematically correct sign ... ");
+      printf("If the result overflows, the functions return HUGE_VAL with the mathematically correct sign ... ");
 
       float xa[] = { 1000, -1000 };
       float ya[] = { 1000, 1000.5, 1001 };
@@ -2119,7 +2119,7 @@ void do_test() {
       showResult(success);
     }
 
-    fprintf(stderr, "\nEnd of pow denormal/nonnumber test\n\n");
+    printf("\nEnd of pow denormal/nonnumber test\n\n");
   }
   
   //
@@ -2128,7 +2128,7 @@ void do_test() {
       mpfr_set_d(frx, argx, GMP_RNDN);					\
       mpfrFunc(frc, frx, GMP_RNDN);					\
       if (!cmpDenormdp(childFunc(argx), frc)) {				\
-	fprintf(stderr, "arg = %.20g, test = %.20g, correct = %.20g\n", argx, childFunc(argx), mpfr_get_d(frc, GMP_RNDN)); \
+	printf("arg = %.20g, test = %.20g, correct = %.20g\n", argx, childFunc(argx), mpfr_get_d(frc, GMP_RNDN)); \
 	success = 0;							\
 	break;								\
       }									\
@@ -2138,7 +2138,7 @@ void do_test() {
       mpfr_set_d(frx, argx, GMP_RNDN);					\
       mpfrFunc(frc, frx);						\
       if (!cmpDenormdp(childFunc(argx), frc)) {				\
-	fprintf(stderr, "arg = %.20g, test = %.20g, correct = %.20g\n", argx, childFunc(argx), mpfr_get_d(frc, GMP_RNDN)); \
+	printf("arg = %.20g, test = %.20g, correct = %.20g\n", argx, childFunc(argx), mpfr_get_d(frc, GMP_RNDN)); \
 	success = 0;							\
 	break;								\
       }									\
@@ -2149,7 +2149,7 @@ void do_test() {
       mpfr_set_d(fry, argy, GMP_RNDN);					\
       mpfrFunc(frc, frx, fry, GMP_RNDN);				\
       if (!cmpDenormdp(childFunc(argx, argy), frc)) {			\
-	fprintf(stderr, "arg = %.20g, %.20g, test = %.20g, correct = %.20g\n", argx, argy, childFunc(argx, argy), mpfr_get_d(frc, GMP_RNDN)); \
+	printf("arg = %.20g, %.20g, test = %.20g, correct = %.20g\n", argx, argy, childFunc(argx, argy), mpfr_get_d(frc, GMP_RNDN)); \
 	success = 0;							\
 	break;								\
       }									\
@@ -2160,7 +2160,7 @@ void do_test() {
       mpfrFunc(frc, frx, GMP_RNDN);					\
       Sleef_double2 d2 = childFunc(argx);				\
       if (!cmpDenormdp(d2.x, frc)) {					\
-	fprintf(stderr, "arg = %.20g, test = %.20g, correct = %.20g\n", argx, d2.x, mpfr_get_d(frc, GMP_RNDN)); \
+	printf("arg = %.20g, test = %.20g, correct = %.20g\n", argx, d2.x, mpfr_get_d(frc, GMP_RNDN)); \
 	success = 0;							\
 	break;								\
       }									\
@@ -2171,7 +2171,7 @@ void do_test() {
       mpfrFunc(frc, frx, GMP_RNDN);					\
       Sleef_double2 d2 = childFunc(argx);				\
       if (!cmpDenormdp(d2.y, frc)) {					\
-	fprintf(stderr, "arg = %.20g, test = %.20g, correct = %.20g\n", argx, d2.y, mpfr_get_d(frc, GMP_RNDN)); \
+	printf("arg = %.20g, test = %.20g, correct = %.20g\n", argx, d2.y, mpfr_get_d(frc, GMP_RNDN)); \
 	success = 0;							\
 	break;								\
       }									\
@@ -2181,49 +2181,49 @@ void do_test() {
 
   if (enableDP) {
     {
-      fprintf(stderr, "sin denormal/nonnumber test : ");
+      printf("sin denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_sin, child_sin, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "sin_u1 denormal/nonnumber test : ");
+      printf("sin_u1 denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_sin, child_sin_u1, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "sin in sincos denormal/nonnumber test : ");
+      printf("sin in sincos denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenormX_d(mpfr_sin, child_sincos, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "sin in sincos_u1 denormal/nonnumber test : ");
+      printf("sin in sincos_u1 denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenormX_d(mpfr_sin, child_sincos_u1, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "sin in sincospi_u05 denormal/nonnumber test : ");
+      printf("sin in sincospi_u05 denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenormX_d(mpfr_sinpi, child_sincospi_u05, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "sin in sincospi_u35 denormal/nonnumber test : ");
+      printf("sin in sincospi_u35 denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenormX_d(mpfr_sinpi, child_sincospi_u35, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "sinpi_u05 denormal/nonnumber test : ");
+      printf("sinpi_u05 denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_sinpi, child_sinpi_u05, xa[i]);
       showResult(success);
@@ -2232,42 +2232,42 @@ void do_test() {
     //
   
     {
-      fprintf(stderr, "cos denormal/nonnumber test : ");
+      printf("cos denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_cos, child_cos, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "cos_u1 denormal/nonnumber test : ");
+      printf("cos_u1 denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_cos, child_cos_u1, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "cos in sincos denormal/nonnumber test : ");
+      printf("cos in sincos denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenormY_d(mpfr_cos, child_sincos, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "cos in sincos_u1 denormal/nonnumber test : ");
+      printf("cos in sincos_u1 denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenormY_d(mpfr_cos, child_sincos_u1, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "cos in sincospi_u05 denormal/nonnumber test : ");
+      printf("cos in sincospi_u05 denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenormY_d(mpfr_cospi, child_sincospi_u05, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "cos in sincospi_u35 denormal/nonnumber test : ");
+      printf("cos in sincospi_u35 denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenormY_d(mpfr_cospi, child_sincospi_u35, xa[i]);
       showResult(success);
@@ -2276,21 +2276,21 @@ void do_test() {
     //
   
     {
-      fprintf(stderr, "tan denormal/nonnumber test : ");
+      printf("tan denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, M_PI/2, -M_PI/2 };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_tan, child_tan, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "tan_u1 denormal/nonnumber test : ");
+      printf("tan_u1 denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, M_PI/2, -M_PI/2 };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_tan, child_tan_u1, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "asin denormal/nonnumber test : ");
+      printf("asin denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN,
 		      POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, nextafter(1, 2), nextafter(-1, -2) };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_asin, child_asin, xa[i]);
@@ -2298,7 +2298,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "asin_u1 denormal/nonnumber test : ");
+      printf("asin_u1 denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN,
 		      POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, nextafter(1, 2), nextafter(-1, -2) };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_asin, child_asin_u1, xa[i]);
@@ -2306,7 +2306,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "acos denormal/nonnumber test : ");
+      printf("acos denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN,
 		      POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, nextafter(1, 2), nextafter(-1, -2) };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_acos, child_acos, xa[i]);
@@ -2314,7 +2314,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "acos_u1 denormal/nonnumber test : ");
+      printf("acos_u1 denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN,
 		      POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, nextafter(1, 2), nextafter(-1, -2) };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_acos, child_acos_u1, xa[i]);
@@ -2322,140 +2322,140 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "atan denormal/nonnumber test : ");
+      printf("atan denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_atan, child_atan, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "atan_u1 denormal/nonnumber test : ");
+      printf("atan_u1 denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_atan, child_atan_u1, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "log denormal/nonnumber test : ");
+      printf("log denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, nextafter(0, -1) };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_log, child_log, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "log_u1 denormal/nonnumber test : ");
+      printf("log_u1 denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, nextafter(0, -1) };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_log, child_log_u1, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "exp denormal/nonnumber test : ");
+      printf("exp denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_exp, child_exp, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "sinh denormal/nonnumber test : ");
+      printf("sinh denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_sinh, child_sinh, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "cosh denormal/nonnumber test : ");
+      printf("cosh denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_cosh, child_cosh, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "tanh denormal/nonnumber test : ");
+      printf("tanh denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_tanh, child_tanh, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "asinh denormal/nonnumber test : ");
+      printf("asinh denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_asinh, child_asinh, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "acosh denormal/nonnumber test : ");
+      printf("acosh denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_acosh, child_acosh, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "atanh denormal/nonnumber test : ");
+      printf("atanh denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_atanh, child_atanh, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "sqrt_u05 denormal/nonnumber test : ");
+      printf("sqrt_u05 denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_sqrt, child_sqrt_u05, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "cbrt denormal/nonnumber test : ");
+      printf("cbrt denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_cbrt, child_cbrt, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "cbrt_u1 denormal/nonnumber test : ");
+      printf("cbrt_u1 denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_cbrt, child_cbrt_u1, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "exp2 denormal/nonnumber test : ");
+      printf("exp2 denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_exp2, child_exp2, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "exp10 denormal/nonnumber test : ");
+      printf("exp10 denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_exp10, child_exp10, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "expm1 denormal/nonnumber test : ");
+      printf("expm1 denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_expm1, child_expm1, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "log10 denormal/nonnumber test : ");
+      printf("log10 denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_log10, child_log10, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "log1p denormal/nonnumber test : ");
+      printf("log1p denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, nextafter(-1, -2), -2 };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_log1p, child_log1p, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "ldexp denormal/nonnumber test : ");
+      printf("ldexp denormal/nonnumber test : ");
     
       for(i=-10000;i<=10000 && success;i++) {
 	d = child_ldexp(1.0, i);
@@ -2464,7 +2464,7 @@ void do_test() {
 	double c = mpfr_get_d(frx, GMP_RNDN);
 
 	if (c != d) {
-	  fprintf(stderr, "arg = %.20g, correct = %.20g, test = %.20g\n", (double)i, c, d);
+	  printf("arg = %.20g, correct = %.20g, test = %.20g\n", (double)i, c, d);
 	  success = 0;
 	  break;
 	}
@@ -2474,13 +2474,13 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "ilogb denormal/nonnumber test : ");
+      printf("ilogb denormal/nonnumber test : ");
 
       double xa[] = { POSITIVE_INFINITY, NEGATIVE_INFINITY, -1, };
 
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
 	if (child_ilogb(xa[i]) != ilogb(xa[i])) {
-	  fprintf(stderr, "arg = %.20g, correct = %d, test = %d\n", xa[i], ilogb(xa[i]), child_ilogb(xa[i]));
+	  printf("arg = %.20g, correct = %d, test = %d\n", xa[i], ilogb(xa[i]), child_ilogb(xa[i]));
 	  success = 0;
 	  break;
 	}
@@ -2500,7 +2500,7 @@ void do_test() {
     }
   
     {
-      fprintf(stderr, "hypot_u35 denormal/nonnumber test : ");
+      printf("hypot_u35 denormal/nonnumber test : ");
 
       double xa[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       double ya[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
@@ -2515,7 +2515,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "hypot_u05 denormal/nonnumber test : ");
+      printf("hypot_u05 denormal/nonnumber test : ");
 
       double xa[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       double ya[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
@@ -2530,7 +2530,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "copysign denormal/nonnumber test : ");
+      printf("copysign denormal/nonnumber test : ");
 
       double xa[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       double ya[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
@@ -2545,7 +2545,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "fmax denormal/nonnumber test : ");
+      printf("fmax denormal/nonnumber test : ");
 
       double xa[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       double ya[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
@@ -2560,7 +2560,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "fmin denormal/nonnumber test : ");
+      printf("fmin denormal/nonnumber test : ");
 
       double xa[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       double ya[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
@@ -2575,7 +2575,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "fdim denormal/nonnumber test : ");
+      printf("fdim denormal/nonnumber test : ");
 
       double xa[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       double ya[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
@@ -2590,7 +2590,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "fmod denormal/nonnumber test : ");
+      printf("fmod denormal/nonnumber test : ");
 
       double xa[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       double ya[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
@@ -2605,35 +2605,35 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "trunc denormal/nonnumber test : ");
+      printf("trunc denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenormNR_d(mpfr_trunc, child_trunc, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "floor denormal/nonnumber test : ");
+      printf("floor denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenormNR_d(mpfr_floor, child_floor, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "ceil denormal/nonnumber test : ");
+      printf("ceil denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenormNR_d(mpfr_ceil, child_ceil, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "round denormal/nonnumber test : ");
+      printf("round denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenormNR_d(mpfr_round, child_round, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "rint denormal/nonnumber test : ");
+      printf("rint denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_rint, child_rint, xa[i]);
       showResult(success);
@@ -2641,28 +2641,28 @@ void do_test() {
 
     
     {
-      fprintf(stderr, "lgamma_u1 denormal/nonnumber test : ");
+      printf("lgamma_u1 denormal/nonnumber test : ");
       double xa[] = { -4, -3, -2, -1, +0.0, -0.0, +1, +2, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_lgamma_nosign, child_lgamma_u1, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "tgamma_u1 denormal/nonnumber test : ");
+      printf("tgamma_u1 denormal/nonnumber test : ");
       double xa[] = { -4, -3, -2, -1, +0.0, -0.0, +1, +2, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_gamma, child_tgamma_u1, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "erf_u1 denormal/nonnumber test : ");
+      printf("erf_u1 denormal/nonnumber test : ");
       double xa[] = { -1, +0.0, -0.0, +1, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_erf, child_erf_u1, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "erfc_u15 denormal/nonnumber test : ");
+      printf("erfc_u15 denormal/nonnumber test : ");
       double xa[] = { -1, +0.0, -0.0, +1, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_erfc, child_erfc_u15, xa[i]);
       showResult(success);
@@ -2671,42 +2671,42 @@ void do_test() {
 
   if (enableSP) {
     {
-      fprintf(stderr, "sinf denormal/nonnumber test : ");
+      printf("sinf denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_sin, child_sinf, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "sinf_u1 denormal/nonnumber test : ");
+      printf("sinf_u1 denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_sin, child_sinf_u1, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "sin in sincosf denormal/nonnumber test : ");
+      printf("sin in sincosf denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenormX_f(mpfr_sin, child_sincosf, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "sin in sincosf_u1 denormal/nonnumber test : ");
+      printf("sin in sincosf_u1 denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenormX_f(mpfr_sin, child_sincosf_u1, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "sin in sincospif_u05 denormal/nonnumber test : ");
+      printf("sin in sincospif_u05 denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenormX_f(mpfr_sinpi, child_sincospif_u05, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "sin in sincospif_u35 denormal/nonnumber test : ");
+      printf("sin in sincospif_u35 denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenormX_f(mpfr_sinpi, child_sincospif_u35, xa[i]);
       showResult(success);
@@ -2715,42 +2715,42 @@ void do_test() {
     //
   
     {
-      fprintf(stderr, "cosf denormal/nonnumber test : ");
+      printf("cosf denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_cos, child_cosf, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "cosf_u1 denormal/nonnumber test : ");
+      printf("cosf_u1 denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_cos, child_cosf_u1, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "cosf in sincos denormal/nonnumber test : ");
+      printf("cosf in sincos denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenormY_f(mpfr_cos, child_sincosf, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "cosf in sincos_u1 denormal/nonnumber test : ");
+      printf("cosf in sincos_u1 denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenormY_f(mpfr_cos, child_sincosf_u1, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "cosf in sincospi_u05 denormal/nonnumber test : ");
+      printf("cosf in sincospi_u05 denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenormY_f(mpfr_cospi, child_sincospif_u05, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "cosf in sincospi_u35 denormal/nonnumber test : ");
+      printf("cosf in sincospi_u35 denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenormY_f(mpfr_cospi, child_sincospif_u35, xa[i]);
       showResult(success);
@@ -2759,21 +2759,21 @@ void do_test() {
     //
   
     {
-      fprintf(stderr, "tanf denormal/nonnumber test : ");
+      printf("tanf denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, M_PI/2, -M_PI/2 };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_tan, child_tanf, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "tanf_u1 denormal/nonnumber test : ");
+      printf("tanf_u1 denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, M_PI/2, -M_PI/2 };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_tan, child_tanf_u1, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "asinf denormal/nonnumber test : ");
+      printf("asinf denormal/nonnumber test : ");
 #if defined(__arm__) && !defined(__aarch64__)
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX,
 		     POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(1, 2), nextafterf(-1, -2) };
@@ -2786,7 +2786,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "asinf_u1 denormal/nonnumber test : ");
+      printf("asinf_u1 denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN,
 		     POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(1, 2), nextafterf(-1, -2) };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_asin, child_asinf_u1, xa[i]);
@@ -2794,7 +2794,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "acosf denormal/nonnumber test : ");
+      printf("acosf denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN,
 		     POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(1, 2), nextafterf(-1, -2) };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_acos, child_acosf, xa[i]);
@@ -2802,7 +2802,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "acosf_u1 denormal/nonnumber test : ");
+      printf("acosf_u1 denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN,
 		     POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(1, 2), nextafterf(-1, -2) };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_acos, child_acosf_u1, xa[i]);
@@ -2810,28 +2810,28 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "atanf denormal/nonnumber test : ");
+      printf("atanf denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_atan, child_atanf, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "atanf_u1 denormal/nonnumber test : ");
+      printf("atanf_u1 denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_atan, child_atanf_u1, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "logf denormal/nonnumber test : ");
+      printf("logf denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(0, -1) };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_log, child_logf, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "logf_u1 denormal/nonnumber test : ");
+      printf("logf_u1 denormal/nonnumber test : ");
 #if defined(__arm__) && !defined(__aarch64__)
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(0, -1) };
 #else
@@ -2842,35 +2842,35 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "expf denormal/nonnumber test : ");
+      printf("expf denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_exp, child_expf, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "sinhf denormal/nonnumber test : ");
+      printf("sinhf denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_sinh, child_sinhf, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "coshf denormal/nonnumber test : ");
+      printf("coshf denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_cosh, child_coshf, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "tanhf denormal/nonnumber test : ");
+      printf("tanhf denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_tanh, child_tanhf, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "asinhf denormal/nonnumber test : ");
+      printf("asinhf denormal/nonnumber test : ");
 #if defined(__arm__) && !defined(__aarch64__)
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
 #else
@@ -2881,7 +2881,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "acoshf denormal/nonnumber test : ");
+      printf("acoshf denormal/nonnumber test : ");
 #if defined(__arm__) && !defined(__aarch64__)
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
 #else
@@ -2892,70 +2892,70 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "atanhf denormal/nonnumber test : ");
+      printf("atanhf denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_atanh, child_atanhf, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "sqrtf_u05 denormal/nonnumber test : ");
+      printf("sqrtf_u05 denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_sqrt, child_sqrtf_u05, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "sqrtf_u35 denormal/nonnumber test : ");
+      printf("sqrtf_u35 denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_sqrt, child_sqrtf_u35, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "cbrtf denormal/nonnumber test : ");
+      printf("cbrtf denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_cbrt, child_cbrtf, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "cbrtf_u1 denormal/nonnumber test : ");
+      printf("cbrtf_u1 denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_cbrt, child_cbrtf_u1, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "exp2f denormal/nonnumber test : ");
+      printf("exp2f denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_exp2, child_exp2f, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "exp10f denormal/nonnumber test : ");
+      printf("exp10f denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_exp10, child_exp10f, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "expm1f denormal/nonnumber test : ");
+      printf("expm1f denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_expm1, child_expm1f, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "log10f denormal/nonnumber test : ");
+      printf("log10f denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_log10, child_log10f, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "log1pf denormal/nonnumber test : ");
+      printf("log1pf denormal/nonnumber test : ");
 #if defined(__arm__) && !defined(__aarch64__)
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(-1, -2), -2 };
 #else
@@ -2966,7 +2966,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "hypotf_u35 denormal/nonnumber test : ");
+      printf("hypotf_u35 denormal/nonnumber test : ");
 
 #if defined(__arm__) && !defined(__aarch64__)
       float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
@@ -2986,7 +2986,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "hypotf_u05 denormal/nonnumber test : ");
+      printf("hypotf_u05 denormal/nonnumber test : ");
 
 #if defined(__arm__) && !defined(__aarch64__)
       float xa[] = { +0.0, -0.0, +1, -1, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
@@ -3006,7 +3006,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "copysignf denormal/nonnumber test : ");
+      printf("copysignf denormal/nonnumber test : ");
 
       float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
@@ -3021,7 +3021,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "fmaxf denormal/nonnumber test : ");
+      printf("fmaxf denormal/nonnumber test : ");
 
       float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
@@ -3036,7 +3036,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "fminf denormal/nonnumber test : ");
+      printf("fminf denormal/nonnumber test : ");
 
       float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
@@ -3051,7 +3051,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "fdimf denormal/nonnumber test : ");
+      printf("fdimf denormal/nonnumber test : ");
 
       float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
@@ -3066,7 +3066,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "fmodf denormal/nonnumber test : ");
+      printf("fmodf denormal/nonnumber test : ");
 
 #if defined(__arm__) && !defined(__aarch64__)
       float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
@@ -3086,35 +3086,35 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "truncf denormal/nonnumber test : ");
+      printf("truncf denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenormNR_f(mpfr_trunc, child_truncf, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "floorf denormal/nonnumber test : ");
+      printf("floorf denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenormNR_f(mpfr_floor, child_floorf, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "ceilf denormal/nonnumber test : ");
+      printf("ceilf denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenormNR_f(mpfr_ceil, child_ceilf, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "roundf denormal/nonnumber test : ");
+      printf("roundf denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenormNR_f(mpfr_round, child_roundf, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "rintf denormal/nonnumber test : ");
+      printf("rintf denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_rint, child_rintf, xa[i]);
       showResult(success);
@@ -3127,7 +3127,7 @@ void do_test() {
     mpfr_set_d(frx, argx, GMP_RNDN);					\
     mpfrFunc(frc, frx, GMP_RNDN);					\
     if (countULPdp(childFunc(argx), frc) > bound) {			\
-      fprintf(stderr, "\narg = %.20g, test = %.20g, correct = %.20g, ULP = %lf\n", argx, childFunc(argx), mpfr_get_d(frc, GMP_RNDN), countULPdp(childFunc(argx), frc)); \
+      printf("\narg = %.20g, test = %.20g, correct = %.20g, ULP = %lf\n", argx, childFunc(argx), mpfr_get_d(frc, GMP_RNDN), countULPdp(childFunc(argx), frc)); \
       success = 0;							\
       break;								\
     }									\
@@ -3137,7 +3137,7 @@ void do_test() {
     mpfr_set_d(frx, argx, GMP_RNDN);					\
     mpfrFunc(frc, frx);							\
     if (countULPdp(childFunc(argx), frc) > bound) {			\
-      fprintf(stderr, "\narg = %.20g, test = %.20g, correct = %.20g, ULP = %lf\n", argx, childFunc(argx), mpfr_get_d(frc, GMP_RNDN), countULPdp(childFunc(argx), frc)); \
+      printf("\narg = %.20g, test = %.20g, correct = %.20g, ULP = %lf\n", argx, childFunc(argx), mpfr_get_d(frc, GMP_RNDN), countULPdp(childFunc(argx), frc)); \
       success = 0;							\
       break;								\
     }									\
@@ -3148,7 +3148,7 @@ void do_test() {
     mpfr_set_d(fry, argy, GMP_RNDN);					\
     mpfrFunc(frc, frx, fry, GMP_RNDN);					\
     if (countULPdp(childFunc(argx, argy), frc) > bound) {		\
-      fprintf(stderr, "\narg = %.20g, %.20g, test = %.20g, correct = %.20g, ULP = %lf\n", \
+      printf("\narg = %.20g, %.20g, test = %.20g, correct = %.20g, ULP = %lf\n", \
 	      argx, argy, childFunc(argx, argy), mpfr_get_d(frc, GMP_RNDN), countULPdp(childFunc(argx, argy), frc)); \
       success = 0;							\
       break;								\
@@ -3160,7 +3160,7 @@ void do_test() {
     mpfrFunc(frc, frx, GMP_RNDN);					\
     Sleef_double2 d2 = childFunc(argx);					\
     if (countULPdp(d2.x, frc) > bound) {				\
-      fprintf(stderr, "\narg = %.20g, test = %.20g, correct = %.20g, ULP = %lf\n", argx, d2.x, mpfr_get_d(frc, GMP_RNDN), countULPdp(d2.x, frc)); \
+      printf("\narg = %.20g, test = %.20g, correct = %.20g, ULP = %lf\n", argx, d2.x, mpfr_get_d(frc, GMP_RNDN), countULPdp(d2.x, frc)); \
       success = 0;							\
       break;								\
     }									\
@@ -3171,7 +3171,7 @@ void do_test() {
     mpfrFunc(frc, frx, GMP_RNDN);					\
     Sleef_double2 d2 = childFunc(argx);					\
     if (countULPdp(d2.y, frc) > bound) {				\
-      fprintf(stderr, "\narg = %.20g, test = %.20g, correct = %.20g, ULP = %lf\n", argx, d2.y, mpfr_get_d(frc, GMP_RNDN), countULPdp(d2.y, frc)); \
+      printf("\narg = %.20g, test = %.20g, correct = %.20g, ULP = %lf\n", argx, d2.y, mpfr_get_d(frc, GMP_RNDN), countULPdp(d2.y, frc)); \
       success = 0;							\
       break;								\
     }									\
@@ -3179,12 +3179,12 @@ void do_test() {
   
   //
   
-  fprintf(stderr, "\nAccuracy test\n");
+  printf("\nAccuracy test\n");
 
   //
 
   if (enableDP) {
-    fprintf(stderr, "hypot_u35 : ");
+    printf("hypot_u35 : ");
     for(y = -10;y < 10 && success;y += 0.15) {
       for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_d_d(mpfr_hypot, child_hypot_u35, y, x, 3.5);
     }
@@ -3195,7 +3195,7 @@ void do_test() {
   
     //
 
-    fprintf(stderr, "hypot_u05 : ");
+    printf("hypot_u05 : ");
     for(y = -10;y < 10 && success;y += 0.15) {
       for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_d_d(mpfr_hypot, child_hypot_u05, y, x, 0.5);
     }
@@ -3206,7 +3206,7 @@ void do_test() {
   
     //
 
-    fprintf(stderr, "copysign : ");
+    printf("copysign : ");
     for(y = -10;y < 10 && success;y += 0.15) {
       for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_d_d(mpfr_copysign, child_copysign, y, x, 0);
     }
@@ -3217,7 +3217,7 @@ void do_test() {
   
     //
 
-    fprintf(stderr, "fmax : ");
+    printf("fmax : ");
     for(y = -10;y < 10 && success;y += 0.15) {
       for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_d_d(mpfr_max, child_fmax, y, x, 0);
     }
@@ -3228,7 +3228,7 @@ void do_test() {
   
     //
 
-    fprintf(stderr, "fmin : ");
+    printf("fmin : ");
     for(y = -10;y < 10 && success;y += 0.15) {
       for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_d_d(mpfr_min, child_fmin, y, x, 0);
     }
@@ -3239,7 +3239,7 @@ void do_test() {
   
     //
 
-    fprintf(stderr, "fdim : ");
+    printf("fdim : ");
     for(y = -10;y < 10 && success;y += 0.15) {
       for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_d_d(mpfr_dim, child_fdim, y, x, 0.5);
     }
@@ -3250,7 +3250,7 @@ void do_test() {
   
     //
 
-    fprintf(stderr, "fmod : ");
+    printf("fmod : ");
     for(y = -10;y < 10 && success;y += 0.15) {
       for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_d_d(mpfr_fmod, child_fmod, y, x, 0.5);
     }
@@ -3261,9 +3261,11 @@ void do_test() {
   
     //
 
-    fprintf(stderr, "trunc : ");
-    for(d = -1000;d < 1000 && success;d += 0.25) checkAccuracyNR_d(mpfr_trunc, child_trunc, d, 0);
-    for(d = -10000;d < 10000 && success;d += 2.25) checkAccuracyNR_d(mpfr_trunc, child_trunc, d, 0);
+    printf("trunc : ");
+    for(x = -100.5;x <= 100.5;x+=0.5) {
+      for(d = u2d(d2u(x)-3);d <= u2d(d2u(x)+3) && success;d = u2d(d2u(d)+1)) checkAccuracyNR_d(mpfr_trunc, child_trunc, d, 0);
+    }
+    for(d = -10000;d < 10000 && success;d += 2.5) checkAccuracyNR_d(mpfr_trunc, child_trunc, d, 0);
     {
       double start = u2d(d2u((double)(1LL << 52))-20), end = u2d(d2u((double)(1LL << 52))+20);
       for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyNR_d(mpfr_trunc, child_trunc,  d, 0);
@@ -3273,9 +3275,11 @@ void do_test() {
   
     //
 
-    fprintf(stderr, "floor : ");
-    for(d = -1000;d < 1000 && success;d += 0.25) checkAccuracyNR_d(mpfr_floor, child_floor, d, 0);
-    for(d = -10000;d < 10000 && success;d += 2.25) checkAccuracyNR_d(mpfr_floor, child_floor, d, 0);
+    printf("floor : ");
+    for(x = -100.5;x <= 100.5;x+=0.5) {
+      for(d = u2d(d2u(x)-3);d <= u2d(d2u(x)+3) && success;d = u2d(d2u(d)+1)) checkAccuracyNR_d(mpfr_floor, child_floor, d, 0);
+    }
+    for(d = -10000;d < 10000 && success;d += 2.5) checkAccuracyNR_d(mpfr_floor, child_floor, d, 0);
     {
       double start = u2d(d2u((double)(1LL << 52))-20), end = u2d(d2u((double)(1LL << 52))+20);
       for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyNR_d(mpfr_floor, child_floor,  d, 0);
@@ -3285,9 +3289,11 @@ void do_test() {
   
     //
 
-    fprintf(stderr, "ceil : ");
-    for(d = -1000;d < 1000 && success;d += 0.25) checkAccuracyNR_d(mpfr_ceil, child_ceil, d, 0);
-    for(d = -10000;d < 10000 && success;d += 2.25) checkAccuracyNR_d(mpfr_ceil, child_ceil, d, 0);
+    printf("ceil : ");
+    for(x = -100.5;x <= 100.5;x+=0.5) {
+      for(d = u2d(d2u(x)-3);d <= u2d(d2u(x)+3) && success;d = u2d(d2u(d)+1)) checkAccuracyNR_d(mpfr_ceil, child_ceil, d, 0);
+    }
+    for(d = -10000;d < 10000 && success;d += 2.5) checkAccuracyNR_d(mpfr_ceil, child_ceil, d, 0);
     {
       double start = u2d(d2u((double)(1LL << 52))-20), end = u2d(d2u((double)(1LL << 52))+20);
       for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyNR_d(mpfr_ceil, child_ceil,  d, 0);
@@ -3297,9 +3303,11 @@ void do_test() {
   
     //
 
-    fprintf(stderr, "round : ");
-    for(d = -1000;d < 1000 && success;d += 0.25) checkAccuracyNR_d(mpfr_round, child_round, d, 0);
-    for(d = -10000;d < 10000 && success;d += 2.25) checkAccuracyNR_d(mpfr_round, child_round, d, 0);
+    printf("round : ");
+    for(x = -100.5;x <= 100.5;x+=0.5) {
+      for(d = u2d(d2u(x)-3);d <= u2d(d2u(x)+3) && success;d = u2d(d2u(d)+1)) checkAccuracyNR_d(mpfr_round, child_round, d, 0);
+    }
+    for(d = -10000;d < 10000 && success;d += 2.5) checkAccuracyNR_d(mpfr_round, child_round, d, 0);
     {
       double start = u2d(d2u((double)(1LL << 52))-20), end = u2d(d2u((double)(1LL << 52))+20);
       for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyNR_d(mpfr_round, child_round,  d, 0);
@@ -3309,9 +3317,11 @@ void do_test() {
   
     //
 
-    fprintf(stderr, "rint : ");
-    for(d = -1000;d < 1000 && success;d += 0.25) checkAccuracy_d(mpfr_rint, child_rint, d, 0);
-    for(d = -10000;d < 10000 && success;d += 2.25) checkAccuracy_d(mpfr_rint, child_rint, d, 0);
+    printf("rint : ");
+    for(x = -100.5;x <= 100.5;x+=0.5) {
+      for(d = u2d(d2u(x)-3);d <= u2d(d2u(x)+3) && success;d = u2d(d2u(d)+1)) checkAccuracy_d(mpfr_rint, child_rint, d, 0);
+    }
+    for(d = -10000;d < 10000 && success;d += 2.5) checkAccuracy_d(mpfr_rint, child_rint, d, 0);
     {
       double start = u2d(d2u((double)(1LL << 52))-20), end = u2d(d2u((double)(1LL << 52))+20);
       for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracy_d(mpfr_rint, child_rint,  d, 0);
@@ -3321,7 +3331,7 @@ void do_test() {
   
     //
   
-    fprintf(stderr, "sin : ");
+    printf("sin : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_sin, child_sin, d, 3.5);
     for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracy_d(mpfr_sin, child_sin, d, 3.5);
     for(i64=(int64_t)-1e+14;i64<(int64_t)1e+14 && success;i64+=(int64_t)1e+12) {
@@ -3332,7 +3342,7 @@ void do_test() {
 
     //
   
-    fprintf(stderr, "sin_u1 : ");
+    printf("sin_u1 : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_sin, child_sin_u1, d, 1.0);
     for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracy_d(mpfr_sin, child_sin_u1, d, 1.0);
     for(i64=(int64_t)-1e+14;i64<(int64_t)1e+14 && success;i64+=(int64_t)1e+12) {
@@ -3343,7 +3353,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "sin in sincos : ");
+    printf("sin in sincos : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracyX_d(mpfr_sin, child_sincos, d, 3.5);
     for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracyX_d(mpfr_sin, child_sincos, d, 3.5);
     for(i=1;i<10000 && success;i+=31) {
@@ -3354,7 +3364,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "sin in sincos_u1 : ");
+    printf("sin in sincos_u1 : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracyX_d(mpfr_sin, child_sincos_u1, d, 1.0);
     for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracyX_d(mpfr_sin, child_sincos_u1, d, 1.0);
     for(i=1;i<10000 && success;i+=31) {
@@ -3367,7 +3377,7 @@ void do_test() {
 
     mpfr_set_default_prec(1280);
 
-    fprintf(stderr, "sin in sincospi_u35 : ");
+    printf("sin in sincospi_u35 : ");
     for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracyX_d(mpfr_sinpi, child_sincospi_u35, d, 3.5);
     for(d = -1e+8-0.1;d < 1e+8 && success;d += (1e+10 + 0.1)) checkAccuracyX_d(mpfr_sinpi, child_sincospi_u35, d, 3.5);
     for(i=1;i<10000 && success;i+=31) {
@@ -3378,7 +3388,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "sin in sincospi_u05 : ");
+    printf("sin in sincospi_u05 : ");
     for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracyX_d(mpfr_sinpi, child_sincospi_u05, d, 0.506);
     for(d = -1e+8-0.1;d < 1e+8 && success;d += (1e+10 + 0.1)) checkAccuracyX_d(mpfr_sinpi, child_sincospi_u05, d, 0.506);
     for(i=1;i<10000 && success;i+=31) {
@@ -3389,7 +3399,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "sinpi_u05 : ");
+    printf("sinpi_u05 : ");
     for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracy_d(mpfr_sinpi, child_sinpi_u05, d, 0.506);
     for(d = -1e+8-0.1;d < 1e+8 && success;d += (1e+10 + 0.1)) checkAccuracy_d(mpfr_sinpi, child_sinpi_u05, d, 0.506);
     for(i=1;i<10000 && success;i+=31) {
@@ -3402,7 +3412,7 @@ void do_test() {
   
     //
 
-    fprintf(stderr, "cos : ");
+    printf("cos : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_cos, child_cos, d, 3.5);
     for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracy_d(mpfr_cos, child_cos, d, 3.5);
     for(i64=(int64_t)-1e+14;i64<(int64_t)1e+14 && success;i64+=(int64_t)1e+12) {
@@ -3413,7 +3423,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "cos_u1 : ");
+    printf("cos_u1 : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_cos, child_cos_u1, d, 1.0);
     for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracy_d(mpfr_cos, child_cos_u1, d, 1.0);
     for(i64=(int64_t)-1e+14;i64<(int64_t)1e+14 && success;i64+=(int64_t)1e+12) {
@@ -3424,7 +3434,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "cos in sincos : ");
+    printf("cos in sincos : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracyY_d(mpfr_cos, child_sincos, d, 3.5);
     for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracyY_d(mpfr_cos, child_sincos, d, 3.5);
     for(i=1;i<10000 && success;i+=31) {
@@ -3435,7 +3445,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "cos in sincos_u1 : ");
+    printf("cos in sincos_u1 : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracyY_d(mpfr_cos, child_sincos_u1, d, 1.0);
     for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracyY_d(mpfr_cos, child_sincos_u1, d, 1.0);
     for(i=1;i<10000 && success;i+=31) {
@@ -3448,7 +3458,7 @@ void do_test() {
 
     mpfr_set_default_prec(1280);
 
-    fprintf(stderr, "cos in sincospi_u35 : ");
+    printf("cos in sincospi_u35 : ");
     for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracyY_d(mpfr_cospi, child_sincospi_u35, d, 3.5);
     for(d = -1e+8-0.1;d < 1e+8 && success;d += (1e+10 + 0.1)) checkAccuracyY_d(mpfr_cospi, child_sincospi_u35, d, 3.5);
     for(i=1;i<10000 && success;i+=31) {
@@ -3459,7 +3469,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "cos in sincospi_u05 : ");
+    printf("cos in sincospi_u05 : ");
     for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracyY_d(mpfr_cospi, child_sincospi_u05, d, 0.506);
     for(d = -1e+8-0.1;d < 1e+8 && success;d += (1e+10 + 0.1)) checkAccuracyY_d(mpfr_cospi, child_sincospi_u05, d, 0.506);
     for(i=1;i<10000 && success;i+=31) {
@@ -3472,7 +3482,7 @@ void do_test() {
   
     //
 
-    fprintf(stderr, "tan : ");
+    printf("tan : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_tan, child_tan, d, 3.5);
     for(d = -1e+7;d < 1e+7 && success;d += 1000.1) checkAccuracy_d(mpfr_tan, child_tan, d, 3.5);
     for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracy_d(mpfr_tan, child_tan, d, 5);
@@ -3484,7 +3494,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "tan_u1 : ");
+    printf("tan_u1 : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_tan, child_tan_u1, d, 1.0);
     for(d = -1e+7;d < 1e+7 && success;d += 1000.1) checkAccuracy_d(mpfr_tan, child_tan_u1, d, 1.0);
     for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracy_d(mpfr_tan, child_tan_u1, d, 1.0);
@@ -3496,7 +3506,7 @@ void do_test() {
 
     //
   
-    fprintf(stderr, "log : ");
+    printf("log : ");
     for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_d(mpfr_log, child_log, d, 3.5);
     for(d = 0.0001;d < 10000 && success;d += 1.1) checkAccuracy_d(mpfr_log, child_log, d, 3.5);
     for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_d(mpfr_log, child_log, pow(2.1, i), 3.5);
@@ -3507,7 +3517,7 @@ void do_test() {
 
     //
   
-    fprintf(stderr, "log_u1 : ");
+    printf("log_u1 : ");
     for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_d(mpfr_log, child_log_u1, d, 1.0);
     for(d = 0.0001;d < 10000 && success;d += 1.1) checkAccuracy_d(mpfr_log, child_log_u1, d, 1.0);
     for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_d(mpfr_log, child_log_u1, pow(2.1, i), 1.0);
@@ -3518,14 +3528,14 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "exp : ");
+    printf("exp : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_exp, child_exp, d, 1.0);
     for(d = -1000;d < 1000 && success;d += 1.1) checkAccuracy_d(mpfr_exp, child_exp, d, 1.0);
     showResult(success);
 
     //
 
-    fprintf(stderr, "pow : ");
+    printf("pow : ");
     for(y = 0.1;y < 100 && success;y += 0.6) {
       for(x = -100;x < 100 && success;x += 0.6) {
 	checkAccuracy_d_d(mpfr_pow, child_pow, x, y, 1.0);
@@ -3536,66 +3546,66 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "sqrt_u05 : ");
+    printf("sqrt_u05 : ");
     for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_d(mpfr_sqrt, child_sqrt_u05, d, 0.506);
     for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_d(mpfr_sqrt, child_sqrt_u05, pow(2.1, d), 0.506);
     showResult(success);
 
     //
 
-    fprintf(stderr, "cbrt : ");
+    printf("cbrt : ");
     for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_d(mpfr_cbrt, child_cbrt, d, 3.5);
     for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_d(mpfr_cbrt, child_cbrt, pow(2.1, d), 3.5);
     showResult(success);
   
     //
 
-    fprintf(stderr, "cbrt_u1 : ");
+    printf("cbrt_u1 : ");
     for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_d(mpfr_cbrt, child_cbrt_u1, d, 1.0);
     for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_d(mpfr_cbrt, child_cbrt_u1, pow(2.1, d), 1.0);
     showResult(success);
 
     //
 
-    fprintf(stderr, "asin : ");
+    printf("asin : ");
     for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_d(mpfr_asin, child_asin, d, 3.5);
     showResult(success);
 
     //
 
-    fprintf(stderr, "asin_u1 : ");
+    printf("asin_u1 : ");
     for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_d(mpfr_asin, child_asin_u1, d, 1.0);
     showResult(success);
 
     //
 
-    fprintf(stderr, "acos : ");
+    printf("acos : ");
     for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_d(mpfr_acos, child_acos, d, 3.5);
     showResult(success);
 
     //
 
-    fprintf(stderr, "acos_u1 : ");
+    printf("acos_u1 : ");
     for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_d(mpfr_acos, child_acos_u1, d, 1.0);
     showResult(success);
 
     //
 
-    fprintf(stderr, "atan : ");
+    printf("atan : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_atan, child_atan, d, 3.5);
     for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_d(mpfr_atan, child_atan, d, 3.5);
     showResult(success);
 
     //
 
-    fprintf(stderr, "atan_u1 : ");
+    printf("atan_u1 : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_atan, child_atan_u1, d, 1.0);
     for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_d(mpfr_atan, child_atan_u1, d, 1.0);
     showResult(success);
 
     //
   
-    fprintf(stderr, "atan2 : ");
+    printf("atan2 : ");
     for(y = -10;y < 10 && success;y += 0.15) {
       for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_d_d(mpfr_atan2, child_atan2, y, x, 3.5);
     }
@@ -3606,7 +3616,7 @@ void do_test() {
 
     //
   
-    fprintf(stderr, "atan2_u1 : ");
+    printf("atan2_u1 : ");
     for(y = -10;y < 10 && success;y += 0.15) {
       for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_d_d(mpfr_atan2, child_atan2_u1, y, x, 1.0);
     }
@@ -3617,63 +3627,63 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "sinh : ");
+    printf("sinh : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_sinh, child_sinh, d, 1.0);
     for(d = -709;d < 709 && success;d += 0.2) checkAccuracy_d(mpfr_sinh, child_sinh, d, 1.0);
     showResult(success);
 
     //
 
-    fprintf(stderr, "cosh : ");
+    printf("cosh : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_cosh, child_cosh, d, 1.0);
     for(d = -709;d < 709 && success;d += 0.2) checkAccuracy_d(mpfr_cosh, child_cosh, d, 1.0);
     showResult(success);
 
     //
 
-    fprintf(stderr, "tanh : ");
+    printf("tanh : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_tanh, child_tanh, d, 1.0);
     for(d = -1000;d < 1000 && success;d += 0.2) checkAccuracy_d(mpfr_tanh, child_tanh, d, 1.0);
     showResult(success);
 
     //
 
-    fprintf(stderr, "asinh : ");
+    printf("asinh : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_asinh, child_asinh, d, 1.0);
     for(d = -1000;d < 1000 && success;d += 0.2) checkAccuracy_d(mpfr_asinh, child_asinh, d, 1.0);
     showResult(success);
 
     //
 
-    fprintf(stderr, "acosh : ");
+    printf("acosh : ");
     for(d = 1;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_acosh, child_acosh, d, 1.0);
     for(d = 1;d < 1000 && success;d += 0.2) checkAccuracy_d(mpfr_acosh, child_acosh, d, 1.0);
     showResult(success);
 
     //
 
-    fprintf(stderr, "atanh : ");
+    printf("atanh : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_atanh, child_atanh, d, 1.0);
     for(d = -1000;d < 1000 && success;d += 0.2) checkAccuracy_d(mpfr_atanh, child_atanh, d, 1.0);
     showResult(success);
 
     //
 
-    fprintf(stderr, "exp2 : ");
+    printf("exp2 : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_exp2, child_exp2, d, 1.0);
     for(d = -1000;d < 1000 && success;d += 0.2) checkAccuracy_d(mpfr_exp2, child_exp2, d, 1.0);
     showResult(success);
 
     //
 
-    fprintf(stderr, "exp10 : ");
+    printf("exp10 : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_exp10, child_exp10, d, 1.0);
     for(d = -300;d < 300 && success;d += 0.1) checkAccuracy_d(mpfr_exp10, child_exp10, d, 1.0);
     showResult(success);
 
     //
 
-    fprintf(stderr, "expm1 : ");
+    printf("expm1 : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_expm1, child_expm1, d, 1.0);
     for(d = -1000;d < 1000 && success;d += 0.21) checkAccuracy_d(mpfr_expm1, child_expm1, d, 1.0);
     for(d = 0;d < 300 && success;d += 0.21) checkAccuracy_d(mpfr_expm1, child_expm1, pow(10, -d), 1.0);
@@ -3682,7 +3692,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "log10 : ");
+    printf("log10 : ");
     for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_d(mpfr_log10, child_log10, d, 1.0);
     for(d = 0.0001;d < 10000 && success;d += 1.1) checkAccuracy_d(mpfr_log10, child_log10, d, 1.0);
     for(i=0;i<10000 && success;i++) checkAccuracy_d(mpfr_log10, child_log10, (DBL_MIN * pow(0.996323, i)), 1.0);
@@ -3690,44 +3700,44 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "log1p : ");
+    printf("log1p : ");
     for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_d(mpfr_log1p, child_log1p, d, 1.0);
     showResult(success);
 
     //
 
-    fprintf(stderr, "lgamma_u1 : ");
+    printf("lgamma_u1 : ");
     for(d = -5000;d < 5000 && success;d += 1.1) checkAccuracy_d(mpfr_lgamma_nosign, child_lgamma_u1, d, 1.0);
     showResult(success);
 
     //
 
-    fprintf(stderr, "tgamma_u1 : ");
+    printf("tgamma_u1 : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_gamma, child_tgamma_u1, d, 1.0);
     showResult(success);
 
     //
 
-    fprintf(stderr, "erf_u1 : ");
+    printf("erf_u1 : ");
     for(d = -100;d < 100 && success;d += 0.02) checkAccuracy_d(mpfr_erf, child_erf_u1, d, 1.0);
     showResult(success);
 
     //
 
-    fprintf(stderr, "erfc_u15 : ");
+    printf("erfc_u15 : ");
     for(d = -1;d < 100 && success;d += 0.01) checkAccuracy_d(mpfr_erfc, child_erfc_u15, d, 1.5);
     showResult(success);
 
     //
 
     {
-      fprintf(stderr, "ilogb : ");
+      printf("ilogb : ");
 
       for(d = 0.0001;d < 10;d += 0.001) {
 	int q = child_ilogb(d);
 	int c = ilogb(d);
 	if (q != c) {
-	  fprintf(stderr, "ilogb : arg = %.20g, test = %d, correct = %d\n", d, ilogb(d), child_ilogb(d));
+	  printf("ilogb : arg = %.20g, test = %d, correct = %d\n", d, ilogb(d), child_ilogb(d));
 	  success = 0;
 	  showResult(success);
 	}
@@ -3737,7 +3747,7 @@ void do_test() {
 	int q = child_ilogb(d);
 	int c = ilogb(d);
 	if (q != c) {
-	  fprintf(stderr, "ilogb : arg = %.20g, test = %d, correct = %d\n", d, ilogb(d), child_ilogb(d));
+	  printf("ilogb : arg = %.20g, test = %d, correct = %d\n", d, ilogb(d), child_ilogb(d));
 	  success = 0;
 	  showResult(success);
 	}
@@ -3749,7 +3759,7 @@ void do_test() {
 	int q = child_ilogb(d);
 	int c = ilogb(d);
 	if (q != c) {
-	  fprintf(stderr, "ilogb : arg = %.20g, test = %d, correct = %d\n", d, ilogb(d), child_ilogb(d));
+	  printf("ilogb : arg = %.20g, test = %d, correct = %d\n", d, ilogb(d), child_ilogb(d));
 	  success = 0;
 	  showResult(success);
 	}
@@ -3761,7 +3771,7 @@ void do_test() {
 	int q = child_ilogb(d);
 	int c = ilogb(d);
 	if (q != c) {
-	  fprintf(stderr, "ilogb : arg = %.20g, test = %d, correct = %d\n", d, ilogb(d), child_ilogb(d));
+	  printf("ilogb : arg = %.20g, test = %d, correct = %d\n", d, ilogb(d), child_ilogb(d));
 	  success = 0;
 	  showResult(success);
 	}
@@ -3777,7 +3787,7 @@ void do_test() {
     mpfr_set_d(frx, (float)flushToZero(argx), GMP_RNDN);		\
     mpfrFunc(frc, frx, GMP_RNDN);					\
     if (countULPsp(childFunc((float)flushToZero(argx)), frc) > bound) {	\
-      fprintf(stderr, "\narg = %.20g, test = %.20g, correct = %.20g, ULP = %lf\n", \
+      printf("\narg = %.20g, test = %.20g, correct = %.20g, ULP = %lf\n", \
 	      (float)flushToZero(argx), (double)childFunc((float)flushToZero(argx)), mpfr_get_d(frc, GMP_RNDN), countULPsp(childFunc((float)flushToZero(argx)), frc)); \
       success = 0;							\
       break;								\
@@ -3788,7 +3798,7 @@ void do_test() {
     mpfr_set_d(frx, (float)flushToZero(argx), GMP_RNDN);		\
     mpfrFunc(frc, frx);							\
     if (countULPsp(childFunc((float)flushToZero(argx)), frc) > bound) {	\
-      fprintf(stderr, "\narg = %.20g, test = %.20g, correct = %.20g, ULP = %lf\n", \
+      printf("\narg = %.20g, test = %.20g, correct = %.20g, ULP = %lf\n", \
 	      (float)flushToZero(argx), (double)childFunc((float)flushToZero(argx)), mpfr_get_d(frc, GMP_RNDN), countULPsp(childFunc((float)flushToZero(argx)), frc)); \
       success = 0;							\
       break;								\
@@ -3800,7 +3810,7 @@ void do_test() {
     mpfr_set_d(fry, (float)flushToZero(argy), GMP_RNDN);		\
     mpfrFunc(frc, frx, fry, GMP_RNDN);					\
     if (countULPsp(childFunc((float)flushToZero(argx), (float)flushToZero(argy)), frc) > bound) {	\
-      fprintf(stderr, "\narg = %.20g, %.20g, test = %.20g, correct = %.20g, ULP = %lf\n", \
+      printf("\narg = %.20g, %.20g, test = %.20g, correct = %.20g, ULP = %lf\n", \
 	      (float)flushToZero(argx), (float)flushToZero(argy), childFunc((float)flushToZero(argx), (float)flushToZero(argy)), mpfr_get_d(frc, GMP_RNDN), countULPsp(childFunc((float)flushToZero(argx), (float)flushToZero(argy)), frc)); \
       success = 0;							\
       break;								\
@@ -3812,7 +3822,7 @@ void do_test() {
     mpfrFunc(frc, frx, GMP_RNDN);					\
     Sleef_float2 d2 = childFunc((float)flushToZero(argx));				\
     if (countULPsp(d2.x, frc) > bound) {				\
-      fprintf(stderr, "\narg = %.20g, test = %.20g, correct = %.20g, ULP = %lf\n", (float)flushToZero(argx), (double)d2.x, mpfr_get_d(frc, GMP_RNDN), countULPsp(d2.x, frc)); \
+      printf("\narg = %.20g, test = %.20g, correct = %.20g, ULP = %lf\n", (float)flushToZero(argx), (double)d2.x, mpfr_get_d(frc, GMP_RNDN), countULPsp(d2.x, frc)); \
       success = 0;							\
       break;								\
     }									\
@@ -3823,7 +3833,7 @@ void do_test() {
     mpfrFunc(frc, frx, GMP_RNDN);					\
     Sleef_float2 d2 = childFunc((float)flushToZero(argx));				\
     if (countULPsp(d2.y, frc) > bound) {				\
-      fprintf(stderr, "\narg = %.20g, test = %.20g, correct = %.20g, ULP = %lf\n", (float)flushToZero(argx), (double)d2.y, mpfr_get_d(frc, GMP_RNDN), countULPsp(d2.y, frc)); \
+      printf("\narg = %.20g, test = %.20g, correct = %.20g, ULP = %lf\n", (float)flushToZero(argx), (double)d2.y, mpfr_get_d(frc, GMP_RNDN), countULPsp(d2.y, frc)); \
       success = 0;							\
       break;								\
     }									\
@@ -3832,7 +3842,7 @@ void do_test() {
   //
 
   if (enableSP) {
-    fprintf(stderr, "hypotf_u35 : ");
+    printf("hypotf_u35 : ");
     for(y = -10;y < 10 && success;y += 0.15) {
       for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_f_f(mpfr_hypot, child_hypotf_u35, y, x, 3.5);
     }
@@ -3843,7 +3853,7 @@ void do_test() {
   
     //
 
-    fprintf(stderr, "hypotf_u05 : ");
+    printf("hypotf_u05 : ");
     for(y = -10;y < 10 && success;y += 0.15) {
       for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_f_f(mpfr_hypot, child_hypotf_u05, y, x, 0.5);
     }
@@ -3854,7 +3864,7 @@ void do_test() {
   
     //
 
-    fprintf(stderr, "copysignf : ");
+    printf("copysignf : ");
     for(y = -10;y < 10 && success;y += 0.15) {
       for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_f_f(mpfr_copysign, child_copysignf, y, x, 0);
     }
@@ -3865,7 +3875,7 @@ void do_test() {
   
     //
 
-    fprintf(stderr, "fmaxf : ");
+    printf("fmaxf : ");
     for(y = -10;y < 10 && success;y += 0.15) {
       for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_f_f(mpfr_max, child_fmaxf, y, x, 0);
     }
@@ -3876,7 +3886,7 @@ void do_test() {
   
     //
 
-    fprintf(stderr, "fminf : ");
+    printf("fminf : ");
     for(y = -10;y < 10 && success;y += 0.15) {
       for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_f_f(mpfr_min, child_fminf, y, x, 0);
     }
@@ -3887,7 +3897,7 @@ void do_test() {
   
     //
 
-    fprintf(stderr, "fdimf : ");
+    printf("fdimf : ");
     for(y = -10;y < 10 && success;y += 0.15) {
       for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_f_f(mpfr_dim, child_fdimf, y, x, 0.5);
     }
@@ -3898,7 +3908,7 @@ void do_test() {
   
     //
 
-    fprintf(stderr, "fmodf : ");
+    printf("fmodf : ");
     for(y = -10;y < 10 && success;y += 0.15) {
       for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_f_f(mpfr_fmod, child_fmodf, y, x, 0.5);
     }
@@ -3909,9 +3919,11 @@ void do_test() {
   
     //
 
-    fprintf(stderr, "truncf : ");
-    for(d = -1000;d < 1000 && success;d += 0.25) checkAccuracyNR_f(mpfr_trunc, child_truncf, d, 0);
-    for(d = -10000;d < 10000 && success;d += 2.25) checkAccuracyNR_f(mpfr_trunc, child_truncf, d, 0);
+    printf("truncf : ");
+    for(x = -100.5;x <= 100.5;x+=0.5) {
+      for(d = u2d(d2u(x)-3);d <= u2d(d2u(x)+3) && success;d = u2d(d2u(d)+1)) checkAccuracyNR_f(mpfr_trunc, child_truncf, d, 0);
+    }
+    for(d = -10000;d < 10000 && success;d += 2.5) checkAccuracyNR_f(mpfr_trunc, child_truncf, d, 0);
     {
       double start = u2f(f2u((double)(1LL << 23))-20), end = u2f(f2u((double)(1LL << 23))+20);
       for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyNR_f(mpfr_trunc, child_truncf,  d, 0);
@@ -3921,9 +3933,11 @@ void do_test() {
   
     //
 
-    fprintf(stderr, "floorf : ");
-    for(d = -1000;d < 1000 && success;d += 0.25) checkAccuracyNR_f(mpfr_floor, child_floorf, d, 0);
-    for(d = -10000;d < 10000 && success;d += 2.25) checkAccuracyNR_f(mpfr_floor, child_floorf, d, 0);
+    printf("floorf : ");
+    for(x = -100.5;x <= 100.5;x+=0.5) {
+      for(d = u2d(d2u(x)-3);d <= u2d(d2u(x)+3) && success;d = u2d(d2u(d)+1)) checkAccuracyNR_f(mpfr_floor, child_floorf, d, 0);
+    }
+    for(d = -10000;d < 10000 && success;d += 2.5) checkAccuracyNR_f(mpfr_floor, child_floorf, d, 0);
     {
       double start = u2f(f2u((double)(1LL << 23))-20), end = u2f(f2u((double)(1LL << 23))+20);
       for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyNR_f(mpfr_floor, child_floorf,  d, 0);
@@ -3933,9 +3947,11 @@ void do_test() {
   
     //
 
-    fprintf(stderr, "ceilf : ");
-    for(d = -1000;d < 1000 && success;d += 0.25) checkAccuracyNR_f(mpfr_ceil, child_ceilf, d, 0);
-    for(d = -10000;d < 10000 && success;d += 2.25) checkAccuracyNR_f(mpfr_ceil, child_ceilf, d, 0);
+    printf("ceilf : ");
+    for(x = -100.5;x <= 100.5;x+=0.5) {
+      for(d = u2d(d2u(x)-3);d <= u2d(d2u(x)+3) && success;d = u2d(d2u(d)+1)) checkAccuracyNR_f(mpfr_ceil, child_ceilf, d, 0);
+    }
+    for(d = -10000;d < 10000 && success;d += 2.5) checkAccuracyNR_f(mpfr_ceil, child_ceilf, d, 0);
     {
       double start = u2f(f2u((double)(1LL << 23))-20), end = u2f(f2u((double)(1LL << 23))+20);
       for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyNR_f(mpfr_ceil, child_ceilf,  d, 0);
@@ -3945,9 +3961,11 @@ void do_test() {
   
     //
 
-    fprintf(stderr, "roundf : ");
-    for(d = -1000;d < 1000 && success;d += 0.25) checkAccuracyNR_f(mpfr_round, child_roundf, d, 0);
-    for(d = -10000;d < 10000 && success;d += 2.25) checkAccuracyNR_f(mpfr_round, child_roundf, d, 0);
+    printf("roundf : ");
+    for(x = -100.5;x <= 100.5;x+=0.5) {
+      for(d = u2d(d2u(x)-3);d <= u2d(d2u(x)+3) && success;d = u2d(d2u(d)+1)) checkAccuracyNR_f(mpfr_round, child_roundf, d, 0);
+    }
+    for(d = -10000;d < 10000 && success;d += 2.5) checkAccuracyNR_f(mpfr_round, child_roundf, d, 0);
     {
       double start = u2f(f2u((double)(1LL << 23))-20), end = u2f(f2u((double)(1LL << 23))+20);
       for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyNR_f(mpfr_round, child_roundf,  d, 0);
@@ -3957,9 +3975,11 @@ void do_test() {
   
     //
 
-    fprintf(stderr, "rintf : ");
-    for(d = -1000;d < 1000 && success;d += 0.25) checkAccuracy_f(mpfr_rint, child_rintf, d, 0);
-    for(d = -10000;d < 10000 && success;d += 2.25) checkAccuracy_f(mpfr_rint, child_rintf, d, 0);
+    printf("rintf : ");
+    for(x = -100.5;x <= 100.5;x+=0.5) {
+      for(d = u2d(d2u(x)-3);d <= u2d(d2u(x)+3) && success;d = u2d(d2u(d)+1)) checkAccuracy_f(mpfr_rint, child_rintf, d, 0);
+    }
+    for(d = -10000;d < 10000 && success;d += 2.5) checkAccuracy_f(mpfr_rint, child_rintf, d, 0);
     {
       double start = u2f(f2u((double)(1LL << 23))-20), end = u2f(f2u((double)(1LL << 23))+20);
       for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracy_f(mpfr_rint, child_rintf,  d, 0);
@@ -3969,7 +3989,7 @@ void do_test() {
   
     //
   
-    fprintf(stderr, "sinf : ");
+    printf("sinf : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_sin, child_sinf, d, 3.5);
     for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_sin, child_sinf, d, 3.5);
     for(i64=(int64_t)-1000;i64<(int64_t)1000 && success;i64+=(int64_t)1) {
@@ -3980,7 +4000,7 @@ void do_test() {
 
     //
   
-    fprintf(stderr, "sinf_u1 : ");
+    printf("sinf_u1 : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_sin, child_sinf_u1, d, 1.0);
     for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_sin, child_sinf_u1, d, 1.0);
     for(i64=(int64_t)-1000;i64<(int64_t)1000 && success;i64+=(int64_t)1) {
@@ -3991,7 +4011,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "sin in sincosf : ");
+    printf("sin in sincosf : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracyX_f(mpfr_sin, child_sincosf, d, 3.5);
     for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracyX_f(mpfr_sin, child_sincosf, d, 3.5);
     for(i=1;i<10000 && success;i+=31) {
@@ -4002,7 +4022,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "sin in sincosf_u1 : ");
+    printf("sin in sincosf_u1 : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracyX_f(mpfr_sin, child_sincosf_u1, d, 1.0);
     for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracyX_f(mpfr_sin, child_sincosf_u1, d, 1.0);
     for(i=1;i<10000 && success;i+=31) {
@@ -4015,7 +4035,7 @@ void do_test() {
 
     mpfr_set_default_prec(1280);
 
-    fprintf(stderr, "sin in sincospif_u35 : ");
+    printf("sin in sincospif_u35 : ");
     for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracyX_f(mpfr_sinpi, child_sincospif_u35, d, 3.5);
     for(d = -10000-0.1;d < 10000 && success;d += 1.1) checkAccuracyX_f(mpfr_sinpi, child_sincospif_u35, d, 3.5);
     for(i=1;i<10000 && success;i+=31) {
@@ -4026,7 +4046,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "sin in sincospif_u05 : ");
+    printf("sin in sincospif_u05 : ");
     for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracyX_f(mpfr_sinpi, child_sincospif_u05, d, 0.506);
     for(d = -10000-0.1;d < 10000 && success;d += 1.1) checkAccuracyX_f(mpfr_sinpi, child_sincospif_u05, d, 0.506);
     for(i=1;i<10000 && success;i+=31) {
@@ -4039,7 +4059,7 @@ void do_test() {
   
     //
 
-    fprintf(stderr, "cosf : ");
+    printf("cosf : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_cos, child_cosf, d, 3.5);
     for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_cos, child_cosf, d, 3.5);
     for(i64=(int64_t)-1000;i64<(int64_t)1000 && success;i64+=(int64_t)1) {
@@ -4050,7 +4070,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "cosf_u1 : ");
+    printf("cosf_u1 : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_cos, child_cosf_u1, d, 1.0);
     for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_cos, child_cosf_u1, d, 1.0);
     for(i64=(int64_t)-1000;i64<(int64_t)1000 && success;i64+=(int64_t)1) {
@@ -4061,7 +4081,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "cos in sincosf : ");
+    printf("cos in sincosf : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracyY_f(mpfr_cos, child_sincosf, d, 3.5);
     for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracyY_f(mpfr_cos, child_sincosf, d, 3.5);
     for(i=1;i<10000 && success;i+=31) {
@@ -4072,7 +4092,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "cos in sincosf_u1 : ");
+    printf("cos in sincosf_u1 : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracyY_f(mpfr_cos, child_sincosf_u1, d, 1.0);
     for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracyY_f(mpfr_cos, child_sincosf_u1, d, 1.0);
     for(i=1;i<10000 && success;i+=31) {
@@ -4085,7 +4105,7 @@ void do_test() {
 
     mpfr_set_default_prec(1280);
 
-    fprintf(stderr, "cos in sincospif_u35 : ");
+    printf("cos in sincospif_u35 : ");
     for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracyY_f(mpfr_cospi, child_sincospif_u35, d, 3.5);
     for(d = -10000-0.1;d < 10000 && success;d += 1.1) checkAccuracyY_f(mpfr_cospi, child_sincospif_u35, d, 3.5);
     for(i=1;i<10000 && success;i+=31) {
@@ -4096,7 +4116,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "cos in sincospif_u05 : ");
+    printf("cos in sincospif_u05 : ");
     for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracyY_f(mpfr_cospi, child_sincospif_u05, d, 0.506);
     for(d = -10000-0.1;d < 10000 && success;d += 1.1) checkAccuracyY_f(mpfr_cospi, child_sincospif_u05, d, 0.506);
     for(i=1;i<10000 && success;i+=31) {
@@ -4109,7 +4129,7 @@ void do_test() {
   
     //
 
-    fprintf(stderr, "tanf : ");
+    printf("tanf : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_tan, child_tanf, d, 3.5);
     for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_tan, child_tanf, d, 3.5);
     for(i=1;i<10000 && success;i+=31) {
@@ -4120,7 +4140,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "tanf_u1 : ");
+    printf("tanf_u1 : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_tan, child_tanf_u1, d, 1.0);
     for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_tan, child_tanf_u1, d, 1.0);
     for(i=1;i<10000 && success;i+=31) {
@@ -4131,7 +4151,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "logf : ");
+    printf("logf : ");
     for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_f(mpfr_log, child_logf, d, 3.5);
     for(d = 0.0001;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_log, child_logf, d, 3.5);
     for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_f(mpfr_log, child_logf, pow(2.1, i), 3.5);
@@ -4142,7 +4162,7 @@ void do_test() {
 
     //
   
-    fprintf(stderr, "logf_u1 : ");
+    printf("logf_u1 : ");
     for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_f(mpfr_log, child_logf_u1, d, 1.0);
     for(d = 0.0001;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_log, child_logf_u1, d, 1.0);
 
@@ -4158,7 +4178,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "expf : ");
+    printf("expf : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_exp, child_expf, d, 1.0);
     if (!enableFlushToZero) {
       for(d = -1000;d < 1000 && success;d += 1.1) checkAccuracy_f(mpfr_exp, child_expf, d, 1.0);
@@ -4167,7 +4187,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "powf : ");
+    printf("powf : ");
     if (!enableFlushToZero) {
       for(y = 0.1;y < 100 && success;y += 0.6) {
 	for(x = -100;x < 100 && success;x += 0.6) {
@@ -4186,7 +4206,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "sqrtf_u35 : ");
+    printf("sqrtf_u35 : ");
     if (!enableFlushToZero) {
       for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_f(mpfr_sqrt, child_sqrtf_u35, d, 3.5);
     }
@@ -4195,7 +4215,7 @@ void do_test() {
   
     //
 
-    fprintf(stderr, "sqrtf_u05 : ");
+    printf("sqrtf_u05 : ");
     if (!enableFlushToZero) {
       for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_f(mpfr_sqrt, child_sqrtf_u05, d, 0.506);
     }
@@ -4204,7 +4224,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "cbrtf : ");
+    printf("cbrtf : ");
     if (!enableFlushToZero) {
       for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_f(mpfr_cbrt, child_cbrtf, d, 3.5);
     }
@@ -4213,7 +4233,7 @@ void do_test() {
   
     //
 
-    fprintf(stderr, "cbrtf_u1 : ");
+    printf("cbrtf_u1 : ");
     if (!enableFlushToZero) {
       for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_f(mpfr_cbrt, child_cbrtf_u1, d, 1.0);
     }
@@ -4222,45 +4242,45 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "asinf : ");
+    printf("asinf : ");
     for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_f(mpfr_asin, child_asinf, d, 3.5);
     showResult(success);
 
     //
 
-    fprintf(stderr, "asinf_u1 : ");
+    printf("asinf_u1 : ");
     for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_f(mpfr_asin, child_asinf_u1, d, 1.0);
     showResult(success);
 
     //
 
-    fprintf(stderr, "acosf : ");
+    printf("acosf : ");
     for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_f(mpfr_acos, child_acosf, d, 3.5);
     showResult(success);
 
     //
 
-    fprintf(stderr, "acosf_u1 : ");
+    printf("acosf_u1 : ");
     for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_f(mpfr_acos, child_acosf_u1, d, 1.0);
     showResult(success);
 
     //
 
-    fprintf(stderr, "atanf : ");
+    printf("atanf : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_atan, child_atanf, d, 3.5);
     for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_f(mpfr_atan, child_atanf, d, 3.5);
     showResult(success);
 
     //
 
-    fprintf(stderr, "atanf_u1 : ");
+    printf("atanf_u1 : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_atan, child_atanf_u1, d, 1.0);
     for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_f(mpfr_atan, child_atanf_u1, d, 1.0);
     showResult(success);
 
     //
   
-    fprintf(stderr, "atan2f : ");
+    printf("atan2f : ");
     for(y = -10;y < 10 && success;y += 0.15) {
       for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_f_f(mpfr_atan2, child_atan2f, y, x, 3.5);
     }
@@ -4271,7 +4291,7 @@ void do_test() {
 
     //
   
-    fprintf(stderr, "atan2f_u1 : ");
+    printf("atan2f_u1 : ");
     for(y = -10;y < 10 && success;y += 0.15) {
       for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_f_f(mpfr_atan2, child_atan2f_u1, y, x, 1.0);
     }
@@ -4282,7 +4302,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "sinhf : ");
+    printf("sinhf : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_sinh, child_sinhf, d, 1.0);
     if (!enableFlushToZero) {
       for(d = -88;d < 88 && success;d += 0.2) checkAccuracy_f(mpfr_sinh, child_sinhf, d, 1.0);
@@ -4291,7 +4311,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "coshf : ");
+    printf("coshf : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_cosh, child_coshf, d, 1.0);
     if (!enableFlushToZero) {
       for(d = -88;d < 88 && success;d += 0.2) checkAccuracy_f(mpfr_cosh, child_coshf, d, 1.0);
@@ -4300,7 +4320,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "tanhf : ");
+    printf("tanhf : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_tanh, child_tanhf, d, 1.0);
     if (!enableFlushToZero) {
       for(d = -1000;d < 1000 && success;d += 0.2) checkAccuracy_f(mpfr_tanh, child_tanhf, d, 1.0);
@@ -4309,7 +4329,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "asinhf : ");
+    printf("asinhf : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_asinh, child_asinhf, d, 1.0);
     if (!enableFlushToZero) {
       for(d = -1000;d < 1000 && success;d += 0.2) checkAccuracy_f(mpfr_asinh, child_asinhf, d, 1.0);
@@ -4318,7 +4338,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "acoshf : ");
+    printf("acoshf : ");
     for(d = 1;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_acosh, child_acoshf, d, 1.0);
     if (!enableFlushToZero) {
       for(d = 1;d < 1000 && success;d += 0.2) checkAccuracy_f(mpfr_acosh, child_acoshf, d, 1.0);
@@ -4327,7 +4347,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "atanhf : ");
+    printf("atanhf : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_atanh, child_atanhf, d, 1.0);
     if (!enableFlushToZero) {
       for(d = -1000;d < 1000 && success;d += 0.2) checkAccuracy_f(mpfr_atanh, child_atanhf, d, 1.0);
@@ -4336,7 +4356,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "exp2f : ");
+    printf("exp2f : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_exp2, child_exp2f, d, 1.0);
     if (!enableFlushToZero) {
       for(d = -1000;d < 1000 && success;d += 0.2) checkAccuracy_f(mpfr_exp2, child_exp2f, d, 1.0);
@@ -4345,7 +4365,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "exp10f : ");
+    printf("exp10f : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_exp10, child_exp10f, d, 1.0);
     if (!enableFlushToZero) {
       for(d = -300;d < 300 && success;d += 0.1) checkAccuracy_f(mpfr_exp10, child_exp10f, d, 1.0);
@@ -4354,7 +4374,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "expm1f : ");
+    printf("expm1f : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_expm1, child_expm1f, d, 1.0);
     if (!enableFlushToZero) {
       for(d = -1000;d < 1000 && success;d += 0.21) checkAccuracy_f(mpfr_expm1, child_expm1f, d, 1.0);
@@ -4365,7 +4385,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "log10f : ");
+    printf("log10f : ");
     for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_f(mpfr_log10, child_log10f, d, 1.0);
     for(d = 0.0001;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_log10, child_log10f, d, 1.0);
     for(i=0;i<10000 && success;i++) checkAccuracy_f(mpfr_log10, child_log10f, (FLT_MIN * pow(0.996323, i)), 1.0);
@@ -4373,7 +4393,7 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "log1pf : ");
+    printf("log1pf : ");
     for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_f(mpfr_log1p, child_log1pf, d, 1.0);
     showResult(success);
   }
@@ -4403,11 +4423,15 @@ int main(int argc, char **argv) {
   {
     char str[256];
     int u;
-    
+
+    for(int i=0;i<100;i++) {
+      if (readln(ctop[0], str, 255) < 1) stop("Could not find header");
+      if (strcmp("SLEEF_IUT\n", str) == 0) break;
+    }
     if (readln(ctop[0], str, 255) < 1) stop("Feature detection");
     sscanf(str, "%d", &u);
     if ((u & 3) == 0) {
-      fprintf(stderr, "\n\n*** CPU does not support the necessary feature\n");
+      printf("\n\n*** CPU does not support the necessary feature\n");
       return 0;
     }
 
@@ -4416,14 +4440,14 @@ int main(int argc, char **argv) {
     enableFlushToZero |= ((u & 4) != 0);
   }
 
-  if (enableFlushToZero) fprintf(stderr, "\n\n*** Flush to zero enabled\n");
-  
+  if (enableFlushToZero) printf("\n\n*** Flush to zero enabled\n");
+
   do_test();
 
   if (allTestsPassed) {
-    fprintf(stderr, "\n\n*** All tests passed\n");
+    printf("\n\n*** All tests passed\n");
   } else {
-    fprintf(stderr, "\n\n*** There were errors in some tests\n");
+    printf("\n\n*** There were errors in some tests\n");
   }
 
   if (allTestsPassed) return 0;

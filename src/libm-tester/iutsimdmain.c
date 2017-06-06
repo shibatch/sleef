@@ -46,8 +46,9 @@ int detectFeatureSP() {
 }
 
 int main(int argc, char **argv) {
+  printf("SLEEF_IUT\n");
+
   if (!(detectFeatureDP() && detectFeatureSP())) {
-    fprintf(stderr, "\n\n***** This host does not support the necessary CPU features to execute this program *****\n\n\n");
     printf("0\n");
     fclose(stdout);
     exit(-1);

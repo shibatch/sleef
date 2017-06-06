@@ -1,7 +1,9 @@
 #!/bin/sh
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../lib
+export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:../../lib
 ./naivetestdp 1
 rc=$?
+echo $rc
 if [ $rc != 0 ]
 then
     echo "Not all tests were passed."

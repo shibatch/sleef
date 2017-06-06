@@ -29,20 +29,30 @@ endif
 
 #
 
-ifeq ($(ARCH), x86_64)
-OBJ+=dispavx.o dispsse.o sleefdpsse2.o sleefspsse2.o sleefdpsse4.o sleefspsse4.o sleefdpavx.o sleefspavx.o
-OBJ2+=sleefgdpsse2.o sleefgdpavx.o sleefgspsse2.o sleefgspavx.o
-OBJ3+=sleefldpsse2.o sleeflspsse2.o sleefldpsse4.o sleeflspsse4.o sleefldpavx.o sleeflspavx.o
+ifeq ($(X86ARCH), 1)
+OBJ+=dispsse.o sleefdpsse2.o sleefspsse2.o sleefdpsse4.o sleefspsse4.o
+OBJ2+=sleefgdpsse2.o sleefgspsse2.o
+OBJ3+=sleefldpsse2.o sleeflspsse2.o sleefldpsse4.o sleeflspsse4.o
 
-ifdef ENABLEFMA4
+ifeq ($(ENABLE256X86), 1)
+OBJ+=dispavx.o sleefdpavx.o sleefspavx.o
+OBJ2+=sleefgdpavx.o sleefgspavx.o
+OBJ3+=sleefldpavx.o sleeflspavx.o
+
+ifeq ($(ENABLEFMA4), 1)
 OBJ+=sleefdpfma4.o sleefspfma4.o
 OBJ3+=sleefldpfma4.o sleeflspfma4.o
 endif
 
 ifeq ($(ENABLEAVX2), 1)
-OBJ+=sleefdpavx2.o sleefspavx2.o sleefdpavx2128.o sleefspavx2128.o
+OBJ+=sleefdpavx2.o sleefspavx2.o
 OBJ2+=sleefgdpavx2.o sleefgspavx2.o
 OBJ3+=sleefldpavx2.o sleeflspavx2.o
+endif
+endif # ifeq ($(ENABLE256X86), 1)
+
+ifeq ($(ENABLEAVX2), 1)
+OBJ+=sleefdpavx2128.o sleefspavx2128.o
 endif
 
 ifeq ($(ENABLEAVX512F), 1)
@@ -56,7 +66,7 @@ endif
 #
 
 .PHONY: all
-all : libm.a libgm.a sleefllvm.a sleef.h
+all : libm.a libgm.a libsleefllvm.a sleef.h
 
 libm.a : $(OBJ)
 	$(FLOCK) libm.a.lock -c 'ar rcs libm.a $(OBJ)'
@@ -64,8 +74,8 @@ libm.a : $(OBJ)
 libgm.a : $(OBJ2)
 	$(FLOCK) libgm.a.lock -c 'ar rcs libgm.a $(OBJ2)'
 
-sleefllvm.a : $(OBJ3)
-	$(FLOCK) sleefllvm.a.lock -c 'ar rcs sleefllvm.a $(OBJ3)'
+libsleefllvm.a : $(OBJ3)
+	$(FLOCK) libsleefllvm.a.lock -c 'ar rcs libsleefllvm.a $(OBJ3)'
 
 OBJ.txt : $(OBJ)
 	rm -rf OBJ.txt
@@ -75,7 +85,7 @@ OBJ2.txt : $(OBJ2)
 	rm -rf OBJ2.txt
 	for i in `echo $(OBJ2)`; do ../script/abspath.sh $(@D) $$i >> OBJ2.txt; done
 
-ifeq ($(ARCH), x86_64)
+ifeq ($(X86ARCH), 1)
 sleef.h : mkrename
 	cp sleeflibm.h.org sleef.h
 	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
@@ -157,10 +167,10 @@ mkrename_llvm : mkrename_llvm.c
 ##
 
 sleefdpsse2.o : sleefsimddp.c renamesse2.h
-	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_SSE2 -msse2 sleefsimddp.c -c -o sleefdpsse2.o
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_SSE2 sleefsimddp.c -c -o sleefdpsse2.o
 
 sleefspsse2.o : sleefsimdsp.c renamesse2.h
-	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_SSE2 -msse2 sleefsimdsp.c -c -o sleefspsse2.o
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_SSE2 sleefsimdsp.c -c -o sleefspsse2.o
 
 renamesse2.h : mkrename
 	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
@@ -169,10 +179,10 @@ renamesse2.h : mkrename
 #
 
 sleefgdpsse2.o : sleefsimddp.c renamesse2_gnuabi.h
-	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_SSE2 -DENABLE_GNUABI -msse2 sleefsimddp.c -c -o sleefgdpsse2.o
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_SSE2 -DENABLE_GNUABI sleefsimddp.c -c -o sleefgdpsse2.o
 
 sleefgspsse2.o : sleefsimdsp.c renamesse2_gnuabi.h
-	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_SSE2 -DENABLE_GNUABI -msse2 sleefsimdsp.c -c -o sleefgspsse2.o
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_SSE2 -DENABLE_GNUABI sleefsimdsp.c -c -o sleefgspsse2.o
 
 renamesse2_gnuabi.h : mkrename_gnuabi
 	$(FLOCK) mkrename_gnuabi.c -c 'echo Acquiring lock for mkrename_gnuabi'
@@ -181,10 +191,10 @@ renamesse2_gnuabi.h : mkrename_gnuabi
 #
 
 sleefldpsse2.o : sleefsimddp.c renamesse2_llvm.h
-	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_SSE2 -DENABLE_LLVMABI -msse2 sleefsimddp.c -c -o sleefldpsse2.o
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_SSE2 -DENABLE_LLVMABI sleefsimddp.c -c -o sleefldpsse2.o
 
 sleeflspsse2.o : sleefsimdsp.c renamesse2_llvm.h
-	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_SSE2 -DENABLE_LLVMABI -msse2 sleefsimdsp.c -c -o sleeflspsse2.o
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_SSE2 -DENABLE_LLVMABI sleefsimdsp.c -c -o sleeflspsse2.o
 
 renamesse2_llvm.h : mkrename_llvm
 	$(FLOCK) mkrename_llvm.c -c 'echo Acquiring lock for mkrename'
@@ -193,10 +203,10 @@ renamesse2_llvm.h : mkrename_llvm
 ##
 
 sleefdpsse4.o : sleefsimddp.c renamesse4.h
-	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_SSE4 -msse2 -msse4.1 sleefsimddp.c -c -o sleefdpsse4.o
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_SSE4 -msse4.1 sleefsimddp.c -c -o sleefdpsse4.o
 
 sleefspsse4.o : sleefsimdsp.c renamesse4.h
-	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_SSE4 -msse2 -msse4.1 sleefsimdsp.c -c -o sleefspsse4.o
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_SSE4 -msse4.1 sleefsimdsp.c -c -o sleefspsse4.o
 
 renamesse4.h : mkrename
 	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
@@ -205,10 +215,10 @@ renamesse4.h : mkrename
 #
 
 sleefldpsse4.o : sleefsimddp.c renamesse4_llvm.h
-	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_SSE4 -DENABLE_LLVMABI -msse2 -msse4.1 sleefsimddp.c -c -o sleefldpsse4.o
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_SSE4 -DENABLE_LLVMABI -msse4.1 sleefsimddp.c -c -o sleefldpsse4.o
 
 sleeflspsse4.o : sleefsimdsp.c renamesse4_llvm.h
-	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_SSE4 -DENABLE_LLVMABI -msse2 -msse4.1 sleefsimdsp.c -c -o sleeflspsse4.o
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_SSE4 -DENABLE_LLVMABI -msse4.1 sleefsimdsp.c -c -o sleeflspsse4.o
 
 renamesse4_llvm.h : mkrename_llvm
 	$(FLOCK) mkrename_llvm.c -c 'echo Acquiring lock for mkrename'
@@ -217,7 +227,7 @@ renamesse4_llvm.h : mkrename_llvm
 ##
 
 DISPAVXOPT=
-ifdef ENABLEFMA4
+ifeq ($ENABLEFMA4, 1)
 DISPAVXOPT+=-DENABLE_FMA4
 endif
 ifeq ($(ENABLEAVX2), 1)
@@ -400,7 +410,7 @@ renameavx512f_llvm.h : mkrename_llvm
 ##
 
 sleefspneon32.o : sleefsimdsp.c renameneon32.h
-	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_NEON32 -mfpu=neon sleefsimdsp.c -c -o sleefspneon32.o
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_NEON32 $(NEONFLAGS) sleefsimdsp.c -c -o sleefspneon32.o
 
 renameneon32.h : mkrename
 	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
@@ -456,7 +466,7 @@ renamedsp256.h : mkrename
 
 .PHONY: clean
 clean :
-	rm -f *~ *.o *.s libm.a libgm.a sleefllvm.a sleef.h a.out *.lock OBJ.txt OBJ2.txt
+	rm -f *~ *.o *.s libm.a libgm.a libsleefllvm.a sleef.h a.out *.lock OBJ.txt OBJ2.txt
 	rm -f *.obj *.lib *.dll *.exp *.exe
 	rm -f mkrename renamesse2.h renamesse4.h renameavx.h renamefma4.h renameavx2.h renameavx2128.h renameavx512f.h renameneon32.h renameadvsimd.h renamedsp128.h renamedsp256.h
 	rm -f mkdisp dispavx.c dispsse.c

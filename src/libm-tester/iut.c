@@ -30,6 +30,7 @@
 int main(int argc, char **argv) {
   char buf[BUFSIZE];
 
+  printf("SLEEF_IUT\n");
   printf("3\n");
   fflush(stdout);
 
