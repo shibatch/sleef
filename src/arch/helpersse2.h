@@ -149,19 +149,20 @@ static INLINE vint vcastu_vi_vi2(vint2 vi) { return _mm_shuffle_epi32(vi, 0x0d);
 
 #ifdef __SSE4_1__
 static INLINE vdouble vtruncate_vd_vd(vdouble vd) { return _mm_round_pd(vd, _MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC); }
-static INLINE vfloat vtruncate_vf_vf(vfloat vf) { return _mm_round_ps(vf, _MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC); }
 static INLINE vdouble vrint_vd_vd(vdouble vd) { return _mm_round_pd(vd, _MM_FROUND_TO_NEAREST_INT |_MM_FROUND_NO_EXC); }
+static INLINE vfloat vtruncate_vf_vf(vfloat vf) { return _mm_round_ps(vf, _MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC); }
+static INLINE vfloat vrint_vf_vf(vfloat vd) { return _mm_round_ps(vd, _MM_FROUND_TO_NEAREST_INT |_MM_FROUND_NO_EXC); }
+static INLINE vopmask veq64_vo_vm_vm(vmask x, vmask y) { return _mm_cmpeq_epi64(x, y); }
 #else
 static INLINE vdouble vtruncate_vd_vd(vdouble vd) { return vcast_vd_vi(vtruncate_vi_vd(vd)); }
 static INLINE vdouble vrint_vd_vd(vdouble vd) { return vcast_vd_vi(vrint_vi_vd(vd)); }
-#endif
-
-static INLINE vmask vcast_vm_i_i(int i0, int i1) { return _mm_set_epi32(i0, i1, i0, i1); }
-
 static INLINE vopmask veq64_vo_vm_vm(vmask x, vmask y) {
   vmask t = _mm_cmpeq_epi32(x, y);
   return vand_vm_vm_vm(t, _mm_shuffle_epi32(t, 0xb1));
 }
+#endif
+
+static INLINE vmask vcast_vm_i_i(int i0, int i1) { return _mm_set_epi32(i0, i1, i0, i1); }
 
 //
 
@@ -286,6 +287,7 @@ static INLINE vint2 vreinterpret_vi2_vf(vfloat vf) { return _mm_castps_si128(vf)
 
 #ifndef __SSE4_1__
 static INLINE vfloat vtruncate_vf_vf(vfloat vd) { return vcast_vf_vi2(vtruncate_vi2_vf(vd)); }
+static INLINE vfloat vrint_vf_vf(vfloat vf) { return vcast_vf_vi2(vrint_vi2_vf(vf)); }
 #endif
 
 static INLINE vfloat vadd_vf_vf_vf(vfloat x, vfloat y) { return _mm_add_ps(x, y); }

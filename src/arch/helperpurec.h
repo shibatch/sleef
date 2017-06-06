@@ -326,6 +326,7 @@ static INLINE vint2 vtruncate_vi2_vf(vfloat vf) { vint2 ret; for(int i=0;i<VECTL
 static INLINE vint2 vrint_vi2_vf(vfloat vf) { vint ret; for(int i=0;i<VECTLENSP;i++) ret.i[i] = vf.f[i] > 0 ? (int)(vf.f[i] + 0.5) : (int)(vf.f[i] - 0.5); return ret; }
 static INLINE vint2 vcast_vi2_i(int j) { vint2 ret; for(int i=0;i<VECTLENSP;i++) ret.i[i] = j; return ret; }
 static INLINE vfloat vtruncate_vf_vf(vfloat vd) { return vcast_vf_vi2(vtruncate_vi2_vf(vd)); }
+static INLINE vfloat vrint_vf_vf(vfloat vd) { return vcast_vf_vi2(vrint_vi2_vf(vd)); }
 
 static INLINE vfloat vcast_vf_f(float f) { vfloat ret; for(int i=0;i<VECTLENSP;i++) ret.f[i] = f; return ret; }
 static INLINE vmask vreinterpret_vm_vf(vfloat vf) { union { vfloat vf; vmask vm; } cnv; cnv.vf = vf; return cnv.vm; }

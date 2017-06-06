@@ -168,6 +168,7 @@ static INLINE vint vrint_vi_vd(vdouble vd) { return _mm256_cvtpd_epi32(vd); }
 static INLINE vint vtruncate_vi_vd(vdouble vd) { return _mm256_cvttpd_epi32(vd); }
 static INLINE vdouble vrint_vd_vd(vdouble vd) { return _mm256_round_pd(vd, _MM_FROUND_TO_NEAREST_INT |_MM_FROUND_NO_EXC); }
 static INLINE vdouble vtruncate_vd_vd(vdouble vd) { return _mm256_round_pd(vd, _MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC); }
+static INLINE vfloat vrint_vf_vf(vfloat vd) { return _mm256_round_ps(vd, _MM_FROUND_TO_NEAREST_INT |_MM_FROUND_NO_EXC); }
 static INLINE vfloat vtruncate_vf_vf(vfloat vf) { return _mm256_round_ps(vf, _MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC); }
 static INLINE vdouble vcast_vd_vi(vint vi) { return _mm256_cvtepi32_pd(vi); }
 static INLINE vint vcast_vi_i(int i) { return _mm_set1_epi32(i); }

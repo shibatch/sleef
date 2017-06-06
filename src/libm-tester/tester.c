@@ -3262,8 +3262,10 @@ void do_test() {
     //
 
     fprintf(stderr, "trunc : ");
-    for(d = -1000;d < 1000 && success;d += 0.25) checkAccuracyNR_d(mpfr_trunc, child_trunc, d, 0);
-    for(d = -10000;d < 10000 && success;d += 2.25) checkAccuracyNR_d(mpfr_trunc, child_trunc, d, 0);
+    for(x = -100.5;x <= 100.5;x+=0.5) {
+      for(d = u2d(d2u(x)-3);d <= u2d(d2u(x)+3) && success;d = u2d(d2u(d)+1)) checkAccuracyNR_d(mpfr_trunc, child_trunc, d, 0);
+    }
+    for(d = -10000;d < 10000 && success;d += 2.5) checkAccuracyNR_d(mpfr_trunc, child_trunc, d, 0);
     {
       double start = u2d(d2u((double)(1LL << 52))-20), end = u2d(d2u((double)(1LL << 52))+20);
       for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyNR_d(mpfr_trunc, child_trunc,  d, 0);
@@ -3274,8 +3276,10 @@ void do_test() {
     //
 
     fprintf(stderr, "floor : ");
-    for(d = -1000;d < 1000 && success;d += 0.25) checkAccuracyNR_d(mpfr_floor, child_floor, d, 0);
-    for(d = -10000;d < 10000 && success;d += 2.25) checkAccuracyNR_d(mpfr_floor, child_floor, d, 0);
+    for(x = -100.5;x <= 100.5;x+=0.5) {
+      for(d = u2d(d2u(x)-3);d <= u2d(d2u(x)+3) && success;d = u2d(d2u(d)+1)) checkAccuracyNR_d(mpfr_floor, child_floor, d, 0);
+    }
+    for(d = -10000;d < 10000 && success;d += 2.5) checkAccuracyNR_d(mpfr_floor, child_floor, d, 0);
     {
       double start = u2d(d2u((double)(1LL << 52))-20), end = u2d(d2u((double)(1LL << 52))+20);
       for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyNR_d(mpfr_floor, child_floor,  d, 0);
@@ -3286,8 +3290,10 @@ void do_test() {
     //
 
     fprintf(stderr, "ceil : ");
-    for(d = -1000;d < 1000 && success;d += 0.25) checkAccuracyNR_d(mpfr_ceil, child_ceil, d, 0);
-    for(d = -10000;d < 10000 && success;d += 2.25) checkAccuracyNR_d(mpfr_ceil, child_ceil, d, 0);
+    for(x = -100.5;x <= 100.5;x+=0.5) {
+      for(d = u2d(d2u(x)-3);d <= u2d(d2u(x)+3) && success;d = u2d(d2u(d)+1)) checkAccuracyNR_d(mpfr_ceil, child_ceil, d, 0);
+    }
+    for(d = -10000;d < 10000 && success;d += 2.5) checkAccuracyNR_d(mpfr_ceil, child_ceil, d, 0);
     {
       double start = u2d(d2u((double)(1LL << 52))-20), end = u2d(d2u((double)(1LL << 52))+20);
       for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyNR_d(mpfr_ceil, child_ceil,  d, 0);
@@ -3298,8 +3304,10 @@ void do_test() {
     //
 
     fprintf(stderr, "round : ");
-    for(d = -1000;d < 1000 && success;d += 0.25) checkAccuracyNR_d(mpfr_round, child_round, d, 0);
-    for(d = -10000;d < 10000 && success;d += 2.25) checkAccuracyNR_d(mpfr_round, child_round, d, 0);
+    for(x = -100.5;x <= 100.5;x+=0.5) {
+      for(d = u2d(d2u(x)-3);d <= u2d(d2u(x)+3) && success;d = u2d(d2u(d)+1)) checkAccuracyNR_d(mpfr_round, child_round, d, 0);
+    }
+    for(d = -10000;d < 10000 && success;d += 2.5) checkAccuracyNR_d(mpfr_round, child_round, d, 0);
     {
       double start = u2d(d2u((double)(1LL << 52))-20), end = u2d(d2u((double)(1LL << 52))+20);
       for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyNR_d(mpfr_round, child_round,  d, 0);
@@ -3310,8 +3318,10 @@ void do_test() {
     //
 
     fprintf(stderr, "rint : ");
-    for(d = -1000;d < 1000 && success;d += 0.25) checkAccuracy_d(mpfr_rint, child_rint, d, 0);
-    for(d = -10000;d < 10000 && success;d += 2.25) checkAccuracy_d(mpfr_rint, child_rint, d, 0);
+    for(x = -100.5;x <= 100.5;x+=0.5) {
+      for(d = u2d(d2u(x)-3);d <= u2d(d2u(x)+3) && success;d = u2d(d2u(d)+1)) checkAccuracy_d(mpfr_rint, child_rint, d, 0);
+    }
+    for(d = -10000;d < 10000 && success;d += 2.5) checkAccuracy_d(mpfr_rint, child_rint, d, 0);
     {
       double start = u2d(d2u((double)(1LL << 52))-20), end = u2d(d2u((double)(1LL << 52))+20);
       for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracy_d(mpfr_rint, child_rint,  d, 0);
@@ -3910,8 +3920,10 @@ void do_test() {
     //
 
     fprintf(stderr, "truncf : ");
-    for(d = -1000;d < 1000 && success;d += 0.25) checkAccuracyNR_f(mpfr_trunc, child_truncf, d, 0);
-    for(d = -10000;d < 10000 && success;d += 2.25) checkAccuracyNR_f(mpfr_trunc, child_truncf, d, 0);
+    for(x = -100.5;x <= 100.5;x+=0.5) {
+      for(d = u2d(d2u(x)-3);d <= u2d(d2u(x)+3) && success;d = u2d(d2u(d)+1)) checkAccuracyNR_f(mpfr_trunc, child_truncf, d, 0);
+    }
+    for(d = -10000;d < 10000 && success;d += 2.5) checkAccuracyNR_f(mpfr_trunc, child_truncf, d, 0);
     {
       double start = u2f(f2u((double)(1LL << 23))-20), end = u2f(f2u((double)(1LL << 23))+20);
       for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyNR_f(mpfr_trunc, child_truncf,  d, 0);
@@ -3922,8 +3934,10 @@ void do_test() {
     //
 
     fprintf(stderr, "floorf : ");
-    for(d = -1000;d < 1000 && success;d += 0.25) checkAccuracyNR_f(mpfr_floor, child_floorf, d, 0);
-    for(d = -10000;d < 10000 && success;d += 2.25) checkAccuracyNR_f(mpfr_floor, child_floorf, d, 0);
+    for(x = -100.5;x <= 100.5;x+=0.5) {
+      for(d = u2d(d2u(x)-3);d <= u2d(d2u(x)+3) && success;d = u2d(d2u(d)+1)) checkAccuracyNR_f(mpfr_floor, child_floorf, d, 0);
+    }
+    for(d = -10000;d < 10000 && success;d += 2.5) checkAccuracyNR_f(mpfr_floor, child_floorf, d, 0);
     {
       double start = u2f(f2u((double)(1LL << 23))-20), end = u2f(f2u((double)(1LL << 23))+20);
       for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyNR_f(mpfr_floor, child_floorf,  d, 0);
@@ -3934,8 +3948,10 @@ void do_test() {
     //
 
     fprintf(stderr, "ceilf : ");
-    for(d = -1000;d < 1000 && success;d += 0.25) checkAccuracyNR_f(mpfr_ceil, child_ceilf, d, 0);
-    for(d = -10000;d < 10000 && success;d += 2.25) checkAccuracyNR_f(mpfr_ceil, child_ceilf, d, 0);
+    for(x = -100.5;x <= 100.5;x+=0.5) {
+      for(d = u2d(d2u(x)-3);d <= u2d(d2u(x)+3) && success;d = u2d(d2u(d)+1)) checkAccuracyNR_f(mpfr_ceil, child_ceilf, d, 0);
+    }
+    for(d = -10000;d < 10000 && success;d += 2.5) checkAccuracyNR_f(mpfr_ceil, child_ceilf, d, 0);
     {
       double start = u2f(f2u((double)(1LL << 23))-20), end = u2f(f2u((double)(1LL << 23))+20);
       for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyNR_f(mpfr_ceil, child_ceilf,  d, 0);
@@ -3946,8 +3962,10 @@ void do_test() {
     //
 
     fprintf(stderr, "roundf : ");
-    for(d = -1000;d < 1000 && success;d += 0.25) checkAccuracyNR_f(mpfr_round, child_roundf, d, 0);
-    for(d = -10000;d < 10000 && success;d += 2.25) checkAccuracyNR_f(mpfr_round, child_roundf, d, 0);
+    for(x = -100.5;x <= 100.5;x+=0.5) {
+      for(d = u2d(d2u(x)-3);d <= u2d(d2u(x)+3) && success;d = u2d(d2u(d)+1)) checkAccuracyNR_f(mpfr_round, child_roundf, d, 0);
+    }
+    for(d = -10000;d < 10000 && success;d += 2.5) checkAccuracyNR_f(mpfr_round, child_roundf, d, 0);
     {
       double start = u2f(f2u((double)(1LL << 23))-20), end = u2f(f2u((double)(1LL << 23))+20);
       for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyNR_f(mpfr_round, child_roundf,  d, 0);
@@ -3958,8 +3976,10 @@ void do_test() {
     //
 
     fprintf(stderr, "rintf : ");
-    for(d = -1000;d < 1000 && success;d += 0.25) checkAccuracy_f(mpfr_rint, child_rintf, d, 0);
-    for(d = -10000;d < 10000 && success;d += 2.25) checkAccuracy_f(mpfr_rint, child_rintf, d, 0);
+    for(x = -100.5;x <= 100.5;x+=0.5) {
+      for(d = u2d(d2u(x)-3);d <= u2d(d2u(x)+3) && success;d = u2d(d2u(d)+1)) checkAccuracy_f(mpfr_rint, child_rintf, d, 0);
+    }
+    for(d = -10000;d < 10000 && success;d += 2.5) checkAccuracy_f(mpfr_rint, child_rintf, d, 0);
     {
       double start = u2f(f2u((double)(1LL << 23))-20), end = u2f(f2u((double)(1LL << 23))+20);
       for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracy_f(mpfr_rint, child_rintf,  d, 0);
