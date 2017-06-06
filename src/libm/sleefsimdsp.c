@@ -1548,6 +1548,7 @@ EXPORT CONST vfloat xroundf(vfloat d) {
   vfloat fr = vsub_vf_vf_vf(x, vcast_vf_vi2(vtruncate_vi2_vf(x)));
   x = vsel_vf_vo_vf_vf(vand_vo_vo_vo(vle_vo_vf_vf(x, vcast_vf_f(0)), veq_vo_vf_vf(fr, vcast_vf_f(0))), vsub_vf_vf_vf(x, vcast_vf_f(1.0f)), x);
   fr = vsel_vf_vo_vf_vf(vlt_vo_vf_vf(fr, vcast_vf_f(0)), vadd_vf_vf_vf(fr, vcast_vf_f(1.0f)), fr);
+  x = vsel_vf_vo_vf_vf(veq_vo_vf_vf(d, vcast_vf_f(0.4999999701976776123f)), vcast_vf_f(0), x);
   return vsel_vf_vo_vf_vf(vor_vo_vo_vo(visinf_vo_vf(d), vge_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(1LL << 23))), d, vcopysign_vf_vf_vf(vsub_vf_vf_vf(x, fr), d));
 }
 
@@ -1556,6 +1557,7 @@ EXPORT CONST vfloat xrintf(vfloat d) {
   vopmask isodd = veq_vo_vi2_vi2(vand_vi2_vi2_vi2(vcast_vi2_i(1), vtruncate_vi2_vf(x)), vcast_vi2_i(1));
   vfloat fr = vsub_vf_vf_vf(x, vcast_vf_vi2(vtruncate_vi2_vf(x)));
   fr = vsel_vf_vo_vf_vf(vor_vo_vo_vo(vlt_vo_vf_vf(fr, vcast_vf_f(0)), vand_vo_vo_vo(veq_vo_vf_vf(fr, vcast_vf_f(0)), isodd)), vadd_vf_vf_vf(fr, vcast_vf_f(1.0f)), fr);
+  x = vsel_vf_vo_vf_vf(veq_vo_vf_vf(d, vcast_vf_f(0.50000005960464477539f)), vcast_vf_f(0), x);
   vfloat ret = vsel_vf_vo_vf_vf(vor_vo_vo_vo(visinf_vo_vf(d), vge_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(1LL << 23))), d, vcopysign_vf_vf_vf(vsub_vf_vf_vf(x, fr), d));
   return ret;
 }
