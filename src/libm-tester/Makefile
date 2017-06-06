@@ -40,10 +40,13 @@ ifdef ENABLEFLOAT128
 TARGET_TESTER+=tester2qp
 endif
 
-ifeq ($(ARCH), x86_64)
+ifeq ($(X86ARCH), 1)
+TARGET_IUT += iutsse2 iutsse4 iutdsp128
+TARGET_TESTER += tester2sse2dp tester2sse2sp tester2sse4dp tester2sse4sp
 
-TARGET_IUT += iutsse2 iutavx
-TARGET_TESTER += tester2sse2dp tester2sse2sp tester2avxdp tester2avxsp
+ifeq ($(ENABLE256X86), 1)
+TARGET_IUT += iutavx iutdsp256
+TARGET_TESTER += tester2avxdp tester2avxsp
 
 ifeq ($(ENABLEAVX2), 1)
 TARGET_IUT+=iutavx2
@@ -53,6 +56,11 @@ endif
 ifdef ENABLEFMA4
 TARGET_IUT += iutfma4
 TARGET_TESTER += tester2fma4dp tester2fma4sp
+endif
+endif # ifeq ($(ENABLE256X86), 1)
+
+ifeq ($(ENABLEAVX2), 1)
+TARGET_IUT+=iutavx2128
 endif
 
 ifeq ($(ENABLEAVX512F),1)
@@ -78,8 +86,14 @@ endif
 .PHONY: all test
 all : $(TARGET_IUT) $(TARGET_TESTER)
 
+ifeq ($(OS),MinGW)
+test : $(TARGET_IUT) tester
+	cp ../../lib/*.dll .
+	$(foreach var,$(TARGET_IUT), ./tester ./$(var) || exit;)
+else
 test : $(TARGET_IUT) tester
 	$(foreach var,$(TARGET_IUT), $(ENVNAME_LD_LIBRARY_PATH)=../../lib:$$$(ENVNAME_LD_LIBRARY_PATH) ./tester ./$(var) || exit;)
+endif
 
 #
 
@@ -106,16 +120,30 @@ iutsimdmain.o : iutsimdmain.c
 #
 
 iutsse2 : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h iutsimdmain.o iutsimd.c testerutil.c ../libm/renamesse2.h ../../include/sleef.h
-	$(CC) $(CFLAGS) -DENABLE_SSE2 -msse2 iutsimdmain.o iutsimd.c testerutil.c -o iutsse2 -lsleef -lm $(LIB)
+	$(CC) $(CFLAGS) -DENABLE_SSE2 iutsimdmain.o iutsimd.c testerutil.c -o iutsse2 -lsleef -lm $(LIB)
 
 tester2sse2dp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2simddp.c testerutil.c ../libm/renamesse2.h ../../include/sleef.h
-	$(CC) $(CFLAGS) -DENABLE_SSE2 -msse2 -DUSEMPFR tester2simddp.c testerutil.c -o tester2sse2dp -lsleef -lm -lmpfr $(LIB)
+	$(CC) $(CFLAGS) -DENABLE_SSE2 -DUSEMPFR tester2simddp.c testerutil.c -o tester2sse2dp -lsleef -lm -lmpfr $(LIB)
 
 tester2sse2sp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2simdsp.c testerutil.c ../libm/renamesse2.h ../../include/sleef.h
-	$(CC) $(CFLAGS) -DENABLE_SSE2 -msse2 -DUSEMPFR tester2simdsp.c testerutil.c -o tester2sse2sp -lsleef -lm -lmpfr $(LIB)
+	$(CC) $(CFLAGS) -DENABLE_SSE2 -DUSEMPFR tester2simdsp.c testerutil.c -o tester2sse2sp -lsleef -lm -lmpfr $(LIB)
 
 ../libm/renamesse2.h :
 	+"$(MAKE)" --directory=../libm renamesse2.h
+
+#
+
+iutsse4 : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h iutsimdmain.o iutsimd.c testerutil.c ../libm/renamesse4.h ../../include/sleef.h
+	$(CC) $(CFLAGS) -DENABLE_SSE4 -msse4.1 iutsimdmain.o iutsimd.c testerutil.c -o iutsse4 -lsleef -lm $(LIB)
+
+tester2sse4dp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2simddp.c testerutil.c ../libm/renamesse4.h ../../include/sleef.h
+	$(CC) $(CFLAGS) -DENABLE_SSE4 -msse4.1 -DUSEMPFR tester2simddp.c testerutil.c -o tester2sse4dp -lsleef -lm -lmpfr $(LIB)
+
+tester2sse4sp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2simdsp.c testerutil.c ../libm/renamesse4.h ../../include/sleef.h
+	$(CC) $(CFLAGS) -DENABLE_SSE4 -msse4.1 -DUSEMPFR tester2simdsp.c testerutil.c -o tester2sse4sp -lsleef -lm -lmpfr $(LIB)
+
+../libm/renamesse4.h :
+	+"$(MAKE)" --directory=../libm renamesse4.h
 
 #
 
@@ -161,6 +189,11 @@ tester2avx2sp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2sim
 
 #
 
+iutavx2128 : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h iutsimdmain.o iutsimd.c testerutil.c ../libm/renameavx2128.h ../../include/sleef.h
+	$(CC) $(CFLAGS) -DENABLE_AVX2128 $(AVX2FLAG) iutsimdmain.o iutsimd.c testerutil.c -o iutavx2128 -lsleef -lm $(LIB)
+
+#
+
 iutavx512f : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h iutsimdmain.o iutsimd.c testerutil.c ../libm/renameavx512f.h ../../include/sleef.h
 	$(CC) $(CFLAGS) -DENABLE_AVX512F $(AVX512FLAG) iutsimdmain.o iutsimd.c testerutil.c -o iutavx512f -lsleef -lm $(LIB)
 
@@ -172,6 +205,20 @@ tester2avx512fsp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2
 
 ../libm/renameavx512f.h :
 	+"$(MAKE)" --directory=../libm renameavx512f.h
+
+#
+
+iutdsp128 : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h iutsimdmain.o iutsimd.c testerutil.c ../libm/renamedsp128.h ../../include/sleef.h
+	$(CC) $(CFLAGS) -DENABLE_DSP128 iutsimdmain.o iutsimd.c testerutil.c -o iutdsp128 -lsleef -lm $(LIB)
+
+../libm/renamedsp128.h :
+	+"$(MAKE)" --directory=../libm renamedsp128.h
+
+iutdsp256 : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h iutsimdmain.o iutsimd.c testerutil.c ../libm/renamedsp256.h ../../include/sleef.h
+	$(CC) $(CFLAGS) -DENABLE_DSP256 -mavx iutsimdmain.o iutsimd.c testerutil.c -o iutdsp256 -lsleef -lm $(LIB)
+
+../libm/renamedsp256.h :
+	+"$(MAKE)" --directory=../libm renamedsp256.h
 
 #
 
@@ -261,12 +308,13 @@ bench_a0_50 : bench_a0.c
 
 .PHONY: clean
 clean :
-	rm -f *~ a.out *.obj *.lib *.dll *.exp *.exe *.stackdump
+	rm -f *~ a.out *.obj *.lib *.dll *.exp *.exe *.stackdump nohup.out
 	rm -rf *.dSYM *.dylib
 	rm -f *.so *.so.* *.a *.s *.o
-	rm -f iut iutsse2 iutavx iutfma4 iutavx2 iutavx512f iutneon32 iutadvsimd
+	rm -f iut iutsse2 iutsse4 iutavx iutfma4 iutavx2 iutavx2128 iutavx512f iutneon32 iutadvsimd iutdsp128 iutdsp256
 	rm -f tester tester2vecextdp tester2vecextsp iutvecext tester2purecdp tester2purecsp iutpurec
-	rm -f tester2dp tester2sp tester2qp tester2ld tester2sse2dp tester2sse2sp tester2fma4dp tester2fma4sp tester2avxdp tester2avxsp tester2avx2dp tester2avx2sp tester2avx512fdp tester2avx512fsp
+	rm -f tester2dp tester2sp tester2qp tester2ld tester2sse2dp tester2sse2sp tester2sse4dp tester2sse4sp
+	rm -f tester2fma4dp tester2fma4sp tester2avxdp tester2avxsp tester2avx2dp tester2avx2sp tester2avx512fdp tester2avx512fsp
 	rm -f tester2advsimddp tester2advsimdsp
 	rm -f bench_s0_10 bench_s0_50 bench_s1_10 bench_s1_50 bench_s2_10 bench_s2_50 bench_a0_10 bench_a0_50
 	rm -f *.csv *.xlsx

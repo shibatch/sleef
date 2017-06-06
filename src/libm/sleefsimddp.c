@@ -23,8 +23,22 @@
 #ifdef DORENAME
 #ifdef ENABLE_GNUABI
 #include "renamesse2_gnuabi.h"
+#elif defined(ENABLE_LLVMABI)
+#include "renamesse2_llvm.h"
 #else
 #include "renamesse2.h"
+#endif
+#endif
+#endif
+
+#ifdef ENABLE_SSE4
+#define CONFIG 4
+#include "helpersse2.h"
+#ifdef DORENAME
+#ifdef ENABLE_LLVMABI
+#include "renamesse4_llvm.h"
+#else
+#include "renamesse4.h"
 #endif
 #endif
 #endif
@@ -35,6 +49,8 @@
 #ifdef DORENAME
 #ifdef ENABLE_GNUABI
 #include "renameavx_gnuabi.h"
+#elif defined(ENABLE_LLVMABI)
+#include "renameavx_llvm.h"
 #else
 #include "renameavx.h"
 #endif
@@ -45,8 +61,8 @@
 #define CONFIG 4
 #include "helperavx.h"
 #ifdef DORENAME
-#ifdef ENABLE_GNUABI
-#include "renamefma4_gnuabi.h"
+#ifdef ENABLE_LLVMABI
+#include "renamefma4_llvm.h"
 #else
 #include "renamefma4.h"
 #endif
@@ -59,8 +75,22 @@
 #ifdef DORENAME
 #ifdef ENABLE_GNUABI
 #include "renameavx2_gnuabi.h"
+#elif defined(ENABLE_LLVMABI)
+#include "renameavx2_llvm.h"
 #else
 #include "renameavx2.h"
+#endif
+#endif
+#endif
+
+#ifdef ENABLE_AVX2128
+#define CONFIG 1
+#include "helperavx2_128.h"
+#ifdef DORENAME
+#if defined(ENABLE_LLVMABI)
+#include "renameavx2128_llvm.h"
+#else
+#include "renameavx2128.h"
 #endif
 #endif
 #endif
@@ -71,6 +101,8 @@
 #ifdef DORENAME
 #ifdef ENABLE_GNUABI
 #include "renameavx512f_gnuabi.h"
+#elif defined(ENABLE_LLVMABI)
+#include "renameavx512f_llvm.h"
 #else
 #include "renameavx512f.h"
 #endif
@@ -83,6 +115,8 @@
 #ifdef DORENAME
 #ifdef ENABLE_GNUABI
 #include "renameadvsimd_gnuabi.h"
+#elif defined(ENABLE_LLVMABI)
+#include "renameadvsimd_llvm.h"
 #else
 #include "renameadvsimd.h"
 #endif
@@ -1819,6 +1853,7 @@ EXPORT CONST vdouble xround(vdouble d) {
   fr = vsub_vd_vd_vd(fr, vcast_vd_vi(vtruncate_vi_vd(fr)));
   x = vsel_vd_vo_vd_vd(vand_vo_vo_vo(vle_vo_vd_vd(x, vcast_vd_d(0)), veq_vo_vd_vd(fr, vcast_vd_d(0))), vsub_vd_vd_vd(x, vcast_vd_d(1.0)), x);
   fr = vsel_vd_vo_vd_vd(vlt_vo_vd_vd(fr, vcast_vd_d(0)), vadd_vd_vd_vd(fr, vcast_vd_d(1.0)), fr);
+  x = vsel_vd_vo_vd_vd(veq_vo_vd_vd(d, vcast_vd_d(0.49999999999999994449)), vcast_vd_d(0), x);
   return vsel_vd_vo_vd_vd(vor_vo_vo_vo(visinf_vo_vd(d), vge_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(1LL << 52))), d, vcopysign_vd_vd_vd(vsub_vd_vd_vd(x, fr), d));
 }
 
@@ -1828,6 +1863,7 @@ EXPORT CONST vdouble xrint(vdouble d) {
   vopmask isodd = vcast_vo64_vo32(veq_vo_vi_vi(vand_vi_vi_vi(vcast_vi_i(1), vtruncate_vi_vd(fr)), vcast_vi_i(1)));
   fr = vsub_vd_vd_vd(fr, vcast_vd_vi(vtruncate_vi_vd(fr)));
   fr = vsel_vd_vo_vd_vd(vor_vo_vo_vo(vlt_vo_vd_vd(fr, vcast_vd_d(0)), vand_vo_vo_vo(veq_vo_vd_vd(fr, vcast_vd_d(0)), isodd)), vadd_vd_vd_vd(fr, vcast_vd_d(1.0)), fr);
+  x = vsel_vd_vo_vd_vd(veq_vo_vd_vd(d, vcast_vd_d(0.50000000000000011102)), vcast_vd_d(0), x);
   vdouble ret = vsel_vd_vo_vd_vd(vor_vo_vo_vo(visinf_vo_vd(d), vge_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(1LL << 52))), d, vcopysign_vd_vd_vd(vsub_vd_vd_vd(x, fr), d));
   return ret;
 }
@@ -1952,6 +1988,8 @@ EXPORT CONST vdouble xsqrt_u05(vdouble d) {
   
   return x;
 }
+
+EXPORT CONST vdouble xsqrt_u35(vdouble d) { return xsqrt_u05(d); }
 
 EXPORT CONST vdouble xhypot_u05(vdouble x, vdouble y) {
   x = vabs_vd_vd(x);

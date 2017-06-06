@@ -15,7 +15,11 @@
 #include "misc.h"
 
 #ifdef DORENAME
+#ifdef ENABLE_LLVMABI
+#include "rename_llvm.h"
+#else
 #include "rename.h"
+#endif
 #endif
 
 #if (defined(_MSC_VER))
@@ -1379,6 +1383,7 @@ EXPORT CONST float xroundf(float d) {
   float fr = x - (int32_t)x;
   if (fr == 0 && x <= 0) x--;
   fr = fr < 0 ? fr+1.0f : fr;
+  x = d == 0.4999999701976776123f ? 0 : x;  // nextafterf(0.5, 0)
   return (xisinff(d) || fabsfk(d) >= (float)(1LL << 23)) ? d : copysignfk(x - fr, d);
 }
 
@@ -1387,6 +1392,7 @@ EXPORT CONST float xrintf(float d) {
   int32_t isodd = (1 & (int32_t)x) != 0;
   float fr = x - (int32_t)x;
   fr = (fr < 0 || (fr == 0 && isodd)) ? fr+1.0f : fr;
+  x = d == 0.50000005960464477539f ? 0 : x;  // nextafterf(0.5, 1)
   return (xisinff(d) || fabsfk(d) >= (float)(1LL << 23)) ? d : copysignfk(x - fr, d);
 }
 

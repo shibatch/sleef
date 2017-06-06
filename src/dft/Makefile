@@ -7,7 +7,7 @@ ISALISTSP=1_purecsp 4_sse2sp 1_avxsp 1_avx2sp 1_avx512fsp
 ISALISTDP=1_purecdp 4_sse2dp 1_avxdp 1_avx2dp 1_avx512fdp
 ISALISTLD=1_purecld
 ISALISTQP=1_purecqp
-else ifeq ($(ARCH), x86_64)
+else ifeq ($(X86ARCH),1)
 
 ISALISTDP=1_vecextdp 4_sse2dp 1_avxdp
 ISALISTSP=1_vecextsp 4_sse2sp 1_avxsp

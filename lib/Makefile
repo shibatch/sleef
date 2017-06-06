@@ -12,11 +12,14 @@ libsleefgnuabi : libsleefgnuabi.$(DLLSUFFIX)
 .PHONY: libsleef-dft
 libsleefdft : libsleefdft.$(DLLSUFFIX)
 
+.PHONY: libsleefllvm
+libsleefllvm : libsleefllvm.a
+
 #
 
 .PHONY: clean
 clean :
-	rm -f *~
+	rm -f *~ symbols.txt
 
 .PHONY: distclean
 distclean : clean
@@ -28,17 +31,17 @@ distclean : clean
 
 ifeq ($(OS),Linux)
 libsleef.so : ../src/libm/libm.a ../src/common/common.a
-	$(FLOCK) ../src/libm/libm.a.lock -c '$(CC) -fPIC -shared -o libsleef.so.$(SOVERSION).$(MINORVERSION) -Wl,-soname,libsleef.so.$(SOVERSION) -Wl,--whole-archive ../src/libm/libm.a ../src/common/common.a -Wl,--no-whole-archive -lm'
+	$(FLOCK) ../src/libm/libm.a.lock -c '$(CC) $(CFLAGS) -fPIC -shared -o libsleef.so.$(SOVERSION).$(MINORVERSION) -Wl,-soname,libsleef.so.$(SOVERSION) -Wl,--whole-archive ../src/libm/libm.a ../src/common/common.a -Wl,--no-whole-archive -lm'
 	ln -f -s libsleef.so.$(SOVERSION).$(MINORVERSION) libsleef.so.$(SOVERSION)
 	ln -f -s libsleef.so.$(SOVERSION) libsleef.so
 
 libsleefgnuabi.so : ../src/libm/libgm.a
-	$(FLOCK) ../src/libm/libm.a.lock -c '$(CC) -fPIC -shared -o libsleefgnuabi.so.$(SOVERSION).$(MINORVERSION) -Wl,-soname,libsleefgnuabi.so.$(SOVERSION) -Wl,--whole-archive ../src/libm/libgm.a -Wl,--no-whole-archive -lm'
+	$(FLOCK) ../src/libm/libm.a.lock -c '$(CC) $(CFLAGS) -fPIC -shared -o libsleefgnuabi.so.$(SOVERSION).$(MINORVERSION) -Wl,-soname,libsleefgnuabi.so.$(SOVERSION) -Wl,--whole-archive ../src/libm/libgm.a -Wl,--no-whole-archive -lm'
 	ln -f -s libsleefgnuabi.so.$(SOVERSION).$(MINORVERSION) libsleefgnuabi.so.$(SOVERSION)
 	ln -f -s libsleefgnuabi.so.$(SOVERSION) libsleefgnuabi.so
 
 libsleefdft.so : ../src/dft/dft.a libsleef.so ../src/common/arraymap.a
-	$(CC) -fPIC $(OPENMPFLAG) -shared -o libsleefdft.so.$(SOVERSION).$(MINORVERSION) -Wl,-soname,libsleefdft.so.$(SOVERSION) -Wl,--whole-archive ../src/dft/dft.a ../src/common/arraymap.a -Wl,--no-whole-archive -L. -lsleef -lm
+	$(CC) $(CFLAGS) -fPIC $(OPENMPFLAG) -shared -o libsleefdft.so.$(SOVERSION).$(MINORVERSION) -Wl,-soname,libsleefdft.so.$(SOVERSION) -Wl,--whole-archive ../src/dft/dft.a ../src/common/arraymap.a -Wl,--no-whole-archive -L. -lsleef -lm
 	ln -f -s libsleefdft.so.$(SOVERSION).$(MINORVERSION) libsleefdft.so.$(SOVERSION)
 	ln -f -s libsleefdft.so.$(SOVERSION) libsleefdft.so
 
@@ -104,6 +107,9 @@ libsleefgnuabistatic.a : ../src/libm/libgm.a
 libsleefdftstatic.a : ../src/dft/dft.a ../src/common/arraymap.a
 	ar -M < libsleefdftstatic.mri
 
+libsleefllvm.a : ../src/libm/libsleefllvm.a
+	cp ../src/libm/libsleefllvm.a .
+
 ../src/libm/libm.a :
 	+"$(MAKE)" --directory=../src/libm libm.a
 
@@ -124,3 +130,6 @@ libsleefdftstatic.a : ../src/dft/dft.a ../src/common/arraymap.a
 
 ../src/libm/OBJ2.txt :
 	+"$(MAKE)" --directory=../src/libm OBJ2.txt
+
+../src/libm/libsleefllvm.a :
+	+"$(MAKE)" --directory=../src/libm libsleefllvm.a

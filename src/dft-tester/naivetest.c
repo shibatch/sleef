@@ -22,9 +22,9 @@
 #define SleefDFT_execute SleefDFT_double_execute
 typedef double real;
 
-typedef long double complex cmpl;
+typedef double complex cmpl;
 
-cmpl omega(long double n, long double kn) {
+cmpl omega(double n, double kn) {
   return cexpl((-2 * M_PIl * _Complex_I / n) * kn);
 }
 #elif BASETYPEID == 2
@@ -32,19 +32,19 @@ cmpl omega(long double n, long double kn) {
 #define SleefDFT_execute SleefDFT_float_execute
 typedef float real;
 
-typedef long double complex cmpl;
+typedef double complex cmpl;
 
-cmpl omega(long double n, long double kn) {
+cmpl omega(double n, double kn) {
   return cexpl((-2 * M_PIl * _Complex_I / n) * kn);
 }
 #elif BASETYPEID == 3
 #define SleefDFT_init SleefDFT_longdouble_init1d
 #define SleefDFT_execute SleefDFT_longdouble_execute
-typedef long double real;
+typedef double real;
 
-typedef long double complex cmpl;
+typedef double complex cmpl;
 
-cmpl omega(long double n, long double kn) {
+cmpl omega(double n, double kn) {
   return cexpl((-2 * M_PIl * _Complex_I / n) * kn);
 }
 #elif BASETYPEID == 4
@@ -54,9 +54,9 @@ cmpl omega(long double n, long double kn) {
 #define SleefDFT_execute SleefDFT_quad_execute
 typedef Sleef_quad real;
 
-typedef long double complex cmpl;
+typedef double complex cmpl;
 
-cmpl omega(long double n, long double kn) {
+cmpl omega(double n, double kn) {
   return cexpl((-2 * M_PIl * _Complex_I / n) * kn);
 }
 #else
@@ -103,6 +103,7 @@ int check_cf(int n) {
     ts[i] = 0.5 * ((2.0 * (rand() / (double)RAND_MAX) - 1) + (2.0 * (rand() / (double)RAND_MAX) - 1) * _Complex_I);
     sx[(i*2+0)] = creal(ts[i]);
     sx[(i*2+1)] = cimag(ts[i]);
+    //printf("%g,\t%g\n", (double)sx[(2*i+0)], (double)sx[(2*i+1)]);
   }
 
   //
@@ -178,7 +179,6 @@ int check_cb(int n) {
 
   backward(fs, ts, n);
 
-  //struct SleefDFT *p = SleefDFT_init(SLEEF_MODE_DEBUG | SLEEF_MODE_BACKWARD, n);
   struct SleefDFT *p = SleefDFT_init(n, NULL, NULL, SLEEF_MODE_BACKWARD | SLEEF_MODE_DEBUG);
 
   if (p == NULL) {
@@ -481,14 +481,16 @@ int main(int argc, char **argv) {
 
   //
 
-  printf("complex  forward   : %s\n", check_cf(n)  ? "OK" : "NG");
-  printf("complex  backward  : %s\n", check_cb(n)  ? "OK" : "NG");
-  /*if (n >= 4)*/ {
-    printf("real     forward   : %s\n", check_rf(n)  ? "OK" : "NG");
-    printf("real     backward  : %s\n", check_rb(n)  ? "OK" : "NG");
-    printf("real alt forward   : %s\n", check_arf(n) ? "OK" : "NG");
-    printf("real alt backward  : %s\n", check_arb(n) ? "OK" : "NG");
+  int success = 1;
+  
+  printf("complex  forward   : %s\n", (success &= check_cf(n))  ? "OK" : "NG");
+  printf("complex  backward  : %s\n", (success &= check_cb(n))  ? "OK" : "NG");
+  {
+    printf("real     forward   : %s\n", (success &= check_rf(n))  ? "OK" : "NG");
+    printf("real     backward  : %s\n", (success &= check_rb(n))  ? "OK" : "NG");
+    printf("real alt forward   : %s\n", (success &= check_arf(n)) ? "OK" : "NG");
+    printf("real alt backward  : %s\n", (success &= check_arb(n)) ? "OK" : "NG");
   }
   
-  exit(0);
+  exit(!success);
 }

@@ -1,0 +1,132 @@
+//          Copyright Naoki Shibata 2010 - 2017.
+// Distributed under the Boost Software License, Version 1.0.
+//    (See accompanying file LICENSE.txt or copy at
+//          http://www.boost.org/LICENSE_1_0.txt)
+
+#include <stdint.h>
+#include <math.h>
+#include <assert.h>
+
+#include "misc.h"
+
+#if defined(_MSC_VER)
+#include <intrin.h>
+#else
+#include <x86intrin.h>
+#endif
+
+#define IMPORT_IS_EXPORT
+#include "sleef.h"
+
+static int cpuSupportsSSE4_1() {
+  static int ret = -1;
+  if (ret == -1) {
+    int32_t reg[4];
+    Sleef_x86CpuID(reg, 1, 0);
+    ret = (reg[2] & (1 << 19)) != 0;
+  }
+  return ret;
+}
+
+static int cpuSupportsAVX2() {
+  static int ret = -1;
+  if (ret == -1) {
+    int32_t reg[4];
+    Sleef_x86CpuID(reg, 7, 0);
+    ret = (reg[1] & (1 << 5)) != 0;
+  }
+  return ret;
+}
+
+static int cpuSupportsFMA() {
+  static int ret = -1;
+  if (ret == -1) {
+    int32_t reg[4];
+    Sleef_x86CpuID(reg, 1, 0);
+    ret = (reg[2] & (1 << 12)) != 0;
+  }
+  return ret;
+}
+
+#define SUBST_IF_SSE4(funcsse4) if (cpuSupportsSSE4_1()) p = funcsse4;
+
+#ifdef ENABLE_AVX2
+#define SUBST_IF_AVX2(funcavx2) if (cpuSupportsAVX2() && cpuSupportsFMA()) p = funcavx2;
+#else
+#define SUBST_IF_AVX2(funcavx2)
+#endif
+
+#define DISPATCH_d_d(fptype, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2)	\
+  static fptype (*pfn)(fptype arg0);					\
+  static fptype dfn(fptype arg0) {					\
+    fptype (*p)(fptype arg0) = funcsse2;				\
+    SUBST_IF_SSE4(funcsse4);						\
+    SUBST_IF_AVX2(funcavx2);						\
+    pfn = p;								\
+    return (*pfn)(arg0);						\
+  }									\
+  static fptype (*pfn)(fptype arg0) = dfn;				\
+  EXPORT fptype funcName(fptype arg0) { return (*pfn)(arg0); }
+
+#define DISPATCH_d_d_d(fptype, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2)	\
+  static fptype (*pfn)(fptype arg0, fptype arg1);			\
+  static fptype dfn(fptype arg0, fptype arg1) {				\
+    fptype (*p)(fptype arg0, fptype arg1) = funcsse2;			\
+    SUBST_IF_SSE4(funcsse4);						\
+    SUBST_IF_AVX2(funcavx2);						\
+    pfn = p;								\
+    return (*pfn)(arg0, arg1);						\
+  }									\
+  static fptype (*pfn)(fptype arg0, fptype arg1) = dfn;			\
+  EXPORT fptype funcName(fptype arg0, fptype arg1) { return (*pfn)(arg0, arg1); }
+
+#define DISPATCH_d2_d(fptype, fptype2, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
+  static fptype2 (*pfn)(fptype arg0);					\
+  static fptype2 dfn(fptype arg0) {					\
+    fptype2 (*p)(fptype arg0) = funcsse2;				\
+    SUBST_IF_SSE4(funcsse4);						\
+    SUBST_IF_AVX2(funcavx2);						\
+    pfn = p;								\
+    return (*pfn)(arg0);						\
+  }									\
+  static fptype2 (*pfn)(fptype arg0) = dfn;				\
+  EXPORT fptype2 funcName(fptype arg0) { return (*pfn)(arg0); }
+
+#define DISPATCH_d_d_i(fptype, itype, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
+  static fptype (*pfn)(fptype arg0, itype arg1);			\
+  static fptype dfn(fptype arg0, itype arg1) {				\
+    fptype (*p)(fptype arg0, itype arg1) = funcsse2;			\
+    SUBST_IF_SSE4(funcsse4);						\
+    SUBST_IF_AVX2(funcavx2);						\
+    pfn = p;								\
+    return (*pfn)(arg0, arg1);						\
+  }									\
+  static fptype (*pfn)(fptype arg0, itype arg1) = dfn;			\
+  EXPORT fptype funcName(fptype arg0, itype arg1) { return (*pfn)(arg0, arg1); }
+
+#define DISPATCH_i_d(fptype, itype, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
+  static itype (*pfn)(fptype arg0);					\
+  static itype dfn(fptype arg0) {					\
+    itype (*p)(fptype arg0) = funcsse2;					\
+    SUBST_IF_SSE4(funcsse4);						\
+    SUBST_IF_AVX2(funcavx2);						\
+    pfn = p;								\
+    return (*pfn)(arg0);						\
+  }									\
+  static itype (*pfn)(fptype arg0) = dfn;				\
+  EXPORT itype funcName(fptype arg0) { return (*pfn)(arg0); }
+
+#define DISPATCH_d_d_d_d(fptype, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
+  static fptype (*pfn)(fptype arg0, fptype arg1, fptype arg2);		\
+  static fptype dfn(fptype arg0, fptype arg1, fptype arg2) {		\
+    fptype (*p)(fptype arg0, fptype arg1, fptype arg2) = funcsse2;	\
+    SUBST_IF_SSE4(funcsse4);						\
+    SUBST_IF_AVX2(funcavx2);						\
+    pfn = p;								\
+    return (*pfn)(arg0, arg1, arg2);					\
+  }									\
+  static fptype (*pfn)(fptype arg0, fptype arg1, fptype arg2) = dfn;	\
+  EXPORT fptype funcName(fptype arg0, fptype arg1, fptype arg2) { return (*pfn)(arg0, arg1, arg2); }
+
+//
+
