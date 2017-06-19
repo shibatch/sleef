@@ -29,6 +29,14 @@
 #endif
 #endif
 
+#ifdef ENABLE_SSE4
+#define CONFIG 4
+#include "helpersse2.h"
+#ifdef DORENAME
+#include "renamesse4.h"
+#endif
+#endif
+
 #ifdef ENABLE_AVX
 #define CONFIG 1
 #include "helperavx.h"
@@ -62,6 +70,14 @@
 #else
 #include "renameavx2.h"
 #endif
+#endif
+#endif
+
+#ifdef ENABLE_AVX2128
+#define CONFIG 1
+#include "helperavx2_128.h"
+#ifdef DORENAME
+#include "renameavx2128.h"
 #endif
 #endif
 

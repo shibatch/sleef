@@ -3,8 +3,8 @@ CFLAGS+=/TC /I..\common /I..\arch
 OPTFLAGS=/O2
 
 OBJ=sleefdp.obj sleefsp.obj sleefld.obj
-OBJ+=sleefdpsse2.obj sleefdpavx.obj sleefdpavx2.obj
-OBJ+=sleefspsse2.obj sleefspavx.obj sleefspavx2.obj
+OBJ+=sleefdpsse2.obj sleefdpsse4.obj sleefdpavx.obj sleefdpavx2.obj sleefdpavx2128.obj
+OBJ+=sleefspsse2.obj sleefspsse4.obj sleefspavx.obj sleefspavx2.obj sleefspavx2128.obj
 
 OBJ2=sleefgdpsse2.obj sleefgdpavx.obj sleefgdpavx2.obj sleefgspsse2.obj sleefgspavx.obj sleefgspavx2.obj
 
@@ -27,9 +27,11 @@ OBJ2.txt : $(OBJ2)
 
 sleef.h : mkrename.exe
 	cp sleeflibm.h.org sleef.h
-	./mkrename.exe sse2 2 4 __m128d __m128 __m128i __m128i __SSE2__ x86intrin.h >> sleef.h
-	./mkrename.exe avx 4 8 __m256d __m256 __m128i 'struct { __m128i x, y; }' __AVX__ x86intrin.h >> sleef.h
-	./mkrename.exe avx2 4 8 __m256d __m256 __m128i __m256i __AVX2__ x86intrin.h >> sleef.h
+	./mkrename.exe sse2 2 4 __m128d __m128 __m128i __m128i __SSE2__ >> sleef.h
+	./mkrename.exe sse4 2 4 __m128d __m128 __m128i __m128i __SSE2__ >> sleef.h
+	./mkrename.exe avx2128 2 4 __m128d __m128 __m128i __m128i __SSE2__ >> sleef.h
+	./mkrename.exe avx 4 8 __m256d __m256 __m128i 'struct { __m128i x, y; }' __AVX__ >> sleef.h
+	./mkrename.exe avx2 4 8 __m256d __m256 __m128i __m256i __AVX2__ >> sleef.h
 	echo '#undef IMPORT' >> sleef.h
 	echo '#endif' >> sleef.h
 	cp sleef.h ../../include
@@ -76,6 +78,28 @@ sleefgspsse2.obj : sleefsimdsp.c renamesse2_gnuabi.h
 
 renamesse2_gnuabi.h : mkrename_gnuabi.exe
 	./mkrename_gnuabi.exe sse2 b 2 4 _mm128d _mm128 _mm128i _mm128i '__SSE2__' > renamesse2_gnuabi.h
+
+##
+
+sleefdpsse4.obj : sleefsimddp.c renamesse4.h
+	$(CC) $(CFLAGS) $(OPTFLAGS) -DDORENAME -DENABLE_SSE4 -D__SSE2__ -D__SSE3__ -D__SSE4_1__ sleefsimddp.c /c /Fosleefdpsse4.obj
+
+sleefspsse4.obj : sleefsimdsp.c renamesse4.h
+	$(CC) $(CFLAGS) $(OPTFLAGS) -DDORENAME -DENABLE_SSE4 -D__SSE2__ -D__SSE3__ -D__SSE4_1__ sleefsimdsp.c /c /Fosleefspsse4.obj
+
+renamesse4.h : mkrename.exe
+	./mkrename.exe sse4 2 4 > renamesse4.h
+
+##
+
+sleefdpavx2128.obj : sleefsimddp.c renameavx2128.h
+	$(CC) $(CFLAGS) $(OPTFLAGS) -DDORENAME -DENABLE_AVX2128 /arch:AVX2 sleefsimddp.c /c /Fosleefdpavx2128.obj
+
+sleefspavx2128.obj : sleefsimdsp.c renameavx2128.h
+	$(CC) $(CFLAGS) $(OPTFLAGS) -DDORENAME -DENABLE_AVX2128 /arch:AVX2 sleefsimdsp.c /c /Fosleefspavx2128.obj
+
+renameavx2128.h : mkrename.exe
+	./mkrename.exe avx2128 2 4 > renameavx2128.h
 
 ##
 

@@ -32,6 +32,14 @@ typedef Sleef___m128d_2 vdouble2;
 typedef Sleef___m128_2 vfloat2;
 #endif
 
+#ifdef ENABLE_SSE4
+#define CONFIG 4
+#include "helpersse2.h"
+#include "renamesse4.h"
+typedef Sleef___m128d_2 vdouble2;
+typedef Sleef___m128_2 vfloat2;
+#endif
+
 #ifdef ENABLE_AVX
 #define CONFIG 1
 #include "helperavx.h"
@@ -54,6 +62,14 @@ typedef Sleef___m256_2 vfloat2;
 #include "renameavx2.h"
 typedef Sleef___m256d_2 vdouble2;
 typedef Sleef___m256_2 vfloat2;
+#endif
+
+#ifdef ENABLE_AVX2128
+#define CONFIG 1
+#include "helperavx2_128.h"
+#include "renameavx2128.h"
+typedef Sleef___m128d_2 vdouble2;
+typedef Sleef___m128_2 vfloat2;
 #endif
 
 #ifdef ENABLE_AVX512F

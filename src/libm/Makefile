@@ -26,11 +26,11 @@ endif
 #
 
 ifeq ($(ARCH), x86_64)
-OBJ+=sleefdpsse2.o sleefdpavx.o sleefspsse2.o sleefspavx.o
+OBJ+=sleefdpsse2.o sleefdpavx.o sleefspsse2.o sleefspavx.o sleefdpsse4.o sleefspsse4.o
 OBJ2+=sleefgdpsse2.o sleefgdpavx.o sleefgspsse2.o sleefgspavx.o
 
 ifeq ($(ENABLEAVX2), 1)
-OBJ+=sleefdpavx2.o sleefspavx2.o
+OBJ+=sleefdpavx2.o sleefspavx2.o sleefdpavx2128.o sleefspavx2128.o
 OBJ2+=sleefgdpavx2.o sleefgspavx2.o
 endif
 
@@ -69,6 +69,8 @@ sleef.h : mkrename
 	cp sleeflibm.h.org sleef.h
 	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
 	./mkrename sse2 2 4 __m128d __m128 __m128i __m128i __SSE2__ >> sleef.h
+	./mkrename sse4 2 4 __m128d __m128 __m128i __m128i __SSE2__ >> sleef.h
+	./mkrename avx2128 2 4 __m128d __m128 __m128i __m128i __SSE2__ >> sleef.h
 	./mkrename avx 4 8 __m256d __m256 __m128i 'struct { __m128i x, y; }' __AVX__ >> sleef.h
 	./mkrename fma4 4 8 __m256d __m256 __m128i 'struct { __m128i x, y; }' __FMA4__ >> sleef.h
 	./mkrename avx2 4 8 __m256d __m256 __m128i __m256i __AVX2__ >> sleef.h
@@ -125,10 +127,10 @@ mkrename_gnuabi : mkrename_gnuabi.c
 ##
 
 sleefdpsse2.o : sleefsimddp.c renamesse2.h
-	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_SSE2 -msse2 -msse4.1 sleefsimddp.c -c -o sleefdpsse2.o
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_SSE2 -msse2 sleefsimddp.c -c -o sleefdpsse2.o
 
 sleefspsse2.o : sleefsimdsp.c renamesse2.h
-	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_SSE2 -msse2 -msse4.1 sleefsimdsp.c -c -o sleefspsse2.o
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_SSE2 -msse2 sleefsimdsp.c -c -o sleefspsse2.o
 
 renamesse2.h : mkrename
 	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
@@ -145,6 +147,18 @@ sleefgspsse2.o : sleefsimdsp.c renamesse2_gnuabi.h
 renamesse2_gnuabi.h : mkrename_gnuabi
 	$(FLOCK) mkrename_gnuabi.c -c 'echo Acquiring lock for mkrename'
 	./mkrename_gnuabi sse2 b 2 4 _mm128d _mm128 _mm128i _mm128i '__SSE2__' > renamesse2_gnuabi.h
+
+##
+
+sleefdpsse4.o : sleefsimddp.c renamesse4.h
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_SSE4 -msse4.1 sleefsimddp.c -c -o sleefdpsse4.o
+
+sleefspsse4.o : sleefsimdsp.c renamesse4.h
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_SSE4 -msse4.1 sleefsimdsp.c -c -o sleefspsse4.o
+
+renamesse4.h : mkrename
+	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
+	./mkrename sse4 2 4 > renamesse4.h
 
 ##
 
@@ -205,6 +219,18 @@ sleefgspavx2.o : sleefsimdsp.c renameavx2_gnuabi.h
 renameavx2_gnuabi.h : mkrename_gnuabi
 	$(FLOCK) mkrename_gnuabi.c -c 'echo Acquiring lock for mkrename'
 	./mkrename_gnuabi avx2 d 4 8 __m256d __m256 __m128i __m256i __AVX2__ > renameavx2_gnuabi.h
+
+##
+
+sleefdpavx2128.o : sleefsimddp.c renameavx2128.h
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_AVX2128 $(AVX2FLAG) sleefsimddp.c -c -o sleefdpavx2128.o
+
+sleefspavx2128.o : sleefsimdsp.c renameavx2128.h
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_AVX2128 $(AVX2FLAG) sleefsimdsp.c -c -o sleefspavx2128.o
+
+renameavx2128.h : mkrename
+	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
+	./mkrename avx2128 2 4 > renameavx2128.h
 
 ##
 
@@ -269,5 +295,5 @@ renameadvsimd_gnuabi.h : mkrename_gnuabi
 clean :
 	rm -f *~ *.o *.s libm.a libgm.a sleef.h a.out *.lock OBJ.txt OBJ2.txt
 	rm -f *.obj *.lib *.dll *.exp *.exe
-	rm -f mkrename renamesse2.h renameavx.h renamefma4.h renameavx2.h renameavx512f.h renameneon32.h renameadvsimd.h
+	rm -f mkrename renamesse2.h renamesse4.h renameavx.h renamefma4.h renameavx2.h renameavx2128.h renameavx512f.h renameneon32.h renameadvsimd.h
 	rm -f mkrename_gnuabi renamesse2_gnuabi.h renameavx_gnuabi.h renamefma4_gnuabi.h renameavx2_gnuabi.h renameavx512f_gnuabi.h renameneon32_gnuabi.h renameadvsimd_gnuabi.h
