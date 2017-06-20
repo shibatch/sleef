@@ -1971,6 +1971,8 @@ EXPORT CONST vdouble xsqrt_u05(vdouble d) {
   return x;
 }
 
+EXPORT CONST vdouble xsqrt_u35(vdouble d) { return xsqrt_u05(d); }
+
 EXPORT CONST vdouble xhypot_u05(vdouble x, vdouble y) {
   x = vabs_vd_vd(x);
   y = vabs_vd_vd(y);
