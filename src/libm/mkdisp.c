@@ -14,7 +14,6 @@ int main(int argc, char **argv) {
   if (argc < 7) {
     fprintf(stderr, "Usage : %s <DP width> <SP width> <vdouble type> <vfloat type> <vint type> <isa0> [<isa1> ...]\n", argv[0]);
     fprintf(stderr, "\n");
-
     exit(-1);
   }
 
