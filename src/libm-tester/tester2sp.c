@@ -159,6 +159,14 @@ int main(int argc,char **argv)
 	printf("Pure C sincospif_u35 sin arg=%.20g ulp=%.20g\n", d, u1);
 	fflush(stdout); ecnt++;
       }
+
+      double u2 = countULP2sp(t = xsinpif_u05(d), frx);
+
+      if (u2 != 0 && ((fabs(d) <= rangemax2 && u2 > 0.506) || fabs(t) > 1 || !isnumber(t))) {
+	printf("Pure C sinpif_u05 arg=%.20g ulp=%.20g\n", d, u2);
+	printf("correct = %g, test = %g\n", mpfr_get_d(frx, GMP_RNDN), t);
+	fflush(stdout); ecnt++;
+      }
     }
 
     {
@@ -178,6 +186,14 @@ int main(int argc,char **argv)
 
       if (u1 != 0 && ((fabs(d) <= rangemax2 && u1 > 2.0) || fabs(t) > 1 || !isnumber(t))) {
 	printf("Pure C sincospif_u35 cos arg=%.20g ulp=%.20g\n", d, u1);
+	fflush(stdout); ecnt++;
+      }
+
+      double u2 = countULP2sp(t = xcospif_u05(d), frx);
+
+      if (u2 != 0 && ((fabs(d) <= rangemax2 && u2 > 0.506) || fabs(t) > 1 || !isnumber(t))) {
+	printf("Pure C cospif_u05 arg=%.20g ulp=%.20g\n", d, u2);
+	printf("correct = %g, test = %g\n", mpfr_get_d(frx, GMP_RNDN), t);
 	fflush(stdout); ecnt++;
       }
     }
@@ -837,6 +853,64 @@ int main(int argc,char **argv)
 	printf("Pure C sqrtf_u35 arg=%.20g ulp=%.20g\n", d, u0);
 	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
 	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_erfc(frx, frx, GMP_RNDN);
+
+      double u0 = countULP2sp(t = xerfcf_u15(d), frx);
+
+      if (u0 > 1.5) {
+	printf("Pure C erfcf arg=%.20g ulp=%.20g\n", d, u0);
+	printf("Correct = %.20Lg, test = %.20g\n", mpfr_get_ld(frx, GMP_RNDN), t);
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_erf(frx, frx, GMP_RNDN);
+
+      double u0 = countULP2sp(t = xerff_u1(d), frx);
+
+      if (u0 > 1.0) {
+	printf("Pure C erff arg=%.20g ulp=%.20g\n", d, u0);
+	printf("Correct = %.20Lg, test = %.20g\n", mpfr_get_ld(frx, GMP_RNDN), t);
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      int s;
+      mpfr_lgamma(frx, &s, frx, GMP_RNDN);
+
+      double u0 = countULPsp(t = xlgammaf_u1(d), frx);
+
+      if (((d < 0 && fabsl(t - mpfr_get_ld(frx, GMP_RNDN)) > 1e-8 && u0 > 1) ||
+	   (0 <= d && d < 4e+36 && u0 > 1) || (4e+36 <= d && !(u0 <= 1 || isinf(t))))) {
+	printf("Pure C xlgammaf arg=%.20g ulp=%.20g\n", d, u0);
+	printf("Correct = %.20Lg, test = %.20g\n", mpfr_get_ld(frx, GMP_RNDN), t);
+	printf("Diff = %.20Lg\n", fabsl(t - mpfr_get_ld(frx, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_gamma(frx, frx, GMP_RNDN);
+
+      double u0 = countULP2sp(t = xtgammaf_u1(d), frx);
+      double c = mpfr_get_d(frx, GMP_RNDN);
+
+      if (isnumber(c) || isnumber(t)) {
+	if (u0 > 1.0) {
+	  printf("Pure C xtgamma arg=%.20g ulp=%.20g\n", d, u0);
+	  printf("Correct = %.20Lg, test = %.20g\n", mpfr_get_ld(frx, GMP_RNDN), t);
+	  fflush(stdout); ecnt++;
+	}
       }
     }
   }
