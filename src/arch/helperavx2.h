@@ -320,6 +320,8 @@ static INLINE vint2 vsel_vi2_vo_vi2_vi2(vopmask m, vint2 x, vint2 y) {
 
 static INLINE vfloat vsel_vf_vo_vf_vf(vopmask o, vfloat x, vfloat y) { return _mm256_blendv_ps(y, x, _mm256_castsi256_ps(o)); }
 
+// At this point, the following three functions are implemented in a generic way,
+// but I will try target-specific optimization later on.
 static INLINE CONST vfloat vsel_vf_vo_f_f(vopmask o, float v1, float v0) {
   return vsel_vf_vo_vf_vf(o, vcast_vf_f(v1), vcast_vf_f(v0));
 }
