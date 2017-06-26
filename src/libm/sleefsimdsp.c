@@ -1802,6 +1802,26 @@ EXPORT CONST vfloat xfmodf(vfloat x, vfloat y) {
   return ret;
 }
 
+EXPORT CONST vfloat xsinpif_u05(vfloat d) {
+  return vcast_vf_f(0);
+}
+
+EXPORT CONST vfloat xtgammaf_u1(vfloat a) {
+  return vcast_vf_f(0);
+}
+
+EXPORT CONST vfloat xlgammaf_u1(vfloat a) {
+  return vcast_vf_f(0);
+}
+
+EXPORT CONST vfloat xerff_u1(vfloat a) {
+  return vcast_vf_f(0);
+}
+
+EXPORT CONST vfloat xerfcf_u15(vfloat a) {
+  return vcast_vf_f(0);
+}
+
 #ifdef ENABLE_MAIN
 // gcc -DENABLE_MAIN -Wno-attributes -I../common -I../arch -DENABLE_AVX2 -mavx2 -mfma sleefsimdsp.c ../common/common.c -lm
 #include <stdio.h>

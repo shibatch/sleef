@@ -11,18 +11,26 @@
 #include "funcproto.h"
 
 int main(int argc, char **argv) {
-  if (argc < 4) {
-    fprintf(stderr, "Usage : %s <isa> <DP width> <SP width> [<vdouble type> <vfloat type> <vint type> <vint2 type> <Macro to enable>]\n", argv[0]);
+  if (argc < 3) {
+    fprintf(stderr, "Generate a header for renaming functions\n");
+    fprintf(stderr, "Usage : %s <DP width> <SP width> [<isa>]\n", argv[0]);
+    fprintf(stderr, "\n");
+
+    fprintf(stderr, "Generate a part of header for library functions\n");
+    fprintf(stderr, "Usage : %s <DP width> <SP width> <vdouble type> <vfloat type> <vint type> <vint2 type> <Macro to enable> [<isa>]\n", argv[0]);
+    fprintf(stderr, "\n");
+
     exit(-1);
   }
 
-  char *isaname = argv[1];
-  int wdp = atoi(argv[2]);
-  int wsp = atoi(argv[3]);
-
   static char *ulpSuffixStr[] = { "", "_u1", "_u05", "_u35", "_u15" };
   
-  if (argc == 4) {
+  if (argc == 3 || argc == 4) {
+    int wdp = atoi(argv[1]);
+    int wsp = atoi(argv[2]);
+    char *isaname = argc == 3 ? "" : argv[3];
+    char *isaub = argc == 4 ? "_" : "";
+
     for(int i=0;funcList[i].name != NULL;i++) {
       if (funcList[i].ulp >= 0) {
 	printf("#define x%s%s Sleef_%sd%d_u%02d%s\n",
@@ -30,7 +38,7 @@ int main(int argc, char **argv) {
 	       funcList[i].name, wdp,
 	       funcList[i].ulp, isaname);
       } else {
-	printf("#define x%s Sleef_%sd%d_%s\n", funcList[i].name, funcList[i].name, wdp, isaname);
+	printf("#define x%s Sleef_%sd%d%s%s\n", funcList[i].name, funcList[i].name, wdp, isaub, isaname);
       }
     }
 
@@ -43,15 +51,19 @@ int main(int argc, char **argv) {
 	       funcList[i].name, wsp,
 	       funcList[i].ulp, isaname);
       } else {
-	printf("#define x%sf Sleef_%sf%d_%s\n", funcList[i].name, funcList[i].name, wsp, isaname);
+	printf("#define x%sf Sleef_%sf%d%s%s\n", funcList[i].name, funcList[i].name, wsp, isaub, isaname);
       }
     }
   } else {
-    char *vdoublename = argv[4];
-    char *vfloatname = argv[5];
-    char *vintname = argv[6];
-    char *vint2name = argv[7];
-    printf("#ifdef %s\n", argv[8]);
+    int wdp = atoi(argv[1]);
+    int wsp = atoi(argv[2]);
+    char *vdoublename = argv[3];
+    char *vfloatname = argv[4];
+    char *vintname = argv[5];
+    char *vint2name = argv[6];
+    char *isaname = argc == 9 ? argv[8] : "";
+    char *isaub = argc == 9 ? "_" : "";
+    printf("#ifdef %s\n", argv[7]);
 
     if (strcmp(vdoublename, "-") != 0) {
       printf("\n");
@@ -73,10 +85,10 @@ int main(int argc, char **argv) {
 		   funcList[i].ulp, isaname,
 		   vdoublename);
 	  } else {
-	    printf("IMPORT %s Sleef_%sd%d_%s(%s);\n",
+	    printf("IMPORT %s Sleef_%sd%d%s%s(%s);\n",
 		   vdoublename,
 		   funcList[i].name, wdp,
-		   isaname,
+		   isaub, isaname,
 		   vdoublename);
 	  }
 	  break;
@@ -88,10 +100,10 @@ int main(int argc, char **argv) {
 		   funcList[i].ulp, isaname,
 		   vdoublename, vdoublename);
 	  } else {
-	    printf("IMPORT %s Sleef_%sd%d_%s(%s, %s);\n",
+	    printf("IMPORT %s Sleef_%sd%d%s%s(%s, %s);\n",
 		   vdoublename,
 		   funcList[i].name, wdp,
-		   isaname,
+		   isaub, isaname,
 		   vdoublename, vdoublename);
 	  }
 	  break;
@@ -104,10 +116,10 @@ int main(int argc, char **argv) {
 		   funcList[i].ulp, isaname,
 		   vdoublename);
 	  } else {
-	    printf("IMPORT Sleef_%s_2 Sleef_%sd%d_%s(%s);\n",
+	    printf("IMPORT Sleef_%s_2 Sleef_%sd%d%s%s(%s);\n",
 		   vdoublename,
 		   funcList[i].name, wdp,
-		   isaname,
+		   isaub, isaname,
 		   vdoublename);
 	  }
 	  break;
@@ -119,10 +131,10 @@ int main(int argc, char **argv) {
 		   funcList[i].ulp, isaname,
 		   vdoublename, vintname);
 	  } else {
-	    printf("IMPORT %s Sleef_%sd%d_%s(%s, %s);\n",
+	    printf("IMPORT %s Sleef_%sd%d%s%s(%s, %s);\n",
 		   vdoublename,
 		   funcList[i].name, wdp,
-		   isaname,
+		   isaub, isaname,
 		   vdoublename, vintname);
 	  }
 	  break;
@@ -134,10 +146,10 @@ int main(int argc, char **argv) {
 		   funcList[i].ulp, isaname,
 		   vdoublename);
 	  } else {
-	    printf("IMPORT %s Sleef_%sd%d_%s(%s);\n",
+	    printf("IMPORT %s Sleef_%sd%d%s%s(%s);\n",
 		   vintname,
 		   funcList[i].name, wdp,
-		   isaname,
+		   isaub, isaname,
 		   vdoublename);
 	  }
 	  break;
@@ -149,10 +161,10 @@ int main(int argc, char **argv) {
 		   funcList[i].ulp, isaname,
 		   vdoublename, vdoublename, vdoublename);
 	  } else {
-	    printf("IMPORT %s Sleef_%sd%d_%s(%s, %s, %s);\n",
+	    printf("IMPORT %s Sleef_%sd%d%s%s(%s, %s, %s);\n",
 		   vdoublename,
 		   funcList[i].name, wdp,
-		   isaname,
+		   isaub, isaname,
 		   vdoublename, vdoublename, vdoublename);
 	  }
 	  break;
@@ -182,10 +194,10 @@ int main(int argc, char **argv) {
 		 funcList[i].ulp, isaname,
 		 vfloatname);
 	} else {
-	  printf("IMPORT %s Sleef_%sf%d_%s(%s);\n",
+	  printf("IMPORT %s Sleef_%sf%d%s%s(%s);\n",
 		 vfloatname,
 		 funcList[i].name, wsp,
-		 isaname,
+		 isaub, isaname,
 		 vfloatname);
 	}
 	break;
@@ -197,10 +209,10 @@ int main(int argc, char **argv) {
 		 funcList[i].ulp, isaname,
 		 vfloatname, vfloatname);
 	} else {
-	  printf("IMPORT %s Sleef_%sf%d_%s(%s, %s);\n",
+	  printf("IMPORT %s Sleef_%sf%d%s%s(%s, %s);\n",
 		 vfloatname,
 		 funcList[i].name, wsp,
-		 isaname,
+		 isaub, isaname,
 		 vfloatname, vfloatname);
 	}
 	break;
@@ -213,10 +225,10 @@ int main(int argc, char **argv) {
 		 funcList[i].ulp, isaname,
 		 vfloatname);
 	} else {
-	  printf("IMPORT Sleef_%s_2 Sleef_%sf%d_%s(%s);\n",
+	  printf("IMPORT Sleef_%s_2 Sleef_%sf%d%s%s(%s);\n",
 		 vfloatname,
 		 funcList[i].name, wsp,
-		 isaname,
+		 isaub, isaname,
 		 vfloatname);
 	}
 	break;
@@ -244,10 +256,10 @@ int main(int argc, char **argv) {
 		 funcList[i].ulp, isaname,
 		 vfloatname, vfloatname, vfloatname);
 	} else {
-	  printf("IMPORT %s Sleef_%sf%d_%s(%s, %s, %s);\n",
+	  printf("IMPORT %s Sleef_%sf%d%s%s(%s, %s, %s);\n",
 		 vfloatname,
 		 funcList[i].name, wsp,
-		 isaname,
+		 isaub, isaname,
 		 vfloatname, vfloatname, vfloatname);
 	}
 	break;

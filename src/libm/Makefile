@@ -26,7 +26,7 @@ endif
 #
 
 ifeq ($(ARCH), x86_64)
-OBJ+=sleefdpsse2.o sleefdpavx.o sleefspsse2.o sleefspavx.o sleefdpsse4.o sleefspsse4.o
+OBJ+=dispsse.o dispavx.o sleefdpsse2.o sleefdpavx.o sleefspsse2.o sleefspavx.o sleefdpsse4.o sleefspsse4.o
 OBJ2+=sleefgdpsse2.o sleefgdpavx.o sleefgspsse2.o sleefgspavx.o
 
 ifeq ($(ENABLEAVX2), 1)
@@ -68,13 +68,15 @@ ifeq ($(ARCH), x86_64)
 sleef.h : mkrename
 	cp sleeflibm.h.org sleef.h
 	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
-	./mkrename sse2 2 4 __m128d __m128 __m128i __m128i __SSE2__ >> sleef.h
-	./mkrename sse4 2 4 __m128d __m128 __m128i __m128i __SSE2__ >> sleef.h
-	./mkrename avx2128 2 4 __m128d __m128 __m128i __m128i __SSE2__ >> sleef.h
-	./mkrename avx 4 8 __m256d __m256 __m128i 'struct { __m128i x, y; }' __AVX__ >> sleef.h
-	./mkrename fma4 4 8 __m256d __m256 __m128i 'struct { __m128i x, y; }' __FMA4__ >> sleef.h
-	./mkrename avx2 4 8 __m256d __m256 __m128i __m256i __AVX2__ >> sleef.h
-	./mkrename avx512f 8 16 __m512d __m512 __m256i __m512i __AVX512F__ >> sleef.h
+	./mkrename 2 4 __m128d __m128 __m128i __m128i __SSE2__ >> sleef.h
+	./mkrename 2 4 __m128d __m128 __m128i __m128i __SSE2__ sse2 >> sleef.h
+	./mkrename 2 4 __m128d __m128 __m128i __m128i __SSE2__ sse4 >> sleef.h
+	./mkrename 2 4 __m128d __m128 __m128i __m128i __SSE2__ avx2128 >> sleef.h
+	./mkrename 4 8 __m256d __m256 __m128i 'struct { __m128i x, y; }' __AVX__ >> sleef.h
+	./mkrename 4 8 __m256d __m256 __m128i 'struct { __m128i x, y; }' __AVX__ avx >> sleef.h
+	./mkrename 4 8 __m256d __m256 __m128i 'struct { __m128i x, y; }' __AVX__ fma4 >> sleef.h
+	./mkrename 4 8 __m256d __m256 __m128i __m256i __AVX__ avx2 >> sleef.h
+	./mkrename 8 16 __m512d __m512 __m256i __m512i __AVX512F__ avx512f >> sleef.h
 	echo '#undef IMPORT' >> sleef.h
 	echo '#endif' >> sleef.h
 	cp sleef.h ../../include
@@ -82,7 +84,7 @@ else ifeq ($(ARCH), arm)
 sleef.h : mkrename
 	cp sleeflibm.h.org sleef.h
 	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
-	./mkrename neon 2 4 - float32x4_t int32x4_t int32x4_t __ARM_NEON__ >> sleef.h
+	./mkrename 2 4 - float32x4_t int32x4_t int32x4_t __ARM_NEON__ neon >> sleef.h
 	echo '#undef IMPORT' >> sleef.h
 	echo '#endif' >> sleef.h
 	cp sleef.h ../../include
@@ -90,7 +92,7 @@ else ifeq ($(ARCH), aarch64)
 sleef.h : mkrename
 	cp sleeflibm.h.org sleef.h
 	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
-	./mkrename advsimd 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON >> sleef.h
+	./mkrename 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON advsimd >> sleef.h
 	echo '#undef IMPORT' >> sleef.h
 	echo '#endif' >> sleef.h
 	cp sleef.h ../../include
@@ -134,7 +136,7 @@ sleefspsse2.o : sleefsimdsp.c renamesse2.h
 
 renamesse2.h : mkrename
 	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
-	./mkrename sse2 2 4 > renamesse2.h
+	./mkrename 2 4 sse2 > renamesse2.h
 
 #
 
@@ -158,7 +160,34 @@ sleefspsse4.o : sleefsimdsp.c renamesse4.h
 
 renamesse4.h : mkrename
 	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
-	./mkrename sse4 2 4 > renamesse4.h
+	./mkrename 2 4 sse4 > renamesse4.h
+
+##
+
+DISPAVXOPT=
+ifeq ($ENABLEFMA4, 1)
+DISPAVXOPT+=-DENABLE_FMA4
+endif
+ifeq ($(ENABLEAVX2), 1)
+DISPAVXOPT+=-DENABLE_AVX2
+endif
+
+dispavx.c : mkdisp
+	cp dispavx.c.org dispavx.c
+	./mkdisp 4 8 __m256d __m256 __m128i avx fma4 avx2 >> dispavx.c
+
+dispsse.c : mkdisp
+	cp dispsse.c.org dispsse.c
+	./mkdisp 2 4 __m128d __m128 __m128i sse2 sse4 avx2128 >> dispsse.c
+
+mkdisp : mkdisp.c
+	$(CC) $(CFLAGS) -Wall mkdisp.c -o mkdisp
+
+dispavx.o : dispavx.c sleef.h
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) $(DISPAVXOPT) -mavx dispavx.c -c -o dispavx.o
+
+dispsse.o : dispsse.c sleef.h
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) $(DISPAVXOPT) dispsse.c -c -o dispsse.o
 
 ##
 
@@ -170,7 +199,7 @@ sleefspavx.o : sleefsimdsp.c renameavx.h
 
 renameavx.h : mkrename
 	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
-	./mkrename avx 4 8 > renameavx.h
+	./mkrename 4 8 avx > renameavx.h
 
 #
 
@@ -194,7 +223,7 @@ sleefspfma4.o : sleefsimdsp.c renamefma4.h
 
 renamefma4.h : mkrename
 	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
-	./mkrename fma4 4 8 > renamefma4.h
+	./mkrename 4 8 fma4 > renamefma4.h
 
 ##
 
@@ -206,7 +235,7 @@ sleefspavx2.o : sleefsimdsp.c renameavx2.h
 
 renameavx2.h : mkrename
 	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
-	./mkrename avx2 4 8 > renameavx2.h
+	./mkrename 4 8 avx2 > renameavx2.h
 
 #
 
@@ -230,7 +259,7 @@ sleefspavx2128.o : sleefsimdsp.c renameavx2128.h
 
 renameavx2128.h : mkrename
 	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
-	./mkrename avx2128 2 4 > renameavx2128.h
+	./mkrename 2 4 avx2128 > renameavx2128.h
 
 ##
 
@@ -242,7 +271,7 @@ sleefspavx512f.o : sleefsimdsp.c renameavx512f.h
 
 renameavx512f.h : mkrename
 	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
-	./mkrename avx512f 8 16 > renameavx512f.h
+	./mkrename 8 16 avx512f > renameavx512f.h
 
 #
 
@@ -263,7 +292,7 @@ sleefspneon32.o : sleefsimdsp.c renameneon32.h
 
 renameneon32.h : mkrename
 	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
-	./mkrename neon 2 4 > renameneon32.h
+	./mkrename 2 4 neon > renameneon32.h
 
 ##
 
@@ -275,7 +304,7 @@ sleefdpadvsimd.o : sleefsimddp.c ../arch/helperadvsimd.h
 
 renameadvsimd.h : mkrename
 	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
-	./mkrename advsimd 2 4 > renameadvsimd.h
+	./mkrename 2 4 advsimd > renameadvsimd.h
 
 #
 
@@ -291,9 +320,20 @@ renameadvsimd_gnuabi.h : mkrename_gnuabi
 
 #
 
+renamedsp128.h : mkrename
+	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
+	./mkrename 2 4 > renamedsp128.h
+
+renamedsp256.h : mkrename
+	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
+	./mkrename 4 8 > renamedsp256.h
+
+#
+
 .PHONY: clean
 clean :
 	rm -f *~ *.o *.s libm.a libgm.a sleef.h a.out *.lock OBJ.txt OBJ2.txt
 	rm -f *.obj *.lib *.dll *.exp *.exe
-	rm -f mkrename renamesse2.h renamesse4.h renameavx.h renamefma4.h renameavx2.h renameavx2128.h renameavx512f.h renameneon32.h renameadvsimd.h
+	rm -f mkrename renamesse2.h renamesse4.h renameavx.h renamefma4.h renameavx2.h renameavx2128.h renameavx512f.h renameneon32.h renameadvsimd.h renamedsp128.h renamedsp256.h
+	rm -f mkdisp dispavx.c dispsse.c
 	rm -f mkrename_gnuabi renamesse2_gnuabi.h renameavx_gnuabi.h renamefma4_gnuabi.h renameavx2_gnuabi.h renameavx512f_gnuabi.h renameneon32_gnuabi.h renameadvsimd_gnuabi.h
