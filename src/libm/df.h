@@ -21,11 +21,31 @@ static INLINE CONST vfloat2 vcast_vf2_f_f(float h, float l) {
   return ret;
 }
 
+static INLINE CONST vfloat2 vcast_vf2_d(double d) {
+  vfloat2 ret = {vcast_vf_f(d), vcast_vf_f(d - (float)d)};
+  return ret;
+}
+
 static INLINE CONST vfloat2 vsel_vf2_vo_vf2_vf2(vopmask m, vfloat2 x, vfloat2 y) {
   vfloat2 r;
   r.x = vsel_vf_vo_vf_vf(m, x.x, y.x);
   r.y = vsel_vf_vo_vf_vf(m, x.y, y.y);
   return r;
+}
+
+static INLINE CONST vfloat2 vsel_vf2_vo_f_f_f_f(vopmask o, float x1, float y1, float x0, float y0) {
+  vfloat2 r;
+  r.x = vsel_vf_vo_f_f(o, x1, x0);
+  r.y = vsel_vf_vo_f_f(o, y1, y0);
+  return r;
+}
+
+static INLINE CONST vfloat2 vsel_vf2_vo_vo_d_d_d(vopmask o0, vopmask o1, double d0, double d1, double d2) {
+  return vsel_vf2_vo_vf2_vf2(o0, vcast_vf2_d(d0), vsel_vf2_vo_vf2_vf2(o1, vcast_vf2_d(d1), vcast_vf2_d(d2)));
+}
+
+static INLINE CONST vfloat2 vsel_vf2_vo_vo_vo_d_d_d_d(vopmask o0, vopmask o1, vopmask o2, double d0, double d1, double d2, double d3) {
+  return vsel_vf2_vo_vf2_vf2(o0, vcast_vf2_d(d0), vsel_vf2_vo_vf2_vf2(o1, vcast_vf2_d(d1), vsel_vf2_vo_vf2_vf2(o2, vcast_vf2_d(d2), vcast_vf2_d(d3))));
 }
 
 static INLINE CONST vfloat2 vabs_vf2_vf2(vfloat2 x) {
@@ -69,6 +89,11 @@ static INLINE CONST vfloat vsub_vf_5vf(vfloat v0, vfloat v1, vfloat v2, vfloat v
 
 static INLINE CONST vfloat2 dfneg_vf2_vf2(vfloat2 x) {
   return vcast_vf2_vf_vf(vneg_vf_vf(x.x), vneg_vf_vf(x.y));
+}
+
+static INLINE CONST vfloat2 dfabs_vf2_vf2(vfloat2 x) {
+  return vcast_vf2_vf_vf(vabs_vf_vf(x.x),
+			 vreinterpret_vf_vm(vxor_vm_vm_vm(vreinterpret_vm_vf(x.y), vand_vm_vm_vm(vreinterpret_vm_vf(x.x), vreinterpret_vm_vf(vcast_vf_f(-0.0f))))));
 }
 
 static INLINE CONST vfloat2 dfnormalize_vf2_vf2(vfloat2 t) {

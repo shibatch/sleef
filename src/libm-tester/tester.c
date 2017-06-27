@@ -161,6 +161,7 @@ double child_expm1(double x) { child_d_d("expm1", x); }
 Sleef_double2 child_sincospi_u05(double x) { child_d2_d("sincospi_u05", x); }
 Sleef_double2 child_sincospi_u35(double x) { child_d2_d("sincospi_u35", x); }
 double child_sinpi_u05(double x) { child_d_d("sinpi_u05", x); }
+double child_cospi_u05(double x) { child_d_d("cospi_u05", x); }
 
 double child_hypot_u05(double x, double y) { child_d_d_d("hypot_u05", x, y); }
 double child_hypot_u35(double x, double y) { child_d_d_d("hypot_u35", x, y); }
@@ -178,7 +179,6 @@ double child_round(double x) { child_d_d("round", x); }
 double child_rint(double x) { child_d_d("rint", x); }
 double child_frfrexp(double x) { child_d_d("frfrexp", x); }
 Sleef_double2 child_modf(double x) { child_d2_d("modf", x); }
-
 double child_tgamma_u1(double x) { child_d_d("tgamma_u1", x); }
 double child_lgamma_u1(double x) { child_d_d("lgamma_u1", x); }
 double child_erf_u1(double x) { child_d_d("erf_u1", x); }
@@ -286,6 +286,8 @@ float child_expm1f(float x) { child_f_f("expm1f", x); }
 
 Sleef_float2 child_sincospif_u05(float x) { child_f2_f("sincospif_u05", x); }
 Sleef_float2 child_sincospif_u35(float x) { child_f2_f("sincospif_u35", x); }
+float child_sinpif_u05(float x) { child_f_f("sinpif_u05", x); }
+float child_cospif_u05(float x) { child_f_f("cospif_u05", x); }
 
 float child_hypotf_u05(float x, float y) { child_f_f_f("hypotf_u05", x, y); }
 float child_hypotf_u35(float x, float y) { child_f_f_f("hypotf_u35", x, y); }
@@ -303,6 +305,10 @@ float child_roundf(float x) { child_f_f("roundf", x); }
 float child_rintf(float x) { child_f_f("rintf", x); }
 float child_frfrexpf(float x) { child_f_f("frfrexpf", x); }
 Sleef_float2 child_modff(float x) { child_f2_f("modff", x); }
+float child_tgammaf_u1(float x) { child_f_f("tgammaf_u1", x); }
+float child_lgammaf_u1(float x) { child_f_f("lgammaf_u1", x); }
+float child_erff_u1(float x) { child_f_f("erff_u1", x); }
+float child_erfcf_u15(float x) { child_f_f("erfcf_u15", x); }
 
 float child_ldexpf(float x, int q) {
   char str[256];
@@ -2229,6 +2235,13 @@ void do_test() {
       showResult(success);
     }
 
+    {
+      fprintf(stderr, "cospi_u05 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_cospi, child_cospi_u05, xa[i]);
+      showResult(success);
+    }
+    
     //
   
     {
@@ -2638,7 +2651,6 @@ void do_test() {
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_rint, child_rint, xa[i]);
       showResult(success);
     }
-
     
     {
       fprintf(stderr, "lgamma_u1 denormal/nonnumber test : ");
@@ -2709,6 +2721,20 @@ void do_test() {
       fprintf(stderr, "sin in sincospif_u35 denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenormX_f(mpfr_sinpi, child_sincospif_u35, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "sinpif_u05 denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_sinpi, child_sinpif_u05, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "cospif_u05 denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_cospi, child_cospif_u05, xa[i]);
       showResult(success);
     }
 
@@ -3119,6 +3145,36 @@ void do_test() {
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_rint, child_rintf, xa[i]);
       showResult(success);
     }
+
+    //
+    
+    {
+      fprintf(stderr, "lgammaf_u1 denormal/nonnumber test : ");
+      float xa[] = { -4, -3, -2, -1, +0.0, -0.0, +1, +2, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_lgamma_nosign, child_lgammaf_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "tgammaf_u1 denormal/nonnumber test : ");
+      float xa[] = { -4, -3, -2, -1, +0.0, -0.0, +1, +2, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_gamma, child_tgammaf_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "erff_u1 denormal/nonnumber test : ");
+      float xa[] = { -1, +0.0, -0.0, +1, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_erf, child_erff_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "erfcf_u15 denormal/nonnumber test : ");
+      float xa[] = { -1, +0.0, -0.0, +1, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_erfc, child_erfcf_u15, xa[i]);
+      showResult(success);
+    }
   }
   
   //
@@ -3408,6 +3464,17 @@ void do_test() {
     }
     showResult(success);
     
+    //
+
+    fprintf(stderr, "cospi_u05 : ");
+    for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracy_d(mpfr_cospi, child_cospi_u05, d, 0.506);
+    for(d = -1e+8-0.1;d < 1e+8 && success;d += (1e+10 + 0.1)) checkAccuracy_d(mpfr_cospi, child_cospi_u05, d, 0.506);
+    for(i=1;i<10000 && success;i+=31) {
+      double start = u2d(d2u(i)-20), end = u2d(d2u(i)+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracy_d(mpfr_cospi, child_cospi_u05, d, 0.506);
+    }
+    showResult(success);
+
     mpfr_set_default_prec(128);
   
     //
@@ -4055,6 +4122,28 @@ void do_test() {
     }
     showResult(success);
 
+    //
+
+    fprintf(stderr, "sinpif_u05 : ");
+    for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracy_f(mpfr_sinpi, child_sinpif_u05, d, 0.506);
+    for(d = -10000-0.1;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_sinpi, child_sinpif_u05, d, 0.506);
+    for(i=1;i<10000 && success;i+=31) {
+      double start = u2f(f2u(i)-20), end = u2f(f2u(i)+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracy_f(mpfr_sinpi, child_sinpif_u05, d, 0.506);
+    }
+    showResult(success);
+    
+    //
+
+    fprintf(stderr, "cospif_u05 : ");
+    for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracy_f(mpfr_cospi, child_cospif_u05, d, 0.506);
+    for(d = -10000-0.1;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_cospi, child_cospif_u05, d, 0.506);
+    for(i=1;i<10000 && success;i+=31) {
+      double start = u2f(f2u(i)-20), end = u2f(f2u(i)+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracy_f(mpfr_cospi, child_cospif_u05, d, 0.506);
+    }
+    showResult(success);
+
     mpfr_set_default_prec(128);
   
     //
@@ -4395,6 +4484,30 @@ void do_test() {
 
     fprintf(stderr, "log1pf : ");
     for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_f(mpfr_log1p, child_log1pf, d, 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "lgammaf_u1 : ");
+    for(d = -5000;d < 5000 && success;d += 1.1) checkAccuracy_f(mpfr_lgamma_nosign, child_lgammaf_u1, d, 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "tgammaf_u1 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_gamma, child_tgammaf_u1, d, 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "erff_u1 : ");
+    for(d = -100;d < 100 && success;d += 0.02) checkAccuracy_f(mpfr_erf, child_erff_u1, d, 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "erfcf_u15 : ");
+    for(d = -1;d < 100 && success;d += 0.01) checkAccuracy_f(mpfr_erfc, child_erfcf_u15, d, 1.5);
     showResult(success);
   }
 }

@@ -836,7 +836,7 @@ EXPORT CONST double xcos(double d) {
 
   u = mla(s, u * d, d);
 
-  if (!xisinf(t) && fabsk(t) > TRIGRANGEMAX) u = 0.0;
+  if (!xisinf(t) && fabsk(t) > TRIGRANGEMAX) u = 1.0;
 
   return u;
 }
@@ -882,7 +882,7 @@ EXPORT CONST double xcos_u1(double d) {
   u = ddmul_d_d2_d2(t, x);
   
   if ((((int)ql) & 2) == 0) u = -u;
-  if (!xisinf(d) && d > TRIGRANGEMAX) u = 0.0;
+  if (!xisinf(d) && d > TRIGRANGEMAX) u = 1.0;
 
   return u;
 }
@@ -934,7 +934,7 @@ EXPORT CONST Sleef_double2 xsincos(double d) {
   if ((ql & 2) != 0) { r.x = -r.x; }
   if (((ql+1) & 2) != 0) { r.y = -r.y; }
 
-  if (fabsk(d) > TRIGRANGEMAX) { r.x = r.y = 0; }
+  if (fabsk(d) > TRIGRANGEMAX) { r.x = 0; r.y = 1; }
   if (xisinf(d)) { r.x = r.y = NAN; }
 
   return r;
@@ -995,7 +995,7 @@ EXPORT CONST Sleef_double2 xsincos_u1(double d) {
   if ((ql & 2) != 0) { r.x = -r.x; }
   if (((ql+1) & 2) != 0) { r.y = -r.y; }
 
-  if (fabsk(d) > TRIGRANGEMAX) { r.x = r.y = 0; }
+  if (fabsk(d) > TRIGRANGEMAX) { r.x = 0; r.y = 1; }
   if (xisinf(d)) { r.x = r.y = NAN; }
 
   return r;
@@ -1049,7 +1049,7 @@ EXPORT CONST Sleef_double2 xsincospi_u05(double d) {
   if ((q & 4) != 0) { r.x = -r.x; }
   if (((q+2) & 4) != 0) { r.y = -r.y; }
 
-  if (fabsk(d) > TRIGRANGEMAX3/4) { r.x = r.y = 0; }
+  if (fabsk(d) > TRIGRANGEMAX3/4) { r.x = 0; r.y = 1; }
   if (xisinf(d)) { r.x = r.y = NAN; }
 
   return r;
@@ -1097,7 +1097,7 @@ EXPORT CONST Sleef_double2 xsincospi_u35(double d) {
   if ((q & 4) != 0) { r.x = -r.x; }
   if (((q+2) & 4) != 0) { r.y = -r.y; }
 
-  if (fabsk(d) > TRIGRANGEMAX3/4) { r.x = r.y = 0; }
+  if (fabsk(d) > TRIGRANGEMAX3/4) { r.x = 0; r.y = 1; }
   if (xisinf(d)) { r.x = r.y = NAN; }
 
   return r;
@@ -1145,6 +1145,52 @@ EXPORT CONST double xsinpi_u05(double d) {
 
   if (xisnegzero(d)) r = -0.0;
   if (fabsk(d) > TRIGRANGEMAX3/4) r = 0; 
+  if (xisinf(d)) r = NAN;
+
+  return r;
+}
+
+static INLINE CONST Sleef_double2 cospik(double d) {
+  double u, s, t;
+  Sleef_double2 x, s2;
+
+  u = d * 4;
+  int q = ceilk(u) & ~1;
+  int o = (q & 2) == 0;
+  
+  s = u - (double)q;
+  t = s;
+  s = s * s;
+  s2 = ddmul_d2_d_d(t, t);
+  
+  //
+  
+  u = o ? 9.94480387626843774090208e-16 : -2.02461120785182399295868e-14;
+  u = mla(u, s, o ? -3.89796226062932799164047e-13 : 6.94821830580179461327784e-12);
+  u = mla(u, s, o ? 1.15011582539996035266901e-10 : -1.75724749952853179952664e-09);
+  u = mla(u, s, o ? -2.4611369501044697495359e-08 : 3.13361688966868392878422e-07);
+  u = mla(u, s, o ? 3.59086044859052754005062e-06 : -3.6576204182161551920361e-05);
+  u = mla(u, s, o ? -0.000325991886927389905997954 : 0.00249039457019271850274356);
+  x = ddadd2_d2_d_d2(u * s, o ? dd(0.0158543442438155018914259, -1.04693272280631521908845e-18) :
+		     dd(-0.0807455121882807852484731, 3.61852475067037104849987e-18));
+  x = ddadd2_d2_d2_d2(ddmul_d2_d2_d2(s2, x), o ? dd(-0.308425137534042437259529, -1.95698492133633550338345e-17) :
+		      dd(0.785398163397448278999491, 3.06287113727155002607105e-17));
+
+  x = ddmul_d2_d2_d2(x, o ? s2 : dd(t, 0));
+  x = o ? ddadd2_d2_d2_d(x, 1) : x;
+  
+  //
+
+  if (((q+2) & 4) != 0) { x.x = -x.x; x.y = -x.y; }
+
+  return x;
+}
+
+EXPORT CONST double xcospi_u05(double d) {
+  Sleef_double2 x = cospik(d);
+  double r = x.x + x.y;
+
+  if (fabsk(d) > TRIGRANGEMAX3/4) r = 1; 
   if (xisinf(d)) r = NAN;
 
   return r;
@@ -2069,7 +2115,7 @@ EXPORT CONST double xerf_u1(double a) {
 EXPORT CONST double xerfc_u15(double a) {
   double s = a, r = 0, t;
   Sleef_double2 u, d, x;
-  a = fabs(a);
+  a = fabsk(a);
   int o0 = a < 1.0, o1 = a < 2.2, o2 = a < 4.2, o3 = a < 27.3;
   u = o0 ? ddmul_d2_d_d(a, a) : o1 ? dd(a, 0) : dddiv_d2_d2_d2(dd(1, 0), dd(a, 0));
 

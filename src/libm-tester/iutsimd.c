@@ -401,6 +401,7 @@ int do_test(int argc, char **argv) {
     func_d_d("cos_u1", xcos_u1);
     func_d_d("tan_u1", xtan_u1);
     func_d_d("sinpi_u05", xsinpi_u05);
+    func_d_d("cospi_u05", xcospi_u05);
     func_d_d("asin_u1", xasin_u1);
     func_d_d("acos_u1", xacos_u1);
     func_d_d("atan_u1", xatan_u1);
@@ -482,6 +483,8 @@ int do_test(int argc, char **argv) {
     func_f_f("sinf_u1", xsinf_u1);
     func_f_f("cosf_u1", xcosf_u1);
     func_f_f("tanf_u1", xtanf_u1);
+    func_f_f("sinpif_u05", xsinpif_u05);
+    func_f_f("cospif_u05", xcospif_u05);
     func_f_f("asinf_u1", xasinf_u1);
     func_f_f("acosf_u1", xacosf_u1);
     func_f_f("atanf_u1", xatanf_u1);
@@ -520,6 +523,11 @@ int do_test(int argc, char **argv) {
     func_f_f_f("fmodf", xfmodf);
 
     func_f2_f("modff", xmodff);
+
+    func_f_f("tgammaf_u1", xtgammaf_u1);
+    func_f_f("lgammaf_u1", xlgammaf_u1);
+    func_f_f("erff_u1", xerff_u1);
+    func_f_f("erfcf_u15", xerfcf_u15);
 #endif
   }
 

@@ -316,8 +316,6 @@ static INLINE void vsscatter2_v_p_i_i_vd(double *ptr, int offset, int step, vdou
 
 //
 
-static INLINE vfloat vsel_vf_vo_vf_vf(vopmask o, vfloat x, vfloat y) { vfloat ret; for(int i=0;i<VECTLENSP;i++) ret.u[i] = (o.u[i] & x.u[i]) | (y.u[i] & ~o.u[i]); return ret; }
-
 static INLINE vint2 vcast_vi2_vm(vmask vm) { union { vint2 vi2; vmask vm; } cnv; cnv.vm = vm; return cnv.vi2; }
 static INLINE vmask vcast_vm_vi2(vint2 vi) { union { vint2 vi2; vmask vm; } cnv; cnv.vi2 = vi; return cnv.vm; }
 
@@ -368,6 +366,19 @@ static INLINE vint vandnot_vi2_vi2_vi2(vint x, vint y) { vint ret; for(int i=0;i
 static INLINE vint vor_vi2_vi2_vi2(vint x, vint y)     { vint ret; for(int i=0;i<VECTLENSP;i++) ret.i[i] = x.i[i] |  y.i[i]; return ret; }
 static INLINE vint vxor_vi2_vi2_vi2(vint x, vint y)    { vint ret; for(int i=0;i<VECTLENSP;i++) ret.i[i] = x.i[i] ^  y.i[i]; return ret; }
 
+static INLINE vfloat vsel_vf_vo_vf_vf(vopmask o, vfloat x, vfloat y) { vfloat ret; for(int i=0;i<VECTLENSP;i++) ret.u[i] = (o.u[i] & x.u[i]) | (y.u[i] & ~o.u[i]); return ret; }
+
+static INLINE CONST vfloat vsel_vf_vo_f_f(vopmask o, float v1, float v0) {
+  return vsel_vf_vo_vf_vf(o, vcast_vf_f(v1), vcast_vf_f(v0));
+}
+
+static INLINE vfloat vsel_vf_vo_vo_f_f_f(vopmask o0, vopmask o1, float d0, float d1, float d2) {
+  return vsel_vf_vo_vf_vf(o0, vcast_vf_f(d0), vsel_vf_vo_f_f(o1, d1, d2));
+}
+
+static INLINE vfloat vsel_vf_vo_vo_vo_f_f_f_f(vopmask o0, vopmask o1, vopmask o2, float d0, float d1, float d2, float d3) {
+  return vsel_vf_vo_vf_vf(o0, vcast_vf_f(d0), vsel_vf_vo_vf_vf(o1, vcast_vf_f(d1), vsel_vf_vo_f_f(o2, d2, d3)));
+}
 
 static INLINE vint2 vand_vi2_vo_vi2(vopmask x, vint2 y) {
   union { vopmask vo; vint2 vi2; } cnv;

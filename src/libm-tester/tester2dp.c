@@ -160,7 +160,7 @@ int main(int argc,char **argv)
       double u2 = countULP2dp(t = xsinpi_u05(d), frx);
 
       if (u2 != 0 && ((fabs(d) <= rangemax2 && u2 > 0.506) || fabs(t) > 1 || !isnumber(t))) {
-	printf("Pure C sinpi_u05 sin arg=%.20g ulp=%.20g\n", d, u2);
+	printf("Pure C sinpi_u05 arg=%.20g ulp=%.20g\n", d, u2);
 	fflush(stdout); ecnt++;
       }
     }
@@ -182,6 +182,13 @@ int main(int argc,char **argv)
 
       if (u1 != 0 && ((fabs(d) <= rangemax2 && u1 > 1.5) || fabs(t) > 1 || !isnumber(t))) {
 	printf("Pure C sincospi_u35 cos arg=%.20g ulp=%.20g\n", d, u1);
+	fflush(stdout); ecnt++;
+      }
+
+      double u2 = countULP2dp(t = xcospi_u05(d), frx);
+
+      if (u2 != 0 && ((fabs(d) <= rangemax2 && u2 > 0.506) || fabs(t) > 1 || !isnumber(t))) {
+	printf("Pure C cospi_u05 arg=%.20g ulp=%.20g\n", d, u2);
 	fflush(stdout); ecnt++;
       }
     }

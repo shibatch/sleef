@@ -67,6 +67,7 @@ funcSpec funcList[] = {
   { "sincospi", 5, 2, 2 },
   { "sincospi", 35, 3, 2 },
   { "sinpi", 5, 2, 0 },
+  { "cospi", 5, 2, 0 },
   { "ldexp", -1, 0, 3 },
   { "ilogb", -1, 0, 4 },
 

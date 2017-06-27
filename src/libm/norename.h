@@ -54,6 +54,7 @@ vdouble xcbrt_u1(vdouble d);
 vdouble2 xsincospi_u05(vdouble d);
 vdouble2 xsincospi_u35(vdouble d);
 vdouble xsinpi_u05(vdouble d);
+vdouble xcospi_u05(vdouble d);
 
 vdouble xldexp(vdouble, vint);
 vint xilogb(vdouble);
@@ -134,6 +135,8 @@ vfloat xcbrtf_u1(vfloat s);
 
 vfloat2 xsincospif_u05(vfloat d);
 vfloat2 xsincospif_u35(vfloat d);
+vfloat xsinpif_u05(vfloat d);
+vfloat xcospif_u05(vfloat d);
 
 
 vfloat xldexpf(vfloat, vint2);
@@ -160,4 +163,10 @@ vfloat xfrfrexpf(vfloat);
 vint2 xexpfrexpf(vfloat);
 vfloat xfmodf(vfloat, vfloat);
 vfloat2 xmodff(vfloat);
+
+vfloat xlgammaf_u1(vfloat);
+vfloat xtgammaf_u1(vfloat);
+
+vfloat xerff_u1(vfloat);
+vfloat xerfcf_u15(vfloat);
 #endif

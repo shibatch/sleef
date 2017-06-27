@@ -85,6 +85,11 @@ int main(int argc, char **argv) {
       sscanf(buf, "sinpi_u05 %" PRIx64, &u);
       u = d2u(xsinpi_u05(u2d(u)));
       printf("%" PRIx64 "\n", u);
+    } else if (startsWith(buf, "cospi_u05 ")) {
+      uint64_t u;
+      sscanf(buf, "cospi_u05 %" PRIx64, &u);
+      u = d2u(xcospi_u05(u2d(u)));
+      printf("%" PRIx64 "\n", u);
     } else if (startsWith(buf, "tan ")) {
       uint64_t u;
       sscanf(buf, "tan %" PRIx64, &u);
@@ -317,9 +322,7 @@ int main(int argc, char **argv) {
       sscanf(buf, "modf %" PRIx64, &u);
       Sleef_double2 x = xmodf(u2d(u));
       printf("%" PRIx64 " %" PRIx64 "\n", d2u(x.x), d2u(x.y));
-    }
-
-    else if (startsWith(buf, "tgamma_u1 ")) {
+    } else if (startsWith(buf, "tgamma_u1 ")) {
       uint64_t u;
       sscanf(buf, "tgamma_u1 %" PRIx64, &u);
       u = d2u(xtgamma_u1(u2d(u)));
@@ -496,6 +499,16 @@ int main(int argc, char **argv) {
       sscanf(buf, "sincospif_u35 %x", &u);
       Sleef_float2 x = xsincospif_u35(u2f(u));
       printf("%x %x\n", f2u(x.x), f2u(x.y));
+    } else if (startsWith(buf, "sinpif_u05 ")) {
+      uint32_t u;
+      sscanf(buf, "sinpif_u05 %x", &u);
+      u = f2u(xsinpif_u05(u2f(u)));
+      printf("%x\n", u);
+    } else if (startsWith(buf, "cospif_u05 ")) {
+      uint32_t u;
+      sscanf(buf, "cospif_u05 %x", &u);
+      u = f2u(xcospif_u05(u2f(u)));
+      printf("%x\n", u);
     } else if (startsWith(buf, "tanf_u1 ")) {
       uint32_t u;
       sscanf(buf, "tanf_u1 %x", &u);
@@ -625,6 +638,26 @@ int main(int argc, char **argv) {
       sscanf(buf, "modff %x", &u);
       Sleef_float2 x = xmodff(u2f(u));
       printf("%x %x\n", f2u(x.x), f2u(x.y));
+    } else if (startsWith(buf, "tgammaf_u1 ")) {
+      uint32_t u;
+      sscanf(buf, "tgammaf_u1 %x", &u);
+      u = f2u(xtgammaf_u1(u2f(u)));
+      printf("%x\n", u);
+    } else if (startsWith(buf, "lgammaf_u1 ")) {
+      uint32_t u;
+      sscanf(buf, "lgammaf_u1 %x", &u);
+      u = f2u(xlgammaf_u1(u2f(u)));
+      printf("%x\n", u);
+    } else if (startsWith(buf, "erff_u1 ")) {
+      uint32_t u;
+      sscanf(buf, "erff_u1 %x", &u);
+      u = f2u(xerff_u1(u2f(u)));
+      printf("%x\n", u);
+    } else if (startsWith(buf, "erfcf_u15 ")) {
+      uint32_t u;
+      sscanf(buf, "erfcf_u15 %x", &u);
+      u = f2u(xerfcf_u15(u2f(u)));
+      printf("%x\n", u);
     }
 
     else {
