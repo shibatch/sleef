@@ -42,7 +42,7 @@ endif
 
 ifeq ($(ARCH), x86_64)
 
-TARGET_IUT += iutsse2 iutsse4 iutavx
+TARGET_IUT += iutsse2 iutsse4 iutavx iutdsp128 iutdsp256
 TARGET_TESTER += tester2sse2dp tester2sse2sp tester2sse4dp tester2sse4sp tester2avxdp tester2avxsp
 
 ifeq ($(ENABLEAVX2), 1)
@@ -194,6 +194,20 @@ tester2avx512fsp : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h tester2
 
 #
 
+iutdsp128 : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h iutsimdmain.o iutsimd.c testerutil.c ../libm/renamedsp128.h ../../include/sleef.h
+	$(CC) $(CFLAGS) -DENABLE_DSP128 iutsimdmain.o iutsimd.c testerutil.c -o iutdsp128 -lsleef -lm $(LIB)
+
+../libm/renamedsp128.h :
+	+"$(MAKE)" --directory=../libm renamedsp128.h
+
+iutdsp256 : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h iutsimdmain.o iutsimd.c testerutil.c ../libm/renamedsp256.h ../../include/sleef.h
+	$(CC) $(CFLAGS) -DENABLE_DSP256 -mavx iutsimdmain.o iutsimd.c testerutil.c -o iutdsp256 -lsleef -lm $(LIB)
+
+../libm/renamedsp256.h :
+	+"$(MAKE)" --directory=../libm renamedsp256.h
+
+#
+
 iutneon32 : ../../lib/libsleef.$(DLLSUFFIX) ../../include/sleef.h iutsimdmain.o iutsimd.c testerutil.c ../libm/renameneon32.h ../../include/sleef.h
 	$(CC) $(CFLAGS) -DENABLE_NEON32 -mfpu=neon iutsimdmain.o iutsimd.c testerutil.c -o iutneon32 -lsleef -lm $(LIB)
 
@@ -283,7 +297,7 @@ clean :
 	rm -f *~ a.out *.obj *.lib *.dll *.exp *.exe *.stackdump
 	rm -rf *.dSYM *.dylib
 	rm -f *.so *.so.* *.a *.s *.o
-	rm -f iut iutsse2 iutsse4 iutavx iutfma4 iutavx2 iutavx2128 iutavx512f iutneon32 iutadvsimd
+	rm -f iut iutsse2 iutsse4 iutavx iutfma4 iutavx2 iutavx2128 iutavx512f iutneon32 iutadvsimd iutdsp128 iutdsp256
 	rm -f tester tester2vecextdp tester2vecextsp iutvecext tester2purecdp tester2purecsp iutpurec
 	rm -f tester2dp tester2sp tester2qp tester2ld tester2sse2dp tester2sse2sp tester2fma4dp tester2fma4sp tester2avxdp tester2avxsp tester2avx2dp tester2avx2sp tester2avx512fdp tester2avx512fsp tester2sse4dp tester2sse4sp
 	rm -f tester2advsimddp tester2advsimdsp

@@ -107,6 +107,22 @@ typedef Sleef_float32x4_t_2 vfloat2;
 #include "norename.h"
 #endif
 
+#ifdef ENABLE_DSP128
+#define CONFIG 2
+#include "helpersse2.h"
+#include "renamedsp128.h"
+typedef Sleef___m128d_2 vdouble2;
+typedef Sleef___m128_2 vfloat2;
+#endif
+
+#ifdef ENABLE_DSP256
+#define CONFIG 1
+#include "helperavx.h"
+#include "renamedsp256.h"
+typedef Sleef___m256d_2 vdouble2;
+typedef Sleef___m256_2 vfloat2;
+#endif
+
 //
 
 #ifdef ENABLE_DP
