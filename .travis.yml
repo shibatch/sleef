@@ -5,10 +5,10 @@ group: edge
 
 before_install:
     - sudo apt-get -qq update
-    - sudo apt-get install -y libmpfr-dev libgomp1
+    - sudo apt-get install -y libmpfr-dev libgomp1 gcc-5
     
 compiler:
-    - gcc
+    - gcc-5
 
 script: make test
 
