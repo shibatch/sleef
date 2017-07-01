@@ -46,8 +46,8 @@ libsleefgnuabi :
 
 .PHONY: test
 test : displayVars libsleef
-	+"$(MAKE)" --directory=./src/libm-tester test
 	+"$(MAKE)" --directory=./src/dft-tester test
+	+"$(MAKE)" --directory=./src/libm-tester test
 
 .PHONY: libsleef-dft
 libsleef-dft :

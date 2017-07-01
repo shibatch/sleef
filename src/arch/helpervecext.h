@@ -98,10 +98,12 @@ static INLINE vdouble vrev21_vd_vd(vdouble vd) { return (vdouble) { vd[1], vd[0]
 static INLINE vdouble vreva2_vd_vd(vdouble vd) { return vd; }
 static INLINE vfloat vrev21_vf_vf(vfloat vd) { return (vfloat) { vd[1], vd[0], vd[3], vd[2] }; }
 static INLINE vfloat vreva2_vf_vf(vfloat vd) { return (vfloat) { vd[2], vd[3], vd[0], vd[1] }; }
+#ifdef ENABLE_LONGDOUBLE
 static INLINE vlongdouble vrev21_vl_vl(vlongdouble vd) { return (vlongdouble) { vd[1], vd[0] }; }
 static INLINE vlongdouble vreva2_vl_vl(vlongdouble vd) { return vd; }
 static INLINE vlongdouble vposneg_vl_vl(vlongdouble vd) { return (vlongdouble) { +vd[0], -vd[1] }; }
 static INLINE vlongdouble vnegpos_vl_vl(vlongdouble vd) { return (vlongdouble) { -vd[0], +vd[1] }; }
+#endif
 
 #ifdef Sleef_quad2_DEFINED
 static INLINE vquad vrev21_vq_vq(vquad vd) { return (vquad) { vd[1], vd[0] }; }
@@ -152,10 +154,12 @@ static INLINE vdouble vrev21_vd_vd(vdouble vd) { return (vdouble) { vd[1], vd[0]
 static INLINE vdouble vreva2_vd_vd(vdouble vd) { return (vdouble) { vd[2], vd[3], vd[0], vd[1] }; }
 static INLINE vfloat vrev21_vf_vf(vfloat vd) { return (vfloat) { vd[1], vd[0], vd[3], vd[2], vd[5], vd[4], vd[7], vd[6] }; }
 static INLINE vfloat vreva2_vf_vf(vfloat vd) { return (vfloat) { vd[6], vd[7], vd[4], vd[5], vd[2], vd[3], vd[0], vd[1] }; }
+#ifdef ENABLE_LONGDOUBLE
 static INLINE vlongdouble vrev21_vl_vl(vlongdouble vd) { return (vlongdouble) { vd[1], vd[0], vd[3], vd[2] }; }
 static INLINE vlongdouble vreva2_vl_vl(vlongdouble vd) { return (vlongdouble) { vd[2], vd[3], vd[0], vd[1] }; }
 static INLINE vlongdouble vposneg_vl_vl(vlongdouble vd) { return (vlongdouble) { +vd[0], -vd[1], +vd[2], -vd[3] }; }
 static INLINE vlongdouble vnegpos_vl_vl(vlongdouble vd) { return (vlongdouble) { -vd[0], +vd[1], -vd[2], +vd[3] }; }
+#endif
 #elif VECTLENDP == 8
 static INLINE vopmask vcast_vo32_vo64(vopmask m) { return (vopmask){ m[1], m[3], m[5], m[7], m[9], m[11], m[13], m[15], 0, 0, 0, 0, 0, 0, 0, 0 }; }
 static INLINE vopmask vcast_vo64_vo32(vopmask m) { return (vopmask){ m[0], m[0], m[1], m[1], m[2], m[2], m[3], m[3], m[4], m[4], m[5], m[5], m[6], m[6], m[7], m[7] }; }
@@ -197,10 +201,12 @@ static INLINE vfloat vreva2_vf_vf(vfloat vd) {
     vd[14], vd[15], vd[12], vd[13], vd[10], vd[11], vd[8], vd[9],
       vd[6], vd[7], vd[4], vd[5], vd[2], vd[3], vd[0], vd[1]};
 }
+#ifdef ENABLE_LONGDOUBLE
 static INLINE vlongdouble vrev21_vl_vl(vlongdouble vd) { return (vlongdouble) { vd[1], vd[0], vd[3], vd[2], vd[5], vd[4], vd[7], vd[6] }; }
 static INLINE vlongdouble vreva2_vl_vl(vlongdouble vd) { return (vlongdouble) { vd[6], vd[7], vd[4], vd[5], vd[2], vd[3], vd[0], vd[1] }; }
 static INLINE vlongdouble vposneg_vl_vl(vlongdouble vd) { return (vlongdouble) { +vd[0], -vd[1], +vd[2], -vd[3], +vd[4], -vd[5], +vd[6], -vd[7] }; }
 static INLINE vlongdouble vnegpos_vl_vl(vlongdouble vd) { return (vlongdouble) { -vd[0], +vd[1], -vd[2], +vd[3], -vd[4], +vd[5], -vd[6], +vd[7] }; }
+#endif
 #else
 static INLINE vint vcast_vi_i(int k) {
   vint ret;
@@ -320,6 +326,7 @@ static INLINE vfloat vreva2_vf_vf(vfloat d0) {
   return r;
 }
 
+#ifdef ENABLE_LONGDOUBLE
 static INLINE vlongdouble vrev21_vl_vl(vlongdouble d0) {
   vlongdouble r;
   for(int i=0;i<VECTLENDP/2;i++) {
@@ -337,6 +344,7 @@ static INLINE vlongdouble vreva2_vl_vl(vlongdouble d0) {
   }
   return r;
 }
+#endif
 
 static INLINE vdouble vposneg_vd_vd(vdouble d0) {
   vdouble r;
@@ -374,6 +382,7 @@ static INLINE vfloat vnegpos_vf_vf(vfloat d0) {
   return r;
 }
 
+#ifdef ENABLE_LONGDOUBLE
 static INLINE vlongdouble vposneg_vl_vl(vlongdouble d0) {
   vlongdouble r;
   for(int i=0;i<VECTLENDP/2;i++) {
@@ -391,6 +400,7 @@ static INLINE vlongdouble vnegpos_vl_vl(vlongdouble d0) {
   }
   return r;
 }
+#endif
 #endif
 
 //
@@ -779,6 +789,7 @@ static INLINE void vsscatter2_v_p_i_i_vf(float *ptr, int offset, int step, vfloa
 
 //
 
+#ifdef ENABLE_LONGDOUBLE
 static INLINE vlongdouble vadd_vl_vl_vl(vlongdouble x, vlongdouble y) { return x + y; }
 static INLINE vlongdouble vsub_vl_vl_vl(vlongdouble x, vlongdouble y) { return x - y; }
 static INLINE vlongdouble vmul_vl_vl_vl(vlongdouble x, vlongdouble y) { return x * y; }
@@ -787,7 +798,6 @@ static INLINE vlongdouble vneg_vl_vl(vlongdouble d) { return -d; }
 static INLINE vlongdouble vsubadd_vl_vl_vl(vlongdouble x, vlongdouble y) { return vadd_vl_vl_vl(x, vnegpos_vl_vl(y)); }
 static INLINE vlongdouble vmlsubadd_vl_vl_vl_vl(vlongdouble x, vlongdouble y, vlongdouble z) { return vsubadd_vl_vl_vl(vmul_vl_vl_vl(x, y), z); }
 
-#ifdef ENABLE_LONGDOUBLE
 static INLINE vlongdouble vload_vl_p(const long double *ptr) { return *(vlongdouble *)ptr; }
 static INLINE vlongdouble vloadu_vl_p(const long double *ptr) {
   vlongdouble vd;
