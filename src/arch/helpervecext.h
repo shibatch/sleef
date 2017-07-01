@@ -585,6 +585,7 @@ static INLINE vdouble vsqrt_vd_vd(vdouble d) {
 }
 
 static INLINE double vcast_d_vd(vdouble v) { return v[0]; }
+static INLINE float vcast_f_vf(vfloat v) { return v[0]; }
 
 static INLINE vdouble vload_vd_p(const double *ptr) { return *(vdouble *)ptr; }
 static INLINE vdouble vloadu_vd_p(const double *ptr) {

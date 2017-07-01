@@ -25,9 +25,15 @@ endif
 
 #
 
-ifeq ($(ARCH), x86_64)
-OBJ+=dispsse.o dispavx.o sleefdpsse2.o sleefdpavx.o sleefspsse2.o sleefspavx.o sleefdpsse4.o sleefspsse4.o
-OBJ2+=sleefgdpsse2.o sleefgdpavx.o sleefgspsse2.o sleefgspavx.o
+
+ifeq ($(X86ARCH),1)
+OBJ+=dispsse.o sleefdpsse2.o sleefspsse2.o sleefdpsse4.o sleefspsse4.o
+OBJ2+=sleefgdpsse2.o sleefgspsse2.o
+
+ifeq ($(ENABLEAVX), 1)
+OBJ+=dispavx.o sleefdpavx.o sleefspavx.o
+OBJ2+=sleefgdpavx.o sleefgspavx.o
+endif
 
 ifeq ($(ENABLEAVX2), 1)
 OBJ+=sleefdpavx2.o sleefspavx2.o sleefdpavx2128.o sleefspavx2128.o
@@ -43,7 +49,7 @@ OBJ+=sleefdpavx512f.o sleefspavx512f.o
 OBJ2+=sleefgdpavx512f.o sleefgspavx512f.o
 endif
 
-endif
+endif #ifeq ($(X86ARCH),1)
 
 #
 
@@ -64,7 +70,7 @@ OBJ2.txt : $(OBJ2)
 	rm -rf OBJ2.txt
 	for i in `echo $(OBJ2)`; do ../script/abspath.sh $(@D) $$i >> OBJ2.txt; done
 
-ifeq ($(ARCH), x86_64)
+ifeq ($(X86ARCH),1)
 sleef.h : mkrename
 	cp sleeflibm.h.org sleef.h
 	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
@@ -288,7 +294,7 @@ renameavx512f_gnuabi.h : mkrename_gnuabi
 ##
 
 sleefspneon32.o : sleefsimdsp.c renameneon32.h
-	$(CC) $(CFLAGS) $(SHAREDFLAGS) -DDORENAME -DENABLE_NEON32 -mfpu=neon sleefsimdsp.c -c -o sleefspneon32.o
+	$(CC) $(CFLAGS) $(SHAREDFLAGS) $(NEONFLAGS) -DDORENAME -DENABLE_NEON32 -mfpu=neon sleefsimdsp.c -c -o sleefspneon32.o
 
 renameneon32.h : mkrename
 	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'

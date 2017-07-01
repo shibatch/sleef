@@ -40,10 +40,15 @@ ifdef ENABLEFLOAT128
 TARGET_TESTER+=tester2qp
 endif
 
-ifeq ($(ARCH), x86_64)
+ifeq ($(X86ARCH),1)
 
-TARGET_IUT += iutsse2 iutsse4 iutavx iutdsp128 iutdsp256
-TARGET_TESTER += tester2sse2dp tester2sse2sp tester2sse4dp tester2sse4sp tester2avxdp tester2avxsp
+TARGET_IUT += iutsse2 iutsse4 iutdsp128
+TARGET_TESTER += tester2sse2dp tester2sse2sp tester2sse4dp tester2sse4sp
+
+ifeq ($(ENABLEAVX), 1)
+TARGET_IUT += iutavx iutdsp256
+TARGET_TESTER += tester2avxdp tester2avxsp
+endif
 
 ifeq ($(ENABLEAVX2), 1)
 TARGET_IUT+=iutavx2 iutavx2128
@@ -78,8 +83,14 @@ endif
 .PHONY: all test
 all : $(TARGET_IUT) $(TARGET_TESTER)
 
+ifeq ($(OS),MinGW)
+test : $(TARGET_IUT) tester
+	cp ../../lib/*.dll .
+	$(foreach var,$(TARGET_IUT), ./tester ./$(var) || exit;)
+else
 test : $(TARGET_IUT) tester
 	$(foreach var,$(TARGET_IUT), $(ENVNAME_LD_LIBRARY_PATH)=../../lib:$$$(ENVNAME_LD_LIBRARY_PATH) ./tester ./$(var) || exit;)
+endif
 
 #
 

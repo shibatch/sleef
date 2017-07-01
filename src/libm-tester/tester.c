@@ -4507,7 +4507,7 @@ void do_test() {
     //
 
     fprintf(stderr, "erfcf_u15 : ");
-    for(d = -1;d < 100 && success;d += 0.01) checkAccuracy_f(mpfr_erfc, child_erfcf_u15, d, 1.5);
+    for(d = -1;d < 8 && success;d += 0.001) checkAccuracy_f(mpfr_erfc, child_erfcf_u15, d, 1.5);
     showResult(success);
   }
 }
