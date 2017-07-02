@@ -42,7 +42,7 @@ ifneq ($(shell $(CC) -v 2>&1 | grep -c "clang"), 0)
   export ENABLEAVX2=1
   export AVX2FLAG=-mavx2 -mfma
   export AVX512FLAG=-mavx512f
-  export WALLFLAGS=-ferror-limit=3 -Wall -Wno-shift-negative-value -Wno-unused -Wno-attributes -Wno-unused-command-line-argument
+  export WALLFLAGS=-Wall -Wno-shift-negative-value -Wno-unused -Wno-attributes -Wno-unused-command-line-argument
   export NEONFLAGS=--target=arm-linux-gnueabihf -mcpu=cortex-a8
   export CFLAGS=$(WALLFLAGS)
 else ifneq ($(shell $(CC) -v 2>&1 | grep -c "icc version"), 0)
@@ -85,7 +85,6 @@ ifeq ($(OS),MinGW)
   export OPENMPFLAG=-fopenmp
   export SHAREDFLAGS=-fvisibility=hidden
   export ENABLEAVX=0
-  export ENABLEAVX2=0
   export DLLSUFFIX=dll
 else ifeq ($(OS),Darwin)
   ifeq ($(COMPILER),clang)

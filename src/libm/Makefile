@@ -33,15 +33,19 @@ OBJ2+=sleefgdpsse2.o sleefgspsse2.o
 ifeq ($(ENABLEAVX), 1)
 OBJ+=dispavx.o sleefdpavx.o sleefspavx.o
 OBJ2+=sleefgdpavx.o sleefgspavx.o
-endif
-
-ifeq ($(ENABLEAVX2), 1)
-OBJ+=sleefdpavx2.o sleefspavx2.o sleefdpavx2128.o sleefspavx2128.o
-OBJ2+=sleefgdpavx2.o sleefgspavx2.o
-endif
 
 ifdef ENABLEFMA4
 OBJ+=sleefdpfma4.o sleefspfma4.o
+endif
+
+ifeq ($(ENABLEAVX2), 1)
+OBJ+=sleefdpavx2.o sleefspavx2.o
+OBJ2+=sleefgdpavx2.o sleefgspavx2.o
+endif
+endif #ifeq ($(ENABLEAVX), 1)
+
+ifeq ($(ENABLEAVX2), 1)
+OBJ+=sleefdpavx2128.o sleefspavx2128.o
 endif
 
 ifeq ($(ENABLEAVX512F), 1)

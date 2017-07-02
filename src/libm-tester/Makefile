@@ -48,16 +48,20 @@ TARGET_TESTER += tester2sse2dp tester2sse2sp tester2sse4dp tester2sse4sp
 ifeq ($(ENABLEAVX), 1)
 TARGET_IUT += iutavx iutdsp256
 TARGET_TESTER += tester2avxdp tester2avxsp
-endif
 
 ifeq ($(ENABLEAVX2), 1)
-TARGET_IUT+=iutavx2 iutavx2128
+TARGET_IUT+=iutavx2
 TARGET_TESTER+=tester2avx2dp tester2avx2sp
 endif
 
 ifdef ENABLEFMA4
 TARGET_IUT += iutfma4
 TARGET_TESTER += tester2fma4dp tester2fma4sp
+endif
+endif #ifeq ($(ENABLEAVX), 1)
+
+ifeq ($(ENABLEAVX2), 1)
+TARGET_IUT+=iutavx2128
 endif
 
 ifeq ($(ENABLEAVX512F),1)
