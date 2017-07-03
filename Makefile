@@ -28,6 +28,7 @@ displayVars :
 	@echo ARCH = $(ARCH)
 	@echo COMPILER = $(COMPILER)
 	@echo ENABLEGNUABI = $(ENABLEGNUABI)
+	@echo ENABLEAVX = $(ENABLEAVX)
 	@echo ENABLEAVX2 = $(ENABLEAVX2)
 	@echo ENABLEAVX512f = $(ENABLEAVX512F)
 	@echo ENABLEFMA4 = $(ENABLEFMA4)
@@ -44,8 +45,9 @@ libsleefgnuabi :
 	+"$(MAKE)" --directory=./lib libsleefgnuabi
 
 .PHONY: test
-test : libsleef
+test : displayVars libsleef
 	+"$(MAKE)" --directory=./src/libm-tester test
+	+"$(MAKE)" --directory=./src/dft-tester test
 
 .PHONY: libsleef-dft
 libsleef-dft :

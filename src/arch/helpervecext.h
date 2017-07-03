@@ -20,6 +20,11 @@
 
 #define DFTPRIORITY LOG2VECTLENDP
 
+// GCC 4 has a bug that prevents long-double functions from compiling
+#if defined(__clang__) || (defined(__GNUC__) && __GNUC__ >= 5)
+#define ENABLE_LONGDOUBLE
+#endif
+
 #if defined(__clang__)
 #define ISANAME "Clang Vector Extension"
 
@@ -32,12 +37,16 @@ typedef int32_t vint __attribute__((ext_vector_type(VECTLENDP)));
 typedef float vfloat __attribute__((ext_vector_type(VECTLENDP*2)));
 typedef int32_t vint2 __attribute__((ext_vector_type(VECTLENDP*2)));
 
+#ifdef ENABLE_LONGDOUBLE
 typedef uint8_t vmaskl __attribute__((ext_vector_type(sizeof(long double)*VECTLENDP)));
 typedef long double vlongdouble __attribute__((ext_vector_type(VECTLENDP)));
+#endif
 
 #ifdef Sleef_quad2_DEFINED
 typedef uint8_t vmaskq __attribute__((ext_vector_type(sizeof(Sleef_quad)*VECTLENDP)));
+#ifdef ENABLE_LONGDOUBLE
 typedef long double vquad __attribute__((ext_vector_type(VECTLENDP)));
+#endif
 #endif
 #elif defined(__GNUC__)
 #define ISANAME "GCC Vector Extension"
@@ -51,8 +60,10 @@ typedef int32_t vint __attribute__((vector_size(sizeof(int32_t)*VECTLENDP)));
 typedef float vfloat __attribute__((vector_size(sizeof(float)*VECTLENDP*2)));
 typedef int32_t vint2 __attribute__((vector_size(sizeof(int32_t)*VECTLENDP*2)));
 
+#ifdef ENABLE_LONGDOUBLE
 typedef uint8_t vmaskl __attribute__((vector_size(sizeof(long double)*VECTLENDP)));
 typedef long double vlongdouble __attribute__((vector_size(sizeof(long double)*VECTLENDP)));
+#endif
 
 #ifdef Sleef_quad2_DEFINED
 typedef uint8_t vmaskq __attribute__((vector_size(sizeof(Sleef_quad)*VECTLENDP)));
@@ -70,7 +81,9 @@ static INLINE vint vcast_vi_i(int i) { return (vint) { i, i }; }
 static INLINE vint2 vcast_vi2_i(int i) { return (vint2) { i, i, i, i }; }
 static INLINE vfloat vcast_vf_f(float f) { return (vfloat) { f, f, f, f }; }
 static INLINE vdouble vcast_vd_d(double d) { return (vdouble) { d, d }; }
+#ifdef ENABLE_LONGDOUBLE
 static INLINE vlongdouble vcast_vl_l(long double d) { return (vlongdouble) { d, d }; }
+#endif
 #ifdef Sleef_quad2_DEFINED
 static INLINE vquad vcast_vq_q(Sleef_quad d) { return (vquad) { d, d }; }
 #endif
@@ -86,10 +99,12 @@ static INLINE vdouble vrev21_vd_vd(vdouble vd) { return (vdouble) { vd[1], vd[0]
 static INLINE vdouble vreva2_vd_vd(vdouble vd) { return vd; }
 static INLINE vfloat vrev21_vf_vf(vfloat vd) { return (vfloat) { vd[1], vd[0], vd[3], vd[2] }; }
 static INLINE vfloat vreva2_vf_vf(vfloat vd) { return (vfloat) { vd[2], vd[3], vd[0], vd[1] }; }
+#ifdef ENABLE_LONGDOUBLE
 static INLINE vlongdouble vrev21_vl_vl(vlongdouble vd) { return (vlongdouble) { vd[1], vd[0] }; }
 static INLINE vlongdouble vreva2_vl_vl(vlongdouble vd) { return vd; }
 static INLINE vlongdouble vposneg_vl_vl(vlongdouble vd) { return (vlongdouble) { +vd[0], -vd[1] }; }
 static INLINE vlongdouble vnegpos_vl_vl(vlongdouble vd) { return (vlongdouble) { -vd[0], +vd[1] }; }
+#endif
 
 #ifdef Sleef_quad2_DEFINED
 static INLINE vquad vrev21_vq_vq(vquad vd) { return (vquad) { vd[1], vd[0] }; }
@@ -115,7 +130,9 @@ static INLINE vint vcast_vi_i(int i) { return (vint) { i, i, i, i }; }
 static INLINE vint2 vcast_vi2_i(int i) { return (vint2) { i, i, i, i, i, i, i, i }; }
 static INLINE vfloat vcast_vf_f(float f) { return (vfloat) { f, f, f, f, f, f, f, f }; }
 static INLINE vdouble vcast_vd_d(double d) { return (vdouble) { d, d, d, d }; }
+#ifdef ENABLE_LONGDOUBLE
 static INLINE vlongdouble vcast_vl_l(long double d) { return (vlongdouble) { d, d, d, d }; }
+#endif
 
 static INLINE vmask vcast_vm_i_i(int h, int l) { return (vmask){ l, h, l, h, l, h, l, h }; }
 static INLINE vint2 vcastu_vi2_vi(vint vi) { return (vint2){ 0, vi[0], 0, vi[1], 0, vi[2], 0, vi[3] }; }
@@ -138,10 +155,12 @@ static INLINE vdouble vrev21_vd_vd(vdouble vd) { return (vdouble) { vd[1], vd[0]
 static INLINE vdouble vreva2_vd_vd(vdouble vd) { return (vdouble) { vd[2], vd[3], vd[0], vd[1] }; }
 static INLINE vfloat vrev21_vf_vf(vfloat vd) { return (vfloat) { vd[1], vd[0], vd[3], vd[2], vd[5], vd[4], vd[7], vd[6] }; }
 static INLINE vfloat vreva2_vf_vf(vfloat vd) { return (vfloat) { vd[6], vd[7], vd[4], vd[5], vd[2], vd[3], vd[0], vd[1] }; }
+#ifdef ENABLE_LONGDOUBLE
 static INLINE vlongdouble vrev21_vl_vl(vlongdouble vd) { return (vlongdouble) { vd[1], vd[0], vd[3], vd[2] }; }
 static INLINE vlongdouble vreva2_vl_vl(vlongdouble vd) { return (vlongdouble) { vd[2], vd[3], vd[0], vd[1] }; }
 static INLINE vlongdouble vposneg_vl_vl(vlongdouble vd) { return (vlongdouble) { +vd[0], -vd[1], +vd[2], -vd[3] }; }
 static INLINE vlongdouble vnegpos_vl_vl(vlongdouble vd) { return (vlongdouble) { -vd[0], +vd[1], -vd[2], +vd[3] }; }
+#endif
 #elif VECTLENDP == 8
 static INLINE vopmask vcast_vo32_vo64(vopmask m) { return (vopmask){ m[1], m[3], m[5], m[7], m[9], m[11], m[13], m[15], 0, 0, 0, 0, 0, 0, 0, 0 }; }
 static INLINE vopmask vcast_vo64_vo32(vopmask m) { return (vopmask){ m[0], m[0], m[1], m[1], m[2], m[2], m[3], m[3], m[4], m[4], m[5], m[5], m[6], m[6], m[7], m[7] }; }
@@ -150,7 +169,9 @@ static INLINE vint vcast_vi_i(int i) { return (vint) { i, i, i, i, i, i, i, i };
 static INLINE vint2 vcast_vi2_i(int i) { return (vint2) { i, i, i, i, i, i, i, i, i, i, i, i, i, i, i, i }; }
 static INLINE vfloat vcast_vf_f(float f) { return (vfloat) { f, f, f, f, f, f, f, f, f, f, f, f, f, f, f, f }; }
 static INLINE vdouble vcast_vd_d(double d) { return (vdouble) { d, d, d, d, d, d, d, d }; }
+#ifdef ENABLE_LONGDOUBLE
 static INLINE vlongdouble vcast_vl_l(long double d) { return (vlongdouble) { d, d, d, d, d, d, d, d }; }
+#endif
 
 static INLINE vmask vcast_vm_i_i(int h, int l) { return (vmask){ l, h, l, h, l, h, l, h, l, h, l, h, l, h, l, h }; }
 static INLINE vint2 vcastu_vi2_vi(vint vi) { return (vint2){ 0, vi[0], 0, vi[1], 0, vi[2], 0, vi[3], 0, vi[4], 0, vi[5], 0, vi[6], 0, vi[7] }; }
@@ -181,10 +202,12 @@ static INLINE vfloat vreva2_vf_vf(vfloat vd) {
     vd[14], vd[15], vd[12], vd[13], vd[10], vd[11], vd[8], vd[9],
       vd[6], vd[7], vd[4], vd[5], vd[2], vd[3], vd[0], vd[1]};
 }
+#ifdef ENABLE_LONGDOUBLE
 static INLINE vlongdouble vrev21_vl_vl(vlongdouble vd) { return (vlongdouble) { vd[1], vd[0], vd[3], vd[2], vd[5], vd[4], vd[7], vd[6] }; }
 static INLINE vlongdouble vreva2_vl_vl(vlongdouble vd) { return (vlongdouble) { vd[6], vd[7], vd[4], vd[5], vd[2], vd[3], vd[0], vd[1] }; }
 static INLINE vlongdouble vposneg_vl_vl(vlongdouble vd) { return (vlongdouble) { +vd[0], -vd[1], +vd[2], -vd[3], +vd[4], -vd[5], +vd[6], -vd[7] }; }
 static INLINE vlongdouble vnegpos_vl_vl(vlongdouble vd) { return (vlongdouble) { -vd[0], +vd[1], -vd[2], +vd[3], -vd[4], +vd[5], -vd[6], +vd[7] }; }
+#endif
 #else
 static INLINE vint vcast_vi_i(int k) {
   vint ret;
@@ -210,11 +233,13 @@ static INLINE vfloat vcast_vf_f(float f) {
   return ret;
 }
 
+#ifdef ENABLE_LONGDOUBLE
 static INLINE vlongdouble vcast_vl_l(long double d) {
   vlongdouble ret;
   for(int i=0;i<VECTLENDP;i++) ret[i] = d;
   return ret;
 }
+#endif
 
 static INLINE vopmask vcast_vo32_vo64(vopmask m) {
   vopmask ret;
@@ -302,6 +327,7 @@ static INLINE vfloat vreva2_vf_vf(vfloat d0) {
   return r;
 }
 
+#ifdef ENABLE_LONGDOUBLE
 static INLINE vlongdouble vrev21_vl_vl(vlongdouble d0) {
   vlongdouble r;
   for(int i=0;i<VECTLENDP/2;i++) {
@@ -319,6 +345,7 @@ static INLINE vlongdouble vreva2_vl_vl(vlongdouble d0) {
   }
   return r;
 }
+#endif
 
 static INLINE vdouble vposneg_vd_vd(vdouble d0) {
   vdouble r;
@@ -356,6 +383,7 @@ static INLINE vfloat vnegpos_vf_vf(vfloat d0) {
   return r;
 }
 
+#ifdef ENABLE_LONGDOUBLE
 static INLINE vlongdouble vposneg_vl_vl(vlongdouble d0) {
   vlongdouble r;
   for(int i=0;i<VECTLENDP/2;i++) {
@@ -373,6 +401,7 @@ static INLINE vlongdouble vnegpos_vl_vl(vlongdouble d0) {
   }
   return r;
 }
+#endif
 #endif
 
 //
@@ -585,6 +614,7 @@ static INLINE vdouble vsqrt_vd_vd(vdouble d) {
 }
 
 static INLINE double vcast_d_vd(vdouble v) { return v[0]; }
+static INLINE float vcast_f_vf(vfloat v) { return v[0]; }
 
 static INLINE vdouble vload_vd_p(const double *ptr) { return *(vdouble *)ptr; }
 static INLINE vdouble vloadu_vd_p(const double *ptr) {
@@ -760,6 +790,7 @@ static INLINE void vsscatter2_v_p_i_i_vf(float *ptr, int offset, int step, vfloa
 
 //
 
+#ifdef ENABLE_LONGDOUBLE
 static INLINE vlongdouble vadd_vl_vl_vl(vlongdouble x, vlongdouble y) { return x + y; }
 static INLINE vlongdouble vsub_vl_vl_vl(vlongdouble x, vlongdouble y) { return x - y; }
 static INLINE vlongdouble vmul_vl_vl_vl(vlongdouble x, vlongdouble y) { return x * y; }
@@ -789,6 +820,7 @@ static INLINE void vscatter2_v_p_i_i_vl(long double *ptr, int offset, int step, 
 }
 
 static INLINE void vsscatter2_v_p_i_i_vl(long double *ptr, int offset, int step, vlongdouble v) { vscatter2_v_p_i_i_vl(ptr, offset, step, v); }
+#endif
 
 #ifdef Sleef_quad2_DEFINED
 static INLINE vquad vadd_vq_vq_vq(vquad x, vquad y) { return x + y; }

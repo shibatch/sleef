@@ -12,8 +12,40 @@ endif
 all : $(TARGET)
 
 .PHONY: test
+
+ifeq ($(OS),MinGW)
 test : $(TARGET)
-	./runtester.sh
+	cp ../../lib/*.dll .
+	./naivetestdp 1
+	./naivetestdp 2
+	./naivetestdp 3
+	./naivetestdp 4
+	./naivetestdp 5
+	./naivetestdp 10
+	./naivetestsp 1
+	./naivetestsp 2
+	./naivetestsp 3
+	./naivetestsp 4
+	./naivetestsp 5
+	./naivetestsp 10
+else
+test : $(TARGET)
+	LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../lib DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:../../lib ./naivetestdp 1
+	LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../lib DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:../../lib ./naivetestdp 2
+	LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../lib DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:../../lib ./naivetestdp 3
+	LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../lib DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:../../lib ./naivetestdp 4
+	LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../lib DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:../../lib ./naivetestdp 5
+	LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../lib DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:../../lib ./naivetestdp 10
+	LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../lib DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:../../lib ./naivetestsp 1
+	LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../lib DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:../../lib ./naivetestsp 2
+	LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../lib DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:../../lib ./naivetestsp 3
+	LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../lib DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:../../lib ./naivetestsp 4
+	LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../lib DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:../../lib ./naivetestsp 5
+	LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../lib DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:../../lib ./naivetestsp 10
+endif
+
+.PHONY: all
+all : $(TARGET)
 
 naivetestdp : naivetest.c ../../lib/libsleef.$(DLLSUFFIX) ../../lib/libsleefdft.$(DLLSUFFIX)
 	$(CC) $(CFLAGS) -DBASETYPEID=1 naivetest.c -o naivetestdp -lsleefdft -lsleef -lm 

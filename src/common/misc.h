@@ -203,7 +203,7 @@ typedef struct {
 
 #elif defined(_MSC_VER)
 
-#define INLINE __inline
+#define INLINE __forceinline
 #define CONST
 #define EXPORT __declspec(dllexport)
 
