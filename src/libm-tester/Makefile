@@ -4,11 +4,11 @@ CFLAGS+=$(STRICTMATHFLAG) -O -g -I../common -I../arch -I../../include -I../libm 
 
 ifeq ($(OS), Darwin)
 CFLAGS += -I/opt/local/include -L/opt/local/lib
-ENVNAME_LD_LIBRARY_PATH=DYLD_LIBRARY_PATH
+ENVNAME_LD_LIBRARY_PATH=$(DYLD_LIBRARY_PATH)
 LIB=
 else
 CFLAGS += -I/opt/local/include -L/opt/local/lib
-ENVNAME_LD_LIBRARY_PATH=LD_LIBRARY_PATH
+ENVNAME_LD_LIBRARY_PATH=$(LD_LIBRARY_PATH)
 LIB=-lrt
 endif
 
