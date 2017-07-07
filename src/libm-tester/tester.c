@@ -4517,7 +4517,8 @@ int main(int argc, char **argv) {
   int i, a2s;
 
   printf("\n\n*** Now testing %s\n", argv[1]);
-  
+  fflush(stdout);
+
   for(a2s=1;a2s<argc;a2s++) {
     if (strcmp(argv[a2s], "--flushtozero") == 0) {
       enableFlushToZero = 1;
@@ -4532,7 +4533,7 @@ int main(int argc, char **argv) {
   mpfr_set_default_prec(128);
 
   startChild(argv2[0], argv2);
-
+  fflush(stdin);
   {
     char str[256];
     int u;
