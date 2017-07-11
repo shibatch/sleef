@@ -6,9 +6,11 @@ group: edge
 before_install:
     - sudo apt-get -qq update
     - sudo apt-get install -y libmpfr-dev libgomp1 gcc
-    
+
 compiler:
     - gcc
 
-script: make test
+script:
+  - make test
+  - mkdir sleef.build && cd sleef.build && cmake .. && make libsleef
 
