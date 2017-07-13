@@ -1,6 +1,3 @@
-Sleef is moving from the existing configure/make system to using
-[Cmake](http://www.cmake.org/).
-
 # Introduction
 
 [Cmake](http://www.cmake.org/) is an open-source and cross-platform building
@@ -44,8 +41,10 @@ $ mkdir my-sleef-build && cd my-sleef-build
 
 4. Run cmake to configure your project and generate the system to build it:
 ```
-$ cmake ..
+$ cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
 ```
+This flag configures an optimised `libsleef` shared library build with basic 
+debug info.
 By default, cmake will autodetect your system platform and configure the build
 using the default parameters. You can control and modify these parameters by
 setting variables when running cmake. See the list of [options and variables](#build-customization)
@@ -56,22 +55,28 @@ of the build directory:
 ```
 $ make sleef
 ```
-Running this command will create the shared library `libsleef`. On UNIX you
-should see the following files in the `my-sleef-build/lib` directory.
-```
-libsleef.3.0.so
-libsleef.3.dylib -> libsleef.3.0.so
-libsleef.dylib -> libsleef.3.so
-```
 
 `
 TODO: Add make install instructions.
 `
 
 # Build customization
-`
-TODO: Populate lists.
-`
+
+Variables dictate how the build is generated; options are defined and undefined, 
+respectively, on the cmake command line like this:
+```
+cmake -DVARIABLE=<value> <cmake-build-dir>
+cmake -UVARIABLE <cmake-build-dir>
+```
+Build configurations allow a project to be built in different ways for debug,
+optimized, or any other special set of flags. By default, CMake supports the
+following configuration, specified via `-DCMAKE_BUILD_TYPE=<config>`:
+* `Debug`: basic debug flags turned on
+* `Release`: basic optimizations turned on
+* `MinSizeRel`: builds the smallest (but not fastest) object code
+* `RelWithDebInfo`: builds optimized code with debug information as well
+
 
 ## CMake Variables
+
 ## SLEEF Variables

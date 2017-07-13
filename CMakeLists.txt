@@ -22,6 +22,21 @@ endif()
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 
+# COMPILER DETECTION
+# TODO.
+
+# FEATURE DETECTION
+
+include(CheckCSourceCompiles)
+include(CheckTypeSize)
+
+CHECK_C_SOURCE_COMPILES("int main(){ __float128 r = 1;}" ENABLE_FLOAT128)
+
+CHECK_TYPE_SIZE("long double" LD_SIZE)
+if(LD_SIZE GREATER "9")
+  set(ENABLE_LONG_DOUBLE 1)
+endif()
+
 # Compiler options; note: this list will build incrementally when introducing system detection
 set(STRICTMATHFLAG -ffp-contract=off)
 
@@ -29,8 +44,7 @@ set(STRICTMATHFLAG -ffp-contract=off)
 # variables listed below carry the names of the targets defined throughout
 # the project.
 
-# Library defined in src/libm/CMakeLists.txt via command add_library
-# Outputs libsleef.so
+# Generates object file (shared library) `libsleef` defined in src/libm/CMakeLists.txt via command add_library
 set(TARGET_LIBSLEEF "sleef")
 
 

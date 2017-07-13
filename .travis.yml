@@ -9,8 +9,21 @@ before_install:
 
 compiler:
     - gcc
+    - clang
+
+addons:
+  apt:
+    sources:
+      - george-edison55-precise-backports
+    packages:
+      - cmake-data
+      - cmake
+
+before_script:
+  - mkdir sleef.build
+  - cd sleef.build
+  - cmake -DCMAKE_BUILD_TYPE=Release ..
 
 script:
-  - make test
-  - mkdir sleef.build && cd sleef.build && cmake .. && make libsleef
+  - make sleef
 
