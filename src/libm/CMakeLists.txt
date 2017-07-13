@@ -4,15 +4,15 @@ if (ENABLE_LONG_DOUBLE)
   set(LIBSLEEF_SRCS ${LIBSLEEF_SRCS} sleefld.c)
 endif(ENABLE_LONG_DOUBLE)
 
-if (ENABLE_FLOAT128)
-  set(LIBSLEEF_SRCS ${LIBSLEEF_SRCS} sleefqp.c)
-endif(ENABLE_FLOAT128)
+#if (ENABLE_FLOAT128)
+  #set(LIBSLEEF_SRCS ${LIBSLEEF_SRCS} sleefqp.c)
+#endif(ENABLE_FLOAT128)
 
 add_library("${TARGET_LIBSLEEF}" SHARED ${LIBSLEEF_SRCS})
 
 # Always compile sleef with -ffp-contract and log at configuration time
 message(STATUS "Using option `${STRICTMATHFLAG}` to compile libsleef")
-target_compile_options(${TARGET_LIBSLEEF} PUBLIC ${STRICTMATHFLAG})
+target_compile_options(${TARGET_LIBSLEEF} PUBLIC ${BASIC_C_FLAGS} ${WALL_FLAGS} ${STRICTMATHFLAG})
 
 # CMake supports soname-based version number encoding on platforms supporting soname natively
 # libsleef version number currently follows the MAJOR version of the SLEEF project

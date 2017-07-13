@@ -4,20 +4,12 @@ dist: trusty
 group: edge
 
 before_install:
+    - sudo add-apt-repository -y ppa:adrozdoff/cmake
     - sudo apt-get -qq update
-    - sudo apt-get install -y libmpfr-dev libgomp1 gcc
+    - sudo apt-get install -y cmake libmpfr-dev libgomp1 gcc
 
 compiler:
     - gcc
-    - clang
-
-addons:
-  apt:
-    sources:
-      - george-edison55-precise-backports
-    packages:
-      - cmake-data
-      - cmake
 
 before_script:
   - mkdir sleef.build
@@ -25,5 +17,5 @@ before_script:
   - cmake -DCMAKE_BUILD_TYPE=Release ..
 
 script:
-  - make sleef
+  - make sleef VERBOSE=1
 

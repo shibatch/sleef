@@ -38,6 +38,8 @@ if(LD_SIZE GREATER "9")
 endif()
 
 # Compiler options; note: this list will build incrementally when introducing system detection
+set(WALL_FLAGS -Wall -Wno-unused -Wno-attributes -fmax-errors=3)
+set(BASIC_C_FLAGS -std=gnu99)
 set(STRICTMATHFLAG -ffp-contract=off)
 
 # We like to have a documented index of all targets in the project. The
