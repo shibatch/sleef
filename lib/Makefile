@@ -90,7 +90,7 @@ libsleefgnuabi.dylib : ../src/libm/libm.a ../src/libm/OBJ2.txt ../src/common/com
 	$(CC) -dynamiclib -current_version 3.1 -compatibility_version 3.1 -fvisibility=hidden `cat ../src/libm/OBJ2.txt` ../src/common/common.o -lm -o libsleefgnuabi.dylib
 
 libsleefdft.dylib : ../src/dft/dft.a libsleef.dylib ../src/common/arraymap.a
-	$(CC) $(OPENMPFLAG) -dynamiclib -current_version 3.0 -compatibility_version 3.0 -fvisibility=hidden ../src/dft/*.o ../src/common/arraymap.o libsleef.dylib -lm -o libsleefdft.dylib
+	$(CC) $(OPENMPFLAG) -dynamiclib -current_version 3.1 -compatibility_version 3.1 -fvisibility=hidden ../src/dft/*.o ../src/common/arraymap.o libsleef.dylib -lm -o libsleefdft.dylib
 endif
 
 #

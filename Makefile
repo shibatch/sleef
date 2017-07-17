@@ -77,6 +77,7 @@ distclean : clean
 	+"$(MAKE)" --directory=include distclean
 	+"$(MAKE)" --directory=lib distclean
 	+"$(MAKE)" --directory=src distclean
+	rm -rf debian/libsleef3
 #	rm -f debian/debhelper-build-stamp
 #	rm -f debian/files
 #	rm -f debian/libsleef3.debhelper.log

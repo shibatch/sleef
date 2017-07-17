@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN" "http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=1024" />
+<link rel="icon" href="favicon.png" />
+<link rel="stylesheet" type="text/css" href="texlike.css"/>
+<link rel="stylesheet" type="text/css" href="sleef.css"/>
+<title>SLEEF Documentation</title>
+</head>
+<body>
+<h1>SLEEF Documentation - Compiling and installing the library</h1>
+
+<h2>Table of contents</h2>
+
+<ul class="none" style="font-family: arial, sansserif; padding-left: 0.5cm;">
+  <li><a href="index.xhtml">Introduction</a></li>
+  <li><a href="compile.xhtml">Compiling and installing the library</a></li>
+  <li><a href="purec.xhtml">Math library reference</a></li>
+  <li><a href="dft.xhtml">DFT library reference</a></li>
+  <li><a href="misc.xhtml">Other tools included in the package</a></li>
+  <li><a href="benchmark.xhtml">Benchmark results</a></li>
+  <li><a href="additional.xhtml">Additional notes</a></li>
+</ul>
+
+<h2 id="install">Compiling and installing the library</h2>
+
+<h3>Compiling and installing library on Linux</h3>
+
+<p class="noindent">
+  You need to install libmpfr and OpenMP(libmpfr is only required to
+  build the tester, and it is not linked to the library.) Change
+  directory to sleef-3.X directory and run make. The built headers
+  and libraries will be located under include and lib directories.
+</p>
+
+<p>
+  You can run make install using sudo command to install the library
+  and header. Those files are installed under /usr/lib and
+  /usr/include. You can run make uninstall to uninstall those files.
+</p>
+
+<pre class="code">
+<code>$ sudo apt-get install libmpfr-dev libgomp1-dev gcc</code>
+<code>$ cd sleef-3.X</code>
+<code>$ make</code>
+<code>$ sudo make install</code>
+</pre>
+<p style="text-align:center;">
+  Fig. 2.1: Commands for compiling SLEEF
+</p>
+
+
+<h3>Compiling library with Microsoft Visual C++</h3>
+
+<p class="noindent">
+Below is the instruction for compiling SLEEF with Microsoft Visual C++
+2015.
+</p>
+
+<ol>
+  <li>Install Visual Studio 2015 or later, along with Cygwin</li>
+  <li>Copy vcvars64.bat to a working directory. This file is usually
+    in the following directory.
+    <pre style="font-size:0.8em;">C:\Program Files (x86)\MSVCCommunity2015\VC\bin\amd64</pre></li>
+  <li>Add the following line at the end of the copy of vcvars64.bat
+    <pre style="font-size:0.8em;">if "%SHELL%"=="/bin/bash" c:\cygwin64\bin\bash.exe</pre></li>
+  <li>Execute the copy of vcvars64.bat within the Cygwin bash
+  shell.</li>
+  <li>Go to sleef-3.X directory and run "make -f Makefile.vc"</li>
+</ol>
+
+<h2 id="hello">Compiling and running "Hello SLEEF!"</h2>
+
+<p class="noindent">
+  Now, let's try compiling the <a class="underlined"
+  href="hellox86.c">source code shown in Fig. 2.2</a>.
+</p>
+
+<pre class="code">
+<code>#include &lt;stdio.h&gt;</code>
+<code>#include &lt;x86intrin.h&gt;</code>
+<code>#include &lt;sleef.h&gt;</code>
+<code></code>
+<code>int main(int argc, char **argv) {</code>
+<code>  double a[] = {2, 10};</code>
+<code>  double b[] = {3, 20};</code>
+<code></code>
+<code>  __m128d va, vb, vc;</code>
+<code>  </code>
+<code>  va = _mm_loadu_pd(a);</code>
+<code>  vb = _mm_loadu_pd(b);</code>
+<code></code>
+<code>  vc = Sleef_powd2_u10(va, vb);</code>
+<code></code>
+<code>  double c[2];</code>
+<code></code>
+<code>  _mm_storeu_pd(c, vc);</code>
+<code></code>
+<code>  printf("pow(%g, %g) = %g\n", a[0], b[0], c[0]);</code>
+<code>  printf("pow(%g, %g) = %g\n", a[1], b[1], c[1]);</code>
+<code>}</code>
+</pre>
+<p style="text-align:center;">
+  Fig. 2.2: <a href="hellox86.c">Source code for testing</a>
+</p>
+
+
+
+<p style="margin-top: 2cm;">
+  Fig.2.3 shows typical commands for compiling and executing the hello
+  code on Linux computers.
+</p>
+
+<pre class="code">
+<code>$ gcc hellox86.c -o hellox86 -lsleef</code>
+<code>$ ./hellox86</code>
+<code>pow(2, 3) = 8</code>
+<code>pow(10, 20) = 1e+20</code>
+</pre>
+<p style="text-align:center;">
+  Fig. 2.3: Commands for compiling and executing hellox86.c
+</p>
+
+<p style="margin-top: 2cm;">
+  You may need to set LD_LIBRARY_PATH environment variable
+  appropriately. If you are trying to execute the program on Mac OSX
+  or Windows, try copying the DLLs to the current directory.
+</p>
+
+<!--TEST-->
+
+</body>
+</html>

@@ -1,5 +1,5 @@
 export SOVERSION=3
-export MINORVERSION=0
+export MINORVERSION=1
 
 export MAXBUTWIDTH=3
 

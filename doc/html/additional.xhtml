@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN" "http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=1024" />
+<link rel="icon" href="favicon.png" />
+<link rel="stylesheet" type="text/css" href="texlike.css"/>
+<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Ubuntu" />
+<link rel="stylesheet" type="text/css" href="sleef.css"/>
+<title>SLEEF Documentation</title>
+</head>
+<body>
+<h1>SLEEF Documentation - Additional Notes</h1>
+
+<h2>Table of contents</h2>
+
+<ul class="none" style="font-family: arial, sansserif; padding-left: 0.5cm;">
+  <li><a href="index.xhtml">Introduction</a></li>
+  <li><a href="compile.xhtml">Compiling and installing the library</a></li>
+  <li><a href="purec.xhtml">Math library reference</a></li>
+  <li><a href="dft.xhtml">DFT library reference</a></li>
+  <li><a href="misc.xhtml">Other tools included in the package</a></li>
+  <li><a href="benchmark.xhtml">Benchmark results</a></li>
+  <li><a href="additional.xhtml">Additional notes</a></li>
+</ul>
+
+<h2>Additional Notes</h2>
+
+<h3 id="dispatcher">How the dispatcher works</h3>
+
+<p class="noindent">
+  Fig. 7.1 shows a simplified code of our dispatcher. There is only
+  one exported function <b class="func">mainFunc</b>. When
+  <b class="func">mainFunc</b> is called for the first
+  time, <b class="func">dispatcherMain</b> is called internally,
+  since <i class="var">funcPtr</i> is initialized to the pointer to
+  <b class="func">dispatcherMain</b>(line 14). It then detects if the
+  CPU supports SSE 4.1(line 7), and
+  rewrites <i class="var">funcPtr</i> to a pointer to the function
+  that utilizes SSE 4.1 or SSE 2, depending on the result of CPU
+  feature detection(line 10).  When
+  <b class="func">mainFunc</b> is called for the second time, it does
+  not execute the
+  <b class="func">dispatcherMain</b>. It just executes the function
+  pointed by the pointer stored in <i class="var">funcPtr</i> during
+  the execution of
+  <b class="func">dispatcherMain</b>.
+</p>
+
+<p>
+  There are a few advantages in our dispatcher. The first advantage is
+  that it does not require any compiler-specific extension. The second
+  advantage is simplicity. There are only 18 lines of simple
+  code. Since the dispatchers are completely separated for each
+  function, there is not much room for bugs to get in.
+</p>
+
+<p>
+  The third advantage is low overhead. You might think that the
+  overhead is one function call including execution of prologue and
+  epilogue. However, since modern compilers eliminate redundant
+  execution of the prologue, epilogue and return instruction, the
+  actual overhead is just one jmp instruction. This is very fast since
+  it is not conditional.
+</p>
+
+<p>
+  The fourth advantage is thread safety. There is only one variable
+  shared among threads, which is <i class="var">funcPtr</i>. There are
+  only two possible values for this pointer variable. The first value
+  is the pointer to the <b class="func">dispatcherMain</b>, and the
+  second value is the pointer to either <b class="func">funcSSE2</b>
+  or <b class="func">funcSSE4</b>, depending on the availability of
+  extensions. Once <i class="var">funcPtr</i> is substituted with the
+  pointer to <b class="func">funcSSE2</b>
+  or <b class="func">funcSSE4</b>, it will not be changed in the
+  future. It is obvious that the code works in all the cases.
+</p>
+
+
+<pre class="code">
+<code>static double (*funcPtr)(double arg);</code>
+<code></code>
+<code>static double dispatcherMain(double arg) {</code>
+<code>    double (*p)(double arg) = funcSSE2;</code>
+<code></code>
+<code>#if the compiler supports SSE4.1</code>
+<code>    if (SSE4.1 is available on the CPU) p = funcSSE4;</code>
+<code>#endif</code>
+<code></code>
+<code>    funcPtr = p;</code>
+<code>    return (*funcPtr)(arg);</code>
+<code>}</code>
+<code></code>
+<code>static double (*funcPtr)(double arg) = dispatcherMain;</code>
+<code></code>
+<code>double mainFunc(double arg) {</code>
+<code>    return (*funcPtr)(arg);</code>
+<code>}</code>
+</pre>
+<p style="text-align:center; margin-bottom: 1.0cm;">
+  Fig. 7.1: Simplified code of our dispatcher
+</p>
+
+
+<h3>ULP, gradual underflow and flush-to-zero mode</h3>
+
+<p class="noindent">
+  ULP stands for "unit in the last place", which is sometimes used for
+  measuring accuracy of calculations. 1 ULP is basically the distance
+  between the two closest floating point number, which depends on the
+  exponent of the FP number. The accuracy of calculations by reputable
+  math libraries is usually between 0.5 and 1 ULP. Here, the accuracy
+  means the largest error of calculation, which only happens in the
+  worst case. SLEEF math library provides multiple accuracy choices
+  for some math functions. Many functions have 3.5-ULP and 1-ULP
+  versions, and 3.5-ULP versions are significantly faster than 1-ULP
+  versions. If you care more about execution speed than accuracy, it
+  is advised to use the 3.5-ULP versions along with -ffast-math or
+  "unsafe math optimization" options for the compiler.
+</p>
+
+<p>
+  In IEEE 754 standard, underflow does not happen abruptly when the
+  exponent becomes zero. Instead, denormal numbers are produced which
+  has less precision, and this is sometimes called gradual
+  underflow. On some implementation which is not IEEE-754 conformant,
+  flush-to-zero mode is used since it is easier to implement. In
+  flush-to-zero mode, numbers smaller than the smallest normalized
+  number cannot be represented, and it is replaced with zero. Because
+  of this, the accuracy of calculation may be influenced in some
+  cases. The smallest normalized precision number can be referred with
+  DBL_MIN for double precision, and FLT_MIN for single precision. The
+  naming of these macros is a little bit confusing because DBL_MIN is
+  not the smallest double precision number.
+</p>
+
+<h3>About sincospi</h3>
+
+<p class="noindent">
+  The sincospi series of functions evaluates <i class="math">sin(
+    &pi;<i class="var">a</i> )</i> and <i class="math">cos(
+    &pi;<i class="var">a</i> )</i> simultaneously. These functions are
+    added to SLEEF as of version 3.0. There are a few reasons that I
+    added these functions.
+</p>
+
+<p>
+  C standards include specifications for functions that evaluate
+  trigonometric functions. In order to do calculations for evaluating
+  these functions, reduction of an argument is required. This involves
+  a multiple precision multiplication with <i class="math">&pi;</i>,
+  which requires many operations of addition and multiplication. This
+  is slow especially if accurate evaluation is required. By designing
+  the function in a way that the argument is pre-multiplied
+  by <i class="math">&pi;</i>, this reduction can be eliminated. This
+  leads to faster and more accurate evaluation.
+</p>
+
+<p>
+  The second reason is that sincospi functions are handy for
+  implementing an FFT library. FFT libraries need to evaluate
+  trigonometric functions for generating twiddle factors that is used in
+  the butterfly operations. Since the butterfly operations are
+  repeatedly applied, the error in twiddle factors accumulates. Thus, we
+  want to make the error in twiddle factors as small as possible.  In an
+  FFT of power-of-two size, twiddle factors are
+  <i class="math">sin( &pi;<i class="var">m</i> /
+    2<sup><i class="var">n</i></sup> )</i> where <i class="var">m</i>
+    and <i class="var">n</i> are integer. If we just use the usual
+    trigonometric functions defined in the C standards with the
+    precision same as that used for butterfly operations, we already
+    have error when calculating arguments, since
+    &pi;<i class="var">m</i> / 2<sup><i class="var">n</i></sup> cannot
+    be represented as a floating point value without error. On the
+    other hand, if we use sincospi function, the argument can be
+    accurately represented by a radix 2 FP number. Thus, we can
+    calculate twiddle factors with better accuracy.
+</p>
+
+<p>
+  The third reason is that sinpi is needed internally to implement
+  gamma functions.
+</p>
+
+<h3>About the logo</h3>
+
+<p>
+  It is a soup ladle.
+</p>
+
+<br/>
+
+<p style="text-align:center; margin-top:1cm;">
+  <a class="nothing" href="sleeflogo2.png">
+    <img src="sleeflogo2.png" alt="logo" width="40%" height="40%" />
+  </a>
+  <br />
+  Fig. 7.2: SLEEF logo
+</p>
+
+<!--TEST-->
+
+</body>
+</html>
