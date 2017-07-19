@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN" "http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=1024" />
+<link rel="icon" href="favicon.png" />
+<link rel="stylesheet" type="text/css" href="texlike.css"/>
+<link rel="stylesheet" type="text/css" href="sleef.css"/>
+<title>SLEEF Documentation - Benchmark Results</title>
+</head>
+<body>
+<h1>SLEEF Documentation - Benchmark Results</h1>
+
+<h2>Table of contents</h2>
+
+<ul class="none" style="font-family: arial, sansserif; padding-left: 0.5cm;">
+  <li><a href="index.xhtml">Introduction</a></li>
+  <li><a href="compile.xhtml">Compiling and installing the library</a></li>
+  <li><a href="purec.xhtml">Math library reference</a></li>
+  <li><a href="dft.xhtml">DFT library reference</a></li>
+  <li><a href="misc.xhtml">Other tools included in the package</a></li>
+  <li><a href="benchmark.xhtml">Benchmark results</a></li>
+  <li><a href="additional.xhtml">Additional notes</a></li>
+</ul>
+
+  <h2>Benchmark results</h2>
+
+  <p class="noindent" style="font-size:1em; margin-top:0.5cm;">
+    These graphs show comparison of the execution time between
+    <a class="undecorated"
+    href="https://github.com/shibatch/sleef">SLEEF</a>-3.1 and Intel
+    SVML.
+  </p>
+
+  <p style="font-size:1em;">
+    The execution time of each function is measured by executing each
+    function 10^8 times and taking the average time. Each time a
+    function is executed, a uniformly distributed random number is set
+    to each element of the argument vector(each element is set a
+    different value.)  The ranges of the random number for each
+    function are shown below. Argument vectors are generated before
+    the measurement, and the time to generate random argument vectors
+    is not included in the execution time.
+  </p>
+
+  <br/>
+  
+  <ul>
+    <li>Trigonometric functions : [0, 6.28] and [0, 10^6] for
+    double-precision functions. [0, 6.28] and [0, 30000] for
+    single-precision functions.</li>
+    <li>Log : [0, 10^300] and [0, 10^38] for double-precision
+    functions and single-precision functions, respectively.</li>
+    <li>Exp : [-700, 700] and [-100, 100] for double-precision
+    functions and single-precision functions, respectively.</li>
+    <li>Pow : [-30, 30] for both the first and the second
+    arguments.</li>
+    <li>Asin : [-1, 1]</li>
+    <li>Atan : [-10, 10]</li>
+    <li>Atan2 : [-10, 10] for both the first and the second
+    arguments.</li>
+  </ul>
+
+  <br/>
+  
+  <p style="font-size:1em;">
+    The accuracy of SVML functions can be chosen by compiler options,
+    not the function names. "-fimf-max-error=1.0" option is specified
+    to icc to obtain the 1-ulp-accuracy results, and
+    "-fimf-max-error=5.0" option is used for the 5-ulp-accuracy
+    results.
+  </p>
+  
+  <p style="font-size:1em;">
+    Those results are measured on a PC with Intel Core i7-6700 CPU @
+    3.40GHz with Turbo Boost turned off. The CPU should be always
+    running at 3.4GHz during the measurement.
+  </p>
+
+  <p style="font-size:1.2em; margin-top:1.0cm;">
+    <b style="color:#0050a0;">Click graphs to magnify</b>.
+  </p>
+  
+  <p style="margin-bottom:1cm;">&nbsp;</p>
+  
+  <p style="text-align:center; margin-bottom:2cm;">
+    <a class="nothing" href="bench_s1.png">
+      <img src="bench_s1.png" alt="Performance graph for DP trigonometric functions" width="50%" height="50%"/>
+    </a>
+    <br />
+    Fig. 6.1: Execution time of double precision trigonometric functions
+  </p>
+  
+  <p style="text-align:center; margin-bottom:2cm;">
+    <a class="nothing" href="bench_s3.png">
+      <img src="bench_s3.png" alt="Performance graph for SP trigonometric functions" width="50%" height="50%"/>
+    </a>
+    <br />
+    Fig. 6.2: Execution time of single precision trigonometric functions
+  </p>
+  
+  <p style="text-align:center; margin-bottom:2cm;">
+    <a class="nothing" href="bench_s2.png">
+      <img src="bench_s2.png" alt="Performance graph for other DP functions" width="50%" height="50%"/>
+    </a>
+    <br />
+    Fig. 6.3: Execution time of double precision log, exp, pow and inverse trigonometric functions
+  </p>
+
+  <p style="text-align:center; margin-bottom:2cm;">
+    <a class="nothing" href="bench_s4.png">
+      <img src="bench_s4.png" alt="Performance graph for other SP functions" width="50%" height="50%"/>
+    </a>
+    <br />
+    Fig. 6.4: Execution time of single precision log, exp, pow and inverse trigonometric functions
+  </p>
+
+<!--TEST-->
+
+</body>
+</html>

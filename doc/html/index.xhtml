@@ -4,114 +4,356 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta name="viewport" content="width=1024" />
-<link rel="stylesheet" type="text/css" href="default.css"/>
-<title>SLEEF API Reference</title>
+<link rel="icon" href="favicon.png" />
+<link rel="stylesheet" type="text/css" href="texlike.css"/>
+<link rel="stylesheet" type="text/css" href="sleef.css"/>
+<title>SLEEF Documentation</title>
 </head>
 <body>
-<h1>SLEEF API Reference - Introduction</h1>
+<h1>SLEEF Documentation - Introduction<img src="sleeflogo2.png" alt="logo" width="25%" height="25%" style="float: right" /></h1>
+
+<ul class="none" style="font-family: arial, sansserif; margin-top: 1.0cm;">
+  <li><a style="color:#a00000;" href="https://sourceforge.net/projects/sleef/files/">Download the latest version</a></li>
+  <li><a href="http://sleef.org/">Latest documentation on the web</a></li>
+  <li><a href="https://github.com/shibatch/sleef">GitHub repository</a></li>
+  <li><a href="https://sourceforge.net/p/sleef/mailman/">Mailing list</a></li>
+  <li><a href="https://sourceforge.net/p/sleef/discussion/general/">Discussion forum</a></li>
+</ul>
 
 <h2>Table of contents</h2>
 
-<ul class="none">
+<ul class="none" style="font-family: arial, sansserif; padding-left: 0.5cm;">
   <li><a href="index.xhtml">Introduction</a>
     <ul class="disc">
       <li><a href="index.xhtml#overview">Overview</a></li>
       <li><a href="index.xhtml#environment">Supported environments</a></li>
-      <li><a href="index.xhtml#install">Compiling and installing the library</a></li>
-      <li><a href="index.xhtml#compatibility">Compatibility with other libraries</a></li>
-      <li><a href="index.xhtml#porting">Porting</a></li>
+      <!--<li><a href="index.xhtml#compatibility">Compatibility with other libraries</a></li>-->
+      <!--<li><a href="index.xhtml#porting">Porting</a></li>-->
       <li><a href="index.xhtml#credit">Credit</a></li>
       <li><a href="index.xhtml#license">License</a></li>
       <li><a href="index.xhtml#history">History of this software</a></li>
+      <li><a href="index.xhtml#related">Related projects</a></li>
     </ul>
   </li>
   <li>&nbsp;</li>
+  <li><a href="compile.xhtml">Compiling and installing the library</a></li>
   <li><a href="purec.xhtml">Math library reference</a></li>
+  <!--
+  <ul class="disc">
+    <li><a href="x86.xhtml">Data types and functions for x86 architectures</a></li>
+    <li><a href="aarch64.xhtml">Data types and functions for AArch64 architectures</a></li>
+    <li><a href="aarch32.xhtml">Data types and functions for AArch32 architectures</a></li>
+  </ul>
+  -->
   <li><a href="dft.xhtml">DFT library reference</a></li>
   <li><a href="misc.xhtml">Other tools included in the package</a></li>
-  <li><a href="funcindex.xhtml">Function index</a></li>
+  <li><a href="benchmark.xhtml">Benchmark results</a></li>
+  <li><a href="additional.xhtml">Additional notes</a></li>
 </ul>
 
 <h2 id="overview">Overview</h2>
 
-<h3>About ULP</h3>
-
-<p class="description">
-  ULP stands for "unit in the last place", which is sometimes used for
-  measuring accuracy of calculations. 1 ULP is basically the distance
-  between the two closest floating point number, which depends on the
-  exponent of the FP number. The accuracy of calculations by reputable
-  math libraries is usually between 0.5 and 1 ULP. Here, the accuracy
-  means the largest error of calculation, which happens in the worst
-  case.
+<p class="noindent">
+  SLEEF stands for SIMD Library for Evaluating Elementary
+  Functions. It implements vectorized versions of all C99 real
+  floating point math functions. It can utilize SIMD instructions of
+  modern processors. SLEEF is designed to fully utilize SIMD
+  computation by reducing the use of conditional branches and
+  scatter/gather memory access. Our <a class="underlined"
+  href="benchmark.xhtml">benchmarks</a> show that the performance of
+  SLEEF is comparable to that of the best commercial library. Unlike
+  vendor-tuned libraries, SLEEF is portable : it can be easily ported
+  to other architectures by writing a helper file, which is a thin
+  abstraction layer of SIMD intrinsics. SLEEF is also designed to work
+  with various operating systems and compilers. It also includes
+  vectorized DFT subroutines.
 </p>
 
-<p class="description">
-  SLEEF math library provides multiple accuracy choices for some math
-  functions. Many functions have 3.5-ULP and 1-ULP versions, and
-  3.5-ULP versions are significantly faster than 1-ULP versions. If
-  you care more about execution speed than accuracy, it is advised to
-  use the 3.5-ULP versions along with "unsafe math optimization"
-  options for the compiler.
-</p>
-
-<h3>About sincospi</h3>
-
-<p class="description">
-  The sincospi series of functions evaluates <i class="math">sin(
-    &pi;<i class="var">a</i> )</i> and <i class="math">cos(
-    &pi;<i class="var">a</i> )</i> simultaneously. These functions
-    are added to SLEEF as of version 3.0. Below, I explain the two
-    reasons that I added these functions.
-</p>
-
-<p class="description">
-  C standards include specifications for functions that evaluate
-  trigonometric functions. In order to do calculations for evaluating
-  these functions, reduction of an argument is required. This involves
-  a multiple precision multiplication with <i class="math">&pi;</i>,
-  which requires many operations of addition and multiplication. This
-  is slow especially if accurate evaluation is required. By designing
-  the function in a way that the argument is pre-multiplied
-  by <i class="math">&pi;</i>, this reduction can be elminated. This
-  leads to faster and more accurate evaluation.
-</p>
-
-<p class="description">
-  The second reason is that sincospi functions are handy for
-  implementing an FFT library. FFT libraries need to evaluate
-  trigonometric functions for generating twiddle factors that is used in
-  the butterfly operations. Since the butterfly operations are
-  repeatedly applied, the error in twiddle factors accumulates. Thus, we
-  want to make the error in twiddle factors as small as possible.  In an
-  FFT of power-of-two size, twiddle factors are
-  <i class="math">sin( &pi;<i class="var">m</i> /
-    2<sup><i class="var">n</i></sup> )</i> where <i class="var">m</i>
-    and <i class="var">n</i> are integer. If we just use the usual
-    trigonometric functions defined in the C standards with the
-    precision same as that used for butterfly operations, we already
-    have error when calculating arguments, since
-    &pi;<i class="var">m</i> / 2<sup><i class="var">n</i></sup> cannot
-    be represented as a floating point value without error. On the
-    other hand, if we use sincospi function, the argument can be
-    accuratedly represented by a radix 2 FP number. Thus, we can
-    calculate twiddle factors with better accuracy.
+<p>
+  The library contains subroutines for all C99 real FP math functions
+  in double precision and single precision. Different accuracy of the
+  results can be chosen for a subset of the elementary functions; for
+  this subset there are versions with up to 1 ulp error (which is the
+  maximum error, not the average) and versions with a few ulp
+  error. Obviously, less accurate versions are faster. For non-finite
+  inputs and outputs, the library should return the same results as
+  libm as specified in the C99 standard. The library is rigorously
+  tested if the evaluation error is within the designed limit. The
+  library is tested against high-precision evaluation
+  using <a class="underlined" href="http://www.mpfr.org/">the libmpfr
+  library</a>. Especially, we carefully checked the error of the
+  trigonometric functions when the arguments are close to an integral
+  multiple of <i class="math">&pi;</i>/2.
 </p>
 
 <h2 id="environment">Supported environments</h2>
 
-<h2 id="install">Compiling and installing the library</h2>
+<p class="noindent">
+  This library currently supports several SIMD architectures :
+</p>
 
-<h2 id="compatibility">Compatibility with other libraries</h2>
+<br/>
 
-<h2 id="porting">Porting</h2>
+<ul class="disc">
+  <li>x86 - SSE2, SSE4.1, AVX, FMA4, AVX2+FMA3, AVX512F</li>
+  <li>AArch64 - Advanced SIMD</li>
+  <li>AArch32 - NEON</li>
+</ul>
 
+<br/>
+
+<p>
+  In addition to the SIMD implementation, Pure C (scalar) version is
+  provided. For x86 architecture, the library provides dispatchers
+  that automatically choose the best subroutines for the computer the
+  library is run. The supported combinations of the architecture,
+  operating system and compiler are shown in Table 1.1.
+</p>
+
+<div style="margin-top: 1.0cm;"></div>
+
+<table style="text-align:center;" align="center">
+  <tr align="center">
+    <td class="caption">Table 1.1: Environment support matrix</td>
+  </tr>
+  <tr align="center">
+    <td>
+      <table class="lt">
+        <tr>
+          <td class="lt-hl"></td>
+	  <td></td>
+          <td class="lt-hl"></td>
+          <td class="lt-hl"></td>
+          <td class="lt-hl"></td>
+          <td class="lt-hl"></td>
+        </tr>
+	<tr>
+	  <td class="lt-br"></td>
+	  <td></td>
+	  <td class="lt-blr" align="center">GCC</td>
+	  <td class="lt-br" align="center">Clang</td>
+	  <td class="lt-br" align="center">Intel Compiler</td>
+	  <td class="lt-b" align="center">MSVC</td>
+	</tr>
+        <tr>
+          <td class="lt-hl"></td>
+	  <td></td>
+	  <td class="lt-hl"></td>
+          <td class="lt-hl"></td>
+          <td class="lt-hl"></td>
+          <td class="lt-hl"></td>
+          <td class="lt-hl"></td>
+        </tr>
+	<tr>
+	  <td class="lt-r" align="left">x86 (64bit), Linux</td>
+	  <td></td>
+	  <td class="lt-lr" align="center">Supported</td>
+	  <td class="lt-r" align="center">Supported</td>
+	  <td class="lt-r" align="center">Supported(*1)</td>
+	  <td class="lt-" align="center">N/A</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">x86 (32bit), Linux</td>
+	  <td></td>
+	  <td class="lt-lr" align="center">Supported(*2)</td>
+	  <td class="lt-r" align="center">Supported(*2)</td>
+	  <td class="lt-r" align="center"></td>
+	  <td class="lt-" align="center">N/A</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">AArch64, Linux</td>
+	  <td></td>
+	  <td class="lt-lr" align="center">Supported</td>
+	  <td class="lt-r" align="center">Supported</td>
+	  <td class="lt-r" align="center">N/A</td>
+	  <td class="lt-" align="center">N/A</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">AArch32, Linux</td>
+	  <td></td>
+	  <td class="lt-lr" align="center">Supported(*3)</td>
+	  <td class="lt-r" align="center">Supported(*3)</td>
+	  <td class="lt-r" align="center">N/A</td>
+	  <td class="lt-" align="center">N/A</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">x86 (64bit), OS X</td>
+	  <td></td>
+	  <td class="lt-lr" align="center">Supported</td>
+	  <td class="lt-r" align="center">Supported</td>
+	  <td class="lt-r" align="center">N/A</td>
+	  <td class="lt-" align="center">N/A</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">x86 (64bit), Windows</td>
+	  <td></td>
+	  <td class="lt-lr" align="center">Supported(Cygwin)(*4)</td>
+	  <td class="lt-r" align="center">Supported(Cygwin)(*4)</td>
+	  <td class="lt-r" align="center"></td>
+	  <td class="lt-" align="center">Supported(*5)</td>
+	</tr>
+	<tr>
+	  <td class="lt-br" align="left">Generic</td>
+	  <td></td>
+	  <td class="lt-blr" align="center">Supported(*6)</td>
+	  <td class="lt-br" align="center">Supported(*6)</td>
+	  <td class="lt-br" align="center"></td>
+	  <td class="lt-b" align="center"></td>
+	</tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+<div style="margin-top: 2.0cm;"></div>
+
+<p>
+  The supported compiler versions are as follows.
+</p>
+
+<br/>
+
+<ul class="disc">
+  <li>GCC : version 5 and later</li>
+  <li>Clang : version 3.9 and later</li>
+  <li>Intel Compiler : ICC version 17</li>
+  <li>MSVC : Visual Studio 2015</li>
+</ul>
+
+<br/>
+
+<p>
+  *1 FMA4 is not supported by Intel Compiler.
+</p>
+
+<p>
+  *2 SSE2 is required to run the scalar functions on 32-bit x86
+  architecture. x87 is not supported.
+</p>
+
+<p>
+  *3 NEON has only single precision support. The computation results
+  are not in full accuracy since NEON is not IEEE 754-compliant.
+</p>
+
+<p>
+  *4 AVX functions are not supported for Cygwin, since AVX is not
+  supported by Cygwin ABI.
+</p>
+
+<p>
+  *5 AVX512F is not supported by Visual Studio 2015.
+</p>
+
+<p>
+  *6 Generic architecture is supported through GCC/Clang vector
+  extensions. IEEE 754-compliant 64-bit and 32-bit calculation is
+  required.
+</p>
+
+<div style="margin-top: 1.0cm;"></div>
+
+<p>
+  All functions in the library are thread safe unless otherwise noted.
+</p>
+  
 
 <h2 id="history">Credit</h2>
 
+<ul class="disc">
+  <li>The main developer
+  is <a href="https://github.com/shibatch">Naoki Shibata</a>
+  at Nara Institute of Science and Technology.</li>
+  <li>Francesco Petrogalli at ARM Ltd. contributed the helper for AArch64
+  (helperadvsimd.h). He also reviewed the code, gave precious comments
+  and suggestions.</li>
+  <li>Hal Finkel at Argonne Leadership Computing Facility is now
+  working on <a class="underlined"
+  href="https://reviews.llvm.org/D24951">importing and adapting SLEEF
+  as an LLVM runtime</a>. He also gave precious comments.</li>
+</ul>
+
 <h2 id="license">License</h2>
 
+<p class="noindent">
+SLEEF is distributed
+under <a class="underlined" href="http://www.boost.org/LICENSE_1_0.txt">Boost Software
+License Version 1.0</a>.
+</p>
+
 <h2 id="history">History</h2>
+
+<h4>3.1 (Released on July 19, 2017)</h4>
+<ul class="disc">
+  <li>Added AArch64 support</li>
+  <li>Implemented the remaining C99 math functions : lgamma, tgamma,
+  erf, erfc, fabs, copysign, fmax, fmin, fdim, trunc, floor, ceil,
+  round, rint, modf, ldexp, nextafter, frexp, hypot, and fmod.</li>
+  <li>Added dispatcher for x86 functions</li>
+  <li>Improved reduction of trigonometric functions</li>
+  <li>Added support for 32-bit x86, Cygwin, etc.</li>
+  <li>Improved tester</li>
+  <li>Etc.</li>
+</ul>
+
+<h4>3.0 (Released on Feb. 7, 2017)</h4>
+<ul class="disc">
+  <li>New API is defined</li>
+  <li>Functions for DFT are added</li>
+  <li>sincospi functions are added</li>
+  <li>gencoef now supports single, extended and quad precision in addition to double precision</li>
+  <li>Linux, Windows and Mac OS X are supported</li>
+  <li>GCC, Clang, Intel Compiler, Microsoft Visual C++ are supported</li>
+  <li>The library can be compiled as DLLs</li>
+  <li>Files needed for creating a debian package are now included</li>
+</ul>
+
+<h4>2.120 (Released on Jan. 30, 2017)</h4>
+<ul class="disc">
+  <li>Relicensed to Boost Software License Version 1.0</li>
+</ul>
+
+<h4>2.110 (Released on Dec. 11, 2016)</h4>
+<ul class="disc">
+  <li>The valid range of argument is extended for trig functions</li>
+  <li>Specification of each functions regarding to the domain and accuracy is added</li>
+  <li>A coefficient generation tool is added</li>
+  <li>New testing tools are introduced</li>
+  <li>Following functions returned incorrect values when the argument is very large or small : exp, pow, asinh, acosh</li>
+  <li>SIMD xsin and xcos returned values more than 1 when FMA is enabled</li>
+  <li>Pure C cbrt returned incorrect values when the argument is negative</li>
+  <li>tan_u1 returned values with more than 1 ulp of error on rare occasions</li>
+  <li>Removed support for Java language(because no one seems using this)</li>
+</ul>
+
+<h2 id="related">Related projects and links</h2>
+
+<ul class="disc">
+  <li>Mustafa A. Mohamad is developing <a class="underlined"
+  href="https://github.com/musm/SLEEF.jl">a pure Julia port of the
+  SLEEF math library</a>.</li>
+  <li>Hal Finkel has <a class="underlined"
+  href="https://github.com/hfinkel/sleef-bgq">adapted SLEEF to
+  PowerPC/QPX</a>. SLEEF is running on Mira IBM BG/Q supercomputer at
+  Argonne National Laboratory.</li>
+  <li>SLEEF is adopted in <a class="underlined"
+  href="http://www.menuetos.net/sc151.html">MenuetOS</a>.</li>
+  <br/>
+  <li><a class="underlined"
+  href="https://software.intel.com/en-us/node/524289">Intel Short
+  Vector Math Library (SVML)</a> is a commercial library of vectorized
+  math functions, which provides similar functionality to
+  SLEEF. Recently, some of the codes are published as free software,
+  and it is now <a class="underlined"
+  href="https://sourceware.org/git/?p=glibc.git;a=tree;f=sysdeps/x86_64/fpu/multiarch">
+  a part of glibc</a>.</li>
+</ul>
+
+<a href="https://sourceforge.net/p/sleef/" rel="nofollow">
+  <img src="https://sourceforge.net/sflogo.php?type=10&amp;group_id=2867658" alt="Download sleef" style="margin-top:0.5cm; float: right;"/>
+</a>
+
+<!--TEST-->
 
 </body>
 </html>
