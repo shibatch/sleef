@@ -2,14 +2,14 @@
 cmake_minimum_required(VERSION 3.4.3)
 
 set(SLEEF_VERSION_MAJOR 3)
-set(SLEEF_VERSION_MINOR 0)
+set(SLEEF_VERSION_MINOR 1)
 set(SLEEF_SOVERSION ${SLEEF_VERSION_MAJOR})
 
 project(SLEEF
 	VERSION ${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}
 	LANGUAGES C CXX)
 
-message(STATUS "Configuring build for ${PROJECT_NAME}-version${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}")
+message(STATUS "Configuring build for ${PROJECT_NAME}-v${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}")
 
 # Sanity check for in-source builds which we do not want to happen
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
@@ -21,9 +21,21 @@ endif()
 # Set output directories for the library files
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+
+# PLATFORM DETECTION
+
+# TODO.
 
 # COMPILER DETECTION
-# TODO.
+
+# All variables storing compiler flags should be prefixed with FLAGS_
+set(FLAGS_WALL "-Wall;-Wno-unused;-Wno-attributes")
+set(FLAGS_BASIC_C "-std=gnu99")
+
+set(FLAGS_FASTMATH "-ffast-math")
+set(FLAGS_STRICTMATH "-ffp-contract=off")
+set(FLAGS_OPENMP "-fopenmp")
 
 # FEATURE DETECTION
 
@@ -37,10 +49,11 @@ if(LD_SIZE GREATER "9")
   set(ENABLE_LONG_DOUBLE 1)
 endif()
 
-# Compiler options; note: this list will build incrementally when introducing system detection
-set(WALL_FLAGS -Wall -Wno-unused -Wno-attributes -fmax-errors=3)
-set(BASIC_C_FLAGS -std=gnu99)
-set(STRICTMATHFLAG -ffp-contract=off)
+# sleef-config.h.in passes cmake settings to the source code
+configure_file(
+  ${PROJECT_SOURCE_DIR}/sleef-config.h.in
+  ${PROJECT_BINARY_DIR}/include/sleef-config.h @ONLY
+  )
 
 # We like to have a documented index of all targets in the project. The
 # variables listed below carry the names of the targets defined throughout
@@ -48,6 +61,14 @@ set(STRICTMATHFLAG -ffp-contract=off)
 
 # Generates object file (shared library) `libsleef` defined in src/libm/CMakeLists.txt via command add_library
 set(TARGET_LIBSLEEF "sleef")
-
+# Generates executable files for running the test suite; defined in src/libm-tester/CMakeLists.txt via command add_executable
+set(TARGET_IUT "iut")
+set(TARGET_TESTER "tester")
+# Runs the test suite; depends on targets: iut, tester; defined in src/libm-tester/CMakeLists.txt via command add_custom_target
+set(TARGET_TEST "test-libm")
+# Generates the helper executable file mkrename needed to write the sleef header file
+set(TARGET_MKRENAME "mkrename")
+# Generates the helper executable file mkdisp
+set(TARGET_MKDISP "mkdisp")
 
 add_subdirectory("src")

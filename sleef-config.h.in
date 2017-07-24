@@ -1,0 +1,13 @@
+// Configuration of @PROJECT_NAME@
+// Generates header file: @PROJECT_NAME@Config.h
+
+#ifndef CONFIG_H
+#define CONFIG_H
+
+#define SLEEF_VERSION_MAJOR @SLEEF_VERSION_MAJOR@
+#define SLEEF_VERSION_MINOR @SLEEF_VERSION_MINOR@
+
+#cmakedefine ENABLE_LONG_DOUBLE
+#cmakedefine ENABLE_FLOAT128
+
+#endif // CONFIG_H
