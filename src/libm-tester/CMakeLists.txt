@@ -28,4 +28,5 @@ target_compile_options(${TARGET_TESTER}
 add_custom_target(${TARGET_TEST}
   COMMAND ./tester ./iut
   WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-add_dependencies(${TARGET_TEST} ${TARGET_TESTER} ${TARGET_IUT} ${TARGET_LIBSLEEF})
+add_dependencies(${TARGET_TEST}
+  ${TARGET_TESTER} ${TARGET_IUT} ${TARGET_LIBSLEEF})

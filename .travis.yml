@@ -19,8 +19,8 @@ compiler:
 before_script:
   - mkdir sleef.build
   - cd sleef.build
-  - cmake -DCMAKE_BUILD_TYPE=Release ..
+  - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 ..
 
 script:
-  - make test-libm VERBOSE=1
-
+  - make test-libm
+  - make install

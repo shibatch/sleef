@@ -11,21 +11,18 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/GenerateSleefHeader.cmake @ONLY)
 
 # Add custom command to generate the sleef header at build time
+set(SLEEF_INCLUDE_HEADER ${CMAKE_BINARY_DIR}/include/sleef.h)
 add_custom_command(
-  OUTPUT ${CMAKE_BINARY_DIR}/include/sleef.h
+  OUTPUT ${SLEEF_INCLUDE_HEADER}
   COMMAND ${CMAKE_COMMAND} -P
     ${CMAKE_CURRENT_BINARY_DIR}/GenerateSleefHeader.cmake
   DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/sleeflibm.h.org
     ${CMAKE_CURRENT_BINARY_DIR}/GenerateSleefHeader.cmake)
 
-# Add target for generating the sleef header
-add_custom_target(generate-header ALL
-  DEPENDS ${CMAKE_BINARY_DIR}/include/sleef.h)
-
 # Build main library
 add_library(${TARGET_LIBSLEEF}
-  SHARED sleefdp.c sleefsp.c ${CMAKE_BINARY_DIR}/include/sleef.h)
+  SHARED sleefdp.c sleefsp.c ${SLEEF_INCLUDE_HEADER})
 
 if(COMPILER_SUPPORTS_LONG_DOUBLE)
   target_sources(${TARGET_LIBSLEEF} PRIVATE sleefld.c)
@@ -53,7 +50,7 @@ if(SLEEF_SHOW_CONFIG)
   message(STATUS "Using option `${FLAGS_STRICTMATH}` to compile libsleef")
 endif(SLEEF_SHOW_CONFIG)
 
-install(FILES ${CMAKE_BINARY_DIR}/include/sleef.h
+install(FILES ${SLEEF_INCLUDE_HEADER}
   DESTINATION include)
 install(TARGETS ${TARGET_LIBSLEEF}
   DESTINATION lib)
