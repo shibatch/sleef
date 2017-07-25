@@ -7,7 +7,7 @@ set(SLEEF_SOVERSION ${SLEEF_VERSION_MAJOR})
 
 project(SLEEF
 	VERSION ${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}
-	LANGUAGES C CXX)
+	LANGUAGES C)
 
 message(STATUS "Configuring build for ${PROJECT_NAME}-v${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}")
 
@@ -31,7 +31,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
 # All variables storing compiler flags should be prefixed with FLAGS_
 set(FLAGS_WALL "-Wall;-Wno-unused;-Wno-attributes")
-set(FLAGS_BASIC_C "-std=gnu99")
 
 set(FLAGS_FASTMATH "-ffast-math")
 set(FLAGS_STRICTMATH "-ffp-contract=off")
@@ -42,11 +41,11 @@ set(FLAGS_OPENMP "-fopenmp")
 include(CheckCSourceCompiles)
 include(CheckTypeSize)
 
-CHECK_C_SOURCE_COMPILES("int main(){ __float128 r = 1;}" ENABLE_FLOAT128)
+CHECK_C_SOURCE_COMPILES("int main(){ __float128 r = 1;}" COMPILER_SUPPORTS_FLOAT128)
 
 CHECK_TYPE_SIZE("long double" LD_SIZE)
 if(LD_SIZE GREATER "9")
-  set(ENABLE_LONG_DOUBLE 1)
+  set(COMPILER_SUPPORTS_LONG_DOUBLE 1)
 endif()
 
 # sleef-config.h.in passes cmake settings to the source code
@@ -68,7 +67,5 @@ set(TARGET_TESTER "tester")
 set(TARGET_TEST "test-libm")
 # Generates the helper executable file mkrename needed to write the sleef header file
 set(TARGET_MKRENAME "mkrename")
-# Generates the helper executable file mkdisp
-set(TARGET_MKDISP "mkdisp")
 
 add_subdirectory("src")
