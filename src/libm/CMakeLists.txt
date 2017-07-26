@@ -2,6 +2,8 @@
 add_executable(${TARGET_MKRENAME} mkrename.c)
 target_compile_options(${TARGET_MKRENAME}
   PRIVATE ${FLAGS_WALL})
+target_compile_features(${TARGET_MKRENAME}
+  PUBLIC c_variadic_macros)
 
 # TODO: set the parameters for mkrename run for the SIMD implementation
 set(MKRENAME_PARAMS "")
@@ -18,7 +20,8 @@ add_custom_command(
     ${CMAKE_CURRENT_BINARY_DIR}/GenerateSleefHeader.cmake
   DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/sleeflibm.h.org
-    ${CMAKE_CURRENT_BINARY_DIR}/GenerateSleefHeader.cmake)
+    ${CMAKE_CURRENT_BINARY_DIR}/GenerateSleefHeader.cmake
+    ${TARGET_MKRENAME})
 
 # Build main library
 add_library(${TARGET_LIBSLEEF}
