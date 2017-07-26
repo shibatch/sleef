@@ -15,6 +15,7 @@ before_install:
 
 compiler:
     - gcc
+    - clang
 
 before_script:
   - mkdir sleef.build
