@@ -1,17 +1,13 @@
 language: c
 
-matrix:
-  include:
-    - os: linux
-      sudo: required
-      dist: trusty
-      group: edge
-    - os: osx
+os:
+  - linux
+  - osx
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository -y ppa:adrozdoff/cmake        ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -qq update                               ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y cmake libmpfr-dev libgomp1 gcc; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository -y ppa:dnadlinger/cmake-precise; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -qq update                                ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y cmake libmpfr-dev              ; fi
 
 compiler:
     - gcc
