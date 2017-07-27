@@ -1,24 +1,29 @@
 language: c
 
-# Default job
+# Default linux jobs
 os: linux
 sudo: required
 dist: trusty
-# Should spawn a linux-gcc job and a linux-clang job
-compiler: 
+compiler:
   - gcc
   - clang
 
-# Aditional testing on OSX with default compiler: should spawn one job
+# Include osx jobs
 matrix:
   include:
     - os: osx
-      env: COMPILER=clang
+      osx_image: xcode8
+      compiler: gcc
+      env:
+        - MATRIX_EVAL="brew install gcc@6 && CC=gcc-6" # install and use gcc
+    - os: osx
+      compiler: clang # use default apple clang
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository -y ppa:adrozdoff/cmake; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -qq update                       ; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y cmake libmpfr-dev     ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx"   ]]; then eval "${MATRIX_EVAL}"                         ; fi
 
 before_script:
   - mkdir sleef.build
