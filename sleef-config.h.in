@@ -1,5 +1,4 @@
-// Configuration of @PROJECT_NAME@
-// Generates header file: @PROJECT_NAME@Config.h
+// Configuration of @PROJECT_NAME@ /////////////////////////////////////////////
 
 #ifndef CONFIG_H
 #define CONFIG_H
@@ -7,7 +6,25 @@
 #define SLEEF_VERSION_MAJOR @SLEEF_VERSION_MAJOR@
 #define SLEEF_VERSION_MINOR @SLEEF_VERSION_MINOR@
 
-#cmakedefine ENABLE_LONG_DOUBLE
-#cmakedefine ENABLE_FLOAT128
+// PLATFORM DETECTION **********************************************************
+
+#define SLEEF_OSTYPE @SLEEF_OSTYPE@
+
+#cmakedefine SLEEF_ARCH_32BIT
+#cmakedefine SLEEF_ARCH_64BIT
+
+// COMPILER DETECTION **********************************************************
+
+#cmakedefine COMPILER_SUPPORTS_FLOAT128
+
+// FEATURE DETECTION ***********************************************************
+
+#cmakedefine COMPILER_SUPPORTS_LONG_DOUBLE
+#cmakedefine COMPILER_SUPPORTS_FLOAT128
+
+#cmakedefine COMPILER_SUPPORTS_AVX
+#cmakedefine COMPILER_SUPPORTS_AVX2
+#cmakedefine COMPILER_SUPPORTS_AVX512F
+#cmakedefine COMPILER_SUPPORTS_FMA4
 
 #endif // CONFIG_H

@@ -1,9 +1,13 @@
-link_directories(${CMAKE_BINARY_DIR}/lib)
-include_directories(${CMAKE_BINARY_DIR}/include)
-
-# This is why a conversation about headers is needed.
 # TODO: Find way to avoid relative includes.
-include_directories(../libm)
+link_directories(${CMAKE_BINARY_DIR}/lib)
+# For sleef.h
+include_directories(${CMAKE_BINARY_DIR}/include)
+# For rename headers
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/../libm/include)
+# For rename.h
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libm)
+
+include(DefineLocations)
 
 set(LIB_SLEEF sleef)
 find_library(LIB_MPFR mpfr)
@@ -13,20 +17,35 @@ set(EXTRA_LIBS m
 # Compile executable 'iut'
 add_executable(${TARGET_IUT} iut.c testerutil.c)
 target_link_libraries(${TARGET_IUT} ${LIB_SLEEF} ${EXTRA_LIBS})
-target_compile_options(${TARGET_IUT}
-  PRIVATE ${FLAGS_WALL} ${FLAGS_STRICTMATH})
+set(IUT_LIST ${TARGET_IUT})
 
-# Compiler executable 'tester'
+# Add vector extension `iut`s
+if(COMPILER_SUPPORTS_SSE2)
+  add_executable(${TARGET_IUTSSE2} iutsimd.c iutsimdmain.c testerutil.c)
+  target_compile_options(${TARGET_IUTSSE2}
+    PUBLIC -msse2)
+  target_compile_definitions(${TARGET_IUTSSE2}
+    PUBLIC ENABLE_SSE2=1)
+  target_link_libraries(${TARGET_IUTSSE2} ${LIB_SLEEF} ${EXTRA_LIBS})
+
+  list(APPEND IUT_LIST ${TARGET_IUTSSE2})
+endif(COMPILER_SUPPORTS_SSE2)
+
+# Compile executable 'tester'
 add_executable(${TARGET_TESTER} tester.c testerutil.c)
-target_link_libraries(${TARGET_TESTER} ${EXTRA_LIBS})
+target_link_libraries(${TARGET_TESTER} ${EXTRA_LIBS} ${LIB_SLEEF})
 target_compile_definitions(${TARGET_TESTER}
   PRIVATE USEMPFR=1)
-target_compile_options(${TARGET_TESTER}
-  PRIVATE ${FLAGS_WALL} ${FLAGS_STRICTMATH} -Wno-unused-result)
+target_compile_options(${TARGET_TESTER} PRIVATE -Wno-unused-result)
 
 # Target 'test-libm' runs the libm tests
 add_custom_target(${TARGET_TEST}
-  COMMAND ./tester ./iut
-  WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-add_dependencies(${TARGET_TEST}
-  ${TARGET_TESTER} ${TARGET_IUT} ${TARGET_LIBSLEEF})
+  COMMAND ${CMAKE_COMMAND}
+    -DTARGET_TESTER="${TARGET_TESTER}"
+    -DIUT_LIST="${IUT_LIST}"
+    -DCMAKE_MODULE_PATH="${CMAKE_MODULE_PATH}"
+    -P ${SLEEF_SCRIPT_PATH}/ExecuteTests.cmake
+  COMMENT "Running tests..."
+  DEPENDS ${TARGET_TESTER} ${IUT_LIST})
+# Tests depends on the library
+add_dependencies(${TARGET_TEST} ${TARGET_LIBSLEEF})

@@ -9,9 +9,6 @@ project(SLEEF
 	VERSION ${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}
 	LANGUAGES C)
 
-message(STATUS "Configuring build for \
-${PROJECT_NAME}-v${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}")
-
 # Sanity check for in-source builds which we do not want to happen
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
   message(FATAL_ERROR "SLEEF does not allow in-source builds.
@@ -25,37 +22,19 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
-# PLATFORM DETECTION
-
-# TODO.
-
-# COMPILER DETECTION
-
-# All variables storing compiler flags should be prefixed with FLAGS_
-set(FLAGS_WALL "-Wall;-Wno-unused;-Wno-attributes")
-
-set(FLAGS_FASTMATH "-ffast-math")
-set(FLAGS_STRICTMATH "-ffp-contract=off")
-set(FLAGS_OPENMP "-fopenmp")
-
-# FEATURE DETECTION
-
-include(CheckCSourceCompiles)
-include(CheckTypeSize)
-
-CHECK_C_SOURCE_COMPILES(
-  "int main(){ __float128 r = 1;}"
-  COMPILER_SUPPORTS_FLOAT128)
-
-CHECK_TYPE_SIZE("long double" LD_SIZE)
-if(LD_SIZE GREATER "9")
-  set(COMPILER_SUPPORTS_LONG_DOUBLE 1)
-endif()
+# Path for finding cmake modules
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
+set(SLEEF_SCRIPT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Scripts CACHE PATH
+  "Path for finding sleef specific cmake scripts")
 
 # sleef-config.h.in passes cmake settings to the source code
+include(Configure.cmake)
 configure_file(
   ${PROJECT_SOURCE_DIR}/sleef-config.h.in
   ${PROJECT_BINARY_DIR}/include/sleef-config.h @ONLY)
+configure_file(
+  ${PROJECT_SOURCE_DIR}/cmake/Modules/DefineLocations.cmake.in
+  ${PROJECT_SOURCE_DIR}/cmake/Modules/DefineLocations.cmake @ONLY)
 
 # We like to have a documented index of all targets in the project. The
 # variables listed below carry the names of the targets defined throughout
@@ -66,13 +45,27 @@ configure_file(
 set(TARGET_LIBSLEEF "sleef")
 # Generates executable files for running the test suite
 # Defined in src/libm-tester/CMakeLists.txt via command add_executable
-set(TARGET_IUT "iut")
 set(TARGET_TESTER "tester")
+set(TARGET_IUT "iut")
+set(TARGET_IUTSSE2 "iutsse2")
 # Runs the test suite
 # Depends on targets: iut, tester
 # Defined in src/libm-tester/CMakeLists.txt via command add_custom_target
 set(TARGET_TEST "test-libm")
 # Generates the helper executable file mkrename needed to write the sleef header
 set(TARGET_MKRENAME "mkrename")
+# Generates the helper executable file mkdisp needed to write the sleef header
+set(TARGET_MKDISP "mkdisp")
 
+# Check subdirectories
 add_subdirectory("src")
+
+if(SLEEF_SHOW_CONFIG)
+  option(SLEEF_SHOW_CONFIG "Show SLEEF configuration status messages." ON)
+  message(STATUS "Configuring build for \
+${PROJECT_NAME}-v${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}")
+  message("** Detected system:: ${CMAKE_SYSTEM}")
+  message("** Detected processor: ${CMAKE_SYSTEM_PROCESSOR}")
+  message("** Detected C compiler: ${CMAKE_C_COMPILER_ID}")
+  message("** Configuring SLEEF for OS type: ${SLEEF_OSTYPE}")
+endif(SLEEF_SHOW_CONFIG)
