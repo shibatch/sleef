@@ -1,4 +1,4 @@
-include(DefineLocations)
+include(${LOCATIONS_FILE})
 
 string(REPLACE " " ";" RENAME_HEADER_LIST  "${RENAME_HEADERS}")
 

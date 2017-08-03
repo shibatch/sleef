@@ -1,4 +1,4 @@
-include(DefineLocations)
+include(${LOCATIONS_FILE})
 
 string(REPLACE " " ";" EXE_IUT_LIST "${IUT_LIST}")
 

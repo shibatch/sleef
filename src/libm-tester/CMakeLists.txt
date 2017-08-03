@@ -7,8 +7,6 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/../libm/include)
 # For rename.h
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libm)
 
-include(DefineLocations)
-
 set(LIB_SLEEF sleef)
 find_library(LIB_MPFR mpfr)
 set(EXTRA_LIBS m
@@ -23,7 +21,7 @@ set(IUT_LIST ${TARGET_IUT})
 if(COMPILER_SUPPORTS_SSE2)
   add_executable(${TARGET_IUTSSE2} iutsimd.c iutsimdmain.c testerutil.c)
   target_compile_options(${TARGET_IUTSSE2}
-    PUBLIC -msse2)
+    PUBLIC ${FLAGS_ENABLE_SSE2})
   target_compile_definitions(${TARGET_IUTSSE2}
     PUBLIC ENABLE_SSE2=1)
   target_link_libraries(${TARGET_IUTSSE2} ${LIB_SLEEF} ${EXTRA_LIBS})
@@ -43,7 +41,7 @@ add_custom_target(${TARGET_TEST}
   COMMAND ${CMAKE_COMMAND}
     -DTARGET_TESTER="${TARGET_TESTER}"
     -DIUT_LIST="${IUT_LIST}"
-    -DCMAKE_MODULE_PATH="${CMAKE_MODULE_PATH}"
+    -DLOCATIONS_FILE="${PROJECT_BINARY_DIR}/DefineLocations.cmake"
     -P ${SLEEF_SCRIPT_PATH}/ExecuteTests.cmake
   COMMENT "Running tests..."
   DEPENDS ${TARGET_TESTER} ${IUT_LIST})

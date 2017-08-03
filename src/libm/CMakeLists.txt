@@ -21,7 +21,7 @@ if(COMPILER_SUPPORTS_SSE2)
   set(OBJECT_SSE2 "sleefsse2")
 
   add_library(${OBJECT_SSE2} OBJECT ${SIMD_SOURCES} ${HEADER_SSE2})
-  target_compile_options(${OBJECT_SSE2} PRIVATE -msse2)
+  target_compile_options(${OBJECT_SSE2} PRIVATE ${FLAGS_ENABLE_SSE2} -fPIC)
   target_compile_definitions(${OBJECT_SSE2} PRIVATE ENABLE_SSE2=1 DORENAME=1)
   target_compile_features(${OBJECT_SSE2} PRIVATE c_variadic_macros)
 
@@ -34,7 +34,7 @@ add_custom_command(
   OUTPUT ${RENAME_HEADERS}
   COMMAND ${CMAKE_COMMAND}
     -DRENAME_HEADERS="${RENAME_HEADERS}"
-    -DCMAKE_MODULE_PATH="${CMAKE_MODULE_PATH}"
+    -DLOCATIONS_FILE="${PROJECT_BINARY_DIR}/DefineLocations.cmake"
     -P ${SLEEF_SCRIPT_PATH}/GenerateRenameHeader.cmake
   DEPENDS
     ${TARGET_MKRENAME})
@@ -46,7 +46,7 @@ add_custom_command(
   COMMAND ${CMAKE_COMMAND}
     -DTARGET_MKRENAME="${TARGET_MKRENAME}"
     -DSLEEF_ARCH_X86="${SLEEF_ARCH_X86}"
-    -DCMAKE_MODULE_PATH="${CMAKE_MODULE_PATH}"
+    -DLOCATIONS_FILE="${PROJECT_BINARY_DIR}/DefineLocations.cmake"
     -P ${SLEEF_SCRIPT_PATH}/GenerateSleefHeader.cmake
   DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/sleeflibm.h.org

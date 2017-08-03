@@ -1,4 +1,4 @@
-include(DefineLocations)
+include(${LOCATIONS_FILE})
 
 function(run_mkrename string_params result_variable)
   # Convert string in param variable to list to pass to the executable
