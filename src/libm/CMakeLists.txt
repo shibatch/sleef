@@ -23,6 +23,7 @@ if(COMPILER_SUPPORTS_SSE2)
   add_library(${OBJECT_SSE2} OBJECT ${SIMD_SOURCES} ${HEADER_SSE2})
   target_compile_options(${OBJECT_SSE2} PRIVATE -msse2)
   target_compile_definitions(${OBJECT_SSE2} PRIVATE ENABLE_SSE2=1 DORENAME=1)
+  target_compile_features(${OBJECT_SSE2} PRIVATE c_variadic_macros)
 
   list(APPEND TARGET_OBJECTS ${OBJECT_SSE2})
   list(APPEND RENAME_HEADERS ${HEADER_SSE2})
