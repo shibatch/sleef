@@ -37,7 +37,7 @@ endif()
 # All variables storing compiler flags should be prefixed with FLAGS_
 
 if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
-  set(FLAGS_WALL "-Wall -Wno-unused -Wno-attributes -Wno-shift-negative-value")
+  set(FLAGS_WALL "-Wall -Wno-unused -Wno-attributes")
   set(FLAGS_FASTMATH "-ffast-math")
   set(FLAGS_STRICTMATH "-ffp-contract=off")
   set(FLAGS_OPENMP "-fopenmp")
@@ -55,6 +55,12 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "MSVC")
   # TODO
 endif()
 
+
+# Warning flags tuning
+# Do we need this for clang; currently get a unknown warning option on Ubuntu
+#if(CMAKE_C_COMPILER_ID MATCHES "Clang")
+  #set(FLAGS_WALL "${FLAGS_WALL} -Wno-shift-negative-value")
+#endif()
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${FLAGS_WALL}")
 
 # Always compile sleef with -ffp-contract and log at configuration time
@@ -67,8 +73,11 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${FLAGS_STRICTMATH}")
 # With -fPIC
 check_c_compiler_flag("-fPIC" WITH_FPIC)
 if (WITH_FPIC)
- set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
 endif (WITH_FPIC)
+# TODO: find out why cmake will fail this test with clang on Ubuntu
+# Until then, always use -fPIC
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
 
 # FEATURE DETECTION
 
