@@ -19,6 +19,7 @@ if(OPTION_SHOW_CONFIG)
 endif(OPTION_SHOW_CONFIG)
 
 # Generate header for x86
+# TODO: Change condition of generation to use a COMPILER_SUPPORTS_* flag
 if(SLEEF_ARCH_X86)
   list(APPEND MKRENAME_PARAMS_LIST
     "2 4 __m128d __m128 __m128i __m128i __SSE2__")
