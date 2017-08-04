@@ -19,6 +19,7 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
   set(FLAGS_OPENMP "-fopenmp")
 
   set(FLAGS_ENABLE_SSE2 "-msse2")
+  set(FLAGS_ENABLE_SSE4 "-msse4.1")
 endif()
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${FLAGS_WALL}")
@@ -41,6 +42,16 @@ CHECK_C_SOURCE_COMPILES("
   int main() {
     __m128d r = _mm_mul_pd(_mm_set1_pd(1), _mm_set1_pd(2)); }"
   COMPILER_SUPPORTS_SSE2)
+
+CHECK_C_SOURCE_COMPILES("
+  #if defined(_MSC_VER)
+  #include <intrin.h>
+  #else
+  #include <x86intrin.h>
+  #endif
+  int main() {
+    __m128d r = _mm_floor_sd(_mm_set1_pd(1), _mm_set1_pd(2)); }"
+  COMPILER_SUPPORTS_SSE4)
 
 CHECK_TYPE_SIZE("long double" LD_SIZE)
 if(LD_SIZE GREATER "9")

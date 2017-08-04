@@ -5,6 +5,8 @@ string(REPLACE " " ";" RENAME_HEADER_LIST  "${RENAME_HEADERS}")
 foreach(rename_header ${RENAME_HEADER_LIST})
   if(${rename_header} MATCHES "renamesse2")
     set(params 2 4 sse2)
+  elseif(${rename_header} MATCHES "renamesse4")
+    set(params 2 4 sse4)
   endif()
 
   execute_process(
