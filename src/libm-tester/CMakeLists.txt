@@ -36,6 +36,10 @@ target_compile_definitions(${TARGET_TESTER}
   PRIVATE USEMPFR=1)
 target_compile_options(${TARGET_TESTER} PRIVATE -Wno-unused-result)
 
+# Set C standard requirement (-std=gnu99 for gcc)
+set_target_properties(${TARGET_TESTER} ${IUT_LIST} PROPERTIES
+  C_STANDARD 99)
+
 # Target 'test-libm' runs the libm tests
 add_custom_target(${TARGET_TEST}
   COMMAND ${CMAKE_COMMAND}

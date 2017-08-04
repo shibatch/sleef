@@ -3,12 +3,11 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # Helper executable: generates parts of the sleef header file
 add_executable(${TARGET_MKRENAME} mkrename.c)
-target_compile_features(${TARGET_MKRENAME}
-  PUBLIC c_variadic_macros)
 # Helper executable: dispatcher for the vector extensions
 add_executable(${TARGET_MKDISP} mkdisp.c)
-target_compile_features(${TARGET_MKDISP}
-  PUBLIC c_variadic_macros)
+# Set C standard requirement (-std=gnu99 for gcc)
+set_target_properties(${TARGET_MKRENAME} ${TARGET_MKDISP} PROPERTIES
+  C_STANDARD 99)
 
 set(RENAME_HEADERS "")
 set(TARGET_OBJECTS "")
@@ -21,13 +20,15 @@ if(COMPILER_SUPPORTS_SSE2)
   set(OBJECT_SSE2 "sleefsse2")
 
   add_library(${OBJECT_SSE2} OBJECT ${SIMD_SOURCES} ${HEADER_SSE2})
-  target_compile_options(${OBJECT_SSE2} PRIVATE ${FLAGS_ENABLE_SSE2} -fPIC)
   target_compile_definitions(${OBJECT_SSE2} PRIVATE ENABLE_SSE2=1 DORENAME=1)
-  target_compile_features(${OBJECT_SSE2} PRIVATE c_variadic_macros)
 
   list(APPEND TARGET_OBJECTS ${OBJECT_SSE2})
   list(APPEND RENAME_HEADERS ${HEADER_SSE2})
 endif(COMPILER_SUPPORTS_SSE2)
+
+set_target_properties(${TARGET_OBJECTS} PROPERTIES
+  POSITION_INDEPENDENT_CODE ON   # -fPIC
+  C_STANDARD 99)                 # -std=gnu99
 
 # Generate the rename headers at build time
 add_custom_command(
@@ -74,13 +75,11 @@ endif(COMPILER_SUPPORTS_FLOAT128)
 
 target_compile_definitions(${TARGET_LIBSLEEF}
   PRIVATE DORENAME=1)
-# Selects C99 with standard gnu99 (add -std=gnu99) for gcc
-target_compile_features(${TARGET_LIBSLEEF}
-  PUBLIC c_variadic_macros)
 set_target_properties(${TARGET_LIBSLEEF}
   PROPERTIES
   VERSION ${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}
-  SOVERSION ${SLEEF_SOVERSION})
+  SOVERSION ${SLEEF_SOVERSION}
+  C_STANDARD 99)
 
 # Install libsleef and sleef.h
 install(FILES ${SLEEF_INCLUDE_HEADER}
