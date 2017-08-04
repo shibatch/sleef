@@ -1,4 +1,8 @@
-# Define location paths and where to find stuff
+# This is needed for the individual cmake scripts to gain knowledge about the 
+# tree structure of the project. The scripts are just another instance of cmake
+# which does not inherit any of the variables defined in the instance running 
+# the build. 
+
 set(LOCATION_SOURCE_DIR @CMAKE_CURRENT_SOURCE_DIR@)
 set(LOCATION_BINARY_DIR @CMAKE_CURRENT_BINARY_DIR@)
 
