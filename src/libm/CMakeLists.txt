@@ -36,6 +36,7 @@ add_custom_command(
   COMMAND ${CMAKE_COMMAND}
     -DRENAME_HEADERS="${RENAME_HEADERS}"
     -DLOCATIONS_FILE="${PROJECT_BINARY_DIR}/DefineLocations.cmake"
+    -DTARGET_MKRENAME="${TARGET_MKRENAME}"
     -P ${SLEEF_SCRIPT_PATH}/GenerateRenameHeader.cmake
   DEPENDS
     ${TARGET_MKRENAME})
