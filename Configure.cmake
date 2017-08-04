@@ -6,7 +6,6 @@ include(CheckTypeSize)
 
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86")
   set(SLEEF_ARCH_X86 ON CACHE INTERNAL "True for x86 architecture.")
-  set(COMPILER_SUPPORTS_SSE2 1)
 endif()
 
 # COMPILER DETECTION
@@ -22,11 +21,6 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
   set(FLAGS_ENABLE_SSE2 "-msse2")
 endif()
 
-# Warning flags tuning
-# Do we need this for clang; currently get a unknown warning option on Ubuntu
-#if(CMAKE_C_COMPILER_ID MATCHES "Clang")
-  #set(FLAGS_WALL "${FLAGS_WALL} -Wno-shift-negative-value")
-#endif()
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${FLAGS_WALL}")
 
 # Always compile sleef with -ffp-contract and log at configuration time
@@ -38,11 +32,21 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${FLAGS_STRICTMATH}")
 
 # FEATURE DETECTION
 
+CHECK_C_SOURCE_COMPILES("
+  #if defined(_MSC_VER)
+  #include <intrin.h>
+  #else
+  #include <x86intrin.h>
+  #endif
+  int main() {
+    __m128d r = _mm_mul_pd(_mm_set1_pd(1), _mm_set1_pd(2)); }"
+  COMPILER_SUPPORTS_SSE2)
+
 CHECK_TYPE_SIZE("long double" LD_SIZE)
 if(LD_SIZE GREATER "9")
   set(COMPILER_SUPPORTS_LONG_DOUBLE 1)
 endif()
 
-CHECK_C_SOURCE_COMPILES(
-  "int main(){ __float128 r = 1;}"
+CHECK_C_SOURCE_COMPILES("
+  int main(){ __float128 r = 1;}"
   COMPILER_SUPPORTS_FLOAT128)
