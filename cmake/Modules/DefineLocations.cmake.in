@@ -1,0 +1,16 @@
+# This is needed for the individual cmake scripts to gain knowledge about the 
+# tree structure of the project. The scripts are just another instance of cmake
+# which does not inherit any of the variables defined in the instance running 
+# the build. 
+
+set(LOCATION_SOURCE_DIR @CMAKE_CURRENT_SOURCE_DIR@)
+set(LOCATION_BINARY_DIR @CMAKE_CURRENT_BINARY_DIR@)
+
+set(LOCATION_LIBRARY_DIR @CMAKE_LIBRARY_OUTPUT_DIRECTORY@)
+set(LOCATION_ARCHIVE_DIR @CMAKE_ARCHIVE_OUTPUT_DIRECTORY@)
+set(LOCATION_RUNTIME_DIR @CMAKE_RUNTIME_OUTPUT_DIRECTORY@)
+
+set(SLEEF_SCRIPT_PATH @SLEEF_SCRIPT_PATH@)
+
+# Define options (TODO: if necessary move this in separate .cmake file)
+set(OPTION_SHOW_CONFIG @SLEEF_SHOW_CONFIG@)
