@@ -9,6 +9,8 @@ foreach(rename_header ${RENAME_HEADER_LIST})
     set(params 2 4 sse4)
   elseif(${rename_header} MATCHES "renameavx")
     set(params 4 8 avx)
+  elseif(${rename_header} MATCHES "renameadvsimd")
+    set(params 2 4 advsimd)
   endif()
 
   execute_process(

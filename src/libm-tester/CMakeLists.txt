@@ -49,6 +49,18 @@ if(COMPILER_SUPPORTS_AVX)
   list(APPEND IUT_LIST ${TARGET_IUTAVX})
 endif(COMPILER_SUPPORTS_AVX)
 
+if(COMPILER_SUPPORTS_ADVSIMD)
+  # TODO: Remove relative-ness of the source file paths
+  add_executable(${TARGET_IUTADVSIMD} iutsimd.c iutsimdmain.c testerutil.c ../libm/sleefsimdsp.c ../libm/sleefsimddp.c)
+  target_compile_options(${TARGET_IUTADVSIMD}
+    PRIVATE ${FLAGS_ENABLE_ADVSIMD})
+  target_compile_definitions(${TARGET_IUTADVSIMD}
+    PRIVATE ENABLE_ADVSIMD=1)
+  target_link_libraries(${TARGET_IUTADVSIMD} ${LIB_SLEEF} ${EXTRA_LIBS})
+
+  list(APPEND IUT_LIST ${TARGET_IUTADVSIMD})
+endif(COMPILER_SUPPORTS_ADVSIMD)
+
 # Compile executable 'tester'
 add_executable(${TARGET_TESTER} tester.c testerutil.c)
 target_link_libraries(${TARGET_TESTER} ${EXTRA_LIBS} ${LIB_SLEEF})
