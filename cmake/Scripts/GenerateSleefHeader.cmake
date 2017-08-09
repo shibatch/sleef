@@ -10,26 +10,46 @@ if(OPTION_SHOW_CONFIG)
 endif(OPTION_SHOW_CONFIG)
 
 # Generate header for x86
-  set(run1 2 4 __m128d __m128 __m128i __m128i __SSE2__)
-  set(run2 2 4 __m128d __m128 __m128i __m128i __SSE2__ sse2)
-  set(run3 2 4 __m128d __m128 __m128i __m128i __SSE2__ sse4)
-  set(run4 2 4 __m128d __m128 __m128i __m128i __SSE2__ avx2128)
-  set(run5 4 8 __m256d __m256 __m128i "struct { __m128i x, y\; }" __AVX__)
-  set(run6 4 8 __m256d __m256 __m128i "struct { __m128i x, y\; }" __AVX__ avx)
-  set(run7 4 8 __m256d __m256 __m128i "struct { __m128i x, y\; }" __AVX__ fma4)
-  set(run8 4 8 __m256d __m256 __m128i __m256i __AVX__ avx2)
-  set(run9 8 16 __m512d __m512 __m256i __m512i __AVX512F__ avx512f)
+  set(mkrename_sse_
+    2 4 __m128d __m128 __m128i __m128i __SSE2__)
+  set(mkrename_sse2
+    2 4 __m128d __m128 __m128i __m128i __SSE2__ sse2)
+  set(mkrename_sse4
+    2 4 __m128d __m128 __m128i __m128i __SSE2__ sse4)
+  set(mkrename_avx2128
+    2 4 __m128d __m128 __m128i __m128i __SSE2__ avx2128)
+  set(mkrename_avx_
+    4 8 __m256d __m256 __m128i "struct { __m128i x, y\; }" __AVX__)
+  set(mkrename_avx
+    4 8 __m256d __m256 __m128i "struct { __m128i x, y\; }" __AVX__ avx)
+  set(mkrename_fma4
+    4 8 __m256d __m256 __m128i "struct { __m128i x, y\; }" __AVX__ fma4)
+  set(mkrename_avx2
+    4 8 __m256d __m256 __m128i __m256i __AVX__ avx2)
+  set(mkrename_avx512f
+    8 16 __m512d __m512 __m256i __m512i __AVX512F__ avx512f)
 
 # TODO: Change condition of generation to use a COMPILER_SUPPORTS_* flag
 if(SLEEF_ARCH_X86)
-  list(APPEND PARAMS_POINTER_LIST run1 run2 run3 run4 run5 run6 run7 run8 run9)
+  list(APPEND PARAMS_POINTER_LIST
+    mkrename_sse_
+    mkrename_sse2
+    mkrename_sse4
+    mkrename_avx2128
+    mkrename_avx_
+    mkrename_avx
+    mkrename_fma4
+    mkrename_avx2
+    mkrename_avx512f)
 endif()
 
 foreach(params_set ${PARAMS_POINTER_LIST})
   execute_process(
+      # Note: <string> params_set is a name pointing to a list of parameters
+      # Double-derefencing params_set returns a <list> value (set of params)
       COMMAND ${LOCATION_RUNTIME_DIR}/${TARGET_MKRENAME} ${${params_set}}
       OUTPUT_VARIABLE _TMP_OUTPUT)
-    file(APPEND ${SLEEF_GEN_HEADER} "${_TMP_OUTPUT}\n")
+    file(APPEND ${SLEEF_GEN_HEADER} "${_TMP_OUTPUT}")
 
   if(OPTION_SHOW_CONFIG)
     message(STATUS "Running mkrename ${${params_set}}")

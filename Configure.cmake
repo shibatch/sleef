@@ -1,5 +1,6 @@
 include(CheckCCompilerFlag)
 include(CheckCSourceCompiles)
+include(CheckCSourceRuns)
 include(CheckTypeSize)
 
 # PLATFORM DETECTION
@@ -57,15 +58,22 @@ CHECK_C_SOURCE_COMPILES("
   COMPILER_SUPPORTS_SSE4)
 
 set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX})
-CHECK_C_SOURCE_COMPILES("
+CHECK_C_SOURCE_RUNS("
+  #include <stdio.h>
   #if defined(_MSC_VER)
   #include <intrin.h>
   #else
   #include <x86intrin.h>
   #endif
   int main() {
-    __m256d r = _mm256_add_pd(_mm256_set1_pd(1), _mm256_set1_pd(2));
+    __m256d v = _mm256_set1_pd(1);
+    double x[4];
+    _mm256_storeu_pd(x, v);
+    printf(\"%g%g%g%g\", x[0], x[1], x[2], x[3]);
   }" COMPILER_SUPPORTS_AVX)
+
+# Reset required flags
+set(CMAKE_REQUIRED_FLAGS)
 
 CHECK_TYPE_SIZE("long double" LD_SIZE)
 if(LD_SIZE GREATER "9")
