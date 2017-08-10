@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
-## v[3.0.1] - 2017-07-19
+## v[3.1.0] - 2017-07-19
 ### Added:
 - AArch64 support
 - Support for 32-bit x86, Cygwin, etc.
@@ -32,7 +32,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed:
 ### Fixed:
 
-## v[3.11.0] - 2017-81-30
+## v[2.1.2] - 2017-01-30
 ### Added:
 ### Changed:
 - Relicensed to Boost Software License Version 1.0

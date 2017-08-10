@@ -62,11 +62,23 @@ done
 
 # Add entry
 entry="$(cat tmpfile)" && rm tmpfile
-awk -ventry="$entry" '/^#.*Unreleased/{print;print entry;next}1' CHANGELOG.md > CHANGELOG.md.tmp
+awk -ventry="$entry" '/^#.*Unreleased/{print;print entry;next}1' \
+  CHANGELOG.md > CHANGELOG.md.tmp
 mv CHANGELOG.md.tmp CHANGELOG.md
 
-# Push tags to git
+# Create git commit and add git tags
 git add CHANGELOG.md VERSION.txt
-git commit -m "Version bump to $VERSION_BUMP"
+git commit -q -m "Version bump to $VERSION_BUMP"
 git tag -a -m "Tagging version $VERSION_BUMP" "v$VERSION_BUMP"
-git push origin --tags
+echo "-- New version bump commit ready to be pushed:
+-------------------------------------------------------------------------------
+$(git show --oneline --stat)
+-------------------------------------------------------------------------------"
+echo "** To drop the commit, consider running 'git reset (--hard) HEAD^'"
+echo "** Note: --hard drops ALL the changes in the current directory."
+
+# Prompt user before executing the push
+read -p ">> Do you want to push the new commit upstream? Would run command:
+>> $ git push origin --tags (Y|N): " INPUT_ANS
+[[ "$INPUT_ANS" == "Y" ]] && git push origin --tags \
+			  || { echo "-- Aborting..." && exit 1; }
