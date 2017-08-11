@@ -27,6 +27,28 @@ if(COMPILER_SUPPORTS_SSE2)
   list(APPEND IUT_LIST ${TARGET_IUTSSE2})
 endif(COMPILER_SUPPORTS_SSE2)
 
+if(COMPILER_SUPPORTS_SSE4)
+  add_executable(${TARGET_IUTSSE4} iutsimd.c iutsimdmain.c testerutil.c)
+  target_compile_options(${TARGET_IUTSSE4}
+    PRIVATE ${FLAGS_ENABLE_SSE4})
+  target_compile_definitions(${TARGET_IUTSSE4}
+    PRIVATE ENABLE_SSE4=1)
+  target_link_libraries(${TARGET_IUTSSE4} ${LIB_SLEEF} ${EXTRA_LIBS})
+
+  list(APPEND IUT_LIST ${TARGET_IUTSSE4})
+endif(COMPILER_SUPPORTS_SSE4)
+
+if(COMPILER_SUPPORTS_AVX)
+  add_executable(${TARGET_IUTAVX} iutsimd.c iutsimdmain.c testerutil.c)
+  target_compile_options(${TARGET_IUTAVX}
+    PRIVATE ${FLAGS_ENABLE_AVX})
+  target_compile_definitions(${TARGET_IUTAVX}
+    PRIVATE ENABLE_AVX=1)
+  target_link_libraries(${TARGET_IUTAVX} ${LIB_SLEEF} ${EXTRA_LIBS})
+
+  list(APPEND IUT_LIST ${TARGET_IUTAVX})
+endif(COMPILER_SUPPORTS_AVX)
+
 # Compile executable 'tester'
 add_executable(${TARGET_TESTER} tester.c testerutil.c)
 target_link_libraries(${TARGET_TESTER} ${EXTRA_LIBS} ${LIB_SLEEF})

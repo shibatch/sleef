@@ -48,6 +48,8 @@ set(TARGET_LIBSLEEF "sleef")
 set(TARGET_TESTER "tester")
 set(TARGET_IUT "iut")
 set(TARGET_IUTSSE2 "iutsse2")
+set(TARGET_IUTSSE4 "iutsse4")
+set(TARGET_IUTAVX "iutavx")
 # Runs the test suite
 # Depends on targets: iut, tester
 # Defined in src/libm-tester/CMakeLists.txt via command add_custom_target
