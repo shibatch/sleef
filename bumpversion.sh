@@ -1,3 +1,5 @@
+# Copyright @ 2017 Arm Limited
+
 #!/bin/bash
 
 # Follows the Semantic Versioning convention
