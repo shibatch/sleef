@@ -100,6 +100,7 @@ add_custom_target(headers ALL DEPENDS ${SLEEF_INCLUDE_HEADER} ${RENAME_HEADERS})
 add_library(${TARGET_LIBSLEEF} SHARED sleefdp.c sleefsp.c)
 add_dependencies(${TARGET_LIBSLEEF} headers)
 
+# Add the object files as sources to the main library via cmake conditional generator expressions
 target_sources(${TARGET_LIBSLEEF} PRIVATE $<$<BOOL:${COMPILER_SUPPORTS_SSE2}>:$<TARGET_OBJECTS:${OBJECT_SSE2}>>)
 target_sources(${TARGET_LIBSLEEF} PRIVATE $<$<BOOL:${COMPILER_SUPPORTS_SSE4}>:$<TARGET_OBJECTS:${OBJECT_SSE4}>>)
 target_sources(${TARGET_LIBSLEEF} PRIVATE $<$<BOOL:${COMPILER_SUPPORTS_AVX}>:$<TARGET_OBJECTS:${OBJECT_AVX}>>)
