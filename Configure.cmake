@@ -27,6 +27,7 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
   set(FLAGS_ENABLE_AVX "-mavx")
   set(FLAGS_ENABLE_FMA4 "-mfma4")
   set(FLAGS_ENABLE_AVX2 "-mavx2;-mfma")
+  set(FLAGS_ENABLE_AVX512F "-mavx512f")
 
   set(FLAGS_ENABLE_ADVSIMD "-march=armv8-a+simd")
 endif()
