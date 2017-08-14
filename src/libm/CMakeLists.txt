@@ -15,6 +15,18 @@ set(TARGET_OBJECTS "")
 # Single precision and double precision
 set(SIMD_SOURCES sleefsimdsp.c sleefsimddp.c)
 
+if(COMPILER_SUPPORTS_ADVSIMD)
+  set(HEADER_ADVSIMD ${CMAKE_CURRENT_BINARY_DIR}/include/renameadvsimd.h)
+  set(OBJECT_ADVSIMD "sleefadvsimd")
+
+  add_library(${OBJECT_ADVSIMD} OBJECT ${SIMD_SOURCES} ${HEADER_ADVSIMD})
+  target_compile_definitions(${OBJECT_ADVSIMD} PRIVATE ENABLE_ADVSIMD=1 DORENAME=1)
+  target_compile_options(${OBJECT_ADVSIMD} PRIVATE ${FLAGS_ENABLE_ADVSIMD})
+
+  list(APPEND TARGET_OBJECTS ${OBJECT_ADVSIMD})
+  list(APPEND RENAME_HEADERS ${HEADER_ADVSIMD})
+endif(COMPILER_SUPPORTS_ADVSIMD)
+
 if(COMPILER_SUPPORTS_SSE2)
   set(HEADER_SSE2 ${CMAKE_CURRENT_BINARY_DIR}/include/renamesse2.h)
   set(OBJECT_SSE2 "sleefsse2")
@@ -73,6 +85,7 @@ add_custom_command(
   COMMAND ${CMAKE_COMMAND}
     -DTARGET_MKRENAME="${TARGET_MKRENAME}"
     -DSLEEF_ARCH_X86="${SLEEF_ARCH_X86}"
+    -DSLEEF_ARCH_AARCH64="${SLEEF_ARCH_AARCH64}"
     -DLOCATIONS_FILE="${PROJECT_BINARY_DIR}/DefineLocations.cmake"
     -P ${SLEEF_SCRIPT_PATH}/GenerateSleefHeader.cmake
   DEPENDS
@@ -84,12 +97,14 @@ add_custom_command(
 add_custom_target(headers ALL DEPENDS ${SLEEF_INCLUDE_HEADER} ${RENAME_HEADERS})
 
 # Build main library
-add_library(${TARGET_LIBSLEEF}
-  SHARED sleefdp.c sleefsp.c
-  $<TARGET_OBJECTS:${OBJECT_SSE2}>
-  $<TARGET_OBJECTS:${OBJECT_SSE4}>
-  $<TARGET_OBJECTS:${OBJECT_AVX}>)
+add_library(${TARGET_LIBSLEEF} SHARED sleefdp.c sleefsp.c)
 add_dependencies(${TARGET_LIBSLEEF} headers)
+
+# Add the object files as sources to the main library via cmake conditional generator expressions
+target_sources(${TARGET_LIBSLEEF} PRIVATE $<$<BOOL:${COMPILER_SUPPORTS_SSE2}>:$<TARGET_OBJECTS:${OBJECT_SSE2}>>)
+target_sources(${TARGET_LIBSLEEF} PRIVATE $<$<BOOL:${COMPILER_SUPPORTS_SSE4}>:$<TARGET_OBJECTS:${OBJECT_SSE4}>>)
+target_sources(${TARGET_LIBSLEEF} PRIVATE $<$<BOOL:${COMPILER_SUPPORTS_AVX}>:$<TARGET_OBJECTS:${OBJECT_AVX}>>)
+target_sources(${TARGET_LIBSLEEF} PRIVATE $<$<BOOL:${COMPILER_SUPPORTS_ADVSIMD}>:$<TARGET_OBJECTS:${OBJECT_ADVSIMD}>>)
 
 if(COMPILER_SUPPORTS_LONG_DOUBLE)
   target_sources(${TARGET_LIBSLEEF} PRIVATE sleefld.c)
