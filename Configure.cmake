@@ -105,8 +105,12 @@ CHECK_C_SOURCE_COMPILES("
 #else
 #include <x86intrin.h>
 #endif
+void f(void *p) {
+  _mm512_loadu_si512(p);
+}
 int main() {
-  __m512d r = _mm512_add_pd(_mm512_set1_pd(1), _mm512_set1_pd(2));
+  __m512i a = _mm512_set1_epi32(1);
+  __m512i r = _mm512_andnot_si512(a, a);
 }" COMPILER_SUPPORTS_AVX512F)
 
 # Reset used flags
