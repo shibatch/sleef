@@ -43,6 +43,9 @@ configure_file(
 # Generates object file (shared library) `libsleef`
 # Defined in src/libm/CMakeLists.txt via command add_library
 set(TARGET_LIBSLEEF "sleef")
+# Generates the sleef.h headers and all the rename headers
+# Defined in src/libm/CMakeLists.txt via custom commands and a custom target
+set(TARGET_HEADERS "headers")
 # Generates executable files for running the test suite
 # Defined in src/libm-tester/CMakeLists.txt via command add_executable
 set(TARGET_TESTER "tester")

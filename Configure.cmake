@@ -2,6 +2,14 @@ include(CheckCCompilerFlag)
 include(CheckCSourceCompiles)
 include(CheckTypeSize)
 
+# The library currently supports the following SIMD architectures
+set(SLEEF_SUPPORTED_EXTENSIONS
+  SSE2 SSE4 AVX FMA4 AVX2 AVX2128 AVX512F # x86
+  ADVSIMD				  # Aarch64
+  NEON					  # Aarch32
+  CACHE STRING "List of SIMD architectures supported by libsleef."
+  )
+
 # PLATFORM DETECTION
 
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86")
@@ -27,6 +35,7 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
   set(FLAGS_ENABLE_AVX "-mavx")
   set(FLAGS_ENABLE_FMA4 "-mfma4")
   set(FLAGS_ENABLE_AVX2 "-mavx2;-mfma")
+  set(FLAGS_ENABLE_AVX2128 "-mavx2;-mfma")
   set(FLAGS_ENABLE_AVX512F "-mavx512f")
 
   set(FLAGS_ENABLE_ADVSIMD "-march=armv8-a+simd")
@@ -43,6 +52,17 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${FLAGS_STRICTMATH}")
 
 # FEATURE DETECTION
 
+CHECK_TYPE_SIZE("long double" LD_SIZE)
+if(LD_SIZE GREATER "9")
+  set(COMPILER_SUPPORTS_LONG_DOUBLE 1)
+endif()
+
+CHECK_C_SOURCE_COMPILES("
+  int main() { __float128 r = 1;
+  }" COMPILER_SUPPORTS_FLOAT128)
+
+# Detect if sleef supported architectures are also supported by the compiler
+
 set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_SSE2})
 CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
@@ -51,8 +71,8 @@ CHECK_C_SOURCE_COMPILES("
   #include <x86intrin.h>
   #endif
   int main() {
-    __m128d r = _mm_mul_pd(_mm_set1_pd(1), _mm_set1_pd(2)); }"
-  COMPILER_SUPPORTS_SSE2)
+    __m128d r = _mm_mul_pd(_mm_set1_pd(1), _mm_set1_pd(2));
+  }" COMPILER_SUPPORTS_SSE2)
 
 set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_SSE4})
 CHECK_C_SOURCE_COMPILES("
@@ -62,8 +82,8 @@ CHECK_C_SOURCE_COMPILES("
   #include <x86intrin.h>
   #endif
   int main() {
-    __m128d r = _mm_floor_sd(_mm_set1_pd(1), _mm_set1_pd(2)); }"
-  COMPILER_SUPPORTS_SSE4)
+    __m128d r = _mm_floor_sd(_mm_set1_pd(1), _mm_set1_pd(2));
+  }" COMPILER_SUPPORTS_SSE4)
 
 set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX})
 CHECK_C_SOURCE_COMPILES("
@@ -78,49 +98,46 @@ CHECK_C_SOURCE_COMPILES("
 
 set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_FMA4})
 CHECK_C_SOURCE_COMPILES("
-#if defined(_MSC_VER)
-#include <intrin.h>
-#else
-#include <x86intrin.h>
-#endif
-int main() {
-  __m256d r = _mm256_macc_pd(_mm256_set1_pd(1), _mm256_set1_pd(2), _mm256_set1_pd(3));
-}" COMPILER_SUPPORTS_FMA4)
+  #if defined(_MSC_VER)
+  #include <intrin.h>
+  #else
+  #include <x86intrin.h>
+  #endif
+  int main() {
+    __m256d r = _mm256_macc_pd(_mm256_set1_pd(1), _mm256_set1_pd(2), _mm256_set1_pd(3));
+  }" COMPILER_SUPPORTS_FMA4)
 
 set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX2})
 CHECK_C_SOURCE_COMPILES("
-#if defined(_MSC_VER)
-#include <intrin.h>
-#else
-#include <x86intrin.h>
-#endif
-int main() {
-  __m256i r = _mm256_abs_epi32(_mm256_set1_epi32(1));
-}" COMPILER_SUPPORTS_AVX2)
+  #if defined(_MSC_VER)
+  #include <intrin.h>
+  #else
+  #include <x86intrin.h>
+  #endif
+  int main() {
+    __m256i r = _mm256_abs_epi32(_mm256_set1_epi32(1));
+  }" COMPILER_SUPPORTS_AVX2)
 
 set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX512F})
 CHECK_C_SOURCE_COMPILES("
-#if defined(_MSC_VER)
-#include <intrin.h>
-#else
-#include <x86intrin.h>
-#endif
-void f(void *p) {
-  _mm512_loadu_si512(p);
-}
-int main() {
-  __m512i a = _mm512_set1_epi32(1);
-  __m512i r = _mm512_andnot_si512(a, a);
-}" COMPILER_SUPPORTS_AVX512F)
+  #if defined(_MSC_VER)
+  #include <intrin.h>
+  #else
+  #include <x86intrin.h>
+  #endif
+  void f(void *p) {
+    __mm_loadu_si512(p);
+  }
+  int main() {
+    __m512i a = _mm512_set1_epi32(1);
+    __m512i r = _mm512_andnot_si512(a, a);
+  }" COMPILER_SUPPORTS_AVX512F)
+
+# AVX2 implies AVX2128
+if(COMPILER_SUPPORTS_AVX2)
+  set(COMPILER_SUPPORTS_AVX2128 1)
+endif()
 
 # Reset used flags
 set(CMAKE_REQUIRED_FLAGS)
 
-CHECK_TYPE_SIZE("long double" LD_SIZE)
-if(LD_SIZE GREATER "9")
-  set(COMPILER_SUPPORTS_LONG_DOUBLE 1)
-endif()
-
-CHECK_C_SOURCE_COMPILES("
-  int main(){ __float128 r = 1;}"
-  COMPILER_SUPPORTS_FLOAT128)
