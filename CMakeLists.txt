@@ -50,6 +50,10 @@ set(TARGET_IUT "iut")
 set(TARGET_IUTSSE2 "iutsse2")
 set(TARGET_IUTSSE4 "iutsse4")
 set(TARGET_IUTAVX "iutavx")
+set(TARGET_IUTFMA4 "iutfma4")
+set(TARGET_IUTAVX2 "iutavx2")
+set(TARGET_IUTAVX2128 "iutavx2128")
+set(TARGET_IUTAVX512F "iutavx512f")
 set(TARGET_IUTADVSIMD "iutadvsimd")
 # Runs the test suite
 # Depends on targets: iut, tester
