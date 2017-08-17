@@ -20,6 +20,12 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
   set(COMPILER_SUPPORTS_ADVSIMD 1)
 endif()
 
+# Enable building of the GNU ABI version for x86 and aarch64
+
+if(SLEEF_ARCH_X86 OR SLEEF_ARCH_AARCH64)
+  set(SLEEF_ENABLE_GNUABI ON CACHE INTERNAL "Build GNU ABI compatible version.")
+endif()
+
 # COMPILER DETECTION
 
 # All variables storing compiler flags should be prefixed with FLAGS_

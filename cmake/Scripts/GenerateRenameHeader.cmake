@@ -1,8 +1,9 @@
 include(${LOCATIONS_FILE})
 
 string(REPLACE " " ";" RENAME_HEADER_LIST  "${RENAME_HEADERS}")
+string(REPLACE " " ";" RENAME_HEADER_GNUABI_LIST  "${RENAME_HEADERS_GNUABI}")
 
-foreach(rename_header ${RENAME_HEADER_LIST})
+foreach(rename_header ${RENAME_HEADER_LIST} ${RENAME_HEADER_GNUABI_LIST})
   if(${rename_header} MATCHES "renamesse2.h")
     set(params 2 4 sse2)
   elseif(${rename_header} MATCHES "renamesse4.h")
@@ -19,10 +20,25 @@ foreach(rename_header ${RENAME_HEADER_LIST})
     set(params 8 16 avx512f)
   elseif(${rename_header} MATCHES "renameadvsimd.h")
     set(params 2 4 advsimd)
+  elseif(${rename_header} MATCHES "renamesse2_gnuabi.h")
+    set(params sse2 b 2 4 _mm128d _mm128 _mm128i _mm128i '__SSE2__')
+  elseif(${rename_header} MATCHES "renameavx_gnuabi.h")
+    set(params avx c 4 8 __m256d __m256 __m128i 'struct { __m128i x, y; }' __AVX__)
+  elseif(${rename_header} MATCHES "renameavx2_gnuabi.h")
+    set(params avx2 d 4 8 __m256d __m256 __m128i __m256i __AVX2__)
+  elseif(${rename_header} MATCHES "renameavx512f_gnuabi.h")
+    set(params avx512f e 8 16 __m512d __m512 __m256i __m512i __AVX512F__)
+  elseif(${rename_header} MATCHES "renameadvsimd_gnuabi.h")
+    set(params advsimd n 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON)
+  endif()
+
+  set(MKRENAME_EXE ${TARGET_MKRENAME})
+  if(${rename_header} MATCHES "gnuabi.h")
+    set(MKRENAME_EXE ${TARGET_MKRENAME_GNUABI})
   endif()
 
   execute_process(
-    COMMAND ${LOCATION_RUNTIME_DIR}/${TARGET_MKRENAME} ${params}
+    COMMAND ${LOCATION_RUNTIME_DIR}/${MKRENAME_EXE} ${params}
     OUTPUT_VARIABLE MKRENAME_OUTPUT)
   file(WRITE ${rename_header} "${MKRENAME_OUTPUT}")
 

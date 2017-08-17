@@ -43,6 +43,7 @@ configure_file(
 # Generates object file (shared library) `libsleef`
 # Defined in src/libm/CMakeLists.txt via command add_library
 set(TARGET_LIBSLEEF "sleef")
+set(TARGET_LIBSLEEFGNUABI "sleefgnuabi")
 # Generates the sleef.h headers and all the rename headers
 # Defined in src/libm/CMakeLists.txt via custom commands and a custom target
 set(TARGET_HEADERS "headers")
@@ -64,6 +65,7 @@ set(TARGET_IUTADVSIMD "iutadvsimd")
 set(TARGET_TEST "test-libm")
 # Generates the helper executable file mkrename needed to write the sleef header
 set(TARGET_MKRENAME "mkrename")
+set(TARGET_MKRENAME_GNUABI "mkrename_gnuabi")
 # Generates the helper executable file mkdisp needed to write the sleef header
 set(TARGET_MKDISP "mkdisp")
 
