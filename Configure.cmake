@@ -71,8 +71,8 @@ CHECK_C_SOURCE_COMPILES("
   #include <x86intrin.h>
   #endif
   int main() {
-    __m128d r = _mm_mul_pd(_mm_set1_pd(1), _mm_set1_pd(2));
-  }" COMPILER_SUPPORTS_SSE2)
+    __m128d r = _mm_mul_pd(_mm_set1_pd(1), _mm_set1_pd(2)); }"
+  COMPILER_SUPPORTS_SSE2)
 
 set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_SSE4})
 CHECK_C_SOURCE_COMPILES("
@@ -82,8 +82,8 @@ CHECK_C_SOURCE_COMPILES("
   #include <x86intrin.h>
   #endif
   int main() {
-    __m128d r = _mm_floor_sd(_mm_set1_pd(1), _mm_set1_pd(2));
-  }" COMPILER_SUPPORTS_SSE4)
+    __m128d r = _mm_floor_sd(_mm_set1_pd(1), _mm_set1_pd(2)); }"
+  COMPILER_SUPPORTS_SSE4)
 
 set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX})
 CHECK_C_SOURCE_COMPILES("
@@ -104,8 +104,8 @@ CHECK_C_SOURCE_COMPILES("
   #include <x86intrin.h>
   #endif
   int main() {
-    __m256d r = _mm256_macc_pd(_mm256_set1_pd(1), _mm256_set1_pd(2), _mm256_set1_pd(3));
-  }" COMPILER_SUPPORTS_FMA4)
+    __m256d r = _mm256_macc_pd(_mm256_set1_pd(1), _mm256_set1_pd(2), _mm256_set1_pd(3)); }"
+  COMPILER_SUPPORTS_FMA4)
 
 set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX2})
 CHECK_C_SOURCE_COMPILES("
@@ -115,8 +115,8 @@ CHECK_C_SOURCE_COMPILES("
   #include <x86intrin.h>
   #endif
   int main() {
-    __m256i r = _mm256_abs_epi32(_mm256_set1_epi32(1));
-  }" COMPILER_SUPPORTS_AVX2)
+    __m256i r = _mm256_abs_epi32(_mm256_set1_epi32(1)); }"
+  COMPILER_SUPPORTS_AVX2)
 
 set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX512F})
 CHECK_C_SOURCE_COMPILES("
@@ -130,8 +130,8 @@ CHECK_C_SOURCE_COMPILES("
   }
   int main() {
     __m512i a = _mm512_set1_epi32(1);
-    __m512i r = _mm512_andnot_si512(a, a);
-  }" COMPILER_SUPPORTS_AVX512F)
+    __m512i r = _mm512_andnot_si512(a, a); }"
+  COMPILER_SUPPORTS_AVX512F)
 
 # AVX2 implies AVX2128
 if(COMPILER_SUPPORTS_AVX2)

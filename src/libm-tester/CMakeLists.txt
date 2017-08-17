@@ -7,8 +7,7 @@ include_directories(${CMAKE_BINARY_DIR}/src/libm/include) # rename headers
 
 set(LIB_SLEEF sleef)
 find_library(LIB_MPFR mpfr)
-set(EXTRA_LIBS
-  m
+set(EXTRA_LIBS m
   ${LIB_MPFR})
 
 # Compile executable 'iut'
@@ -33,11 +32,13 @@ endmacro(test_extension)
 set(IUT_SRC iutsimd.c iutsimdmain.c testerutil)
 
 foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
+  # TODO: remove  need for special case iutadvsimd
+  # See: https://github.com/shibatch/sleef/issues/56
   if(SIMD STREQUAL "ADVSIMD")
     set(IUT_SRC ${IUT_SRC} ../libm/sleefsimddp.c ../libm/sleefsimdsp.c)
     test_extension(${SIMD})
     set(IUT_SRC iutsimd.c iutsimdmain.c testerutil)
-    break()
+    continue()
   endif()
 
   test_extension(${SIMD})
