@@ -15,6 +15,8 @@ add_executable(${TARGET_IUT} iut.c testerutil.c)
 target_link_libraries(${TARGET_IUT} ${LIB_SLEEF} ${EXTRA_LIBS})
 set(IUT_LIST ${TARGET_IUT})
 
+set(IUT_SRC iutsimd.c iutsimdmain.c testerutil)
+
 # Add vector extension `iut`s
 macro(test_extension SIMD)
   if(COMPILER_SUPPORTS_${SIMD})
@@ -29,18 +31,7 @@ macro(test_extension SIMD)
   endif(COMPILER_SUPPORTS_${SIMD})
 endmacro(test_extension)
 
-set(IUT_SRC iutsimd.c iutsimdmain.c testerutil)
-
 foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
-  # TODO: remove  need for special case iutadvsimd
-  # See: https://github.com/shibatch/sleef/issues/56
-  if(SIMD STREQUAL "ADVSIMD")
-    set(IUT_SRC ${IUT_SRC} ../libm/sleefsimddp.c ../libm/sleefsimdsp.c)
-    test_extension(${SIMD})
-    set(IUT_SRC iutsimd.c iutsimdmain.c testerutil)
-    continue()
-  endif()
-
   test_extension(${SIMD})
 endforeach()
 
