@@ -29,7 +29,7 @@ endif(OPTION_SHOW_CONFIG)
   set(mkrename_avx512f
     8 16 __m512d __m512 __m256i __m512i __AVX512F__ avx512f)
   set(mkrename_advsimd
-    2 4 float64x2_t float32x4_t int32x2_t int32x4_t _ARM_NEON__ advsimd)
+    2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON advsimd)
 
 # TODO: Change condition of generation to use a COMPILER_SUPPORTS_* flag
 if(SLEEF_ARCH_X86)
