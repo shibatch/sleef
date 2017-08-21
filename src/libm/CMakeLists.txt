@@ -9,111 +9,65 @@ add_executable(${TARGET_MKDISP} mkdisp.c)
 set_target_properties(${TARGET_MKRENAME} ${TARGET_MKDISP} PROPERTIES
   C_STANDARD 99)
 
+# Build main library
+add_library(${TARGET_LIBSLEEF} SHARED sleefdp.c sleefsp.c)
+
+# Check for different precision support and add sources accordingly
+if(COMPILER_SUPPORTS_LONG_DOUBLE)
+  target_sources(${TARGET_LIBSLEEF} PRIVATE sleefld.c)
+endif(COMPILER_SUPPORTS_LONG_DOUBLE)
+
+if(COMPILER_SUPPORTS_FLOAT128)
+  target_sources(${TARGET_LIBSLEEF} PRIVATE sleefqp.c)
+  target_compile_definitions(${TARGET_LIBSLEEF}
+    PRIVATE ENABLEFLOAT128=1)
+endif(COMPILER_SUPPORTS_FLOAT128)
+
 set(RENAME_HEADERS "")
 set(TARGET_OBJECTS "")
-
 # Single precision and double precision
 set(SIMD_SOURCES sleefsimdsp.c sleefsimddp.c)
 
-if(COMPILER_SUPPORTS_ADVSIMD)
-  set(HEADER_ADVSIMD ${CMAKE_CURRENT_BINARY_DIR}/include/renameadvsimd.h)
-  set(OBJECT_ADVSIMD "sleefadvsimd")
+# Repeat for each architecture: configure header file and compile object file
+macro(compile_object SIMD)
+  if(COMPILER_SUPPORTS_${SIMD})
+    # Need lowercase string for rename header
+    string(TOLOWER ${SIMD} vecarch)
 
-  add_library(${OBJECT_ADVSIMD} OBJECT ${SIMD_SOURCES} ${HEADER_ADVSIMD})
-  target_compile_definitions(${OBJECT_ADVSIMD} PRIVATE ENABLE_ADVSIMD=1 DORENAME=1)
-  target_compile_options(${OBJECT_ADVSIMD} PRIVATE ${FLAGS_ENABLE_ADVSIMD})
+    set(OBJECT_${SIMD} "sleef${vecarch}")
+    set(HEADER_${SIMD} ${CMAKE_CURRENT_BINARY_DIR}/include/rename${vecarch}.h)
 
-  list(APPEND TARGET_OBJECTS ${OBJECT_ADVSIMD})
-  list(APPEND RENAME_HEADERS ${HEADER_ADVSIMD})
-endif(COMPILER_SUPPORTS_ADVSIMD)
+    add_library(${OBJECT_${SIMD}} OBJECT ${SIMD_SOURCES} ${HEADER_${SIMD}})
+    target_compile_definitions(${OBJECT_${SIMD}} PRIVATE
+      ENABLE_${SIMD}=1
+      DORENAME=1)
+    target_compile_options(${OBJECT_${SIMD}} PRIVATE
+      ${FLAGS_ENABLE_${SIMD}})
 
-if(COMPILER_SUPPORTS_SSE2)
-  set(HEADER_SSE2 ${CMAKE_CURRENT_BINARY_DIR}/include/renamesse2.h)
-  set(OBJECT_SSE2 "sleefsse2")
+    list(APPEND TARGET_OBJECTS ${OBJECT_${SIMD}})
+    list(APPEND RENAME_HEADERS ${HEADER_${SIMD}})
+  endif(COMPILER_SUPPORTS_${SIMD})
+endmacro(compile_object)
 
-  add_library(${OBJECT_SSE2} OBJECT ${SIMD_SOURCES} ${HEADER_SSE2})
-  target_compile_definitions(${OBJECT_SSE2} PRIVATE ENABLE_SSE2=1 DORENAME=1)
-  target_compile_options(${OBJECT_SSE2} PRIVATE ${FLAGS_ENABLE_SSE2})
+# Include symbols for each SIMD architecture (if supported by the platform)
+# Note: adds object file as sources via cmake conditional generator expression
+foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
+  compile_object(${SIMD})
+  target_sources(${TARGET_LIBSLEEF} PRIVATE
+    $<$<BOOL:${COMPILER_SUPPORTS_${SIMD}}>:$<TARGET_OBJECTS:${OBJECT_${SIMD}}>>)
+endforeach()
 
-  list(APPEND TARGET_OBJECTS ${OBJECT_SSE2})
-  list(APPEND RENAME_HEADERS ${HEADER_SSE2})
-endif(COMPILER_SUPPORTS_SSE2)
-
-if(COMPILER_SUPPORTS_SSE4)
-  set(HEADER_SSE4 ${CMAKE_CURRENT_BINARY_DIR}/include/renamesse4.h)
-  set(OBJECT_SSE4 "sleefsse4")
-
-  add_library(${OBJECT_SSE4} OBJECT ${SIMD_SOURCES} ${HEADER_SSE4})
-  target_compile_definitions(${OBJECT_SSE4} PRIVATE ENABLE_SSE4=1 DORENAME=1)
-  target_compile_options(${OBJECT_SSE4} PRIVATE ${FLAGS_ENABLE_SSE4})
-
-  list(APPEND TARGET_OBJECTS ${OBJECT_SSE4})
-  list(APPEND RENAME_HEADERS ${HEADER_SSE4})
-endif(COMPILER_SUPPORTS_SSE4)
-
-if(COMPILER_SUPPORTS_AVX)
-  set(HEADER_AVX ${CMAKE_CURRENT_BINARY_DIR}/include/renameavx.h)
-  set(OBJECT_AVX "sleefavx")
-
-  add_library(${OBJECT_AVX} OBJECT ${SIMD_SOURCES} ${HEADER_AVX})
-  target_compile_definitions(${OBJECT_AVX} PRIVATE ENABLE_AVX=1 DORENAME=1)
-  target_compile_options(${OBJECT_AVX} PRIVATE ${FLAGS_ENABLE_AVX})
-
-  list(APPEND TARGET_OBJECTS ${OBJECT_AVX})
-  list(APPEND RENAME_HEADERS ${HEADER_AVX})
-endif(COMPILER_SUPPORTS_AVX)
-
-if(COMPILER_SUPPORTS_FMA4)
-  set(HEADER_FMA4 ${CMAKE_CURRENT_BINARY_DIR}/include/renamefma4.h)
-  set(OBJECT_FMA4 "sleeffma4")
-
-  add_library(${OBJECT_FMA4} OBJECT ${SIMD_SOURCES} ${HEADER_FMA4})
-  target_compile_definitions(${OBJECT_FMA4} PRIVATE ENABLE_FMA4=1 DORENAME=1)
-  target_compile_options(${OBJECT_FMA4} PRIVATE ${FLAGS_ENABLE_FMA4})
-
-  list(APPEND TARGET_OBJECTS ${OBJECT_FMA4})
-  list(APPEND RENAME_HEADERS ${HEADER_FMA4})
-endif(COMPILER_SUPPORTS_FMA4)
-
-if(COMPILER_SUPPORTS_AVX2)
-  set(HEADER_AVX2 ${CMAKE_CURRENT_BINARY_DIR}/include/renameavx2.h)
-  set(OBJECT_AVX2 "sleefavx2")
-
-  add_library(${OBJECT_AVX2} OBJECT ${SIMD_SOURCES} ${HEADER_AVX2})
-  target_compile_definitions(${OBJECT_AVX2} PRIVATE ENABLE_AVX2=1 DORENAME=1)
-  target_compile_options(${OBJECT_AVX2} PRIVATE ${FLAGS_ENABLE_AVX2})
-
-  list(APPEND TARGET_OBJECTS ${OBJECT_AVX2})
-  list(APPEND RENAME_HEADERS ${HEADER_AVX2})
-endif(COMPILER_SUPPORTS_AVX2)
-
-if(COMPILER_SUPPORTS_AVX2)
-  set(HEADER_AVX2128 ${CMAKE_CURRENT_BINARY_DIR}/include/renameavx2128.h)
-  set(OBJECT_AVX2128 "sleefavx2128")
-
-  add_library(${OBJECT_AVX2128} OBJECT ${SIMD_SOURCES} ${HEADER_AVX2128})
-  target_compile_definitions(${OBJECT_AVX2128} PRIVATE ENABLE_AVX2128=1 DORENAME=1)
-  target_compile_options(${OBJECT_AVX2128} PRIVATE ${FLAGS_ENABLE_AVX2})
-
-  list(APPEND TARGET_OBJECTS ${OBJECT_AVX2128})
-  list(APPEND RENAME_HEADERS ${HEADER_AVX2128})
-endif(COMPILER_SUPPORTS_AVX2)
-
-if(COMPILER_SUPPORTS_AVX512F)
-  set(HEADER_AVX512F ${CMAKE_CURRENT_BINARY_DIR}/include/renameavx512f.h)
-  set(OBJECT_AVX512F "sleefavx512f")
-
-  add_library(${OBJECT_AVX512F} OBJECT ${SIMD_SOURCES} ${HEADER_AVX512F})
-  target_compile_definitions(${OBJECT_AVX512F} PRIVATE ENABLE_AVX512F=1 DORENAME=1)
-  target_compile_options(${OBJECT_AVX512F} PRIVATE ${FLAGS_ENABLE_AVX512F})
-
-  list(APPEND TARGET_OBJECTS ${OBJECT_AVX512F})
-  list(APPEND RENAME_HEADERS ${HEADER_AVX512F})
-endif(COMPILER_SUPPORTS_AVX512F)
-
+# All code that goes into the main library needs to be position independent code
 set_target_properties(${TARGET_OBJECTS} PROPERTIES
   POSITION_INDEPENDENT_CODE ON   # -fPIC
   C_STANDARD 99)                 # -std=gnu99
+
+target_compile_definitions(${TARGET_LIBSLEEF}
+  PRIVATE DORENAME=1)
+set_target_properties(${TARGET_LIBSLEEF} PROPERTIES
+  VERSION ${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}
+  SOVERSION ${SLEEF_SOVERSION}
+  C_STANDARD 99)
 
 # Generate the rename headers at build time
 add_custom_command(
@@ -143,38 +97,6 @@ add_custom_command(
 
 # Always run the commands to generate the headers
 add_custom_target(headers ALL DEPENDS ${SLEEF_INCLUDE_HEADER} ${RENAME_HEADERS})
-
-# Build main library
-add_library(${TARGET_LIBSLEEF} SHARED sleefdp.c sleefsp.c)
-add_dependencies(${TARGET_LIBSLEEF} headers)
-
-# Add the object files as sources to the main library via cmake conditional generator expressions
-target_sources(${TARGET_LIBSLEEF} PRIVATE $<$<BOOL:${COMPILER_SUPPORTS_SSE2}>:$<TARGET_OBJECTS:${OBJECT_SSE2}>>)
-target_sources(${TARGET_LIBSLEEF} PRIVATE $<$<BOOL:${COMPILER_SUPPORTS_SSE4}>:$<TARGET_OBJECTS:${OBJECT_SSE4}>>)
-target_sources(${TARGET_LIBSLEEF} PRIVATE $<$<BOOL:${COMPILER_SUPPORTS_AVX}>:$<TARGET_OBJECTS:${OBJECT_AVX}>>)
-target_sources(${TARGET_LIBSLEEF} PRIVATE $<$<BOOL:${COMPILER_SUPPORTS_FMA4}>:$<TARGET_OBJECTS:${OBJECT_FMA4}>>)
-target_sources(${TARGET_LIBSLEEF} PRIVATE $<$<BOOL:${COMPILER_SUPPORTS_AVX2}>:$<TARGET_OBJECTS:${OBJECT_AVX2}>>)
-target_sources(${TARGET_LIBSLEEF} PRIVATE $<$<BOOL:${COMPILER_SUPPORTS_AVX2}>:$<TARGET_OBJECTS:${OBJECT_AVX2128}>>)
-target_sources(${TARGET_LIBSLEEF} PRIVATE $<$<BOOL:${COMPILER_SUPPORTS_AVX512F}>:$<TARGET_OBJECTS:${OBJECT_AVX512F}>>)
-target_sources(${TARGET_LIBSLEEF} PRIVATE $<$<BOOL:${COMPILER_SUPPORTS_ADVSIMD}>:$<TARGET_OBJECTS:${OBJECT_ADVSIMD}>>)
-
-if(COMPILER_SUPPORTS_LONG_DOUBLE)
-  target_sources(${TARGET_LIBSLEEF} PRIVATE sleefld.c)
-endif(COMPILER_SUPPORTS_LONG_DOUBLE)
-
-if(COMPILER_SUPPORTS_FLOAT128)
-  target_sources(${TARGET_LIBSLEEF} PRIVATE sleefqp.c)
-  target_compile_definitions(${TARGET_LIBSLEEF}
-    PRIVATE ENABLEFLOAT128=1)
-endif(COMPILER_SUPPORTS_FLOAT128)
-
-target_compile_definitions(${TARGET_LIBSLEEF}
-  PRIVATE DORENAME=1)
-set_target_properties(${TARGET_LIBSLEEF}
-  PROPERTIES
-  VERSION ${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}
-  SOVERSION ${SLEEF_SOVERSION}
-  C_STANDARD 99)
 
 # Install libsleef and sleef.h
 install(FILES ${SLEEF_INCLUDE_HEADER}
