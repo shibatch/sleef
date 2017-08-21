@@ -10,6 +10,15 @@ set(SLEEF_SUPPORTED_EXTENSIONS
   CACHE STRING "List of SIMD architectures supported by libsleef."
   )
 
+# Force set default build type if none was specified
+# Note: some sleef code requires the optimisation flags turned on
+if(NOT CMAKE_BUILD_TYPE)
+  message(STATUS "Setting build type to 'Release' (required for full support).")
+  set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
+    "Debug" "Release" "RelWithDebInfo" "MinSizeRel")
+endif()
+
 # PLATFORM DETECTION
 
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86")
@@ -118,6 +127,8 @@ CHECK_C_SOURCE_COMPILES("
     __m256i r = _mm256_abs_epi32(_mm256_set1_epi32(1)); }"
   COMPILER_SUPPORTS_AVX2)
 
+# AVX512F code requires optimisation flags -O3
+set (CMAKE_TRY_COMPILE_CONFIGURATION Release)
 set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX512F})
 CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
