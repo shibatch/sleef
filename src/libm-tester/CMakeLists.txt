@@ -6,15 +6,37 @@ include_directories(${CMAKE_BINARY_DIR}/include)          # sleef.h
 include_directories(${CMAKE_SOURCE_DIR}/src/libm)         # rename.h
 include_directories(${CMAKE_BINARY_DIR}/src/libm/include) # rename headers
 
-find_library(LIB_MPFR mpfr)
-set(EXTRA_LIBS m
-  ${LIB_MPFR}
+set(LIB_EXTRAS m
   ${TARGET_LIBCOMMON_STATIC}
   )
 
+find_library(LIB_MPFR mpfr)
+find_path(MPFR_INCLUDE_DIR mpfr.h)
+
+find_library(LIB_GMP gmp)
+find_path(GMP_INCLUDE_DIR gmp.h)
+
+if(NOT LIB_MPFR OR NOT MPFR_INCLUDE_DIR)
+  message(FATAL_ERROR "Missing dependency: mpfr library not found.")
+else(NOT LIB_MPFR OR NOT MPFR_INCLUDE_DIR)
+  message(STATUS "FOUND libmpfr: ${LIB_MPFR}")
+endif(NOT LIB_MPFR OR NOT MPFR_INCLUDE_DIR)
+
+if(NOT LIB_GMP OR NOT GMP_INCLUDE_DIR)
+  message(FATAL_ERROR "Missing dependency: gmp library not found.")
+else(NOT LIB_GMP OR NOT GMP_INCLUDE_DIR)
+  message(STATUS "FOUND libgmp: ${LIB_GMP}")
+endif(NOT LIB_GMP OR NOT GMP_INCLUDE_DIR)
+
+if(LIB_MPFR AND LIB_GMP)
+  set(LIB_EXTRAS ${LIB_EXTRAS} ${LIB_MPFR} ${LIB_GMP})
+  include_directories(${MPFR_INCLUDE_DIR})
+  include_directories(${GMP_INCLUDE_DIR})
+endif()
+
 # Compile executable 'iut'
 add_executable(${TARGET_IUT} iut.c testerutil.c)
-target_link_libraries(${TARGET_IUT} ${TARGET_LIBSLEEF} ${EXTRA_LIBS})
+target_link_libraries(${TARGET_IUT} ${TARGET_LIBSLEEF} ${LIB_EXTRAS})
 set(IUT_LIST ${TARGET_IUT})
 
 set(IUT_SRC iutsimd.c iutsimdmain.c testerutil)
@@ -39,7 +61,7 @@ endforeach()
 
 # Compile executable 'tester'
 add_executable(${TARGET_TESTER} tester.c testerutil.c)
-target_link_libraries(${TARGET_TESTER} ${EXTRA_LIBS} ${TARGET_LIBSLEEF})
+target_link_libraries(${TARGET_TESTER} ${LIB_EXTRAS} ${TARGET_LIBSLEEF})
 target_compile_definitions(${TARGET_TESTER}
   PRIVATE USEMPFR=1)
 target_compile_options(${TARGET_TESTER} PRIVATE -Wno-unused-result)
