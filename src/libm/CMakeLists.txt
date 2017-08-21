@@ -7,7 +7,8 @@ add_executable(${TARGET_MKRENAME_GNUABI} mkrename_gnuabi.c)
 # Helper executable: dispatcher for the vector extensions
 add_executable(${TARGET_MKDISP} mkdisp.c)
 # Set C standard requirement (-std=gnu99 for gcc)
-set_target_properties(${TARGET_MKRENAME} ${TARGET_MKDISP} PROPERTIES
+set_target_properties(
+  ${TARGET_MKRENAME} ${TARGET_MKRENAME_GNUABI} ${TARGET_MKDISP} PROPERTIES
   C_STANDARD 99)
 
 # Build main library
