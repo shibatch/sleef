@@ -1,6 +1,7 @@
 # Note: We are assuming SLEEF is the CMake root project.
 # TODO: Remove constraint: do not use CMAKE_BINARY_DIR and CMAKE_SOURCE_DIR
 link_directories(${CMAKE_BINARY_DIR}/lib)                 # libsleef
+link_directories(${CMAKE_BINARY_DIR}/src/common)          # common.a
 include_directories(${CMAKE_BINARY_DIR}/include)          # sleef.h
 include_directories(${CMAKE_SOURCE_DIR}/src/libm)         # rename.h
 include_directories(${CMAKE_BINARY_DIR}/src/libm/include) # rename headers
@@ -8,7 +9,9 @@ include_directories(${CMAKE_BINARY_DIR}/src/libm/include) # rename headers
 set(LIB_SLEEF sleef)
 find_library(LIB_MPFR mpfr)
 set(EXTRA_LIBS m
-  ${LIB_MPFR})
+  ${LIB_MPFR}
+  common
+  )
 
 # Compile executable 'iut'
 add_executable(${TARGET_IUT} iut.c testerutil.c)
