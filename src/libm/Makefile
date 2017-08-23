@@ -175,7 +175,7 @@ renamesse4.h : mkrename
 ##
 
 DISPAVXOPT=
-ifeq ($ENABLEFMA4, 1)
+ifeq ($(ENABLEFMA4), 1)
 DISPAVXOPT+=-DENABLE_FMA4
 endif
 ifeq ($(ENABLEAVX2), 1)
