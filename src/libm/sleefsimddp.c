@@ -752,14 +752,15 @@ static INLINE CONST vdouble2 sinpik(vdouble d) {
   vdouble2 x, s2;
 
   u = vmul_vd_vd_vd(d, vcast_vd_d(4.0));
-  vint q = vand_vi_vi_vi(vrint_vi_vd(vadd_vd_vd_vd(u, vcast_vd_d(0.5))), vcast_vi_i(~1));
+  vint q = vtruncate_vi_vd(u);
+  q = vand_vi_vi_vi(vadd_vi_vi_vi(q, vxor_vi_vi_vi(vsrl_vi_vi_i(q, 31), vcast_vi_i(1))), vcast_vi_i(~1));
   o = vcast_vo64_vo32(veq_vo_vi_vi(vand_vi_vi_vi(q, vcast_vi_i(2)), vcast_vi_i(2)));
 
   s = vsub_vd_vd_vd(u, vcast_vd_vi(q));
   t = s;
   s = vmul_vd_vd_vd(s, s);
   s2 = ddmul_vd2_vd_vd(t, t);
-  
+
   //
 
   u = vsel_vd_vo_d_d(o, 9.94480387626843774090208e-16, -2.02461120785182399295868e-14);
