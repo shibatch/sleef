@@ -596,7 +596,8 @@ TYPE2_FUNCATR vfloat2 XSINCOSPIF_U05(vfloat d) {
   vfloat2 r, x, s2;
 
   u = vmul_vf_vf_vf(d, vcast_vf_f(4));
-  vint2 q = vand_vi2_vi2_vi2(vrint_vi2_vf(vadd_vf_vf_vf(u, vcast_vf_f(0.5))), vcast_vi2_i(~1));
+  vint2 q = vtruncate_vi2_vf(u);
+  q = vand_vi2_vi2_vi2(vadd_vi2_vi2_vi2(q, vxor_vi2_vi2_vi2(vsrl_vi2_vi2_i(q, 31), vcast_vi2_i(1))), vcast_vi2_i(~1));
   s = vsub_vf_vf_vf(u, vcast_vf_vi2(q));
 
   t = s;
@@ -656,7 +657,8 @@ TYPE2_FUNCATR vfloat2 XSINCOSPIF_U35(vfloat d) {
   vfloat2 r;
 
   u = vmul_vf_vf_vf(d, vcast_vf_f(4));
-  vint2 q = vand_vi2_vi2_vi2(vrint_vi2_vf(vadd_vf_vf_vf(u, vcast_vf_f(0.5))), vcast_vi2_i(~1));
+  vint2 q = vtruncate_vi2_vf(u);
+  q = vand_vi2_vi2_vi2(vadd_vi2_vi2_vi2(q, vxor_vi2_vi2_vi2(vsrl_vi2_vi2_i(q, 31), vcast_vi2_i(1))), vcast_vi2_i(~1));
   s = vsub_vf_vf_vf(u, vcast_vf_vi2(q));
 
   t = s;
@@ -1873,7 +1875,8 @@ static INLINE CONST vfloat2 cospifk(vfloat d) {
   vfloat2 x, s2;
 
   u = vmul_vf_vf_vf(d, vcast_vf_f(4.0));
-  vint2 q = vand_vi2_vi2_vi2(vrint_vi2_vf(vadd_vf_vf_vf(u, vcast_vf_f(0.5))), vcast_vi2_i(~1));
+  vint2 q = vtruncate_vi2_vf(u);
+  q = vand_vi2_vi2_vi2(vadd_vi2_vi2_vi2(q, vxor_vi2_vi2_vi2(vsrl_vi2_vi2_i(q, 31), vcast_vi2_i(1))), vcast_vi2_i(~1));
   o = veq_vo_vi2_vi2(vand_vi2_vi2_vi2(q, vcast_vi2_i(2)), vcast_vi2_i(0));
 
   s = vsub_vf_vf_vf(u, vcast_vf_vi2(q));

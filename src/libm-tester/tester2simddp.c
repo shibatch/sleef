@@ -885,9 +885,11 @@ int main(int argc,char **argv)
 
       if ((-1e+308 < c && c < 1e+308 && u0 > 3.5) ||
 	  !(u0 <= 3.5 || isinf(t))) {
-	printf(ISANAME " hypot_u35 arg=%.20g, %.20g  ulp=%.20g\n", d, d2, u0);
-	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
-	fflush(stdout); ecnt++;
+	if (!(isinf(c) && t == 1.7976931348623157081e+308)) {
+	  printf(ISANAME " hypot_u35 arg=%.20g, %.20g  ulp=%.20g\n", d, d2, u0);
+	  printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
+	  fflush(stdout); ecnt++;
+	}
       }
     }
 
