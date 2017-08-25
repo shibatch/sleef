@@ -7,10 +7,11 @@ include_directories(${CMAKE_SOURCE_DIR}/src/libm)         # rename.h
 include_directories(${CMAKE_BINARY_DIR}/src/libm/include) # rename headers
 
 set(LIB_SLEEF sleef)
+set(LIB_COMMON_STATIC common)
 find_library(LIB_MPFR mpfr)
 set(EXTRA_LIBS m
   ${LIB_MPFR}
-  common
+  ${LIB_COMMON_STATIC}
   )
 
 # Compile executable 'iut'
