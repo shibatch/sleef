@@ -1,2 +1,2 @@
-add_library(common STATIC common.c)
+add_library(${TARGET_LIBCOMMON_STATIC} STATIC common.c)
 
