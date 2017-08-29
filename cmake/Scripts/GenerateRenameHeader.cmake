@@ -2,6 +2,8 @@ include(${LOCATIONS_FILE})
 
 string(REPLACE " " ";" RENAME_HEADER_LIST  "${RENAME_HEADERS}")
 string(REPLACE " " ";" RENAME_HEADER_GNUABI_LIST  "${RENAME_HEADERS_GNUABI}")
+string(REPLACE " " ";" MKRENAME_EXE  "${MKRENAME_EXE}")
+string(REPLACE " " ";" MKRENAME_GNUABI_EXE  "${MKRENAME_GNUABI_EXE}")
 
 foreach(rename_header ${RENAME_HEADER_LIST} ${RENAME_HEADER_GNUABI_LIST})
   if(${rename_header} MATCHES "renamesse2.h")
@@ -32,15 +34,15 @@ foreach(rename_header ${RENAME_HEADER_LIST} ${RENAME_HEADER_GNUABI_LIST})
     set(params advsimd n 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON)
   endif()
 
-  set(MKRENAME_EXE ${TARGET_MKRENAME})
+  set(MKRENAME_EXE_TMP ${MKRENAME_EXE})
   if(${rename_header} MATCHES "gnuabi.h")
-    set(MKRENAME_EXE ${TARGET_MKRENAME_GNUABI})
+    set(MKRENAME_EXE_TMP ${MKRENAME_GNUABI_EXE})
   endif()
 
   execute_process(
-    COMMAND ${LOCATION_RUNTIME_DIR}/${MKRENAME_EXE} ${params}
-    OUTPUT_VARIABLE MKRENAME_OUTPUT)
-  file(WRITE ${rename_header} "${MKRENAME_OUTPUT}")
+    COMMAND ${MKRENAME_EXE_TMP} ${params}
+    OUTPUT_VARIABLE _TMP_OUTPUT)
+  file(WRITE ${rename_header} "${_TMP_OUTPUT}")
 
   if(OPTION_SHOW_CONFIG)
     message(STATUS "Generating ${rename_header}")

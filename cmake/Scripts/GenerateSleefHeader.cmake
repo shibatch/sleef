@@ -51,12 +51,12 @@ foreach(params_set ${PARAMS_POINTER_LIST})
   execute_process(
       # Note: <string> params_set is a name pointing to a list of parameters
       # Double-derefencing params_set returns a <list> value (set of params)
-      COMMAND ${LOCATION_RUNTIME_DIR}/${TARGET_MKRENAME} ${${params_set}}
+      COMMAND ${MKRENAME_EXE} ${${params_set}}
       OUTPUT_VARIABLE _TMP_OUTPUT)
     file(APPEND ${SLEEF_GEN_HEADER} "${_TMP_OUTPUT}")
 
   if(OPTION_SHOW_CONFIG)
-    message(STATUS "Running mkrename ${${params_set}}")
+    message(STATUS "Running ${MKRENAME_EXE} ${${params_set}}")
   endif(OPTION_SHOW_CONFIG)
 endforeach()
 

@@ -12,9 +12,9 @@ before_install:
 
 install:
   - wget https://gmplib.org/download/gmp/gmp-6.1.2.tar.xz && tar -xvf gmp-6.1.2.tar.xz
-  - pushd gmp-6.1.2 && CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-gcc++ ./configure --host=aarch64-linux-gnu --prefix=/home/travis/xcompile-extra-install/libgmp --enable-static && make && make install && popd
+  - pushd gmp-6.1.2 && CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-gcc++ ./configure --host=aarch64-linux-gnu --prefix=/home/travis/xcompile-extra-install --enable-static && make && make install && popd
   - wget http://www.mpfr.org/mpfr-current/mpfr-3.1.5.tar.xz && tar -xvf mpfr-3.1.5.tar.xz
-  - pushd mpfr-3.1.5 && CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-gcc++ ./configure --host=aarch64-linux-gnu --prefix=/home/travis/xcompile-extra-install/libmpfr --with-gmp=/home/travis/xcompile-extra-install/libgmp --enable-static && make && make install && popd
+  - pushd mpfr-3.1.5 && CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-gcc++ ./configure --host=aarch64-linux-gnu --prefix=/home/travis/xcompile-extra-install --with-gmp=/home/travis/xcompile-extra-install --enable-static && make && make install && popd
 
 before_script:
   - mkdir sleef.xbuild && cd sleef.xbuild
