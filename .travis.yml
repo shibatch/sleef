@@ -16,9 +16,7 @@ before_install:
 before_script:
   - mkdir sleef.xbuild
   - cd sleef.xbuild
-  - cmake -DCMAKE_VERBOSE_MAKEFILE=1 -DSLEEF_SHOW_CONFIG=1 \
-    -DCMAKE_TOOLCHAIN_FILE=../cmake/Toolchains/TC-aarch64-linux-gnu.cmake \
-    -DCMAKE_INSTALL_PREFIX=../install ..
+  - cmake -DCMAKE_VERBOSE_MAKEFILE=1 -DSLEEF_SHOW_CONFIG=1 -DCMAKE_TOOLCHAIN_FILE=../cmake/Toolchains/TC-aarch64-linux-gnu.cmake -DCMAKE_INSTALL_PREFIX=../install ..
 
 script:
   - make
