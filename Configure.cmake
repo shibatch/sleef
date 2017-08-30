@@ -136,19 +136,13 @@ CHECK_C_SOURCE_COMPILES("
   #else
   #include <x86intrin.h>
   #endif
-  void f(void *p) {
-    _mm512_loadu_si512(p);
+  __m512 addConstant(__m512 arg) {
+    return _mm512_add_ps(arg, _mm512_set1_ps(1.f));
   }
   int main() {
     __m512i a = _mm512_set1_epi32(1);
     __m512i r = _mm512_andnot_si512(a, a); }"
   COMPILER_SUPPORTS_AVX512F)
-
- # Turn AVX512F off for MacOSX until the assembler issue is resolved
-if(APPLE)
-  set(COMPILER_SUPPORTS_AVX512F OFF CACHE INTERNAL "Compiler is able to compile AVX512F code.")
-  message(STATUS "Disabling AVX512F on MacOSX.")
-endif(APPLE)
 
 # AVX2 implies AVX2128
 if(COMPILER_SUPPORTS_AVX2)
