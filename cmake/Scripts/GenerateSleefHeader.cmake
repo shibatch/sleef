@@ -1,5 +1,8 @@
 include(${LOCATIONS_FILE})
 
+
+# Convert command line from plain string to list
+string(REPLACE " " ";" MKRENAME_EXE  "${MKRENAME_EXE}")
 # Workaround: temporary copy of sleeflibm.h.org
 set(SLEEF_ORG_HEADER ${LOCATION_SOURCE_DIR}/src/libm/sleeflibm.h.org)
 set(SLEEF_GEN_HEADER ${LOCATION_BINARY_DIR}/include/sleef.h)

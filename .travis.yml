@@ -8,12 +8,17 @@ dist: trusty
 before_install:
   - sudo add-apt-repository -y ppa:adrozdoff/cmake
   - sudo apt-get -qq update
-  - sudo apt-get install -y cmake libmpfr-dev g++-aarch64-linux-gnu gcc-aarch64-linux-gnu qemu-user-static
-
-install:
-  - wget https://gmplib.org/download/gmp/gmp-6.1.2.tar.xz && tar -xvf gmp-6.1.2.tar.xz
+  - sudo apt-get install -y cmake libmpfr-dev qemu-user-static
+  # Install the cross compilers
+  - wget https://releases.linaro.org/components/toolchain/binaries/6.3-2017.02/aarch64-linux-gnu/gcc-linaro-6.3.1-2017.02-x86_64_aarch64-linux-gnu.tar.xz
+  - tar -xf gcc-linaro-6.3.1-2017.02-x86_64_aarch64-linux-gnu.tar.xz
+  - export PATH=${PWD}/gcc-linaro-6.3.1-2017.02-x86_64_aarch64-linux-gnu/bin:${PATH} && aarch64-linux-gnu-gcc --version
+  # Cross-build dependencies and install the dependencies
+  - wget https://gmplib.org/download/gmp/gmp-6.1.2.tar.xz
+  - tar -xf gmp-6.1.2.tar.xz
   - pushd gmp-6.1.2 && CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-gcc++ ./configure --host=aarch64-linux-gnu --prefix=/home/travis/xcompile-extra-install --enable-static && make && make install && popd
-  - wget http://www.mpfr.org/mpfr-current/mpfr-3.1.5.tar.xz && tar -xvf mpfr-3.1.5.tar.xz
+  - wget http://www.mpfr.org/mpfr-current/mpfr-3.1.5.tar.xz
+  - tar -xf mpfr-3.1.5.tar.xz
   - pushd mpfr-3.1.5 && CC=aarch64-linux-gnu-gcc CXX=aarch64-linux-gnu-gcc++ ./configure --host=aarch64-linux-gnu --prefix=/home/travis/xcompile-extra-install --with-gmp=/home/travis/xcompile-extra-install --enable-static && make && make install && popd
 
 before_script:
