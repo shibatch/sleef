@@ -2322,76 +2322,23 @@ int main(int argc, char **argv) {
 #endif
 
 #ifdef ENABLE_GNUABI
-EXPORT CONST vdouble __acos_finite(vdouble d) {
-  return xacos(d);
-}
+EXPORT CONST vdouble __acos_finite(vdouble d) __attribute__((weak, alias(str_xacos)));
+EXPORT CONST vdouble __acosh_finite(vdouble d) __attribute__((weak, alias(str_xacosh)));
+EXPORT CONST vdouble __asin_finite(vdouble d) __attribute__((weak, alias(str_xasin_u1)));
+EXPORT CONST vdouble __atan2_finite(vdouble x, vdouble y) __attribute__((weak, alias(str_xatan2_u1)));
+EXPORT CONST vdouble __atanh_finite(vdouble d) __attribute__((weak, alias(str_xatanh)));
+EXPORT CONST vdouble __cosh_finite(vdouble d) __attribute__((weak, alias(str_xcosh)));
+EXPORT CONST vdouble __sinh_finite(vdouble d) __attribute__((weak, alias(str_xsinh)));
+EXPORT CONST vdouble __sqrt_u05_finite(vdouble d) __attribute__((weak, alias(str_xsqrt_u05)));
+EXPORT CONST vdouble __exp_finite(vdouble d) __attribute__((weak, alias(str_xexp)));
+EXPORT CONST vdouble __tgamma_u1_finite(vdouble d) __attribute__((weak, alias(str_xtgamma_u1)));
+EXPORT CONST vdouble __exp10_finite(vdouble d) __attribute__((weak, alias(str_xexp10)));
+EXPORT CONST vdouble __exp2_finite(vdouble d) __attribute__((weak, alias(str_xexp2)));
+EXPORT CONST vdouble __log_finite(vdouble d) __attribute__((weak, alias(str_xlog_u1)));
+EXPORT CONST vdouble __log10_finite(vdouble d) __attribute__((weak, alias(str_xlog10)));
+EXPORT CONST vdouble __pow_finite(vdouble x, vdouble y) __attribute__((weak, alias(str_xpow)));
+EXPORT CONST vdouble __fmod_finite(vdouble x, vdouble y) __attribute__((weak, alias(str_xfmod)));
+EXPORT CONST vdouble __hypot_u05_finite(vdouble x, vdouble y) __attribute__((weak, alias(str_xhypot_u05)));
+EXPORT CONST vdouble __lgamma_u1_finite(vdouble d) __attribute__((weak, alias(str_xlgamma_u1)));
 
-EXPORT CONST vdouble __acosh_finite(vdouble d) {
-  return xacosh(d);
-}
-
-EXPORT CONST vdouble __asin_finite(vdouble d) {
-  return xasin_u1(d);
-}
-
-EXPORT CONST vdouble __atan2_finite(vdouble x, vdouble y) {
-  return xatan2_u1(x, y);
-}
-
-EXPORT CONST vdouble __atanh_finite(vdouble d) {
-  return xatanh(d);
-}
-
-EXPORT CONST vdouble __cosh_finite(vdouble d) {
-  return xcosh(d);
-}
-
-EXPORT CONST vdouble __sinh_finite(vdouble d) {
-  return xsinh(d);
-}
-
-EXPORT CONST vdouble __sqrt_u05_finite(vdouble d) {
-  return xsqrt_u05(d);
-}
-
-EXPORT CONST vdouble __exp_finite(vdouble d) {
-  return xexp(d);
-}
-
-EXPORT CONST vdouble __tgamma_u1_finite(vdouble d) {
-  return xtgamma_u1(d);
-}
-
-EXPORT CONST vdouble __exp10_finite(vdouble d) {
-  return xexp10(d);
-}
-
-EXPORT CONST vdouble __exp2_finite(vdouble d) {
-  return xexp2(d);
-}
-
-EXPORT CONST vdouble __log_finite(vdouble d) {
-  return xlog_u1(d);
-}
-
-EXPORT CONST vdouble __log10_finite(vdouble d) {
-  return xlog10(d);
-}
-
-EXPORT CONST vdouble __pow_finite(vdouble x, vdouble y) {
-  return xpow(x, y);
-}
-
-EXPORT CONST vdouble __fmod_finite(vdouble x, vdouble y) {
-  return xfmod(x, y);
-}
-
-EXPORT CONST vdouble __hypot_u05_finite(vdouble x, vdouble y) {
-  return xhypot_u05(x, y);
-}
-
-EXPORT CONST vdouble __lgamma_u1_finite(vdouble d) {
-  return xlgamma_u1(d);
-}
-
-#endif
+#endif /* #ifdef ENABLE_GNUABI */
