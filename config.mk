@@ -144,7 +144,7 @@ else ifeq ($(OS),Linux)
   endif
 endif
 
-ifeq (OS,Linux)
+ifeq ($(OS),Linux)
   ifeq ($(X86ARCH),1)
     export ENABLEGNUABI=1
   endif
