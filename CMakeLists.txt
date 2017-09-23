@@ -74,12 +74,19 @@ set(TARGET_LIBCOMMON_STATIC "common")
 # Check subdirectories
 add_subdirectory("src")
 
+# Extra messages at configuration time. By default is active, it can be
+# turned off by invoking cmake with "-DSLEEF_SHOW_CONFIG=OFF".
+option(SLEEF_SHOW_CONFIG "Show SLEEF configuration status messages." ON)
 if(SLEEF_SHOW_CONFIG)
-  option(SLEEF_SHOW_CONFIG "Show SLEEF configuration status messages." ON)
   message(STATUS "Configuring build for \
 ${PROJECT_NAME}-v${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}")
-  message("** Detected system:: ${CMAKE_SYSTEM}")
-  message("** Detected processor: ${CMAKE_SYSTEM_PROCESSOR}")
-  message("** Detected C compiler: ${CMAKE_C_COMPILER_ID}")
-  message("** Configuring SLEEF for OS type: ${SLEEF_OSTYPE}")
+  message("   Target system: ${CMAKE_SYSTEM}")
+  message("   Target processor: ${CMAKE_SYSTEM_PROCESSOR}")
+  message("   Host system: ${CMAKE_HOST_SYSTEM}")
+  message("   Host processor: ${CMAKE_HOST_SYSTEM_PROCESSOR}")
+  message("   Detected C compiler: ${CMAKE_C_COMPILER_ID} @ ${CMAKE_C_COMPILER}")
+  if(CMAKE_CROSSCOMPILING)
+    message("   Crosscompiling SLEEF.")
+  endif(CMAKE_CROSSCOMPILING)
+  message(STATUS "Using option `${SLEEF_C_FLAGS}` to compile libsleef")
 endif(SLEEF_SHOW_CONFIG)
