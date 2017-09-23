@@ -38,14 +38,13 @@ endif()
 # COMPILER DETECTION
 
 # All variables storing compiler flags should be prefixed with FLAGS_
+
 if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
-  # Always compile sleef with -ffp-contract.
-  set(FLAGS_STRICTMATH "-ffp-contract=off")
-
-  # Warning flags.
   set(FLAGS_WALL "-Wall -Wno-unused -Wno-attributes")
+  set(FLAGS_FASTMATH "-ffast-math")
+  set(FLAGS_STRICTMATH "-ffp-contract=off")
+  set(FLAGS_OPENMP "-fopenmp")
 
-  # Intel vector extensions.
   set(FLAGS_ENABLE_SSE2 "-msse2")
   set(FLAGS_ENABLE_SSE4 "-msse4.1")
   set(FLAGS_ENABLE_AVX "-mavx")
@@ -54,11 +53,17 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
   set(FLAGS_ENABLE_AVX2128 "-mavx2;-mfma")
   set(FLAGS_ENABLE_AVX512F "-mavx512f")
 
-  # Arm AArch64 vector extensions.
   set(FLAGS_ENABLE_ADVSIMD "-march=armv8-a+simd")
 endif()
 
-set(SLEEF_C_FLAGS "${FLAGS_WALL} ${FLAGS_STRICTMATH}")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${FLAGS_WALL}")
+
+# Always compile sleef with -ffp-contract and log at configuration time
+if(SLEEF_SHOW_CONFIG)
+  message(STATUS "Using option `${FLAGS_STRICTMATH}` to compile libsleef")
+endif(SLEEF_SHOW_CONFIG)
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${FLAGS_STRICTMATH}")
 
 # FEATURE DETECTION
 
@@ -153,5 +158,3 @@ endif()
 # Reset used flags
 set(CMAKE_REQUIRED_FLAGS)
 
-# Cache the flags required to compile SLEEF.
-string(CONCAT CMAKE_C_FLAGS ${SLEEF_C_FLAGS})
