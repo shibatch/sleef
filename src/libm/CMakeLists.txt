@@ -12,11 +12,11 @@ set_target_properties(
   C_STANDARD 99)
 
 # Custom target to build headers
-add_custom_target(BuildHeaders)
+add_custom_target(${TARGET_HEADERS})
 
 # Build main library
 add_library(${TARGET_LIBSLEEF} SHARED sleefdp.c sleefsp.c)
-add_dependencies(${TARGET_LIBSLEEF} BuildHeaders)
+add_dependencies(${TARGET_LIBSLEEF} ${TARGET_HEADERS})
 
 # Check for different precision support and add sources accordingly
 if(COMPILER_SUPPORTS_LONG_DOUBLE)
@@ -59,7 +59,7 @@ macro(compile_object SIMD)
       ${FLAGS_ENABLE_${SIMD}})
 
     # Generate mkrename commands
-    add_custom_command(TARGET BuildHeaders 
+    add_custom_command(TARGET ${TARGET_HEADERS} 
       COMMAND echo Generating rename${vecarch}.h: ${TARGET_MKRENAME} ${RENAME_PARAMS_${SIMD}}
       COMMAND ${TARGET_MKRENAME} ${RENAME_PARAMS_${SIMD}} > ${HEADER_${SIMD}}
     )
@@ -101,7 +101,7 @@ macro(compile_object_gnuabi SIMD)
       ${FLAGS_ENABLE_${SIMD}})
 
     # Generate mkrename_gnuabi commands
-    add_custom_command(TARGET BuildHeaders 
+    add_custom_command(TARGET ${TARGET_HEADERS} 
       COMMAND echo Generating rename${vecarch}_gnuabi.h: ${TARGET_MKRENAME_GNUABI} ${RENAME_PARAMS_GNUABI_${SIMD}}  
       COMMAND ${TARGET_MKRENAME_GNUABI} ${RENAME_PARAMS_GNUABI_${SIMD}} > ${HEADER_${SIMD}_GNUABI}
     )
@@ -148,7 +148,7 @@ set(SLEEF_GEN_HEADER ${CMAKE_BINARY_DIR}/include/sleef.h)
 configure_file(${SLEEF_ORG_HEADER} ${SLEEF_GEN_HEADER} COPYONLY)
 
 foreach(SIMD ${SLEEF_HEADER_LIST})
-  add_custom_command(TARGET BuildHeaders 
+  add_custom_command(TARGET ${TARGET_HEADERS} 
     COMMAND echo Generating sleef.h: ${TARGET_MKRENAME} ${HEADER_PARAMS_${SIMD}}
     COMMAND ${TARGET_MKRENAME} ${HEADER_PARAMS_${SIMD}} >> ${SLEEF_GEN_HEADER}
   )
@@ -157,11 +157,11 @@ endforeach()
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/sleef_footer.h "#undef IMPORT\n#endif\n")
 if(MSVC)
   string(REPLACE "/" "\\" sleef_footer_input_file "${CMAKE_CURRENT_BINARY_DIR}/sleef_footer.h")
-  add_custom_command(TARGET BuildHeaders 
+  add_custom_command(TARGET ${TARGET_HEADERS} 
     COMMAND type ${sleef_footer_input_file} >> ${SLEEF_GEN_HEADER}
   )
 else()
-  add_custom_command(TARGET BuildHeaders 
+  add_custom_command(TARGET ${TARGET_HEADERS} 
     COMMAND cat ${CMAKE_CURRENT_BINARY_DIR}/sleef_footer.h >> ${SLEEF_GEN_HEADER}
   )
 endif()
