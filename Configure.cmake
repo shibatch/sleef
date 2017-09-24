@@ -45,7 +45,7 @@ if((CMAKE_SYSTEM_PROCESSOR MATCHES "x86") OR (CMAKE_SYSTEM_PROCESSOR MATCHES "AM
     FMA4
     AVX2
     AVX2128
-    AVX512f
+    AVX512F
   )
   command_arguments(HEADER_PARAMS_SSE_      2 4 __m128d __m128 __m128i __m128i __SSE2__)
   command_arguments(HEADER_PARAMS_SSE2      2 4 __m128d __m128 __m128i __m128i __SSE2__ sse2)
@@ -55,7 +55,7 @@ if((CMAKE_SYSTEM_PROCESSOR MATCHES "x86") OR (CMAKE_SYSTEM_PROCESSOR MATCHES "AM
   command_arguments(HEADER_PARAMS_FMA4      4 8 __m256d __m256 __m128i "struct { __m128i x, y$<SEMICOLON> }" __AVX__ fma4)
   command_arguments(HEADER_PARAMS_AVX2      4 8 __m256d __m256 __m128i __m256i __AVX__ avx2)
   command_arguments(HEADER_PARAMS_AVX2128   2 4 __m128d __m128 __m128i __m128i __SSE2__ avx2128)
-  command_arguments(HEADER_PARAMS_AVX512f   8 16 __m512d __m512 __m256i __m512i __AVX512F__ avx512f)
+  command_arguments(HEADER_PARAMS_AVX512F   8 16 __m512d __m512 __m256i __m512i __AVX512F__ avx512f)
 
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
   set(SLEEF_ARCH_AARCH64 ON CACHE INTERNAL "True for Aarch64 architecture.")
@@ -83,13 +83,13 @@ command_arguments(RENAME_PARAMS_AVX            4 8 avx)
 command_arguments(RENAME_PARAMS_FMA4           4 8 fma4)
 command_arguments(RENAME_PARAMS_AVX2           4 8 avx2)
 command_arguments(RENAME_PARAMS_AVX2128        2 4 avx2128)
-command_arguments(RENAME_PARAMS_AVX512f        8 16 avx512f)
+command_arguments(RENAME_PARAMS_AVX512F        8 16 avx512f)
 command_arguments(RENAME_PARAMS_ADVSIMD        2 4 advsimd)
 
 command_arguments(RENAME_PARAMS_GNUABI_SSE2    sse2 b 2 4 _mm128d _mm128 _mm128i _mm128i __SSE2__)
 command_arguments(RENAME_PARAMS_GNUABI_AVX     avx c 4 8 __m256d __m256 __m128i "struct { __m128i x, y$<SEMICOLON> }" __AVX__)
 command_arguments(RENAME_PARAMS_GNUABI_AVX2    avx2 d 4 8 __m256d __m256 __m128i __m256i __AVX2__)
-command_arguments(RENAME_PARAMS_GNUABI_AVX512f avx512f e 8 16 __m512d __m512 __m256i __m512i __AVX512F__)
+command_arguments(RENAME_PARAMS_GNUABI_AVX512F avx512f e 8 16 __m512d __m512 __m256i __m512i __AVX512F__)
 command_arguments(RENAME_PARAMS_GNUABI_ADVSIMD advsimd n 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON)
 
 # COMPILER DETECTION
