@@ -7,7 +7,7 @@ find_library(LIB_MPFR mpfr)
 
 # The library currently supports the following SIMD architectures
 set(SLEEF_SUPPORTED_EXTENSIONS
-  SSE2 SSE4 AVX FMA4 AVX2 AVX2128 AVX512F # x86
+  SSE2 SSE4 AVX FMA4 AVX2 AVX2128  # x86 (note AVX512F is disabled)
   ADVSIMD				  # Aarch64
   NEON					  # Aarch32
   CACHE STRING "List of SIMD architectures supported by libsleef."
@@ -126,7 +126,7 @@ elseif(MSVC)
   set(FLAGS_ENABLE_FMA4 /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /D__FMA4__ /arch:AVX2)
   set(FLAGS_ENABLE_AVX2 /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /arch:AVX2)
   set(FLAGS_ENABLE_AVX2128 /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /arch:AVX2)
-  set(FLAGS_ENABLE_AVX2512F /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /arch:AVX2)
+  set(FLAGS_ENABLE_AVX512F /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /arch:AVX2)
   set(FLAGS_ENABLE_NEON "")
   # Arm AArch64 vector extensions.
   set(FLAGS_ENABLE_ADVSIMD "")
