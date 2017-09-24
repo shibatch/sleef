@@ -151,7 +151,10 @@ set_target_properties(${TARGET_LIBSLEEF} PROPERTIES
 # --------------------------------------------------------------------
 set(SLEEF_ORG_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/sleeflibm.h.org)
 set(SLEEF_GEN_HEADER ${CMAKE_BINARY_DIR}/include/sleef.h)
-configure_file(${SLEEF_ORG_HEADER} ${SLEEF_GEN_HEADER} COPYONLY)
+
+add_custom_command(TARGET ${TARGET_HEADERS} 
+  COMMAND cmake -E copy ${SLEEF_ORG_HEADER} ${SLEEF_GEN_HEADER}
+)
 
 foreach(SIMD ${SLEEF_HEADER_LIST})
   add_custom_command(TARGET ${TARGET_HEADERS} 
