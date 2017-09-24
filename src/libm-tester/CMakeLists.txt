@@ -6,7 +6,6 @@ include_directories(${CMAKE_BINARY_DIR}/include)          # sleef.h
 include_directories(${CMAKE_SOURCE_DIR}/src/libm)         # rename.h
 include_directories(${CMAKE_BINARY_DIR}/src/libm/include) # rename headers
 
-find_library(LIB_MPFR mpfr)
 set(EXTRA_LIBS m
   ${LIB_MPFR}
   ${TARGET_LIBCOMMON_STATIC}

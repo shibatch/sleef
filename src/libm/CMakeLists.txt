@@ -55,6 +55,8 @@ macro(compile_object SIMD)
       ENABLE_${SIMD}=1
       DORENAME=1)
 
+    add_dependencies(${OBJECT_${SIMD}} ${TARGET_HEADERS})
+
     target_compile_options(${OBJECT_${SIMD}} PRIVATE
       ${FLAGS_ENABLE_${SIMD}})
 
@@ -100,6 +102,8 @@ macro(compile_object_gnuabi SIMD)
     target_compile_options(${OBJECT_${SIMD}_GNUABI} PRIVATE
       ${FLAGS_ENABLE_${SIMD}})
 
+    add_dependencies(${OBJECT_${SIMD}_GNUABI} ${TARGET_HEADERS})
+
     # Generate mkrename_gnuabi commands
     add_custom_command(TARGET ${TARGET_HEADERS} 
       COMMAND echo Generating rename${vecarch}_gnuabi.h: ${TARGET_MKRENAME_GNUABI} ${RENAME_PARAMS_GNUABI_${SIMD}}  
@@ -125,6 +129,8 @@ if(SLEEF_ENABLE_GNUABI)
   VERSION ${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}
   SOVERSION ${SLEEF_SOVERSION}
   C_STANDARD 99)
+  
+  add_dependencies(${TARGET_LIBSLEEFGNUABI} ${TARGET_HEADERS})
   
 endif(SLEEF_ENABLE_GNUABI)
 
