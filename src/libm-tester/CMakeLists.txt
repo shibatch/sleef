@@ -6,11 +6,13 @@ include_directories(${CMAKE_BINARY_DIR}/include)          # sleef.h
 include_directories(${CMAKE_SOURCE_DIR}/src/libm)         # rename.h
 include_directories(${CMAKE_BINARY_DIR}/src/libm/include) # rename headers
 
-find_library(LIB_MPFR mpfr)
 set(EXTRA_LIBS m
   ${LIB_MPFR}
   ${TARGET_LIBCOMMON_STATIC}
   )
+
+# Test target
+add_custom_target(${TARGET_TEST})
 
 # Compile executable 'iut'
 add_executable(${TARGET_IUT} iut.c testerutil.c)
@@ -29,6 +31,9 @@ macro(test_extension SIMD)
       PRIVATE ENABLE_${SIMD}=1)
     target_link_libraries(${TARGET_IUT${SIMD}} ${TARGET_LIBSLEEF} ${EXTRA_LIBS})
 
+    add_dependencies(${TARGET_IUT${SIMD}} ${TARGET_HEADERS})
+    add_dependencies(${TARGET_TEST} ${TARGET_IUT${SIMD}})
+    
     list(APPEND IUT_LIST ${TARGET_IUT${SIMD}})
   endif(COMPILER_SUPPORTS_${SIMD})
 endmacro(test_extension)
@@ -49,14 +54,12 @@ set_target_properties(${TARGET_TESTER} ${IUT_LIST} PROPERTIES
   C_STANDARD 99)
 
 # Target 'test-libm' runs the libm tests
-add_custom_target(${TARGET_TEST}
-  COMMAND ${CMAKE_COMMAND}
-    -DTARGET_TESTER="${TARGET_TESTER}"
-    -DIUT_LIST="${IUT_LIST}"
-    -DLOCATIONS_FILE="${PROJECT_BINARY_DIR}/DefineLocations.cmake"
-    -P ${SLEEF_SCRIPT_PATH}/ExecuteTests.cmake
-  COMMENT "Running tests..."
-  DEPENDS ${TARGET_TESTER} ${IUT_LIST})
+foreach(exe_iut ${IUT_LIST})
+  add_custom_command(TARGET ${TARGET_TEST}
+    COMMAND ${TARGET_TESTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${exe_iut}
+  )
+endforeach()
+
 # Tests depends on the library
-add_dependencies(${TARGET_TEST} ${TARGET_LIBSLEEF} ${TARGET_HEADERS})
 add_dependencies(${TARGET_IUT} ${TARGET_HEADERS})
+add_dependencies(${TARGET_TEST} ${TARGET_LIBSLEEF} ${TARGET_HEADERS} ${TARGET_IUT})
