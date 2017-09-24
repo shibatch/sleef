@@ -11,8 +11,12 @@ set_target_properties(
   ${TARGET_MKRENAME} ${TARGET_MKRENAME_GNUABI} ${TARGET_MKDISP} PROPERTIES
   C_STANDARD 99)
 
+# Custom target to build headers
+add_custom_target(BuildHeaders)
+
 # Build main library
 add_library(${TARGET_LIBSLEEF} SHARED sleefdp.c sleefsp.c)
+add_dependencies(${TARGET_LIBSLEEF} BuildHeaders)
 
 # Check for different precision support and add sources accordingly
 if(COMPILER_SUPPORTS_LONG_DOUBLE)
@@ -25,7 +29,9 @@ if(COMPILER_SUPPORTS_FLOAT128)
     PRIVATE ENABLEFLOAT128=1)
 endif(COMPILER_SUPPORTS_FLOAT128)
 
-set(RENAME_HEADERS "")
+# --------------------------------------------------------------------
+# Compile SIMD versions, generate renameXXX.h files
+# --------------------------------------------------------------------
 set(TARGET_OBJECTS "")
 # Single precision and double precision
 set(SIMD_SOURCES sleefsimdsp.c sleefsimddp.c)
@@ -39,15 +45,27 @@ macro(compile_object SIMD)
     set(OBJECT_${SIMD} "sleef${vecarch}")
     set(HEADER_${SIMD} ${CMAKE_CURRENT_BINARY_DIR}/include/rename${vecarch}.h)
 
-    add_library(${OBJECT_${SIMD}} OBJECT ${SIMD_SOURCES} ${HEADER_${SIMD}})
+    # Ensure that the renameXXX.h file exists so that add_custom_command mkrename will work
+    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/)
+    file(WRITE ${HEADER_${SIMD}} "")
+    
+    # Create a library
+    add_library(${OBJECT_${SIMD}} OBJECT ${SIMD_SOURCES} ${HEADER_${SIMD}})    
     target_compile_definitions(${OBJECT_${SIMD}} PRIVATE
       ENABLE_${SIMD}=1
       DORENAME=1)
+
     target_compile_options(${OBJECT_${SIMD}} PRIVATE
       ${FLAGS_ENABLE_${SIMD}})
 
+    # Generate mkrename commands
+    add_custom_command(TARGET BuildHeaders 
+      COMMAND echo Generating rename${vecarch}.h: ${TARGET_MKRENAME} ${RENAME_PARAMS_${SIMD}}
+      COMMAND ${TARGET_MKRENAME} ${RENAME_PARAMS_${SIMD}} > ${HEADER_${SIMD}}
+    )
+
+    # Store the generate object/headers
     list(APPEND TARGET_OBJECTS ${OBJECT_${SIMD}})
-    list(APPEND RENAME_HEADERS ${HEADER_${SIMD}})
   endif(COMPILER_SUPPORTS_${SIMD})
 endmacro(compile_object)
 
@@ -59,6 +77,9 @@ foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
     $<$<BOOL:${COMPILER_SUPPORTS_${SIMD}}>:$<TARGET_OBJECTS:${OBJECT_${SIMD}}>>)
 endforeach()
 
+# --------------------------------------------------------------------
+# Compile SIMD versions for GNU Abi, generate renameXXX_gnuabi.h files
+# --------------------------------------------------------------------
 macro(compile_object_gnuabi SIMD)
   if(COMPILER_SUPPORTS_${SIMD})
     # Need lowercase string for rename header
@@ -66,6 +87,10 @@ macro(compile_object_gnuabi SIMD)
 
     set(OBJECT_${SIMD}_GNUABI "sleefgnuabi${vecarch}")
     set(HEADER_${SIMD}_GNUABI ${CMAKE_CURRENT_BINARY_DIR}/include/rename${vecarch}_gnuabi.h)
+
+    # Ensure that the renameXXX.h file exists so that add_custom_command mkrename will work
+    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/)
+    file(WRITE ${HEADER_${SIMD}_GNUABI} "")
 
     add_library(${OBJECT_${SIMD}_GNUABI} OBJECT ${SIMD_SOURCES} ${HEADER_${SIMD}_GNUABI})
     target_compile_definitions(${OBJECT_${SIMD}_GNUABI} PRIVATE
@@ -75,8 +100,13 @@ macro(compile_object_gnuabi SIMD)
     target_compile_options(${OBJECT_${SIMD}_GNUABI} PRIVATE
       ${FLAGS_ENABLE_${SIMD}})
 
+    # Generate mkrename_gnuabi commands
+    add_custom_command(TARGET BuildHeaders 
+      COMMAND echo Generating rename${vecarch}_gnuabi.h: ${TARGET_MKRENAME_GNUABI} ${RENAME_PARAMS_GNUABI_${SIMD}}  
+      COMMAND ${TARGET_MKRENAME_GNUABI} ${RENAME_PARAMS_GNUABI_${SIMD}} > ${HEADER_${SIMD}_GNUABI}
+    )
+
     list(APPEND TARGET_OBJECTS_GNUABI ${OBJECT_${SIMD}_GNUABI})
-    list(APPEND RENAME_HEADERS_GNUABI ${HEADER_${SIMD}_GNUABI})
   endif(COMPILER_SUPPORTS_${SIMD})
 endmacro(compile_object_gnuabi)
 
@@ -90,6 +120,12 @@ if(SLEEF_ENABLE_GNUABI)
   endforeach()
 
   add_library(${TARGET_LIBSLEEFGNUABI} SHARED ${GNUABI_OBJ_SRC})
+
+  set_target_properties(${TARGET_LIBSLEEFGNUABI} PROPERTIES
+  VERSION ${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}
+  SOVERSION ${SLEEF_SOVERSION}
+  C_STANDARD 99)
+  
 endif(SLEEF_ENABLE_GNUABI)
 
 # All code that goes into the main library needs to be position independent code
@@ -99,48 +135,45 @@ set_target_properties(${TARGET_OBJECTS} ${TARGET_OBJECTS_GNUABI} PROPERTIES
 
 target_compile_definitions(${TARGET_LIBSLEEF}
   PRIVATE DORENAME=1)
-set_target_properties(${TARGET_LIBSLEEF} ${TARGET_LIBSLEEFGNUABI} PROPERTIES
+set_target_properties(${TARGET_LIBSLEEF} PROPERTIES
   VERSION ${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}
   SOVERSION ${SLEEF_SOVERSION}
   C_STANDARD 99)
 
-# Generate the rename headers at build time
-add_custom_command(
-  OUTPUT ${RENAME_HEADERS} ${RENAME_HEADERS_GNUABI}
-  COMMAND ${CMAKE_COMMAND}
-    -DRENAME_HEADERS="${RENAME_HEADERS}"
-    -DRENAME_HEADERS_GNUABI="${RENAME_HEADERS_GNUABI}"
-    -DLOCATIONS_FILE="${PROJECT_BINARY_DIR}/DefineLocations.cmake"
-    -DTARGET_MKRENAME="${TARGET_MKRENAME}"
-    -DTARGET_MKRENAME_GNUABI="${TARGET_MKRENAME_GNUABI}"
-    -P ${SLEEF_SCRIPT_PATH}/GenerateRenameHeader.cmake
-  DEPENDS
-    ${TARGET_MKRENAME}
-    ${TARGET_MKRENAME_GNUABI})
+# --------------------------------------------------------------------
+# Generate include/sleef.h header file
+# --------------------------------------------------------------------
+set(SLEEF_ORG_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/sleeflibm.h.org)
+set(SLEEF_GEN_HEADER ${CMAKE_BINARY_DIR}/include/sleef.h)
+configure_file(${SLEEF_ORG_HEADER} ${SLEEF_GEN_HEADER} COPYONLY)
 
-# Generate the sleef header at build time
-set(SLEEF_INCLUDE_HEADER ${CMAKE_BINARY_DIR}/include/sleef.h)
-add_custom_command(
-  OUTPUT ${SLEEF_INCLUDE_HEADER}
-  COMMAND ${CMAKE_COMMAND}
-    -DTARGET_MKRENAME="${TARGET_MKRENAME}"
-    -DSLEEF_ARCH_X86="${SLEEF_ARCH_X86}"
-    -DSLEEF_ARCH_AARCH64="${SLEEF_ARCH_AARCH64}"
-    -DLOCATIONS_FILE="${PROJECT_BINARY_DIR}/DefineLocations.cmake"
-    -P ${SLEEF_SCRIPT_PATH}/GenerateSleefHeader.cmake
-  DEPENDS
-    ${CMAKE_CURRENT_SOURCE_DIR}/sleeflibm.h.org
-    ${TARGET_MKRENAME}
-    ${TARGET_MKDISP})
+foreach(SIMD ${SLEEF_HEADER_LIST})
+  add_custom_command(TARGET BuildHeaders 
+    COMMAND echo Generating sleef.h: ${TARGET_MKRENAME} ${HEADER_PARAMS_${SIMD}}
+    COMMAND ${TARGET_MKRENAME} ${HEADER_PARAMS_${SIMD}} >> ${SLEEF_GEN_HEADER}
+  )
+endforeach()
 
-# Always run the commands to generate the headers
-add_custom_target(headers ALL DEPENDS
-  ${SLEEF_INCLUDE_HEADER}
-  ${RENAME_HEADERS}
-  ${RENAME_HEADERS_GNUABI})
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/sleef_footer.h "#undef IMPORT\n#endif\n")
+if(MSVC)
+  string(REPLACE "/" "\\" sleef_footer_input_file "${CMAKE_CURRENT_BINARY_DIR}/sleef_footer.h")
+  add_custom_command(TARGET BuildHeaders 
+    COMMAND type ${sleef_footer_input_file} >> ${SLEEF_GEN_HEADER}
+  )
+else()
+  add_custom_command(TARGET BuildHeaders 
+    COMMAND cat ${CMAKE_CURRENT_BINARY_DIR}/sleef_footer.h >> ${SLEEF_GEN_HEADER}
+  )
+endif()
+
+
 
 # Install libsleef and sleef.h
 install(FILES ${SLEEF_INCLUDE_HEADER}
   DESTINATION include)
-install(TARGETS ${TARGET_LIBSLEEF} ${TARGET_LIBSLEEFGNUABI}
+if(SLEEF_ENABLE_GNUABI)
+  install(TARGETS ${TARGET_LIBSLEEF} ${TARGET_LIBSLEEFGNUABI}
   DESTINATION lib)
+else()
+  install(TARGETS ${TARGET_LIBSLEEF} DESTINATION lib)
+endif(SLEEF_ENABLE_GNUABI)
