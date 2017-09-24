@@ -48,14 +48,13 @@ set_target_properties(${TARGET_TESTER} ${IUT_LIST} PROPERTIES
   C_STANDARD 99)
 
 # Target 'test-libm' runs the libm tests
-add_custom_target(${TARGET_TEST}
-  COMMAND ${CMAKE_COMMAND}
-    -DTARGET_TESTER="${TARGET_TESTER}"
-    -DIUT_LIST="${IUT_LIST}"
-    -DLOCATIONS_FILE="${PROJECT_BINARY_DIR}/DefineLocations.cmake"
-    -P ${SLEEF_SCRIPT_PATH}/ExecuteTests.cmake
-  COMMENT "Running tests..."
-  DEPENDS ${TARGET_TESTER} ${IUT_LIST})
+add_custom_target(${TARGET_TEST})
+foreach(exe_iut ${IUT_LIST})
+  add_custom_command(TARGET ${TARGET_TEST}
+    COMMAND ${TARGET_TESTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${exe_iut}
+  )
+endforeach()
+
 # Tests depends on the library
 add_dependencies(${TARGET_TEST} ${TARGET_LIBSLEEF} ${TARGET_HEADERS})
 add_dependencies(${TARGET_IUT} ${TARGET_HEADERS})
