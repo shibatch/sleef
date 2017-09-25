@@ -94,6 +94,17 @@ command_arguments(RENAME_PARAMS_GNUABI_ADVSIMD advsimd n 2 4 float64x2_t float32
 
 # COMPILER DETECTION
 
+# Detect CLANG executable path (on both Windows and Linux/OSX)
+if(NOT CLANG_EXE_PATH)
+  # If the current compiler used by CMAKE is already clang, use this one directly
+  if(CMAKE_C_COMPILER MATCHES "clang")
+    set(CLANG_EXE_PATH ${CMAKE_C_COMPILER})
+  else()
+    # Else we may find clang on the path?
+    find_program(CLANG_EXE_PATH clang clang-5.0 clang-4.0 clang-3.9 )
+  endif()
+endif()
+
 # Allow to define the Gcc/Clang here
 # As we might compile the lib with MSVC, but generates bitcode with CLANG
 # Intel vector extensions.

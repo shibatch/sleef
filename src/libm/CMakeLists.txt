@@ -15,15 +15,19 @@ set_target_properties(
 add_custom_target(${TARGET_HEADERS})
 
 # Build main library
-add_library(${TARGET_LIBSLEEF} SHARED sleefdp.c sleefsp.c)
+# Single precision and double precision
+set(SLEEF_SOURCES sleefdp.c sleefsp.c)
+add_library(${TARGET_LIBSLEEF} SHARED ${SLEEF_SOURCES})
 add_dependencies(${TARGET_LIBSLEEF} ${TARGET_HEADERS})
 
 # Check for different precision support and add sources accordingly
 if(COMPILER_SUPPORTS_LONG_DOUBLE)
   target_sources(${TARGET_LIBSLEEF} PRIVATE sleefld.c)
+  set(SLEEF_SOURCES ${SLEEF_SOURCES} sleefld.c)
 endif(COMPILER_SUPPORTS_LONG_DOUBLE)
 
 if(COMPILER_SUPPORTS_FLOAT128)
+  # TODO: can't add sleefqp.c to SLEEF_SOURCES as it requires special compile definitions (for LLVM bitcode gen)
   target_sources(${TARGET_LIBSLEEF} PRIVATE sleefqp.c)
   target_compile_definitions(${TARGET_LIBSLEEF}
     PRIVATE ENABLEFLOAT128=1)
@@ -175,7 +179,43 @@ else()
   )
 endif()
 
+# --------------------------------------------------------------------
+# Generate LLVM bitcode
+# --------------------------------------------------------------------
+if(CLANG_EXE_PATH AND SLEEF_ENABLE_LLVM_BITCODE)
+  set(SLEEP_LLVM_BITCODE_INCLUDES "") 
+  get_property(SLEEP_LLVM_BITCODE_INCLUDES_LIST DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+  foreach(INCLUDE_DIRECTORY ${SLEEP_LLVM_BITCODE_INCLUDES_LIST})
+    set(SLEEP_LLVM_BITCODE_INCLUDES "${SLEEP_LLVM_BITCODE_INCLUDES} -I ${INCLUDE_DIRECTORY}")
+  endforeach()
 
+  separate_arguments(SLEEP_LLVM_BITCODE_INCLUDES_CLANG WINDOWS_COMMAND "${SLEEP_LLVM_BITCODE_INCLUDES}")
+  file(MAKE_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+  add_custom_target(${TARGET_LLVM_BITCODE} ALL)
+  add_dependencies(${TARGET_LLVM_BITCODE} ${TARGET_HEADERS})
+
+  set(SLEEF_CLANG_LLVM_BITCODE_OPTIONS -O3 -S -emit-llvm -D NDEBUG -D DORENAME=1)
+
+  # Generate LLVM bitcode for regular SLEEF
+  foreach(SLEEF_SRC ${SLEEF_SOURCES})
+    get_filename_component(SRC_WITHOUT_EXT ${SLEEF_SRC} NAME_WE)
+    add_custom_command(TARGET ${TARGET_LLVM_BITCODE}
+      COMMAND ${CLANG_EXE_PATH} ${SLEEF_CLANG_LLVM_BITCODE_OPTIONS} -o ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${SRC_WITHOUT_EXT}.ll ${CMAKE_CURRENT_SOURCE_DIR}/${SRC_WITHOUT_EXT}.c ${SLEEP_LLVM_BITCODE_INCLUDES_CLANG}
+    )
+  endforeach()
+
+  # Generate LLVM bitcode for SIMD SLEEF
+  foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
+    if(COMPILER_SUPPORTS_${SIMD})
+      foreach(SIMD_SOURCE ${SIMD_SOURCES})
+        get_filename_component(SIMD_SOURCE_WITHOUT_EXT ${SIMD_SOURCE} NAME_WE)
+        add_custom_command(TARGET ${TARGET_LLVM_BITCODE}
+          COMMAND  ${CLANG_EXE_PATH} ${CLANG_FLAGS_ENABLE_${SIMD}} ${SLEEF_CLANG_LLVM_BITCODE_OPTIONS} -D ENABLE_${SIMD}=1 -o ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${SIMD_SOURCE_WITHOUT_EXT}_${SIMD}.ll ${CMAKE_CURRENT_SOURCE_DIR}/${SIMD_SOURCE} ${SLEEP_LLVM_BITCODE_INCLUDES_CLANG}
+        )
+      endforeach()
+    endif()
+  endforeach()
+endif()
 
 # Install libsleef and sleef.h
 install(FILES ${SLEEF_INCLUDE_HEADER}
