@@ -31,9 +31,6 @@ include(Configure.cmake)
 configure_file(
   ${PROJECT_SOURCE_DIR}/sleef-config.h.in
   ${PROJECT_BINARY_DIR}/include/sleef-config.h @ONLY)
-configure_file(
-  ${PROJECT_SOURCE_DIR}/cmake/Modules/DefineLocations.cmake.in
-  ${PROJECT_BINARY_DIR}/DefineLocations.cmake @ONLY)
 
 # We like to have a documented index of all targets in the project. The
 # variables listed below carry the names of the targets defined throughout
@@ -58,6 +55,8 @@ set(TARGET_IUTAVX2 "iutavx2")
 set(TARGET_IUTAVX2128 "iutavx2128")
 set(TARGET_IUTAVX512F "iutavx512f")
 set(TARGET_IUTADVSIMD "iutadvsimd")
+# The target to generate LLVM bitcode only, available when SLEEF_ENABLE_LLVM_BITCODE is passed to cmake
+set(TARGET_LLVM_BITCODE "llvm-bitcode")
 # Runs the test suite
 # Depends on targets: iut, tester
 # Defined in src/libm-tester/CMakeLists.txt via command add_custom_target
