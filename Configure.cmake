@@ -7,7 +7,7 @@ find_library(LIB_MPFR mpfr)
 
 # The library currently supports the following SIMD architectures
 set(SLEEF_SUPPORTED_EXTENSIONS
-  SSE2 SSE4 AVX FMA4 AVX2 AVX2128  # x86 (note AVX512F is disabled)
+  SSE2 SSE4 AVX FMA4 AVX2 AVX512F AVX2128  # x86
   ADVSIMD				  # Aarch64
   NEON					  # Aarch32
   CACHE STRING "List of SIMD architectures supported by libsleef."
