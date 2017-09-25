@@ -164,9 +164,16 @@ foreach(SIMD ${SLEEF_HEADER_LIST})
 endforeach()
 
 file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/sleef_footer.h "#undef IMPORT\n#endif\n")
-add_custom_command(TARGET ${TARGET_HEADERS} 
-  COMMAND cat ${CMAKE_CURRENT_BINARY_DIR}/sleef_footer.h >> ${SLEEF_INCLUDE_HEADER}
-)
+if(MSVC)
+  string(REPLACE "/" "\\" sleef_footer_input_file "${CMAKE_CURRENT_BINARY_DIR}/sleef_footer.h")
+  add_custom_command(TARGET ${TARGET_HEADERS} 
+    COMMAND type ${sleef_footer_input_file} >> ${SLEEF_INCLUDE_HEADER}
+  )
+else()
+  add_custom_command(TARGET ${TARGET_HEADERS} 
+    COMMAND cat ${CMAKE_CURRENT_BINARY_DIR}/sleef_footer.h >> ${SLEEF_INCLUDE_HEADER}
+  )
+endif()
 
 # Install libsleef and sleef.h
 install(FILES ${SLEEF_INCLUDE_HEADER} DESTINATION include)

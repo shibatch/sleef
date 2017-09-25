@@ -70,9 +70,11 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
 endif()
 
 # Enable building of the GNU ABI version for x86 and aarch64
-if((SLEEF_ARCH_X86 OR SLEEF_ARCH_AARCH64))
-  set(SLEEF_ENABLE_GNUABI ON CACHE INTERNAL "Build GNU ABI compatible version.")
-endif()
+if(NOT MSVC)
+  if((SLEEF_ARCH_X86 OR SLEEF_ARCH_AARCH64))
+    set(SLEEF_ENABLE_GNUABI ON CACHE INTERNAL "Build GNU ABI compatible version.")
+  endif()
+endif()  
 
 # MKRename arguments per type
 command_arguments(RENAME_PARAMS_SSE2           2 4 sse2)
@@ -112,6 +114,15 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
   
   # Warning flags.
   set(FLAGS_WALL "-Wall -Wno-unused -Wno-attributes")
+elseif(MSVC)
+  # Intel vector extensions.
+  set(FLAGS_ENABLE_SSE2 /D__SSE2__)
+  set(FLAGS_ENABLE_SSE4 /D__SSE2__ /D__SSE3__ /D__SSE4_1__)
+  set(FLAGS_ENABLE_AVX  /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /arch:AVX)
+  set(FLAGS_ENABLE_FMA4 /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /D__FMA4__ /arch:AVX2)
+  set(FLAGS_ENABLE_AVX2 /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /arch:AVX2)
+  set(FLAGS_ENABLE_AVX2128 /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /arch:AVX2)
+  set(FLAGS_ENABLE_AVX512F /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /arch:AVX2)
 endif()
 
 set(SLEEF_C_FLAGS "${FLAGS_WALL} ${FLAGS_STRICTMATH}")
