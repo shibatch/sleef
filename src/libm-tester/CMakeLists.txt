@@ -56,5 +56,6 @@ foreach(exe_iut ${IUT_LIST})
 endforeach()
 
 # Tests depends on the library
-add_dependencies(${TARGET_TEST} ${TARGET_LIBSLEEF} ${TARGET_HEADERS})
 add_dependencies(${TARGET_IUT} ${TARGET_HEADERS})
+add_dependencies(${TARGET_TEST} ${TARGET_LIBSLEEF} ${TARGET_HEADERS} ${TARGET_IUT})
+
