@@ -55,6 +55,14 @@ using the default parameters. You can control and modify these parameters by
 setting variables when running cmake. See the list of
 [options and variables](#build-customization) for customizing your build.
 
+> NOTE: On **Windows**, you need to use a specific generator like this:
+> `cmake -G"Visual Studio 14 2015 Win64" ..` specifying the Visual Studio version
+> and targeting specifically `Win64` (to support compilation of AVX/AVX2)
+> Check `cmake -G` to get a full list of supported Visual Studio project generators.
+> This generator will create a proper solution `SLEEF.sln` under the build
+> directory. 
+> You can still use `cmake --build .` to build without opening Visual Studio.
+
 5. Now that you have the build files created by cmake, proceed from the top
 of the build directory:
 ```
