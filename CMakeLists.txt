@@ -55,6 +55,8 @@ set(TARGET_IUTAVX2 "iutavx2")
 set(TARGET_IUTAVX2128 "iutavx2128")
 set(TARGET_IUTAVX512F "iutavx512f")
 set(TARGET_IUTADVSIMD "iutadvsimd")
+# The target to generate LLVM bitcode only, available when SLEEF_ENABLE_LLVM_BITCODE is passed to cmake
+set(TARGET_LLVM_BITCODE "llvm-bitcode")
 # Runs the test suite
 # Depends on targets: iut, tester
 # Defined in src/libm-tester/CMakeLists.txt via command add_custom_target

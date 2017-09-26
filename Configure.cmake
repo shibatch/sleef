@@ -98,24 +98,41 @@ command_arguments(RENAME_PARAMS_GNUABI_ADVSIMD advsimd n 2 4 float64x2_t float32
 
 # COMPILER DETECTION
 
+# Detect CLANG executable path (on both Windows and Linux/OSX)
+if(NOT CLANG_EXE_PATH)
+  # If the current compiler used by CMAKE is already clang, use this one directly
+  if(CMAKE_C_COMPILER MATCHES "clang")
+    set(CLANG_EXE_PATH ${CMAKE_C_COMPILER})
+  else()
+    # Else we may find clang on the path?
+    find_program(CLANG_EXE_PATH NAMES clang "clang-5.0" "clang-4.0" "clang-3.9")
+  endif()
+endif()
+
+# Allow to define the Gcc/Clang here
+# As we might compile the lib with MSVC, but generates bitcode with CLANG
+# Intel vector extensions.
+set(CLANG_FLAGS_ENABLE_SSE2 "-msse2")
+set(CLANG_FLAGS_ENABLE_SSE4 "-msse4.1")
+set(CLANG_FLAGS_ENABLE_AVX "-mavx")
+set(CLANG_FLAGS_ENABLE_FMA4 "-mfma4")
+set(CLANG_FLAGS_ENABLE_AVX2 "-mavx2;-mfma")
+set(CLANG_FLAGS_ENABLE_AVX2128 "-mavx2;-mfma")
+set(CLANG_FLAGS_ENABLE_AVX512F "-mavx512f")
+set(CLANG_FLAGS_ENABLE_NEON "")
+# Arm AArch64 vector extensions.
+set(CLANG_FLAGS_ENABLE_ADVSIMD "-march=armv8-a+simd")
+
 # All variables storing compiler flags should be prefixed with FLAGS_
 if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
   # Always compile sleef with -ffp-contract.
   set(FLAGS_STRICTMATH "-ffp-contract=off")
 
   # Intel vector extensions.
-  set(FLAGS_ENABLE_SSE2 "-msse2")
-  set(FLAGS_ENABLE_SSE4 "-msse4.1")
-  set(FLAGS_ENABLE_AVX "-mavx")
-  set(FLAGS_ENABLE_FMA4 "-mfma4")
-  set(FLAGS_ENABLE_AVX2 "-mavx2;-mfma")
-  set(FLAGS_ENABLE_AVX2128 "-mavx2;-mfma")
-  set(FLAGS_ENABLE_AVX512F "-mavx512f")
-  set(FLAGS_ENABLE_NEON "")
+  foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
+    set(FLAGS_ENABLE_${SIMD} ${CLANG_FLAGS_ENABLE_${SIMD}})
+  endforeach()
 
-  # Arm AArch64 vector extensions.
-  set(FLAGS_ENABLE_ADVSIMD "-march=armv8-a+simd")
-  
   # Warning flags.
   set(FLAGS_WALL "-Wall -Wno-unused -Wno-attributes")
 elseif(MSVC)
