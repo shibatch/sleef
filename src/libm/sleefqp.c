@@ -22,10 +22,6 @@
 #pragma fp_contract (off)
 #endif
 
-#if defined(__GNUC__)
-typedef __float128 Sleef_quad;
-#endif
-
 static INLINE CONST Sleef_quad mlaq(Sleef_quad x, Sleef_quad y, Sleef_quad z) { return x * y + z; }
 static INLINE CONST int64_t xrintq(Sleef_quad x) { return x < 0 ? (int64_t)(x - 0.5) : (int64_t)(x + 0.5); }
 static INLINE CONST int64_t xceilq(Sleef_quad x) { return (int64_t)x + (x < 0 ? 0 : 1); }
