@@ -12,6 +12,10 @@ set(SLEEF_SUPPORTED_EXTENSIONS
   NEON					  # Aarch32
   CACHE STRING "List of SIMD architectures supported by libsleef."
   )
+set(SLEEF_SUPPORTED_GNUABI_EXTENSIONS 
+  SSE2 AVX AVX2 AVX512F ADVSIMD
+  CACHE STRING "List of SIMD architectures supported by libsleef for GNU ABI."
+)
 
 # Force set default build type if none was specified
 # Note: some sleef code requires the optimisation flags turned on
