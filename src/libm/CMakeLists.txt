@@ -110,31 +110,33 @@ set_target_properties(
 # TARGET_LIBSLEEF
 # --------------------------------------------------------------------
 # Build main library
-add_library(${TARGET_LIBSLEEF} SHARED sleefdp.c sleefsp.c)
 
 set(COMMON_TARGET_PROPERTIES 
-  POSITION_INDEPENDENT_CODE ON   # -fPIC
-  C_STANDARD 99                  # -std=gnu99
+POSITION_INDEPENDENT_CODE ON   # -fPIC
+C_STANDARD 99                  # -std=gnu99
 )
 
+# Original sleef sources
+set(STANDARD_SOURCES sleefdp.c sleefsp.c)
+
+# Check for different precision support and add sources accordingly
+if(COMPILER_SUPPORTS_LONG_DOUBLE)
+  list(APPEND STANDARD_SOURCES sleefld.c)
+endif()
+
+add_library(${TARGET_LIBSLEEF} SHARED ${STANDARD_SOURCES})
 set_target_properties(${TARGET_LIBSLEEF} PROPERTIES
   VERSION ${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}
   SOVERSION ${SLEEF_SOVERSION}
   ${COMMON_TARGET_PROPERTIES}
 )
 
-
-
 target_compile_definitions(${TARGET_LIBSLEEF} 
   PRIVATE DORENAME=1
 )
 
-# Check for different precision support and add sources accordingly
-if(COMPILER_SUPPORTS_LONG_DOUBLE)
-  target_sources(${TARGET_LIBSLEEF} PRIVATE sleefld.c)
-endif()
-
 if(COMPILER_SUPPORTS_FLOAT128)
+  # TODO: Not supported for LLVM bitcode gen as it has a specific compilation flags
   target_sources(${TARGET_LIBSLEEF} PRIVATE sleefqp.c)
   target_compile_definitions(${TARGET_LIBSLEEF}
     PRIVATE ENABLEFLOAT128=1)
@@ -206,6 +208,61 @@ if(SLEEF_ENABLE_GNUABI)
     C_STANDARD 99                  # -std=gnu99
   ) 
 endif(SLEEF_ENABLE_GNUABI)
+
+# --------------------------------------------------------------------
+# TARGET_LLVM_BITCODE
+# Generate LLVM bitcode
+# --------------------------------------------------------------------
+if(CLANG_EXE_PATH AND SLEEF_ENABLE_LLVM_BITCODE)
+  set(SLEEP_LLVM_BITCODE_INCLUDES "") 
+  get_property(SLEEP_LLVM_BITCODE_INCLUDES_LIST DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+  foreach(INCLUDE_DIRECTORY ${SLEEP_LLVM_BITCODE_INCLUDES_LIST})
+    set(SLEEP_LLVM_BITCODE_INCLUDES "${SLEEP_LLVM_BITCODE_INCLUDES} -I ${INCLUDE_DIRECTORY}")
+  endforeach()
+
+  separate_arguments(SLEEP_LLVM_BITCODE_INCLUDES_CLANG WINDOWS_COMMAND "${SLEEP_LLVM_BITCODE_INCLUDES}")
+  set(SLEEF_CLANG_LLVM_BITCODE_OPTIONS -O3 -S -emit-llvm -D NDEBUG -D DORENAME=1)
+  set(LLVM_BITCODE_OUTPUTS "")
+  
+  # Generate LLVM bitcode for regular SLEEF
+  foreach(STANDARD_SOURCE ${STANDARD_SOURCES})
+    get_filename_component(SRC_WITHOUT_EXT ${STANDARD_SOURCE} NAME_WE)
+    set(LLVM_BITCODE_INPUT ${CMAKE_CURRENT_SOURCE_DIR}/${SRC_WITHOUT_EXT}.c)
+    set(LLVM_BITCODE_OUTPUT ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${SRC_WITHOUT_EXT}.ll)
+    add_custom_command(OUTPUT ${LLVM_BITCODE_OUTPUT}
+      COMMAND ${CLANG_EXE_PATH} ${SLEEF_CLANG_LLVM_BITCODE_OPTIONS} -o ${LLVM_BITCODE_OUTPUT} ${LLVM_BITCODE_INPUT} ${SLEEP_LLVM_BITCODE_INCLUDES_CLANG}
+      DEPENDS
+        ${LLVM_BITCODE_INPUT}
+    )
+    list(APPEND LLVM_BITCODE_OUTPUTS ${LLVM_BITCODE_OUTPUT})
+  endforeach()
+
+  # Generate LLVM bitcode for SIMD SLEEF
+  foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
+    if(COMPILER_SUPPORTS_${SIMD})
+      foreach(SIMD_SOURCE ${SIMD_SOURCES})
+        get_filename_component(SIMD_SOURCE_WITHOUT_EXT ${SIMD_SOURCE} NAME_WE)
+        set(LLVM_BITCODE_INPUT ${CMAKE_CURRENT_SOURCE_DIR}/${SIMD_SOURCE})
+        set(LLVM_BITCODE_OUTPUT ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${SIMD_SOURCE_WITHOUT_EXT}_${SIMD}.ll)
+        add_custom_command(OUTPUT ${LLVM_BITCODE_OUTPUT}
+          COMMAND  ${CLANG_EXE_PATH} ${CLANG_FLAGS_ENABLE_${SIMD}} ${SLEEF_CLANG_LLVM_BITCODE_OPTIONS} -D ENABLE_${SIMD}=1 -o ${LLVM_BITCODE_OUTPUT} ${LLVM_BITCODE_INPUT} ${SLEEP_LLVM_BITCODE_INCLUDES_CLANG}
+          DEPENDS
+            ${LLVM_BITCODE_INPUT}
+        )
+        list(APPEND LLVM_BITCODE_OUTPUTS ${LLVM_BITCODE_OUTPUT})
+      endforeach()
+    endif()
+  endforeach()
+
+  file(MAKE_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+  add_custom_target(${TARGET_LLVM_BITCODE} ALL
+    DEPENDS
+      ${LLVM_BITCODE_OUTPUTS}
+  )
+  add_dependencies(${TARGET_LLVM_BITCODE} ${TARGET_HEADERS})
+
+  install(FILES ${LLVM_BITCODE_OUTPUTS} DESTINATION lib)
+endif()
 
 # --------------------------------------------------------------------
 # Install
