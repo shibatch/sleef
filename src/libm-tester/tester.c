@@ -3440,6 +3440,10 @@ void do_test() {
       double start = u2d(d2u(i)-20), end = u2d(d2u(i)+20);
       for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyX_d(mpfr_sinpi, child_sincospi_u35, d, 3.5);
     }
+    for(i=1;i<=20 && success;i++) {
+      double start = u2d(d2u(0.25 * i)-20), end = u2d(d2u(0.25 * i)+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyX_d(mpfr_sinpi, child_sincospi_u35, d, 3.5);
+    }
     showResult(success);
 
     //
@@ -3449,6 +3453,10 @@ void do_test() {
     for(d = -1e+8-0.1;d < 1e+8 && success;d += (1e+10 + 0.1)) checkAccuracyX_d(mpfr_sinpi, child_sincospi_u05, d, 0.506);
     for(i=1;i<10000 && success;i+=31) {
       double start = u2d(d2u(i)-20), end = u2d(d2u(i)+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyX_d(mpfr_sinpi, child_sincospi_u05, d, 0.506);
+    }
+    for(i=1;i<=20 && success;i++) {
+      double start = u2d(d2u(0.25 * i)-20), end = u2d(d2u(0.25 * i)+20);
       for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyX_d(mpfr_sinpi, child_sincospi_u05, d, 0.506);
     }
     showResult(success);
@@ -3462,6 +3470,10 @@ void do_test() {
       double start = u2d(d2u(i)-20), end = u2d(d2u(i)+20);
       for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracy_d(mpfr_sinpi, child_sinpi_u05, d, 0.506);
     }
+    for(i=1;i<=20 && success;i++) {
+      double start = u2d(d2u(0.25 * i)-20), end = u2d(d2u(0.25 * i)+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracy_d(mpfr_sinpi, child_sinpi_u05, d, 0.506);
+    }
     showResult(success);
     
     //
@@ -3471,6 +3483,10 @@ void do_test() {
     for(d = -1e+8-0.1;d < 1e+8 && success;d += (1e+10 + 0.1)) checkAccuracy_d(mpfr_cospi, child_cospi_u05, d, 0.506);
     for(i=1;i<10000 && success;i+=31) {
       double start = u2d(d2u(i)-20), end = u2d(d2u(i)+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracy_d(mpfr_cospi, child_cospi_u05, d, 0.506);
+    }
+    for(i=1;i<=20 && success;i++) {
+      double start = u2d(d2u(0.25 * i)-20), end = u2d(d2u(0.25 * i)+20);
       for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracy_d(mpfr_cospi, child_cospi_u05, d, 0.506);
     }
     showResult(success);
@@ -3532,6 +3548,10 @@ void do_test() {
       double start = u2d(d2u(i)-20), end = u2d(d2u(i)+20);
       for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyY_d(mpfr_cospi, child_sincospi_u35, d, 3.5);
     }
+    for(i=1;i<=20 && success;i++) {
+      double start = u2d(d2u(0.25 * i)-20), end = u2d(d2u(0.25 * i)+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyY_d(mpfr_cospi, child_sincospi_u35, d, 3.5);
+    }
     showResult(success);
 
     //
@@ -3541,6 +3561,10 @@ void do_test() {
     for(d = -1e+8-0.1;d < 1e+8 && success;d += (1e+10 + 0.1)) checkAccuracyY_d(mpfr_cospi, child_sincospi_u05, d, 0.506);
     for(i=1;i<10000 && success;i+=31) {
       double start = u2d(d2u(i)-20), end = u2d(d2u(i)+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyY_d(mpfr_cospi, child_sincospi_u05, d, 0.506);
+    }
+    for(i=1;i<=20 && success;i++) {
+      double start = u2d(d2u(0.25 * i)-20), end = u2d(d2u(0.25 * i)+20);
       for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyY_d(mpfr_cospi, child_sincospi_u05, d, 0.506);
     }
     showResult(success);
@@ -4109,6 +4133,10 @@ void do_test() {
       double start = u2f(f2u(i)-20), end = u2f(f2u(i)+20);
       for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyX_f(mpfr_sinpi, child_sincospif_u35, d, 3.5);
     }
+    for(i=1;i<=20 && success;i++) {
+      double start = u2f(f2u(0.25 * i)-20), end = u2f(f2u(0.25 * i)+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyX_f(mpfr_sinpi, child_sincospif_u35, d, 3.5);
+    }
     showResult(success);
 
     //
@@ -4118,6 +4146,10 @@ void do_test() {
     for(d = -10000-0.1;d < 10000 && success;d += 1.1) checkAccuracyX_f(mpfr_sinpi, child_sincospif_u05, d, 0.506);
     for(i=1;i<10000 && success;i+=31) {
       double start = u2f(f2u(i)-20), end = u2f(f2u(i)+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyX_f(mpfr_sinpi, child_sincospif_u05, d, 0.506);
+    }
+    for(i=1;i<=20 && success;i++) {
+      double start = u2f(f2u(0.25 * i)-20), end = u2f(f2u(0.25 * i)+20);
       for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyX_f(mpfr_sinpi, child_sincospif_u05, d, 0.506);
     }
     showResult(success);
@@ -4131,6 +4163,10 @@ void do_test() {
       double start = u2f(f2u(i)-20), end = u2f(f2u(i)+20);
       for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracy_f(mpfr_sinpi, child_sinpif_u05, d, 0.506);
     }
+    for(i=1;i<=20 && success;i++) {
+      double start = u2f(f2u(0.25 * i)-20), end = u2f(f2u(0.25 * i)+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracy_f(mpfr_sinpi, child_sinpif_u05, d, 0.506);
+    }
     showResult(success);
     
     //
@@ -4140,6 +4176,10 @@ void do_test() {
     for(d = -10000-0.1;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_cospi, child_cospif_u05, d, 0.506);
     for(i=1;i<10000 && success;i+=31) {
       double start = u2f(f2u(i)-20), end = u2f(f2u(i)+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracy_f(mpfr_cospi, child_cospif_u05, d, 0.506);
+    }
+    for(i=1;i<=20 && success;i++) {
+      double start = u2f(f2u(0.25 * i)-20), end = u2f(f2u(0.25 * i)+20);
       for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracy_f(mpfr_cospi, child_cospif_u05, d, 0.506);
     }
     showResult(success);
@@ -4201,6 +4241,10 @@ void do_test() {
       double start = u2f(f2u(i)-20), end = u2f(f2u(i)+20);
       for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyY_f(mpfr_cospi, child_sincospif_u35, d, 3.5);
     }
+    for(i=1;i<=20 && success;i++) {
+      double start = u2f(f2u(0.25 * i)-20), end = u2f(f2u(0.25 * i)+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyY_f(mpfr_cospi, child_sincospif_u35, d, 3.5);
+    }
     showResult(success);
 
     //
@@ -4210,6 +4254,10 @@ void do_test() {
     for(d = -10000-0.1;d < 10000 && success;d += 1.1) checkAccuracyY_f(mpfr_cospi, child_sincospif_u05, d, 0.506);
     for(i=1;i<10000 && success;i+=31) {
       double start = u2f(f2u(i)-20), end = u2f(f2u(i)+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyY_f(mpfr_cospi, child_sincospif_u05, d, 0.506);
+    }
+    for(i=1;i<=20 && success;i++) {
+      double start = u2f(f2u(0.25 * i)-20), end = u2f(f2u(0.25 * i)+20);
       for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyY_f(mpfr_cospi, child_sincospif_u05, d, 0.506);
     }
     showResult(success);
