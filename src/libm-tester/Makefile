@@ -92,7 +92,31 @@ test : $(TARGET_IUT) tester
 	cp ../../lib/*.dll .
 	$(foreach var,$(TARGET_IUT), ./tester ./$(var) || exit;)
 else
-test : $(TARGET_IUT) tester
+ifeq ($(ENABLEGNUABI),1)
+test :: ../../lib/libsleefgnuabi.$(DLLSUFFIX)
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__exp_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__log_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__acos_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__acosh_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__asin_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__atan2_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__atanh_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__cosh_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__sinh_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__sqrt_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__exp_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__tgamma_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__exp10_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__exp2_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__log_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__log10_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__pow_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__fmod_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__hypot_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__lgamma_finite"
+
+endif
+test :: $(TARGET_IUT) tester
 	$(foreach var,$(TARGET_IUT), $(ENVNAME_LD_LIBRARY_PATH)=../../lib:$$$(ENVNAME_LD_LIBRARY_PATH) ./tester ./$(var) || exit;)
 endif
 
@@ -264,6 +288,9 @@ iutpurec : ../libm/sleefsimddp.c ../libm/sleefsimdsp.c iutsimdmain.o iutsimd.c t
 
 ../../lib/libsleef.$(DLLSUFFIX) :
 	+"$(MAKE)" --directory=../../lib libsleef.$(DLLSUFFIX)
+
+../../lib/libsleefgnuabi.$(DLLSUFFIX) :
+	+"$(MAKE)" --directory=../../lib libsleefgnuabi.$(DLLSUFFIX)
 
 ../../include/sleef.h :
 	+"$(MAKE)" --directory=../../include sleef.h
