@@ -2324,3 +2324,26 @@ int main(int argc, char **argv) {
   //printf("%g, %g\n", vcast_d_vd(r.x), vcast_d_vd(r.y));
 }
 #endif
+
+#ifdef ENABLE_GNUABI
+/* "finite" aliases for compatibility with GLIBC */
+__extension__ __typeof(xacos     ) __acos_finite      __attribute__((weak, alias(str_xacos     )));
+__extension__ __typeof(xacosh    ) __acosh_finite     __attribute__((weak, alias(str_xacosh    )));
+__extension__ __typeof(xasin_u1  ) __asin_finite      __attribute__((weak, alias(str_xasin_u1  )));
+__extension__ __typeof(xatan2_u1 ) __atan2_finite     __attribute__((weak, alias(str_xatan2_u1 )));
+__extension__ __typeof(xatanh    ) __atanh_finite     __attribute__((weak, alias(str_xatanh    )));
+__extension__ __typeof(xcosh     ) __cosh_finite      __attribute__((weak, alias(str_xcosh     )));
+__extension__ __typeof(xsinh     ) __sinh_finite      __attribute__((weak, alias(str_xsinh     )));
+__extension__ __typeof(xsqrt_u05 ) __sqrt_u05_finite  __attribute__((weak, alias(str_xsqrt_u05 )));
+__extension__ __typeof(xexp      ) __exp_finite       __attribute__((weak, alias(str_xexp      )));
+__extension__ __typeof(xtgamma_u1) __tgamma_u1_finite __attribute__((weak, alias(str_xtgamma_u1)));
+__extension__ __typeof(xexp10    ) __exp10_finite     __attribute__((weak, alias(str_xexp10    )));
+__extension__ __typeof(xexp2     ) __exp2_finite      __attribute__((weak, alias(str_xexp2     )));
+__extension__ __typeof(xlog_u1   ) __log_finite       __attribute__((weak, alias(str_xlog_u1   )));
+__extension__ __typeof(xlog10    ) __log10_finite     __attribute__((weak, alias(str_xlog10    )));
+__extension__ __typeof(xpow      ) __pow_finite       __attribute__((weak, alias(str_xpow      )));
+__extension__ __typeof(xfmod     ) __fmod_finite      __attribute__((weak, alias(str_xfmod     )));
+__extension__ __typeof(xhypot_u05) __hypot_u05_finite __attribute__((weak, alias(str_xhypot_u05)));
+__extension__ __typeof(xlgamma_u1) __lgamma_u1_finite __attribute__((weak, alias(str_xlgamma_u1)));
+
+#endif /* #ifdef ENABLE_GNUABI */
