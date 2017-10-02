@@ -2102,7 +2102,7 @@ int main(int argc, char **argv) {
 }
 #endif
 
-#ifdef ENABLE_GNUABI
+#ifdef ENABLE_WEAK_ALIASES
 /* "finite" aliases for compatibility with GLIBC */
 __extension__ __typeof(xacosf     ) __acosf_finite      __attribute__((weak, alias(str_xacosf_u1  )));
 __extension__ __typeof(xacoshf    ) __acoshf_finite     __attribute__((weak, alias(str_xacoshf    )));

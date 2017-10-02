@@ -2325,7 +2325,7 @@ int main(int argc, char **argv) {
 }
 #endif
 
-#ifdef ENABLE_GNUABI
+#ifdef ENABLE_WEAK_ALIASES
 /* "finite" aliases for compatibility with GLIBC */
 __extension__ __typeof(xacos     ) __acos_finite      __attribute__((weak, alias(str_xacos     )));
 __extension__ __typeof(xacosh    ) __acosh_finite     __attribute__((weak, alias(str_xacosh    )));
