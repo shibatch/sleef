@@ -172,7 +172,7 @@ endforeach()
 # use some of the math functions used in the scalar code (for example
 # sqrt).
 if(LIBM)
-  target_link_libraries(${TARGET_LIBSLEEF} m)
+  target_link_libraries(${TARGET_LIBSLEEF} ${LIBM})
 endif(LIBM)
 
 
@@ -220,7 +220,7 @@ if(SLEEF_ENABLE_GNUABI)
 # libm to use some of the math functions used in the scalar code (for
 # example sqrt).
 if(LIBM)
-  target_link_libraries(${TARGET_LIBSLEEFGNUABI} m)
+  target_link_libraries(${TARGET_LIBSLEEFGNUABI} ${LIBM})
 endif(LIBM)
 endif(SLEEF_ENABLE_GNUABI)
 
