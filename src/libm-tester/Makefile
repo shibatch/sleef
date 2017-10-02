@@ -115,6 +115,27 @@ test :: ../../lib/libsleefgnuabi.$(DLLSUFFIX)
 	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__hypot_finite"
 	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__lgamma_finite"
 
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__acosf_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__acoshf_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__asinf_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__atan2f_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__atanhf_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__coshf_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__exp10f_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__exp2f_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__expf_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__expf_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__fmodf_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__hypotf_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__lgammaf_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__log10f_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__logf_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__logf_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__powf_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__sinhf_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__sqrtf_finite"
+	nm ../../lib/libsleefgnuabi.$(DLLSUFFIX) | grep -e "__tgammaf_finite"
+
 endif
 test :: $(TARGET_IUT) tester
 	$(foreach var,$(TARGET_IUT), $(ENVNAME_LD_LIBRARY_PATH)=../../lib:$$$(ENVNAME_LD_LIBRARY_PATH) ./tester ./$(var) || exit;)
