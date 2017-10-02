@@ -168,6 +168,14 @@ foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
   endif(COMPILER_SUPPORTS_${SIMD})
 endforeach()
 
+# On some systems we need to explicitly link libsleef against libm to
+# use some of the math functions used in the scalar code (for example
+# sqrt).
+if(LIBM)
+  target_link_libraries(${TARGET_LIBSLEEF} m)
+endif(LIBM)
+
+
 # --------------------------------------------------------------------
 # TARGET_LIBSLEEFGNUABI
 # Compile SIMD versions for GNU Abi
@@ -207,6 +215,13 @@ if(SLEEF_ENABLE_GNUABI)
     POSITION_INDEPENDENT_CODE ON   # -fPIC
     C_STANDARD 99                  # -std=gnu99
   ) 
+
+# On some systems we need to explicitly link libsleefgnuabi against
+# libm to use some of the math functions used in the scalar code (for
+# example sqrt).
+if(LIBM)
+  target_link_libraries(${TARGET_LIBSLEEFGNUABI} m)
+endif(LIBM)
 endif(SLEEF_ENABLE_GNUABI)
 
 # --------------------------------------------------------------------

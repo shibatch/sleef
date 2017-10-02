@@ -4,6 +4,7 @@ include(CheckTypeSize)
 
 # Check that the library LIB_MPFR is available
 find_library(LIB_MPFR mpfr)
+find_library(LIBM m)
 
 # The library currently supports the following SIMD architectures
 set(SLEEF_SUPPORTED_EXTENSIONS
