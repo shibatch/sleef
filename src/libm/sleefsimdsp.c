@@ -2101,3 +2101,25 @@ int main(int argc, char **argv) {
   
 }
 #endif
+
+#ifdef ENABLE_GNUABI
+/* "finite" aliases for compatibility with GLIBC */
+__extension__ __typeof(xacosf     ) __acosf_finite      __attribute__((weak, alias(str_xacosf_u1  )));
+__extension__ __typeof(xacoshf    ) __acoshf_finite     __attribute__((weak, alias(str_xacoshf    )));
+__extension__ __typeof(xasinf_u1  ) __asinf_finite      __attribute__((weak, alias(str_xasinf_u1  )));
+__extension__ __typeof(xatan2f_u1 ) __atan2f_finite     __attribute__((weak, alias(str_xatan2f_u1 )));
+__extension__ __typeof(xatanhf    ) __atanhf_finite     __attribute__((weak, alias(str_xatanhf    )));
+__extension__ __typeof(xcoshf     ) __coshf_finite      __attribute__((weak, alias(str_xcoshf     )));
+__extension__ __typeof(xexp10f    ) __exp10f_finite     __attribute__((weak, alias(str_xexp10f    )));
+__extension__ __typeof(xexp2f     ) __exp2f_finite      __attribute__((weak, alias(str_xexp2f     )));
+__extension__ __typeof(xexpf      ) __expf_finite       __attribute__((weak, alias(str_xexpf      )));
+__extension__ __typeof(xfmodf     ) __fmodf_finite      __attribute__((weak, alias(str_xfmodf     )));
+__extension__ __typeof(xhypotf_u05) __hypotf_u05_finite __attribute__((weak, alias(str_xhypotf_u05)));
+__extension__ __typeof(xlgammaf_u1) __lgammaf_u1_finite __attribute__((weak, alias(str_xlgammaf_u1)));
+__extension__ __typeof(xlog10f    ) __log10f_finite     __attribute__((weak, alias(str_xlog10f    )));
+__extension__ __typeof(xlogf_u1   ) __logf_finite       __attribute__((weak, alias(str_xlogf_u1   )));
+__extension__ __typeof(xpowf      ) __powf_finite       __attribute__((weak, alias(str_xpowf      )));
+__extension__ __typeof(xsinhf     ) __sinhf_finite      __attribute__((weak, alias(str_xsinhf     )));
+__extension__ __typeof(xsqrtf_u05 ) __sqrtf_u05_finite  __attribute__((weak, alias(str_xsqrtf_u05 )));
+__extension__ __typeof(xtgammaf_u1) __tgammaf_u1_finite __attribute__((weak, alias(str_xtgammaf_u1)));
+#endif /* #ifdef ENABLE_GNUABI */
