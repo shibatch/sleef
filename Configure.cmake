@@ -251,5 +251,8 @@ CHECK_C_SOURCE_COMPILES("
   int f(int a) {
    return a + 2;
   }
-  int g(int a) __attribute__((weak, alias(\"f\")));"
+  int g(int a) __attribute__((weak, alias(\"f\")));
+  int main(void) {
+    return g(2);
+  }"
   COMPILER_SUPPORTS_WEAK_ALIASES)
