@@ -31,5 +31,5 @@ before_script:
   - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 ..
 
 script:
-  - make test-libm
+  - CTEST_OUTPUT_ON_FAILURE=TRUE make all test
   - make install
