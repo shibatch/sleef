@@ -41,7 +41,7 @@ macro(test_extension SIMD)
 	add_executable(link_finite${SIMD} finite_names_testing.c)
 	target_compile_options(link_finite${SIMD}
 	  PRIVATE ${FLAGS_ENABLE_${SIMD}})
-	target_compile_definitions(${TARGET_IUT${SIMD}}
+	target_compile_definitions(link_finite${SIMD}
 	  PRIVATE ENABLE_${SIMD}=1)
 	target_link_libraries(link_finite${SIMD} ${TARGET_LIBSLEEFGNUABI})
 	add_test(NAME link_finite${SIMD}

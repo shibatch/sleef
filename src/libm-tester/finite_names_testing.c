@@ -27,6 +27,9 @@ int main(void) {
 
 #else
 
-int main(void) { printf("Nothing here.\n"); }
+int main(void) {
+  printf("Nothing here.\n");
+  return 0;
+}
 
 #endif
