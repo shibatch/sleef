@@ -35,6 +35,18 @@ macro(test_extension SIMD)
       COMMAND ${TARGET_TESTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_IUT${SIMD}})
     
     list(APPEND IUT_LIST ${TARGET_IUT${SIMD}})
+
+    if(SLEEF_ENABLE_GNUABI)
+      if (COMPILER_SUPPORTS_WEAK_ALIASES)
+	add_executable(link_finite${SIMD} finite_names_testing.c)
+	target_compile_options(link_finite${SIMD}
+	  PRIVATE ${FLAGS_ENABLE_${SIMD}})
+	target_link_libraries(link_finite${SIMD} ${TARGET_LIBSLEEFGNUABI})
+	add_test(NAME link_finite${SIMD}
+	  COMMAND link_finite${SIMD})
+      endif (COMPILER_SUPPORTS_WEAK_ALIASES)
+    endif(SLEEF_ENABLE_GNUABI)
+
   endif(COMPILER_SUPPORTS_${SIMD})
 endmacro(test_extension)
 
