@@ -13,12 +13,13 @@ extern vdouble vsin_finite(vdouble);
 int main(void) {
   double in[VECTLENDP], out[VECTLENDP];
   vdouble vin, vout;
+  int i;
   vin = vload_vd_p(in);
   vout = vcos_finite(vin);
   vout = vsin_finite(vout);
   vstore_v_p_vd(out, vout);
 
-  for (int i = 0; i < VECTLENDP; ++i)
+  for (i = 0; i < VECTLENDP; ++i)
     printf("%g\n", out[i]);
 
   return 0;
