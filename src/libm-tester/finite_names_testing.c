@@ -1,10 +1,10 @@
 #include <stdio.h>
 
-#ifdef __SSE2__
+#ifdef ENABLE_SSE2
 #define CONFIG 2
 #include "helpersse2.h"
-#define vcos_finite _ZGbN2v___cos_finite
-#define vsin_finite _ZGbN2v___sin_finite
+#define vcos_finite _ZGVbN2v___cos_finite
+#define vsin_finite _ZGVbN2v___sin_finite
 // #endif
 
 extern vdouble vcos_finite(vdouble);
