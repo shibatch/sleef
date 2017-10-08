@@ -11,9 +11,6 @@ set(EXTRA_LIBS ${LIBM}
   ${TARGET_LIBCOMMON_STATIC}
   )
 
-# Test target
-add_custom_target(${TARGET_TEST})
-
 # Compile executable 'iut'
 add_executable(${TARGET_IUT} iut.c testerutil.c)
 target_link_libraries(${TARGET_IUT} ${TARGET_LIBSLEEF} ${EXTRA_LIBS})
@@ -32,7 +29,10 @@ macro(test_extension SIMD)
     target_link_libraries(${TARGET_IUT${SIMD}} ${TARGET_LIBSLEEF} ${EXTRA_LIBS})
 
     add_dependencies(${TARGET_IUT${SIMD}} ${TARGET_HEADERS})
-    add_dependencies(${TARGET_TEST} ${TARGET_IUT${SIMD}})
+    add_dependencies(${TARGET_IUT${SIMD}} ${TARGET_LIBSLEEF})
+
+    add_test(NAME ${TARGET_IUT${SIMD}}
+      COMMAND ${TARGET_TESTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_IUT${SIMD}})
     
     list(APPEND IUT_LIST ${TARGET_IUT${SIMD}})
   endif(COMPILER_SUPPORTS_${SIMD})
@@ -53,13 +53,5 @@ target_compile_options(${TARGET_TESTER} PRIVATE -Wno-unused-result)
 set_target_properties(${TARGET_TESTER} ${IUT_LIST} PROPERTIES
   C_STANDARD 99)
 
-# Target 'test-libm' runs the libm tests
-foreach(exe_iut ${IUT_LIST})
-  add_custom_command(TARGET ${TARGET_TEST}
-    COMMAND ${TARGET_TESTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${exe_iut}
-  )
-endforeach()
-
 # Tests depends on the library
 add_dependencies(${TARGET_IUT} ${TARGET_HEADERS})
-add_dependencies(${TARGET_TEST} ${TARGET_LIBSLEEF} ${TARGET_HEADERS} ${TARGET_IUT})

@@ -1,6 +1,8 @@
 # See doc/build-with-cmake.md for instructions on how to build Sleef.
 cmake_minimum_required(VERSION 3.4.3)
 
+enable_testing()
+
 set(SLEEF_VERSION_MAJOR 3)
 set(SLEEF_VERSION_MINOR 1)
 set(SLEEF_SOVERSION ${SLEEF_VERSION_MAJOR})
@@ -57,10 +59,6 @@ set(TARGET_IUTAVX512F "iutavx512f")
 set(TARGET_IUTADVSIMD "iutadvsimd")
 # The target to generate LLVM bitcode only, available when SLEEF_ENABLE_LLVM_BITCODE is passed to cmake
 set(TARGET_LLVM_BITCODE "llvm-bitcode")
-# Runs the test suite
-# Depends on targets: iut, tester
-# Defined in src/libm-tester/CMakeLists.txt via command add_custom_target
-set(TARGET_TEST "test-libm")
 # Generates the helper executable file mkrename needed to write the sleef header
 set(TARGET_MKRENAME "mkrename")
 set(TARGET_MKRENAME_GNUABI "mkrename_gnuabi")
