@@ -8,7 +8,6 @@ The software is distributed under the Boost Software License, Version
 http://www.boost.org/LICENSE_1_0.txt.
 Contributions to this project are accepted under the same license.
 
-
 Copyright Naoki Shibata and contributors 2010 - 2017.
 
 Main Page   : http://sleef.org/
