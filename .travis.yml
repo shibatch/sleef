@@ -12,7 +12,7 @@ compiler:
 matrix:
   include:
     - os: osx
-      osx_image: xcode8
+      osx_image: xcode9.1
       compiler: gcc
       env:
         - MATRIX_EVAL="brew install gcc@6 && CC=gcc-6" # install and use gcc
