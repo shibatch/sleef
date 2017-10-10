@@ -76,42 +76,50 @@ OBJ2.txt : $(OBJ2)
 
 ifeq ($(X86ARCH),1)
 sleef.h : mkrename
-	cp sleeflibm.h.org sleef.h
+	cp sleeflibm.h.org sleef.h.0
 	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
-	./mkrename 2 4 __m128d __m128 __m128i __m128i __SSE2__ >> sleef.h
-	./mkrename 2 4 __m128d __m128 __m128i __m128i __SSE2__ sse2 >> sleef.h
-	./mkrename 2 4 __m128d __m128 __m128i __m128i __SSE2__ sse4 >> sleef.h
-	./mkrename 2 4 __m128d __m128 __m128i __m128i __SSE2__ avx2128 >> sleef.h
-	./mkrename 4 8 __m256d __m256 __m128i 'struct { __m128i x, y; }' __AVX__ >> sleef.h
-	./mkrename 4 8 __m256d __m256 __m128i 'struct { __m128i x, y; }' __AVX__ avx >> sleef.h
-	./mkrename 4 8 __m256d __m256 __m128i 'struct { __m128i x, y; }' __AVX__ fma4 >> sleef.h
-	./mkrename 4 8 __m256d __m256 __m128i __m256i __AVX__ avx2 >> sleef.h
-	./mkrename 8 16 __m512d __m512 __m256i __m512i __AVX512F__ avx512f >> sleef.h
-	echo '#undef IMPORT' >> sleef.h
-	echo '#endif' >> sleef.h
-	cp sleef.h ../../include
+	./mkrename 2 4 __m128d __m128 __m128i __m128i __SSE2__ >> sleef.h.0
+	./mkrename 2 4 __m128d __m128 __m128i __m128i __SSE2__ sse2 >> sleef.h.0
+	./mkrename 2 4 __m128d __m128 __m128i __m128i __SSE2__ sse4 >> sleef.h.0
+	./mkrename 2 4 __m128d __m128 __m128i __m128i __SSE2__ avx2128 >> sleef.h.0
+	./mkrename 4 8 __m256d __m256 __m128i 'struct { __m128i x, y; }' __AVX__ >> sleef.h.0
+	./mkrename 4 8 __m256d __m256 __m128i 'struct { __m128i x, y; }' __AVX__ avx >> sleef.h.0
+	./mkrename 4 8 __m256d __m256 __m128i 'struct { __m128i x, y; }' __AVX__ fma4 >> sleef.h.0
+	./mkrename 4 8 __m256d __m256 __m128i __m256i __AVX__ avx2 >> sleef.h.0
+	./mkrename 8 16 __m512d __m512 __m256i __m512i __AVX512F__ avx512f >> sleef.h.0
+	echo '#undef IMPORT' >> sleef.h.0
+	echo '#endif' >> sleef.h.0
+	mv sleef.h.0 sleef.h
+	cp sleef.h ../../include/sleef.h.0
+	mv ../../include/sleef.h.0 ../../include/sleef.h
 else ifeq ($(ARCH), arm)
 sleef.h : mkrename
-	cp sleeflibm.h.org sleef.h
+	cp sleeflibm.h.org sleef.h.0
 	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
-	./mkrename 2 4 - float32x4_t int32x4_t int32x4_t __ARM_NEON__ neon >> sleef.h
-	echo '#undef IMPORT' >> sleef.h
-	echo '#endif' >> sleef.h
-	cp sleef.h ../../include
+	./mkrename 2 4 - float32x4_t int32x4_t int32x4_t __ARM_NEON__ neon >> sleef.h.0
+	echo '#undef IMPORT' >> sleef.h.0
+	echo '#endif' >> sleef.h.0
+	mv sleef.h.0 sleef.h
+	cp sleef.h ../../include/sleef.h.0
+	mv ../../include/sleef.h.0 ../../include/sleef.h
 else ifeq ($(ARCH), aarch64)
 sleef.h : mkrename
-	cp sleeflibm.h.org sleef.h
+	cp sleeflibm.h.org sleef.h.0
 	$(FLOCK) mkrename.c -c 'echo Acquiring lock for mkrename'
-	./mkrename 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON advsimd >> sleef.h
-	echo '#undef IMPORT' >> sleef.h
-	echo '#endif' >> sleef.h
-	cp sleef.h ../../include
+	./mkrename 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON advsimd >> sleef.h.0
+	echo '#undef IMPORT' >> sleef.h.0
+	echo '#endif' >> sleef.h.0
+	mv sleef.h.0 sleef.h
+	cp sleef.h ../../include/sleef.h.0
+	mv ../../include/sleef.h.0 ../../include/sleef.h
 else
 sleef.h :
-	cp sleeflibm.h.org sleef.h
-	echo '#undef IMPORT' >> sleef.h
-	echo '#endif' >> sleef.h
-	cp sleef.h ../../include
+	cp sleeflibm.h.org sleef.h.0
+	echo '#undef IMPORT' >> sleef.h.0
+	echo '#endif' >> sleef.h.0
+	mv sleef.h.0 sleef.h
+	cp sleef.h ../../include/sleef.h.0
+	mv ../../include/sleef.h.0 ../../include/sleef.h
 endif
 
 #
@@ -342,7 +350,7 @@ renamedsp256.h : mkrename
 
 .PHONY: clean
 clean :
-	rm -f *~ *.o *.s libm.a libgm.a sleef.h a.out *.lock OBJ.txt OBJ2.txt
+	rm -f *~ *.o *.s libm.a libgm.a sleef.h sleef.h.0 a.out *.lock OBJ.txt OBJ2.txt
 	rm -f *.obj *.lib *.dll *.exp *.exe
 	rm -f mkrename renamesse2.h renamesse4.h renameavx.h renamefma4.h renameavx2.h renameavx2128.h renameavx512f.h renameneon32.h renameadvsimd.h renamedsp128.h renamedsp256.h
 	rm -f mkdisp dispavx.c dispsse.c

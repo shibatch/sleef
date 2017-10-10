@@ -16,4 +16,4 @@ clean :
 
 .PHONY: distclean
 distclean : clean
-	rm -f sleef.h
+	rm -f sleef.h sleef.h.0

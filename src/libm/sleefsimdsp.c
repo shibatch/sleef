@@ -1783,30 +1783,38 @@ EXPORT CONST vint2 xexpfrexpf(vfloat x) {
   return vcast_vi2_i(0);
 }
 
-static INLINE CONST vfloat vnexttoward0f(vfloat x) {
-  vint2 xi2 = vreinterpret_vi2_vf(x);
+static INLINE CONST vfloat vtoward0f(vfloat x) {
+  vfloat t = vreinterpret_vf_vi2(vsub_vi2_vi2_vi2(vreinterpret_vi2_vf(x), vcast_vi2_i(1)));
+  return vsel_vf_vo_vf_vf(veq_vo_vf_vf(x, vcast_vf_f(0)), vcast_vf_f(0), t);
+}
 
-  xi2 = vsub_vi2_vi2_vi2(xi2, vcast_vi2_i(1));
-  
-  vfloat ret = vreinterpret_vf_vi2(xi2);
-  ret = vsel_vf_vo_vf_vf(veq_vo_vf_vf(x, vcast_vf_f(0)), vcast_vf_f(0), ret);
-
-  return ret;
+static INLINE CONST vfloat vptruncf(vfloat x) {
+#ifdef FULL_FP_ROUNDING
+  return vtruncate_vf_vf(x);
+#else
+  vfloat fr = vsub_vf_vf_vf(x, vcast_vf_vi2(vtruncate_vi2_vf(x)));
+  return vsel_vf_vo_vf_vf(vge_vo_vf_vf(vabs_vf_vf(x), vcast_vf_f(1LL << 23)), x, vsub_vf_vf_vf(x, fr));
+#endif
 }
 
 EXPORT CONST vfloat xfmodf(vfloat x, vfloat y) {
-  vfloat nu = vabs_vf_vf(x), de = vabs_vf_vf(y), s = vcast_vf_f(1);
+  vfloat nu = vabs_vf_vf(x), de = vabs_vf_vf(y), s = vcast_vf_f(1), q;
   vopmask o = vlt_vo_vf_vf(de, vcast_vf_f(FLT_MIN));
   nu = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(nu, vcast_vf_f(1ULL << 25)), nu);
   de = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(de, vcast_vf_f(1ULL << 25)), de);
   s  = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(s , vcast_vf_f(1.0f / (1ULL << 25))), s);
+  vfloat rde = vtoward0f(vrec_vf_vf(de));
+#ifdef ENABLE_NEON32
+  rde = vtoward0f(rde);
+#endif
+  vfloat2 r = vcast_vf2_vf_vf(nu, vcast_vf_f(0));
 
-  vfloat2 q, r = vcast_vf2_vf_vf(nu, vcast_vf_f(0));
-
-  for(int i=0;i<6;i++) { // ceil(log2(FLT_MAX) / 23)
-    q = dfnormalize_vf2_vf2(dfdiv_vf2_vf2_vf2(r, vcast_vf2_vf_vf(de, vcast_vf_f(0))));
-    r = dfnormalize_vf2_vf2(dfadd2_vf2_vf2_vf2(r, dfmul_vf2_vf_vf(xtruncf(vsel_vf_vo_vf_vf(vlt_vo_vf_vf(q.y, vcast_vf_f(0)), vnexttoward0f(q.x), q.x)), vmul_vf_vf_vf(de, vcast_vf_f(-1)))));
-    if (vtestallones_i_vo32(vlt_vo_vf_vf(r.x, y))) break;
+  for(int i=0;i<8;i++) { // ceil(log2(FLT_MAX) / 22)+1
+    q = vsel_vf_vo_vf_vf(vand_vo_vo_vo(vgt_vo_vf_vf(vadd_vf_vf_vf(de, de), r.x),
+				       vge_vo_vf_vf(r.x, de)),
+			 vcast_vf_f(1), vmul_vf_vf_vf(vtoward0f(r.x), rde));
+    r = dfnormalize_vf2_vf2(dfadd2_vf2_vf2_vf2(r, dfmul_vf2_vf_vf(vptruncf(q), vneg_vf_vf(de))));
+    if (vtestallones_i_vo32(vlt_vo_vf_vf(r.x, de))) break;
   }
   
   vfloat ret = vmul_vf_vf_vf(vadd_vf_vf_vf(r.x, r.y), s);
@@ -1814,7 +1822,8 @@ EXPORT CONST vfloat xfmodf(vfloat x, vfloat y) {
 
   ret = vmulsign_vf_vf_vf(ret, x);
 
-  ret = vsel_vf_vo_vf_vf(vlt_vo_vf_vf(vabs_vf_vf(x), vabs_vf_vf(y)), x, ret);
+  ret = vsel_vf_vo_vf_vf(vlt_vo_vf_vf(nu, de), x, ret);
+  ret = vsel_vf_vo_vf_vf(veq_vo_vf_vf(de, vcast_vf_f(0)), vcast_vf_f(NANf), ret);
 
   return ret;
 }
@@ -2101,3 +2110,25 @@ int main(int argc, char **argv) {
   
 }
 #endif
+
+#ifdef ENABLE_GNUABI
+/* "finite" aliases for compatibility with GLIBC */
+__extension__ __typeof(xacosf     ) __acosf_finite      __attribute__((weak, alias(str_xacosf_u1  )));
+__extension__ __typeof(xacoshf    ) __acoshf_finite     __attribute__((weak, alias(str_xacoshf    )));
+__extension__ __typeof(xasinf_u1  ) __asinf_finite      __attribute__((weak, alias(str_xasinf_u1  )));
+__extension__ __typeof(xatan2f_u1 ) __atan2f_finite     __attribute__((weak, alias(str_xatan2f_u1 )));
+__extension__ __typeof(xatanhf    ) __atanhf_finite     __attribute__((weak, alias(str_xatanhf    )));
+__extension__ __typeof(xcoshf     ) __coshf_finite      __attribute__((weak, alias(str_xcoshf     )));
+__extension__ __typeof(xexp10f    ) __exp10f_finite     __attribute__((weak, alias(str_xexp10f    )));
+__extension__ __typeof(xexp2f     ) __exp2f_finite      __attribute__((weak, alias(str_xexp2f     )));
+__extension__ __typeof(xexpf      ) __expf_finite       __attribute__((weak, alias(str_xexpf      )));
+__extension__ __typeof(xfmodf     ) __fmodf_finite      __attribute__((weak, alias(str_xfmodf     )));
+__extension__ __typeof(xhypotf_u05) __hypotf_u05_finite __attribute__((weak, alias(str_xhypotf_u05)));
+__extension__ __typeof(xlgammaf_u1) __lgammaf_u1_finite __attribute__((weak, alias(str_xlgammaf_u1)));
+__extension__ __typeof(xlog10f    ) __log10f_finite     __attribute__((weak, alias(str_xlog10f    )));
+__extension__ __typeof(xlogf_u1   ) __logf_finite       __attribute__((weak, alias(str_xlogf_u1   )));
+__extension__ __typeof(xpowf      ) __powf_finite       __attribute__((weak, alias(str_xpowf      )));
+__extension__ __typeof(xsinhf     ) __sinhf_finite      __attribute__((weak, alias(str_xsinhf     )));
+__extension__ __typeof(xsqrtf_u05 ) __sqrtf_u05_finite  __attribute__((weak, alias(str_xsqrtf_u05 )));
+__extension__ __typeof(xtgammaf_u1) __tgammaf_u1_finite __attribute__((weak, alias(str_xtgammaf_u1)));
+#endif /* #ifdef ENABLE_GNUABI */
