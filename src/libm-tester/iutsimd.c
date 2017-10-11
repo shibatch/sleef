@@ -23,7 +23,6 @@
 #include "misc.h"
 #include "sleef.h"
 #include "testerutil.h"
-#include "check_feature.h"
 
 #define DORENAME
 
@@ -124,6 +123,40 @@ typedef Sleef___m128_2 vfloat2;
 #include "renamedsp256.h"
 typedef Sleef___m256d_2 vdouble2;
 typedef Sleef___m256_2 vfloat2;
+#endif
+
+//
+
+#ifdef ENABLE_DP
+void check_featureDP() {
+  double s[VECTLENDP];
+  int i;
+  for(i=0;i<VECTLENDP;i++) {
+    s[i] = 1.0;
+  }
+  vdouble a = vloadu_vd_p(s);
+  a = xpow(a, a);
+  vstoreu_v_p_vd(s, a);
+}
+#else
+void check_featureDP() {
+}
+#endif
+
+#ifdef ENABLE_SP
+void check_featureSP() {
+  float s[VECTLENSP];
+  int i;
+  for(i=0;i<VECTLENSP;i++) {
+    s[i] = 1.0;
+  }
+  vfloat a = vloadu_vf_p(s);
+  a = xpowf(a, a);
+  vstoreu_v_p_vf(s, a);
+}
+#else
+void check_featureSP() {
+}
 #endif
 
 //

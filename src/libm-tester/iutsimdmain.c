@@ -6,9 +6,44 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include "check_feature.h"
+#include <signal.h>
+#include <setjmp.h>
+
+static jmp_buf sigjmp;
 
 int do_test(int argc, char **argv);
+void check_featureDP();
+void check_featureSP();
+
+static void sighandler(int signum) {
+  longjmp(sigjmp, 1);
+}
+
+int detectFeatureDP() {
+  signal(SIGILL, sighandler);
+
+  if (setjmp(sigjmp) == 0) {
+    check_featureDP();
+    signal(SIGILL, SIG_DFL);
+    return 1;
+  } else {
+    signal(SIGILL, SIG_DFL);
+    return 0;
+  }
+}
+
+int detectFeatureSP() {
+  signal(SIGILL, sighandler);
+
+  if (setjmp(sigjmp) == 0) {
+    check_featureSP();
+    signal(SIGILL, SIG_DFL);
+    return 1;
+  } else {
+    signal(SIGILL, SIG_DFL);
+    return 0;
+  }
+}
 
 int main(int argc, char **argv) {
   if (!(detectFeatureDP() && detectFeatureSP())) {

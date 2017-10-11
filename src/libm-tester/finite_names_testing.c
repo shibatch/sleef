@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include "check_feature.h"
 
 #if defined(ENABLE_SSE2) || defined(ENABLE_SSE4)
 
@@ -49,14 +48,6 @@ extern vdouble vacos_finite(vdouble);
 extern vdouble vasin_finite(vdouble);
 
 int main(void) {
-  
-  if (!detectFeatureDP() || !detectFeatureSP()) {
-    fprintf(stderr, "\n\n***** This host does not support the "
-	    "necessary CPU features to execute this program *****\n\n\n");
-    
-    return 0;
-  }
-
   double in[VECTLENDP], out[VECTLENDP];
   vdouble vin, vout;
   int i;

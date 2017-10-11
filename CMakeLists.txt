@@ -68,8 +68,6 @@ set(TARGET_MKDISP "mkdisp")
 # Defined in src/common/CMakeLists.txt via command add_library
 set(TARGET_LIBCOMMON_STATIC "common")
 
-set(TARGET_LIBCHECKFEATURE_STATIC "checkfeature")
-
 # Check subdirectories
 add_subdirectory("src")
 
