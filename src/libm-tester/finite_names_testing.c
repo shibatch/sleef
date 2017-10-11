@@ -124,9 +124,8 @@ int detectFeatureSP() {
 
 int main(void) {
   if (!detectFeatureDP() || !detectFeatureSP()) {
-    fprintf(stderr, "\n\n***** This host does not support the necessary CPU"
-                    "features to execute this program *****\n\n\n");
-    exit(-1);
+    printf("%s is not available on this machine.\n", NAME);
+    return 0;
   }
 
 #ifdef ENABLE_DP
@@ -143,7 +142,7 @@ int main(void) {
     vout = vasin_finite(vout);
     vstore_v_p_vd(out, vout);
 
-    printf("%s... ", NAME);
+    printf("DP: %s... ", NAME);
     for (i = 0; i < VECTLENDP; ++i)
       printf("%g ", out[i]);
     printf(" ...passed. \n");
@@ -164,7 +163,7 @@ int main(void) {
     vout = vasinf_finite(vout);
     vstore_v_p_vf(out, vout);
 
-    printf("%s... ", NAME);
+    printf("SP: %s... ", NAME);
     for (i = 0; i < VECTLENSP; ++i)
       printf("%g ", out[i]);
     printf(" ...passed. \n");
