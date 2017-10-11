@@ -6,10 +6,12 @@ include_directories(${CMAKE_BINARY_DIR}/include)          # sleef.h
 include_directories(${CMAKE_SOURCE_DIR}/src/libm)         # rename.h
 include_directories(${CMAKE_BINARY_DIR}/src/libm/include) # rename headers
 
+add_library(${TARGET_LIBCHECKFEATURE_STATIC} check_feature.c)
+
 set(EXTRA_LIBS ${LIBM}
   ${LIB_MPFR}
   ${TARGET_LIBCOMMON_STATIC}
-  )
+  ${TARGET_LIBCHECKFEATURE_STATIC} )
 
 # Compile executable 'iut'
 add_executable(${TARGET_IUT} iut.c testerutil.c)
@@ -43,7 +45,10 @@ macro(test_extension SIMD)
 	  PRIVATE ${FLAGS_ENABLE_${SIMD}})
 	target_compile_definitions(link_finite${SIMD}
 	  PRIVATE ENABLE_${SIMD}=1)
-	target_link_libraries(link_finite${SIMD} ${TARGET_LIBSLEEFGNUABI})
+	target_link_libraries(link_finite${SIMD}
+	  ${TARGET_LIBSLEEFGNUABI}
+	  ${TARGET_LIBCHECKFEATURE_STATIC})
+
 	add_test(NAME link_finite${SIMD}
 	  COMMAND link_finite${SIMD})
       endif (COMPILER_SUPPORTS_WEAK_ALIASES)
