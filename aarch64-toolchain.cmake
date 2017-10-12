@@ -6,7 +6,7 @@ SET(CMAKE_C_COMPILER   /opt/linaro-toolchain/bin/aarch64-linux-gnu-gcc)
 SET(CMAKE_CXX_COMPILER /opt/linaro-toolchain/bin/aarch64-linux-gnu-g++)
 
 # where is the target environment 
-SET(CMAKE_FIND_ROOT_PATH  /opt/linaro-toolchain/)
+SET(CMAKE_FIND_ROOT_PATH  /opt/linaro-toolchain/aarch64-linux-gnu/)
 
 # search for programs in the build host directories
 SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
