@@ -23,6 +23,7 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository -y ppa:adrozdoff/cmake; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -qq update                       ; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y cmake libmpfr-dev     ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y cmake gcc-aarch64-linux-gnu     ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx"   ]]; then brew update                                   ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx"   ]]; then eval "${MATRIX_EVAL}"                         ; fi
 
@@ -32,5 +33,6 @@ before_script:
   - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_VERBOSE_MAKEFILE=1 -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 ..
 
 script:
-  - CTEST_OUTPUT_ON_FAILURE=TRUE make all test
-  - make install
+  echo "Hello - please re-enable testing"
+  # - CTEST_OUTPUT_ON_FAILURE=TRUE make all test
+  # - make install
