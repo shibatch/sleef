@@ -1,10 +1,13 @@
 #!/bin/bash
-TXZ=https://releases.linaro.org/components/toolchain/binaries/latest/aarch64-linux-gnu/gcc-linaro-7.1.1-2017.08-x86_64_aarch64-linux-gnu.tar.xz
-wget $TXZ
-tar -xvf $TXZ
+set -ex
 
-# gcc-linaro-7.1.1-2017.08-x86_64_aarch64-linux-gnu
-./gcc-linaro-7.1.1-2017.08-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-gcc --version
+NAME=gcc-linaro-7.1.1-2017.08-x86_64_aarch64-linux-gnu
+TOOLCHAIN=/opt/linaro-toolchain
 
-mkdir /opt/linaro-toolchain
-mv gcc-linaro-7.1.1-2017.08-x86_64_aarch64-linux-gnu/* /opt/linaro-toolchain
+wget https://releases.linaro.org/components/toolchain/binaries/latest/aarch64-linux-gnu/$NAME.tar.xz
+tar -xvf $NAME.tar.xz
+
+mkdir $TOOLCHAIN
+mv $NAME/* $TOOLCHAIN
+
+$TOOLCHAIN/bin/aarch64-linux-gnu-gcc --version
