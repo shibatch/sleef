@@ -2328,7 +2328,9 @@ int main(int argc, char **argv) {
 }
 #endif
 
-#ifdef ENABLE_GNUABI
+// TODO: reactivate after https://github.com/shibatch/sleef/pull/78
+// gets in
+#if 0
 /* "finite" aliases for compatibility with GLIBC */
 __extension__ __typeof(xacos     ) __acos_finite      __attribute__((weak, alias(str_xacos     )));
 __extension__ __typeof(xacosh    ) __acosh_finite     __attribute__((weak, alias(str_xacosh    )));
