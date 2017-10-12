@@ -23,10 +23,7 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository -y ppa:adrozdoff/cmake; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -qq update                       ; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y cmake libmpfr-dev     ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y cmake gcc-aarch64-linux-gnu     ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y cmake g++-aarch64-linux-gnu     ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then aarch64-linux-gnu-gcc-4.8 --version     ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then aarch64-linux-gnu-g++-4.8 --version     ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo ./scripts/install-linaro-toolchain.sh    ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx"   ]]; then brew update                                   ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx"   ]]; then eval "${MATRIX_EVAL}"                         ; fi
 
