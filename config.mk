@@ -144,12 +144,14 @@ else ifeq ($(OS),Linux)
   endif
 endif
 
-ifeq ($(X86ARCH),1)
-  export ENABLEGNUABI=1
-endif
+ifeq ($(OS),Linux)
+  ifeq ($(X86ARCH),1)
+    export ENABLEGNUABI=1
+  endif
 
-ifeq ($(ARCH),aarch64)
-  export ENABLEGNUABI=1
+  ifeq ($(ARCH),aarch64)
+    export ENABLEGNUABI=1
+  endif
 endif
 
 ifeq ($(ENABLEAVX), 0)

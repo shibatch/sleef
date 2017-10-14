@@ -29,14 +29,30 @@ int main(int argc, char **argv) {
     if (funcList[i].ulp < 0) {
       printf("#define x%s _ZGV%sN%d%s_%s\n", funcList[i].name,
 	     mangledisa, wdp, vparameterStrDP[funcList[i].funcType], funcList[i].name);
+      printf("#define str_x%s \"_ZGV%sN%d%s_%s\"\n", funcList[i].name,
+	     mangledisa, wdp, vparameterStrDP[funcList[i].funcType], funcList[i].name);
+      printf("#define __%s_finite _ZGV%sN%d%s___%s_finite\n", funcList[i].name,
+	     mangledisa, wdp, vparameterStrDP[funcList[i].funcType], funcList[i].name);
     } else if (funcList[i].ulp < 20) {
       printf("#define x%s%s _ZGV%sN%d%s_%s\n", 
+	     funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
+	     mangledisa, wdp, vparameterStrDP[funcList[i].funcType], funcList[i].name);
+      printf("#define str_x%s%s \"_ZGV%sN%d%s_%s\"\n", 
+	     funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
+	     mangledisa, wdp, vparameterStrDP[funcList[i].funcType], funcList[i].name);
+      printf("#define __%s%s_finite _ZGV%sN%d%s___%s_finite\n", 
 	     funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
 	     mangledisa, wdp, vparameterStrDP[funcList[i].funcType], funcList[i].name);
     } else {
       printf("#define x%s%s _ZGV%sN%d%s_%s_u%d\n", 
 	     funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
 	     mangledisa, wdp, vparameterStrDP[funcList[i].funcType], funcList[i].name, funcList[i].ulp);
+      printf("#define str_x%s%s \"_ZGV%sN%d%s_%s_u%d\"\n", 
+	     funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
+	     mangledisa, wdp, vparameterStrDP[funcList[i].funcType], funcList[i].name, funcList[i].ulp);
+      printf("#define __%s%s_finite _ZGV%sN%d%s___%s_finite\n", 
+	     funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
+	     mangledisa, wdp, vparameterStrDP[funcList[i].funcType], funcList[i].name);
     }
   }
 
@@ -45,15 +61,31 @@ int main(int argc, char **argv) {
   for(int i=0;funcList[i].name != NULL;i++) {
     if (funcList[i].ulp < 0) {
       printf("#define x%sf _ZGV%sN%d%s_%sf\n", funcList[i].name,
-	     mangledisa, wsp, vparameterStrSP[funcList[i].funcType], funcList[i].name);
+             mangledisa, wsp, vparameterStrSP[funcList[i].funcType], funcList[i].name);
+      printf("#define str_x%sf \"_ZGV%sN%d%s_%sf\"\n", funcList[i].name,
+             mangledisa, wsp, vparameterStrSP[funcList[i].funcType], funcList[i].name);
+      printf("#define __%sf_finite _ZGV%sN%d%s___%sf_finite\n", funcList[i].name,
+             mangledisa, wsp, vparameterStrSP[funcList[i].funcType], funcList[i].name);
     } else if (funcList[i].ulp < 20) {
-      printf("#define x%sf%s _ZGV%sN%d%s_%sf\n", 
-	     funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
-	     mangledisa, wsp, vparameterStrSP[funcList[i].funcType], funcList[i].name);
+      printf("#define x%sf%s _ZGV%sN%d%s_%sf\n",
+             funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
+             mangledisa, wsp, vparameterStrSP[funcList[i].funcType], funcList[i].name);
+      printf("#define str_x%sf%s \"_ZGV%sN%d%s_%sf\"\n",
+             funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
+             mangledisa, wsp, vparameterStrSP[funcList[i].funcType], funcList[i].name);
+      printf("#define __%sf%s_finite _ZGV%sN%d%s___%sf_finite\n",
+             funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
+             mangledisa, wsp, vparameterStrSP[funcList[i].funcType], funcList[i].name);
     } else {
-      printf("#define x%sf%s _ZGV%sN%d%s_%sf_u%d\n", 
-	     funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
-	     mangledisa, wsp, vparameterStrSP[funcList[i].funcType], funcList[i].name, funcList[i].ulp);
+      printf("#define x%sf%s _ZGV%sN%d%s_%sf_u%d\n",
+             funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
+             mangledisa, wsp, vparameterStrSP[funcList[i].funcType], funcList[i].name, funcList[i].ulp);
+      printf("#define str_x%sf%s \"_ZGV%sN%d%s_%sf_u%d\"\n",
+             funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
+             mangledisa, wsp, vparameterStrSP[funcList[i].funcType], funcList[i].name, funcList[i].ulp);
+      printf("#define __%sf%s_finite _ZGV%sN%d%s___%sf_finite\n",
+             funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
+             mangledisa, wsp, vparameterStrSP[funcList[i].funcType], funcList[i].name);
     }
   }
   
