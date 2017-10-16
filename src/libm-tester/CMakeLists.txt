@@ -14,6 +14,9 @@ set(EXTRA_LIBS ${LIBM}
 # Compile executable 'iut'
 add_executable(${TARGET_IUT} iut.c testerutil.c)
 target_link_libraries(${TARGET_IUT} ${TARGET_LIBSLEEF} ${EXTRA_LIBS})
+add_test(NAME ${TARGET_IUT}
+  COMMAND ${TARGET_TESTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_IUT})
+
 set(IUT_LIST ${TARGET_IUT})
 
 set(IUT_SRC iutsimd.c iutsimdmain.c testerutil)

@@ -70,7 +70,7 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
   set(SLEEF_HEADER_LIST
     ADVSIMD
   )
-  set(HEADER_PARAMS_ADVSIMD    "2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON advsimd")
+  command_arguments(HEADER_PARAMS_ADVSIMD    2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON advsimd)
 
 endif()
 
