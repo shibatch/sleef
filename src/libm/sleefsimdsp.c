@@ -2112,9 +2112,7 @@ int main(int argc, char **argv) {
 }
 #endif
 
-// TODO: reactivate after https://github.com/shibatch/sleef/pull/78
-// gets in
-#if 0
+#ifdef ENABLE_WEAK_ALIASES
 /* "finite" aliases for compatibility with GLIBC */
 __extension__ __typeof(xacosf     ) __acosf_finite      __attribute__((weak, alias(str_xacosf_u1  )));
 __extension__ __typeof(xacoshf    ) __acoshf_finite     __attribute__((weak, alias(str_xacoshf    )));
