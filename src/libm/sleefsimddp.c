@@ -1788,14 +1788,14 @@ EXPORT CONST vdouble xexp10(vdouble d) {
   s = vmla_vd_vd_vd_vd(u, vcast_vd_d(-L10U), d);
   s = vmla_vd_vd_vd_vd(u, vcast_vd_d(-L10L), s);
 
-  u = vcast_vd_d(+0.2411463498334268736e-3);
-  u = vmla_vd_vd_vd_vd(u, s, vcast_vd_d(+0.1157488415217188243e-2));
-  u = vmla_vd_vd_vd_vd(u, s, vcast_vd_d(+0.5013975546789721516e-2));
-  u = vmla_vd_vd_vd_vd(u, s, vcast_vd_d(+0.1959762320720533774e-1));
-  u = vmla_vd_vd_vd_vd(u, s, vcast_vd_d(+0.6808936399446775811e-1));
-  u = vmla_vd_vd_vd_vd(u, s, vcast_vd_d(+0.2069958494722674014e+0));
-  u = vmla_vd_vd_vd_vd(u, s, vcast_vd_d(+0.5393829292058549552e+0));
-  u = vmla_vd_vd_vd_vd(u, s, vcast_vd_d(+0.1171255148908542543e+1));
+  u = vcast_vd_d(+0.2411463498334267652e-3);
+  u = vmla_vd_vd_vd_vd(u, s, vcast_vd_d(+0.1157488415217187375e-2));
+  u = vmla_vd_vd_vd_vd(u, s, vcast_vd_d(+0.5013975546789733659e-2));
+  u = vmla_vd_vd_vd_vd(u, s, vcast_vd_d(+0.1959762320720533080e-1));
+  u = vmla_vd_vd_vd_vd(u, s, vcast_vd_d(+0.6808936399446784138e-1));
+  u = vmla_vd_vd_vd_vd(u, s, vcast_vd_d(+0.2069958494722676234e+0));
+  u = vmla_vd_vd_vd_vd(u, s, vcast_vd_d(+0.5393829292058536229e+0));
+  u = vmla_vd_vd_vd_vd(u, s, vcast_vd_d(+0.1171255148908541655e+1));
   u = vmla_vd_vd_vd_vd(u, s, vcast_vd_d(+0.2034678592293432953e+1));
   u = vmla_vd_vd_vd_vd(u, s, vcast_vd_d(+0.2650949055239205876e+1));
   u = vmla_vd_vd_vd_vd(u, s, vcast_vd_d(+0.2302585092994045901e+1));
