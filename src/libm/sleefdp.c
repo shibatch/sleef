@@ -1777,16 +1777,46 @@ EXPORT CONST double xlog10(double d) {
   return r;
 }
 
-EXPORT CONST double xlog1p(double a) {
-  Sleef_double2 d = logk2(ddadd2_d2_d_d(a, 1));
-  double x = d.x + d.y;
+EXPORT CONST double xlog1p(double d) {
+  Sleef_double2 x, s;
+  double m, t, x2;
+  int e;
 
-  if (a > 1e+307) x = INFINITY;
-  if (a < -1) x = NAN;
-  if (a == -1) x = -INFINITY;
-  if (xisnegzero(a)) x = -0.0;
+  double dp1 = d + 1;
+  
+  int o = dp1 < DBL_MIN;
+  if (o) dp1 *= (double)(1LL << 32) * (double)(1LL << 32);
+      
+  e = ilogb2k(dp1 * (1.0/0.75));
 
-  return x;
+  t = ldexp3k(1, -e);
+  m = mla(d, t, t - 1);
+  
+  if (o) e -= 64;
+
+  x = dddiv_d2_d2_d2(dd(m, 0), ddadd_d2_d_d(2, m));
+  x2 = x.x * x.x;
+
+  t = 0.1532076988502701353e+0;
+  t = mla(t, x2, 0.1525629051003428716e+0);
+  t = mla(t, x2, 0.1818605932937785996e+0);
+  t = mla(t, x2, 0.2222214519839380009e+0);
+  t = mla(t, x2, 0.2857142932794299317e+0);
+  t = mla(t, x2, 0.3999999999635251990e+0);
+  t = mla(t, x2, 0.6666666666667333541e+0);
+
+  s = ddmul_d2_d2_d(dd(0.693147180559945286226764, 2.319046813846299558417771e-17), (double)e);
+  s = ddadd_d2_d2_d2(s, ddscale_d2_d2_d(x, 2));
+  s = ddadd_d2_d2_d(s, x2 * x.x * t);
+
+  double r = s.x + s.y;
+  
+  if (d > 1e+307) r = INFINITY;
+  if (d < -1 || xisnan(d)) r = NAN;
+  if (d == -1) r = -INFINITY;
+  if (xisnegzero(d)) r = -0.0;
+
+  return r;
 }
 
 //
