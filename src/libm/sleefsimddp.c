@@ -921,8 +921,9 @@ EXPORT CONST vdouble xtan(vdouble d) {
   u = vfixup_vd_vd_vd_vi2_i(u, d, vcast_vi2_i((3 << (4*4)) | (3 << (5*4))), 0);
 #endif
 
-  u = vsel_vd_vo_vd_vd(vor_vo_vo_vo(visnegzero_vo_vd(d),
-				    vgt_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(TRIGRANGEMAX))),
+  u = vsel_vd_vo_vd_vd(vandnot_vo_vo_vo(visinf_vo_vd(d),
+					vor_vo_vo_vo(visnegzero_vo_vd(d),
+						     vgt_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(TRIGRANGEMAX)))),
 		       vcast_vd_d(-0.0), u);
   
   return u;
