@@ -2000,7 +2000,6 @@ EXPORT CONST vdouble xexp2(vdouble d) {
   u = vmla_vd_vd_vd_vd(u, s2, vcast_vd_d(+0.1525273353517584730e-4));
   u = vmla_vd_vd_vd_vd(u, s2, vcast_vd_d(+0.1333355814670499073e-2));
   u = vmla_vd_vd_vd_vd(u, s2, vcast_vd_d(+0.5550410866482046596e-1));
-  u = vmla_vd_vd_vd_vd(u, s2, vcast_vd_d(+0.6931471805599452862e+0));
 
   v = vcast_vd_d(+0.7073164598085707425e-8);
   v = vmla_vd_vd_vd_vd(v, s2, vcast_vd_d(+0.1321543872511327615e-5));
@@ -2008,7 +2007,8 @@ EXPORT CONST vdouble xexp2(vdouble d) {
   v = vmla_vd_vd_vd_vd(v, s2, vcast_vd_d(+0.9618129107597600536e-2));
   v = vmla_vd_vd_vd_vd(v, s2, vcast_vd_d(+0.2402265069591012214e+0));
 
-  u = vmla_vd_vd_vd_vd(v, s, u);
+  u = vmla_vd_vd_vd_vd(u, s, v);
+  u = vmla_vd_vd_vd_vd(u, s, vcast_vd_d(+0.6931471805599452862e+0));
 #else
   u = vcast_vd_d(+0.4434359082926529454e-9);
   u = vmla_vd_vd_vd_vd(u, s, vcast_vd_d(+0.7073164598085707425e-8));
