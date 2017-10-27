@@ -1,4 +1,4 @@
-all : benchsvml_10 benchsvml_40 benchsleef ProcessData.class
+all : benchsleef
 	@echo
 	@echo You can start measurement by "'"make measure"'".
 	@echo Then, you can plot the results of measurement by "'"make plot"'".
@@ -61,13 +61,13 @@ measure : all
 	@echo You can start over by "'"make restart"'".
 	@echo
 
-measureSVML : all
+measureSVML : all benchsvml_10 benchsvml_40
 	./measure.sh ./benchsvml_10 ./benchsvml_40
 	@echo
 	@echo Now, you can plot the results of measurement by "'"make plot"'".
 	@echo
 
-plot :
+plot : ProcessData.class counter.txt
 	java ProcessData *dptrig*.out
 	gnuplot script.out
 	mv output.png trigdp.png
