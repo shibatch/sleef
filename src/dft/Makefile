@@ -101,19 +101,19 @@ mkunroll : mkunroll.c
 	$(CC) $(CFLAGS) -Wall -Wno-unused -Wno-attributes mkunroll.c -o mkunroll
 
 dispatchdp.h : mkdispatch
-	./mkdispatch double $(UNROLLMAX) $(UNROLLMAX2) $(MAXBUTWIDTH) $(ISALISTDP) > dispatchdp.h
+	$(FLOCK) mkdispatch.lock -c './mkdispatch double $(UNROLLMAX) $(UNROLLMAX2) $(MAXBUTWIDTH) $(ISALISTDP) > dispatchdp.h.0; mv dispatchdp.h.0 dispatchdp.h'
 
 dispatchsp.h : mkdispatch
-	./mkdispatch float $(UNROLLMAX) $(UNROLLMAX2) $(MAXBUTWIDTH) $(ISALISTSP) > dispatchsp.h
+	$(FLOCK) mkdispatch.lock -c './mkdispatch float $(UNROLLMAX) $(UNROLLMAX2) $(MAXBUTWIDTH) $(ISALISTSP) > dispatchsp.h.0; mv dispatchsp.h.0 dispatchsp.h'
 
 dispatchld.h : mkdispatch
-	./mkdispatch longdouble $(UNROLLMAX) $(UNROLLMAX2) $(MAXBUTWIDTH) $(ISALISTLD) > dispatchld.h
+	$(FLOCK) mkdispatch.lock -c './mkdispatch longdouble $(UNROLLMAX) $(UNROLLMAX2) $(MAXBUTWIDTH) $(ISALISTLD) > dispatchld.h.0; mv dispatchld.h.0 dispatchld.h'
 
 dispatchqp.h : mkdispatch
-	./mkdispatch Sleef_quad $(UNROLLMAX) $(UNROLLMAX2) $(MAXBUTWIDTH) $(ISALISTQP) > dispatchqp.h
+	$(FLOCK) mkdispatch.lock -c './mkdispatch Sleef_quad $(UNROLLMAX) $(UNROLLMAX2) $(MAXBUTWIDTH) $(ISALISTQP) > dispatchqp.h.0; mv dispatchqp.h.0 dispatchqp.h'
 
 dispatchparam.h : mkdispatch
-	./mkdispatch paramonly $(UNROLLMAX) $(UNROLLMAX2) $(MAXBUTWIDTH) $(ISALISTDP) > dispatchparam.h
+	$(FLOCK) mkdispatch.lock -c './mkdispatch paramonly $(UNROLLMAX) $(UNROLLMAX2) $(MAXBUTWIDTH) $(ISALISTDP) > dispatchparam.h.0; mv dispatchparam.h.0 dispatchparam.h'
 
 ../../include/sleef.h :
 	+"$(MAKE)" --directory=../../include sleef.h
