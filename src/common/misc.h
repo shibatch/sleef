@@ -200,7 +200,7 @@ typedef struct {
 #define INFINITYf __builtin_inff()
 #define INFINITYl __builtin_infl()
 
-#if defined(__INTEL_COMPILER)
+#if defined(__INTEL_COMPILER) || defined (__clang__)
 #define INFINITYq __builtin_inf()
 #define NANq __builtin_nan("")
 #else

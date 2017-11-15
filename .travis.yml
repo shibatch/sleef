@@ -1,14 +1,36 @@
 language: c
+
+# Default linux jobs
+os: linux
 sudo: required
 dist: trusty
-group: edge
+compiler:
+  - gcc
+  - clang
+
+# Include osx jobs
+matrix:
+  include:
+    - os: osx
+      osx_image: xcode8
+      compiler: gcc
+      env:
+        - MATRIX_EVAL="brew install gcc@6 && CC=gcc-6" # install and use gcc
+    - os: osx
+      compiler: clang # use default apple clang
 
 before_install:
-    - sudo apt-get -qq update
-    - sudo apt-get install -y libmpfr-dev libgomp1 gcc
-    
-compiler:
-    - gcc
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository -y ppa:adrozdoff/cmake; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -qq update                       ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y cmake libmpfr-dev     ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx"   ]]; then brew update                                   ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx"   ]]; then eval "${MATRIX_EVAL}"                         ; fi
 
-script: make test
+before_script:
+  - mkdir sleef.build
+  - cd sleef.build
+  - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 ..
 
+script:
+  - CTEST_OUTPUT_ON_FAILURE=TRUE make all test -j2 ARGS=-j2
+  - make install
