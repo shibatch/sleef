@@ -27,6 +27,9 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx"   ]]; then eval "${MATRIX_EVAL}"                         ; fi
 
 before_script:
+  - make
+  - make test-dft
+  - git clean -f
   - mkdir sleef.build
   - cd sleef.build
   - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 ..
