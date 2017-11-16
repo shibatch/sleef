@@ -28,7 +28,7 @@ before_install:
 
 before_script:
   - make libsleef
-  - if [[ "$CC" == "gcc" ]] &&  [[ "$TRAVIS_OS_NAME" == "linux" ]]; make test-dft; fi
+  - if [[ "$CC" == "gcc" ]] &&  [[ "$TRAVIS_OS_NAME" == "linux" ]]; then make test-dft; fi
   - git clean -f
   - mkdir sleef.build
   - cd sleef.build
