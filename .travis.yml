@@ -27,7 +27,7 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx"   ]]; then eval "${MATRIX_EVAL}"                         ; fi
 
 before_script:
-  - make libsleef
+  - if [[ "$CC" == "gcc" ]] &&  [[ "$TRAVIS_OS_NAME" == "linux" ]]; then make libsleef; fi
   - if [[ "$CC" == "gcc" ]] &&  [[ "$TRAVIS_OS_NAME" == "linux" ]]; then make test-dft; fi
   - git clean -f
   - mkdir sleef.build
