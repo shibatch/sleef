@@ -2209,7 +2209,7 @@ int main(int argc, char **argv) {
 }
 #endif
 
-#ifdef ENABLE_WEAK_ALIASES
+#ifdef ENABLE_GNUABI
 EXPORT CONST vfloat __acosf_finite     (vfloat)         __attribute__((weak, alias(str_xacosf_u1  )));
 EXPORT CONST vfloat __acoshf_finite    (vfloat)         __attribute__((weak, alias(str_xacoshf    )));
 EXPORT CONST vfloat __asinf_finite     (double)         __attribute__((weak, alias(str_xasinf_u1  )));
@@ -2228,4 +2228,4 @@ EXPORT CONST vfloat __powf_finite      (vfloat, vfloat) __attribute__((weak, ali
 EXPORT CONST vfloat __sinhf_finite     (vfloat)         __attribute__((weak, alias(str_xsinhf     )));
 EXPORT CONST vfloat __sqrtf_u05_finite (vfloat)         __attribute__((weak, alias(str_xsqrtf_u05 )));
 EXPORT CONST vfloat __tgammaf_u1_finite(vfloat)         __attribute__((weak, alias(str_xtgammaf_u1)));
-#endif /* #ifdef ENABLE_WEAK_ALIASES */
+#endif /* #ifdef ENABLE_GNUABI */
