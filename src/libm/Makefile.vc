@@ -27,7 +27,7 @@ OBJ2.txt : $(OBJ2)
 	for i in `echo $(OBJ2)`; do ../script/abspath.sh $(@D) $$i >> OBJ2.txt; done
 
 sleef.h : mkrename.exe
-	cp sleeflibm.h.org sleef.h
+	cp sleeflibm_header.h.org sleef.h
 	./mkrename.exe 2 4 __m128d __m128 __m128i __m128i __SSE2__ >> sleef.h
 	./mkrename.exe 2 4 __m128d __m128 __m128i __m128i __SSE2__ sse2 >> sleef.h
 	./mkrename.exe 2 4 __m128d __m128 __m128i __m128i __SSE2__ sse4 >> sleef.h
@@ -35,8 +35,7 @@ sleef.h : mkrename.exe
 	./mkrename.exe 4 8 __m256d __m256 __m128i 'struct { __m128i x, y; }' __AVX__ >> sleef.h
 	./mkrename.exe 4 8 __m256d __m256 __m128i 'struct { __m128i x, y; }' __AVX__ avx >> sleef.h
 	./mkrename.exe 4 8 __m256d __m256 __m128i __m256i __AVX__ avx2 >> sleef.h
-	echo '#undef IMPORT' >> sleef.h
-	echo '#endif' >> sleef.h
+	type sleeflibm_footer.h.org >> sleef.h
 	cp sleef.h ../../include
 
 #

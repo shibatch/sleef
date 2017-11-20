@@ -78,7 +78,7 @@ ifeq ($(X86ARCH),1)
 sleef.h : mkrename
 	$(FLOCK) mkrename.lock -c 'echo Acquiring lock for mkrename'
 	$(eval RND := $(shell bash -c 'echo $$(( RANDOM ))' ))
-	cp sleeflibm.h.org sleef.h.$(RND)
+	cp sleeflibm_header.h.org sleef.h.$(RND)
 	./mkrename 2 4 __m128d __m128 __m128i __m128i __SSE2__ >> sleef.h.$(RND)
 	./mkrename 2 4 __m128d __m128 __m128i __m128i __SSE2__ sse2 >> sleef.h.$(RND)
 	./mkrename 2 4 __m128d __m128 __m128i __m128i __SSE2__ sse4 >> sleef.h.$(RND)
@@ -88,8 +88,7 @@ sleef.h : mkrename
 	./mkrename 4 8 __m256d __m256 __m128i 'struct { __m128i x, y; }' __AVX__ fma4 >> sleef.h.$(RND)
 	./mkrename 4 8 __m256d __m256 __m128i __m256i __AVX__ avx2 >> sleef.h.$(RND)
 	./mkrename 8 16 __m512d __m512 __m256i __m512i __AVX512F__ avx512f >> sleef.h.$(RND)
-	echo '#undef IMPORT' >> sleef.h.$(RND)
-	echo '#endif' >> sleef.h.$(RND)
+	cat sleeflibm_footer.h.org >> sleef.h.$(RND)
 	mv sleef.h.$(RND) sleef.h
 	cp sleef.h ../../include/sleef.h.$(RND)
 	mv ../../include/sleef.h.$(RND) ../../include/sleef.h
@@ -97,10 +96,9 @@ else ifeq ($(ARCH), arm)
 sleef.h : mkrename
 	$(FLOCK) mkrename.lock -c 'echo Acquiring lock for mkrename'
 	$(eval RND := $(shell bash -c 'echo $$(( RANDOM ))' ))
-	cp sleeflibm.h.org sleef.h.$(RND)
+	cp sleeflibm_header.h.org sleef.h.$(RND)
 	./mkrename 2 4 - float32x4_t int32x4_t int32x4_t __ARM_NEON__ neon >> sleef.h.$(RND)
-	echo '#undef IMPORT' >> sleef.h.$(RND)
-	echo '#endif' >> sleef.h.$(RND)
+	cat sleeflibm_footer.h.org >> sleef.h.$(RND)
 	mv sleef.h.$(RND) sleef.h
 	cp sleef.h ../../include/sleef.h.$(RND)
 	mv ../../include/sleef.h.$(RND) ../../include/sleef.h
@@ -108,10 +106,9 @@ else ifeq ($(ARCH), aarch64)
 sleef.h : mkrename
 	$(FLOCK) mkrename.lock -c 'echo Acquiring lock for mkrename'
 	$(eval RND := $(shell bash -c 'echo $$(( RANDOM ))' ))
-	cp sleeflibm.h.org sleef.h.$(RND)
+	cp sleeflibm_header.h.org sleef.h.$(RND)
 	./mkrename 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON advsimd >> sleef.h.$(RND)
-	echo '#undef IMPORT' >> sleef.h.$(RND)
-	echo '#endif' >> sleef.h.$(RND)
+	cat sleeflibm_footer.h.org >> sleef.h.$(RND)
 	mv sleef.h.$(RND) sleef.h
 	cp sleef.h ../../include/sleef.h.$(RND)
 	mv ../../include/sleef.h.$(RND) ../../include/sleef.h
@@ -119,9 +116,8 @@ else
 sleef.h :
 	$(FLOCK) mkrename.lock -c 'echo Acquiring lock for mkrename'
 	$(eval RND := $(shell bash -c 'echo $$(( RANDOM ))' ))
-	cp sleeflibm.h.org sleef.h.$(RND)
-	echo '#undef IMPORT' >> sleef.h.$(RND)
-	echo '#endif' >> sleef.h.$(RND)
+	cp sleeflibm_header.h.org sleef.h.$(RND)
+	cat sleeflibm_footer.h.org >> sleef.h.$(RND)
 	mv sleef.h.$(RND) sleef.h
 	cp sleef.h ../../include/sleef.h.$(RND)
 	mv ../../include/sleef.h.$(RND) ../../include/sleef.h

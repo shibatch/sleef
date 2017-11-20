@@ -6,7 +6,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 # sleef.h
 # --------------------------------------------------------------------
 # File generated for the headers
-set(SLEEF_ORG_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/sleeflibm.h.org)
+set(SLEEF_ORG_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/sleeflibm_header.h.org)
+set(SLEEF_ORG_FOOTER ${CMAKE_CURRENT_SOURCE_DIR}/sleeflibm_footer.h.org)
 set(SLEEF_INCLUDE_HEADER ${CMAKE_BINARY_DIR}/include/sleef.h)
 
 set(SLEEF_HEADER_COMMANDS "")
@@ -16,18 +17,18 @@ foreach(SIMD ${SLEEF_HEADER_LIST})
   list(APPEND SLEEF_HEADER_COMMANDS COMMAND ${TARGET_MKRENAME} ${HEADER_PARAMS_${SIMD}} >> ${SLEEF_INCLUDE_HEADER})
 endforeach()
 
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/sleef_footer.h "#undef IMPORT\n#endif\n")
 if(MSVC)
-  string(REPLACE "/" "\\" sleef_footer_input_file "${CMAKE_CURRENT_BINARY_DIR}/sleef_footer.h")
+  string(REPLACE "/" "\\" sleef_footer_input_file "${SLEEF_ORG_FOOTER}")
   list(APPEND SLEEF_HEADER_COMMANDS COMMAND type ${sleef_footer_input_file} >> ${SLEEF_INCLUDE_HEADER})
 else()
-  list(APPEND SLEEF_HEADER_COMMANDS COMMAND cat ${CMAKE_CURRENT_BINARY_DIR}/sleef_footer.h >> ${SLEEF_INCLUDE_HEADER})
+  list(APPEND SLEEF_HEADER_COMMANDS COMMAND cat ${SLEEF_ORG_FOOTER} >> ${SLEEF_INCLUDE_HEADER})
 endif()
 
 add_custom_command(OUTPUT ${SLEEF_INCLUDE_HEADER}
   ${SLEEF_HEADER_COMMANDS}
   DEPENDS 
     ${SLEEF_ORG_HEADER}  
+    ${SLEEF_ORG_FOOTER}
     ${TARGET_MKRENAME}
 )
 
