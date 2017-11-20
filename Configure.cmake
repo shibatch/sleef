@@ -74,13 +74,6 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
 
 endif()
 
-# Enable building of the GNU ABI version for x86 and aarch64
-if(NOT MSVC)
-  if((SLEEF_ARCH_X86 OR SLEEF_ARCH_AARCH64))
-    set(SLEEF_ENABLE_GNUABI ON CACHE INTERNAL "Build GNU ABI compatible version.")
-  endif()
-endif()  
-
 # MKRename arguments per type
 command_arguments(RENAME_PARAMS_SSE2           2 4 sse2)
 command_arguments(RENAME_PARAMS_SSE4           2 4 sse4)
@@ -256,3 +249,8 @@ CHECK_C_SOURCE_COMPILES("
     return g(2);
   }"
   COMPILER_SUPPORTS_WEAK_ALIASES)
+
+# Enable building of the GNU ABI version for x86 and aarch64
+if(COMPILER_SUPPORTS_WEAK_ALIASES)
+    set(ENABLE_GNUABI ON CACHE INTERNAL "Build GNU ABI compatible version.")
+endif()

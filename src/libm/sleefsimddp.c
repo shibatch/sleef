@@ -2704,7 +2704,7 @@ int main(int argc, char **argv) {
 }
 #endif
 
-#ifdef ENABLE_WEAK_ALIASES
+#ifdef ENABLE_GNUABI
 /* "finite" aliases for compatibility with GLIBC */
 EXPORT CONST vdouble __acos_finite     (vdouble)          __attribute__((weak, alias(str_xacos     )));
 EXPORT CONST vdouble __acosh_finite    (vdouble)          __attribute__((weak, alias(str_xacosh    )));

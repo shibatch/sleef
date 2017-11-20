@@ -65,7 +65,7 @@ endforeach()
 add_executable(${TARGET_MKRENAME_GNUABI} mkrename_gnuabi.c)
 
 set(HEADER_GNUABI_FILES_GENERATED "")
-if(SLEEF_ENABLE_GNUABI)
+if(ENABLE_GNUABI)
   foreach(SIMD ${SLEEF_SUPPORTED_GNUABI_EXTENSIONS})
     if(COMPILER_SUPPORTS_${SIMD})
       string(TOLOWER ${SIMD} vecarch)
@@ -181,7 +181,7 @@ endif(LIBM)
 # Compile SIMD versions for GNU Abi
 # --------------------------------------------------------------------
 # Build gnuabi version from just simd object files
-if(SLEEF_ENABLE_GNUABI)
+if(ENABLE_GNUABI)
   set(TARGET_LIBSLEEFGNUABI_OBJECTS "")
   foreach(SIMD ${SLEEF_SUPPORTED_GNUABI_EXTENSIONS})
     if(COMPILER_SUPPORTS_${SIMD})
@@ -201,7 +201,7 @@ if(SLEEF_ENABLE_GNUABI)
 
       target_compile_options(${OBJECT_${SIMD}_GNUABI} PRIVATE ${FLAGS_ENABLE_${SIMD}})
       if (COMPILER_SUPPORTS_WEAK_ALIASES)
-        target_compile_options(${OBJECT_${SIMD}_GNUABI} PRIVATE -DENABLE_WEAK_ALIASES=1)
+        target_compile_options(${OBJECT_${SIMD}_GNUABI} PRIVATE -DENABLE_GNUABI=1)
       endif(COMPILER_SUPPORTS_WEAK_ALIASES)
       list(APPEND TARGET_LIBSLEEFGNUABI_OBJECTS $<TARGET_OBJECTS:${OBJECT_${SIMD}_GNUABI}>)
     endif(COMPILER_SUPPORTS_${SIMD})
@@ -224,7 +224,7 @@ if(SLEEF_ENABLE_GNUABI)
 if(LIBM)
   target_link_libraries(${TARGET_LIBSLEEFGNUABI} ${LIBM})
 endif(LIBM)
-endif(SLEEF_ENABLE_GNUABI)
+endif(ENABLE_GNUABI)
 
 # --------------------------------------------------------------------
 # TARGET_LLVM_BITCODE
@@ -288,6 +288,6 @@ endif()
 install(FILES ${SLEEF_INCLUDE_HEADER} DESTINATION include)
 install(TARGETS ${TARGET_LIBSLEEF} DESTINATION lib)
 
-if(SLEEF_ENABLE_GNUABI)
+if(ENABLE_GNUABI)
   install(TARGETS ${TARGET_LIBSLEEFGNUABI} DESTINATION lib)
 endif()
