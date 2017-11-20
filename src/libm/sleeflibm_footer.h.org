@@ -1,0 +1,6 @@
+#undef IMPORT
+#endif
+
+#ifdef __cplusplus
+}
+#endif
