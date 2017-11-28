@@ -396,10 +396,10 @@ static INLINE CONST vdouble2 ddsqrt_vd2_vd(vdouble d) {
 
 #ifndef SLEEF_DOUBLE_MINMAXNUM_AVAILABLE
 static INLINE CONST vdouble vmaxnum_vd_vd_vd(vdouble x, vdouble y) {
-  return vmax_vd_vd_vd(vsel_vd_vo_vd_vd(visnan_vo_vd(x), y, x), vsel_vd_vo_vd_vd(visnan_vo_vd(y), x, y));
+  return vsel_vd_vo_vd_vd(visnan_vo_vd(y), x, vsel_vd_vo_vd_vd(vgt_vo_vd_vd(x, y), x, y));
 }
 
 static INLINE CONST vdouble vminnum_vd_vd_vd(vdouble x, vdouble y) {
-  return vmin_vd_vd_vd(vsel_vd_vo_vd_vd(visnan_vo_vd(x), y, x), vsel_vd_vo_vd_vd(visnan_vo_vd(y), x, y));
+  return vsel_vd_vo_vd_vd(visnan_vo_vd(y), x, vsel_vd_vo_vd_vd(vgt_vo_vd_vd(y, x), x, y));
 }
 #endif
