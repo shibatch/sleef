@@ -162,6 +162,13 @@ if(LD_SIZE GREATER "9")
   set(COMPILER_SUPPORTS_LONG_DOUBLE 1)
 endif()
 
+# Bug workaround for gcc 4.x
+if(CMAKE_C_COMPILER_ID MATCHES "GNU")
+  if (CMAKE_C_COMPILER_VERSION VERSION_LESS 5.0)
+    set(COMPILER_SUPPORTS_LONG_DOUBLE 0)
+  endif()
+endif()
+
 CHECK_C_SOURCE_COMPILES("
   int main() { __float128 r = 1;
   }" COMPILER_SUPPORTS_FLOAT128)

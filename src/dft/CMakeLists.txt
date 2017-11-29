@@ -129,11 +129,13 @@ endif(COMPILER_SUPPORTS_ADVSIMD)
 
 set(TARGET_MKUNROLL "mkunroll_exe")
 add_executable(${TARGET_MKUNROLL} EXCLUDE_FROM_ALL mkunroll.c)
+set_target_properties(${TARGET_MKUNROLL} PROPERTIES ${COMMON_TARGET_PROPERTIES})
 
 # Target mkdispatch
 
 set(TARGET_MKDISPATCH "mkdispatch_exe")
 add_executable(${TARGET_MKDISPATCH} EXCLUDE_FROM_ALL mkdispatch.c)
+set_target_properties(${TARGET_MKDISPATCH} PROPERTIES ${COMMON_TARGET_PROPERTIES})
 
 # Target dispatchparam.h
 
