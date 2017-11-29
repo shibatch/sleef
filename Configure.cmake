@@ -36,6 +36,9 @@ function(command_arguments PROPNAME)
   set(${PROPNAME} ${quoted_args} PARENT_SCOPE)
 endfunction()
 
+# Detect the path of cmake executable
+
+find_program(CMAKE_EXE_PATH "cmake")
 
 # PLATFORM DETECTION
 if((CMAKE_SYSTEM_PROCESSOR MATCHES "x86") OR (CMAKE_SYSTEM_PROCESSOR MATCHES "AMD64"))
@@ -136,6 +139,9 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
 
   # Warning flags.
   set(FLAGS_WALL "-Wall -Wno-unused -Wno-attributes")
+  if(CMAKE_C_COMPILER_ID MATCHES "GNU")
+    string(CONCAT FLAGS_WALL ${FLAGS_WALL} " -Wno-psabi")
+  endif(CMAKE_C_COMPILER_ID MATCHES "GNU")
 elseif(MSVC)
   # Intel vector extensions.
   set(FLAGS_ENABLE_SSE2 /D__SSE2__)
