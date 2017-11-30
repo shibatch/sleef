@@ -15,11 +15,9 @@ matrix:
       osx_image: xcode8.3
       compiler: gcc
       env:
-        - MATRIX_EVAL="rm '/usr/local/include/c++' && brew install gcc@6 && CC=gcc-6" # install and use gcc
+        - MATRIX_EVAL="rm -f '/usr/local/include/c++' && brew install gcc@6 && CC=gcc-6" # install and use gcc
     - os: osx
       compiler: clang # use default apple clang
-  exclude:
-    - os: linux
 
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository -y ppa:adrozdoff/cmake; fi
