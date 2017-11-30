@@ -20,11 +20,11 @@ matrix:
       compiler: clang # use default apple clang
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository -y ppa:adrozdoff/cmake      ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -qq update                             ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y cmake libmpfr-dev libomp-dev; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx"   ]]; then brew update                                         ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx"   ]]; then eval "${MATRIX_EVAL}"                               ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository -y ppa:adrozdoff/cmake    ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -qq update                           ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y cmake libmpfr-dev libiomp5; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx"   ]]; then brew update                                       ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx"   ]]; then eval "${MATRIX_EVAL}"                             ; fi
 
 before_script:
   - mkdir sleef.build
