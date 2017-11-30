@@ -162,13 +162,13 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
 
-  string(CONCAT G ${S} "_generated")                        # S is dispatchdp.h_generated
+  string(CONCAT G ${S} "_generated")                        # G is dispatchdp.h_generated
   add_custom_target(${G} SOURCES ${S})
 endforeach()
 
 # Target dftcommon.o
 
-add_library(dftcommon_obj OBJECT dftcommon.c ${CMAKE_CURRENT_BINARY_DIR}/dispatchparam.h ${CMAKE_BINARY_DIR}/include/sleef.h)
+add_library(dftcommon_obj OBJECT dftcommon.c dftcommon.h ${CMAKE_CURRENT_BINARY_DIR}/dispatchparam.h ${CMAKE_BINARY_DIR}/include/sleef.h)
 add_dependencies(dftcommon_obj ${TARGET_HEADERS} dispatchparam.h_generated)
 set_source_files_properties(${CMAKE_BINARY_DIR}/include/sleef.h PROPERTIES GENERATED TRUE)
 set_target_properties(dftcommon_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
@@ -181,7 +181,7 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
   
   string(CONCAT G "dft" ${ST} "_obj")                       # G is "dftdp_obj"
   string(CONCAT S "dispatch" ${ST} ".h")                    # S is "dispatchdp.h"
-  add_library(${G} OBJECT dft.c ${S})
+  add_library(${G} OBJECT dft.c dftcommon.h ${S})
   string(CONCAT SG ${S} "_generated")                       # SG is "dispatchdp.h_generated"
   add_dependencies(${G} ${SG})
   set_target_properties(${G} PROPERTIES ${COMMON_TARGET_PROPERTIES})
@@ -189,9 +189,14 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
   target_compile_definitions(${G} PRIVATE BASETYPEID=${ID} ${COMMON_TARGET_DEFINITIONS})
 endforeach()
 
+# Copy unroll0.org to ${CMAKE_CURRENT_BINARY_DIR}
+
+add_custom_target(unroll0.org_source
+  COMMAND ${CMAKE_EXE_PATH} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/unroll0.org ${CMAKE_CURRENT_BINARY_DIR}
+  SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/unroll0.org)
+
 # Target unroll*.c
 
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/unroll0.org DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 foreach(T ${LIST_SUPPORTED_FPTYPE})
   list(GET LISTSHORTTYPENAME ${T} ST)                       # ST is "dp", for example
   string(TOUPPER ${ST} CST)                                 # CST is "DP"
@@ -206,12 +211,12 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
     endforeach()
   endforeach()
   message(STATUS "Unroll target for ${CST} : ${UNROLL_TARGET_${CST}}")
-  
+
   add_custom_command(OUTPUT ${UNROLL_TARGET_${CST}}
     COMMENT "Generating ${UNROLL_TARGET_${CST}}"
     COMMAND ${TARGET_MKUNROLL} ${LT} ${ISALIST_${CST}}
-    DEPENDS ${TARGET_MKUNROLL}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    DEPENDS ${TARGET_MKUNROLL} unroll0.org_source
     )
 endforeach()
 
