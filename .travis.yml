@@ -15,7 +15,7 @@ matrix:
       osx_image: xcode8.3
       compiler: gcc
       env:
-        - MATRIX_EVAL="brew install gcc@6 && CC=gcc-6" # install and use gcc
+        - MATRIX_EVAL="(brew install gcc@6 || true) && CC=gcc-6" # install and use gcc
     - os: osx
       compiler: clang # use default apple clang
 
