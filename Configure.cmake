@@ -176,6 +176,10 @@ CHECK_C_SOURCE_COMPILES("
   int main() { __float128 r = 1;
   }" COMPILER_SUPPORTS_FLOAT128)
 
+if (${RUNNING_ON_TRAVIS})
+  set(COMPILER_SUPPORTS_FLOAT128 FALSE)
+endif()
+
 # Detect if sleef supported architectures are also supported by the compiler
 
 set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_SSE2})
