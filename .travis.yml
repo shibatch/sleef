@@ -12,10 +12,10 @@ compiler:
 matrix:
   include:
     - os: osx
-      osx_image: xcode8.3
+      osx_image: xcode8
       compiler: gcc
       env:
-        - MATRIX_EVAL="rm -f '/usr/local/include/c++' && brew install gcc@6 && CC=gcc-6" # install and use gcc
+        - MATRIX_EVAL="brew install gcc@6 && CC=gcc-6" # install and use gcc
     - os: osx
       compiler: clang # use default apple clang
 
