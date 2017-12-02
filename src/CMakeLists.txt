@@ -13,3 +13,6 @@ else()
     endif()
 endif()
 add_subdirectory("common")
+
+add_subdirectory("dft")
+add_subdirectory("dft-tester")

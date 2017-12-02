@@ -2,22 +2,22 @@
 all : libsleef libsleefgnuabi libsleefdft
 
 .PHONY: libsleef
-libsleef : libsleef.dll
+libsleef : sleef.dll
 
 .PHONY: libsleefgnuabi
-libsleefgnuabi : libsleefgnuabi.dll
+libsleefgnuabi : sleefgnuabi.dll
 
 .PHONY: libsleef-dft
-libsleefdft : libsleefdft.dll
+libsleefdft : sleefdft.dll
 
-libsleef.dll : ../src/libm/libm.lib ../src/libm/OBJ.txt ../src/common/common.lib
-	link /DLL /OUT:libsleef.dll `cat ../src/libm/OBJ.txt` ../src/common/common.obj
+sleef.dll : ../src/libm/libm.lib ../src/libm/OBJ.txt ../src/common/common.lib
+	link /DLL /OUT:sleef.dll `cat ../src/libm/OBJ.txt` ../src/common/common.obj
 
-libsleefgnuabi.dll : ../src/libm/libgm.lib ../src/libm/OBJ2.txt
-	link /DLL /OUT:libsleefgnuabi.dll `cat ../src/libm/OBJ2.txt`
+sleefgnuabi.dll : ../src/libm/libgm.lib ../src/libm/OBJ2.txt
+	link /DLL /OUT:sleefgnuabi.dll `cat ../src/libm/OBJ2.txt`
 
-libsleefdft.dll : ../src/dft/dft.lib libsleef.dll ../src/common/arraymap.lib
-	link /DLL /OUT:libsleefdft.dll ../src/dft/*.obj ../src/common/arraymap.obj libsleef.lib
+sleefdft.dll : ../src/dft/dft.lib sleef.dll ../src/common/arraymap.lib
+	link /DLL /OUT:sleefdft.dll ../src/dft/*.obj ../src/common/arraymap.obj sleef.lib
 
 sleef.h : ../src/libm/sleef.h
 

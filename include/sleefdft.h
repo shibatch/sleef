@@ -26,7 +26,7 @@
 #else
 #define IMPORT __declspec(dllimport)
 #if (defined(_MSC_VER))
-#pragma comment(lib,"libsleefdft.lib")
+#pragma comment(lib,"sleefdft.lib")
 #endif
 #endif
 #else
