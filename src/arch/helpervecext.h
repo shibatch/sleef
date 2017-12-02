@@ -45,7 +45,7 @@ typedef long double vlongdouble __attribute__((ext_vector_type(VECTLENDP)));
 #ifdef Sleef_quad2_DEFINED
 typedef uint8_t vmaskq __attribute__((ext_vector_type(sizeof(Sleef_quad)*VECTLENDP)));
 #ifdef ENABLE_LONGDOUBLE
-typedef long double vquad __attribute__((ext_vector_type(VECTLENDP)));
+typedef Sleef_quad vquad __attribute__((ext_vector_type(VECTLENDP)));
 #endif
 #endif
 #elif defined(__GNUC__)
