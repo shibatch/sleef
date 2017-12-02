@@ -38,11 +38,6 @@ endfunction()
 
 # Detect the path of cmake executable
 
-find_program(CMAKE_EXE_PATH "cmake")
-
-# Detect if cmake is running on Travis
-string(COMPARE NOTEQUAL "" "$ENV{TRAVIS}" RUNNING_ON_TRAVIS)
-  
 # PLATFORM DETECTION
 if((CMAKE_SYSTEM_PROCESSOR MATCHES "x86") OR (CMAKE_SYSTEM_PROCESSOR MATCHES "AMD64"))
   set(SLEEF_ARCH_X86 ON CACHE INTERNAL "True for x86 architecture.")
@@ -143,6 +138,9 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
   # Warning flags.
   set(FLAGS_WALL "-Wall -Wno-unused -Wno-attributes")
   if(CMAKE_C_COMPILER_ID MATCHES "GNU")
+    # The following compiler option is needed to suppress the warning
+    # "AVX vector return without AVX enabled changes the ABI" at
+    # src/arch/helpervecext.h:88
     string(CONCAT FLAGS_WALL ${FLAGS_WALL} " -Wno-psabi")
   endif(CMAKE_C_COMPILER_ID MATCHES "GNU")
 elseif(MSVC)
@@ -162,23 +160,17 @@ set(SLEEF_C_FLAGS "${FLAGS_WALL} ${FLAGS_STRICTMATH}")
 
 CHECK_TYPE_SIZE("long double" LD_SIZE)
 if(LD_SIZE GREATER "9")
-  set(COMPILER_SUPPORTS_LONG_DOUBLE 1)
-endif()
-
-# Bug workaround for gcc 4.x
-if(CMAKE_C_COMPILER_ID MATCHES "GNU")
-  if (CMAKE_C_COMPILER_VERSION VERSION_LESS 5.0)
-    set(COMPILER_SUPPORTS_LONG_DOUBLE 0)
-  endif()
+  # This is needed to check since internal compiler error occurs with gcc 4.x
+  CHECK_C_SOURCE_COMPILES("
+  typedef long double vlongdouble __attribute__((vector_size(sizeof(long double)*2)));
+  vlongdouble vcast_vl_l(long double d) { return (vlongdouble) { d, d }; }
+  int main() { vlongdouble vld = vcast_vl_l(0);
+  }" COMPILER_SUPPORTS_LONG_DOUBLE)
 endif()
 
 CHECK_C_SOURCE_COMPILES("
   int main() { __float128 r = 1;
   }" COMPILER_SUPPORTS_FLOAT128)
-
-if (${RUNNING_ON_TRAVIS} AND CMAKE_C_COMPILER_ID MATCHES "Clang")
-  set(COMPILER_SUPPORTS_FLOAT128 FALSE)
-endif()
 
 # Detect if sleef supported architectures are also supported by the compiler
 
@@ -259,6 +251,22 @@ CHECK_C_SOURCE_COMPILES("
 if(COMPILER_SUPPORTS_AVX2)
   set(COMPILER_SUPPORTS_AVX2128 1)
 endif()
+
+# Check if compilation with OpenMP really succeeds
+# It does not succeed on Travis even though find_package(OpenMP) succeeds.
+find_package(OpenMP)
+if(OPENMP_FOUND)
+  set (CMAKE_REQUIRED_FLAGS "${OpenMP_C_FLAGS}")
+  message(${CMAKE_REQUIRED_FLAGS})
+  CHECK_C_SOURCE_COMPILES("
+  #include <stdio.h>
+  int main() {
+  int i;
+  #pragma omp parallel for
+    for(i=0;i < 10;i++) { putchar(0); }
+  }"
+  COMPILER_SUPPORTS_OPENMP)
+endif(OPENMP_FOUND)
 
 # Reset used flags
 set(CMAKE_REQUIRED_FLAGS)

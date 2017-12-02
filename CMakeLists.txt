@@ -70,7 +70,7 @@ set(TARGET_LIBCOMMON_STATIC "common")
 
 # Generates object file (shared library) `libsleefdft`
 # Defined in src/dft/CMakeLists.txt via command add_library
-set(TARGET_LIBDFT "sleefdft_shared")
+set(TARGET_LIBDFT "sleefdft")
 
 # Check subdirectories
 add_subdirectory("src")
