@@ -249,7 +249,6 @@ endif()
 find_package(OpenMP)
 if(OPENMP_FOUND)
   set (CMAKE_REQUIRED_FLAGS "${OpenMP_C_FLAGS}")
-  message(${CMAKE_REQUIRED_FLAGS})
   CHECK_C_SOURCE_COMPILES("
   #include <stdio.h>
   int main() {
@@ -277,7 +276,13 @@ CHECK_C_SOURCE_COMPILES("
   }"
   COMPILER_SUPPORTS_WEAK_ALIASES)
 
-# Enable building of the GNU ABI version for x86 and aarch64
-if(COMPILER_SUPPORTS_WEAK_ALIASES)
-    set(ENABLE_GNUABI ON CACHE INTERNAL "Build GNU ABI compatible version.")
+##
+
+# Below is workaround for https://github.com/travis-ci/travis-ci/issues/8613
+
+# Detect if cmake is running on Travis
+string(COMPARE NOTEQUAL "" "$ENV{TRAVIS}" RUNNING_ON_TRAVIS)
+
+if (${RUNNING_ON_TRAVIS} AND CMAKE_C_COMPILER_ID MATCHES "Clang")
+  set(COMPILER_SUPPORTS_OPENMP FALSE)
 endif()
