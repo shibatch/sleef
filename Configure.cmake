@@ -278,11 +278,10 @@ CHECK_C_SOURCE_COMPILES("
 
 ##
 
-# Below is workaround for https://github.com/travis-ci/travis-ci/issues/8613
-
 # Detect if cmake is running on Travis
 string(COMPARE NOTEQUAL "" "$ENV{TRAVIS}" RUNNING_ON_TRAVIS)
 
 if (${RUNNING_ON_TRAVIS} AND CMAKE_C_COMPILER_ID MATCHES "Clang")
-  set(COMPILER_SUPPORTS_OPENMP FALSE)
+  set(COMPILER_SUPPORTS_OPENMP FALSE)   # Workaround for https://github.com/travis-ci/travis-ci/issues/8613
+  set(COMPILER_SUPPORTS_FLOAT128 FALSE) # Compilation on unroll_0_vecextqp.c does not finish on Travis
 endif()
