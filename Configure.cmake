@@ -222,9 +222,9 @@ CHECK_C_SOURCE_COMPILES("
   __m512 addConstant(__m512 arg) {
     return _mm512_add_ps(arg, _mm512_set1_ps(1.f));
   }
-  static auto TestCmp = _MM_CMPINT_EQ;
   int main() {
     __m512i a = _mm512_set1_epi32(1);
+    __mmask16 m = _mm512_cmp_epi32_mask(a, a, _MM_CMPINT_EQ);
     __m512i r = _mm512_andnot_si512(a, a); }"
   COMPILER_SUPPORTS_AVX512F)
 
