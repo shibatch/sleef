@@ -130,13 +130,13 @@ endif(COMPILER_SUPPORTS_ADVSIMD)
 
 # Target mkunroll
 
-set(TARGET_MKUNROLL "mkunroll_exe")
+set(TARGET_MKUNROLL "mkunroll")
 add_executable(${TARGET_MKUNROLL} EXCLUDE_FROM_ALL mkunroll.c)
 set_target_properties(${TARGET_MKUNROLL} PROPERTIES ${COMMON_TARGET_PROPERTIES})
 
 # Target mkdispatch
 
-set(TARGET_MKDISPATCH "mkdispatch_exe")
+set(TARGET_MKDISPATCH "mkdispatch")
 add_executable(${TARGET_MKDISPATCH} EXCLUDE_FROM_ALL mkdispatch.c)
 set_target_properties(${TARGET_MKDISPATCH} PROPERTIES ${COMMON_TARGET_PROPERTIES})
 
@@ -215,12 +215,14 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
   endforeach()
   message(STATUS "Unroll target for ${CST} : ${UNROLL_TARGET_${CST}}")
 
-  add_custom_command(OUTPUT ${UNROLL_TARGET_${CST}}
-    COMMENT "Generating ${UNROLL_TARGET_${CST}}"
-    COMMAND ${TARGET_MKUNROLL} ${LT} ${ISALIST_${CST}}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    DEPENDS ${TARGET_MKUNROLL} ${CMAKE_CURRENT_BINARY_DIR}/unroll0.org
-    )
+  if(UNROLL_TARGET_${CST})
+    add_custom_command(OUTPUT ${UNROLL_TARGET_${CST}}
+      COMMENT "Generating ${UNROLL_TARGET_${CST}}"
+      COMMAND ${TARGET_MKUNROLL} ${LT} ${ISALIST_${CST}}
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      DEPENDS ${TARGET_MKUNROLL} ${CMAKE_CURRENT_BINARY_DIR}/unroll0.org
+      )
+  endif()
 endforeach()
 
 # Target unroll*.o

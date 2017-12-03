@@ -17,18 +17,18 @@ link_directories(${CMAKE_BINARY_DIR}/lib)                 # libsleef, libsleefdf
 if(MSVC)
   message(STATUS "The testing program for DFT is currently not available with MSVC build - skip building tests dft-tester")
 else()
-  # Target executable naivetestdp_exe
+  # Target executable naivetestdp
 
-  set(TARGET_NAIVETESTDP "naivetestdp_exe")
+  set(TARGET_NAIVETESTDP "naivetestdp")
   add_executable(${TARGET_NAIVETESTDP} naivetest.c ${PROJECT_SOURCE_DIR}/include/sleefdft.h)
   add_dependencies(${TARGET_NAIVETESTDP} ${TARGET_HEADERS} ${TARGET_LIBSLEEF} ${TARGET_LIBDFT})
   target_compile_definitions(${TARGET_NAIVETESTDP} PRIVATE ${COMMON_TARGET_DEFINITIONS} BASETYPEID=1)
   target_link_libraries(${TARGET_NAIVETESTDP} ${TARGET_LIBSLEEF} ${TARGET_LIBDFT})
   set_target_properties(${TARGET_NAIVETESTDP} PROPERTIES ${COMMON_TARGET_PROPERTIES})
 
-  # Target executable naivetestsp_exe
+  # Target executable naivetestsp
 
-  set(TARGET_NAIVETESTSP "naivetestsp_exe")
+  set(TARGET_NAIVETESTSP "naivetestsp")
   add_executable(${TARGET_NAIVETESTSP} naivetest.c ${PROJECT_SOURCE_DIR}/include/sleefdft.h)
   add_dependencies(${TARGET_NAIVETESTSP} ${TARGET_HEADERS} ${TARGET_LIBSLEEF} ${TARGET_LIBDFT})
   target_compile_definitions(${TARGET_NAIVETESTSP} PRIVATE ${COMMON_TARGET_DEFINITIONS} BASETYPEID=2)
