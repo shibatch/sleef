@@ -215,11 +215,11 @@ static uint64_t keyButStat(int baseTypeID, int log2len, int dir, int butStat) {
   dir = (dir & SLEEF_MODE_BACKWARD) == 0;
   int cat = 0;
   uint64_t k = 0;
-  k = (k << BUTSTATBIT) | (butStat & ~(-1 << BUTSTATBIT));
-  k = (k << LOG2LENBIT) | (log2len & ~(-1 << LOG2LENBIT));
-  k = (k << DIRBIT) | (dir & ~(-1 << LOG2LENBIT));
-  k = (k << BASETYPEIDBIT) | (baseTypeID & ~(-1 << BASETYPEIDBIT));
-  k = (k << CATBIT) | (cat & ~(-1 << CATBIT));
+  k = (k << BUTSTATBIT) | (butStat & ~(~(uint64_t)0 << BUTSTATBIT));
+  k = (k << LOG2LENBIT) | (log2len & ~(~(uint64_t)0 << LOG2LENBIT));
+  k = (k << DIRBIT) | (dir & ~(~(uint64_t)0 << LOG2LENBIT));
+  k = (k << BASETYPEIDBIT) | (baseTypeID & ~(~(uint64_t)0 << BASETYPEIDBIT));
+  k = (k << CATBIT) | (cat & ~(~(uint64_t)0 << CATBIT));
   return k;
 }
 
@@ -231,11 +231,11 @@ static uint64_t keyTrans(int baseTypeID, int hlen, int vlen, int transConfig) {
   int max = MAX(hlen, vlen), min = MIN(hlen, vlen);
   int cat = 2;
   uint64_t k = 0;
-  k = (k << TRANSCONFIGBIT) | (transConfig & ~(-1 << TRANSCONFIGBIT));
-  k = (k << LOG2LENBIT) | (max & ~(-1 << LOG2LENBIT));
-  k = (k << LOG2LENBIT) | (min & ~(-1 << LOG2LENBIT));
-  k = (k << BASETYPEIDBIT) | (baseTypeID & ~(-1 << BASETYPEIDBIT));
-  k = (k << CATBIT) | (cat & ~(-1 << CATBIT));
+  k = (k << TRANSCONFIGBIT) | (transConfig & ~(~(uint64_t)0 << TRANSCONFIGBIT));
+  k = (k << LOG2LENBIT) | (max & ~(~(uint64_t)0 << LOG2LENBIT));
+  k = (k << LOG2LENBIT) | (min & ~(~(uint64_t)0 << LOG2LENBIT));
+  k = (k << BASETYPEIDBIT) | (baseTypeID & ~(~(uint64_t)0 << BASETYPEIDBIT));
+  k = (k << CATBIT) | (cat & ~(~(uint64_t)0 << CATBIT));
   return k;
 }
 
@@ -243,12 +243,12 @@ static uint64_t keyPath(int baseTypeID, int log2len, int dir, int level, int con
   dir = (dir & SLEEF_MODE_BACKWARD) == 0;
   int cat = 3;
   uint64_t k = 0;
-  k = (k << BUTCONFIGBIT) | (config & ~(-1 << BUTCONFIGBIT));
-  k = (k << LEVELBIT) | (level & ~(-1 << LEVELBIT));
-  k = (k << LOG2LENBIT) | (log2len & ~(-1 << LOG2LENBIT));
-  k = (k << DIRBIT) | (dir & ~(-1 << LOG2LENBIT));
-  k = (k << BASETYPEIDBIT) | (baseTypeID & ~(-1 << BASETYPEIDBIT));
-  k = (k << CATBIT) | (cat & ~(-1 << CATBIT));
+  k = (k << BUTCONFIGBIT) | (config & ~(~(uint64_t)0 << BUTCONFIGBIT));
+  k = (k << LEVELBIT) | (level & ~(~(uint64_t)0 << LEVELBIT));
+  k = (k << LOG2LENBIT) | (log2len & ~(~(uint64_t)0 << LOG2LENBIT));
+  k = (k << DIRBIT) | (dir & ~(~(uint64_t)0 << LOG2LENBIT));
+  k = (k << BASETYPEIDBIT) | (baseTypeID & ~(~(uint64_t)0 << BASETYPEIDBIT));
+  k = (k << CATBIT) | (cat & ~(~(uint64_t)0 << CATBIT));
   return k;
 }
 
@@ -256,12 +256,12 @@ static uint64_t keyPathConfig(int baseTypeID, int log2len, int dir, int level, i
   dir = (dir & SLEEF_MODE_BACKWARD) == 0;
   int cat = 4;
   uint64_t k = 0;
-  k = (k << BUTCONFIGBIT) | (config & ~(-1 << BUTCONFIGBIT));
-  k = (k << LEVELBIT) | (level & ~(-1 << LEVELBIT));
-  k = (k << LOG2LENBIT) | (log2len & ~(-1 << LOG2LENBIT));
-  k = (k << DIRBIT) | (dir & ~(-1 << LOG2LENBIT));
-  k = (k << BASETYPEIDBIT) | (baseTypeID & ~(-1 << BASETYPEIDBIT));
-  k = (k << CATBIT) | (cat & ~(-1 << CATBIT));
+  k = (k << BUTCONFIGBIT) | (config & ~(~(uint64_t)0 << BUTCONFIGBIT));
+  k = (k << LEVELBIT) | (level & ~(~(uint64_t)0 << LEVELBIT));
+  k = (k << LOG2LENBIT) | (log2len & ~(~(uint64_t)0 << LOG2LENBIT));
+  k = (k << DIRBIT) | (dir & ~(~(uint64_t)0 << LOG2LENBIT));
+  k = (k << BASETYPEIDBIT) | (baseTypeID & ~(~(uint64_t)0 << BASETYPEIDBIT));
+  k = (k << CATBIT) | (cat & ~(~(uint64_t)0 << CATBIT));
   return k;
 }
 

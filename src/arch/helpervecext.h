@@ -20,11 +20,6 @@
 
 #define DFTPRIORITY LOG2VECTLENDP
 
-// GCC 4 has a bug that prevents long-double functions from compiling
-#if defined(__clang__) || (defined(__GNUC__) && __GNUC__ >= 5)
-#define ENABLE_LONGDOUBLE
-#endif
-
 #if defined(__clang__)
 #define ISANAME "Clang Vector Extension"
 
