@@ -20,11 +20,6 @@
 
 #define DFTPRIORITY LOG2VECTLENDP
 
-// GCC 4 has a bug that prevents long-double functions from compiling
-#if defined(__clang__) || (defined(__GNUC__) && __GNUC__ >= 5)
-#define ENABLE_LONGDOUBLE
-#endif
-
 #if defined(__clang__)
 #define ISANAME "Clang Vector Extension"
 
@@ -45,7 +40,7 @@ typedef long double vlongdouble __attribute__((ext_vector_type(VECTLENDP)));
 #ifdef Sleef_quad2_DEFINED
 typedef uint8_t vmaskq __attribute__((ext_vector_type(sizeof(Sleef_quad)*VECTLENDP)));
 #ifdef ENABLE_LONGDOUBLE
-typedef long double vquad __attribute__((ext_vector_type(VECTLENDP)));
+typedef Sleef_quad vquad __attribute__((ext_vector_type(VECTLENDP)));
 #endif
 #endif
 #elif defined(__GNUC__)

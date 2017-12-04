@@ -129,6 +129,12 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
 
   # Warning flags.
   set(FLAGS_WALL "-Wall -Wno-unused -Wno-attributes")
+  if(CMAKE_C_COMPILER_ID MATCHES "GNU")
+    # The following compiler option is needed to suppress the warning
+    # "AVX vector return without AVX enabled changes the ABI" at
+    # src/arch/helpervecext.h:88
+    string(CONCAT FLAGS_WALL ${FLAGS_WALL} " -Wno-psabi")
+  endif(CMAKE_C_COMPILER_ID MATCHES "GNU")
 elseif(MSVC)
   # Intel vector extensions.
   set(FLAGS_ENABLE_SSE2 /D__SSE2__)
@@ -146,7 +152,12 @@ set(SLEEF_C_FLAGS "${FLAGS_WALL} ${FLAGS_STRICTMATH}")
 
 CHECK_TYPE_SIZE("long double" LD_SIZE)
 if(LD_SIZE GREATER "9")
-  set(COMPILER_SUPPORTS_LONG_DOUBLE 1)
+  # This is needed to check since internal compiler error occurs with gcc 4.x
+  CHECK_C_SOURCE_COMPILES("
+  typedef long double vlongdouble __attribute__((vector_size(sizeof(long double)*2)));
+  vlongdouble vcast_vl_l(long double d) { return (vlongdouble) { d, d }; }
+  int main() { vlongdouble vld = vcast_vl_l(0);
+  }" COMPILER_SUPPORTS_LONG_DOUBLE)
 endif()
 
 CHECK_C_SOURCE_COMPILES("
@@ -233,6 +244,21 @@ if(COMPILER_SUPPORTS_AVX2)
   set(COMPILER_SUPPORTS_AVX2128 1)
 endif()
 
+# Check if compilation with OpenMP really succeeds
+# It does not succeed on Travis even though find_package(OpenMP) succeeds.
+find_package(OpenMP)
+if(OPENMP_FOUND)
+  set (CMAKE_REQUIRED_FLAGS "${OpenMP_C_FLAGS}")
+  CHECK_C_SOURCE_COMPILES("
+  #include <stdio.h>
+  int main() {
+  int i;
+  #pragma omp parallel for
+    for(i=0;i < 10;i++) { putchar(0); }
+  }"
+  COMPILER_SUPPORTS_OPENMP)
+endif(OPENMP_FOUND)
+
 # Reset used flags
 set(CMAKE_REQUIRED_FLAGS)
 
@@ -250,7 +276,12 @@ CHECK_C_SOURCE_COMPILES("
   }"
   COMPILER_SUPPORTS_WEAK_ALIASES)
 
-# Enable building of the GNU ABI version for x86 and aarch64
-if(COMPILER_SUPPORTS_WEAK_ALIASES)
-    set(ENABLE_GNUABI ON CACHE INTERNAL "Build GNU ABI compatible version.")
+##
+
+# Detect if cmake is running on Travis
+string(COMPARE NOTEQUAL "" "$ENV{TRAVIS}" RUNNING_ON_TRAVIS)
+
+if (${RUNNING_ON_TRAVIS} AND CMAKE_C_COMPILER_ID MATCHES "Clang")
+  set(COMPILER_SUPPORTS_OPENMP FALSE)   # Workaround for https://github.com/travis-ci/travis-ci/issues/8613
+  set(COMPILER_SUPPORTS_FLOAT128 FALSE) # Compilation on unroll_0_vecextqp.c does not finish on Travis
 endif()
