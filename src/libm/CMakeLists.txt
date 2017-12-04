@@ -146,6 +146,9 @@ endif()
 # Compile SIMD versions
 # Single precision and double precision
 set(SIMD_SOURCES sleefsimdsp.c sleefsimddp.c)
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
+  set(SIMD_SOURCES sleefsimdsp.c)
+endif()
 
 # Include symbols for each SIMD architecture (if supported by the platform)
 # Note: adds object file as sources via cmake conditional generator expression
