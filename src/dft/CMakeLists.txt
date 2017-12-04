@@ -4,6 +4,9 @@ set(MAXBUTWIDTH 3 CACHE STRING "Log_2 (Maximum butterfly length) of butterflies"
 
 # Compiler properties
 
+set(CMAKE_C_FLAGS ORG_CMAKE_C_FLAGS)
+string(CONCAT CMAKE_C_FLAGS ${DFT_C_FLAGS})
+
 set(COMMON_TARGET_PROPERTIES 
   POSITION_INDEPENDENT_CODE ON   # -fPIC
   C_STANDARD 99                  # -std=gnu99
