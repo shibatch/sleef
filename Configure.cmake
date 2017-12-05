@@ -10,7 +10,7 @@ find_library(LIBM m)
 set(SLEEF_SUPPORTED_EXTENSIONS
   SSE2 SSE4 AVX FMA4 AVX2 AVX2128 AVX512F # x86
   ADVSIMD				  # Aarch64
-  NEON					  # Aarch32
+  NEON32				  # Aarch32
   CACHE STRING "List of SIMD architectures supported by libsleef."
   )
 set(SLEEF_SUPPORTED_GNUABI_EXTENSIONS 
@@ -72,6 +72,14 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
   )
   command_arguments(HEADER_PARAMS_ADVSIMD    2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON advsimd)
 
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
+  set(SLEEF_ARCH_AARCH32 ON CACHE INTERNAL "True for Aarch32 architecture.")
+  set(COMPILER_SUPPORTS_NEON32 1)
+
+  set(SLEEF_HEADER_LIST
+    NEON32
+  )
+  command_arguments(HEADER_PARAMS_NEON32    2 4 - float32x4_t int32x2_t int32x4_t __ARM_NEON__ neon)
 endif()
 
 # MKRename arguments per type
@@ -83,6 +91,7 @@ command_arguments(RENAME_PARAMS_AVX2           4 8 avx2)
 command_arguments(RENAME_PARAMS_AVX2128        2 4 avx2128)
 command_arguments(RENAME_PARAMS_AVX512F        8 16 avx512f)
 command_arguments(RENAME_PARAMS_ADVSIMD        2 4 advsimd)
+command_arguments(RENAME_PARAMS_NEON32         2 4 neon)
 
 command_arguments(RENAME_PARAMS_GNUABI_SSE2    sse2 b 2 4 _mm128d _mm128 _mm128i _mm128i __SSE2__)
 command_arguments(RENAME_PARAMS_GNUABI_AVX     avx c 4 8 __m256d __m256 __m128i "struct { __m128i x, y$<SEMICOLON> }" __AVX__)
@@ -113,7 +122,7 @@ set(CLANG_FLAGS_ENABLE_FMA4 "-mfma4")
 set(CLANG_FLAGS_ENABLE_AVX2 "-mavx2;-mfma")
 set(CLANG_FLAGS_ENABLE_AVX2128 "-mavx2;-mfma")
 set(CLANG_FLAGS_ENABLE_AVX512F "-mavx512f")
-set(CLANG_FLAGS_ENABLE_NEON "")
+set(CLANG_FLAGS_ENABLE_NEON32 "--target=arm-linux-gnueabihf;-mcpu=cortex-a8")
 # Arm AArch64 vector extensions.
 set(CLANG_FLAGS_ENABLE_ADVSIMD "-march=armv8-a+simd")
 
@@ -134,6 +143,7 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
     # "AVX vector return without AVX enabled changes the ABI" at
     # src/arch/helpervecext.h:88
     string(CONCAT FLAGS_WALL ${FLAGS_WALL} " -Wno-psabi")
+    set(FLAGS_ENABLE_NEON32 "-mfpu=neon")
   endif(CMAKE_C_COMPILER_ID MATCHES "GNU")
 elseif(MSVC)
   # Intel vector extensions.
