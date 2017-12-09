@@ -198,9 +198,9 @@ static INLINE vint vand_vi_vo_vi(vopmask o, vint y) {
 
 static INLINE vint vor_vi_vi_vi(vint x, vint y) { return _mm256_or_si256(x, y); }
 static INLINE vint vxor_vi_vi_vi(vint x, vint y) { return _mm256_xor_si256(x, y); }
-static INLINE vint vsll_vi_vi_i(vint x, int c) { return _mm256_slli_epi32(x, c); }
-static INLINE vint vsrl_vi_vi_i(vint x, int c) { return _mm256_srli_epi32(x, c); }
-static INLINE vint vsra_vi_vi_i(vint x, int c) { return _mm256_srai_epi32(x, c); }
+#define vsll_vi_vi_i(x, c) _mm256_slli_epi32(x, c)
+#define vsrl_vi_vi_i(x, c) _mm256_srli_epi32(x, c)
+#define vsra_vi_vi_i(x, c) _mm256_srai_epi32(x, c)
 
 static INLINE vint veq_vi_vi_vi(vint x, vint y) { return _mm256_cmpeq_epi32(x, y); }
 static INLINE vint vgt_vi_vi_vi(vint x, vint y) { return _mm256_cmpgt_epi32(x, y); }
@@ -373,9 +373,9 @@ static INLINE vint2 vandnot_vi2_vo_vi2(vopmask o, vint2 m) {
   return _mm512_mask_and_epi32(m, o, _mm512_set1_epi32(0), _mm512_set1_epi32(0));
 }
 
-static INLINE vint2 vsll_vi2_vi2_i(vint2 x, int c) { return _mm512_slli_epi32(x, c); }
-static INLINE vint2 vsrl_vi2_vi2_i(vint2 x, int c) { return _mm512_srli_epi32(x, c); }
-static INLINE vint2 vsra_vi2_vi2_i(vint2 x, int c) { return _mm512_srai_epi32(x, c); }
+#define vsll_vi2_vi2_i(x, c) _mm512_slli_epi32(x, c)
+#define vsrl_vi2_vi2_i(x, c) _mm512_srli_epi32(x, c)
+#define vsra_vi2_vi2_i(x, c) _mm512_srai_epi32(x, c)
 static INLINE vopmask veq_vo_vi2_vi2(vint2 x, vint2 y) { return _mm512_cmpeq_epi32_mask(x, y); }
 static INLINE vopmask vgt_vo_vi2_vi2(vint2 x, vint2 y) { return _mm512_cmpgt_epi32_mask(x, y); }
 
