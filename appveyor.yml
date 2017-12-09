@@ -1,10 +1,11 @@
 version: 1.0.{build}
-image: Visual Studio 2015
+max_jobs: 1
+image: Visual Studio 2017
 configuration: Release
 install:
   - mkdir build
   - cd build
-  - cmake -G"Visual Studio 14 2015 Win64" .. -DCMAKE_INSTALL_PREFIX=install -DSLEEF_SHOW_CONFIG=1
+  - cmake -G"Visual Studio 15 2017 Win64" .. -DCMAKE_INSTALL_PREFIX=install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_SHOW_ERROR_LOG=1
 build_script:
   - cmake --build . --target install --config Release
 artifacts:
