@@ -97,3 +97,37 @@ set_target_properties(${TARGET_TESTER} ${IUT_LIST} PROPERTIES
 
 # Tests depends on the library
 add_dependencies(${TARGET_IUT} ${TARGET_HEADERS})
+
+# Tester3
+
+set(TESTER3_0 AVX2128        __m128d d2 __m128 f4 AVX2    __m256d d4 __m256 f8)
+set(TESTER3_1 SSE2           __m128d d2 __m128 f4 AVX     __m256d d4 __m256 f8)
+set(TESTER3_2 SSE4           __m128d d2 __m128 f4 AVX     __m256d d4 __m256 f8)
+
+foreach(N 0 1 2)
+  list(GET TESTER3_${N} 0 EXTX)                                    # EXTX is AVX2_SCALAR, for example
+  list(GET TESTER3_${N} 1 DPTYPEX)
+  list(GET TESTER3_${N} 2 DPTYPESPECX)
+  list(GET TESTER3_${N} 3 SPTYPEX)
+  list(GET TESTER3_${N} 4 SPTYPESPECX)
+  list(GET TESTER3_${N} 5 EXTY)                                    # EXTY is AVX2
+  list(GET TESTER3_${N} 6 DPTYPEY)
+  list(GET TESTER3_${N} 7 DPTYPESPECY)
+  list(GET TESTER3_${N} 8 SPTYPEY)
+  list(GET TESTER3_${N} 9 SPTYPESPECY)
+
+  string(TOLOWER ${EXTX} EXTSPECX)                                 # EXTSPECX is avx2_scalar
+  string(TOLOWER ${EXTY} EXTSPECY)                                 # EXTSPECY is avx2
+  set(EXEFN tester3_${EXTSPECX}_${EXTSPECY})                       # EXEFN is tester3_avx_scalar_avx2
+
+  add_executable(${EXEFN} tester3.c testerutil.c)
+  target_compile_options(${EXEFN} PRIVATE ${FLAGS_ENABLE_${EXTX}} ${FLAGS_ENABLE_${EXTY}})
+  target_compile_definitions(${EXEFN} PRIVATE
+    DPTYPEX=${DPTYPEX} DPTYPESPECX=${DPTYPESPECX} SPTYPEX=${SPTYPEX} SPTYPESPECX=${SPTYPESPECX} EXTSPECX=${EXTSPECX}
+    DPTYPEY=${DPTYPEY} DPTYPESPECY=${DPTYPESPECY} SPTYPEY=${SPTYPEY} SPTYPESPECY=${SPTYPESPECY} EXTSPECY=${EXTSPECY})
+  set_target_properties(${EXEFN} PROPERTIES C_STANDARD 99)
+  target_link_libraries(${EXEFN} ${TARGET_LIBSLEEF} ${TARGET_LIBCOMMON_STATIC})
+  add_dependencies(${EXEFN} ${TARGET_HEADERS} ${TARGET_LIBSLEEF})
+
+  add_test(NAME ${EXEFN} COMMAND ${EXEFN})
+endforeach()
