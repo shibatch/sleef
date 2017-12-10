@@ -298,6 +298,14 @@ CHECK_C_SOURCE_COMPILES("
 
 ##
 
+option(SLEEF_SHOW_ERROR_LOG "Show cmake error log." OFF)
+if(SLEEF_SHOW_ERROR_LOG)
+  if (EXISTS ${PROJECT_BINARY_DIR}/CMakeFiles/CMakeError.log)
+    file(READ ${PROJECT_BINARY_DIR}/CMakeFiles/CMakeError.log FILE_CONTENT)
+    message("${FILE_CONTENT}")
+  endif()
+endif(SLEEF_SHOW_ERROR_LOG)
+
 # Detect if cmake is running on Travis
 string(COMPARE NOTEQUAL "" "$ENV{TRAVIS}" RUNNING_ON_TRAVIS)
 
