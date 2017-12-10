@@ -166,8 +166,8 @@ static float snsp2[] = {
   } while(0)
 
 #define test2_d_d(NAME, ULP, START, END, STEP) do {			\
-    for(int i=0;i<sizeof(sndp)/sizeof(double);i++)			\
-      compare2_d_d(NAME, ULP, DPTYPEX, DPTYPESPECX, EXTSPECX, DPTYPEY, DPTYPESPECY, EXTSPECY, sndp[i]); \
+    for(int i=0;i<sizeof(sndp2)/sizeof(double);i++)			\
+      compare2_d_d(NAME, ULP, DPTYPEX, DPTYPESPECX, EXTSPECX, DPTYPEY, DPTYPESPECY, EXTSPECY, sndp2[i]); \
     for(double d = (START);d < (END);d += (STEP)*STEPSCALE)			\
       compare2_d_d(NAME, ULP, DPTYPEX, DPTYPESPECX, EXTSPECX, DPTYPEY, DPTYPESPECY, EXTSPECY, d); \
   } while(0)
@@ -222,8 +222,8 @@ static float snsp2[] = {
   } while(0)
 
 #define test2_d2_d(NAME, ULP, START, END, STEP) do {			\
-    for(int i=0;i<sizeof(sndp)/sizeof(double);i++)			\
-      compare2_d2_d(NAME, ULP, DPTYPEX, DPTYPESPECX, EXTSPECX, DPTYPEY, DPTYPESPECY, EXTSPECY, sndp[i]); \
+    for(int i=0;i<sizeof(sndp2)/sizeof(double);i++)			\
+      compare2_d2_d(NAME, ULP, DPTYPEX, DPTYPESPECX, EXTSPECX, DPTYPEY, DPTYPESPECY, EXTSPECY, sndp2[i]); \
     for(double d = (START);d < (END);d += (STEP)*STEPSCALE)			\
       compare2_d2_d(NAME, ULP, DPTYPEX, DPTYPESPECX, EXTSPECX, DPTYPEY, DPTYPESPECY, EXTSPECY, d); \
   } while(0)
@@ -289,8 +289,8 @@ static float snsp2[] = {
   } while(0)
 
 #define test2_f_f(NAME, ULP, START, END, STEP) do {			\
-    for(int i=0;i<sizeof(snsp)/sizeof(float);i++)			\
-      compare2_f_f(NAME, ULP, SPTYPEX, SPTYPESPECX, EXTSPECX, SPTYPEY, SPTYPESPECY, EXTSPECY, snsp[i]); \
+    for(int i=0;i<sizeof(snsp2)/sizeof(float);i++)			\
+      compare2_f_f(NAME, ULP, SPTYPEX, SPTYPESPECX, EXTSPECX, SPTYPEY, SPTYPESPECY, EXTSPECY, snsp2[i]); \
     for(float d = (START);d < (END);d += (STEP)*STEPSCALE)			\
       compare2_f_f(NAME, ULP, SPTYPEX, SPTYPESPECX, EXTSPECX, SPTYPEY, SPTYPESPECY, EXTSPECY, d); \
   } while(0)
@@ -337,8 +337,8 @@ static float snsp2[] = {
   } while(0)
 
 #define test2_f2_f(NAME, ULP, START, END, STEP) do {			\
-    for(int i=0;i<sizeof(snsp)/sizeof(float);i++)			\
-      compare2_f2_f(NAME, ULP, SPTYPEX, SPTYPESPECX, EXTSPECX, SPTYPEY, SPTYPESPECY, EXTSPECY, snsp[i]); \
+    for(int i=0;i<sizeof(snsp2)/sizeof(float);i++)			\
+      compare2_f2_f(NAME, ULP, SPTYPEX, SPTYPESPECX, EXTSPECX, SPTYPEY, SPTYPESPECY, EXTSPECY, snsp2[i]); \
     for(float d = (START);d < (END);d += (STEP)*STEPSCALE)			\
       compare2_f2_f(NAME, ULP, SPTYPEX, SPTYPESPECX, EXTSPECX, SPTYPEY, SPTYPESPECY, EXTSPECY, d); \
   } while(0)
