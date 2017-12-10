@@ -52,12 +52,37 @@ macro(test_extension SIMD)
       endif (COMPILER_SUPPORTS_WEAK_ALIASES)
     endif(ENABLE_GNUABI)
 
+    # Build tester2 SIMD
+    string(TOLOWER ${SIMD} SCSIMD)
+    foreach(P dp sp)
+      set(T "tester2${SCSIMD}${P}")
+      add_executable(${T} tester2simd${P}.c testerutil.c)
+      target_compile_options(${T} PRIVATE ${FLAGS_ENABLE_${SIMD}})
+      target_compile_definitions(${T} PRIVATE ENABLE_${SIMD}=1 USEMPFR=1)
+      set_target_properties(${T} PROPERTIES C_STANDARD 99)
+      target_link_libraries(${T} ${TARGET_LIBSLEEF} ${EXTRA_LIBS})
+      add_dependencies(${T} ${TARGET_HEADERS})
+      add_dependencies(${T} ${TARGET_LIBSLEEF})
+    endforeach()
+
   endif(COMPILER_SUPPORTS_${SIMD})
 endmacro(test_extension)
 
 foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
   test_extension(${SIMD})
 endforeach()
+
+# Build tester2 scalar
+foreach(P dp sp)
+  set(T "tester2${P}")
+  add_executable(${T} tester2${P}.c testerutil.c)
+  target_compile_definitions(${T} PRIVATE USEMPFR=1)
+  target_link_libraries(${T} ${TARGET_LIBSLEEF} ${EXTRA_LIBS})
+  add_dependencies(${T} ${TARGET_HEADERS})
+  add_dependencies(${T} ${TARGET_LIBSLEEF})
+endforeach()
+
+# No test defined with tester2
 
 # Compile executable 'tester'
 add_executable(${TARGET_TESTER} tester.c testerutil.c)
