@@ -104,6 +104,8 @@ set(TESTER3_0 AVX2128        __m128d d2 __m128 f4 AVX2    __m256d d4 __m256 f8)
 set(TESTER3_1 SSE2           __m128d d2 __m128 f4 AVX     __m256d d4 __m256 f8)
 set(TESTER3_2 SSE4           __m128d d2 __m128 f4 AVX     __m256d d4 __m256 f8)
 
+add_library(tester3main_obj OBJECT tester3main.c)
+
 foreach(N 0 1 2)
   list(GET TESTER3_${N} 0 EXTX)                                    # EXTX is AVX2_SCALAR, for example
   list(GET TESTER3_${N} 1 DPTYPEX)
@@ -120,7 +122,7 @@ foreach(N 0 1 2)
   string(TOLOWER ${EXTY} EXTSPECY)                                 # EXTSPECY is avx2
   set(EXEFN tester3_${EXTSPECX}_${EXTSPECY})                       # EXEFN is tester3_avx_scalar_avx2
 
-  add_executable(${EXEFN} tester3.c testerutil.c)
+  add_executable(${EXEFN} $<TARGET_OBJECTS:tester3main_obj> tester3.c testerutil.c)
   target_compile_options(${EXEFN} PRIVATE ${FLAGS_ENABLE_${EXTX}} ${FLAGS_ENABLE_${EXTY}})
   target_compile_definitions(${EXEFN} PRIVATE
     DPTYPEX=${DPTYPEX} DPTYPESPECX=${DPTYPESPECX} SPTYPEX=${SPTYPEX} SPTYPESPECX=${SPTYPESPECX} EXTSPECX=${EXTSPECX}

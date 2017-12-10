@@ -368,7 +368,7 @@ static float snsp2[] = {
 
 //
 
-int main(int argc,char **argv)
+int do_test(int argc, char **argv)
 {
   srand(seed = time(NULL));
 
