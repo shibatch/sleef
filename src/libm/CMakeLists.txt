@@ -181,6 +181,63 @@ endif(LIBM)
 
 target_link_libraries(${TARGET_LIBSLEEF} ${TARGET_LIBCOMMON_STATIC})
 
+# --------------------------------------------------------------------
+
+# Target dispsse.c
+
+add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c
+  COMMENT "Generating dispsse.c"
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/dispsse.c.org ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c
+  COMMAND ${TARGET_MKDISP} 2 4 __m128d __m128 __m128i sse2 sse4 avx2128 >> ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c
+  DEPENDS ${TARGET_MKDISP}
+  )
+add_custom_target(dispsse.c_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c)
+
+# Target renamedsp128.h
+
+add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h
+  COMMENT "Generating renamedsp128.h"
+  COMMAND ${TARGET_MKRENAME} 2 4 > ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h
+  DEPENDS ${TARGET_MKRENAME}
+  )
+add_custom_target(renamedsp128.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h)
+
+# Target dispavx.c
+
+add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c
+  COMMENT "Generating dispavx.c"
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/dispavx.c.org ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c
+  COMMAND ${TARGET_MKDISP} 4 8 __m256d __m256 __m128i avx fma4 avx2 >> ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c
+  DEPENDS ${TARGET_MKDISP}
+  )
+add_custom_target(dispavx.c_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c)
+
+# Target renamedsp256.h
+
+add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp256.h
+  COMMENT "Generating renamedsp256.h"
+  COMMAND ${TARGET_MKRENAME} 4 8 > ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp256.h
+  DEPENDS ${TARGET_MKRENAME}
+  )
+add_custom_target(renamedsp256.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp256.h)
+
+# Target dispsse_obj
+
+add_library(dispsse_obj OBJECT dispsse.c ${SLEEF_INCLUDE_HEADER})
+set_target_properties(dispsse_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
+target_include_directories(dispsse_obj PRIVATE ${CMAKE_BINARY_DIR}/include)
+add_dependencies(dispsse_obj dispsse.c_generated renamedsp128.h_generated ${TARGET_HEADERS})
+target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:dispsse_obj>)
+
+# Target dispavx_obj
+
+add_library(dispavx_obj OBJECT dispavx.c ${SLEEF_INCLUDE_HEADER})
+target_compile_options(dispavx_obj PRIVATE ${FLAGS_ENABLE_AVX})
+set_target_properties(dispavx_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
+target_include_directories(dispavx_obj PRIVATE ${CMAKE_BINARY_DIR}/include)
+add_dependencies(dispavx_obj dispavx.c_generated renamedsp256.h_generated ${TARGET_HEADERS})
+target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:dispavx_obj>)
+
 
 # --------------------------------------------------------------------
 # TARGET_LIBSLEEFGNUABI

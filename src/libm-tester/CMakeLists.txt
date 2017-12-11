@@ -72,6 +72,25 @@ foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
   test_extension(${SIMD})
 endforeach()
 
+# iutdsp128
+
+add_executable(iutdsp128 ${IUT_SRC})
+target_compile_definitions(iutdsp128 PRIVATE ENABLE_DSP128=1)
+target_link_libraries(iutdsp128 ${TARGET_LIBSLEEF})
+add_dependencies(iutdsp128 ${TARGET_HEADERS} ${TARGET_LIBSLEEF})
+add_test(NAME iutdsp128 COMMAND ${TARGET_TESTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/iutdsp128)
+list(APPEND IUT_LIST iutdsp128)
+
+# iutdsp256
+
+add_executable(iutdsp256 ${IUT_SRC})
+target_compile_definitions(iutdsp256 PRIVATE ENABLE_DSP256=1)
+target_compile_options(iutdsp256 PRIVATE ${FLAGS_ENABLE_AVX})
+target_link_libraries(iutdsp256 ${TARGET_LIBSLEEF})
+add_dependencies(iutdsp256 ${TARGET_HEADERS} ${TARGET_LIBSLEEF})
+add_test(NAME iutdsp256 COMMAND ${TARGET_TESTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/iutdsp256)
+list(APPEND IUT_LIST iutdsp256)
+
 # Build tester2 scalar
 foreach(P dp sp)
   set(T "tester2${P}")
