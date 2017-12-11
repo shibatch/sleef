@@ -10,12 +10,7 @@ set(COMMON_TARGET_PROPERTIES
 add_library(${TARGET_LIBCOMMON_STATIC} STATIC common.c)
 set_target_properties(${TARGET_LIBCOMMON_STATIC} PROPERTIES ${COMMON_TARGET_PROPERTIES})
 
-# Target common.o
+# Target TARGET_LIBARRAYMAP_STATIC
 
-add_library(common_obj OBJECT common.c)
-set_target_properties(common_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
-
-# Target arraymap.o
-
-add_library(arraymap_obj OBJECT arraymap.c)
-set_target_properties(arraymap_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
+add_library(${TARGET_LIBARRAYMAP_STATIC} STATIC arraymap.c)
+set_target_properties(${TARGET_LIBARRAYMAP_STATIC} PROPERTIES ${COMMON_TARGET_PROPERTIES})

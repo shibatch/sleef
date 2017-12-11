@@ -179,6 +179,8 @@ if(LIBM)
   target_link_libraries(${TARGET_LIBSLEEF} ${LIBM})
 endif(LIBM)
 
+target_link_libraries(${TARGET_LIBSLEEF} ${TARGET_LIBCOMMON_STATIC})
+
 
 # --------------------------------------------------------------------
 # TARGET_LIBSLEEFGNUABI

@@ -254,8 +254,8 @@ endforeach()
 
 # Target libdft
 
-add_library(${TARGET_LIBDFT} SHARED $<TARGET_OBJECTS:dftcommon_obj> $<TARGET_OBJECTS:common_obj> $<TARGET_OBJECTS:arraymap_obj>)
-target_link_libraries(${TARGET_LIBDFT} ${TARGET_LIBSLEEF})
+add_library(${TARGET_LIBDFT} SHARED $<TARGET_OBJECTS:dftcommon_obj>)
+target_link_libraries(${TARGET_LIBDFT} ${TARGET_LIBSLEEF} ${TARGET_LIBARRAYMAP_STATIC})
 
 foreach(T ${LIST_SUPPORTED_FPTYPE})
   list(GET LISTSHORTTYPENAME ${T} ST)                       # ST is "dp", for example
