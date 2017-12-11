@@ -100,13 +100,17 @@ add_dependencies(${TARGET_IUT} ${TARGET_HEADERS})
 
 # Tester3
 
-set(TESTER3_0 AVX2128        __m128d d2 __m128 f4 AVX2    __m256d d4 __m256 f8)
-set(TESTER3_1 SSE2           __m128d d2 __m128 f4 AVX     __m256d d4 __m256 f8)
-set(TESTER3_2 SSE4           __m128d d2 __m128 f4 AVX     __m256d d4 __m256 f8)
+if (SLEEF_ARCH_X86)
+  set(TESTER3_0 AVX2128        __m128d d2 __m128 f4 AVX2    __m256d d4 __m256 f8)
+  set(TESTER3_1 SSE2           __m128d d2 __m128 f4 AVX     __m256d d4 __m256 f8)
+  set(TESTER3_2 SSE4           __m128d d2 __m128 f4 AVX     __m256d d4 __m256 f8)
+
+  set(TESTER3_ITERATION 0 1 2)
+endif(SLEEF_ARCH_X86)
 
 add_library(tester3main_obj OBJECT tester3main.c)
 
-foreach(N 0 1 2)
+foreach(N ${TESTER3_ITERATION})
   list(GET TESTER3_${N} 0 EXTX)                                    # EXTX is AVX2_SCALAR, for example
   list(GET TESTER3_${N} 1 DPTYPEX)
   list(GET TESTER3_${N} 2 DPTYPESPECX)
