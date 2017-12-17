@@ -3,7 +3,7 @@ max_jobs: 1
 image: Visual Studio 2017
 configuration: Release
 install:
-  - "C:\\Cygwin64\\setup-x86_64.exe -q -g -P libmpfr-dev,libgmp-dev,make"
+  - "C:\\Cygwin64\\setup-x86_64.exe -q -P libmpfr-dev,libgmp-dev,make"
   - PATH c:\\Cygwin64\\bin;c:\\Cygwin64\\usr\\bin;%PATH%
   - "C:\\Cygwin64\\bin\\bash -c '/usr/bin/make --directory=/cygdrive/c/projects/sleef/src/libm-tester -f Makefile.tester'"
   - mkdir build
