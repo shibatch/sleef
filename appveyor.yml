@@ -3,7 +3,7 @@ max_jobs: 1
 image: Visual Studio 2017
 configuration: Release
 install:
-  - updateCygwin.bat
+  - "C:\\Cygwin64\\setup-x86_64.exe -q -g -P libmpfr-devel,libgmp-devel"
   - PATH c:\\Cygwin64\\bin;c:\\Cygwin64\\usr\\bin;%PATH%
   - "C:\\Cygwin64\\bin\\bash -c '/usr/bin/make --directory=/cygdrive/c/projects/sleef/src/libm-tester -f Makefile.tester'"
   - mkdir build
@@ -12,7 +12,7 @@ install:
 build_script:
   - cmake --build . --target install --config Release
 test_script:
-  - ctest -j 2
+  - ctest -C Release -j 2
 artifacts:
 - path: build\install\**\*
   name: SLEEFWindowsx64
