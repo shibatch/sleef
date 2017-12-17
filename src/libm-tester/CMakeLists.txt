@@ -21,6 +21,14 @@ set(IUT_LIST ${TARGET_IUT})
 
 set(IUT_SRC iutsimd.c iutsimdmain.c testerutil)
 
+option(SLEEF_TEST_ALL_IUT "Perform tests on implementations with all vector extensions" OFF)
+
+if(NOT SLEEF_TEST_ALL_IUT)
+  set(SKIP_TEST
+    SSE4 AVX AVX2128
+    )
+endif()
+
 # Add vector extension `iut`s
 macro(test_extension SIMD)
   if(COMPILER_SUPPORTS_${SIMD})
@@ -34,8 +42,11 @@ macro(test_extension SIMD)
     add_dependencies(${TARGET_IUT${SIMD}} ${TARGET_HEADERS})
     add_dependencies(${TARGET_IUT${SIMD}} ${TARGET_LIBSLEEF})
 
-    add_test(NAME ${TARGET_IUT${SIMD}}
-      COMMAND ${TARGET_TESTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_IUT${SIMD}})
+    list(FIND SKIP_TEST ${SIMD} INDEX_SKIP_TEST)
+    if (INDEX_SKIP_TEST EQUAL -1)
+      add_test(NAME ${TARGET_IUT${SIMD}}
+	COMMAND ${TARGET_TESTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_IUT${SIMD}})
+    endif()
     
     list(APPEND IUT_LIST ${TARGET_IUT${SIMD}})
 
@@ -102,8 +113,8 @@ add_dependencies(${TARGET_IUT} ${TARGET_HEADERS})
 
 if (SLEEF_ARCH_X86)
   set(TESTER3_0 AVX2128        __m128d d2 __m128 f4 AVX2    __m256d d4 __m256 f8)
-  set(TESTER3_1 SSE2           __m128d d2 __m128 f4 AVX     __m256d d4 __m256 f8)
-  set(TESTER3_2 SSE4           __m128d d2 __m128 f4 AVX     __m256d d4 __m256 f8)
+  set(TESTER3_1 AVX            __m256d d4 __m256 f8 SSE2    __m128d d2 __m128 f4)
+  set(TESTER3_2 SSE4           __m128d d2 __m128 f4 SSE2    __m128d d2 __m128 f4)
 
   set(TESTER3_ITERATION 0 1 2)
 endif(SLEEF_ARCH_X86)
