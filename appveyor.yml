@@ -5,7 +5,7 @@ configuration: Release
 install:
   - "C:\\Cygwin64\\setup-x86_64.exe -q -g -P libmpfr-dev,make"
   - set BACKUPPATH=%PATH%
-  - PATH c:\\cygwin64\\usr\\bin
+  - PATH c:\\Cygwin64\\bin;c:\\Cygwin64\\usr\\bin
   - "C:\\Cygwin64\\bin\\bash -c /usr/bin/make --directory=/cygdrive/c/projects/sleef/src/libm-tester -f Makefile.tester"
   - set PATH=%BACKUPPATH%
   - mkdir build
