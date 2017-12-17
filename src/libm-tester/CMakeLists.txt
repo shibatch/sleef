@@ -6,27 +6,14 @@ include_directories(${CMAKE_BINARY_DIR}/include)          # sleef.h
 include_directories(${CMAKE_SOURCE_DIR}/src/libm)         # rename.h
 include_directories(${CMAKE_BINARY_DIR}/src/libm/include) # rename headers
 
-# Check if tester.exe is already there
-if (MSVC AND EXISTS ${PROJECT_SOURCE_DIR}/src/libm-tester/tester.exe)
-  set(TESTER_AVAILABLE 1)
-  add_custom_target(copy_tester_exe ALL
-    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/src/libm-tester/tester.exe ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Release
-    COMMENT "Copying tester.exe to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Release"
-    DEPENDS ${TARGET_IUT})
-endif()
-
-if(LIB_MPFR)
-  set(TESTER_AVAILABLE 1)
-endif(LIB_MPFR)
-
 # Compile executable 'iut'
 add_executable(${TARGET_IUT} iut.c testerutil.c)
 target_link_libraries(${TARGET_IUT} ${TARGET_LIBSLEEF} ${TARGET_LIBCOMMON_STATIC})
 set_target_properties(${TARGET_IUT} PROPERTIES C_STANDARD 99)
-if (TESTER_AVAILABLE)
+if (LIB_MPFR)
   add_test(NAME ${TARGET_IUT}
     COMMAND ${TARGET_TESTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_IUT})
-endif()
+endif(LIB_MPFR)
 
 set(IUT_SRC iutsimd.c iutsimdmain.c testerutil)
 
@@ -43,10 +30,10 @@ macro(test_extension SIMD)
     add_dependencies(${TARGET_IUT${SIMD}} ${TARGET_HEADERS})
     add_dependencies(${TARGET_IUT${SIMD}} ${TARGET_LIBSLEEF})
 
-    if (TESTER_AVAILABLE)
+    if (LIB_MPFR)
       add_test(NAME ${TARGET_IUT${SIMD}}
 	COMMAND ${TARGET_TESTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_IUT${SIMD}})
-    endif(TESTER_AVAILABLE)
+    endif(LIB_MPFR)
 
     set_target_properties(${TARGET_IUT${SIMD}} PROPERTIES C_STANDARD 99)
 

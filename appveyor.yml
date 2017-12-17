@@ -12,7 +12,7 @@ install:
 build_script:
   - cmake --build . --target install --config Release
 test_script:
-  - ctest -C Release -j 2
+  - "C:\\Cygwin64\\bin\\bash -c '/cygdrive/c/projects/sleef/src/script/testOnAppveyor.sh'"
 artifacts:
 - path: build\install\**\*
   name: SLEEFWindowsx64
