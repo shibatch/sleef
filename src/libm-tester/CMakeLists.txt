@@ -6,18 +6,25 @@ include_directories(${CMAKE_BINARY_DIR}/include)          # sleef.h
 include_directories(${CMAKE_SOURCE_DIR}/src/libm)         # rename.h
 include_directories(${CMAKE_BINARY_DIR}/src/libm/include) # rename headers
 
-set(EXTRA_LIBS ${LIBM}
-  ${LIB_MPFR}
-  ${TARGET_LIBCOMMON_STATIC}
-  )
+# Check if tester.exe is already there
+if (MSVC AND EXISTS ${PROJECT_SOURCE_DIR}/src/libm-tester/tester.exe)
+  set(TESTER_AVAILABLE 1)
+  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/tester.exe
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/src/libm-tester/tester.exe ${CMAKE_CURRENT_BINARY_DIR})
+endif()
+
+if(LIB_MPFR)
+  set(TESTER_AVAILABLE 1)
+endif(LIB_MPFR)
 
 # Compile executable 'iut'
 add_executable(${TARGET_IUT} iut.c testerutil.c)
-target_link_libraries(${TARGET_IUT} ${TARGET_LIBSLEEF} ${EXTRA_LIBS})
-add_test(NAME ${TARGET_IUT}
-  COMMAND ${TARGET_TESTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_IUT})
-
-set(IUT_LIST ${TARGET_IUT})
+target_link_libraries(${TARGET_IUT} ${TARGET_LIBSLEEF} ${TARGET_LIBCOMMON_STATIC})
+set_target_properties(${TARGET_IUT} PROPERTIES C_STANDARD 99)
+if (TESTER_AVAILABLE)
+  add_test(NAME ${TARGET_IUT}
+    COMMAND ${TARGET_TESTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_IUT})
+endif()
 
 set(IUT_SRC iutsimd.c iutsimdmain.c testerutil)
 
@@ -29,15 +36,17 @@ macro(test_extension SIMD)
       PRIVATE ${FLAGS_ENABLE_${SIMD}})
     target_compile_definitions(${TARGET_IUT${SIMD}}
       PRIVATE ENABLE_${SIMD}=1)
-    target_link_libraries(${TARGET_IUT${SIMD}} ${TARGET_LIBSLEEF} ${EXTRA_LIBS})
+    target_link_libraries(${TARGET_IUT${SIMD}} ${TARGET_LIBSLEEF} ${TARGET_LIBCOMMON_STATIC})
 
     add_dependencies(${TARGET_IUT${SIMD}} ${TARGET_HEADERS})
     add_dependencies(${TARGET_IUT${SIMD}} ${TARGET_LIBSLEEF})
 
-    add_test(NAME ${TARGET_IUT${SIMD}}
-      COMMAND ${TARGET_TESTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_IUT${SIMD}})
-    
-    list(APPEND IUT_LIST ${TARGET_IUT${SIMD}})
+    if (TESTER_AVAILABLE)
+      add_test(NAME ${TARGET_IUT${SIMD}}
+	COMMAND ${TARGET_TESTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_IUT${SIMD}})
+    endif(TESTER_AVAILABLE)
+
+    set_target_properties(${TARGET_IUT${SIMD}} PROPERTIES C_STANDARD 99)
 
     if(ENABLE_GNUABI)
       if (COMPILER_SUPPORTS_WEAK_ALIASES)
@@ -52,19 +61,21 @@ macro(test_extension SIMD)
       endif (COMPILER_SUPPORTS_WEAK_ALIASES)
     endif(ENABLE_GNUABI)
 
-    # Build tester2 SIMD
-    string(TOLOWER ${SIMD} SCSIMD)
-    foreach(P dp sp)
-      set(T "tester2${SCSIMD}${P}")
-      add_executable(${T} tester2simd${P}.c testerutil.c)
-      target_compile_options(${T} PRIVATE ${FLAGS_ENABLE_${SIMD}})
-      target_compile_definitions(${T} PRIVATE ENABLE_${SIMD}=1 USEMPFR=1)
-      set_target_properties(${T} PROPERTIES C_STANDARD 99)
-      target_link_libraries(${T} ${TARGET_LIBSLEEF} ${EXTRA_LIBS})
-      add_dependencies(${T} ${TARGET_HEADERS})
-      add_dependencies(${T} ${TARGET_LIBSLEEF})
-    endforeach()
-
+    if(LIB_MPFR AND NOT ${SIMD} STREQUAL NEON32)
+      # Build tester2 SIMD
+      string(TOLOWER ${SIMD} SCSIMD)
+      foreach(P dp sp)
+	set(T "tester2${SCSIMD}${P}")
+	add_executable(${T} tester2simd${P}.c testerutil.c)
+	target_compile_options(${T} PRIVATE ${FLAGS_ENABLE_${SIMD}})
+	target_compile_definitions(${T} PRIVATE ENABLE_${SIMD}=1 USEMPFR=1)
+	set_target_properties(${T} PROPERTIES C_STANDARD 99)
+	target_link_libraries(${T} ${TARGET_LIBSLEEF} ${LIB_MPFR} ${TARGET_LIBCOMMON_STATIC})
+	add_dependencies(${T} ${TARGET_HEADERS})
+	add_dependencies(${T} ${TARGET_LIBSLEEF})
+      endforeach()
+    endif()
+      
   endif(COMPILER_SUPPORTS_${SIMD})
 endmacro(test_extension)
 
@@ -72,28 +83,31 @@ foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
   test_extension(${SIMD})
 endforeach()
 
-# Build tester2 scalar
-foreach(P dp sp)
-  set(T "tester2${P}")
-  add_executable(${T} tester2${P}.c testerutil.c)
-  target_compile_definitions(${T} PRIVATE USEMPFR=1)
-  target_link_libraries(${T} ${TARGET_LIBSLEEF} ${EXTRA_LIBS})
-  add_dependencies(${T} ${TARGET_HEADERS})
-  add_dependencies(${T} ${TARGET_LIBSLEEF})
-endforeach()
+if(LIB_MPFR)
+  # Build tester2 scalar
+  foreach(P dp sp)
+    set(T "tester2${P}")
+    add_executable(${T} tester2${P}.c testerutil.c)
+    target_compile_definitions(${T} PRIVATE USEMPFR=1)
+    target_link_libraries(${T} ${TARGET_LIBSLEEF} ${LIB_MPFR} ${TARGET_LIBCOMMON_STATIC})
+    add_dependencies(${T} ${TARGET_HEADERS})
+    add_dependencies(${T} ${TARGET_LIBSLEEF})
+  endforeach()
 
-# No test defined with tester2
+  # No test defined with tester2
 
-# Compile executable 'tester'
-add_executable(${TARGET_TESTER} tester.c testerutil.c)
-target_link_libraries(${TARGET_TESTER} ${EXTRA_LIBS} ${TARGET_LIBSLEEF})
-target_compile_definitions(${TARGET_TESTER}
-  PRIVATE USEMPFR=1)
-target_compile_options(${TARGET_TESTER} PRIVATE -Wno-unused-result)
-
+  # Compile executable 'tester'
+  add_executable(${TARGET_TESTER} tester.c testerutil.c)
+  target_link_libraries(${TARGET_TESTER} ${LIB_MPFR} ${TARGET_LIBSLEEF})
+  target_compile_definitions(${TARGET_TESTER}
+    PRIVATE USEMPFR=1)
+  target_compile_options(${TARGET_TESTER} PRIVATE -Wno-unused-result)
+  set_target_properties(${TARGET_TESTER} PROPERTIES C_STANDARD 99)
+elseif(MSVC)
+  
+endif(LIB_MPFR)
+  
 # Set C standard requirement (-std=gnu99 for gcc)
-set_target_properties(${TARGET_TESTER} ${IUT_LIST} PROPERTIES
-  C_STANDARD 99)
 
 # Tests depends on the library
 add_dependencies(${TARGET_IUT} ${TARGET_HEADERS})
