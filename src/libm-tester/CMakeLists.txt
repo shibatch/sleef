@@ -11,6 +11,8 @@ if (MSVC AND EXISTS ${PROJECT_SOURCE_DIR}/src/libm-tester/tester.exe)
   set(TESTER_AVAILABLE 1)
   add_custom_target(copy_tester_exe ALL
     COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/src/libm-tester/tester.exe ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/src/libm-tester/tester.exe ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE}
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/src/libm-tester/tester.exe ${CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG}
     COMMENT "Copying tester.exe to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
     DEPENDS ${TARGET_IUT})
 endif()
