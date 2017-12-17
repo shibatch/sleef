@@ -786,7 +786,7 @@ static int measure(SleefDFT *p, int randomize) {
   if (!randomize) {
     searchForBestPathRecurse(p, p->log2len, path, pathConfig, 0);
   } else {
-    searchForRandomPathRecurse(p, p->log2len, path, pathConfig, 0, 1000);
+    searchForRandomPathRecurse(p, p->log2len, path, pathConfig, 0, 10000);
   }
 
   if (p->bestPath[p->log2len] == 0) return 0;
