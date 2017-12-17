@@ -1,6 +1,6 @@
 # Option MAXBUTWIDTH
 
-set(MAXBUTWIDTH 3 CACHE STRING "Log_2 (Maximum butterfly length) of butterflies")
+set(MAXBUTWIDTH 4 CACHE STRING "Log_2 (Maximum butterfly length) of butterflies")
 
 # Compiler properties
 
