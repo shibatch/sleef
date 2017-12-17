@@ -10,8 +10,8 @@ include_directories(${CMAKE_BINARY_DIR}/src/libm/include) # rename headers
 if (MSVC AND EXISTS ${PROJECT_SOURCE_DIR}/src/libm-tester/tester.exe)
   set(TESTER_AVAILABLE 1)
   add_custom_target(copy_tester_exe ALL
-    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/src/libm-tester/tester.exe ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-    COMMENT "Copying tester.exe to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/src/libm-tester/tester.exe ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Release
+    COMMENT "Copying tester.exe to ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Release"
     DEPENDS ${TARGET_IUT})
 endif()
 

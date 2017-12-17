@@ -27,10 +27,6 @@ if(NOT CMAKE_BUILD_TYPE)
     "Debug" "Release" "RelWithDebInfo" "MinSizeRel")
 endif()
 
-SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CMAKE_BUILD_TYPE} ${CMAKE_BINARY_DIR}/bin)
-SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CMAKE_BUILD_TYPE} ${CMAKE_BINARY_DIR}/lib)
-SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CMAKE_BUILD_TYPE} ${CMAKE_BINARY_DIR}/lib)
-
 # Function used to generate safe command arguments for add_custom_command
 function(command_arguments PROPNAME)
   set(quoted_args "")
