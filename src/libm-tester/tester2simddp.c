@@ -94,7 +94,9 @@ typedef Sleef___m512_2 vfloat2;
 #ifdef ENABLE_ADVSIMD
 #define CONFIG 1
 #include "helperadvsimd.h"
-#include "norename.h"
+#include "renameadvsimd.h"
+typedef Sleef_float64x2_t_2 vdouble2;
+typedef Sleef_float32x4_t_2 vfloat2;
 #endif
 
 #define DENORMAL_DBL_MIN (4.9406564584124654418e-324)
