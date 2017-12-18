@@ -1,5 +1,8 @@
 # Compiler properties
 
+set(CMAKE_C_FLAGS ORG_CMAKE_C_FLAGS)
+string(CONCAT CMAKE_C_FLAGS ${DFT_C_FLAGS})
+
 set(COMMON_TARGET_PROPERTIES 
   C_STANDARD 99                  # -std=gnu99
   )

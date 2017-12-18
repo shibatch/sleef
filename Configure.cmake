@@ -130,6 +130,7 @@ set(CLANG_FLAGS_ENABLE_ADVSIMD "-march=armv8-a+simd")
 if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
   # Always compile sleef with -ffp-contract.
   set(FLAGS_STRICTMATH "-ffp-contract=off")
+  set(FLAGS_FASTMATH "-ffast-math")
 
   # Intel vector extensions.
   foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
@@ -137,7 +138,7 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
   endforeach()
 
   # Warning flags.
-  set(FLAGS_WALL "-Wall -Wno-unused -Wno-attributes")
+  set(FLAGS_WALL "-Wall -Wno-unused -Wno-attributes -Wno-unused-result")
   if(CMAKE_C_COMPILER_ID MATCHES "GNU")
     # The following compiler option is needed to suppress the warning
     # "AVX vector return without AVX enabled changes the ABI" at
@@ -167,6 +168,12 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "Intel")
 endif()
 
 set(SLEEF_C_FLAGS "${FLAGS_WALL} ${FLAGS_STRICTMATH}")
+if(CMAKE_C_COMPILER_ID MATCHES "GNU" AND CMAKE_C_COMPILER_VERSION VERSION_GREATER 6.99)
+  set(DFT_C_FLAGS "${FLAGS_WALL}")
+else()
+  set(DFT_C_FLAGS "${FLAGS_WALL} ${FLAGS_FASTMATH}")
+endif()
+
 
 # FEATURE DETECTION
 
@@ -282,8 +289,8 @@ endif(OPENMP_FOUND)
 # Reset used flags
 set(CMAKE_REQUIRED_FLAGS)
 
-# Cache the flags required to compile SLEEF.
-string(CONCAT CMAKE_C_FLAGS ${SLEEF_C_FLAGS})
+# Save the default C flags
+set(ORG_CMAKE_C_FLAGS CMAKE_C_FLAGS)
 
 # Check weak aliases are supported.
 CHECK_C_SOURCE_COMPILES("

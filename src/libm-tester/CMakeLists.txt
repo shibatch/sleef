@@ -11,6 +11,9 @@ set(EXTRA_LIBS ${LIBM}
   ${TARGET_LIBCOMMON_STATIC}
   )
 
+set(CMAKE_C_FLAGS ORG_CMAKE_C_FLAGS)
+string(CONCAT CMAKE_C_FLAGS ${SLEEF_C_FLAGS})
+
 # Compile executable 'iut'
 add_executable(${TARGET_IUT} iut.c testerutil.c)
 target_link_libraries(${TARGET_IUT} ${TARGET_LIBSLEEF} ${EXTRA_LIBS})
@@ -89,7 +92,6 @@ add_executable(${TARGET_TESTER} tester.c testerutil.c)
 target_link_libraries(${TARGET_TESTER} ${EXTRA_LIBS} ${TARGET_LIBSLEEF})
 target_compile_definitions(${TARGET_TESTER}
   PRIVATE USEMPFR=1)
-target_compile_options(${TARGET_TESTER} PRIVATE -Wno-unused-result)
 
 # Set C standard requirement (-std=gnu99 for gcc)
 set_target_properties(${TARGET_TESTER} ${IUT_LIST} PROPERTIES
