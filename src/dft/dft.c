@@ -559,17 +559,17 @@ static real **makeTable(int sign, int vecwidth, int log2len, const int N, const 
 
 int planFilePathSet;
 
-static void searchForRandomPathRecurse(SleefDFT *p, int level, int *path, int *pathConfig, uint64_t tm) {
+static int searchForRandomPathRecurse(SleefDFT *p, int level, int *path, int *pathConfig, uint64_t tm, int nTrial) {
   if (level == 0) {
     p->bestTime = tm;
     for(uint32_t j = 0;j < p->log2len+1;j++) {
       p->bestPathConfig[j] = pathConfig[j];
       p->bestPath[j] = path[j];
     }
-    return;
+    return nTrial;
   }
 
-  if (level < 1) return;
+  if (level < 1) return nTrial-1;
   
   for(int i=0;i<10;i++) {
     int N;
@@ -588,10 +588,12 @@ static void searchForRandomPathRecurse(SleefDFT *p, int level, int *path, int *p
       break;
     }
     for(int j = level-1;j >= 0;j--) path[j] = 0;
-    searchForRandomPathRecurse(p, level - N, path, pathConfig, 0);
-
+    nTrial = searchForRandomPathRecurse(p, level - N, path, pathConfig, 0, nTrial);
+    if (nTrial <= 0) break;
     if (p->bestTime < 1ULL << 60) break;
   }
+
+  return nTrial - 1;
 }
 
 static void searchForBestPathRecurse(SleefDFT *p, int level, int *path, int *pathConfig, uint64_t tm) {
@@ -605,7 +607,6 @@ static void searchForBestPathRecurse(SleefDFT *p, int level, int *path, int *pat
   }
 
   if (level < 1 || tm >= p->bestTime) return;
-  if (p->vecwidth > (1 << MAXBUTWIDTH)) return;
 
   for(int N=MAXBUTWIDTH;N>0;N--) {
     if (p->vecwidth > (1 << N) || N == p->log2len) continue;
@@ -780,14 +781,19 @@ static int measure(SleefDFT *p, int randomize) {
   int pathConfig[MAXLOG2LEN+1];
   for(int j = p->log2len;j >= 0;j--) path[j] = pathConfig[j] = 0;
 
+  p->bestPath[p->log2len] = 0;
+  
   if (!randomize) {
     searchForBestPathRecurse(p, p->log2len, path, pathConfig, 0);
   } else {
+    int nTrial = 100000;
     do {
-      searchForRandomPathRecurse(p, p->log2len, path, pathConfig, 0);
-    } while(p->bestTime == 1ULL << 60);
+      nTrial = searchForRandomPathRecurse(p, p->log2len, path, pathConfig, 0, nTrial);
+    } while(p->bestTime == 1ULL << 60 && nTrial >= 0);
   }
 
+  if (p->bestPath[p->log2len] == 0) return 0;
+  
   p->pathLen = 0;
   for(int j = p->log2len;j >= 0;j--) if (p->bestPath[j] != 0) p->pathLen++;
 

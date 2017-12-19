@@ -274,6 +274,7 @@ static INLINE vfloat vgetmant_vf_vf(vfloat d) { return _mm512_getmant_ps(d, _MM_
 #if defined(__clang__) || defined(_MSC_VER)
 #define vfixup_vd_vd_vd_vi2_i(a, b, c, imm) _mm512_fixupimm_pd((a), (b), (c), (imm))
 #define vfixup_vf_vf_vf_vi2_i(a, b, c, imm) _mm512_fixupimm_ps((a), (b), (c), (imm))
+
 #else
 static INLINE vdouble vfixup_vd_vd_vd_vi2_i(vdouble a, vdouble b, vint2 c, int imm) { return _mm512_fixupimm_pd(a, b, c, imm); }
 static INLINE vfloat vfixup_vf_vf_vf_vi2_i(vfloat a, vfloat b, vint2 c, int imm) { return _mm512_fixupimm_ps(a, b, c, imm); }
