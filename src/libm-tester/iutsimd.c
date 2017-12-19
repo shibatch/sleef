@@ -493,6 +493,7 @@ int do_test(int argc, char **argv) {
     func_f_f("exp2f", xexp2f);
     func_f_f("exp10f", xexp10f);
     func_f_f("expm1f", xexpm1f);
+    func_f_f("log10f", xlog10f);
     func_f_f("log2f", xlog2f);
     func_f_f("log1pf", xlog1pf);
 
