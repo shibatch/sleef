@@ -50,5 +50,5 @@ before_script:
   - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 ..
 
 script:
-  - CTEST_OUTPUT_ON_FAILURE=TRUE make all test -j2 ARGS=-j2
+  - travis_wait 30 CTEST_OUTPUT_ON_FAILURE=TRUE make all test -j2 ARGS=-j2
   - make install
