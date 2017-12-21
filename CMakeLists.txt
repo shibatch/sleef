@@ -68,6 +68,7 @@ set(TARGET_MKDISP "mkdisp")
 # Generates static library common
 # Defined in src/common/CMakeLists.txt via command add_library
 set(TARGET_LIBCOMMON_STATIC "common")
+set(TARGET_LIBARRAYMAP_STATIC "arraymap")
 
 # Generates object file (shared library) `libsleefdft`
 # Defined in src/dft/CMakeLists.txt via command add_library

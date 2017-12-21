@@ -1,8 +1,11 @@
 # Option MAXBUTWIDTH
 
-set(MAXBUTWIDTH 3 CACHE STRING "Log_2 (Maximum butterfly length) of butterflies")
+set(MAXBUTWIDTH 4 CACHE STRING "Log_2 (Maximum butterfly length) of butterflies")
 
 # Compiler properties
+
+set(CMAKE_C_FLAGS ORG_CMAKE_C_FLAGS)
+string(CONCAT CMAKE_C_FLAGS ${DFT_C_FLAGS})
 
 set(COMMON_TARGET_PROPERTIES 
   POSITION_INDEPENDENT_CODE ON   # -fPIC
@@ -254,8 +257,8 @@ endforeach()
 
 # Target libdft
 
-add_library(${TARGET_LIBDFT} SHARED $<TARGET_OBJECTS:dftcommon_obj> $<TARGET_OBJECTS:common_obj> $<TARGET_OBJECTS:arraymap_obj>)
-target_link_libraries(${TARGET_LIBDFT} ${TARGET_LIBSLEEF})
+add_library(${TARGET_LIBDFT} SHARED $<TARGET_OBJECTS:dftcommon_obj>)
+target_link_libraries(${TARGET_LIBDFT} ${TARGET_LIBSLEEF} ${TARGET_LIBARRAYMAP_STATIC})
 
 foreach(T ${LIST_SUPPORTED_FPTYPE})
   list(GET LISTSHORTTYPENAME ${T} ST)                       # ST is "dp", for example
