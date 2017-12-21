@@ -46,7 +46,7 @@ int detectFeatureSP() {
 }
 
 int main(int argc, char **argv) {
-  if (!(detectFeatureDP() && detectFeatureSP())) {
+  if (!detectFeatureDP() && !detectFeatureSP()) {
     fprintf(stderr, "\n\n***** This host does not support the necessary CPU features to execute this program *****\n\n\n");
     printf("0\n");
     fclose(stdout);
