@@ -306,6 +306,9 @@ CHECK_C_SOURCE_COMPILES("
 # Check if sde64 command is available
 
 find_program(SDE_COMMAND sde64)
+if (NOT SDE_COMMAND)
+  find_program(SDE_COMMAND sde)
+endif()
 
 ##
 
