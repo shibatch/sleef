@@ -37,9 +37,14 @@ macro(test_extension SIMD)
     add_dependencies(${TARGET_IUT${SIMD}} ${TARGET_HEADERS})
     add_dependencies(${TARGET_IUT${SIMD}} ${TARGET_LIBSLEEF})
 
-    add_test(NAME ${TARGET_IUT${SIMD}}
-      COMMAND ${TARGET_TESTER} "--sde" "sde64" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_IUT${SIMD}})
-    
+    if (SDE_COMMAND)
+      add_test(NAME ${TARGET_IUT${SIMD}}
+	COMMAND ${TARGET_TESTER} "--sde" "sde64" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_IUT${SIMD}})
+    else()
+      add_test(NAME ${TARGET_IUT${SIMD}}
+	COMMAND ${TARGET_TESTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_IUT${SIMD}})
+    endif()
+
     list(APPEND IUT_LIST ${TARGET_IUT${SIMD}})
 
     if(ENABLE_GNUABI)

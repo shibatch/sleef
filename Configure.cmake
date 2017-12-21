@@ -303,6 +303,10 @@ CHECK_C_SOURCE_COMPILES("
   }"
   COMPILER_SUPPORTS_WEAK_ALIASES)
 
+# Check if sde64 command is available
+
+find_program(SDE_COMMAND sde64)
+
 ##
 
 option(SLEEF_SHOW_ERROR_LOG "Show cmake error log." OFF)

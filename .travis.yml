@@ -35,12 +35,12 @@ matrix:
         - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
 
 before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then wget -q ${SDE_URL}                            ; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then tar xvf sde-external-8.12.0-2017-10-23-lin.tar.bz2; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export PATH=${PATH}:${TRAVIS_BUILD_DIR}/sde-external-8.12.0-2017-10-23-lin; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository -y ppa:adrozdoff/cmake; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -qq update                       ; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y cmake libmpfr-dev     ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then wget -q $SDE_URL                              ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then tar xvf sde-external-8.12.0-2017-10-23-lin.tar.bz2; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export PATH=$PATH:$TRAVIS_BUILD_DIR/sde-external-8.12.0-2017-10-23-lin; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx"   ]]; then brew update                                   ; fi
   - eval "${MATRIX_EVAL}"
 
