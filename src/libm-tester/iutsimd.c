@@ -128,7 +128,8 @@ typedef Sleef___m256_2 vfloat2;
 //
 
 #ifdef ENABLE_DP
-void check_featureDP() {
+int check_featureDP() {
+  if (vavailability_i(1) == 0) return 0;
   double s[VECTLENDP];
   int i;
   for(i=0;i<VECTLENDP;i++) {
@@ -137,14 +138,16 @@ void check_featureDP() {
   vdouble a = vloadu_vd_p(s);
   a = xpow(a, a);
   vstoreu_v_p_vd(s, a);
+  return 1;
 }
 #else
-void check_featureDP() {
+int check_featureDP() {
 }
 #endif
 
 #ifdef ENABLE_SP
-void check_featureSP() {
+int check_featureSP() {
+  if (vavailability_i(2) == 0) return 0;
   float s[VECTLENSP];
   int i;
   for(i=0;i<VECTLENSP;i++) {
@@ -153,9 +156,10 @@ void check_featureSP() {
   vfloat a = vloadu_vf_p(s);
   a = xpowf(a, a);
   vstoreu_v_p_vf(s, a);
+  return 1;
 }
 #else
-void check_featureSP() {
+int check_featureSP() {
 }
 #endif
 
