@@ -180,10 +180,14 @@ typedef struct {
 #endif
 
 #if defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__)
+#ifndef SLEEF_STATIC_LIBS
 #define EXPORT __stdcall __declspec(dllexport)
-#else
+#else // #ifndef SLEEF_STATIC_LIBS
+#define EXPORT
+#endif // #ifndef SLEEF_STATIC_LIBS
+#else // #if defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__)
 #define EXPORT __attribute__((visibility("default")))
-#endif
+#endif // #if defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__)
 
 #ifdef INFINITY
 #undef INFINITY
@@ -212,7 +216,12 @@ typedef struct {
 
 #define INLINE __forceinline
 #define CONST
+
+#ifndef SLEEF_STATIC_LIBS
 #define EXPORT __declspec(dllexport)
+#else
+#define EXPORT
+#endif
 
 #if (defined(__GNUC__) || defined(__CLANG__)) && (defined(__i386__) || defined(__x86_64__))
 #include <x86intrin.h>

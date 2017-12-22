@@ -20,18 +20,18 @@
 #define SLEEF_MODE_ESTIMATE    (1 << 20)
 #define SLEEF_MODE_MEASURE     (2 << 20)
 
-#if defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)
+#if (defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)) && !defined(SLEEF_STATIC_LIBS)
 #ifdef IMPORT_IS_EXPORT
 #define IMPORT __declspec(dllexport)
-#else
+#else // #ifdef IMPORT_IS_EXPORT
 #define IMPORT __declspec(dllimport)
 #if (defined(_MSC_VER))
-#pragma comment(lib,"libsleefdft.lib")
-#endif
-#endif
-#else
+#pragma comment(lib,"sleefdft.lib")
+#endif // #if (defined(_MSC_VER))
+#endif // #ifdef IMPORT_IS_EXPORT
+#else // #if (defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)) && !defined(SLEEF_STATIC_LIBS)
 #define IMPORT
-#endif
+#endif // #if (defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)) && !defined(SLEEF_STATIC_LIBS)
 
 IMPORT struct SleefDFT *SleefDFT_double_init1d(uint32_t n, const double *in, double *out, uint64_t mode);
 IMPORT struct SleefDFT *SleefDFT_double_init2d(uint32_t n, uint32_t m, const double *in, double *out, uint64_t mode);

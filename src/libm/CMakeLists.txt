@@ -128,7 +128,7 @@ if(COMPILER_SUPPORTS_LONG_DOUBLE)
   list(APPEND STANDARD_SOURCES sleefld.c)
 endif()
 
-add_library(${TARGET_LIBSLEEF} SHARED ${STANDARD_SOURCES})
+add_library(${TARGET_LIBSLEEF} ${STANDARD_SOURCES})
 set_target_properties(${TARGET_LIBSLEEF} PROPERTIES
   VERSION ${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}
   SOVERSION ${SLEEF_SOVERSION}
@@ -136,14 +136,14 @@ set_target_properties(${TARGET_LIBSLEEF} PROPERTIES
 )
 
 target_compile_definitions(${TARGET_LIBSLEEF} 
-  PRIVATE DORENAME=1
+  PRIVATE DORENAME=1 ${COMMON_TARGET_DEFINITIONS}
 )
 
 if(COMPILER_SUPPORTS_FLOAT128)
   # TODO: Not supported for LLVM bitcode gen as it has a specific compilation flags
   target_sources(${TARGET_LIBSLEEF} PRIVATE sleefqp.c)
   target_compile_definitions(${TARGET_LIBSLEEF}
-    PRIVATE ENABLEFLOAT128=1)
+    PRIVATE ENABLEFLOAT128=1 ${COMMON_TARGET_DEFINITIONS})
 endif()
 
 # Compile SIMD versions
@@ -162,6 +162,7 @@ foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
     target_compile_definitions(${OBJECT_${SIMD}} PRIVATE
       ENABLE_${SIMD}=1
       DORENAME=1
+      ${COMMON_TARGET_DEFINITIONS}
     )
 
     set_target_properties(${OBJECT_${SIMD}} PROPERTIES
