@@ -323,8 +323,8 @@ string(COMPARE NOTEQUAL "" "$ENV{TRAVIS}" RUNNING_ON_TRAVIS)
 
 if (${RUNNING_ON_TRAVIS} AND CMAKE_C_COMPILER_ID MATCHES "Clang")
   message("Travix bug workaround turned on")
-  unset(COMPILER_SUPPORTS_OPENMP)   # Workaround for https://github.com/travis-ci/travis-ci/issues/8613
-  unset(COMPILER_SUPPORTS_FLOAT128) # Compilation on unroll_0_vecextqp.c does not finish on Travis
+  set(COMPILER_SUPPORTS_OPENMP FALSE)   # Workaround for https://github.com/travis-ci/travis-ci/issues/8613
+  set(COMPILER_SUPPORTS_FLOAT128 FALSE) # Compilation on unroll_0_vecextqp.c does not finish on Travis
 endif()
 
 # Set common definitions
