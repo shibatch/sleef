@@ -34,6 +34,11 @@ configure_file(
   ${PROJECT_SOURCE_DIR}/sleef-config.h.in
   ${PROJECT_BINARY_DIR}/include/sleef-config.h @ONLY)
 
+option(SLEEFLIBM_STATIC "Build sleeflibm as a dynamic library." OFF)
+if (NOT ${SLEEFLIBM_STATIC})
+  set(BUILD_SHARED_LIBS ON)
+endif()
+
 # We like to have a documented index of all targets in the project. The
 # variables listed below carry the names of the targets defined throughout
 # the project.

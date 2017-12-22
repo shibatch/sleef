@@ -128,16 +128,22 @@ if(COMPILER_SUPPORTS_LONG_DOUBLE)
   list(APPEND STANDARD_SOURCES sleefld.c)
 endif()
 
-add_library(${TARGET_LIBSLEEF} SHARED ${STANDARD_SOURCES})
+add_library(${TARGET_LIBSLEEF} ${STANDARD_SOURCES})
 set_target_properties(${TARGET_LIBSLEEF} PROPERTIES
   VERSION ${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}
   SOVERSION ${SLEEF_SOVERSION}
   ${COMMON_TARGET_PROPERTIES}
 )
 
-target_compile_definitions(${TARGET_LIBSLEEF} 
+target_compile_definitions(${TARGET_LIBSLEEF}
   PRIVATE DORENAME=1
 )
+
+if(NOT ${BUILD_SHARED_LIBS})
+  target_compile_definitions(${TARGET_LIBSLEEF}
+    PUBLIC SLEEFLIBM_STATIC=1
+  )
+endif()
 
 if(COMPILER_SUPPORTS_FLOAT128)
   # TODO: Not supported for LLVM bitcode gen as it has a specific compilation flags
@@ -275,7 +281,7 @@ if(ENABLE_GNUABI)
   endforeach()
 
   # Create library 
-  add_library(${TARGET_LIBSLEEFGNUABI} SHARED ${TARGET_LIBSLEEFGNUABI_OBJECTS})
+  add_library(${TARGET_LIBSLEEFGNUABI} ${TARGET_LIBSLEEFGNUABI_OBJECTS})
   
   # Library properties
   set_target_properties(${TARGET_LIBSLEEFGNUABI} PROPERTIES
