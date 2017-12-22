@@ -334,5 +334,5 @@ if (NOT BUILD_SHARED_LIBS)
 endif()
 
 if (NOT COMPILER_SUPPORTS_OPENMP)
-  unset(OpenMP_C_FLAGS)
+  unset(OpenMP_C_FLAGS PARENT_SCOPE)
 endif()
