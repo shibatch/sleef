@@ -44,7 +44,7 @@ before_install:
 before_script:
   - mkdir sleef.build
   - cd sleef.build
-  - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENABLE_GNUABI=1 ..
+  - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 ..
 
 script:
   - CTEST_OUTPUT_ON_FAILURE=TRUE make all test -j2 ARGS=-j2
