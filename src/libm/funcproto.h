@@ -99,8 +99,8 @@ funcSpec funcList[] = {
   { "erf", 10, 1, 0 },
   { "erfc", 15, 4, 0 },
   
-  { "getInt", -1, 0, 7},
-  { "getPtr", -1, 0, 8},
+  { "getInt", -2, 0, 7},
+  { "getPtr", -2, 0, 8},
   
   { NULL, -1, 0, 0 },
 };
