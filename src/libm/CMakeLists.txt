@@ -227,8 +227,17 @@ if (SLEEF_ARCH_X86)
 
   # Target dispsse_obj
 
+  if (COMPILER_SUPPORTS_FMA4)
+    set(DISPATCHER_DEFINITIONS ${DISPATCHER_DEFINITIONS} ENABLE_FMA4=1)
+  endif()
+
+  if (COMPILER_SUPPORTS_AVX2)
+    set(DISPATCHER_DEFINITIONS ${DISPATCHER_DEFINITIONS} ENABLE_AVX2=1)
+  endif()
+
   add_library(dispsse_obj OBJECT dispsse.c ${SLEEF_INCLUDE_HEADER})
   set_target_properties(dispsse_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
+  target_compile_definitions(dispsse_obj PRIVATE ${COMMON_TARGET_DEFINITIONS} ${DISPATCHER_DEFINITIONS})
   target_include_directories(dispsse_obj PRIVATE ${CMAKE_BINARY_DIR}/include)
   add_dependencies(dispsse_obj dispsse.c_generated renamedsp128.h_generated ${TARGET_HEADERS})
   target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:dispsse_obj>)
@@ -238,6 +247,7 @@ if (SLEEF_ARCH_X86)
   add_library(dispavx_obj OBJECT dispavx.c ${SLEEF_INCLUDE_HEADER})
   target_compile_options(dispavx_obj PRIVATE ${FLAGS_ENABLE_AVX})
   set_target_properties(dispavx_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
+  target_compile_definitions(dispavx_obj PRIVATE ${COMMON_TARGET_DEFINITIONS} ${DISPATCHER_DEFINITIONS})
   target_include_directories(dispavx_obj PRIVATE ${CMAKE_BINARY_DIR}/include)
   add_dependencies(dispavx_obj dispavx.c_generated renamedsp256.h_generated ${TARGET_HEADERS})
   target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:dispavx_obj>)

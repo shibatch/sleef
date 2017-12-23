@@ -138,4 +138,28 @@ static int cpuSupportsFMA4() {
   static CONST fptype (*pfn)(fptype arg0, fptype arg1, fptype arg2) = dfn; \
   EXPORT CONST fptype funcName(fptype arg0, fptype arg1, fptype arg2) { return (*pfn)(arg0, arg1, arg2); }
 
+#define DISPATCH_si_si(funcName, pfn, dfn, funcavx, funcfma4, funcavx2) \
+  static CONST int (*pfn)(int arg0);					\
+  static CONST int dfn(int arg0) {					\
+    int CONST (*p)(int) = funcavx;					\
+    SUBST_IF_FMA4(funcfma4);						\
+    SUBST_IF_AVX2(funcavx2);						\
+    pfn = p;								\
+    return (*pfn)(arg0);						\
+  }									\
+  static CONST int (*pfn)(int arg0) = dfn;				\
+  EXPORT CONST int funcName(int arg0) { return (*pfn)(arg0); }
+
+#define DISPATCH_sp_si(funcName, pfn, dfn, funcavx, funcfma4, funcavx2) \
+  static CONST void *(*pfn)(int arg0);					\
+  static CONST void *dfn(int arg0) {					\
+    CONST void *(*p)(int) = funcavx;					\
+    SUBST_IF_FMA4(funcfma4);						\
+    SUBST_IF_AVX2(funcavx2);						\
+    pfn = p;								\
+    return (*pfn)(arg0);						\
+  }									\
+  static CONST void *(*pfn)(int arg0) = dfn;				\
+  EXPORT CONST void *funcName(int arg0) { return (*pfn)(arg0); }
+
 //

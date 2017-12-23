@@ -375,6 +375,9 @@ int do_test(int argc, char **argv) {
     printf("%d\n", k);
     fflush(stdout);
   }
+
+  fprintf(stderr, "IUT : %s\n", (const char *)xgetPtrf(0));
+  fflush(stderr);
   
   char buf[BUFSIZE];
 

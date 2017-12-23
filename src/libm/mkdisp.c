@@ -120,6 +120,36 @@ int main(int argc, char **argv) {
       printf(")\n");
 
       break;
+    case 7:
+      printf("DISPATCH_si_si(Sleef_%sf%d, pnt_%sf%d, disp_%sf%d",
+	     funcList[i].name, wsp,
+	     funcList[i].name, wsp,
+	     funcList[i].name, wsp);
+      for(int j=0;j<nisa;j++) printf(", Sleef_%sf%d_%s", funcList[i].name, wsp, argv[isastart + j]);
+      printf(")\n");
+
+      printf("DISPATCH_si_si(Sleef_%sd%d, pnt_%sd%d, disp_%sd%d",
+	     funcList[i].name, wdp,
+	     funcList[i].name, wdp,
+	     funcList[i].name, wdp);
+      for(int j=0;j<nisa;j++) printf(", Sleef_%sd%d_%s", funcList[i].name, wdp, argv[isastart + j]);
+      printf(")\n");
+      break;
+    case 8:
+      printf("DISPATCH_sp_si(Sleef_%sf%d, pnt_%sf%d, disp_%sf%d",
+	     funcList[i].name, wsp,
+	     funcList[i].name, wsp,
+	     funcList[i].name, wsp);
+      for(int j=0;j<nisa;j++) printf(", Sleef_%sf%d_%s", funcList[i].name, wsp, argv[isastart + j]);
+      printf(")\n");
+
+      printf("DISPATCH_sp_si(Sleef_%sd%d, pnt_%sd%d, disp_%sd%d",
+	     funcList[i].name, wdp,
+	     funcList[i].name, wdp,
+	     funcList[i].name, wdp);
+      for(int j=0;j<nisa;j++) printf(", Sleef_%sd%d_%s", funcList[i].name, wdp, argv[isastart + j]);
+      printf(")\n");
+      break;
     }
   }
   
