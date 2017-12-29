@@ -52,5 +52,5 @@ before_script:
 script:
   - make -j 2 all
   - export CTEST_OUTPUT_ON_FAILURE=TRUE
-  - travis_wait 30 ctest -j 2
+  - ctest --verbose -j 2
   - make install
