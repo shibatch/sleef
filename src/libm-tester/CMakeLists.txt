@@ -6,8 +6,9 @@ include_directories(${CMAKE_BINARY_DIR}/include)          # sleef.h
 include_directories(${CMAKE_SOURCE_DIR}/src/libm)         # rename.h
 include_directories(${CMAKE_BINARY_DIR}/src/libm/include) # rename headers
 
-set(CMAKE_C_FLAGS ORG_CMAKE_C_FLAGS)
-string(CONCAT CMAKE_C_FLAGS ${SLEEF_C_FLAGS})
+if(NOT LIB_MPFR)
+  find_program(TESTER_COMMAND tester)
+endif(NOT LIB_MPFR)
 
 # Compile executable 'iut'
 add_executable(${TARGET_IUT} iut.c testerutil.c)
@@ -16,7 +17,10 @@ set_target_properties(${TARGET_IUT} PROPERTIES C_STANDARD 99)
 if (LIB_MPFR)
   add_test(NAME ${TARGET_IUT}
     COMMAND ${TARGET_TESTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_IUT})
-endif(LIB_MPFR)
+elseif(TESTER_COMMAND)
+  add_test(NAME ${TARGET_IUT}
+    COMMAND ${TESTER_COMMAND} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_IUT})
+endif()
 
 set(IUT_SRC iutsimd.c iutsimdmain.c testerutil)
 
@@ -36,7 +40,10 @@ macro(test_extension SIMD)
     if (LIB_MPFR)
       add_test(NAME ${TARGET_IUT${SIMD}}
 	COMMAND ${TARGET_TESTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_IUT${SIMD}})
-    endif(LIB_MPFR)
+    elseif(TESTER_COMMAND)
+      add_test(NAME ${TARGET_IUT${SIMD}}
+	COMMAND ${TESTER_COMMAND} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_IUT${SIMD}})
+    endif()
 
     set_target_properties(${TARGET_IUT${SIMD}} PROPERTIES C_STANDARD 99)
 
