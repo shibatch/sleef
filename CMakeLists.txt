@@ -21,7 +21,15 @@ endif()
 
 # Set output directories for the library files
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+
+foreach(CONFIG ${CMAKE_CONFIGURATION_TYPES})
+  string(TOUPPER ${CONFIG} CONFIG)
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CONFIG} ${PROJECT_BINARY_DIR}/lib)
+  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CONFIG} ${PROJECT_BINARY_DIR}/lib)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONFIG} ${PROJECT_BINARY_DIR}/bin)
+endforeach(CONFIG CMAKE_CONFIGURATION_TYPES)
 
 # Path for finding cmake modules
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
@@ -69,6 +77,8 @@ set(TARGET_MKDISP "mkdisp")
 # Defined in src/common/CMakeLists.txt via command add_library
 set(TARGET_LIBCOMMON_STATIC "common")
 set(TARGET_LIBARRAYMAP_STATIC "arraymap")
+set(TARGET_COPYCAT "copycat")
+file(TO_NATIVE_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_COPYCAT} COPYCAT_COMMAND)
 
 # Generates object file (shared library) `libsleefdft`
 # Defined in src/dft/CMakeLists.txt via command add_library

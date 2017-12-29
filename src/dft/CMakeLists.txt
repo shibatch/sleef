@@ -193,7 +193,7 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
   string(CONCAT S "dispatch" ${ST} ".h")                    # S is "dispatchdp.h"
   add_library(${G} OBJECT dft.c dftcommon.h ${S})
   string(CONCAT SG ${S} "_generated")                       # SG is "dispatchdp.h_generated"
-  add_dependencies(${G} ${SG})
+  add_dependencies(${G} ${SG} ${TARGET_HEADERS})
   set_target_properties(${G} PROPERTIES ${COMMON_TARGET_PROPERTIES})
   list(GET LISTTYPEID ${T} ID)                              # ID is 1
   target_compile_definitions(${G} PRIVATE BASETYPEID=${ID} ${COMMON_TARGET_DEFINITIONS})
@@ -202,8 +202,8 @@ endforeach()
 # Copy unroll0.org to ${CMAKE_CURRENT_BINARY_DIR}
 
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/unroll0.org
-  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/unroll0.org ${CMAKE_CURRENT_BINARY_DIR}
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/unroll0.org)
+  COMMAND ${COPYCAT_COMMAND} ${CMAKE_CURRENT_SOURCE_DIR}/unroll0.org ${CMAKE_CURRENT_BINARY_DIR}/unroll0.org
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/unroll0.org ${TARGET_COPYCAT})
 
 # Target unroll*.c
 
