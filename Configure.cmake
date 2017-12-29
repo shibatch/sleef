@@ -36,7 +36,6 @@ function(command_arguments PROPNAME)
   set(${PROPNAME} ${quoted_args} PARENT_SCOPE)
 endfunction()
 
-
 # PLATFORM DETECTION
 if((CMAKE_SYSTEM_PROCESSOR MATCHES "x86") OR (CMAKE_SYSTEM_PROCESSOR MATCHES "AMD64"))
   set(SLEEF_ARCH_X86 ON CACHE INTERNAL "True for x86 architecture.")
@@ -302,6 +301,13 @@ CHECK_C_SOURCE_COMPILES("
     return g(2);
   }"
   COMPILER_SUPPORTS_WEAK_ALIASES)
+
+# Check if sde64 command is available
+
+find_program(SDE_COMMAND sde64)
+if (NOT SDE_COMMAND)
+  find_program(SDE_COMMAND sde)
+endif()
 
 ##
 
