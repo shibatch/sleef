@@ -5,7 +5,7 @@ configuration: Release
 install:
   - "C:\\Cygwin64\\setup-x86_64.exe -q -g -P libmpfr-devel,libgmp-devel"
   - PATH c:\Cygwin64\bin;c:\Cygwin64\usr\bin;c:\projects\sleef\build-cygwin\bin;%PATH%
-  - "C:\\Cygwin64\\bin\\bash -c 'mkdir build-cygwin;cd build-cygwin;cmake -g\"Unix Makefiles\" ..;make -j 2'"
+  - "C:\\Cygwin64\\bin\\bash -c 'mkdir build-cygwin;cd build-cygwin;CC=gcc cmake -g\"Unix Makefiles\" ..;make -j 2'"
   - cd "c:\\projects\\sleef"
   - mkdir build
   - cd build
