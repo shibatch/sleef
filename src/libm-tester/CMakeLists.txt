@@ -10,7 +10,7 @@ if(NOT LIB_MPFR)
   find_program(TESTER_COMMAND tester)
 endif(NOT LIB_MPFR)
 
-# This is a workaround of appveyor bug
+set(CMAKE_C_FLAGS ORG_CMAKE_C_FLAGS)
 string(CONCAT CMAKE_C_FLAGS ${SLEEF_C_FLAGS})
 
 # Compile executable 'iut'
