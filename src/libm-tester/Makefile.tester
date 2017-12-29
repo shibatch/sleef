@@ -1,4 +1,0 @@
-CFLAGS=-ffp-contract=off -O -g -I../common -I../arch -I../../include -I../libm -L../../lib
-
-tester : tester.c testerutil.c
-	$(CC) $(CFLAGS) -Wno-unused-result -DUSEMPFR tester.c testerutil.c -lm -lmpfr -o tester $(LIB)
