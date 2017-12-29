@@ -63,6 +63,7 @@ funcSpec funcList[] = {
   { "exp10", 10, 0, 0 },
   { "expm1", 10, 0, 0 },
   { "log10", 10, 0, 0 },
+  { "log2", 10, 0, 0 },
   { "log1p", 10, 0, 0 },
   { "sincospi", 5, 2, 2 },
   { "sincospi", 35, 3, 2 },

@@ -314,6 +314,18 @@ int main(int argc,char **argv)
     }
     
     {
+      mpfr_set_d(frx, fabs(d), GMP_RNDN);
+      mpfr_log2(frx, frx, GMP_RNDN);
+
+      double u0 = countULPdp(t = xlog2(fabs(d)), frx);
+      
+      if (u0 > 1) {
+	printf("Pure C log2 arg=%.20g ulp=%.20g\n", d, u0);
+	fflush(stdout); ecnt++;
+      }
+    }
+    
+    {
       mpfr_set_d(frx, d, GMP_RNDN);
       mpfr_log1p(frx, frx, GMP_RNDN);
 
@@ -901,4 +913,6 @@ int main(int argc,char **argv)
       }
     }
   }
+
+  exit(0);
 }

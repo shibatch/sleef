@@ -416,12 +416,7 @@ int do_test(int argc, char **argv) {
     func_d_d("exp10", xexp10);
     func_d_d("expm1", xexpm1);
     func_d_d("log10", xlog10);
-    func_d_d("log1p", xlog1p);
-
-    func_d_d("exp2", xexp2);
-    func_d_d("exp10", xexp10);
-    func_d_d("expm1", xexpm1);
-    func_d_d("log10", xlog10);
+    func_d_d("log2", xlog2);
     func_d_d("log1p", xlog1p);
 
     func_d2_d("sincos", xsincos);
@@ -499,6 +494,7 @@ int do_test(int argc, char **argv) {
     func_f_f("exp10f", xexp10f);
     func_f_f("expm1f", xexpm1f);
     func_f_f("log10f", xlog10f);
+    func_f_f("log2f", xlog2f);
     func_f_f("log1pf", xlog1pf);
 
     func_f2_f("sincosf", xsincosf);
