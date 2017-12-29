@@ -6,7 +6,7 @@ install:
   - set ORGPATH=%PATH%
   - "C:\\Cygwin64\\setup-x86_64.exe -q -g -P libmpfr-devel,libgmp-devel,cmake"
   - PATH c:\Cygwin64\bin;c:\Cygwin64\usr\bin;c:\projects\sleef\build-cygwin\bin;%PATH%
-  - "C:\\Cygwin64\\bin\\bash -c 'mkdir build-cygwin;cd build-cygwin;cmake -g\"Unix Makefiles\" ..;VERBOSE=1 make -j 2'"
+  - "C:\\Cygwin64\\bin\\bash -c 'mkdir build-cygwin;cd build-cygwin;cmake -g\"Unix Makefiles\" ..;make -j 2'"
   - PATH %ORGPATH%;c:\Cygwin64\bin;c:\Cygwin64\usr\bin;c:\projects\sleef\build-cygwin\bin
   - cd "c:\\projects\\sleef"
   - mkdir build
@@ -15,7 +15,7 @@ install:
 build_script:
   - cmake --build . --target install --config Release
 test_script:
-  - ctest -j 2 -C Release
+  - ctest --output-on-failure -j 2 -C Release
 artifacts:
 - path: build\install\**\*
   name: SLEEFWindowsx64
