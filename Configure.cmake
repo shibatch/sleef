@@ -36,7 +36,6 @@ function(command_arguments PROPNAME)
   set(${PROPNAME} ${quoted_args} PARENT_SCOPE)
 endfunction()
 
-
 # PLATFORM DETECTION
 if((CMAKE_SYSTEM_PROCESSOR MATCHES "x86") OR (CMAKE_SYSTEM_PROCESSOR MATCHES "AMD64"))
   set(SLEEF_ARCH_X86 ON CACHE INTERNAL "True for x86 architecture.")
