@@ -13,7 +13,6 @@
 
 #if defined(__MINGW32__) || defined(__MINGW64__) || defined(_MSC_VER)
 #define STDIN_FILENO 0
-#define _CRT_SECURE_NO_WARNINGS
 #else
 #include <unistd.h>
 #include <sys/types.h>
