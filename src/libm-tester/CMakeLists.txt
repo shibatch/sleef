@@ -16,6 +16,7 @@ string(CONCAT CMAKE_C_FLAGS ${SLEEF_C_FLAGS})
 
 # Compile executable 'iut'
 add_executable(${TARGET_IUT} iut.c testerutil.c)
+target_compile_definitions(${TARGET_IUT} PRIVATE ${COMMON_TARGET_DEFINITIONS})
 target_link_libraries(${TARGET_IUT} ${TARGET_LIBSLEEF} ${EXTRA_LIBS})
 add_test(NAME ${TARGET_IUT}
   COMMAND ${TARGET_TESTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_IUT})
@@ -31,7 +32,7 @@ macro(test_extension SIMD)
     target_compile_options(${TARGET_IUT${SIMD}}
       PRIVATE ${FLAGS_ENABLE_${SIMD}})
     target_compile_definitions(${TARGET_IUT${SIMD}}
-      PRIVATE ENABLE_${SIMD}=1)
+      PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS})
     target_link_libraries(${TARGET_IUT${SIMD}} ${TARGET_LIBSLEEF} ${EXTRA_LIBS})
 
     add_dependencies(${TARGET_IUT${SIMD}} ${TARGET_HEADERS})
@@ -48,7 +49,7 @@ macro(test_extension SIMD)
 	target_compile_options(link_finite${SIMD}
 	  PRIVATE ${FLAGS_ENABLE_${SIMD}})
 	target_compile_definitions(link_finite${SIMD}
-	  PRIVATE ENABLE_${SIMD}=1)
+	  PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS})
 	target_link_libraries(link_finite${SIMD} ${TARGET_LIBSLEEFGNUABI})
 	add_test(NAME link_finite${SIMD}
 	  COMMAND link_finite${SIMD})
@@ -61,7 +62,7 @@ macro(test_extension SIMD)
       set(T "tester2${SCSIMD}${P}")
       add_executable(${T} tester2simd${P}.c testerutil.c)
       target_compile_options(${T} PRIVATE ${FLAGS_ENABLE_${SIMD}})
-      target_compile_definitions(${T} PRIVATE ENABLE_${SIMD}=1 USEMPFR=1)
+      target_compile_definitions(${T} PRIVATE ENABLE_${SIMD}=1 USEMPFR=1 ${COMMON_TARGET_DEFINITIONS})
       set_target_properties(${T} PROPERTIES C_STANDARD 99)
       target_link_libraries(${T} ${TARGET_LIBSLEEF} ${EXTRA_LIBS})
       add_dependencies(${T} ${TARGET_HEADERS})
@@ -78,7 +79,7 @@ endforeach()
 if (SLEEF_ARCH_X86)
   # iutdsp128
   add_executable(iutdsp128 ${IUT_SRC})
-  target_compile_definitions(iutdsp128 PRIVATE ENABLE_DSP128=1)
+  target_compile_definitions(iutdsp128 PRIVATE ENABLE_DSP128=1 ${COMMON_TARGET_DEFINITIONS})
   target_link_libraries(iutdsp128 ${TARGET_LIBSLEEF})
   add_dependencies(iutdsp128 ${TARGET_HEADERS} ${TARGET_LIBSLEEF})
   add_test(NAME iutdsp128 COMMAND ${TARGET_TESTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/iutdsp128)
@@ -86,7 +87,7 @@ if (SLEEF_ARCH_X86)
 
   # iutdsp256
   add_executable(iutdsp256 ${IUT_SRC})
-  target_compile_definitions(iutdsp256 PRIVATE ENABLE_DSP256=1)
+  target_compile_definitions(iutdsp256 PRIVATE ENABLE_DSP256=1 ${COMMON_TARGET_DEFINITIONS})
   target_compile_options(iutdsp256 PRIVATE ${FLAGS_ENABLE_AVX})
   target_link_libraries(iutdsp256 ${TARGET_LIBSLEEF})
   add_dependencies(iutdsp256 ${TARGET_HEADERS} ${TARGET_LIBSLEEF})
@@ -98,7 +99,7 @@ endif(SLEEF_ARCH_X86)
 foreach(P dp sp)
   set(T "tester2${P}")
   add_executable(${T} tester2${P}.c testerutil.c)
-  target_compile_definitions(${T} PRIVATE USEMPFR=1)
+  target_compile_definitions(${T} PRIVATE USEMPFR=1 ${COMMON_TARGET_DEFINITIONS})
   target_link_libraries(${T} ${TARGET_LIBSLEEF} ${EXTRA_LIBS})
   add_dependencies(${T} ${TARGET_HEADERS})
   add_dependencies(${T} ${TARGET_LIBSLEEF})
@@ -110,7 +111,7 @@ endforeach()
 add_executable(${TARGET_TESTER} tester.c testerutil.c)
 target_link_libraries(${TARGET_TESTER} ${EXTRA_LIBS} ${TARGET_LIBSLEEF})
 target_compile_definitions(${TARGET_TESTER}
-  PRIVATE USEMPFR=1)
+  PRIVATE USEMPFR=1 ${COMMON_TARGET_DEFINITIONS})
 
 # Set C standard requirement (-std=gnu99 for gcc)
 set_target_properties(${TARGET_TESTER} ${IUT_LIST} PROPERTIES

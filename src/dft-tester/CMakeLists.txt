@@ -16,6 +16,13 @@ include_directories(${CMAKE_BINARY_DIR}/include)          # sleef.h
 
 link_directories(${CMAKE_BINARY_DIR}/lib)                 # libsleef, libsleefdft
 
+# Link libraries
+
+set(COMMON_LINK_LIBRARIES ${TARGET_LIBSLEEF} ${TARGET_LIBDFT})
+
+if (COMPILER_SUPPORTS_OPENMP)
+  set(COMMON_LINK_LIBRARIES ${COMMON_LINK_LIBRARIES} ${OpenMP_C_FLAGS})
+endif()
 
 if(MSVC)
   message(STATUS "The testing program for DFT is currently not available with MSVC build - skip building tests dft-tester")
@@ -26,7 +33,7 @@ else()
   add_executable(${TARGET_NAIVETESTDP} naivetest.c ${PROJECT_SOURCE_DIR}/include/sleefdft.h)
   add_dependencies(${TARGET_NAIVETESTDP} ${TARGET_HEADERS} ${TARGET_LIBSLEEF} ${TARGET_LIBDFT})
   target_compile_definitions(${TARGET_NAIVETESTDP} PRIVATE ${COMMON_TARGET_DEFINITIONS} BASETYPEID=1)
-  target_link_libraries(${TARGET_NAIVETESTDP} ${TARGET_LIBSLEEF} ${TARGET_LIBDFT})
+  target_link_libraries(${TARGET_NAIVETESTDP} ${COMMON_LINK_LIBRARIES})
   set_target_properties(${TARGET_NAIVETESTDP} PROPERTIES ${COMMON_TARGET_PROPERTIES})
 
   # Target executable naivetestsp
@@ -35,7 +42,7 @@ else()
   add_executable(${TARGET_NAIVETESTSP} naivetest.c ${PROJECT_SOURCE_DIR}/include/sleefdft.h)
   add_dependencies(${TARGET_NAIVETESTSP} ${TARGET_HEADERS} ${TARGET_LIBSLEEF} ${TARGET_LIBDFT})
   target_compile_definitions(${TARGET_NAIVETESTSP} PRIVATE ${COMMON_TARGET_DEFINITIONS} BASETYPEID=2)
-  target_link_libraries(${TARGET_NAIVETESTSP} ${TARGET_LIBSLEEF} ${TARGET_LIBDFT})
+  target_link_libraries(${TARGET_NAIVETESTSP} ${COMMON_LINK_LIBRARIES})
   set_target_properties(${TARGET_NAIVETESTSP} PROPERTIES ${COMMON_TARGET_PROPERTIES})
 
   # Test naivetestdp
