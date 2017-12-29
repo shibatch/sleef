@@ -126,10 +126,8 @@ if(LIB_MPFR)
     PRIVATE USEMPFR=1)
   target_compile_options(${TARGET_TESTER} PRIVATE -Wno-unused-result)
   set_target_properties(${TARGET_TESTER} PROPERTIES C_STANDARD 99)
-elseif(MSVC)
-  
 endif(LIB_MPFR)
-
+  
 # Set C standard requirement (-std=gnu99 for gcc)
 
 # Tests depends on the library
