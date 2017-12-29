@@ -3,11 +3,20 @@ max_jobs: 1
 image: Visual Studio 2017
 configuration: Release
 install:
+  - set ORGPATH=%PATH%
+  - "C:\\Cygwin64\\setup-x86_64.exe -q -g -P libmpfr-devel,libgmp-devel,cmake"
+  - PATH c:\Cygwin64\bin;c:\Cygwin64\usr\bin;c:\projects\sleef\build-cygwin\bin;%PATH%
+  - "C:\\Cygwin64\\bin\\bash -c 'mkdir build-cygwin;cd build-cygwin;cmake -g\"Unix Makefiles\" ..;make -j 2'"
+  - del /Q /F c:\projects\sleef\build-cygwin\bin\iut*
+  - PATH %ORGPATH%;c:\Cygwin64\bin;c:\Cygwin64\usr\bin;c:\projects\sleef\build-cygwin\bin;c:\projects\sleef\build\bin
+  - cd "c:\\projects\\sleef"
   - mkdir build
   - cd build
   - cmake -G"Visual Studio 15 2017 Win64" .. -DCMAKE_INSTALL_PREFIX=install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_SHOW_ERROR_LOG=1
 build_script:
   - cmake --build . --target install --config Release
+test_script:
+  - ctest --output-on-failure -j 2 -C Release
 artifacts:
 - path: build\install\**\*
   name: SLEEFWindowsx64

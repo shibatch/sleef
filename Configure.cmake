@@ -154,6 +154,7 @@ elseif(MSVC)
   set(FLAGS_ENABLE_AVX2 /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /arch:AVX2)
   set(FLAGS_ENABLE_AVX2128 /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /arch:AVX2)
   set(FLAGS_ENABLE_AVX512F /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /D__AVX512F__ /arch:AVX2)
+  set(FLAGS_WALL "/D_CRT_SECURE_NO_WARNINGS")
 elseif(CMAKE_C_COMPILER_ID MATCHES "Intel")
   set(FLAGS_ENABLE_SSE2 "-msse2")
   set(FLAGS_ENABLE_SSE4 "-msse4.1")
@@ -317,6 +318,12 @@ if(SLEEF_SHOW_ERROR_LOG)
     message("${FILE_CONTENT}")
   endif()
 endif(SLEEF_SHOW_ERROR_LOG)
+
+# Compiling AVX512F code on Cygwin does not succeed
+
+if (CMAKE_SYSTEM_NAME MATCHES "CYGWIN")
+  set(COMPILER_SUPPORTS_AVX512F FALSE)
+endif()
 
 # Detect if cmake is running on Travis
 string(COMPARE NOTEQUAL "" "$ENV{TRAVIS}" RUNNING_ON_TRAVIS)

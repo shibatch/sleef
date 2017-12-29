@@ -5,6 +5,9 @@ set(COMMON_TARGET_PROPERTIES
   C_STANDARD 99                  # -std=gnu99
   )
 
+# This is a workaround of appveyor bug
+string(CONCAT CMAKE_C_FLAGS ${SLEEF_C_FLAGS})
+
 # Target TARGET_LIBCOMMON_STATIC
 
 add_library(${TARGET_LIBCOMMON_STATIC} STATIC common.c)
