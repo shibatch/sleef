@@ -38,12 +38,13 @@ macro(test_extension SIMD)
     add_dependencies(${TARGET_IUT${SIMD}} ${TARGET_LIBSLEEF})
 
     if (SDE_COMMAND)
-      add_test(NAME ${TARGET_IUT${SIMD}}
-	COMMAND ${TARGET_TESTER} "--sde" ${SDE_COMMAND} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_IUT${SIMD}})
+      set(FLAGS_SDE "--sde" ${SDE_COMMAND})
     else()
-      add_test(NAME ${TARGET_IUT${SIMD}}
-	COMMAND ${TARGET_TESTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_IUT${SIMD}})
+      set(FLAGS_SDE)
     endif()
+    
+    add_test(NAME ${TARGET_IUT${SIMD}}
+      COMMAND ${TARGET_TESTER} ${FLAGS_SDE} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_IUT${SIMD}})
 
     list(APPEND IUT_LIST ${TARGET_IUT${SIMD}})
 
