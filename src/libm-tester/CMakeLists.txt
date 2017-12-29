@@ -10,6 +10,8 @@ if(NOT LIB_MPFR)
   find_program(TESTER_COMMAND tester)
 endif(NOT LIB_MPFR)
 
+string(CONCAT CMAKE_C_FLAGS ${SLEEF_C_FLAGS})
+
 # Compile executable 'iut'
 add_executable(${TARGET_IUT} iut.c testerutil.c)
 target_link_libraries(${TARGET_IUT} ${TARGET_LIBSLEEF} ${TARGET_LIBCOMMON_STATIC})

@@ -15,7 +15,7 @@ install:
 build_script:
   - cmake --build . --target install --config Release
 test_script:
-  - ctest -j 2
+  - ctest -j 2 -C Release
 artifacts:
 - path: build\install\**\*
   name: SLEEFWindowsx64
