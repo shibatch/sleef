@@ -25,10 +25,6 @@ set(IUT_LIST ${TARGET_IUT})
 
 set(IUT_SRC iutsimd.c iutsimdmain.c testerutil)
 
-if (CMAKE_SYSTEM_NAME MATCHES "CYGWIN")
-  set(SKIP_TEST ${SKIP_TEST} AVX AVX2 FMA4 AVX512F)
-endif()
-
 # Add vector extension `iut`s
 macro(test_extension SIMD)
   if(COMPILER_SUPPORTS_${SIMD})
@@ -42,11 +38,8 @@ macro(test_extension SIMD)
     add_dependencies(${TARGET_IUT${SIMD}} ${TARGET_HEADERS})
     add_dependencies(${TARGET_IUT${SIMD}} ${TARGET_LIBSLEEF})
 
-    list(FIND SKIP_TEST ${SIMD} INDEX_SKIP_TEST)
-    if (LIB_MPFR AND INDEX_SKIP_TEST EQUAL -1)
-      add_test(NAME ${TARGET_IUT${SIMD}}
-	COMMAND ${TARGET_TESTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_IUT${SIMD}})
-    endif()
+    add_test(NAME ${TARGET_IUT${SIMD}}
+      COMMAND ${TARGET_TESTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_IUT${SIMD}})
     
     list(APPEND IUT_LIST ${TARGET_IUT${SIMD}})
 
@@ -92,16 +85,14 @@ if (SLEEF_ARCH_X86)
   add_test(NAME iutdsp128 COMMAND ${TARGET_TESTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/iutdsp128)
   list(APPEND IUT_LIST iutdsp128)
 
-  if (NOT CMAKE_SYSTEM_NAME MATCHES "CYGWIN")
-    # iutdsp256
-    add_executable(iutdsp256 ${IUT_SRC})
-    target_compile_definitions(iutdsp256 PRIVATE ENABLE_DSP256=1 ${COMMON_TARGET_DEFINITIONS})
-    target_compile_options(iutdsp256 PRIVATE ${FLAGS_ENABLE_AVX})
-    target_link_libraries(iutdsp256 ${TARGET_LIBSLEEF})
-    add_dependencies(iutdsp256 ${TARGET_HEADERS} ${TARGET_LIBSLEEF})
-    add_test(NAME iutdsp256 COMMAND ${TARGET_TESTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/iutdsp256)
-    list(APPEND IUT_LIST iutdsp256)
-  endif()
+  # iutdsp256
+  add_executable(iutdsp256 ${IUT_SRC})
+  target_compile_definitions(iutdsp256 PRIVATE ENABLE_DSP256=1 ${COMMON_TARGET_DEFINITIONS})
+  target_compile_options(iutdsp256 PRIVATE ${FLAGS_ENABLE_AVX})
+  target_link_libraries(iutdsp256 ${TARGET_LIBSLEEF})
+  add_dependencies(iutdsp256 ${TARGET_HEADERS} ${TARGET_LIBSLEEF})
+  add_test(NAME iutdsp256 COMMAND ${TARGET_TESTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/iutdsp256)
+  list(APPEND IUT_LIST iutdsp256)
 endif(SLEEF_ARCH_X86)
 
 # Build tester2 scalar

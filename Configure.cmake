@@ -312,12 +312,6 @@ if(SLEEF_SHOW_ERROR_LOG)
   endif()
 endif(SLEEF_SHOW_ERROR_LOG)
 
-# Compiling AVX512F code on Cygwin does not succeed
-
-if (CMAKE_SYSTEM_NAME MATCHES "CYGWIN")
-  set(COMPILER_SUPPORTS_AVX512F FALSE)
-endif()
-
 # Detect if cmake is running on Travis
 string(COMPARE NOTEQUAL "" "$ENV{TRAVIS}" RUNNING_ON_TRAVIS)
 
