@@ -54,6 +54,9 @@ void startChild(const char *path, char *const argv[]) {
     close(ptoc[1]);
     close(ctop[0]);
 
+    fflush(stdin);
+    fflush(stdout);
+    
     i = dup2(ptoc[0], fileno(stdin));
     assert(i != -1);
 
@@ -74,7 +77,7 @@ void startChild(const char *path, char *const argv[]) {
 
     fprintf(stderr, "execvp in startChild : %s\n", strerror(errno));
 
-    assert(0);
+    exit(-1);
   }
 
   // parent process
@@ -4593,10 +4596,9 @@ void do_test() {
 }
 
 int main(int argc, char **argv) {
-  char *argv2[argc];
+  char *argv2[argc+2], *commandSde = NULL;
   int i, a2s;
 
-  printf("\n\n*** Now testing %s\n", argv[1]);
   // BUGFIX: this flush is to prevent incorrect syncing with the
   // `iut*` executable that causes failures in the CPU detection on
   // some CI systems.
@@ -4605,14 +4607,19 @@ int main(int argc, char **argv) {
   for(a2s=1;a2s<argc;a2s++) {
     if (strcmp(argv[a2s], "--flushtozero") == 0) {
       enableFlushToZero = 1;
+    } else if (a2s+1 < argc && strcmp(argv[a2s], "--sde") == 0) {
+      commandSde = argv[a2s+1];
+      a2s++;
     } else {
       break;
     }
   }
 
+  printf("\n\n*** Now testing %s\n", argv[a2s]);
+  
   for(i=a2s;i<argc;i++) argv2[i-a2s] = argv[i];
   argv2[argc-a2s] = NULL;
-
+  
   mpfr_set_default_prec(128);
 
   startChild(argv2[0], argv2);
@@ -4624,12 +4631,31 @@ int main(int argc, char **argv) {
   {
     char str[256];
     int u;
-    
-    if (readln(ctop[0], str, 255) < 1) stop("Feature detection");
-    sscanf(str, "%d", &u);
+
+    if (readln(ctop[0], str, 255) < 1) stop("Feature detection(readln)");
+    if (sscanf(str, "%d", &u) != 1) stop("Feature detection(sscanf)");
     if ((u & 3) == 0) {
-      fprintf(stderr, "\n\n*** CPU does not support the necessary feature\n");
-      return 0;
+      if (commandSde != NULL) {
+	close(ctop[0]);
+	close(ptoc[1]);
+
+	argv2[0] = commandSde;
+	argv2[1] = "--";
+	for(i=a2s;i<argc;i++) argv2[i-a2s+2] = argv[i];
+	argv2[argc-a2s+2] = NULL;
+	
+	startChild(argv2[0], argv2);
+
+	if (readln(ctop[0], str, 255) < 1) stop("Feature detection(sde, readln)");
+	if (sscanf(str, "%d", &u) != 1) stop("Feature detection(sde, sscanf)");
+	if ((u & 3) == 0) {
+	  fprintf(stderr, "\n\nTester : *** CPU does not support the necessary feature(SDE)\n");
+	  return 0;
+	}
+      } else {
+	fprintf(stderr, "\n\nTester : *** CPU does not support the necessary feature\n");
+	return 0;
+      }
     }
 
     enableDP = (u & 1) != 0;

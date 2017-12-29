@@ -303,6 +303,13 @@ CHECK_C_SOURCE_COMPILES("
   }"
   COMPILER_SUPPORTS_WEAK_ALIASES)
 
+# Check if sde64 command is available
+
+find_program(SDE_COMMAND sde64)
+if (NOT SDE_COMMAND)
+  find_program(SDE_COMMAND sde)
+endif()
+
 ##
 
 if(SLEEF_SHOW_ERROR_LOG)
