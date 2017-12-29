@@ -305,7 +305,6 @@ CHECK_C_SOURCE_COMPILES("
 
 ##
 
-option(SLEEF_SHOW_ERROR_LOG "Show cmake error log." OFF)
 if(SLEEF_SHOW_ERROR_LOG)
   if (EXISTS ${PROJECT_BINARY_DIR}/CMakeFiles/CMakeError.log)
     file(READ ${PROJECT_BINARY_DIR}/CMakeFiles/CMakeError.log FILE_CONTENT)
@@ -323,6 +322,13 @@ endif()
 string(COMPARE NOTEQUAL "" "$ENV{TRAVIS}" RUNNING_ON_TRAVIS)
 
 if (${RUNNING_ON_TRAVIS} AND CMAKE_C_COMPILER_ID MATCHES "Clang")
+  message("Travix bug workaround turned on")
   set(COMPILER_SUPPORTS_OPENMP FALSE)   # Workaround for https://github.com/travis-ci/travis-ci/issues/8613
   set(COMPILER_SUPPORTS_FLOAT128 FALSE) # Compilation on unroll_0_vecextqp.c does not finish on Travis
+endif()
+
+# Set common definitions
+
+if (NOT BUILD_SHARED_LIBS)
+  set(COMMON_TARGET_DEFINITIONS SLEEF_STATIC_LIBS=1)
 endif()

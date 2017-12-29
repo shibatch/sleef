@@ -15,18 +15,18 @@
 #define CONST
 #endif
 
-#if defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)
+#if (defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)) && !defined(SLEEF_STATIC_LIBS)
 #ifdef IMPORT_IS_EXPORT
 #define IMPORT __declspec(dllexport)
-#else
+#else // #ifdef IMPORT_IS_EXPORT
 #define IMPORT __declspec(dllimport)
 #if (defined(_MSC_VER))
 #pragma comment(lib,"sleef.lib")
-#endif
-#endif
-#else // #if defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)
+#endif // #if (defined(_MSC_VER))
+#endif // #ifdef IMPORT_IS_EXPORT
+#else // #if (defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)) && !defined(SLEEF_STATIC_LIBS)
 #define IMPORT
-#endif // #if defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)
+#endif // #if (defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)) && !defined(SLEEF_STATIC_LIBS)
 
 #if (defined(__GNUC__) || defined(__CLANG__)) && (defined(__i386__) || defined(__x86_64__))
 #include <x86intrin.h>
@@ -118,6 +118,7 @@ IMPORT CONST double Sleef_exp2_u10(double);
 IMPORT CONST double Sleef_exp10_u10(double);
 IMPORT CONST double Sleef_expm1_u10(double);
 IMPORT CONST double Sleef_log10_u10(double);
+IMPORT CONST double Sleef_log2_u10(double);
 IMPORT CONST double Sleef_log1p_u10(double);
 IMPORT CONST Sleef_double2 Sleef_sincospi_u05(double);
 IMPORT CONST Sleef_double2 Sleef_sincospi_u35(double);
@@ -184,6 +185,7 @@ IMPORT CONST float Sleef_exp2f_u10(float);
 IMPORT CONST float Sleef_exp10f_u10(float);
 IMPORT CONST float Sleef_expm1f_u10(float);
 IMPORT CONST float Sleef_log10f_u10(float);
+IMPORT CONST float Sleef_log2f_u10(float);
 IMPORT CONST float Sleef_log1pf_u10(float);
 IMPORT CONST Sleef_float2 Sleef_sincospif_u05(float);
 IMPORT CONST Sleef_float2 Sleef_sincospif_u35(float);

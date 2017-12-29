@@ -1,3 +1,11 @@
+# Options
+
+option(BUILD_SHARED_LIBS "Build shared libs" ON)
+
+option(SLEEF_TEST_ALL_IUT "Perform tests on implementations with all vector extensions" OFF)
+option(SLEEF_SHOW_CONFIG "Show SLEEF configuration status messages." ON)
+option(SLEEF_SHOW_ERROR_LOG "Show cmake error log." OFF)
+
 # See doc/build-with-cmake.md for instructions on how to build Sleef.
 cmake_minimum_required(VERSION 3.4.3)
 
@@ -87,7 +95,6 @@ add_subdirectory("src")
 
 # Extra messages at configuration time. By default is active, it can be
 # turned off by invoking cmake with "-DSLEEF_SHOW_CONFIG=OFF".
-option(SLEEF_SHOW_CONFIG "Show SLEEF configuration status messages." ON)
 if(SLEEF_SHOW_CONFIG)
   message(STATUS "Configuring build for \
 ${PROJECT_NAME}-v${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}")
@@ -100,4 +107,8 @@ ${PROJECT_NAME}-v${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}")
     message("   Crosscompiling SLEEF.")
   endif(CMAKE_CROSSCOMPILING)
   message(STATUS "Using option `${SLEEF_C_FLAGS}` to compile libsleef")
+  message(STATUS "Building shared libs : " ${BUILD_SHARED_LIBS})
+  message(STATUS "MPFR : " ${LIB_MPFR})
+  message(STATUS "RUNNING_ON_TRAVIS : " ${RUNNING_ON_TRAVIS})
+  message(STATUS "COMPILER_SUPPORTS_OPENMP : " ${COMPILER_SUPPORTS_OPENMP})
 endif(SLEEF_SHOW_CONFIG)
