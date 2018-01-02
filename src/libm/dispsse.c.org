@@ -62,7 +62,24 @@ static int cpuSupportsFMA() {
 #define SUBST_IF_AVX2(funcavx2)
 #endif
 
-#define DISPATCH_d_d(fptype, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
+/*
+ * DISPATCH_R_X, DISPATCH_R_X_Y and DISPATCH_R_X_Y_Z are the macro for
+ * defining dispatchers. R, X, Y and Z represent the data types of
+ * return value, first argument, second argument and third argument,
+ * respectively. vf, vi, i and p correspond to vector FP, vector
+ * integer, scalar integer and scalar pointer types, respectively.
+ *
+ * The arguments for the macros are as follows:
+ *   fptype   : FP type name
+ *   funcname : Fundamental function name
+ *   pfn      : Name of pointer of the function to the dispatcher
+ *   dfn      : Name of the dispatcher function
+ *   funcsse2 : Name of the SSE2 function
+ *   funcsse4 : Name of the SSE4 function
+ *   funcavx2 : Name of the AVX2 function
+ */
+
+#define DISPATCH_vf_vf(fptype, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
   static CONST fptype (*pfn)(fptype arg0);				\
   static CONST fptype dfn(fptype arg0) {				\
     fptype CONST (*p)(fptype arg0) = funcsse2;				\
@@ -74,7 +91,7 @@ static int cpuSupportsFMA() {
   static CONST fptype (*pfn)(fptype arg0) = dfn;			\
   EXPORT CONST fptype funcName(fptype arg0) { return (*pfn)(arg0); }
 
-#define DISPATCH_d_d_d(fptype, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
+#define DISPATCH_vf_vf_vf(fptype, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
   static CONST fptype (*pfn)(fptype arg0, fptype arg1);			\
   static CONST fptype dfn(fptype arg0, fptype arg1) {			\
     fptype CONST (*p)(fptype arg0, fptype arg1) = funcsse2;		\
@@ -86,7 +103,7 @@ static int cpuSupportsFMA() {
   static CONST fptype (*pfn)(fptype arg0, fptype arg1) = dfn;		\
   EXPORT CONST fptype funcName(fptype arg0, fptype arg1) { return (*pfn)(arg0, arg1); }
 
-#define DISPATCH_d2_d(fptype, fptype2, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
+#define DISPATCH_vf2_vf(fptype, fptype2, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
   static CONST fptype2 (*pfn)(fptype arg0);				\
   static CONST fptype2 dfn(fptype arg0) {				\
     fptype2 CONST (*p)(fptype arg0) = funcsse2;				\
@@ -98,7 +115,7 @@ static int cpuSupportsFMA() {
   static CONST fptype2 (*pfn)(fptype arg0) = dfn;			\
   EXPORT CONST fptype2 funcName(fptype arg0) { return (*pfn)(arg0); }
 
-#define DISPATCH_d_d_i(fptype, itype, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
+#define DISPATCH_vf_vf_vi(fptype, itype, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
   static CONST fptype (*pfn)(fptype arg0, itype arg1);			\
   static CONST fptype dfn(fptype arg0, itype arg1) {			\
     fptype CONST (*p)(fptype arg0, itype arg1) = funcsse2;		\
@@ -110,7 +127,7 @@ static int cpuSupportsFMA() {
   static CONST fptype (*pfn)(fptype arg0, itype arg1) = dfn;		\
   EXPORT CONST fptype funcName(fptype arg0, itype arg1) { return (*pfn)(arg0, arg1); }
 
-#define DISPATCH_i_d(fptype, itype, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
+#define DISPATCH_vi_vf(fptype, itype, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
   static CONST itype (*pfn)(fptype arg0);				\
   static CONST itype dfn(fptype arg0) {					\
     itype CONST (*p)(fptype arg0) = funcsse2;				\
@@ -122,7 +139,7 @@ static int cpuSupportsFMA() {
   static CONST itype (*pfn)(fptype arg0) = dfn;				\
   EXPORT CONST itype funcName(fptype arg0) { return (*pfn)(arg0); }
 
-#define DISPATCH_d_d_d_d(fptype, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
+#define DISPATCH_vf_vf_vf_vf(fptype, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
   static CONST fptype (*pfn)(fptype arg0, fptype arg1, fptype arg2);	\
   static CONST fptype dfn(fptype arg0, fptype arg1, fptype arg2) {	\
     fptype CONST (*p)(fptype arg0, fptype arg1, fptype arg2) = funcsse2; \
@@ -134,5 +151,28 @@ static int cpuSupportsFMA() {
   static CONST fptype (*pfn)(fptype arg0, fptype arg1, fptype arg2) = dfn; \
   EXPORT CONST fptype funcName(fptype arg0, fptype arg1, fptype arg2) { return (*pfn)(arg0, arg1, arg2); }
 
-//
+#define DISPATCH_i_i(funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
+  static CONST int (*pfn)(int arg0);					\
+  static CONST int dfn(int arg0) {					\
+    int CONST (*p)(int) = funcsse2;					\
+    SUBST_IF_SSE4(funcsse4);						\
+    SUBST_IF_AVX2(funcavx2);						\
+    pfn = p;								\
+    return (*pfn)(arg0);						\
+  }									\
+  static CONST int (*pfn)(int arg0) = dfn;				\
+  EXPORT CONST int funcName(int arg0) { return (*pfn)(arg0); }
 
+#define DISPATCH_p_i(funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
+  static CONST void *(*pfn)(int arg0);					\
+  static CONST void *dfn(int arg0) {					\
+    CONST void *(*p)(int) = funcsse2;					\
+    SUBST_IF_SSE4(funcsse4);						\
+    SUBST_IF_AVX2(funcavx2);						\
+    pfn = p;								\
+    return (*pfn)(arg0);						\
+  }									\
+  static CONST void *(*pfn)(int arg0) = dfn;				\
+  EXPORT CONST void *funcName(int arg0) { return (*pfn)(arg0); }
+
+//

@@ -2233,6 +2233,18 @@ EXPORT CONST vfloat xerfcf_u15(vfloat a) {
   return r;
 }
 
+#ifndef ENABLE_GNUABI
+EXPORT CONST int xgetIntf(int name) {
+  if (1 <= name && name <= 10) return vavailability_i(name);
+  return 0;
+}
+
+EXPORT CONST void *xgetPtrf(int name) {
+  if (name == 0) return ISANAME;
+  return (void *)0;
+}
+#endif
+
 #ifdef ENABLE_MAIN
 // gcc -DENABLE_MAIN -Wno-attributes -I../common -I../arch -DENABLE_AVX2 -mavx2 -mfma sleefsimdsp.c ../common/common.c -lm
 #include <stdio.h>

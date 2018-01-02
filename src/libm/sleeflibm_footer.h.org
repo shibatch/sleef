@@ -1,6 +1,6 @@
-#undef IMPORT
-#endif
-
 #ifdef __cplusplus
 }
 #endif
+
+#undef IMPORT
+#endif // #ifndef __SLEEF_H__

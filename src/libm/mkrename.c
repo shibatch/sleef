@@ -168,6 +168,12 @@ int main(int argc, char **argv) {
 		   vdoublename, vdoublename, vdoublename);
 	  }
 	  break;
+	case 7:
+	  printf("IMPORT CONST int Sleef_%sd%d%s%s(int);\n", funcList[i].name, wdp, isaub, isaname);
+	  break;
+	case 8:
+	  printf("IMPORT CONST void *Sleef_%sd%d%s%s(int);\n", funcList[i].name, wdp, isaub, isaname);
+	  break;
 	}
       }
     }
@@ -262,6 +268,12 @@ int main(int argc, char **argv) {
 		 isaub, isaname,
 		 vfloatname, vfloatname, vfloatname);
 	}
+	break;
+      case 7:
+	printf("IMPORT CONST int Sleef_%sf%d%s%s(int);\n", funcList[i].name, wsp, isaub, isaname);
+	break;
+      case 8:
+	printf("IMPORT CONST void *Sleef_%sf%d%s%s(int);\n", funcList[i].name, wsp, isaub, isaname);
 	break;
       }
     }
