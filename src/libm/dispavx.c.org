@@ -66,7 +66,7 @@ static int cpuSupportsFMA4() {
 #define SUBST_IF_AVX2(funcavx2)
 #endif
 
-#define DISPATCH_d_d(fptype, funcName, pfn, dfn, funcavx, funcfma4, funcavx2) \
+#define DISPATCH_vf_vf(fptype, funcName, pfn, dfn, funcavx, funcfma4, funcavx2) \
   static CONST fptype (*pfn)(fptype arg0);				\
   static CONST fptype dfn(fptype arg0) {				\
     fptype CONST (*p)(fptype arg0) = funcavx;				\
@@ -78,7 +78,7 @@ static int cpuSupportsFMA4() {
   static CONST fptype (*pfn)(fptype arg0) = dfn;			\
   EXPORT CONST fptype funcName(fptype arg0) { return (*pfn)(arg0); }
 
-#define DISPATCH_d_d_d(fptype, funcName, pfn, dfn, funcavx, funcfma4, funcavx2) \
+#define DISPATCH_vf_vf_vf(fptype, funcName, pfn, dfn, funcavx, funcfma4, funcavx2) \
   static CONST fptype (*pfn)(fptype arg0, fptype arg1);			\
   static CONST fptype dfn(fptype arg0, fptype arg1) {			\
     fptype CONST (*p)(fptype arg0, fptype arg1) = funcavx;		\
@@ -90,7 +90,7 @@ static int cpuSupportsFMA4() {
   static CONST fptype (*pfn)(fptype arg0, fptype arg1) = dfn;		\
   EXPORT CONST fptype funcName(fptype arg0, fptype arg1) { return (*pfn)(arg0, arg1); }
 
-#define DISPATCH_d2_d(fptype, fptype2, funcName, pfn, dfn, funcavx, funcfma4, funcavx2) \
+#define DISPATCH_vf2_vf(fptype, fptype2, funcName, pfn, dfn, funcavx, funcfma4, funcavx2) \
   static CONST fptype2 (*pfn)(fptype arg0);				\
   static CONST fptype2 dfn(fptype arg0) {				\
     fptype2 CONST (*p)(fptype arg0) = funcavx;				\
@@ -102,7 +102,7 @@ static int cpuSupportsFMA4() {
   static CONST fptype2 (*pfn)(fptype arg0) = dfn;			\
   EXPORT CONST fptype2 funcName(fptype arg0) { return (*pfn)(arg0); }
 
-#define DISPATCH_d_d_i(fptype, itype, funcName, pfn, dfn, funcavx, funcfma4, funcavx2) \
+#define DISPATCH_vf_vf_vi(fptype, itype, funcName, pfn, dfn, funcavx, funcfma4, funcavx2) \
   static CONST fptype (*pfn)(fptype arg0, itype arg1);			\
   static CONST fptype dfn(fptype arg0, itype arg1) {			\
     fptype CONST (*p)(fptype arg0, itype arg1) = funcavx;		\
@@ -114,7 +114,7 @@ static int cpuSupportsFMA4() {
   static CONST fptype (*pfn)(fptype arg0, itype arg1) = dfn;		\
   EXPORT CONST fptype funcName(fptype arg0, itype arg1) { return (*pfn)(arg0, arg1); }
 
-#define DISPATCH_i_d(fptype, itype, funcName, pfn, dfn, funcavx, funcfma4, funcavx2) \
+#define DISPATCH_vi_vf(fptype, itype, funcName, pfn, dfn, funcavx, funcfma4, funcavx2) \
   static CONST itype (*pfn)(fptype arg0);				\
   static CONST itype dfn(fptype arg0) {					\
     itype CONST (*p)(fptype arg0) = funcavx;				\
@@ -126,7 +126,7 @@ static int cpuSupportsFMA4() {
   static CONST itype (*pfn)(fptype arg0) = dfn;				\
   EXPORT CONST itype funcName(fptype arg0) { return (*pfn)(arg0); }
 
-#define DISPATCH_d_d_d_d(fptype, funcName, pfn, dfn, funcavx, funcfma4, funcavx2) \
+#define DISPATCH_vf_vf_vf_vf(fptype, funcName, pfn, dfn, funcavx, funcfma4, funcavx2) \
   static CONST fptype (*pfn)(fptype arg0, fptype arg1, fptype arg2);	\
   static CONST fptype dfn(fptype arg0, fptype arg1, fptype arg2) {	\
     fptype CONST (*p)(fptype arg0, fptype arg1, fptype arg2) = funcavx;	\
@@ -138,7 +138,7 @@ static int cpuSupportsFMA4() {
   static CONST fptype (*pfn)(fptype arg0, fptype arg1, fptype arg2) = dfn; \
   EXPORT CONST fptype funcName(fptype arg0, fptype arg1, fptype arg2) { return (*pfn)(arg0, arg1, arg2); }
 
-#define DISPATCH_si_si(funcName, pfn, dfn, funcavx, funcfma4, funcavx2) \
+#define DISPATCH_i_i(funcName, pfn, dfn, funcavx, funcfma4, funcavx2) \
   static CONST int (*pfn)(int arg0);					\
   static CONST int dfn(int arg0) {					\
     int CONST (*p)(int) = funcavx;					\
@@ -150,7 +150,7 @@ static int cpuSupportsFMA4() {
   static CONST int (*pfn)(int arg0) = dfn;				\
   EXPORT CONST int funcName(int arg0) { return (*pfn)(arg0); }
 
-#define DISPATCH_sp_si(funcName, pfn, dfn, funcavx, funcfma4, funcavx2) \
+#define DISPATCH_p_i(funcName, pfn, dfn, funcavx, funcfma4, funcavx2) \
   static CONST void *(*pfn)(int arg0);					\
   static CONST void *dfn(int arg0) {					\
     CONST void *(*p)(int) = funcavx;					\
