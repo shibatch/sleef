@@ -151,8 +151,8 @@ set_target_properties(${TARGET_MKDISPATCH} PROPERTIES ${COMMON_TARGET_PROPERTIES
 
 add_custom_command(OUTPUT dispatchparam.h
   COMMENT "Generating dispatchparam.h"
-  COMMAND ${TARGET_MKDISPATCH} paramonly ${MAXBUTWIDTH} ${ISALIST_DP} > ${CMAKE_CURRENT_BINARY_DIR}/dispatchparam.h
-  DEPENDS ${TARGET_MKDISPATCH}
+  COMMAND ${TARGET_MKDISPATCH} paramonly ${MAXBUTWIDTH} ${ISALIST_DP} | ${COPYCAT_COMMAND} ${CMAKE_CURRENT_BINARY_DIR}/dispatchparam.h
+  DEPENDS ${TARGET_MKDISPATCH} ${TARGET_COPYCAT}
   )
 add_custom_target(dispatchparam.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/dispatchparam.h)
 
@@ -167,8 +167,8 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
   string(CONCAT S "dispatch" ${ST} ".h")                    # S is dispatchdp.h
   add_custom_command(OUTPUT ${S}
     COMMENT "Generating ${S}"
-    COMMAND ${TARGET_MKDISPATCH} ${LT} ${MAXBUTWIDTH} ${ISALIST_${CST}} > ${S}
-    DEPENDS ${TARGET_MKDISPATCH}
+    COMMAND ${TARGET_MKDISPATCH} ${LT} ${MAXBUTWIDTH} ${ISALIST_${CST}} | ${COPYCAT_COMMAND} ${S}
+    DEPENDS ${TARGET_MKDISPATCH} ${TARGET_COPYCAT}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
 
@@ -204,6 +204,7 @@ endforeach()
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/unroll0.org
   COMMAND ${COPYCAT_COMMAND} ${CMAKE_CURRENT_SOURCE_DIR}/unroll0.org ${CMAKE_CURRENT_BINARY_DIR}/unroll0.org
   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/unroll0.org ${TARGET_COPYCAT})
+add_custom_target(unroll0.org.copied DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/unroll0.org)
 
 # Target unroll*.c
 
@@ -216,8 +217,6 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
     foreach(N 0 1 2 3)
       string(CONCAT UC unroll_ ${N} _ ${E} ".c")            # UC is "unroll_0_sse2dp.c"
       set(UNROLL_TARGET_${CST} ${UNROLL_TARGET_${CST}} ${UC})
-      string(CONCAT UCG ${UC} "_generated")                 # UCG is "unroll_0_sse2dp.c_generated"
-      add_custom_target(${UCG} SOURCES ${UC} ${CMAKE_CURRENT_SOURCE_DIR}/unroll0.org)
     endforeach()
   endforeach()
   message(STATUS "Unroll target for ${CST} : ${UNROLL_TARGET_${CST}}")
@@ -227,8 +226,9 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
       COMMENT "Generating ${UNROLL_TARGET_${CST}}"
       COMMAND ${TARGET_MKUNROLL} ${LT} ${ISALIST_${CST}}
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      DEPENDS ${TARGET_MKUNROLL} ${CMAKE_CURRENT_BINARY_DIR}/unroll0.org
+      DEPENDS ${TARGET_MKUNROLL} unroll0.org.copied
       )
+    add_custom_target(unroll_target_${ST} DEPENDS ${UNROLL_TARGET_${CST}})
   endif()
 endforeach()
 
@@ -244,13 +244,12 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
       string(CONCAT U unroll_ ${N} _ ${E})                  # U is "unroll_0_sse2dp"
       string(CONCAT UG ${U} "_obj")                         # UG is "unroll_0_sse2dp_obj"
       string(CONCAT UC ${U} ".c")                           # UC is "unroll_0_sse2dp.c"
-      string(CONCAT UCG ${UC} "_generated")                 # UCG is "unroll_0_sse2dp.c_generated"
-      add_library(${UG} OBJECT ${CMAKE_CURRENT_BINARY_DIR}/${UC} ${CMAKE_BINARY_DIR}/include/sleef.h)
+      add_library(${UG} OBJECT ${UC})
       set_target_properties(${UG} PROPERTIES ${COMMON_TARGET_PROPERTIES})
       target_include_directories(${UG} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
       target_compile_definitions(${UG} PRIVATE ${COMMON_TARGET_DEFINITIONS} ${MACRODEF_${E}})
       target_compile_options(${UG} PRIVATE ${CFLAGS_${E}})
-      add_dependencies(${UG} ${TARGET_HEADERS} ${UCG})
+      add_dependencies(${UG} ${TARGET_HEADERS} unroll_target_${ST})
     endforeach()
   endforeach()
 endforeach()

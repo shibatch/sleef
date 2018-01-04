@@ -27,14 +27,21 @@ void sub(FILE *fpin, FILE *fpout) {
 
 int main(int argc, char **argv) {
   if (argc == 1) {
-    fprintf(stderr, "Usage : %s [<source> ...] <destination>\n\n", argv[0]);
+    fprintf(stderr, "Usage : %s [<source> ...] <destination file name>\n\n", argv[0]);
     fprintf(stderr, "This program concatenates the source files and write it in\n");
-    fprintf(stderr, "the destination file. If no source file is given, it copies\n");
-    fprintf(stderr, "STDIN to the destination. The destination file is once made\n");
-    fprintf(stderr, "with a name with PID suffix, and it is renamed to the\n");
+    fprintf(stderr, "the destination file. If no source file is given, this program\n");
+    fprintf(stderr, "copies STDIN to the destination. The destination file is once\n");
+    fprintf(stderr, "made with a name with PID suffix, and it is renamed to the\n");
     fprintf(stderr, "specified name after it is closed. In this way, the other\n");
     fprintf(stderr, "processes do not see incomplete contents of the destination\n");
     fprintf(stderr, "file.\n");
+    fprintf(stderr, "\n");
+    fprintf(stderr, "This program is required to make parallel build on Microsoft\n");
+    fprintf(stderr, "Visual Studio reliable. There is a problem in cmake or MSBuild\n");
+    fprintf(stderr, "that makes add_custom_command executed multiple times.\n");
+    fprintf(stderr, "Please see the following page for details.\n");
+    fprintf(stderr, "\n");
+    fprintf(stderr, "https://cmake.org/pipermail/cmake/2014-February/057025.html\n");
     exit(-1);
   }
 

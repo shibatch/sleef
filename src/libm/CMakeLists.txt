@@ -53,7 +53,7 @@ foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
       COMMAND ${TARGET_MKRENAME} ${RENAME_PARAMS_${SIMD}} | ${COPYCAT_COMMAND} ${HEADER_${SIMD}}
       DEPENDS ${TARGET_MKRENAME} ${TARGET_COPYCAT}
     )
-    # set_source_files_properties(${HEADER_${SIMD}} PROPERTIES GENERATED TRUE)
+    add_custom_target(rename${SIMD}.h.generated DEPENDS ${HEADER_${SIMD}})
   endif()
 endforeach()
 
@@ -76,8 +76,8 @@ if(ENABLE_GNUABI)
       # Generate mkrename_gnuabi commands
       add_custom_command(OUTPUT ${HEADER_${SIMD}_GNUABI}
         COMMAND echo Generating rename${vecarch}_gnuabi.h: ${TARGET_MKRENAME_GNUABI} ${RENAME_PARAMS_GNUABI_${SIMD}}  
-        COMMAND ${TARGET_MKRENAME_GNUABI} ${RENAME_PARAMS_GNUABI_${SIMD}} > ${HEADER_${SIMD}_GNUABI}
-        DEPENDS ${TARGET_MKRENAME_GNUABI}      
+        COMMAND ${TARGET_MKRENAME_GNUABI} ${RENAME_PARAMS_GNUABI_${SIMD}} | ${COPYCAT_COMMAND} ${HEADER_${SIMD}_GNUABI}
+        DEPENDS ${TARGET_MKRENAME_GNUABI} ${TARGET_COPYCAT}
       )
       # set_source_files_properties(${HEADER_${SIMD}_GNUABI} PROPERTIES GENERATED TRUE)
     endif()
@@ -158,7 +158,8 @@ foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
     target_compile_definitions(${OBJECT_${SIMD}} PRIVATE
       ENABLE_${SIMD}=1
       DORENAME=1
-    )
+      )
+    add_dependencies(${OBJECT_${SIMD}} rename${SIMD}.h.generated)
 
     set_target_properties(${OBJECT_${SIMD}} PROPERTIES
       ${COMMON_TARGET_PROPERTIES}
@@ -187,9 +188,11 @@ if (SLEEF_ARCH_X86)
 
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c
     COMMENT "Generating dispsse.c"
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/dispsse.c.org ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c
-    COMMAND ${TARGET_MKDISP} 2 4 __m128d __m128 __m128i sse2 sse4 avx2128 >> ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c
-    DEPENDS ${TARGET_MKDISP}
+    #COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/dispsse.c.org ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c
+    #COMMAND ${TARGET_MKDISP} 2 4 __m128d __m128 __m128i sse2 sse4 avx2128 >> ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c
+    COMMAND ${TARGET_MKDISP} 2 4 __m128d __m128 __m128i sse2 sse4 avx2128 | ${COPYCAT_COMMAND} ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c.part
+    COMMAND ${COPYCAT_COMMAND} ${CMAKE_CURRENT_SOURCE_DIR}/dispsse.c.org ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c.part ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c
+    DEPENDS ${TARGET_MKDISP} ${TARGET_COPYCAT}
     )
   add_custom_target(dispsse.c_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c)
 
@@ -197,8 +200,8 @@ if (SLEEF_ARCH_X86)
 
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h
     COMMENT "Generating renamedsp128.h"
-    COMMAND ${TARGET_MKRENAME} 2 4 > ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h
-    DEPENDS ${TARGET_MKRENAME}
+    COMMAND ${TARGET_MKRENAME} 2 4 | ${COPYCAT_COMMAND} ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h
+    DEPENDS ${TARGET_MKRENAME} ${TARGET_COPYCAT}
     )
   add_custom_target(renamedsp128.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h)
 
@@ -206,9 +209,11 @@ if (SLEEF_ARCH_X86)
 
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c
     COMMENT "Generating dispavx.c"
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/dispavx.c.org ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c
-    COMMAND ${TARGET_MKDISP} 4 8 __m256d __m256 __m128i avx fma4 avx2 >> ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c
-    DEPENDS ${TARGET_MKDISP}
+    #COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/dispavx.c.org ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c
+    #COMMAND ${TARGET_MKDISP} 4 8 __m256d __m256 __m128i avx fma4 avx2 >> ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c
+    COMMAND ${TARGET_MKDISP} 4 8 __m256d __m256 __m128i avx fma4 avx2 | ${COPYCAT_COMMAND}  ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c.part
+    COMMAND ${COPYCAT_COMMAND} ${CMAKE_CURRENT_SOURCE_DIR}/dispavx.c.org ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c.part ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c
+    DEPENDS ${TARGET_MKDISP} ${TARGET_COPYCAT}
     )
   add_custom_target(dispavx.c_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c)
 
@@ -216,8 +221,8 @@ if (SLEEF_ARCH_X86)
 
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp256.h
     COMMENT "Generating renamedsp256.h"
-    COMMAND ${TARGET_MKRENAME} 4 8 > ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp256.h
-    DEPENDS ${TARGET_MKRENAME}
+    COMMAND ${TARGET_MKRENAME} 4 8 | ${COPYCAT_COMMAND} ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp256.h
+    DEPENDS ${TARGET_MKRENAME} ${TARGET_COPYCAT}
     )
   add_custom_target(renamedsp256.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp256.h)
 
