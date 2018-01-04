@@ -2282,4 +2282,8 @@ EXPORT CONST vfloat __powf_finite      (vfloat, vfloat) __attribute__((weak, ali
 EXPORT CONST vfloat __sinhf_finite     (vfloat)         __attribute__((weak, alias(str_xsinhf     )));
 EXPORT CONST vfloat __sqrtf_u05_finite (vfloat)         __attribute__((weak, alias(str_xsqrtf_u05 )));
 EXPORT CONST vfloat __tgammaf_u1_finite(vfloat)         __attribute__((weak, alias(str_xtgammaf_u1)));
+
+#ifdef HEADER_MASKED
+#include HEADER_MASKED
+#endif
 #endif /* #ifdef ENABLE_GNUABI */

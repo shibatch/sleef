@@ -98,6 +98,17 @@ command_arguments(RENAME_PARAMS_GNUABI_AVX2    avx2 d 4 8 __m256d __m256 __m128i
 command_arguments(RENAME_PARAMS_GNUABI_AVX512F avx512f e 8 16 __m512d __m512 __m256i __m512i __AVX512F__)
 command_arguments(RENAME_PARAMS_GNUABI_ADVSIMD advsimd n 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON)
 
+command_arguments(MKMASKED_PARAMS_GNUABI_SSE2_dp    sse2 b 2)
+command_arguments(MKMASKED_PARAMS_GNUABI_SSE2_sp    sse2 b -4)
+command_arguments(MKMASKED_PARAMS_GNUABI_AVX_dp     avx c 4)
+command_arguments(MKMASKED_PARAMS_GNUABI_AVX_sp     avx c -8)
+command_arguments(MKMASKED_PARAMS_GNUABI_AVX2_dp    avx2 d 4)
+command_arguments(MKMASKED_PARAMS_GNUABI_AVX2_sp    avx2 d -8)
+command_arguments(MKMASKED_PARAMS_GNUABI_AVX512F_dp avx512f e 8)
+command_arguments(MKMASKED_PARAMS_GNUABI_AVX512F_sp avx512f e -16)
+command_arguments(MKMASKED_PARAMS_GNUABI_ADVSIMD_dp advsimd n 2)
+command_arguments(MKMASKED_PARAMS_GNUABI_ADVSIMD_sp advsimd n -4)
+
 # COMPILER DETECTION
 
 # Detect CLANG executable path (on both Windows and Linux/OSX)

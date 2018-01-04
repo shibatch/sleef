@@ -2783,4 +2783,7 @@ EXPORT CONST vdouble __sinh_finite     (vdouble)          __attribute__((weak, a
 EXPORT CONST vdouble __sqrt_u05_finite (vdouble)          __attribute__((weak, alias(str_xsqrt_u05 )));
 EXPORT CONST vdouble __tgamma_u1_finite(vdouble)          __attribute__((weak, alias(str_xtgamma_u1)));
 
+#ifdef HEADER_MASKED
+#include HEADER_MASKED
+#endif
 #endif /* #ifdef ENABLE_GNUABI */
