@@ -152,8 +152,8 @@ set_target_properties(${TARGET_MKDISPATCH} PROPERTIES ${COMMON_TARGET_PROPERTIES
 
 add_custom_command(OUTPUT dispatchparam.h
   COMMENT "Generating dispatchparam.h"
-  COMMAND ${TARGET_MKDISPATCH} paramonly ${MAXBUTWIDTH} ${ISALIST_DP} | ${COPYCAT_COMMAND} ${CMAKE_CURRENT_BINARY_DIR}/dispatchparam.h
-  DEPENDS ${TARGET_MKDISPATCH} ${TARGET_COPYCAT}
+  COMMAND ${TARGET_MKDISPATCH} paramonly ${MAXBUTWIDTH} ${ISALIST_DP} > ${CMAKE_CURRENT_BINARY_DIR}/dispatchparam.h
+  DEPENDS ${TARGET_MKDISPATCH}
   )
 add_custom_target(dispatchparam.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/dispatchparam.h)
 
@@ -168,8 +168,8 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
   string(CONCAT S "dispatch" ${ST} ".h")                    # S is dispatchdp.h
   add_custom_command(OUTPUT ${S}
     COMMENT "Generating ${S}"
-    COMMAND ${TARGET_MKDISPATCH} ${LT} ${MAXBUTWIDTH} ${ISALIST_${CST}} | ${COPYCAT_COMMAND} ${S}
-    DEPENDS ${TARGET_MKDISPATCH} ${TARGET_COPYCAT}
+    COMMAND ${TARGET_MKDISPATCH} ${LT} ${MAXBUTWIDTH} ${ISALIST_${CST}} > ${S}
+    DEPENDS ${TARGET_MKDISPATCH}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
 
@@ -203,8 +203,8 @@ endforeach()
 # Copy unroll0.org to ${CMAKE_CURRENT_BINARY_DIR}
 
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/unroll0.org
-  COMMAND ${COPYCAT_COMMAND} ${CMAKE_CURRENT_SOURCE_DIR}/unroll0.org ${CMAKE_CURRENT_BINARY_DIR}/unroll0.org
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/unroll0.org ${TARGET_COPYCAT})
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/unroll0.org ${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/unroll0.org)
 add_custom_target(unroll0.org.copied DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/unroll0.org)
 
 # Target unroll*.c

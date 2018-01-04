@@ -8,16 +8,6 @@
 #include <stdint.h>
 #include <string.h>
 
-#ifndef _MSC_VER
-#include <unistd.h>
-#include <sys/types.h>
-int xgetpid() { return (int)getpid(); }
-#define _CRT_SECURE_NO_WARNINGS
-#else
-#include <process.h>
-int xgetpid() { return _getpid(); }
-#endif
-
 #define CONFIGMAX 4
 
 char *replaceAll(const char *in, const char *pat, const char *replace) {
@@ -48,7 +38,7 @@ char *replaceAll(const char *in, const char *pat, const char *replace) {
 }
 
 #define LEN 1024
-char line[LEN+10], line2[LEN+10];
+char line[LEN+10];
 
 int main(int argc, char **argv) {
   if (argc < 2) {
@@ -61,18 +51,15 @@ int main(int argc, char **argv) {
   const int isamax = argc - isastart;
   const int maxbutwidth = 6;
 
-  int pid = xgetpid();
-  FILE *fpin = fopen("unroll0.org", "r");
-  
   for(int config=0;config<CONFIGMAX;config++) {
     for(int isa=isastart;isa<argc;isa++) {
       char *isaString = argv[isa];
       char configString[100];
       sprintf(configString, "%d", config);
       
-      rewind(fpin);
-      
-      sprintf(line, "unroll_%d_%s.c.%d", config, isaString, pid);
+      FILE *fpin = fopen("unroll0.org", "r");
+
+      sprintf(line, "unroll_%d_%s.c", config, isaString);
       FILE *fpout = fopen(line, "w");
       fputs("#include \"vectortype.h\"\n\n", fpout);
       fprintf(fpout, "extern %s ctbl_%s[];\n", baseType, baseType);
@@ -109,14 +96,8 @@ int main(int argc, char **argv) {
 	free(s);
       }
     
+      fclose(fpin);
       fclose(fpout);
-
-      sprintf(line, "unroll_%d_%s.c.%d", config, isaString, pid);
-      sprintf(line2, "unroll_%d_%s.c", config, isaString);
-      if (rename(line, line2) != 0) remove(line);
     }
   }
-
-  fclose(fpin);
-  exit(0);
 }

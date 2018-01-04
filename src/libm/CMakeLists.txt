@@ -14,13 +14,18 @@ set(SLEEF_ORG_FOOTER ${CMAKE_CURRENT_SOURCE_DIR}/sleeflibm_footer.h.org)
 set(SLEEF_INCLUDE_HEADER ${CMAKE_BINARY_DIR}/include/sleef.h)
 
 set(SLEEF_HEADER_COMMANDS "")
-set(LIST_PART_OF_HEADERS "")
+list(APPEND SLEEF_HEADER_COMMANDS COMMAND ${CMAKE_COMMAND} -E copy ${SLEEF_ORG_HEADER} ${SLEEF_INCLUDE_HEADER})
 foreach(SIMD ${SLEEF_HEADER_LIST})
   list(APPEND SLEEF_HEADER_COMMANDS COMMAND echo Generating sleef.h: ${TARGET_MKRENAME} ${HEADER_PARAMS_${SIMD}})
-  list(APPEND SLEEF_HEADER_COMMANDS COMMAND ${TARGET_MKRENAME} ${HEADER_PARAMS_${SIMD}} | ${COPYCAT_COMMAND} part_of_header_${SIMD})
-  list(APPEND LIST_PART_OF_HEADERS part_of_header_${SIMD})
+  list(APPEND SLEEF_HEADER_COMMANDS COMMAND ${TARGET_MKRENAME} ${HEADER_PARAMS_${SIMD}} >> ${SLEEF_INCLUDE_HEADER})
 endforeach()
-list(APPEND SLEEF_HEADER_COMMANDS COMMAND ${COPYCAT_COMMAND} ${SLEEF_ORG_HEADER} ${LIST_PART_OF_HEADERS} ${SLEEF_ORG_FOOTER} ${SLEEF_INCLUDE_HEADER})
+
+if(MSVC)
+  string(REPLACE "/" "\\" sleef_footer_input_file "${SLEEF_ORG_FOOTER}")
+  list(APPEND SLEEF_HEADER_COMMANDS COMMAND type ${sleef_footer_input_file} >> ${SLEEF_INCLUDE_HEADER})
+else()
+  list(APPEND SLEEF_HEADER_COMMANDS COMMAND cat ${SLEEF_ORG_FOOTER} >> ${SLEEF_INCLUDE_HEADER})
+endif()
 
 add_custom_command(OUTPUT ${SLEEF_INCLUDE_HEADER}
   ${SLEEF_HEADER_COMMANDS}
@@ -28,7 +33,6 @@ add_custom_command(OUTPUT ${SLEEF_INCLUDE_HEADER}
     ${SLEEF_ORG_HEADER}  
     ${SLEEF_ORG_FOOTER}
     ${TARGET_MKRENAME}
-    ${TARGET_COPYCAT}
 )
 
 # --------------------------------------------------------------------
@@ -50,8 +54,8 @@ foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
     # Generate mkrename commands
     add_custom_command(OUTPUT ${HEADER_${SIMD}}
       COMMAND echo Generating rename${vecarch}.h: ${TARGET_MKRENAME} ${RENAME_PARAMS_${SIMD}}
-      COMMAND ${TARGET_MKRENAME} ${RENAME_PARAMS_${SIMD}} | ${COPYCAT_COMMAND} ${HEADER_${SIMD}}
-      DEPENDS ${TARGET_MKRENAME} ${TARGET_COPYCAT}
+      COMMAND ${TARGET_MKRENAME} ${RENAME_PARAMS_${SIMD}} > ${HEADER_${SIMD}}
+      DEPENDS ${TARGET_MKRENAME}
     )
     add_custom_target(rename${SIMD}.h.generated DEPENDS ${HEADER_${SIMD}})
   endif()
@@ -76,8 +80,8 @@ if(ENABLE_GNUABI)
       # Generate mkrename_gnuabi commands
       add_custom_command(OUTPUT ${HEADER_${SIMD}_GNUABI}
         COMMAND echo Generating rename${vecarch}_gnuabi.h: ${TARGET_MKRENAME_GNUABI} ${RENAME_PARAMS_GNUABI_${SIMD}}  
-        COMMAND ${TARGET_MKRENAME_GNUABI} ${RENAME_PARAMS_GNUABI_${SIMD}} | ${COPYCAT_COMMAND} ${HEADER_${SIMD}_GNUABI}
-        DEPENDS ${TARGET_MKRENAME_GNUABI} ${TARGET_COPYCAT}
+        COMMAND ${TARGET_MKRENAME_GNUABI} ${RENAME_PARAMS_GNUABI_${SIMD}} > ${HEADER_${SIMD}_GNUABI}
+        DEPENDS ${TARGET_MKRENAME_GNUABI}
       )
       # set_source_files_properties(${HEADER_${SIMD}_GNUABI} PROPERTIES GENERATED TRUE)
     endif()
@@ -159,12 +163,12 @@ foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
       ENABLE_${SIMD}=1
       DORENAME=1
       ${COMMON_TARGET_DEFINITIONS}
-    )
+      )
     add_dependencies(${OBJECT_${SIMD}} rename${SIMD}.h.generated)
 
     set_target_properties(${OBJECT_${SIMD}} PROPERTIES
       ${COMMON_TARGET_PROPERTIES}
-    )    
+      )    
 
     target_compile_options(${OBJECT_${SIMD}} PRIVATE
       ${FLAGS_ENABLE_${SIMD}})
@@ -189,10 +193,8 @@ if (SLEEF_ARCH_X86)
 
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c
     COMMENT "Generating dispsse.c"
-    #COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/dispsse.c.org ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c
-    #COMMAND ${TARGET_MKDISP} 2 4 __m128d __m128 __m128i sse2 sse4 avx2128 >> ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c
-    COMMAND ${TARGET_MKDISP} 2 4 __m128d __m128 __m128i sse2 sse4 avx2128 | ${COPYCAT_COMMAND} ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c.part
-    COMMAND ${COPYCAT_COMMAND} ${CMAKE_CURRENT_SOURCE_DIR}/dispsse.c.org ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c.part ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/dispsse.c.org ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c
+    COMMAND ${TARGET_MKDISP} 2 4 __m128d __m128 __m128i sse2 sse4 avx2128 >> ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c
     DEPENDS ${TARGET_MKDISP} ${TARGET_COPYCAT}
     )
   add_custom_target(dispsse.c_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c)
@@ -201,8 +203,8 @@ if (SLEEF_ARCH_X86)
 
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h
     COMMENT "Generating renamedsp128.h"
-    COMMAND ${TARGET_MKRENAME} 2 4 | ${COPYCAT_COMMAND} ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h
-    DEPENDS ${TARGET_MKRENAME} ${TARGET_COPYCAT}
+    COMMAND ${TARGET_MKRENAME} 2 4 > ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h
+    DEPENDS ${TARGET_MKRENAME}
     )
   add_custom_target(renamedsp128.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h)
 
@@ -210,11 +212,9 @@ if (SLEEF_ARCH_X86)
 
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c
     COMMENT "Generating dispavx.c"
-    #COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/dispavx.c.org ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c
-    #COMMAND ${TARGET_MKDISP} 4 8 __m256d __m256 __m128i avx fma4 avx2 >> ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c
-    COMMAND ${TARGET_MKDISP} 4 8 __m256d __m256 __m128i avx fma4 avx2 | ${COPYCAT_COMMAND}  ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c.part
-    COMMAND ${COPYCAT_COMMAND} ${CMAKE_CURRENT_SOURCE_DIR}/dispavx.c.org ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c.part ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c
-    DEPENDS ${TARGET_MKDISP} ${TARGET_COPYCAT}
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/dispavx.c.org ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c
+    COMMAND ${TARGET_MKDISP} 4 8 __m256d __m256 __m128i avx fma4 avx2 >> ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c
+    DEPENDS ${TARGET_MKDISP}
     )
   add_custom_target(dispavx.c_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c)
 
@@ -222,8 +222,8 @@ if (SLEEF_ARCH_X86)
 
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp256.h
     COMMENT "Generating renamedsp256.h"
-    COMMAND ${TARGET_MKRENAME} 4 8 | ${COPYCAT_COMMAND} ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp256.h
-    DEPENDS ${TARGET_MKRENAME} ${TARGET_COPYCAT}
+    COMMAND ${TARGET_MKRENAME} 4 8 > ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp256.h
+    DEPENDS ${TARGET_MKRENAME}
     )
   add_custom_target(renamedsp256.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp256.h)
 
@@ -237,7 +237,7 @@ if (SLEEF_ARCH_X86)
     set(DISPATCHER_DEFINITIONS ${DISPATCHER_DEFINITIONS} ENABLE_AVX2=1)
   endif()
 
-  add_library(dispsse_obj OBJECT dispsse.c ${SLEEF_INCLUDE_HEADER})
+  add_library(dispsse_obj OBJECT dispsse.c)
   set_target_properties(dispsse_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
   target_compile_definitions(dispsse_obj PRIVATE ${COMMON_TARGET_DEFINITIONS} ${DISPATCHER_DEFINITIONS})
   target_include_directories(dispsse_obj PRIVATE ${CMAKE_BINARY_DIR}/include)
@@ -246,7 +246,7 @@ if (SLEEF_ARCH_X86)
 
   # Target dispavx_obj
 
-  add_library(dispavx_obj OBJECT dispavx.c ${SLEEF_INCLUDE_HEADER})
+  add_library(dispavx_obj OBJECT dispavx.c)
   target_compile_options(dispavx_obj PRIVATE ${FLAGS_ENABLE_AVX})
   set_target_properties(dispavx_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
   target_compile_definitions(dispavx_obj PRIVATE ${COMMON_TARGET_DEFINITIONS} ${DISPATCHER_DEFINITIONS})

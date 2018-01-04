@@ -85,8 +85,6 @@ set(TARGET_MKDISP "mkdisp")
 # Defined in src/common/CMakeLists.txt via command add_library
 set(TARGET_LIBCOMMON_STATIC "common")
 set(TARGET_LIBARRAYMAP_STATIC "arraymap")
-set(TARGET_COPYCAT "copycat")
-file(TO_NATIVE_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_COPYCAT} COPYCAT_COMMAND)
 
 # Generates object file (shared library) `libsleefdft`
 # Defined in src/dft/CMakeLists.txt via command add_library
@@ -114,3 +112,8 @@ ${PROJECT_NAME}-v${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}")
   message(STATUS "RUNNING_ON_TRAVIS : " ${RUNNING_ON_TRAVIS})
   message(STATUS "COMPILER_SUPPORTS_OPENMP : " ${COMPILER_SUPPORTS_OPENMP})
 endif(SLEEF_SHOW_CONFIG)
+
+if (MSVC)
+  message("")
+  message("*** Note: Parallel build is not supported on Microsoft Visual Studio")
+endif()
