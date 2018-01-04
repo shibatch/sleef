@@ -124,7 +124,7 @@ if(COMPILER_SUPPORTS_LONG_DOUBLE)
   list(APPEND STANDARD_SOURCES sleefld.c)
 endif()
 
-add_library(${TARGET_LIBSLEEF} SHARED ${STANDARD_SOURCES})
+add_library(${TARGET_LIBSLEEF} ${STANDARD_SOURCES})
 set_target_properties(${TARGET_LIBSLEEF} PROPERTIES
   VERSION ${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}
   SOVERSION ${SLEEF_SOVERSION}
@@ -132,14 +132,14 @@ set_target_properties(${TARGET_LIBSLEEF} PROPERTIES
 )
 
 target_compile_definitions(${TARGET_LIBSLEEF} 
-  PRIVATE DORENAME=1
+  PRIVATE DORENAME=1 ${COMMON_TARGET_DEFINITIONS}
 )
 
 if(COMPILER_SUPPORTS_FLOAT128)
   # TODO: Not supported for LLVM bitcode gen as it has a specific compilation flags
   target_sources(${TARGET_LIBSLEEF} PRIVATE sleefqp.c)
   target_compile_definitions(${TARGET_LIBSLEEF}
-    PRIVATE ENABLEFLOAT128=1)
+    PRIVATE ENABLEFLOAT128=1 ${COMMON_TARGET_DEFINITIONS})
 endif()
 
 # Compile SIMD versions
@@ -158,7 +158,8 @@ foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
     target_compile_definitions(${OBJECT_${SIMD}} PRIVATE
       ENABLE_${SIMD}=1
       DORENAME=1
-      )
+      ${COMMON_TARGET_DEFINITIONS}
+    )
     add_dependencies(${OBJECT_${SIMD}} rename${SIMD}.h.generated)
 
     set_target_properties(${OBJECT_${SIMD}} PROPERTIES
@@ -228,8 +229,17 @@ if (SLEEF_ARCH_X86)
 
   # Target dispsse_obj
 
+  if (COMPILER_SUPPORTS_FMA4)
+    set(DISPATCHER_DEFINITIONS ${DISPATCHER_DEFINITIONS} ENABLE_FMA4=1)
+  endif()
+
+  if (COMPILER_SUPPORTS_AVX2)
+    set(DISPATCHER_DEFINITIONS ${DISPATCHER_DEFINITIONS} ENABLE_AVX2=1)
+  endif()
+
   add_library(dispsse_obj OBJECT dispsse.c ${SLEEF_INCLUDE_HEADER})
   set_target_properties(dispsse_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
+  target_compile_definitions(dispsse_obj PRIVATE ${COMMON_TARGET_DEFINITIONS} ${DISPATCHER_DEFINITIONS})
   target_include_directories(dispsse_obj PRIVATE ${CMAKE_BINARY_DIR}/include)
   add_dependencies(dispsse_obj dispsse.c_generated renamedsp128.h_generated ${TARGET_HEADERS})
   target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:dispsse_obj>)
@@ -239,6 +249,7 @@ if (SLEEF_ARCH_X86)
   add_library(dispavx_obj OBJECT dispavx.c ${SLEEF_INCLUDE_HEADER})
   target_compile_options(dispavx_obj PRIVATE ${FLAGS_ENABLE_AVX})
   set_target_properties(dispavx_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
+  target_compile_definitions(dispavx_obj PRIVATE ${COMMON_TARGET_DEFINITIONS} ${DISPATCHER_DEFINITIONS})
   target_include_directories(dispavx_obj PRIVATE ${CMAKE_BINARY_DIR}/include)
   add_dependencies(dispavx_obj dispavx.c_generated renamedsp256.h_generated ${TARGET_HEADERS})
   target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:dispavx_obj>)

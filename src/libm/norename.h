@@ -38,6 +38,7 @@ vdouble xexp2(vdouble a);
 vdouble xexp10(vdouble a);
 vdouble xexpm1(vdouble a);
 vdouble xlog10(vdouble a);
+vdouble xlog2(vdouble a);
 vdouble xlog1p(vdouble a);
 
 vdouble xsin_u1(vdouble d);
@@ -120,6 +121,7 @@ vfloat xexp2f(vfloat a);
 vfloat xexp10f(vfloat a);
 vfloat xexpm1f(vfloat a);
 vfloat xlog10f(vfloat a);
+vfloat xlog2f(vfloat a);
 vfloat xlog1pf(vfloat a);
 
 vfloat xsinf_u1(vfloat d);

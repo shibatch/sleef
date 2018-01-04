@@ -230,6 +230,11 @@ int main(int argc, char **argv) {
       sscanf(buf, "log10 %" PRIx64, &u);
       u = d2u(xlog10(u2d(u)));
       printf("%" PRIx64 "\n", u);
+    } else if (startsWith(buf, "log2 ")) {
+      uint64_t u;
+      sscanf(buf, "log2 %" PRIx64, &u);
+      u = d2u(xlog2(u2d(u)));
+      printf("%" PRIx64 "\n", u);
     } else if (startsWith(buf, "log1p ")) {
       uint64_t u;
       sscanf(buf, "log1p %" PRIx64, &u);
@@ -468,6 +473,11 @@ int main(int argc, char **argv) {
       uint32_t u;
       sscanf(buf, "log10f %x", &u);
       u = f2u(xlog10f(u2f(u)));
+      printf("%x\n", u);
+    } else if (startsWith(buf, "log2f ")) {
+      uint32_t u;
+      sscanf(buf, "log2f %x", &u);
+      u = f2u(xlog2f(u2f(u)));
       printf("%x\n", u);
     } else if (startsWith(buf, "log1pf ")) {
       uint32_t u;

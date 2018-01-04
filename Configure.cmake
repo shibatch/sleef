@@ -36,7 +36,6 @@ function(command_arguments PROPNAME)
   set(${PROPNAME} ${quoted_args} PARENT_SCOPE)
 endfunction()
 
-
 # PLATFORM DETECTION
 if((CMAKE_SYSTEM_PROCESSOR MATCHES "x86") OR (CMAKE_SYSTEM_PROCESSOR MATCHES "AMD64"))
   set(SLEEF_ARCH_X86 ON CACHE INTERNAL "True for x86 architecture.")
@@ -155,6 +154,7 @@ elseif(MSVC)
   set(FLAGS_ENABLE_AVX2 /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /arch:AVX2)
   set(FLAGS_ENABLE_AVX2128 /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /arch:AVX2)
   set(FLAGS_ENABLE_AVX512F /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /D__AVX512F__ /arch:AVX2)
+  set(FLAGS_WALL "/D_CRT_SECURE_NO_WARNINGS")
 elseif(CMAKE_C_COMPILER_ID MATCHES "Intel")
   set(FLAGS_ENABLE_SSE2 "-msse2")
   set(FLAGS_ENABLE_SSE4 "-msse4.1")
@@ -303,9 +303,15 @@ CHECK_C_SOURCE_COMPILES("
   }"
   COMPILER_SUPPORTS_WEAK_ALIASES)
 
+# Check if sde64 command is available
+
+find_program(SDE_COMMAND sde64)
+if (NOT SDE_COMMAND)
+  find_program(SDE_COMMAND sde)
+endif()
+
 ##
 
-option(SLEEF_SHOW_ERROR_LOG "Show cmake error log." OFF)
 if(SLEEF_SHOW_ERROR_LOG)
   if (EXISTS ${PROJECT_BINARY_DIR}/CMakeFiles/CMakeError.log)
     file(READ ${PROJECT_BINARY_DIR}/CMakeFiles/CMakeError.log FILE_CONTENT)
@@ -313,10 +319,23 @@ if(SLEEF_SHOW_ERROR_LOG)
   endif()
 endif(SLEEF_SHOW_ERROR_LOG)
 
+# Compiling AVX512F code on Cygwin does not succeed
+
+if (CMAKE_SYSTEM_NAME MATCHES "CYGWIN")
+  set(COMPILER_SUPPORTS_AVX512F FALSE)
+endif()
+
 # Detect if cmake is running on Travis
 string(COMPARE NOTEQUAL "" "$ENV{TRAVIS}" RUNNING_ON_TRAVIS)
 
 if (${RUNNING_ON_TRAVIS} AND CMAKE_C_COMPILER_ID MATCHES "Clang")
+  message("Travix bug workaround turned on")
   set(COMPILER_SUPPORTS_OPENMP FALSE)   # Workaround for https://github.com/travis-ci/travis-ci/issues/8613
   set(COMPILER_SUPPORTS_FLOAT128 FALSE) # Compilation on unroll_0_vecextqp.c does not finish on Travis
+endif()
+
+# Set common definitions
+
+if (NOT BUILD_SHARED_LIBS)
+  set(COMMON_TARGET_DEFINITIONS SLEEF_STATIC_LIBS=1)
 endif()

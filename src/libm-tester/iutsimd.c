@@ -128,7 +128,8 @@ typedef Sleef___m256_2 vfloat2;
 //
 
 #ifdef ENABLE_DP
-void check_featureDP() {
+int check_featureDP() {
+  if (vavailability_i(1) == 0) return 0;
   double s[VECTLENDP];
   int i;
   for(i=0;i<VECTLENDP;i++) {
@@ -137,14 +138,16 @@ void check_featureDP() {
   vdouble a = vloadu_vd_p(s);
   a = xpow(a, a);
   vstoreu_v_p_vd(s, a);
+  return 1;
 }
 #else
-void check_featureDP() {
+int check_featureDP() {
 }
 #endif
 
 #ifdef ENABLE_SP
-void check_featureSP() {
+int check_featureSP() {
+  if (vavailability_i(2) == 0) return 0;
   float s[VECTLENSP];
   int i;
   for(i=0;i<VECTLENSP;i++) {
@@ -153,9 +156,10 @@ void check_featureSP() {
   vfloat a = vloadu_vf_p(s);
   a = xpowf(a, a);
   vstoreu_v_p_vf(s, a);
+  return 1;
 }
 #else
-void check_featureSP() {
+int check_featureSP() {
 }
 #endif
 
@@ -375,6 +379,9 @@ int do_test(int argc, char **argv) {
     printf("%d\n", k);
     fflush(stdout);
   }
+
+  fprintf(stderr, "IUT : %s\n", (const char *)xgetPtrf(0));
+  fflush(stderr);
   
   char buf[BUFSIZE];
 
@@ -416,12 +423,7 @@ int do_test(int argc, char **argv) {
     func_d_d("exp10", xexp10);
     func_d_d("expm1", xexpm1);
     func_d_d("log10", xlog10);
-    func_d_d("log1p", xlog1p);
-
-    func_d_d("exp2", xexp2);
-    func_d_d("exp10", xexp10);
-    func_d_d("expm1", xexpm1);
-    func_d_d("log10", xlog10);
+    func_d_d("log2", xlog2);
     func_d_d("log1p", xlog1p);
 
     func_d2_d("sincos", xsincos);
@@ -499,6 +501,7 @@ int do_test(int argc, char **argv) {
     func_f_f("exp10f", xexp10f);
     func_f_f("expm1f", xexpm1f);
     func_f_f("log10f", xlog10f);
+    func_f_f("log2f", xlog2f);
     func_f_f("log1pf", xlog1pf);
 
     func_f2_f("sincosf", xsincosf);

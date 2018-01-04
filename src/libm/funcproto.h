@@ -21,13 +21,15 @@ typedef struct {
   4 : "_u15"
 
   funcType:
-  0 : double func(double);
-  1 : double func(double, double);
-  2 : double2 func(double);   GNUABI : void func(double, double *, double *);
-  3 : double func(double, int);
-  4 : int func(double);
-  5 : double func(double, double, double);
-  6 : double2 func(double);   GNUABI : double func(double, double *);
+  0 : vdouble func(vdouble);
+  1 : vdouble func(vdouble, vdouble);
+  2 : vdouble2 func(vdouble);   GNUABI : void func(vdouble, double *, double *);
+  3 : vdouble func(vdouble, vint);
+  4 : vint func(vdouble);
+  5 : vdouble func(vdouble, vdouble, vdouble);
+  6 : vdouble2 func(vdouble);   GNUABI : vdouble func(vdouble, double *);
+  7 : int func(int);
+  8 : void *func(int);
  */
 
 funcSpec funcList[] = {
@@ -63,6 +65,7 @@ funcSpec funcList[] = {
   { "exp10", 10, 0, 0 },
   { "expm1", 10, 0, 0 },
   { "log10", 10, 0, 0 },
+  { "log2", 10, 0, 0 },
   { "log1p", 10, 0, 0 },
   { "sincospi", 5, 2, 2 },
   { "sincospi", 35, 3, 2 },
@@ -96,6 +99,9 @@ funcSpec funcList[] = {
   { "tgamma", 10, 1, 0 },
   { "erf", 10, 1, 0 },
   { "erfc", 15, 4, 0 },
+  
+  { "getInt", -2, 0, 7},
+  { "getPtr", -2, 0, 8},
   
   { NULL, -1, 0, 0 },
 };

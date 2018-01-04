@@ -54,6 +54,9 @@ void startChild(const char *path, char *const argv[]) {
     close(ptoc[1]);
     close(ctop[0]);
 
+    fflush(stdin);
+    fflush(stdout);
+    
     i = dup2(ptoc[0], fileno(stdin));
     assert(i != -1);
 
@@ -74,7 +77,7 @@ void startChild(const char *path, char *const argv[]) {
 
     fprintf(stderr, "execvp in startChild : %s\n", strerror(errno));
 
-    assert(0);
+    exit(-1);
   }
 
   // parent process
@@ -153,6 +156,7 @@ double child_acosh(double x) { child_d_d("acosh", x); }
 double child_atanh(double x) { child_d_d("atanh", x); }
 
 double child_log10(double x) { child_d_d("log10", x); }
+double child_log2(double x) { child_d_d("log2", x); }
 double child_log1p(double x) { child_d_d("log1p", x); }
 double child_exp2(double x) { child_d_d("exp2", x); }
 double child_exp10(double x) { child_d_d("exp10", x); }
@@ -279,6 +283,7 @@ float child_acoshf(float x) { child_f_f("acoshf", x); }
 float child_atanhf(float x) { child_f_f("atanhf", x); }
 
 float child_log10f(float x) { child_f_f("log10f", x); }
+float child_log2f(float x) { child_f_f("log2f", x); }
 float child_log1pf(float x) { child_f_f("log1pf", x); }
 float child_exp2f(float x) { child_f_f("exp2f", x); }
 float child_exp10f(float x) { child_f_f("exp10f", x); }
@@ -2461,6 +2466,13 @@ void do_test() {
     }
 
     {
+      fprintf(stderr, "log2 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_log2, child_log2, xa[i]);
+      showResult(success);
+    }
+
+    {
       fprintf(stderr, "log1p denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, nextafter(-1, -2), -2 };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_log1p, child_log1p, xa[i]);
@@ -2977,6 +2989,13 @@ void do_test() {
       fprintf(stderr, "log10f denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_log10, child_log10f, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "log2f denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_log2, child_log2f, xa[i]);
       showResult(success);
     }
 
@@ -3791,6 +3810,14 @@ void do_test() {
 
     //
 
+    fprintf(stderr, "log2 : ");
+    for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_d(mpfr_log2, child_log2, d, 1.0);
+    for(d = 0.0001;d < 10000 && success;d += 1.1) checkAccuracy_d(mpfr_log2, child_log2, d, 1.0);
+    for(i=0;i<10000 && success;i++) checkAccuracy_d(mpfr_log2, child_log2, (DBL_MIN * pow(0.996323, i)), 1.0);
+    showResult(success);
+
+    //
+
     fprintf(stderr, "log1p : ");
     for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_d(mpfr_log1p, child_log1p, d, 1.0);
     showResult(success);
@@ -4530,6 +4557,14 @@ void do_test() {
 
     //
 
+    fprintf(stderr, "log2f : ");
+    for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_f(mpfr_log2, child_log2f, d, 1.0);
+    for(d = 0.0001;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_log2, child_log2f, d, 1.0);
+    for(i=0;i<10000 && success;i++) checkAccuracy_f(mpfr_log2, child_log2f, (FLT_MIN * pow(0.996323, i)), 1.0);
+    showResult(success);
+
+    //
+
     fprintf(stderr, "log1pf : ");
     for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_f(mpfr_log1p, child_log1pf, d, 1.0);
     showResult(success);
@@ -4561,10 +4596,9 @@ void do_test() {
 }
 
 int main(int argc, char **argv) {
-  char *argv2[argc];
+  char *argv2[argc+2], *commandSde = NULL;
   int i, a2s;
 
-  printf("\n\n*** Now testing %s\n", argv[1]);
   // BUGFIX: this flush is to prevent incorrect syncing with the
   // `iut*` executable that causes failures in the CPU detection on
   // some CI systems.
@@ -4573,14 +4607,19 @@ int main(int argc, char **argv) {
   for(a2s=1;a2s<argc;a2s++) {
     if (strcmp(argv[a2s], "--flushtozero") == 0) {
       enableFlushToZero = 1;
+    } else if (a2s+1 < argc && strcmp(argv[a2s], "--sde") == 0) {
+      commandSde = argv[a2s+1];
+      a2s++;
     } else {
       break;
     }
   }
 
+  printf("\n\n*** Now testing %s\n", argv[a2s]);
+  
   for(i=a2s;i<argc;i++) argv2[i-a2s] = argv[i];
   argv2[argc-a2s] = NULL;
-
+  
   mpfr_set_default_prec(128);
 
   startChild(argv2[0], argv2);
@@ -4592,12 +4631,31 @@ int main(int argc, char **argv) {
   {
     char str[256];
     int u;
-    
-    if (readln(ctop[0], str, 255) < 1) stop("Feature detection");
-    sscanf(str, "%d", &u);
+
+    if (readln(ctop[0], str, 255) < 1) stop("Feature detection(readln)");
+    if (sscanf(str, "%d", &u) != 1) stop("Feature detection(sscanf)");
     if ((u & 3) == 0) {
-      fprintf(stderr, "\n\n*** CPU does not support the necessary feature\n");
-      return 0;
+      if (commandSde != NULL) {
+	close(ctop[0]);
+	close(ptoc[1]);
+
+	argv2[0] = commandSde;
+	argv2[1] = "--";
+	for(i=a2s;i<argc;i++) argv2[i-a2s+2] = argv[i];
+	argv2[argc-a2s+2] = NULL;
+	
+	startChild(argv2[0], argv2);
+
+	if (readln(ctop[0], str, 255) < 1) stop("Feature detection(sde, readln)");
+	if (sscanf(str, "%d", &u) != 1) stop("Feature detection(sde, sscanf)");
+	if ((u & 3) == 0) {
+	  fprintf(stderr, "\n\nTester : *** CPU does not support the necessary feature(SDE)\n");
+	  return 0;
+	}
+      } else {
+	fprintf(stderr, "\n\nTester : *** CPU does not support the necessary feature\n");
+	return 0;
+      }
     }
 
     enableDP = (u & 1) != 0;
