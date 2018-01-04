@@ -73,7 +73,8 @@ if(ENABLE_GNUABI)
   foreach(SIMD ${SLEEF_SUPPORTED_GNUABI_EXTENSIONS})
     if(COMPILER_SUPPORTS_${SIMD})
       string(TOLOWER ${SIMD} vecarch)
-      set(OBJECT_${SIMD}_GNUABI "sleefgnuabi${vecarch}")    
+      set(OBJECT_${SIMD}_dp_GNUABI "sleefgnuabi${vecarch}dp")
+      set(OBJECT_${SIMD}_sp_GNUABI "sleefgnuabi${vecarch}sp")
       set(HEADER_${SIMD}_GNUABI ${CMAKE_CURRENT_BINARY_DIR}/include/rename${vecarch}_gnuabi.h)  
       list(APPEND HEADER_GNUABI_FILES_GENERATED ${HEADER_${SIMD}_GNUABI})
 
@@ -84,6 +85,33 @@ if(ENABLE_GNUABI)
         DEPENDS ${TARGET_MKRENAME_GNUABI}
       )
       # set_source_files_properties(${HEADER_${SIMD}_GNUABI} PROPERTIES GENERATED TRUE)
+    endif()
+  endforeach()
+endif()
+
+# --------------------------------------------------------------------
+
+# TARGET_MKMASKED_GNUABI
+add_executable(${TARGET_MKMASKED_GNUABI} mkmasked_gnuabi.c)
+
+# maskedXXX_YY_gnuabi.h
+if(ENABLE_GNUABI)
+  foreach(SIMD ${SLEEF_SUPPORTED_GNUABI_EXTENSIONS})
+    if(COMPILER_SUPPORTS_${SIMD})
+      string(TOLOWER ${SIMD} vecarch)
+
+      set(HEADER_GENERATED "")
+      foreach(T dp sp)
+	set(HEADER_MASKED_${SIMD}_${T}_GNUABI ${CMAKE_CURRENT_BINARY_DIR}/include/masked_${vecarch}_${T}_gnuabi.h)
+	list(APPEND HEADER_GENERATED ${HEADER_MASKED_${SIMD}_${T}_GNUABI})
+
+	add_custom_command(OUTPUT ${HEADER_MASKED_${SIMD}_${T}_GNUABI}
+          COMMAND echo Generating ${HEADER_MASKED_${SIMD}_${T}_GNUABI}
+          COMMAND ${TARGET_MKMASKED_GNUABI} ${MKMASKED_PARAMS_GNUABI_${SIMD}_${T}} > ${HEADER_MASKED_${SIMD}_${T}_GNUABI}
+          DEPENDS ${TARGET_MKMASKED_GNUABI}
+	  )
+      endforeach()
+      add_custom_target(masked${SIMD}_generated DEPENDS ${HEADER_GENERATED})
     endif()
   endforeach()
 endif()
@@ -267,22 +295,26 @@ if(ENABLE_GNUABI)
       # Need lowercase string for rename header
       string(TOLOWER ${SIMD} vecarch)
 
-      add_library(${OBJECT_${SIMD}_GNUABI} OBJECT ${SIMD_SOURCES} ${HEADER_${SIMD}_GNUABI})
-      target_compile_definitions(${OBJECT_${SIMD}_GNUABI} PRIVATE
-        ENABLE_${SIMD}=1
-        DORENAME=1
-        ENABLE_GNUABI=1
-      )
+      foreach(T dp sp)
+	add_library(${OBJECT_${SIMD}_${T}_GNUABI} OBJECT sleefsimd${T}.c ${HEADER_${SIMD}_GNUABI})
+	target_compile_definitions(${OBJECT_${SIMD}_${T}_GNUABI} PRIVATE
+          ENABLE_${SIMD}=1
+          DORENAME=1
+          ENABLE_GNUABI=1
+	  HEADER_MASKED=\"masked_${vecarch}_${T}_gnuabi.h\"
+	  )
 
-      set_target_properties(${OBJECT_${SIMD}_GNUABI} PROPERTIES
-        ${COMMON_TARGET_PROPERTIES}
-      )    
+	set_target_properties(${OBJECT_${SIMD}_${T}_GNUABI} PROPERTIES
+          ${COMMON_TARGET_PROPERTIES}
+	  )    
 
-      target_compile_options(${OBJECT_${SIMD}_GNUABI} PRIVATE ${FLAGS_ENABLE_${SIMD}})
-      if (COMPILER_SUPPORTS_WEAK_ALIASES)
-        target_compile_options(${OBJECT_${SIMD}_GNUABI} PRIVATE -DENABLE_GNUABI=1)
-      endif(COMPILER_SUPPORTS_WEAK_ALIASES)
-      list(APPEND TARGET_LIBSLEEFGNUABI_OBJECTS $<TARGET_OBJECTS:${OBJECT_${SIMD}_GNUABI}>)
+	target_compile_options(${OBJECT_${SIMD}_${T}_GNUABI} PRIVATE ${FLAGS_ENABLE_${SIMD}})
+	if (COMPILER_SUPPORTS_WEAK_ALIASES)
+          target_compile_options(${OBJECT_${SIMD}_${T}_GNUABI} PRIVATE -DENABLE_GNUABI=1)
+	endif(COMPILER_SUPPORTS_WEAK_ALIASES)
+	list(APPEND TARGET_LIBSLEEFGNUABI_OBJECTS $<TARGET_OBJECTS:${OBJECT_${SIMD}_${T}_GNUABI}>)
+	add_dependencies(${OBJECT_${SIMD}_${T}_GNUABI} masked${SIMD}_generated)
+      endforeach()
     endif(COMPILER_SUPPORTS_${SIMD})
   endforeach()
 
