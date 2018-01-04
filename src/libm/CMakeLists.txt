@@ -195,7 +195,7 @@ if (SLEEF_ARCH_X86)
     COMMENT "Generating dispsse.c"
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/dispsse.c.org ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c
     COMMAND ${TARGET_MKDISP} 2 4 __m128d __m128 __m128i sse2 sse4 avx2128 >> ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c
-    DEPENDS ${TARGET_MKDISP} ${TARGET_COPYCAT}
+    DEPENDS ${TARGET_MKDISP}
     )
   add_custom_target(dispsse.c_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c)
 
