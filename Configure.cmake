@@ -302,7 +302,7 @@ CHECK_C_SOURCE_COMPILES("
     return g(2);
   }"
   COMPILER_SUPPORTS_WEAK_ALIASES)
-
+set(ENABLE_GNUABI ${COMPILER_SUPPORTS_WEAK_ALIASES})
 # Check if sde64 command is available
 
 find_program(SDE_COMMAND sde64)
