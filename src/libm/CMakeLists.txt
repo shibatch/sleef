@@ -57,7 +57,7 @@ foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
       COMMAND ${TARGET_MKRENAME} ${RENAME_PARAMS_${SIMD}} > ${HEADER_${SIMD}}
       DEPENDS ${TARGET_MKRENAME}
     )
-    # set_source_files_properties(${HEADER_${SIMD}} PROPERTIES GENERATED TRUE)
+    add_custom_target(rename${SIMD}.h.generated DEPENDS ${HEADER_${SIMD}})
   endif()
 endforeach()
 
@@ -81,7 +81,7 @@ if(ENABLE_GNUABI)
       add_custom_command(OUTPUT ${HEADER_${SIMD}_GNUABI}
         COMMAND echo Generating rename${vecarch}_gnuabi.h: ${TARGET_MKRENAME_GNUABI} ${RENAME_PARAMS_GNUABI_${SIMD}}  
         COMMAND ${TARGET_MKRENAME_GNUABI} ${RENAME_PARAMS_GNUABI_${SIMD}} > ${HEADER_${SIMD}_GNUABI}
-        DEPENDS ${TARGET_MKRENAME_GNUABI}      
+        DEPENDS ${TARGET_MKRENAME_GNUABI}
       )
       # set_source_files_properties(${HEADER_${SIMD}_GNUABI} PROPERTIES GENERATED TRUE)
     endif()
@@ -163,11 +163,12 @@ foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
       ENABLE_${SIMD}=1
       DORENAME=1
       ${COMMON_TARGET_DEFINITIONS}
-    )
+      )
+    add_dependencies(${OBJECT_${SIMD}} rename${SIMD}.h.generated)
 
     set_target_properties(${OBJECT_${SIMD}} PROPERTIES
       ${COMMON_TARGET_PROPERTIES}
-    )    
+      )    
 
     target_compile_options(${OBJECT_${SIMD}} PRIVATE
       ${FLAGS_ENABLE_${SIMD}})
@@ -236,7 +237,7 @@ if (SLEEF_ARCH_X86)
     set(DISPATCHER_DEFINITIONS ${DISPATCHER_DEFINITIONS} ENABLE_AVX2=1)
   endif()
 
-  add_library(dispsse_obj OBJECT dispsse.c ${SLEEF_INCLUDE_HEADER})
+  add_library(dispsse_obj OBJECT dispsse.c)
   set_target_properties(dispsse_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
   target_compile_definitions(dispsse_obj PRIVATE ${COMMON_TARGET_DEFINITIONS} ${DISPATCHER_DEFINITIONS})
   target_include_directories(dispsse_obj PRIVATE ${CMAKE_BINARY_DIR}/include)
@@ -245,7 +246,7 @@ if (SLEEF_ARCH_X86)
 
   # Target dispavx_obj
 
-  add_library(dispavx_obj OBJECT dispavx.c ${SLEEF_INCLUDE_HEADER})
+  add_library(dispavx_obj OBJECT dispavx.c)
   target_compile_options(dispavx_obj PRIVATE ${FLAGS_ENABLE_AVX})
   set_target_properties(dispavx_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
   target_compile_definitions(dispavx_obj PRIVATE ${COMMON_TARGET_DEFINITIONS} ${DISPATCHER_DEFINITIONS})

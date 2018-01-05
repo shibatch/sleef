@@ -112,3 +112,8 @@ ${PROJECT_NAME}-v${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}")
   message(STATUS "RUNNING_ON_TRAVIS : " ${RUNNING_ON_TRAVIS})
   message(STATUS "COMPILER_SUPPORTS_OPENMP : " ${COMPILER_SUPPORTS_OPENMP})
 endif(SLEEF_SHOW_CONFIG)
+
+if (MSVC)
+  message("")
+  message("*** Note: Parallel build is not supported on Microsoft Visual Studio")
+endif()

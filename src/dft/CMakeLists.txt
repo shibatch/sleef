@@ -194,7 +194,7 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
   string(CONCAT S "dispatch" ${ST} ".h")                    # S is "dispatchdp.h"
   add_library(${G} OBJECT dft.c dftcommon.h ${S})
   string(CONCAT SG ${S} "_generated")                       # SG is "dispatchdp.h_generated"
-  add_dependencies(${G} ${SG})
+  add_dependencies(${G} ${SG} ${TARGET_HEADERS})
   set_target_properties(${G} PROPERTIES ${COMMON_TARGET_PROPERTIES})
   list(GET LISTTYPEID ${T} ID)                              # ID is 1
   target_compile_definitions(${G} PRIVATE BASETYPEID=${ID} ${COMMON_TARGET_DEFINITIONS})
@@ -205,6 +205,7 @@ endforeach()
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/unroll0.org
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/unroll0.org ${CMAKE_CURRENT_BINARY_DIR}
   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/unroll0.org)
+add_custom_target(unroll0.org.copied DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/unroll0.org)
 
 # Target unroll*.c
 
@@ -217,8 +218,6 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
     foreach(N 0 1 2 3)
       string(CONCAT UC unroll_ ${N} _ ${E} ".c")            # UC is "unroll_0_sse2dp.c"
       set(UNROLL_TARGET_${CST} ${UNROLL_TARGET_${CST}} ${UC})
-      string(CONCAT UCG ${UC} "_generated")                 # UCG is "unroll_0_sse2dp.c_generated"
-      add_custom_target(${UCG} SOURCES ${UC} ${CMAKE_CURRENT_SOURCE_DIR}/unroll0.org)
     endforeach()
   endforeach()
   message(STATUS "Unroll target for ${CST} : ${UNROLL_TARGET_${CST}}")
@@ -228,8 +227,9 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
       COMMENT "Generating ${UNROLL_TARGET_${CST}}"
       COMMAND ${TARGET_MKUNROLL} ${LT} ${ISALIST_${CST}}
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      DEPENDS ${TARGET_MKUNROLL} ${CMAKE_CURRENT_BINARY_DIR}/unroll0.org
+      DEPENDS ${TARGET_MKUNROLL} unroll0.org.copied
       )
+    add_custom_target(unroll_target_${ST} DEPENDS ${UNROLL_TARGET_${CST}})
   endif()
 endforeach()
 
@@ -245,13 +245,12 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
       string(CONCAT U unroll_ ${N} _ ${E})                  # U is "unroll_0_sse2dp"
       string(CONCAT UG ${U} "_obj")                         # UG is "unroll_0_sse2dp_obj"
       string(CONCAT UC ${U} ".c")                           # UC is "unroll_0_sse2dp.c"
-      string(CONCAT UCG ${UC} "_generated")                 # UCG is "unroll_0_sse2dp.c_generated"
-      add_library(${UG} OBJECT ${CMAKE_CURRENT_BINARY_DIR}/${UC} ${CMAKE_BINARY_DIR}/include/sleef.h)
+      add_library(${UG} OBJECT ${UC})
       set_target_properties(${UG} PROPERTIES ${COMMON_TARGET_PROPERTIES})
       target_include_directories(${UG} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
       target_compile_definitions(${UG} PRIVATE ${COMMON_TARGET_DEFINITIONS} ${MACRODEF_${E}})
       target_compile_options(${UG} PRIVATE ${CFLAGS_${E}})
-      add_dependencies(${UG} ${TARGET_HEADERS} ${UCG})
+      add_dependencies(${UG} ${TARGET_HEADERS} unroll_target_${ST})
     endforeach()
   endforeach()
 endforeach()
