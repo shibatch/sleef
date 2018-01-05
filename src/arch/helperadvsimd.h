@@ -161,14 +161,6 @@ static INLINE vfloat vmin_vf_vf_vf(vfloat x, vfloat y) {
   return vminq_f32(x, y);
 }
 
-// max number, min number
-static INLINE vfloat vmaxnum_vf_vf_vf(vfloat x, vfloat y) {
-  return vmaxnmq_f32(x, y);
-}
-static INLINE vfloat vminnum_vf_vf_vf(vfloat x, vfloat y) {
-  return vminnmq_f32(x, y);
-}
-
 // Comparisons
 static INLINE vmask veq_vm_vf_vf(vfloat x, vfloat y) { return vceqq_f32(x, y); }
 static INLINE vmask vneq_vm_vf_vf(vfloat x, vfloat y) {
@@ -306,14 +298,6 @@ static INLINE vdouble vmax_vd_vd_vd(vdouble x, vdouble y) {
 }
 static INLINE vdouble vmin_vd_vd_vd(vdouble x, vdouble y) {
   return vminq_f64(x, y);
-}
-
-// max number, min number
-static INLINE vdouble vmaxnum_vd_vd_vd(vdouble x, vdouble y) {
-  return vmaxnmq_f64(x, y);
-}
-static INLINE vdouble vminnum_vd_vd_vd(vdouble x, vdouble y) {
-  return vminnmq_f64(x, y);
 }
 
 // Multiply accumulate: z = z + x * y
@@ -623,6 +607,20 @@ static INLINE vdouble vreinterpret_vd_vi2(vint2 vi) {
   return vreinterpretq_f64_s32(vi);
 }
 static INLINE vdouble vtruncate_vd_vd(vdouble vd) { return vrndq_f64(vd); }
+
+// max number, min number
+static INLINE vdouble vmaxnum_vd_vd_vd(vdouble x, vdouble y) {
+  return vsel_vd_vo_vd_vd(visnan_vo_vd(y), x, vsel_vd_vo_vd_vd(vgt_vo_vd_vd(x, y), x, y));
+}
+static INLINE vdouble vminnum_vd_vd_vd(vdouble x, vdouble y) {
+  return vsel_vd_vo_vd_vd(visnan_vo_vd(y), x, vsel_vd_vo_vd_vd(vgt_vo_vd_vd(y, x), x, y));
+}
+static INLINE vfloat vmaxnum_vf_vf_vf(vfloat x, vfloat y) {
+  return vsel_vf_vo_vf_vf(visnan_vo_vf(y), x, vsel_vf_vo_vf_vf(vgt_vo_vf_vf(x, y), x, y));
+}
+static INLINE vfloat vminnum_vf_vf_vf(vfloat x, vfloat y) {
+  return vsel_vf_vo_vf_vf(visnan_vo_vf(y), x, vsel_vf_vo_vf_vf(vgt_vo_vf_vf(y, x), x, y));
+}
 
 //
 
