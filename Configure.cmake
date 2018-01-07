@@ -65,12 +65,6 @@ if((CMAKE_SYSTEM_PROCESSOR MATCHES "x86") OR (CMAKE_SYSTEM_PROCESSOR MATCHES "AM
   command_arguments(HEADER_PARAMS_AVX2128   2 4 __m128d __m128 __m128i __m128i __SSE2__ avx2128)
   command_arguments(HEADER_PARAMS_AVX512F   8 16 __m512d __m512 __m256i __m512i __AVX512F__ avx512f)
 
-  command_arguments(ALIAS_PARAMS_SSE2_DP      2 __m128d __m128i b)
-  command_arguments(ALIAS_PARAMS_SSE2_SP     -4 __m128  __m128i b)
-  command_arguments(ALIAS_PARAMS_AVX_DP       4 __m256d __m128i c)
-  command_arguments(ALIAS_PARAMS_AVX_SP      -8 __m256  __m128i c)
-  command_arguments(ALIAS_PARAMS_AVX2_DP      4 __m256d __m128i d)
-  command_arguments(ALIAS_PARAMS_AVX2_SP     -8 __m256  __m256i d)
   command_arguments(ALIAS_PARAMS_AVX512F_DP   8 __m512d __m256i e avx512f)
   command_arguments(ALIAS_PARAMS_AVX512F_SP -16 __m512  __m512i e avx512f)
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
