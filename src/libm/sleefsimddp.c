@@ -2745,6 +2745,10 @@ EXPORT CONST void *xgetPtr(int name) {
 }
 #endif
 
+#ifdef ALIAS_NO_EXT_SUFFIX
+#include ALIAS_NO_EXT_SUFFIX
+#endif
+
 #ifdef ENABLE_MAIN
 // gcc -DENABLE_MAIN -Wno-attributes -I../common -I../arch -DENABLE_AVX2 -mavx2 -mfma sleefsimddp.c ../common/common.c -lm
 #include <stdio.h>
