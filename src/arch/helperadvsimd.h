@@ -28,16 +28,6 @@
 
 #define ISANAME "AArch64 AdvSIMD"
 
-#ifdef SLEEF_SINGLE_MINMAXNUM_AVAILABLE
-#error prior definition of SLEEF_SINGLE_MINMAXNUM_AVAILABLE
-#endif
-#define SLEEF_SINGLE_MINMAXNUM_AVAILABLE 1
-
-#ifdef SLEEF_DOUBLE_MINMAXNUM_AVAILABLE
-#error prior definition of SLEEF_DOUBLE_MINMAXNUM_AVAILABLE
-#endif
-#define SLEEF_DOUBLE_MINMAXNUM_AVAILABLE 1
-
 // Mask definition
 typedef uint32x4_t vmask;
 typedef uint32x4_t vopmask;
@@ -607,20 +597,6 @@ static INLINE vdouble vreinterpret_vd_vi2(vint2 vi) {
   return vreinterpretq_f64_s32(vi);
 }
 static INLINE vdouble vtruncate_vd_vd(vdouble vd) { return vrndq_f64(vd); }
-
-// max number, min number
-static INLINE vdouble vmaxnum_vd_vd_vd(vdouble x, vdouble y) {
-  return vsel_vd_vo_vd_vd(visnan_vo_vd(y), x, vsel_vd_vo_vd_vd(vgt_vo_vd_vd(x, y), x, y));
-}
-static INLINE vdouble vminnum_vd_vd_vd(vdouble x, vdouble y) {
-  return vsel_vd_vo_vd_vd(visnan_vo_vd(y), x, vsel_vd_vo_vd_vd(vgt_vo_vd_vd(y, x), x, y));
-}
-static INLINE vfloat vmaxnum_vf_vf_vf(vfloat x, vfloat y) {
-  return vsel_vf_vo_vf_vf(visnan_vo_vf(y), x, vsel_vf_vo_vf_vf(vgt_vo_vf_vf(x, y), x, y));
-}
-static INLINE vfloat vminnum_vf_vf_vf(vfloat x, vfloat y) {
-  return vsel_vf_vo_vf_vf(visnan_vo_vf(y), x, vsel_vf_vo_vf_vf(vgt_vo_vf_vf(y, x), x, y));
-}
 
 //
 
