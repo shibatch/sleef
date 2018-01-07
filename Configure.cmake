@@ -294,17 +294,22 @@ set(ORG_CMAKE_C_FLAGS CMAKE_C_FLAGS)
 
 # Check weak aliases are supported.
 CHECK_C_SOURCE_COMPILES("
-  int f(int a) {
+#if defined(__CYGWIN__)
+#define EXPORT __stdcall __declspec(dllexport)
+#else
+#define EXPORT
+#endif
+  EXPORT int f(int a) {
    return a + 2;
   }
-  int g(int a) __attribute__((weak, alias(\"f\")));
+  EXPORT int g(int a) __attribute__((weak, alias(\"f\")));
   int main(void) {
     return g(2);
   }"
   COMPILER_SUPPORTS_WEAK_ALIASES)
+set(ENABLE_GNUABI ${COMPILER_SUPPORTS_WEAK_ALIASES})
 
 # Check if sde64 command is available
-
 find_program(SDE_COMMAND sde64)
 if (NOT SDE_COMMAND)
   find_program(SDE_COMMAND sde)
