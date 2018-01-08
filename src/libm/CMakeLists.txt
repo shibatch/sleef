@@ -146,6 +146,10 @@ if(COMPILER_SUPPORTS_FLOAT128)
     PRIVATE ENABLEFLOAT128=1 ${COMMON_TARGET_DEFINITIONS})
 endif()
 
+if(COMPILER_SUPPORTS_BUILTIN_MATH)
+  target_compile_definitions(${TARGET_LIBSLEEF} PRIVATE ENABLE_BUILTIN_MATH=1)
+endif()
+
 # Compile SIMD versions
 # Single precision and double precision
 set(SIMD_SOURCES sleefsimdsp.c sleefsimddp.c)
@@ -180,9 +184,9 @@ endforeach()
 # On some systems we need to explicitly link libsleef against libm to
 # use some of the math functions used in the scalar code (for example
 # sqrt).
-if(LIBM)
+if(LIBM AND NOT COMPILER_SUPPORTS_BUILTIN_MATH)
   target_link_libraries(${TARGET_LIBSLEEF} ${LIBM})
-endif(LIBM)
+endif()
 
 target_link_libraries(${TARGET_LIBSLEEF} ${TARGET_LIBCOMMON_STATIC})
 
@@ -300,9 +304,9 @@ if(ENABLE_GNUABI)
 # On some systems we need to explicitly link libsleefgnuabi against
 # libm to use some of the math functions used in the scalar code (for
 # example sqrt).
-if(LIBM)
+if(LIBM AND NOT COMPILER_SUPPORTS_BUILTIN_MATH)
   target_link_libraries(${TARGET_LIBSLEEFGNUABI} ${LIBM})
-endif(LIBM)
+endif()
 endif(ENABLE_GNUABI)
 
 # --------------------------------------------------------------------

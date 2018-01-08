@@ -42,6 +42,16 @@
 
 //
 
+#ifndef SLEEF_FP_ILOGB0
+#define SLEEF_FP_ILOGB0 ((int)-2147483648)
+#endif
+
+#ifndef SLEEF_FP_ILOGBNAN
+#define SLEEF_FP_ILOGBNAN ((int)2147483647)
+#endif
+
+//
+
 IMPORT void *Sleef_malloc(size_t z);
 IMPORT void Sleef_free(void *ptr);
 IMPORT uint64_t Sleef_currentTimeMicros();

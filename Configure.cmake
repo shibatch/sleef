@@ -6,6 +6,10 @@ include(CheckTypeSize)
 find_library(LIB_MPFR mpfr)
 find_library(LIBM m)
 
+if (NOT LIBM)
+  set(LIBM "")
+endif()
+
 # The library currently supports the following SIMD architectures
 set(SLEEF_SUPPORTED_EXTENSIONS
   SSE2 SSE4 AVX FMA4 AVX2 AVX2128 AVX512F # x86
@@ -286,12 +290,6 @@ if(OPENMP_FOUND)
   COMPILER_SUPPORTS_OPENMP)
 endif(OPENMP_FOUND)
 
-# Reset used flags
-set(CMAKE_REQUIRED_FLAGS)
-
-# Save the default C flags
-set(ORG_CMAKE_C_FLAGS CMAKE_C_FLAGS)
-
 # Check weak aliases are supported.
 CHECK_C_SOURCE_COMPILES("
 #if defined(__CYGWIN__)
@@ -309,7 +307,21 @@ CHECK_C_SOURCE_COMPILES("
   COMPILER_SUPPORTS_WEAK_ALIASES)
 set(ENABLE_GNUABI ${COMPILER_SUPPORTS_WEAK_ALIASES})
 
+CHECK_C_SOURCE_COMPILES("
+  int main(void) {
+    double a = __builtin_sqrt (2);
+    float  b = __builtin_sqrtf(2);
+  }"
+  COMPILER_SUPPORTS_BUILTIN_MATH)
+
+# Reset used flags
+set(CMAKE_REQUIRED_FLAGS)
+
+# Save the default C flags
+set(ORG_CMAKE_C_FLAGS CMAKE_C_FLAGS)
+
 # Check if sde64 command is available
+
 find_program(SDE_COMMAND sde64)
 if (NOT SDE_COMMAND)
   find_program(SDE_COMMAND sde)

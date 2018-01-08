@@ -28,9 +28,9 @@ static INLINE CONST int64_t xceilq(Sleef_quad x) { return (int64_t)x + (x < 0 ? 
 static INLINE CONST Sleef_quad xtruncq(Sleef_quad x) { return (Sleef_quad)(int64_t)x; }
 
 static INLINE CONST int xisnanq(Sleef_quad x) { return x != x; }
-static INLINE CONST int xisinfq(Sleef_quad x) { return x == INFINITYq || x == -INFINITYq; }
-static INLINE CONST int xisminfq(Sleef_quad x) { return x == -INFINITYq; }
-static INLINE CONST int xispinfq(Sleef_quad x) { return x == INFINITYq; }
+static INLINE CONST int xisinfq(Sleef_quad x) { return x == SLEEF_INFINITYq || x == -SLEEF_INFINITYq; }
+static INLINE CONST int xisminfq(Sleef_quad x) { return x == -SLEEF_INFINITYq; }
+static INLINE CONST int xispinfq(Sleef_quad x) { return x == SLEEF_INFINITYq; }
 
 static INLINE CONST Sleef_quad xfabsq(Sleef_quad x) {
   union {
@@ -380,7 +380,7 @@ EXPORT CONST Sleef_quad2 xsincospiq_u05(Sleef_quad d) {
   if ((q & 4) != 0) { r.x = -r.x; }
   if (((q+2) & 4) != 0) { r.y = -r.y; }
 
-  if (xisinfq(d)) { r.x = r.y = NANq; }
+  if (xisinfq(d)) { r.x = r.y = SLEEF_NANq; }
   if (!xisinfq(d) && xfabsq(d) > TRIGRANGEMAX3) { r.x = r.y = 0; }
 
   return r;
@@ -438,7 +438,7 @@ EXPORT CONST Sleef_quad2 xsincospiq_u35(Sleef_quad d) {
   if ((q & 4) != 0) { r.x = -r.x; }
   if (((q+2) & 4) != 0) { r.y = -r.y; }
 
-  if (xisinfq(d)) { r.x = r.y = NANq; }
+  if (xisinfq(d)) { r.x = r.y = SLEEF_NANq; }
   if (!xisinfq(d) && xfabsq(d) > TRIGRANGEMAX3) { r.x = r.y = 0; }
 
   return r;
