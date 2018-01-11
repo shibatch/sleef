@@ -2,7 +2,7 @@ language: c
 
 # Default linux jobs
 os: linux
-sudo: required
+sudo: false
 dist: trusty
 
 # Include osx jobs
