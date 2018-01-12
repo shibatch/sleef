@@ -9,7 +9,6 @@ set(COMMON_TARGET_PROPERTIES
 
 # Include directories
 
-include_directories(${PROJECT_SOURCE_DIR}/include)        # sleefdft.h
 include_directories(${CMAKE_BINARY_DIR}/include)          # sleef.h
 
 # Link directories
@@ -30,7 +29,7 @@ else()
   # Target executable naivetestdp
 
   set(TARGET_NAIVETESTDP "naivetestdp")
-  add_executable(${TARGET_NAIVETESTDP} naivetest.c ${PROJECT_SOURCE_DIR}/include/sleefdft.h)
+  add_executable(${TARGET_NAIVETESTDP} naivetest.c)
   add_dependencies(${TARGET_NAIVETESTDP} ${TARGET_HEADERS} ${TARGET_LIBSLEEF} ${TARGET_LIBDFT})
   target_compile_definitions(${TARGET_NAIVETESTDP} PRIVATE ${COMMON_TARGET_DEFINITIONS} BASETYPEID=1)
   target_link_libraries(${TARGET_NAIVETESTDP} ${COMMON_LINK_LIBRARIES})
@@ -39,7 +38,7 @@ else()
   # Target executable naivetestsp
 
   set(TARGET_NAIVETESTSP "naivetestsp")
-  add_executable(${TARGET_NAIVETESTSP} naivetest.c ${PROJECT_SOURCE_DIR}/include/sleefdft.h)
+  add_executable(${TARGET_NAIVETESTSP} naivetest.c)
   add_dependencies(${TARGET_NAIVETESTSP} ${TARGET_HEADERS} ${TARGET_LIBSLEEF} ${TARGET_LIBDFT})
   target_compile_definitions(${TARGET_NAIVETESTSP} PRIVATE ${COMMON_TARGET_DEFINITIONS} BASETYPEID=2)
   target_link_libraries(${TARGET_NAIVETESTSP} ${COMMON_LINK_LIBRARIES})

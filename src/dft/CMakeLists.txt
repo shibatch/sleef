@@ -255,6 +255,13 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
   endforeach()
 endforeach()
 
+# Copy sleefdft.h to ${CMAKE_BINARY_DIR}/include
+
+add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/include/sleefdft.h
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/include/sleefdft.h ${CMAKE_BINARY_DIR}/include
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/sleefdft.h)
+add_custom_target(sleefdft.h_copied DEPENDS ${CMAKE_BINARY_DIR}/include/sleefdft.h)
+
 # Target libdft
 
 add_library(${TARGET_LIBDFT} $<TARGET_OBJECTS:dftcommon_obj>)
@@ -285,7 +292,9 @@ set_target_properties(${TARGET_LIBDFT} PROPERTIES
   ${COMMON_TARGET_PROPERTIES}
   ) 
 
+add_dependencies(${TARGET_LIBDFT} sleefdft.h_copied)
+
 # Install
 
-install(FILES ${PROJECT_SOURCE_DIR}/include/sleefdft.h DESTINATION include)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/sleefdft.h DESTINATION include)
 install(TARGETS ${TARGET_LIBDFT} DESTINATION lib)
