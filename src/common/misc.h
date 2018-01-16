@@ -32,6 +32,9 @@
 #define M_2_PIl 0.636619772367581343075535053490057448L
 #endif
 
+#define SLEEF_SNAN (((union { long long int i; double d; }) { .i = 0x7ff0000000000001LL }).d)
+#define SLEEF_SNANf (((union { long int i; float f; }) { .i = 0xff800001 }).f)
+
 //
 
 /*
