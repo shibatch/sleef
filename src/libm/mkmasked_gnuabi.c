@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+#include <assert.h>
 
 #include "funcproto.h"
 
@@ -76,7 +77,7 @@ int main(int argc, char **argv) {
 	     vfpname[fptype], funcname[1], vfpname[fptype], vfpname[fptype], funcname[0]);
       break;
     case 2:
-      if (fptype == 0) {
+      if (sizeoffp[fptype] == sizeof(double)) {
 	printf("EXPORT void %s(vdouble a0, double *a1, double *a2, vopmask m) {\n", funcname[1]);
 	printf("  double s[VECTLENDP], c[VECTLENDP];\n");
 	printf("  int32_t mbuf[VECTLENSP];\n");
@@ -86,7 +87,7 @@ int main(int argc, char **argv) {
 	printf("    if (mbuf[i*2]) { *a1++ = s[i]; *a2++ = c[i]; }\n");
 	printf("  }\n");
 	printf("}\n");
-      } else {
+      } else if (sizeoffp[fptype] == sizeof(float)) {
 	printf("EXPORT void %s(vfloat a0, float *a1, float *a2, vopmask m) {\n", funcname[1]);
 	printf("  float s[VECTLENSP], c[VECTLENSP];\n");
 	printf("  int32_t mbuf[VECTLENSP];\n");
@@ -96,6 +97,8 @@ int main(int argc, char **argv) {
 	printf("    if (mbuf[i]) { *a1++ = s[i]; *a2++ = c[i]; }\n");
 	printf("  }\n");
 	printf("}\n");
+      } else {
+	assert(0 && "Invalid size of FP data");
       }
       break;
     case 3:

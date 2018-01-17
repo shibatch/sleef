@@ -97,7 +97,7 @@ add_executable(${TARGET_MKMASKED_GNUABI} mkmasked_gnuabi.c)
 # maskedXXX_YY_gnuabi.h
 if(ENABLE_GNUABI)
   foreach(SIMD ${SLEEF_SUPPORTED_GNUABI_EXTENSIONS})
-    if(COMPILER_SUPPORTS_${SIMD})
+    if(COMPILER_SUPPORTS_${SIMD} AND MKMASKED_PARAMS_GNUABI_${SIMD}_sp)
       string(TOLOWER ${SIMD} vecarch)
 
       set(HEADER_GENERATED "")
@@ -301,7 +301,6 @@ if(ENABLE_GNUABI)
           ENABLE_${SIMD}=1
           DORENAME=1
           ENABLE_GNUABI=1
-	  HEADER_MASKED=\"masked_${vecarch}_${T}_gnuabi.h\"
 	  )
 
 	set_target_properties(${OBJECT_${SIMD}_${T}_GNUABI} PROPERTIES
@@ -313,7 +312,12 @@ if(ENABLE_GNUABI)
           target_compile_options(${OBJECT_${SIMD}_${T}_GNUABI} PRIVATE -DENABLE_GNUABI=1)
 	endif(COMPILER_SUPPORTS_WEAK_ALIASES)
 	list(APPEND TARGET_LIBSLEEFGNUABI_OBJECTS $<TARGET_OBJECTS:${OBJECT_${SIMD}_${T}_GNUABI}>)
-	add_dependencies(${OBJECT_${SIMD}_${T}_GNUABI} masked${SIMD}_generated)
+
+	if(MKMASKED_PARAMS_GNUABI_${SIMD}_${T})
+	  target_compile_definitions(${OBJECT_${SIMD}_${T}_GNUABI} PRIVATE
+	    HEADER_MASKED=\"masked_${vecarch}_${T}_gnuabi.h\")
+	  add_dependencies(${OBJECT_${SIMD}_${T}_GNUABI} masked${SIMD}_generated)
+	endif()
       endforeach()
     endif(COMPILER_SUPPORTS_${SIMD})
   endforeach()
