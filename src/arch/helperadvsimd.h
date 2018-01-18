@@ -28,16 +28,6 @@
 
 #define ISANAME "AArch64 AdvSIMD"
 
-#ifdef SLEEF_SINGLE_MINMAXNUM_AVAILABLE
-#error prior definition of SLEEF_SINGLE_MINMAXNUM_AVAILABLE
-#endif
-#define SLEEF_SINGLE_MINMAXNUM_AVAILABLE 1
-
-#ifdef SLEEF_DOUBLE_MINMAXNUM_AVAILABLE
-#error prior definition of SLEEF_DOUBLE_MINMAXNUM_AVAILABLE
-#endif
-#define SLEEF_DOUBLE_MINMAXNUM_AVAILABLE 1
-
 // Mask definition
 typedef uint32x4_t vmask;
 typedef uint32x4_t vopmask;
@@ -159,14 +149,6 @@ static INLINE vfloat vmax_vf_vf_vf(vfloat x, vfloat y) {
 }
 static INLINE vfloat vmin_vf_vf_vf(vfloat x, vfloat y) {
   return vminq_f32(x, y);
-}
-
-// max number, min number
-static INLINE vfloat vmaxnum_vf_vf_vf(vfloat x, vfloat y) {
-  return vmaxnmq_f32(x, y);
-}
-static INLINE vfloat vminnum_vf_vf_vf(vfloat x, vfloat y) {
-  return vminnmq_f32(x, y);
 }
 
 // Comparisons
@@ -306,14 +288,6 @@ static INLINE vdouble vmax_vd_vd_vd(vdouble x, vdouble y) {
 }
 static INLINE vdouble vmin_vd_vd_vd(vdouble x, vdouble y) {
   return vminq_f64(x, y);
-}
-
-// max number, min number
-static INLINE vdouble vmaxnum_vd_vd_vd(vdouble x, vdouble y) {
-  return vmaxnmq_f64(x, y);
-}
-static INLINE vdouble vminnum_vd_vd_vd(vdouble x, vdouble y) {
-  return vminnmq_f64(x, y);
 }
 
 // Multiply accumulate: z = z + x * y
