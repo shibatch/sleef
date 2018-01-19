@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN" "http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta name="viewport" content="width=1024" />
+<meta name="google" content="notranslate" />
+<link rel="canonical" href="http://sleef.org/aarch32.xhtml" />
 <link rel="icon" href="favicon.png" />
 <link rel="stylesheet" type="text/css" href="texlike.css"/>
 <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Ubuntu" />
@@ -16,15 +18,15 @@
 <h2>Table of contents</h2>
 
 <ul class="none" style="font-family: arial, sansserif; padding-left: 0.5cm;">
-  <li><a href="index.xhtml">Introduction</a></li>
-  <li><a href="compile.xhtml">Compiling and installing the library</a></li>
+  <li><a class="underlined" href="index.xhtml">Introduction</a></li>
+  <li><a class="underlined" href="compile.xhtml">Compiling and installing the library</a></li>
   <li>&nbsp;</li>
-  <li><a href="purec.xhtml">Math library reference</a>
+  <li><a class="underlined" href="purec.xhtml">Math library reference</a>
   <ul class="disc">
-    <li><a href="purec.xhtml">Data types and functions for all architectures</a></li>
-    <li><a href="x86.xhtml">Data types and functions for x86 architecture</a></li>
-    <li><a href="aarch64.xhtml">Data types and functions for AArch64 architecture</a></li>
-    <li><a href="aarch32.xhtml">Data types and functions for AArch32 architecture</a></li>
+    <li><a class="underlined" href="purec.xhtml">Data types and functions for all architectures</a></li>
+    <li><a class="underlined" href="x86.xhtml">Data types and functions for x86 architecture</a></li>
+    <li><a class="underlined" href="aarch64.xhtml">Data types and functions for AArch64 architecture</a></li>
+    <li><a class="underlined" href="aarch32.xhtml">Data types and functions for AArch32 architecture</a></li>
     <ul class="circle">
       <li><a href="aarch32.xhtml#datatypes">Data types</a></li>
       <li><a href="aarch32.xhtml#trig">Trigonometric functions</a></li>
@@ -38,11 +40,10 @@
   </ul>
   </li>
   <li>&nbsp;</li>
-  <li><a href="dft.xhtml">DFT library reference</a>
-  <li><a href="misc.xhtml">Other tools included in the package</a></li>
-  <li><a href="funcindex.xhtml">Function index</a></li>
-  <li><a href="benchmark.xhtml">Benchmark results</a></li>
-  <li><a href="additional.xhtml">Additional notes</a></li>
+  <li><a class="underlined" href="dft.xhtml">DFT library reference</a>
+  <li><a class="underlined" href="misc.xhtml">Other tools included in the package</a></li>
+  <li><a class="underlined" href="benchmark.xhtml">Benchmark results</a></li>
+  <li><a class="underlined" href="additional.xhtml">Additional notes</a></li>
   </li>
 </ul>
 
@@ -386,6 +387,25 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_logf_u35"><b class
 
 <p class="noindent">
 This is the vectorized function of <a href="purec.xhtml#Sleef_log10f_u10"><b class="func">Sleef_log10f_u10</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+</p>
+
+<hr/>
+<p class="funcname">Vectorized single precision base-2 logarithmic function with 1.0 ULP error bound</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b class="type">float32x4_t</b> <b class="func">Sleef_log2f4_u10neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
+<br/>
+<span class="normal">Link with</span> -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="noindent">
+This is the vectorized function of <a href="purec.xhtml#Sleef_log2f_u10"><b class="func">Sleef_log2f_u10</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>

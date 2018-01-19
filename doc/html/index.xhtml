@@ -1,29 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN" "http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta name="viewport" content="width=1024" />
+<meta name="description" content="SLEEF implements vectorized C99 math functions. It utilizes vector extensions including SSE2, AVX, AVX2, AVX512F for x86, and Advanced SIMD for ARM processors." />
+<meta name="google" content="notranslate" />
+<link rel="canonical" href="http://sleef.org/" />
 <link rel="icon" href="favicon.png" />
 <link rel="stylesheet" type="text/css" href="texlike.css"/>
 <link rel="stylesheet" type="text/css" href="sleef.css"/>
-<title>SLEEF Documentation</title>
+<title>SLEEF Vectorized Math Library</title>
 </head>
 <body>
-<h1>SLEEF Documentation - Introduction<img src="sleeflogo2.png" alt="logo" width="25%" height="25%" style="float: right" /></h1>
+<h1>SLEEF Vectorized Math Library<img src="sleeflogo2.png" alt="logo" width="25%" height="25%" style="float: right" /></h1>
 
 <ul class="none" style="font-family: arial, sansserif; margin-top: 1.0cm;">
-  <li><a style="color:#a00000;" href="https://sourceforge.net/projects/sleef/files/">Download the latest version</a></li>
-  <li><a href="http://sleef.org/">Latest documentation on the web</a></li>
-  <li><a href="https://github.com/shibatch/sleef">GitHub repository</a></li>
-  <li><a href="https://sourceforge.net/p/sleef/mailman/">Mailing list</a></li>
-  <li><a href="https://sourceforge.net/p/sleef/discussion/general/">Discussion forum</a></li>
+  <li><a class="underlined" style="color:#a00000;" href="https://sourceforge.net/projects/sleef/files/">Download the latest version</a></li>
+  <li><a class="underlined" href="http://sleef.org/">Latest documentation on the web</a></li>
+  <li><a class="underlined" href="https://github.com/shibatch/sleef">GitHub repository</a></li>
+  <li><a class="underlined" href="https://sourceforge.net/p/sleef/mailman/">Mailing list</a></li>
+  <li><a class="underlined" href="https://sourceforge.net/p/sleef/discussion/general/">Discussion forum</a></li>
 </ul>
 
 <h2>Table of contents</h2>
 
 <ul class="none" style="font-family: arial, sansserif; padding-left: 0.5cm;">
-  <li><a href="index.xhtml">Introduction</a>
+  <li><a class="underlined" href="index.xhtml">Introduction</a>
     <ul class="disc">
       <li><a href="index.xhtml#overview">Overview</a></li>
       <li><a href="index.xhtml#environment">Supported environments</a></li>
@@ -36,19 +39,12 @@
     </ul>
   </li>
   <li>&nbsp;</li>
-  <li><a href="compile.xhtml">Compiling and installing the library</a></li>
-  <li><a href="purec.xhtml">Math library reference</a></li>
-  <!--
-  <ul class="disc">
-    <li><a href="x86.xhtml">Data types and functions for x86 architectures</a></li>
-    <li><a href="aarch64.xhtml">Data types and functions for AArch64 architectures</a></li>
-    <li><a href="aarch32.xhtml">Data types and functions for AArch32 architectures</a></li>
-  </ul>
-  -->
-  <li><a href="dft.xhtml">DFT library reference</a></li>
-  <li><a href="misc.xhtml">Other tools included in the package</a></li>
-  <li><a href="benchmark.xhtml">Benchmark results</a></li>
-  <li><a href="additional.xhtml">Additional notes</a></li>
+  <li><a class="underlined" href="compile.xhtml">Compiling and installing the library</a></li>
+  <li><a class="underlined" href="purec.xhtml">Math library reference</a></li>
+  <li><a class="underlined" href="dft.xhtml">DFT library reference</a></li>
+  <li><a class="underlined" href="misc.xhtml">Other tools included in the package</a></li>
+  <li><a class="underlined" href="benchmark.xhtml">Benchmark results</a></li>
+  <li><a class="underlined" href="additional.xhtml">Additional notes</a></li>
 </ul>
 
 <h2 id="overview">Overview</h2>
@@ -92,7 +88,7 @@
   This library currently supports several SIMD architectures :
 </p>
 
-<br/>
+<div><br/></div>
 
 <ul class="disc">
   <li>x86 - SSE2, SSE4.1, AVX, FMA4, AVX2+FMA3, AVX512F</li>
@@ -100,7 +96,7 @@
   <li>AArch32 - NEON</li>
 </ul>
 
-<br/>
+<div><br/></div>
 
 <p>
   In addition to the SIMD implementation, Pure C (scalar) version is
@@ -121,7 +117,7 @@
       <table class="lt">
         <tr>
           <td class="lt-hl"></td>
-	  <td></td>
+	  <td class="lt-hl"></td>
           <td class="lt-hl"></td>
           <td class="lt-hl"></td>
           <td class="lt-hl"></td>
@@ -129,7 +125,7 @@
         </tr>
 	<tr>
 	  <td class="lt-br"></td>
-	  <td></td>
+	  <td class="lt-hl"></td>
 	  <td class="lt-blr" align="center">GCC</td>
 	  <td class="lt-br" align="center">Clang</td>
 	  <td class="lt-br" align="center">Intel Compiler</td>
@@ -137,9 +133,8 @@
 	</tr>
         <tr>
           <td class="lt-hl"></td>
-	  <td></td>
 	  <td class="lt-hl"></td>
-          <td class="lt-hl"></td>
+	  <td class="lt-hl"></td>
           <td class="lt-hl"></td>
           <td class="lt-hl"></td>
           <td class="lt-hl"></td>
@@ -181,7 +176,7 @@
 	  <td></td>
 	  <td class="lt-lr" align="center">Supported</td>
 	  <td class="lt-r" align="center">Supported</td>
-	  <td class="lt-r" align="center">N/A</td>
+	  <td class="lt-r" align="center"></td>
 	  <td class="lt-" align="center">N/A</td>
 	</tr>
 	<tr>
@@ -194,7 +189,7 @@
 	</tr>
 	<tr>
 	  <td class="lt-br" align="left">Generic</td>
-	  <td></td>
+	  <td class="lt-hl"></td>
 	  <td class="lt-blr" align="center">Supported(*6)</td>
 	  <td class="lt-br" align="center">Supported(*6)</td>
 	  <td class="lt-br" align="center"></td>
@@ -211,7 +206,7 @@
   The supported compiler versions are as follows.
 </p>
 
-<br/>
+<div><br/></div>
 
 <ul class="disc">
   <li>GCC : version 5 and later</li>
@@ -220,7 +215,7 @@
   <li>MSVC : Visual Studio 2015</li>
 </ul>
 
-<br/>
+<div><br/></div>
 
 <p>
   *1 FMA4 is not supported by Intel Compiler.
@@ -258,30 +253,66 @@
 </p>
   
 
-<h2 id="history">Credit</h2>
+<h2 id="credit">Credit</h2>
 
 <ul class="disc">
-  <li>The main developer
-  is <a href="https://github.com/shibatch">Naoki Shibata</a>
+  <li>The main developer is <a class="underlined"
+  href="https://github.com/shibatch">Naoki Shibata</a>
+  ( <a href="mailto:shibatch@users.sourceforge.net">shibatch@users.sourceforge.net</a> )
   at Nara Institute of Science and Technology.</li>
-  <li>Francesco Petrogalli at ARM Ltd. contributed the helper for AArch64
-  (helperadvsimd.h). He also reviewed the code, gave precious comments
+  <li><a class="underlined"
+  href="https://github.com/fpetrogalli-arm">Francesco Petrogalli</a>
+  at ARM Ltd. contributed the helper for AArch64 (helperadvsimd.h) and
+  GNUABI interface of the library. He also worked on migrating the
+  build system to cmake, and reviewed the code, gave precious comments
   and suggestions.</li>
-  <li>Hal Finkel at Argonne Leadership Computing Facility is now
-  working on <a class="underlined"
+  <li><a class="underlined" href="https://github.com/hfinkel">Hal Finkel</a> at Argonne
+  Leadership Computing Facility is now working
+  on <a class="underlined"
   href="https://reviews.llvm.org/D24951">importing and adapting SLEEF
   as an LLVM runtime</a>. He also gave precious comments.</li>
+  <li><a class="underlined" href="https://github.com/diaena">Diana
+  Bite</a> at University of Manchester and <a class="underlined"
+  href="https://github.com/xoofx">Alexandre Mutel</a> at Unity
+  Technologies worked on migrating the build system to
+  cmake.</li>
+  <li><a class="underlined" href="https://github.com/blu">Martin
+  Krastev</a> at Chaos Group contributed faster implementation of fmin
+  and fmax functions.</li>
 </ul>
 
 <h2 id="license">License</h2>
 
 <p class="noindent">
-SLEEF is distributed
-under <a class="underlined" href="http://www.boost.org/LICENSE_1_0.txt">Boost Software
-License Version 1.0</a>.
+SLEEF is distributed under <a class="underlined"
+href="http://www.boost.org/LICENSE_1_0.txt">Boost Software License
+    Version 1.0</a>.
+</p>
+
+<p class="noindent" style="margin-top: 0.8cm;">
+  <a class="nothing" href="https://opensource.org/">
+    <img src="osi_logo.png" width="90" height="103" alt="open source logo" style="position:relative; top:3px;"/>
+  </a>
+&nbsp; Boost Software License is <a class="underlined"
+href="https://opensource.org/licenses/BSL-1.0">OSI-certified</a>.
+See <a class="underlined"
+href="http://www.boost.org/users/license.html">this page</a> for more
+information about Boost Software License.
 </p>
 
 <h2 id="history">History</h2>
+
+<h4>3.2 (Not released yet)</h4>
+<ul class="disc">
+  <li>GNUABI version of the library is added.</li>
+  <li>fmod(FP remainder), asin, acos, log, pow, log10, exp2, exp10 and log1p functions are now faster.</li>
+  <li>log2 is added.</li>
+  <li>Fixed a bug that was preventing the dispatcher from choosing the
+  FMA4 implementation.</li>
+  <li>Fixed a bug that was making the error of sinpi, cospi, sincospi,
+  and tgamma functions larger than the specifications on very rare
+    occasions.</li>
+</ul>
 
 <h4>3.1 (Released on July 19, 2017)</h4>
 <ul class="disc">
@@ -337,9 +368,11 @@ License Version 1.0</a>.
   PowerPC/QPX</a>. SLEEF is running on Mira IBM BG/Q supercomputer at
   Argonne National Laboratory.</li>
   <li>SLEEF is adopted in <a class="underlined"
-  href="http://www.menuetos.net/sc151.html">MenuetOS</a>.</li>
-  <br/>
-  <li><a class="underlined"
+  href="http://www.menuetos.net/sc151.html">MenuetOS</a>, <a class="underlined"
+  href="https://github.com/Beep6581/RawTherapee/tree/dev/rtengine">RawTherapee</a> and 
+  <a class="underlined"
+  href="http://buraphakit.sourceforge.net/BASIC.shtml">John's ECMA-55 Minimal BASIC Compiler</a>.</li>
+  <li style="margin-top: 1em;"><a class="underlined"
   href="https://software.intel.com/en-us/node/524289">Intel Short
   Vector Math Library (SVML)</a> is a commercial library of vectorized
   math functions, which provides similar functionality to
@@ -349,9 +382,11 @@ License Version 1.0</a>.
   a part of glibc</a>.</li>
 </ul>
 
-<a href="https://sourceforge.net/p/sleef/" rel="nofollow">
-  <img src="https://sourceforge.net/sflogo.php?type=10&amp;group_id=2867658" alt="Download sleef" style="margin-top:0.5cm; float: right;"/>
-</a>
+<div>
+  <a href="https://sourceforge.net/p/sleef/" rel="nofollow">
+    <img src="https://sourceforge.net/sflogo.php?type=10&amp;group_id=2867658" alt="Download sleef" style="margin-top:0.5cm; float: right;"/>
+  </a>
+</div>
 
 <!--TEST-->
 

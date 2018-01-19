@@ -189,7 +189,7 @@ td.lt-r { margin: 0px; padding: 4px; padding-left:0.3cm; padding-right:0.3cm; bo
 td.lt-l { margin: 0px; padding: 4px; padding-left:0.3cm; padding-right:0.3cm; border-style: none; border-left-style: solid; border-width: 1px; border-color: black; }
 td.lt-lr { margin: 0px; padding: 4px; padding-left:0.3cm; padding-right:0.3cm; border-style: none; border-right-style: solid; border-left-style: solid; border-width: 1px; border-color: black; }
 td.lt-b { margin: 0px; padding: 4px; padding-left:0.3cm; padding-right:0.3cm; border-style: none; border-bottom-style: solid; border-width: 1px; border-color: black; }
-td.lt-hl { margin: 0px; border-style: none; border-bottom-style: solid; border-width: 1px; border-color: black; height: 2px; }
+td.lt-hl { margin: 0px; border-style: none; border-bottom-style: solid; border-width: 1px; border-color: black; height: 0px; }
 td.lt-bl { margin: 0px; padding: 4px; padding-left:0.3cm; padding-right:0.3cm; border-style: none; border-bottom-style: solid; border-left-style: solid; border-width: 1px; border-color: black; }
 td.lt-br { margin: 0px; padding: 4px; padding-left:0.3cm; padding-right:0.3cm; border-style: none; border-bottom-style: solid; border-right-style: solid; border-width: 1px; border-color: black; }
 td.lt-blr { margin: 0px; padding: 4px; padding-left:0.3cm; padding-right:0.3cm; border-style: none; border-bottom-style: solid; border-left-style: solid; border-right-style: solid; border-width: 1px; border-color: black; }
@@ -203,7 +203,6 @@ pre.command {
     font-family: arial, sansserif;
     font-size: 12pt;
     font-weight: normal;
-    background-color:#fbf2ef;
     box-shadow: 3px 3px 3px #aaa;
 }
 
