@@ -34,6 +34,10 @@ p.synopsis {
     text-indent:0pt;
 }
 
+pre {
+    background-color:#ffffee;
+}
+
 pre.white {
     font-family: Ubuntu, arial, sansserif;
 }

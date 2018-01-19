@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN" "http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta name="viewport" content="width=1024" />
+<meta name="google" content="notranslate" />
+<link rel="canonical" href="http://sleef.org/benchmark.xhtml" />
 <link rel="icon" href="favicon.png" />
 <link rel="stylesheet" type="text/css" href="texlike.css"/>
 <link rel="stylesheet" type="text/css" href="sleef.css"/>
@@ -15,13 +17,13 @@
 <h2>Table of contents</h2>
 
 <ul class="none" style="font-family: arial, sansserif; padding-left: 0.5cm;">
-  <li><a href="index.xhtml">Introduction</a></li>
-  <li><a href="compile.xhtml">Compiling and installing the library</a></li>
-  <li><a href="purec.xhtml">Math library reference</a></li>
-  <li><a href="dft.xhtml">DFT library reference</a></li>
-  <li><a href="misc.xhtml">Other tools included in the package</a></li>
-  <li><a href="benchmark.xhtml">Benchmark results</a></li>
-  <li><a href="additional.xhtml">Additional notes</a></li>
+  <li><a class="underlined" href="index.xhtml">Introduction</a></li>
+  <li><a class="underlined" href="compile.xhtml">Compiling and installing the library</a></li>
+  <li><a class="underlined" href="purec.xhtml">Math library reference</a></li>
+  <li><a class="underlined" href="dft.xhtml">DFT library reference</a></li>
+  <li><a class="underlined" href="misc.xhtml">Other tools included in the package</a></li>
+  <li><a class="underlined" href="benchmark.xhtml">Benchmark results</a></li>
+  <li><a class="underlined" href="additional.xhtml">Additional notes</a></li>
 </ul>
 
   <h2>Benchmark results</h2>
@@ -29,8 +31,8 @@
   <p class="noindent" style="font-size:1em; margin-top:0.5cm;">
     These graphs show comparison of the execution time between
     <a class="undecorated"
-    href="https://github.com/shibatch/sleef">SLEEF</a>-3.1 and Intel
-    SVML.
+    href="https://github.com/shibatch/sleef">SLEEF</a>-3.2 and Intel
+    SVML included in Intel C Compiler 17.0.1.
   </p>
 
   <p style="font-size:1em;">
@@ -85,32 +87,32 @@
   <p style="margin-bottom:1cm;">&nbsp;</p>
   
   <p style="text-align:center; margin-bottom:2cm;">
-    <a class="nothing" href="bench_s1.png">
-      <img src="bench_s1.png" alt="Performance graph for DP trigonometric functions" width="50%" height="50%"/>
+    <a class="nothing" href="trigdp.png">
+      <img src="trigdp.png" alt="Performance graph for DP trigonometric functions" width="50%" height="50%"/>
     </a>
     <br />
     Fig. 6.1: Execution time of double precision trigonometric functions
   </p>
   
   <p style="text-align:center; margin-bottom:2cm;">
-    <a class="nothing" href="bench_s3.png">
-      <img src="bench_s3.png" alt="Performance graph for SP trigonometric functions" width="50%" height="50%"/>
+    <a class="nothing" href="trigsp.png">
+      <img src="trigsp.png" alt="Performance graph for SP trigonometric functions" width="50%" height="50%"/>
     </a>
     <br />
     Fig. 6.2: Execution time of single precision trigonometric functions
   </p>
   
   <p style="text-align:center; margin-bottom:2cm;">
-    <a class="nothing" href="bench_s2.png">
-      <img src="bench_s2.png" alt="Performance graph for other DP functions" width="50%" height="50%"/>
+    <a class="nothing" href="nontrigdp.png">
+      <img src="nontrigdp.png" alt="Performance graph for other DP functions" width="50%" height="50%"/>
     </a>
     <br />
     Fig. 6.3: Execution time of double precision log, exp, pow and inverse trigonometric functions
   </p>
 
   <p style="text-align:center; margin-bottom:2cm;">
-    <a class="nothing" href="bench_s4.png">
-      <img src="bench_s4.png" alt="Performance graph for other SP functions" width="50%" height="50%"/>
+    <a class="nothing" href="nontrigsp.png">
+      <img src="nontrigsp.png" alt="Performance graph for other SP functions" width="50%" height="50%"/>
     </a>
     <br />
     Fig. 6.4: Execution time of single precision log, exp, pow and inverse trigonometric functions
