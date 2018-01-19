@@ -28,9 +28,9 @@ static INLINE CONST int64_t xceill(long double x) { return (int64_t)x + (x < 0 ?
 static INLINE CONST long double xtruncl(long double x) { return (long double)(int)x; }
 
 static INLINE CONST int xisnanl(long double x) { return x != x; }
-static INLINE CONST int xisinfl(long double x) { return x == INFINITYl || x == -INFINITYl; }
-static INLINE CONST int xisminfl(long double x) { return x == -INFINITYl; }
-static INLINE CONST int xispinfl(long double x) { return x == INFINITYl; }
+static INLINE CONST int xisinfl(long double x) { return x == SLEEF_INFINITYl || x == -SLEEF_INFINITYl; }
+static INLINE CONST int xisminfl(long double x) { return x == -SLEEF_INFINITYl; }
+static INLINE CONST int xispinfl(long double x) { return x == SLEEF_INFINITYl; }
 
 static INLINE CONST long double xfabsl(long double x) { return fabsl(x); }
 
@@ -363,7 +363,7 @@ EXPORT CONST Sleef_longdouble2 xsincospil_u05(long double d) {
   if ((q & 4) != 0) { r.x = -r.x; }
   if (((q+2) & 4) != 0) { r.y = -r.y; }
 
-  if (xisinfl(d)) { r.x = r.y = NAN; }
+  if (xisinfl(d)) { r.x = r.y = SLEEF_NAN; }
   if (!xisinfl(d) && xfabsl(d) > TRIGRANGEMAX3) { r.x = r.y = 0; }
 
   return r;
@@ -413,7 +413,7 @@ EXPORT CONST Sleef_longdouble2 xsincospil_u35(long double d) {
   if ((q & 4) != 0) { r.x = -r.x; }
   if (((q+2) & 4) != 0) { r.y = -r.y; }
 
-  if (xisinfl(d)) { r.x = r.y = NAN; }
+  if (xisinfl(d)) { r.x = r.y = SLEEF_NAN; }
   if (!xisinfl(d) && xfabsl(d) > TRIGRANGEMAX3) { r.x = r.y = 0; }
 
   return r;

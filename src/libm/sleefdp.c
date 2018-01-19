@@ -8,9 +8,15 @@
 #include <stdio.h>
 #include <assert.h>
 #include <stdint.h>
-#include <math.h>
 #include <limits.h>
 #include <float.h>
+
+#ifndef ENABLE_BUILTIN_MATH
+#include <math.h>
+#define SQRT sqrt
+#else
+#define SQRT __builtin_sqrt
+#endif
 
 #include "misc.h"
 
@@ -61,9 +67,9 @@ static INLINE CONST double fmink(double x, double y) { return x < y ? x : y; }
 static INLINE CONST double fmaxk(double x, double y) { return x > y ? x : y; }
 
 static INLINE CONST int xisnan(double x) { return x != x; }
-static INLINE CONST int xisinf(double x) { return x == INFINITY || x == -INFINITY; }
-static INLINE CONST int xisminf(double x) { return x == -INFINITY; }
-static INLINE CONST int xispinf(double x) { return x == INFINITY; }
+static INLINE CONST int xisinf(double x) { return x == SLEEF_INFINITY || x == -SLEEF_INFINITY; }
+static INLINE CONST int xisminf(double x) { return x == -SLEEF_INFINITY; }
+static INLINE CONST int xispinf(double x) { return x == SLEEF_INFINITY; }
 static INLINE CONST int xisnegzero(double x) { return doubleToRawLongBits(x) == doubleToRawLongBits(-0.0); }
 static INLINE CONST int xisnumber(double x) { return !xisinf(x) && !xisnan(x); }
 
@@ -135,8 +141,8 @@ static INLINE CONST int ilogb2k(double d) {
 
 EXPORT CONST int xilogb(double d) {
   int e = ilogbk(fabsk(d));
-  e = d == 0.0  ? FP_ILOGB0 : e;
-  e = xisnan(d) ? FP_ILOGBNAN : e;
+  e = d == 0.0  ? SLEEF_FP_ILOGB0 : e;
+  e = xisnan(d) ? SLEEF_FP_ILOGBNAN : e;
   e = xisinf(d) ? INT_MAX : e;
   return e;
 }
@@ -442,12 +448,12 @@ static INLINE CONST Sleef_double2 ddrec_d2_d2(Sleef_double2 d) {
 }
 
 static INLINE CONST Sleef_double2 ddsqrt_d2_d2(Sleef_double2 d) {
-  double t = sqrt(d.x + d.y);
+  double t = SQRT(d.x + d.y);
   return ddscale_d2_d2_d(ddmul_d2_d2_d2(ddadd2_d2_d2_d2(d, ddmul_d2_d_d(t, t)), ddrec_d2_d(t)), 0.5);
 }
 
 static INLINE CONST Sleef_double2 ddsqrt_d2_d(double d) {
-  double t = sqrt(d);
+  double t = SQRT(d);
   return ddscale_d2_d2_d(ddmul_d2_d2_d2(ddadd2_d2_d_d2(d, ddmul_d2_d_d(t, t)), ddrec_d2_d(t)), 0.5);
 }
 
@@ -497,12 +503,12 @@ EXPORT CONST double xatan2(double y, double x) {
   if (xisinf(y)          ) r = M_PI/2 - (xisinf(x) ? (sign(x) * (M_PI*1/4)) : 0);
   if (             y == 0) r = (sign(x) == -1 ? M_PI : 0);
 
-  return xisnan(x) || xisnan(y) ? NAN : mulsign(r, y);
+  return xisnan(x) || xisnan(y) ? SLEEF_NAN : mulsign(r, y);
 }
 
 EXPORT CONST double xasin(double d) {
   int o = fabsk(d) < 0.5;
-  double x2 = o ? (d*d) : ((1-fabsk(d))*0.5), x = o ? fabsk(d) : sqrt(x2), u;
+  double x2 = o ? (d*d) : ((1-fabsk(d))*0.5), x = o ? fabsk(d) : SQRT(x2), u;
 
   u = +0.3161587650653934628e-1;
   u = mla(u, x2, -0.1581918243329996643e-1);
@@ -527,7 +533,7 @@ EXPORT CONST double xasin(double d) {
 EXPORT CONST double xacos(double d) {
   int o = fabsk(d) < 0.5;
   double x2 = o ? (d*d) : ((1-fabsk(d))*0.5), u;
-  double x = o ? fabsk(d) : sqrt(x2);
+  double x = o ? fabsk(d) : SQRT(x2);
   x = fabsk(d) == 1.0 ? 0 : x;
 
   u = +0.3161587650653934628e-1;
@@ -641,7 +647,7 @@ EXPORT CONST double xatan2_u1(double y, double x) {
   if (xisinf(y)          ) r = M_PI/2 - (xisinf(x) ? (sign(x) * (M_PI*1/4)) : 0);
   if (             y == 0) r = (sign(x) == -1 ? M_PI : 0);
 
-  return xisnan(x) || xisnan(y) ? NAN : mulsign(r, y);
+  return xisnan(x) || xisnan(y) ? SLEEF_NAN : mulsign(r, y);
 }
 
 EXPORT CONST double xasin_u1(double d) {
@@ -916,7 +922,7 @@ EXPORT CONST Sleef_double2 xsincos(double d) {
   if (((ql+1) & 2) != 0) { r.y = -r.y; }
 
   if (fabsk(d) > TRIGRANGEMAX) { r.x = 0; r.y = 1; }
-  if (xisinf(d)) { r.x = r.y = NAN; }
+  if (xisinf(d)) { r.x = r.y = SLEEF_NAN; }
 
   return r;
 }
@@ -977,7 +983,7 @@ EXPORT CONST Sleef_double2 xsincos_u1(double d) {
   if (((ql+1) & 2) != 0) { r.y = -r.y; }
 
   if (fabsk(d) > TRIGRANGEMAX) { r.x = 0; r.y = 1; }
-  if (xisinf(d)) { r.x = r.y = NAN; }
+  if (xisinf(d)) { r.x = r.y = SLEEF_NAN; }
 
   return r;
 }
@@ -1031,7 +1037,7 @@ EXPORT CONST Sleef_double2 xsincospi_u05(double d) {
   if (((q+2) & 4) != 0) { r.y = -r.y; }
 
   if (fabsk(d) > TRIGRANGEMAX3/4) { r.x = 0; r.y = 1; }
-  if (xisinf(d)) { r.x = r.y = NAN; }
+  if (xisinf(d)) { r.x = r.y = SLEEF_NAN; }
 
   return r;
 }
@@ -1079,7 +1085,7 @@ EXPORT CONST Sleef_double2 xsincospi_u35(double d) {
   if (((q+2) & 4) != 0) { r.y = -r.y; }
 
   if (fabsk(d) > TRIGRANGEMAX3/4) { r.x = 0; r.y = 1; }
-  if (xisinf(d)) { r.x = r.y = NAN; }
+  if (xisinf(d)) { r.x = r.y = SLEEF_NAN; }
 
   return r;
 }
@@ -1126,7 +1132,7 @@ EXPORT CONST double xsinpi_u05(double d) {
 
   if (xisnegzero(d)) r = -0.0;
   if (fabsk(d) > TRIGRANGEMAX3/4) r = 0; 
-  if (xisinf(d)) r = NAN;
+  if (xisinf(d)) r = SLEEF_NAN;
 
   return r;
 }
@@ -1172,7 +1178,7 @@ EXPORT CONST double xcospi_u05(double d) {
   double r = x.x + x.y;
 
   if (fabsk(d) > TRIGRANGEMAX3/4) r = 1; 
-  if (xisinf(d)) r = NAN;
+  if (xisinf(d)) r = SLEEF_NAN;
 
   return r;
 }
@@ -1216,7 +1222,7 @@ EXPORT CONST double xtan(double d) {
 
   if ((ql & 1) != 0) u = 1.0 / u;
 
-  if (xisinf(d)) u = NAN;
+  if (xisinf(d)) u = SLEEF_NAN;
 
   return u;
 }
@@ -1302,9 +1308,9 @@ EXPORT CONST double xlog(double d) {
   
   x = x * t + 0.693147180559945286226764 * e;
   
-  if (xisinf(d)) x = INFINITY;
-  if (d < 0 || xisnan(d)) x = NAN;
-  if (d == 0) x = -INFINITY;
+  if (xisinf(d)) x = SLEEF_INFINITY;
+  if (d < 0 || xisnan(d)) x = SLEEF_NAN;
+  if (d == 0) x = -SLEEF_INFINITY;
 
   return x;
 }
@@ -1331,7 +1337,7 @@ EXPORT CONST double xexp(double d) {
   u = s * s * u + s + 1;
   u = ldexp2k(u, q);
 
-  if (d > 709.78271114955742909217217426) u = INFINITY;
+  if (d > 709.78271114955742909217217426) u = SLEEF_INFINITY;
   if (d < -1000) u = 0;
   
   return u;
@@ -1401,9 +1407,9 @@ EXPORT CONST double xlog_u1(double d) {
 
   double r = s.x + s.y;
   
-  if (xisinf(d)) r = INFINITY;
-  if (d < 0 || xisnan(d)) r = NAN;
-  if (d == 0) r = -INFINITY;
+  if (xisinf(d)) r = SLEEF_INFINITY;
+  if (d < 0 || xisnan(d)) r = SLEEF_NAN;
+  if (d == 0) r = -SLEEF_INFINITY;
 
   return r;
 }
@@ -1446,15 +1452,15 @@ EXPORT CONST double xpow(double x, double y) {
 
   Sleef_double2 d = ddmul_d2_d2_d(logk(fabsk(x)), y);
   double result = expk(d);
-  if (d.x > 709.78271114955742909217217426) result = INFINITY;
+  if (d.x > 709.78271114955742909217217426) result = SLEEF_INFINITY;
 
-  result = xisnan(result) ? INFINITY : result;
-  result *= (x > 0 ? 1 : (!yisint ? NAN : (yisodd ? -1 : 1)));
+  result = xisnan(result) ? SLEEF_INFINITY : result;
+  result *= (x > 0 ? 1 : (!yisint ? SLEEF_NAN : (yisodd ? -1 : 1)));
 
   double efx = mulsign(fabsk(x) - 1, y);
-  if (xisinf(y)) result = efx < 0 ? 0.0 : (efx == 0 ? 1.0 : INFINITY);
-  if (xisinf(x) || x == 0) result = (yisodd ? sign(x) : 1) * ((x == 0 ? -y : y) < 0 ? 0 : INFINITY);
-  if (xisnan(x) || xisnan(y)) result = NAN;
+  if (xisinf(y)) result = efx < 0 ? 0.0 : (efx == 0 ? 1.0 : SLEEF_INFINITY);
+  if (xisinf(x) || x == 0) result = (yisodd ? sign(x) : 1) * ((x == 0 ? -y : y) < 0 ? 0 : SLEEF_INFINITY);
+  if (xisnan(x) || xisnan(y)) result = SLEEF_NAN;
   if (y == 0 || x == 1) result = 1;
 
   return result;
@@ -1497,10 +1503,10 @@ EXPORT CONST double xsinh(double x) {
   d = ddsub_d2_d2_d2(d, ddrec_d2_d2(d));
   y = (d.x + d.y) * 0.5;
 
-  y = fabsk(x) > 710 ? INFINITY : y;
-  y = xisnan(y) ? INFINITY : y;
+  y = fabsk(x) > 710 ? SLEEF_INFINITY : y;
+  y = xisnan(y) ? SLEEF_INFINITY : y;
   y = mulsign(y, x);
-  y = xisnan(x) ? NAN : y;
+  y = xisnan(x) ? SLEEF_NAN : y;
 
   return y;
 }
@@ -1511,9 +1517,9 @@ EXPORT CONST double xcosh(double x) {
   d = ddadd_d2_d2_d2(d, ddrec_d2_d2(d));
   y = (d.x + d.y) * 0.5;
 
-  y = fabsk(x) > 710 ? INFINITY : y;
-  y = xisnan(y) ? INFINITY : y;
-  y = xisnan(x) ? NAN : y;
+  y = fabsk(x) > 710 ? SLEEF_INFINITY : y;
+  y = xisnan(y) ? SLEEF_INFINITY : y;
+  y = xisnan(x) ? SLEEF_NAN : y;
 
   return y;
 }
@@ -1528,7 +1534,7 @@ EXPORT CONST double xtanh(double x) {
   y = fabsk(x) > 18.714973875 ? 1.0 : y;
   y = xisnan(y) ? 1.0 : y;
   y = mulsign(y, x);
-  y = xisnan(x) ? NAN : y;
+  y = xisnan(x) ? SLEEF_NAN : y;
 
   return y;
 }
@@ -1573,8 +1579,8 @@ EXPORT CONST double xasinh(double x) {
   d = logk2(ddnormalize_d2_d2(ddadd_d2_d2_d(d, x)));
   y = d.x + d.y;
 
-  y = (fabsk(x) > SQRT_DBL_MAX || xisnan(y)) ? mulsign(INFINITY, x) : y;
-  y = xisnan(x) ? NAN : y;
+  y = (fabsk(x) > SQRT_DBL_MAX || xisnan(y)) ? mulsign(SLEEF_INFINITY, x) : y;
+  y = xisnan(x) ? SLEEF_NAN : y;
   y = xisnegzero(x) ? -0.0 : y;
   
   return y;
@@ -1584,10 +1590,10 @@ EXPORT CONST double xacosh(double x) {
   Sleef_double2 d = logk2(ddadd2_d2_d2_d(ddmul_d2_d2_d2(ddsqrt_d2_d2(ddadd2_d2_d_d(x, 1)), ddsqrt_d2_d2(ddadd2_d2_d_d(x, -1))), x));
   double y = d.x + d.y;
 
-  y = (x > SQRT_DBL_MAX || xisnan(y)) ? INFINITY : y;
+  y = (x > SQRT_DBL_MAX || xisnan(y)) ? SLEEF_INFINITY : y;
   y = x == 1.0 ? 0.0 : y;
-  y = x < 1.0 ? NAN : y;
-  y = xisnan(x) ? NAN : y;
+  y = x < 1.0 ? SLEEF_NAN : y;
+  y = xisnan(x) ? SLEEF_NAN : y;
 
   return y;
 }
@@ -1595,10 +1601,10 @@ EXPORT CONST double xacosh(double x) {
 EXPORT CONST double xatanh(double x) {
   double y = fabsk(x);
   Sleef_double2 d = logk2(dddiv_d2_d2_d2(ddadd2_d2_d_d(1, y), ddadd2_d2_d_d(1, -y)));
-  y = y > 1.0 ? NAN : (y == 1.0 ? INFINITY : (d.x + d.y) * 0.5);
+  y = y > 1.0 ? SLEEF_NAN : (y == 1.0 ? SLEEF_INFINITY : (d.x + d.y) * 0.5);
 
   y = mulsign(y, x);
-  y = (xisinf(x) || xisnan(y)) ? NAN : y;
+  y = (xisinf(x) || xisnan(y)) ? SLEEF_NAN : y;
 
   return y;
 }
@@ -1670,7 +1676,7 @@ EXPORT CONST double xcbrt_u1(double d) {
   v = ddmul_d2_d2_d2(v, q2);
   z = ldexp2k(v.x + v.y, (e + 6144) / 3 - 2048);
 
-  if (xisinf(d)) { z = mulsign(INFINITY, q2.x); }
+  if (xisinf(d)) { z = mulsign(SLEEF_INFINITY, q2.x); }
   if (d == 0) { z = mulsign(0, q2.x); }
 
   return z;
@@ -1697,7 +1703,7 @@ EXPORT CONST double xexp2(double d) {
 
   u = ldexp2k(u, q);
 
-  if (d >= 1024) u = INFINITY;
+  if (d >= 1024) u = SLEEF_INFINITY;
   if (d < -2000) u = 0;
   
   return u;
@@ -1725,7 +1731,7 @@ EXPORT CONST double xexp10(double d) {
   
   u = ldexp2k(u, q);
   
-  if (d > 308.25471555991671) u = INFINITY; // log10(DBL_MAX)
+  if (d > 308.25471555991671) u = SLEEF_INFINITY; // log10(DBL_MAX)
   if (d < -350) u = 0;
   
   return u;
@@ -1734,7 +1740,7 @@ EXPORT CONST double xexp10(double d) {
 EXPORT CONST double xexpm1(double a) {
   Sleef_double2 d = ddadd2_d2_d2_d(expk2(dd(a, 0)), -1.0);
   double x = d.x + d.y;
-  if (a > 709.782712893383996732223) x = INFINITY; // log(DBL_MAX)
+  if (a > 709.782712893383996732223) x = SLEEF_INFINITY; // log(DBL_MAX)
   if (a < -36.736800569677101399113302437) x = -1; // log(1 - nexttoward(1, 0))
   if (xisnegzero(a)) x = -0.0;
   return x;
@@ -1770,9 +1776,9 @@ EXPORT CONST double xlog10(double d) {
 
   double r = s.x + s.y;
   
-  if (xisinf(d)) r = INFINITY;
-  if (d < 0 || xisnan(d)) r = NAN;
-  if (d == 0) r = -INFINITY;
+  if (xisinf(d)) r = SLEEF_INFINITY;
+  if (d < 0 || xisnan(d)) r = SLEEF_NAN;
+  if (d == 0) r = -SLEEF_INFINITY;
 
   return r;
 }
@@ -1805,9 +1811,9 @@ EXPORT CONST double xlog2(double d) {
   
   double r = s.x + s.y;
   
-  if (xisinf(d)) r = INFINITY;
-  if (d < 0 || xisnan(d)) r = NAN;
-  if (d == 0) r = -INFINITY;
+  if (xisinf(d)) r = SLEEF_INFINITY;
+  if (d < 0 || xisnan(d)) r = SLEEF_NAN;
+  if (d == 0) r = -SLEEF_INFINITY;
 
   return r;
 }
@@ -1846,9 +1852,9 @@ EXPORT CONST double xlog1p(double d) {
 
   double r = s.x + s.y;
   
-  if (d > 1e+307) r = INFINITY;
-  if (d < -1 || xisnan(d)) r = NAN;
-  if (d == -1) r = -INFINITY;
+  if (d > 1e+307) r = SLEEF_INFINITY;
+  if (d < -1 || xisnan(d)) r = SLEEF_NAN;
+  if (d == -1) r = -SLEEF_INFINITY;
   if (xisnegzero(d)) r = -0.0;
 
   return r;
@@ -1882,7 +1888,7 @@ EXPORT CONST double xfma(double x, double y, double z) {
 EXPORT CONST double xsqrt_u05(double d) {
   double q = 0.5;
 
-  d = d < 0 ? NAN : d;
+  d = d < 0 ? SLEEF_NAN : d;
   
   if (d < 8.636168555094445E-78) {
     d *= 1.157920892373162E77;
@@ -1905,7 +1911,7 @@ EXPORT CONST double xsqrt_u05(double d) {
 
   double ret = (d2.x + d2.y) * q;
 
-  ret = d == INFINITY ? INFINITY : ret;
+  ret = d == SLEEF_INFINITY ? SLEEF_INFINITY : ret;
   ret = d == 0 ? d : ret;
 
   return ret;
@@ -1979,10 +1985,10 @@ EXPORT CONST double xhypot_u05(double x, double y) {
   Sleef_double2 t = dddiv_d2_d2_d2(dd(n, 0), dd(d, 0));
   t = ddmul_d2_d2_d(ddsqrt_d2_d2(ddadd2_d2_d2_d(ddsqu_d2_d2(t), 1)), max);
   double ret = t.x + t.y;
-  if (xisnan(ret)) ret = INFINITY;
+  if (xisnan(ret)) ret = SLEEF_INFINITY;
   if (min == 0) ret = max;
-  if (xisnan(x) || xisnan(y)) ret = NAN;
-  if (x == INFINITY || y == INFINITY) ret = INFINITY;
+  if (xisnan(x) || xisnan(y)) ret = SLEEF_NAN;
+  if (x == SLEEF_INFINITY || y == SLEEF_INFINITY) ret = SLEEF_INFINITY;
   return ret;
 }
 
@@ -1993,10 +1999,10 @@ EXPORT CONST double xhypot_u35(double x, double y) {
   double max = fmaxk(x, y);
 
   double t = min / max;
-  double ret = max * sqrt(1 + t*t);
+  double ret = max * SQRT(1 + t*t);
   if (min == 0) ret = max;
-  if (xisnan(x) || xisnan(y)) ret = NAN;
-  if (x == INFINITY || y == INFINITY) ret = INFINITY;
+  if (xisnan(x) || xisnan(y)) ret = SLEEF_NAN;
+  if (x == SLEEF_INFINITY || y == SLEEF_INFINITY) ret = SLEEF_INFINITY;
   return ret;
 }
 
@@ -2017,7 +2023,7 @@ EXPORT CONST double xnextafter(double x, double y) {
 
   if (cx.f == 0 && x != 0) cx.f = mulsign(0, x);
   if (x == 0 && y == 0) cx.f = y;
-  if (xisnan(x) || xisnan(y)) cx.f = NAN;
+  if (xisnan(x) || xisnan(y)) cx.f = SLEEF_NAN;
   
   return cx.f;
 }
@@ -2034,7 +2040,7 @@ EXPORT CONST double xfrfrexp(double x) {
   cx.u &= ~0x7ff0000000000000ULL;
   cx.u |=  0x3fe0000000000000ULL;
 
-  if (xisinf(x)) cx.f = mulsign(INFINITY, x);
+  if (xisinf(x)) cx.f = mulsign(SLEEF_INFINITY, x);
   if (x == 0) cx.f = x;
   
   return cx.f;
@@ -2087,7 +2093,7 @@ EXPORT CONST double xfmod(double x, double y) {
   if (r.x + r.y == de) ret = 0;
   ret = mulsign(ret, x);
   if (nu < de) ret = x;
-  if (de == 0) ret = NAN;
+  if (de == 0) ret = SLEEF_NAN;
   
   return ret;
 }
@@ -2180,8 +2186,8 @@ EXPORT CONST double xtgamma_u1(double a) {
   dd2 d = gammak(a);
   Sleef_double2 y = ddmul_d2_d2_d2(expk2(d.a), d.b);
   double r = y.x + y.y;
-  r = (a == -INFINITY || (a < 0 && xisint(a)) || (xisnumber(a) && a < 0 && xisnan(r))) ? NAN : r;
-  r = ((a == INFINITY || xisnumber(a)) && a >= -DBL_MIN && (a == 0 || a > 200 || xisnan(r))) ? mulsign(INFINITY, a) : r;
+  r = (a == -SLEEF_INFINITY || (a < 0 && xisint(a)) || (xisnumber(a) && a < 0 && xisnan(r))) ? SLEEF_NAN : r;
+  r = ((a == SLEEF_INFINITY || xisnumber(a)) && a >= -DBL_MIN && (a == 0 || a > 200 || xisnan(r))) ? mulsign(SLEEF_INFINITY, a) : r;
   return r;
 }
 
@@ -2189,7 +2195,7 @@ EXPORT CONST double xlgamma_u1(double a) {
   dd2 d = gammak(a);
   Sleef_double2 y = ddadd2_d2_d2_d2(d.a, logk2(ddabs_d2_d2(d.b)));
   double r = y.x + y.y;
-  r = (xisinf(a) || (a <= 0 && xisint(a)) || (xisnumber(a) && xisnan(r))) ? INFINITY : r;
+  r = (xisinf(a) || (a <= 0 && xisint(a)) || (xisnumber(a) && xisnan(r))) ? SLEEF_INFINITY : r;
   return r;
 }
 
@@ -2227,7 +2233,7 @@ EXPORT CONST double xerf_u1(double a) {
 		      dd(0.00024963035690526438285, -5.4362665034856259795e-21));
   d = o0 ? ddmul_d2_d2_d(d, a) : ddadd_d2_d_d2(1.0, ddneg_d2_d2(expk2(d)));
   u = mulsign(o2 ? (d.x + d.y) : 1, s);
-  u = xisnan(a) ? NAN : u;
+  u = xisnan(a) ? SLEEF_NAN : u;
   return u;
 }
 
@@ -2280,7 +2286,7 @@ EXPORT CONST double xerfc_u15(double a) {
 
   r = o3 ? (x.x + x.y) : 0;
   if (s < 0) r = 2 - r;
-  r = xisnan(s) ? NAN : r;
+  r = xisnan(s) ? SLEEF_NAN : r;
   return r;
 }
 

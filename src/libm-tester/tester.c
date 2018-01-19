@@ -28,6 +28,10 @@
 #include "misc.h"
 #include "testerutil.h"
 
+#ifndef NANf
+#define NANf ((float)NAN)
+#endif
+
 void stop(char *mes) {
   fprintf(stderr, "%s\n", mes);
   exit(-1);
