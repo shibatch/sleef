@@ -76,7 +76,7 @@ $ make install
 
 7. You can execute the tests by running:
 ```
-$ make test-libm
+$ make test
 ```
 
 # Build customization
