@@ -53,6 +53,7 @@ if((CMAKE_SYSTEM_PROCESSOR MATCHES "x86") OR (CMAKE_SYSTEM_PROCESSOR MATCHES "AM
     FMA4
     AVX2
     AVX2128
+    AVX512F_
     AVX512F
   )
   command_arguments(HEADER_PARAMS_SSE_      2 4 __m128d __m128 __m128i __m128i __SSE2__)
@@ -63,6 +64,7 @@ if((CMAKE_SYSTEM_PROCESSOR MATCHES "x86") OR (CMAKE_SYSTEM_PROCESSOR MATCHES "AM
   command_arguments(HEADER_PARAMS_FMA4      4 8 __m256d __m256 __m128i "struct { __m128i x, y$<SEMICOLON> }" __AVX__ fma4)
   command_arguments(HEADER_PARAMS_AVX2      4 8 __m256d __m256 __m128i __m256i __AVX__ avx2)
   command_arguments(HEADER_PARAMS_AVX2128   2 4 __m128d __m128 __m128i __m128i __SSE2__ avx2128)
+  command_arguments(HEADER_PARAMS_AVX512F_  8 16 __m512d __m512 __m256i __m512i __AVX512F__)
   command_arguments(HEADER_PARAMS_AVX512F   8 16 __m512d __m512 __m256i __m512i __AVX512F__ avx512f)
 
   command_arguments(ALIAS_PARAMS_AVX512F_DP   8 __m512d __m256i e avx512f)
