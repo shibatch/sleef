@@ -75,8 +75,10 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
   set(COMPILER_SUPPORTS_ADVSIMD 1)
 
   set(SLEEF_HEADER_LIST
+    ADVSIMD_
     ADVSIMD
   )
+  command_arguments(HEADER_PARAMS_ADVSIMD_   2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON)
   command_arguments(HEADER_PARAMS_ADVSIMD    2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON advsimd)
 
   command_arguments(ALIAS_PARAMS_ADVSIMD_DP  2 float64x2_t int32x2_t n advsimd)
@@ -86,8 +88,10 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
   set(COMPILER_SUPPORTS_NEON32 1)
 
   set(SLEEF_HEADER_LIST
+    NEON32_
     NEON32
   )
+  command_arguments(HEADER_PARAMS_NEON32_   2 4 - float32x4_t int32x2_t int32x4_t __ARM_NEON__)
   command_arguments(HEADER_PARAMS_NEON32    2 4 - float32x4_t int32x2_t int32x4_t __ARM_NEON__ neon)
 
   command_arguments(ALIAS_PARAMS_NEON32_SP -4 float32x4_t int32x4_t - neon)
