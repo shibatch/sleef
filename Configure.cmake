@@ -5,6 +5,11 @@ include(CheckTypeSize)
 # Check that the library LIB_MPFR is available
 find_library(LIB_MPFR mpfr)
 find_library(LIBM m)
+find_library(LIBGMP gmp)
+
+find_path(MPFR_INCLUDE_DIR
+  NAMES mpfr.h
+  ONLY_CMAKE_FIND_ROOT_PATH)
 
 if (NOT LIBM)
   set(LIBM "")
