@@ -196,16 +196,6 @@ td.lt-blr { margin: 0px; padding: 4px; padding-left:0.3cm; padding-right:0.3cm; 
 
 //
 
-pre.command {
-    margin: 0.5cm 1.5cm 0.5cm 1.5cm;
-    padding: 1em;
-    border:0px;
-    font-family: arial, sansserif;
-    font-size: 12pt;
-    font-weight: normal;
-    box-shadow: 3px 3px 3px #aaa;
-}
-
 pre.white {
     font-family: arial, sansserif;
     font-size:1.0em;
@@ -216,6 +206,7 @@ pre.white {
     margin: 0.6cm;
     margin-top: 1.0cm;
     padding: 0.1cm;
+    color:black;
 }
 
 pre.code {
@@ -229,6 +220,7 @@ pre.code {
     margin: 1.0cm 1.5cm 1.0cm 1.5cm;
     padding: 1em 1em 2em 1.1em;
     counter-reset: line;
+    color:black;
 }
 
 code {
