@@ -66,7 +66,12 @@ int main(int argc, char **argv) {
   sprintf(argType1[8], "int a0");
 
   //
-  
+
+  if (fptype == 0) {
+    printf("#ifdef __SLEEFSIMDDP_C__\n");
+  } else {
+    printf("#ifdef __SLEEFSIMDSP_C__\n");
+  }
   printf("#ifdef ENABLE_ALIAS\n");
 
   if (argc == 6) {
@@ -118,6 +123,11 @@ int main(int argc, char **argv) {
   }
 
   printf("#endif // #ifdef ENABLE_ALIAS\n");
+  if (fptype == 0) {
+    printf("#endif // #ifdef __SLEEFSIMDDP_C__\n");
+  } else {
+    printf("#endif // #ifdef __SLEEFSIMDSP_C__\n");
+  }
 
   exit(0);
 }

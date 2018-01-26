@@ -12,6 +12,8 @@
 
 #include "misc.h"
 
+#define __SLEEFSIMDSP_C__
+
 #if (defined(_MSC_VER))
 #pragma fp_contract (off)
 #endif
