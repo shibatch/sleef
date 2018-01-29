@@ -46,7 +46,7 @@ before_install:
      - docker cp /tmp/builddir.tgz xenial:/tmp/
      - docker exec xenial mkdir /build
      - docker exec xenial tar xfz /tmp/builddir.tgz -C /build
-     - docker exec xenial sh -c 'chmod +x /build/*'
+     - docker exec xenial sh -c 'chmod +x /build/travis/*'
      - docker exec xenial ls -l /build
      - docker exec xenial ls -l /build/travis
      - docker exec xenial /build/travis/before_install.${LABEL}.sh
