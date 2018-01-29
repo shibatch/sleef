@@ -41,10 +41,11 @@ matrix:
 before_install:
      - docker pull ubuntu:xenial;
      - docker run -d --name xenial -dti ubuntu:xenial bash;
-     - docker exec xenial apt-get update
-     - docker exec xenial apt-get -y install git
+     - cd ${TRAVIS_BUILD_DIR}
+     - tar cfz /tmp/builddir.tgz .
+     - docker cp /tmp/builddir.tgz xenial:/tmp/
      - docker exec xenial mkdir /build
-     - docker exec xenial git -C /build clone -b ${TRAVIS_BRANCH} https://github.com/shibatch/sleef.git ${TRAVIS_REPO_SLUG}
+     - docker exec xenial tar xfz /tmp/builddir.tgz -C /build
      - docker exec xenial sh -c 'chmod +x /build/*'
      - docker exec xenial ls -l /build
      - docker exec xenial ls -l /build/travis
