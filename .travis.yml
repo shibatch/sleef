@@ -3,7 +3,7 @@ language: c
 # Default linux jobs
 os: linux
 sudo: required
-dist: xenial
+dist: trusty
 
 # Include osx jobs
 matrix:
@@ -34,12 +34,18 @@ matrix:
     #   env:
     #     - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
      - os: linux
+       services: docker
        env:
          - LABEL="aarch64-gcc"
 
 before_install:
-     - chmod +x ${TRAVIS_BUILD_DIR}/travis/*.sh
-     - sudo ${TRAVIS_BUILD_DIR}/travis/before_install.${LABEL}.sh
+     - docker pull ubuntu:xenial;
+     - docker run -d --name xenial -dti ubuntu:xenial bash;
+     - docker exec xenial chmod +x ${TRAVIS_BUILD_DIR}/travis/*.sh
+     - docker exec xenial ${TRAVIS_BUILD_DIR}/travis/before_install.${LABEL}.sh
+     
+     #- chmod +x ${TRAVIS_BUILD_DIR}/travis/*.sh
+     #- sudo ${TRAVIS_BUILD_DIR}/travis/before_install.${LABEL}.sh
   # - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then wget -q ${SDE_URL}                            ; fi
   # - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then tar xf sde-external-8.12.0-2017-10-23-lin.tar.bz2; fi
   # - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export PATH=${PATH}:${TRAVIS_BUILD_DIR}/sde-external-8.12.0-2017-10-23-lin; fi
@@ -50,13 +56,15 @@ before_install:
   # - eval "${MATRIX_EVAL}"
 
 before_script:
-     - ${TRAVIS_BUILD_DIR}/travis/before_script.${LABEL}.sh
+     - docker exec xenial ${TRAVIS_BUILD_DIR}/travis/before_script.${LABEL}.sh
+  #   - ${TRAVIS_BUILD_DIR}/travis/before_script.${LABEL}.sh
   # - mkdir sleef.build
   # - cd sleef.build
   # - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 ..
 
 script:
-     - ${TRAVIS_BUILD_DIR}/travis/script.${LABEL}.sh
+     - docker exec xenial ${TRAVIS_BUILD_DIR}/travis/script.${LABEL}.sh
+  #   - ${TRAVIS_BUILD_DIR}/travis/script.${LABEL}.sh
   # - make -j 2 all
   # - export CTEST_OUTPUT_ON_FAILURE=TRUE
   # - ctest --verbose -j 2
