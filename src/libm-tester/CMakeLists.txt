@@ -13,19 +13,39 @@ endif(NOT LIB_MPFR)
 set(CMAKE_C_FLAGS ORG_CMAKE_C_FLAGS)
 string(CONCAT CMAKE_C_FLAGS ${SLEEF_C_FLAGS})
 
+#
+
+function(add_test_iut IUT)
+  if (LIB_MPFR)
+    set(TESTER ${TARGET_TESTER})
+  elseif(TESTER_COMMAND)
+    set(TESTER ${TESTER_COMMAND})
+  endif()
+
+  if (TESTER)
+    if (NOT EMULATOR)
+      if (SDE_COMMAND)
+	set(FLAGS_SDE "--sde" ${SDE_COMMAND})
+      else()
+	set(FLAGS_SDE)
+      endif()
+      add_test(NAME ${IUT}
+	COMMAND ${TESTER} ${FLAGS_SDE} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${IUT}
+	WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+    else()
+      add_test(NAME ${IUT}
+	COMMAND ${TESTER} ${EMULATOR} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${IUT}
+	WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+    endif()
+  endif()
+endfunction()
+
 # Compile executable 'iut'
 add_executable(${TARGET_IUT} iut.c testerutil.c)
 target_compile_definitions(${TARGET_IUT} PRIVATE ${COMMON_TARGET_DEFINITIONS})
 target_link_libraries(${TARGET_IUT} ${TARGET_LIBSLEEF} ${TARGET_LIBCOMMON_STATIC} ${LIBM})
 set_target_properties(${TARGET_IUT} PROPERTIES C_STANDARD 99)
-if (LIB_MPFR)
-  add_test(NAME ${TARGET_IUT}
-    COMMAND ${TARGET_TESTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_IUT})
-elseif(TESTER_COMMAND)
-  add_test(NAME ${TARGET_IUT}
-    COMMAND ${TESTER_COMMAND} ${TARGET_IUT}
-    WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-endif()
+add_test_iut(${TARGET_IUT})
 set(IUT_LIST ${TARGET_IUT})
 
 set(IUT_SRC iutsimd.c iutsimdmain.c testerutil)
@@ -43,21 +63,7 @@ macro(test_extension SIMD)
     add_dependencies(${TARGET_IUT${SIMD}} ${TARGET_HEADERS})
     add_dependencies(${TARGET_IUT${SIMD}} ${TARGET_LIBSLEEF})
     set_target_properties(${TARGET_IUT${SIMD}} PROPERTIES C_STANDARD 99)
-
-    if (LIB_MPFR)
-      if (SDE_COMMAND)
-        set(FLAGS_SDE "--sde" ${SDE_COMMAND})
-      else()
-        set(FLAGS_SDE)
-      endif()
-      add_test(NAME ${TARGET_IUT${SIMD}}
-      COMMAND ${TARGET_TESTER} ${FLAGS_SDE} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_IUT${SIMD}})
-    elseif(TESTER_COMMAND)
-      add_test(NAME ${TARGET_IUT${SIMD}}
-	      COMMAND ${TESTER_COMMAND} ${FLAGS_SDE} ${TARGET_IUT${SIMD}}
-	      WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-    endif()
-
+    add_test_iut(${TARGET_IUT${SIMD}})
     list(APPEND IUT_LIST ${TARGET_IUT${SIMD}})
 
     if(ENABLE_GNUABI)
@@ -69,7 +75,7 @@ macro(test_extension SIMD)
 	  PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS})
 	target_link_libraries(link_finite${SIMD} ${TARGET_LIBSLEEFGNUABI} ${LIBM})
 	add_test(NAME link_finite${SIMD}
-	  COMMAND link_finite${SIMD})
+	  COMMAND ${EMULATOR} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/link_finite${SIMD})
       endif (COMPILER_SUPPORTS_WEAK_ALIASES)
     endif(ENABLE_GNUABI)
 
@@ -103,7 +109,7 @@ if (SLEEF_ARCH_X86)
   target_compile_definitions(iutdsp128 PRIVATE ENABLE_DSP128=1 ${COMMON_TARGET_DEFINITIONS})
   target_link_libraries(iutdsp128 ${TARGET_LIBSLEEF} ${LIBM})
   add_dependencies(iutdsp128 ${TARGET_HEADERS} ${TARGET_LIBSLEEF})
-  add_test(NAME iutdsp128 COMMAND ${TARGET_TESTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/iutdsp128)
+  add_test_iut(iutdsp128)
   list(APPEND IUT_LIST iutdsp128)
 
   # iutdsp256
@@ -112,7 +118,7 @@ if (SLEEF_ARCH_X86)
   target_compile_options(iutdsp256 PRIVATE ${FLAGS_ENABLE_AVX})
   target_link_libraries(iutdsp256 ${TARGET_LIBSLEEF} ${LIBM})
   add_dependencies(iutdsp256 ${TARGET_HEADERS} ${TARGET_LIBSLEEF})
-  add_test(NAME iutdsp256 COMMAND ${TARGET_TESTER} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/iutdsp256)
+  add_test_iut(iutdsp256)
   list(APPEND IUT_LIST iutdsp256)
 endif(SLEEF_ARCH_X86)
 
