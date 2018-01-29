@@ -3,7 +3,7 @@ language: c
 # Default linux jobs
 os: linux
 sudo: required
-dist: trusty
+dist: xenial
 
 # Include osx jobs
 matrix:
