@@ -41,7 +41,11 @@ matrix:
 before_install:
      - docker pull ubuntu:xenial;
      - docker run -d --name xenial -dti ubuntu:xenial bash;
-     - docker exec xenial ${TRAVIS_BUILD_DIR}/travis/before_install.${LABEL}.sh
+     - docker apt-get update
+     - docker apt-get -y install git
+     - docker exec xenial mkdir /build
+     - docker exec xenial git -C /build clone -b ${TRAVIS_BRANCH} https://github.com/shibatch/sleef.git ${TRAVIS_REPO_SLUG}
+     - docker exec xenial /build/travis/before_install.${LABEL}.sh
      
      #- chmod +x ${TRAVIS_BUILD_DIR}/travis/*.sh
      #- sudo ${TRAVIS_BUILD_DIR}/travis/before_install.${LABEL}.sh
@@ -55,8 +59,6 @@ before_install:
   # - eval "${MATRIX_EVAL}"
 
 before_script:
-     - docker exec xenial mkdir /build
-     - docker exec xenial git -C /build clone -b ${TRAVIS_BRANCH} https://github.com/shibatch/sleef.git ${TRAVIS_REPO_SLUG}
      - docker exec xenial ${TRAVIS_BUILD_DIR}/travis/before_script.${LABEL}.sh
   #   - ${TRAVIS_BUILD_DIR}/travis/before_script.${LABEL}.sh
   # - mkdir sleef.build
