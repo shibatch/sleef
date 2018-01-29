@@ -1,19 +1,23 @@
 #!/bin/bash
 dpkg --add-architecture arm64
-cat /etc/apt/sources.list | sed -e 's/^deb /deb \[arch=amd64\] /g' > /tmp/sources.list
+cat /etc/apt/sources.list | sed -e 's/^deb /deb \[arch=amd64\] /g' -e 's/\[arch=amd64\] \[arch=amd64\]/\[arch=amd64\]/g' > /tmp/sources.list
 cat <<EOF | sed -e 's/CODENAME/'`lsb_release -s -c`'/g' >> /tmp/sources.list
-deb [arch=arm64] http://archive.ubuntu.com/ubuntu/ CODENAME main restricted
-deb-src http://archive.ubuntu.com/ubuntu/ CODENAME main restricted
-deb [arch=arm64] http://archive.ubuntu.com/ubuntu/ CODENAME-updates main restricted
-deb-src http://archive.ubuntu.com/ubuntu/ CODENAME-updates main restricted
-deb [arch=arm64] http://archive.ubuntu.com/ubuntu/ CODENAME universe
-deb-src http://archive.ubuntu.com/ubuntu/ CODENAME universe
-deb [arch=arm64] http://archive.ubuntu.com/ubuntu/ CODENAME-updates universe
-deb-src http://archive.ubuntu.com/ubuntu/ CODENAME-updates universe
-deb [arch=arm64] http://archive.ubuntu.com/ubuntu/ CODENAME-security main restricted
-deb-src http://archive.ubuntu.com/ubuntu/ CODENAME-security main restricted
-deb [arch=arm64] http://archive.ubuntu.com/ubuntu/ CODENAME-security universe
-deb-src http://archive.ubuntu.com/ubuntu/ CODENAME-security universe
+deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ CODENAME main restricted
+deb-src http://ports.ubuntu.com/ubuntu-ports/ CODENAME main restricted
+deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ CODENAME-updates main restricted
+deb-src http://ports.ubuntu.com/ubuntu-ports/ CODENAME-updates main restricted
+deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ CODENAME universe
+deb-src http://ports.ubuntu.com/ubuntu-ports/ CODENAME universe
+deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ CODENAME-updates universe
+deb-src http://ports.ubuntu.com/ubuntu-ports/ CODENAME-updates universe
+deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ CODENAME-backports main restricted
+deb-src http://ports.ubuntu.com/ubuntu-ports/ CODENAME-backports main restricted
+deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ CODENAME-security main restricted
+deb-src http://ports.ubuntu.com/ubuntu-ports/ CODENAME-security main restricted
+deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ CODENAME-security universe
+deb-src http://ports.ubuntu.com/ubuntu-ports/ CODENAME-security universe
+deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ CODENAME-security multiverse
+deb-src http://ports.ubuntu.com/ubuntu-ports/ CODENAME-security multiverse
 EOF
 mv /tmp/sources.list /etc/apt/sources.list
 cat /etc/apt/sources.list
