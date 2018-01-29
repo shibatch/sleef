@@ -39,7 +39,7 @@ matrix:
 
 before_install:
      - chmod +x ${TRAVIS_BUILD_DIR}/travis/*.sh
-     - ${TRAVIS_BUILD_DIR}/travis/before_install.${LABEL}.sh
+     - sudo ${TRAVIS_BUILD_DIR}/travis/before_install.${LABEL}.sh
   # - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then wget -q ${SDE_URL}                            ; fi
   # - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then tar xf sde-external-8.12.0-2017-10-23-lin.tar.bz2; fi
   # - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export PATH=${PATH}:${TRAVIS_BUILD_DIR}/sde-external-8.12.0-2017-10-23-lin; fi
