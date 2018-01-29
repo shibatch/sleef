@@ -1,6 +1,6 @@
 #!/bin/sh
 cd sleef.build
-make -j 2 all
+VERBOSE=1 make -j 1 all
 export CTEST_OUTPUT_ON_FAILURE=TRUE
 ctest --verbose -j 2
 make install
