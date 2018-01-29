@@ -1,4 +1,5 @@
 #!/bin/bash
+set -ev
 export PATH=$PATH:/usr/bin
 dpkg --add-architecture arm64
 cat /etc/apt/sources.list | sed -e 's/^deb /deb \[arch=amd64\] /g' -e 's/\[arch=amd64\] \[arch=amd64\]/\[arch=amd64\]/g' > /tmp/sources.list

@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash
+set -ev
 cd /build
 mkdir sleef.build
 cd sleef.build
