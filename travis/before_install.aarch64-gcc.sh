@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 cat /etc/apt/sources.list | sed -e 's/^deb /deb \[arch=amd64\] /g' > /tmp/sources.list
 cat <<EOF | sed -e 's/CODENAME/'`lsb_release -s -c`'/g' >> /tmp/sources.list
 deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ CODENAME main restricted
