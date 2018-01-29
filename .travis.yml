@@ -42,9 +42,8 @@ before_install:
      - docker pull ubuntu:xenial;
      - docker run -d --name xenial -dti ubuntu:xenial bash;
      - docker exec xenial mkdir /build
-     - docker exec xenial cd /build
-     - docker exec xenial git clone -b ${TRAVIS_BRANCH} https://github.com/shibatch/sleef.git ${TRAVIS_REPO_SLUG}
-     - docker exec xenial ${TRAVIS_BUILD_DIR}/travis/before_install.${LABEL}.sh
+     - docker exec -w /build xenial git clone -b ${TRAVIS_BRANCH} https://github.com/shibatch/sleef.git ${TRAVIS_REPO_SLUG}
+     - docker exec -w /build xenial ${TRAVIS_BUILD_DIR}/travis/before_install.${LABEL}.sh
      
      #- chmod +x ${TRAVIS_BUILD_DIR}/travis/*.sh
      #- sudo ${TRAVIS_BUILD_DIR}/travis/before_install.${LABEL}.sh
@@ -58,14 +57,14 @@ before_install:
   # - eval "${MATRIX_EVAL}"
 
 before_script:
-     - docker exec xenial ${TRAVIS_BUILD_DIR}/travis/before_script.${LABEL}.sh
+     - docker exec -w /build xenial ${TRAVIS_BUILD_DIR}/travis/before_script.${LABEL}.sh
   #   - ${TRAVIS_BUILD_DIR}/travis/before_script.${LABEL}.sh
   # - mkdir sleef.build
   # - cd sleef.build
   # - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 ..
 
 script:
-     - docker exec xenial ${TRAVIS_BUILD_DIR}/travis/script.${LABEL}.sh
+     - docker exec -w /build xenial ${TRAVIS_BUILD_DIR}/travis/script.${LABEL}.sh
   #   - ${TRAVIS_BUILD_DIR}/travis/script.${LABEL}.sh
   # - make -j 2 all
   # - export CTEST_OUTPUT_ON_FAILURE=TRUE
