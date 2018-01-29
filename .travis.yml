@@ -41,7 +41,9 @@ matrix:
 before_install:
      - docker pull ubuntu:xenial;
      - docker run -d --name xenial -dti ubuntu:xenial bash;
-     - docker exec xenial chmod +x ${TRAVIS_BUILD_DIR}/travis/*.sh
+     - docker exec xenial mkdir /build
+     - docker exec xenial cd /build
+     - docker exec xenial git clone -b ${TRAVIS_BRANCH} https://github.com/shibatch/sleef.git ${TRAVIS_REPO_SLUG}
      - docker exec xenial ${TRAVIS_BUILD_DIR}/travis/before_install.${LABEL}.sh
      
      #- chmod +x ${TRAVIS_BUILD_DIR}/travis/*.sh
