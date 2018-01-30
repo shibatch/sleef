@@ -53,7 +53,7 @@ before_install:
      - if [[ "${ENABLE_DOCKER}" == "true" ]]; then docker exec xenial /build/travis/before_install.${LABEL}.sh; fi
      - if [[ "${LABEL}" == "x86_64-gcc"   ]]; then wget -q ${SDE_URL}; fi
      - if [[ "${LABEL}" == "x86_64-clang" ]]; then wget -q ${SDE_URL}; fi
-     - if [[ "${ENABLE_DOCKER}" != "true" ]]; then sudo ${TRAVIS_BUILD_DIR}/travis/before_install.${LABEL}.sh; fi
+     - if [[ "${ENABLE_DOCKER}" != "true" ]]; then ${TRAVIS_BUILD_DIR}/travis/before_install.${LABEL}.sh; fi
 
 before_script:
      - if [[ "${ENABLE_DOCKER}" == "true" ]]; then docker exec xenial /build/travis/before_script.${LABEL}.sh; fi
