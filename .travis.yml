@@ -44,11 +44,19 @@ matrix:
          - LABEL="aarch64-gcc"
          - ENABLE_DOCKER="true"
 
+     - os: linux
+       services: docker
+       env:
+         - LABEL="armhf-gcc"
+         - ENABLE_DOCKER="true"
+
 before_install:
      - cd ${TRAVIS_BUILD_DIR}
      - chmod +x ${TRAVIS_BUILD_DIR}/travis/*.sh
      - if [[ "${ENABLE_DOCKER}" == "true" ]]; then ${TRAVIS_BUILD_DIR}/travis/setupdocker.sh; fi
      - if [[ "${ENABLE_DOCKER}" == "true" ]]; then docker exec xenial /build/travis/before_install.${LABEL}.sh; fi
+     - if [[ "${LABEL}" == "x86_64-gcc"   ]]; then wget -q ${SDE_URL}; fi
+     - if [[ "${LABEL}" == "x86_64-clang" ]]; then wget -q ${SDE_URL}; fi
      - if [[ "${ENABLE_DOCKER}" != "true" ]]; then sudo ${TRAVIS_BUILD_DIR}/travis/before_install.${LABEL}.sh; fi
 
 
