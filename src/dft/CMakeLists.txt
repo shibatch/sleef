@@ -139,20 +139,18 @@ endif(COMPILER_SUPPORTS_NEON32)
 # Target mkunroll
 
 set(TARGET_MKUNROLL "mkunroll")
-add_executable(${TARGET_MKUNROLL} EXCLUDE_FROM_ALL mkunroll.c)
-set_target_properties(${TARGET_MKUNROLL} PROPERTIES ${COMMON_TARGET_PROPERTIES})
+add_host_executable(${TARGET_MKUNROLL} mkunroll.c)
 
 # Target mkdispatch
 
 set(TARGET_MKDISPATCH "mkdispatch")
-add_executable(${TARGET_MKDISPATCH} EXCLUDE_FROM_ALL mkdispatch.c)
-set_target_properties(${TARGET_MKDISPATCH} PROPERTIES ${COMMON_TARGET_PROPERTIES})
+add_host_executable(${TARGET_MKDISPATCH} mkdispatch.c)
 
 # Target dispatchparam.h
 
 add_custom_command(OUTPUT dispatchparam.h
   COMMENT "Generating dispatchparam.h"
-  COMMAND ${EMULATOR} $<TARGET_FILE:${TARGET_MKDISPATCH}> paramonly ${MAXBUTWIDTH} ${ISALIST_DP} > ${CMAKE_CURRENT_BINARY_DIR}/dispatchparam.h
+  COMMAND $<TARGET_FILE:${TARGET_MKDISPATCH}> paramonly ${MAXBUTWIDTH} ${ISALIST_DP} > ${CMAKE_CURRENT_BINARY_DIR}/dispatchparam.h
   DEPENDS ${TARGET_MKDISPATCH}
   )
 add_custom_target(dispatchparam.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/dispatchparam.h)
@@ -168,7 +166,7 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
   string(CONCAT S "dispatch" ${ST} ".h")                    # S is dispatchdp.h
   add_custom_command(OUTPUT ${S}
     COMMENT "Generating ${S}"
-    COMMAND ${EMULATOR} $<TARGET_FILE:${TARGET_MKDISPATCH}> ${LT} ${MAXBUTWIDTH} ${ISALIST_${CST}} > ${S}
+    COMMAND $<TARGET_FILE:${TARGET_MKDISPATCH}> ${LT} ${MAXBUTWIDTH} ${ISALIST_${CST}} > ${S}
     DEPENDS ${TARGET_MKDISPATCH}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
@@ -225,7 +223,7 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
   if(UNROLL_TARGET_${CST})
     add_custom_command(OUTPUT ${UNROLL_TARGET_${CST}}
       COMMENT "Generating ${UNROLL_TARGET_${CST}}"
-      COMMAND ${EMULATOR} $<TARGET_FILE:${TARGET_MKUNROLL}> ${LT} ${ISALIST_${CST}}
+      COMMAND $<TARGET_FILE:${TARGET_MKUNROLL}> ${LT} ${ISALIST_${CST}}
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       DEPENDS ${TARGET_MKUNROLL} unroll0.org.copied
       )

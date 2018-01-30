@@ -17,7 +17,7 @@ set(SLEEF_HEADER_COMMANDS "")
 list(APPEND SLEEF_HEADER_COMMANDS COMMAND ${CMAKE_COMMAND} -E copy ${SLEEF_ORG_HEADER} ${SLEEF_INCLUDE_HEADER})
 foreach(SIMD ${SLEEF_HEADER_LIST})
   list(APPEND SLEEF_HEADER_COMMANDS COMMAND echo Generating sleef.h: ${TARGET_MKRENAME} ${HEADER_PARAMS_${SIMD}})
-  list(APPEND SLEEF_HEADER_COMMANDS COMMAND ${EMULATOR} $<TARGET_FILE:${TARGET_MKRENAME}> ${HEADER_PARAMS_${SIMD}} >> ${SLEEF_INCLUDE_HEADER})
+  list(APPEND SLEEF_HEADER_COMMANDS COMMAND $<TARGET_FILE:${TARGET_MKRENAME}> ${HEADER_PARAMS_${SIMD}} >> ${SLEEF_INCLUDE_HEADER})
 endforeach()
 
 if(MSVC)
@@ -40,7 +40,7 @@ add_custom_command(OUTPUT ${SLEEF_INCLUDE_HEADER}
 # renameXXX.h for each SIMD
 # --------------------------------------------------------------------
 # Helper executable: generates parts of the sleef header file
-add_executable(${TARGET_MKRENAME} mkrename.c)
+add_host_executable(${TARGET_MKRENAME} mkrename.c)
 
 set(HEADER_FILES_GENERATED "")
 foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
@@ -54,7 +54,7 @@ foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
     # Generate mkrename commands
     add_custom_command(OUTPUT ${HEADER_${SIMD}}
       COMMAND echo Generating rename${vecarch}.h: ${TARGET_MKRENAME} ${RENAME_PARAMS_${SIMD}}
-      COMMAND ${EMULATOR} $<TARGET_FILE:${TARGET_MKRENAME}> ${RENAME_PARAMS_${SIMD}} > ${HEADER_${SIMD}}
+      COMMAND $<TARGET_FILE:${TARGET_MKRENAME}> ${RENAME_PARAMS_${SIMD}} > ${HEADER_${SIMD}}
       DEPENDS ${TARGET_MKRENAME}
     )
     add_custom_target(rename${SIMD}.h.generated DEPENDS ${HEADER_${SIMD}})
@@ -66,7 +66,7 @@ endforeach()
 # renameXXX_gnuabi.h for each SIMD GNU Abi
 # --------------------------------------------------------------------
 # Helper executable: generates parts of the sleef header file gnu_abi
-add_executable(${TARGET_MKRENAME_GNUABI} mkrename_gnuabi.c)
+add_host_executable(${TARGET_MKRENAME_GNUABI} mkrename_gnuabi.c)
 
 set(HEADER_GNUABI_FILES_GENERATED "")
 if(ENABLE_GNUABI)
@@ -81,7 +81,7 @@ if(ENABLE_GNUABI)
       # Generate mkrename_gnuabi commands
       add_custom_command(OUTPUT ${HEADER_${SIMD}_GNUABI}
         COMMAND echo Generating rename${vecarch}_gnuabi.h: ${TARGET_MKRENAME_GNUABI} ${RENAME_PARAMS_GNUABI_${SIMD}}  
-        COMMAND ${EMULATOR} $<TARGET_FILE:${TARGET_MKRENAME_GNUABI}> ${RENAME_PARAMS_GNUABI_${SIMD}} > ${HEADER_${SIMD}_GNUABI}
+        COMMAND $<TARGET_FILE:${TARGET_MKRENAME_GNUABI}> ${RENAME_PARAMS_GNUABI_${SIMD}} > ${HEADER_${SIMD}_GNUABI}
         DEPENDS ${TARGET_MKRENAME_GNUABI}
       )
       # set_source_files_properties(${HEADER_${SIMD}_GNUABI} PROPERTIES GENERATED TRUE)
@@ -92,7 +92,7 @@ endif()
 # --------------------------------------------------------------------
 
 # TARGET_MKMASKED_GNUABI
-add_executable(${TARGET_MKMASKED_GNUABI} mkmasked_gnuabi.c)
+add_host_executable(${TARGET_MKMASKED_GNUABI} mkmasked_gnuabi.c)
 
 # maskedXXX_YY_gnuabi.h
 if(ENABLE_GNUABI)
@@ -107,7 +107,7 @@ if(ENABLE_GNUABI)
 
 	add_custom_command(OUTPUT ${HEADER_MASKED_${SIMD}_${T}_GNUABI}
           COMMAND echo Generating ${HEADER_MASKED_${SIMD}_${T}_GNUABI}
-          COMMAND ${EMULATOR} $<TARGET_FILE:${TARGET_MKMASKED_GNUABI}> ${MKMASKED_PARAMS_GNUABI_${SIMD}_${T}} > ${HEADER_MASKED_${SIMD}_${T}_GNUABI}
+          COMMAND $<TARGET_FILE:${TARGET_MKMASKED_GNUABI}> ${MKMASKED_PARAMS_GNUABI_${SIMD}_${T}} > ${HEADER_MASKED_${SIMD}_${T}_GNUABI}
           DEPENDS ${TARGET_MKMASKED_GNUABI}
 	  )
       endforeach()
@@ -130,11 +130,11 @@ add_custom_target(${TARGET_HEADERS} ALL
 # TARGET_MKDISP
 # --------------------------------------------------------------------
 # Helper executable: dispatcher for the vector extensions
-add_executable(${TARGET_MKDISP} mkdisp.c)
+add_host_executable(${TARGET_MKDISP} mkdisp.c)
 
 # Set C standard requirement (-std=gnu99 for gcc)
 set_target_properties(
-  ${TARGET_MKRENAME} ${TARGET_MKRENAME_GNUABI} ${TARGET_MKDISP} ${TARGET_MKMASKED_GNUABI} PROPERTIES
+  ${TARGET_MKRENAME} ${TARGET_MKRENAME_GNUABI} ${TARGET_MKDISP} PROPERTIES
   C_STANDARD 99
 )
 
@@ -226,7 +226,7 @@ if (SLEEF_ARCH_X86)
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c
     COMMENT "Generating dispsse.c"
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/dispsse.c.org ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c
-    COMMAND ${EMULATOR} $<TARGET_FILE:${TARGET_MKDISP}> 2 4 __m128d __m128 __m128i sse2 sse4 avx2128 >> ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c
+    COMMAND $<TARGET_FILE:${TARGET_MKDISP}> 2 4 __m128d __m128 __m128i sse2 sse4 avx2128 >> ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c
     DEPENDS ${TARGET_MKDISP}
     )
   add_custom_target(dispsse.c_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c)
@@ -235,7 +235,7 @@ if (SLEEF_ARCH_X86)
 
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h
     COMMENT "Generating renamedsp128.h"
-    COMMAND ${EMULATOR} $<TARGET_FILE:${TARGET_MKRENAME}> 2 4 > ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h
+    COMMAND $<TARGET_FILE:${TARGET_MKRENAME}> 2 4 > ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h
     DEPENDS ${TARGET_MKRENAME}
     )
   add_custom_target(renamedsp128.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h)
@@ -245,7 +245,7 @@ if (SLEEF_ARCH_X86)
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c
     COMMENT "Generating dispavx.c"
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/dispavx.c.org ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c
-    COMMAND ${EMULATOR} $<TARGET_FILE:${TARGET_MKDISP}> 4 8 __m256d __m256 __m128i avx fma4 avx2 >> ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c
+    COMMAND $<TARGET_FILE:${TARGET_MKDISP}> 4 8 __m256d __m256 __m128i avx fma4 avx2 >> ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c
     DEPENDS ${TARGET_MKDISP}
     )
   add_custom_target(dispavx.c_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c)
@@ -254,7 +254,7 @@ if (SLEEF_ARCH_X86)
 
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp256.h
     COMMENT "Generating renamedsp256.h"
-    COMMAND ${EMULATOR} $<TARGET_FILE:${TARGET_MKRENAME}> 4 8 > ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp256.h
+    COMMAND $<TARGET_FILE:${TARGET_MKRENAME}> 4 8 > ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp256.h
     DEPENDS ${TARGET_MKRENAME}
     )
   add_custom_target(renamedsp256.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp256.h)

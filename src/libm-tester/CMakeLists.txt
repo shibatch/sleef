@@ -34,7 +34,7 @@ function(add_test_iut IUT)
 	WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     else()
       add_test(NAME ${IUT}
-	COMMAND ${EMULATOR} ${TESTER} ${EMULATOR} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${IUT}
+	COMMAND ${TESTER} ${EMULATOR} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${IUT}
 	WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     endif()
   endif()
@@ -74,8 +74,11 @@ macro(test_extension SIMD)
 	target_compile_definitions(link_finite${SIMD}
 	  PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS})
 	target_link_libraries(link_finite${SIMD} ${TARGET_LIBSLEEFGNUABI} ${LIBM})
-	add_test(NAME link_finite${SIMD}
-	  COMMAND ${EMULATOR} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/link_finite${SIMD})
+	if (NOT EMULATOR)
+	  add_test(NAME link_finite${SIMD} COMMAND link_finite${SIMD})
+	else()
+	  add_test(NAME link_finite${SIMD} COMMAND ${EMULATOR} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/link_finite${SIMD})
+	endif()
       endif (COMPILER_SUPPORTS_WEAK_ALIASES)
     endif(ENABLE_GNUABI)
 
@@ -140,14 +143,16 @@ if(LIB_MPFR)
   # No test defined with tester2
 
   # Compile executable 'tester'
-  add_executable(${TARGET_TESTER} tester.c testerutil.c)
-  target_link_libraries(${TARGET_TESTER} ${LIB_MPFR} ${TARGET_LIBCOMMON_STATIC} ${TARGET_LIBSLEEF} ${LIBM} ${LIBGMP})
-  target_compile_definitions(${TARGET_TESTER}
-    PRIVATE USEMPFR=1 ${COMMON_TARGET_DEFINITIONS})
-  target_compile_options(${TARGET_TESTER} PRIVATE -Wno-unused-result)
-  set_target_properties(${TARGET_TESTER} PROPERTIES C_STANDARD 99)
-  if (MPFR_INCLUDE_DIR)
-    target_include_directories(${TARGET_TESTER} PRIVATE ${MPFR_INCLUDE_DIR})
+  add_host_executable(${TARGET_TESTER} tester.c testerutil.c)
+  if (NOT CMAKE_CROSSCOMPILING)
+    target_link_libraries(${TARGET_TESTER} ${LIB_MPFR} ${TARGET_LIBCOMMON_STATIC} ${TARGET_LIBSLEEF} ${LIBM} ${LIBGMP})
+    target_compile_definitions(${TARGET_TESTER}
+      PRIVATE USEMPFR=1 ${COMMON_TARGET_DEFINITIONS})
+    target_compile_options(${TARGET_TESTER} PRIVATE -Wno-unused-result)
+    set_target_properties(${TARGET_TESTER} PROPERTIES C_STANDARD 99)
+    if (MPFR_INCLUDE_DIR)
+      target_include_directories(${TARGET_TESTER} PRIVATE ${MPFR_INCLUDE_DIR})
+    endif()
   endif()
 endif(LIB_MPFR)
 

@@ -87,6 +87,16 @@ set(TARGET_MKDISP "mkdisp")
 set(TARGET_LIBCOMMON_STATIC "common")
 set(TARGET_LIBARRAYMAP_STATIC "arraymap")
 
+# Function used to add an executable that is executed on host
+function(add_host_executable TARGETNAME)
+  if (NOT CMAKE_CROSSCOMPILING)
+    add_executable(${TARGETNAME} ${ARGN})
+  else()
+    add_executable(${TARGETNAME} IMPORTED)
+    set_property(TARGET ${TARGETNAME} PROPERTY IMPORTED_LOCATION ${NATIVE_BUILD_DIR}/bin/${TARGETNAME})
+  endif()
+endfunction()
+
 # Generates object file (shared library) `libsleefdft`
 # Defined in src/dft/CMakeLists.txt via command add_library
 set(TARGET_LIBDFT "sleefdft")
@@ -106,6 +116,7 @@ ${PROJECT_NAME}-v${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}")
   message("   Detected C compiler: ${CMAKE_C_COMPILER_ID} @ ${CMAKE_C_COMPILER}")
   if(CMAKE_CROSSCOMPILING)
     message("   Crosscompiling SLEEF.")
+    message("   Native build dir: ${NATIVE_BUILD_DIR}")
   endif(CMAKE_CROSSCOMPILING)
   message(STATUS "Using option `${SLEEF_C_FLAGS}` to compile libsleef")
   message(STATUS "Building shared libs : " ${BUILD_SHARED_LIBS})
