@@ -13,12 +13,10 @@ matrix:
       compiler: gcc
       env:
         - LABEL="osx-gcc"
-	
     - os: osx
       compiler: clang # use default apple clang
       env:
         - LABEL="osx-clang"
-	
     - os: linux
       addons:
         apt:
@@ -28,7 +26,6 @@ matrix:
             - g++-7
       env:
         - LABEL="x86_64-gcc"
-	
     - os: linux
       addons:
         apt:
@@ -38,18 +35,16 @@ matrix:
             - clang-5.0
       env:
         - LABEL="x86_64-clang"
-	
-     - os: linux
-       services: docker
-       env:
-         - LABEL="aarch64-gcc"
-         - ENABLE_DOCKER="true"
-
-     - os: linux
-       services: docker
-       env:
-         - LABEL="armhf-gcc"
-         - ENABLE_DOCKER="true"
+    - os: linux
+      services: docker
+      env:
+        - LABEL="aarch64-gcc"
+        - ENABLE_DOCKER="true"
+    - os: linux
+      services: docker
+      env:
+        - LABEL="armhf-gcc"
+        - ENABLE_DOCKER="true"
 
 before_install:
      - cd ${TRAVIS_BUILD_DIR}
