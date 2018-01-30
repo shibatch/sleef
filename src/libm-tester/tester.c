@@ -2816,14 +2816,15 @@ void do_test() {
 
     {
       fprintf(stderr, "asinf denormal/nonnumber test : ");
-#if defined(__arm__) && !defined(__aarch64__)
-      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX,
-		     POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(1, 2), nextafterf(-1, -2) };
-#else
-      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN,
-		     POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(1, 2), nextafterf(-1, -2) };
-#endif
-      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_asin, child_asinf, xa[i]);
+      if (enableFlushToZero) {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX,
+		       POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(1, 2), nextafterf(-1, -2) };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_asin, child_asinf, xa[i]);
+      } else {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN,
+		       POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(1, 2), nextafterf(-1, -2) };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_asin, child_asinf, xa[i]);
+      }
       showResult(success);
     }
 
@@ -2874,12 +2875,13 @@ void do_test() {
 
     {
       fprintf(stderr, "logf_u1 denormal/nonnumber test : ");
-#if defined(__arm__) && !defined(__aarch64__)
-      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(0, -1) };
-#else
-      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(0, -1) };
-#endif
-      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_log, child_logf_u1, xa[i]);
+      if (enableFlushToZero) {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(0, -1) };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_log, child_logf_u1, xa[i]);
+      } else {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(0, -1) };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_log, child_logf_u1, xa[i]);
+      }
       showResult(success);
     }
 
@@ -2913,23 +2915,25 @@ void do_test() {
 
     {
       fprintf(stderr, "asinhf denormal/nonnumber test : ");
-#if defined(__arm__) && !defined(__aarch64__)
-      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
-#else
-      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
-#endif
-      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_asinh, child_asinhf, xa[i]);
+      if (enableFlushToZero) {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_asinh, child_asinhf, xa[i]);
+      } else {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_asinh, child_asinhf, xa[i]);
+      }
       showResult(success);
     }
 
     {
       fprintf(stderr, "acoshf denormal/nonnumber test : ");
-#if defined(__arm__) && !defined(__aarch64__)
-      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
-#else
-      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
-#endif
-      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_acosh, child_acoshf, xa[i]);
+      if (enableFlushToZero) {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_acosh, child_acoshf, xa[i]);
+      } else {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_acosh, child_acoshf, xa[i]);
+      }
       showResult(success);
     }
 
@@ -3005,29 +3009,34 @@ void do_test() {
 
     {
       fprintf(stderr, "log1pf denormal/nonnumber test : ");
-#if defined(__arm__) && !defined(__aarch64__)
-      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(-1, -2), -2 };
-#else
-      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(-1, -2), -2 };
-#endif
-      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_log1p, child_log1pf, xa[i]);
+      if (enableFlushToZero) {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(-1, -2), -2 };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_log1p, child_log1pf, xa[i]);
+      } else {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(-1, -2), -2 };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_log1p, child_log1pf, xa[i]);
+      }
       showResult(success);
     }
 
     {
       fprintf(stderr, "hypotf_u35 denormal/nonnumber test : ");
 
-#if defined(__arm__) && !defined(__aarch64__)
-      float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
-      float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
-#else
-      float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
-      float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
-#endif
-      
-      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
-	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
-	  cmpDenorm_f_f(mpfr_hypot, child_hypotf_u35, xa[i], ya[i]);
+      if (enableFlushToZero) {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	  for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	    cmpDenorm_f_f(mpfr_hypot, child_hypotf_u35, xa[i], ya[i]);
+	  }
+	}
+      } else {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	  for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	    cmpDenorm_f_f(mpfr_hypot, child_hypotf_u35, xa[i], ya[i]);
+	  }
 	}
       }
 
@@ -3037,17 +3046,21 @@ void do_test() {
     {
       fprintf(stderr, "hypotf_u05 denormal/nonnumber test : ");
 
-#if defined(__arm__) && !defined(__aarch64__)
-      float xa[] = { +0.0, -0.0, +1, -1, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
-      float ya[] = { +0.0, -0.0, +1, -1, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
-#else
-      float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
-      float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
-#endif
-
-      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
-	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
-	  cmpDenorm_f_f(mpfr_hypot, child_hypotf_u05, xa[i], ya[i]);
+      if (enableFlushToZero) {
+	float xa[] = { +0.0, -0.0, +1, -1, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	float ya[] = { +0.0, -0.0, +1, -1, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	  for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	    cmpDenorm_f_f(mpfr_hypot, child_hypotf_u05, xa[i], ya[i]);
+	  }
+	}
+      } else {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	  for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	    cmpDenorm_f_f(mpfr_hypot, child_hypotf_u05, xa[i], ya[i]);
+	  }
 	}
       }
 
@@ -3117,20 +3130,24 @@ void do_test() {
     {
       fprintf(stderr, "fmodf denormal/nonnumber test : ");
 
-#if defined(__arm__) && !defined(__aarch64__)
-      float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
-      float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
-#else
-      float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
-      float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
-#endif
-      
-      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
-	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
-	  cmpDenorm_f_f(mpfr_fmod, child_fmodf, xa[i], ya[i]);
+      if (enableFlushToZero) {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	  for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	    cmpDenorm_f_f(mpfr_fmod, child_fmodf, xa[i], ya[i]);
+	  }
+	}
+      } else {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	  for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	    cmpDenorm_f_f(mpfr_fmod, child_fmodf, xa[i], ya[i]);
+	  }
 	}
       }
-
+      
       showResult(success);
     }
 
