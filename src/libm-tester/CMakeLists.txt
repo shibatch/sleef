@@ -103,8 +103,7 @@ if(ENABLE_GNUABI)
       # These are linker tests that don't really need to be executed,
       # but seeing them in the report of ctest gives an idea of what
       # has been built for testing.
-      add_test(NAME ${GNUABI_COMPATIBILITY_TEST}
-	COMMAND ${GNUABI_COMPATIBILITY_TEST})
+      add_test_with_simulator(${GNUABI_COMPATIBILITY_TEST} ${GNUABI_COMPATIBILITY_TEST})
     endif (COMPILER_SUPPORTS_${SIMD})
   endforeach(SIMD ${SLEEF_SUPPORTED_GNUABI_EXTENSIONS})
 endif(ENABLE_GNUABI)
