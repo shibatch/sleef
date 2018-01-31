@@ -139,14 +139,12 @@ endif(COMPILER_SUPPORTS_NEON32)
 # Target mkunroll
 
 set(TARGET_MKUNROLL "mkunroll")
-add_executable(${TARGET_MKUNROLL} EXCLUDE_FROM_ALL mkunroll.c)
-set_target_properties(${TARGET_MKUNROLL} PROPERTIES ${COMMON_TARGET_PROPERTIES})
+add_host_executable(${TARGET_MKUNROLL} mkunroll.c)
 
 # Target mkdispatch
 
 set(TARGET_MKDISPATCH "mkdispatch")
-add_executable(${TARGET_MKDISPATCH} EXCLUDE_FROM_ALL mkdispatch.c)
-set_target_properties(${TARGET_MKDISPATCH} PROPERTIES ${COMMON_TARGET_PROPERTIES})
+add_host_executable(${TARGET_MKDISPATCH} mkdispatch.c)
 
 # Target dispatchparam.h
 

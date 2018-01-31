@@ -12,9 +12,11 @@ matrix:
       osx_image: xcode8
       compiler: gcc
       env:
-        - MATRIX_EVAL="brew install gcc@6 && CC=gcc-6" # install and use gcc
+        - LABEL="osx-gcc"
     - os: osx
       compiler: clang # use default apple clang
+      env:
+        - LABEL="osx-clang"
     - os: linux
       addons:
         apt:
@@ -23,7 +25,7 @@ matrix:
           packages:
             - g++-7
       env:
-        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+        - LABEL="x86_64-gcc"
     - os: linux
       addons:
         apt:
@@ -32,25 +34,32 @@ matrix:
           packages:
             - clang-5.0
       env:
-        - MATRIX_EVAL="CC=clang-5.0 && CXX=clang++-5.0"
+        - LABEL="x86_64-clang"
+    - os: linux
+      services: docker
+      env:
+        - LABEL="aarch64-gcc"
+        - ENABLE_DOCKER="true"
+    - os: linux
+      services: docker
+      env:
+        - LABEL="armhf-gcc"
+        - ENABLE_DOCKER="true"
 
 before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then wget -q ${SDE_URL}                            ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then tar xf sde-external-8.12.0-2017-10-23-lin.tar.bz2; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export PATH=${PATH}:${TRAVIS_BUILD_DIR}/sde-external-8.12.0-2017-10-23-lin; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo add-apt-repository -y ppa:adrozdoff/cmake; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get -qq update                       ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo apt-get install -y cmake libmpfr-dev     ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx"   ]]; then brew update                                   ; fi
-  - eval "${MATRIX_EVAL}"
+     - export PATH=$PATH:/usr/bin:${TRAVIS_BUILD_DIR}/sde-external-8.12.0-2017-10-23-lin
+     - cd ${TRAVIS_BUILD_DIR}
+     - chmod +x ${TRAVIS_BUILD_DIR}/travis/*.sh
+     - if [[ "${ENABLE_DOCKER}" == "true" ]]; then ${TRAVIS_BUILD_DIR}/travis/setupdocker.sh; fi
+     - if [[ "${ENABLE_DOCKER}" == "true" ]]; then docker exec xenial /build/travis/before_install.${LABEL}.sh; fi
+     - if [[ "${LABEL}" == "x86_64-gcc"   ]]; then wget -q ${SDE_URL}; fi
+     - if [[ "${LABEL}" == "x86_64-clang" ]]; then wget -q ${SDE_URL}; fi
+     - if [[ "${ENABLE_DOCKER}" != "true" ]]; then ${TRAVIS_BUILD_DIR}/travis/before_install.${LABEL}.sh; fi
 
 before_script:
-  - mkdir sleef.build
-  - cd sleef.build
-  - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 ..
+     - if [[ "${ENABLE_DOCKER}" == "true" ]]; then docker exec xenial /build/travis/before_script.${LABEL}.sh; fi
+     - if [[ "${ENABLE_DOCKER}" != "true" ]]; then ${TRAVIS_BUILD_DIR}/travis/before_script.${LABEL}.sh; fi
 
 script:
-  - make -j 2 all
-  - export CTEST_OUTPUT_ON_FAILURE=TRUE
-  - ctest --verbose -j 2
-  - make install
+     - if [[ "${ENABLE_DOCKER}" == "true" ]]; then docker exec xenial /build/travis/script.${LABEL}.sh; fi
+     - if [[ "${ENABLE_DOCKER}" != "true" ]]; then ${TRAVIS_BUILD_DIR}/travis/script.${LABEL}.sh; fi

@@ -40,7 +40,7 @@ add_custom_command(OUTPUT ${SLEEF_INCLUDE_HEADER}
 # renameXXX.h for each SIMD
 # --------------------------------------------------------------------
 # Helper executable: generates parts of the sleef header file
-add_executable(${TARGET_MKRENAME} mkrename.c)
+add_host_executable(${TARGET_MKRENAME} mkrename.c)
 
 set(HEADER_FILES_GENERATED "")
 foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
@@ -66,7 +66,7 @@ endforeach()
 # renameXXX_gnuabi.h for each SIMD GNU Abi
 # --------------------------------------------------------------------
 # Helper executable: generates parts of the sleef header file gnu_abi
-add_executable(${TARGET_MKRENAME_GNUABI} mkrename_gnuabi.c)
+add_host_executable(${TARGET_MKRENAME_GNUABI} mkrename_gnuabi.c)
 
 set(HEADER_GNUABI_FILES_GENERATED "")
 if(ENABLE_GNUABI)
@@ -92,7 +92,7 @@ endif()
 # --------------------------------------------------------------------
 
 # TARGET_MKMASKED_GNUABI
-add_executable(${TARGET_MKMASKED_GNUABI} mkmasked_gnuabi.c)
+add_host_executable(${TARGET_MKMASKED_GNUABI} mkmasked_gnuabi.c)
 
 # maskedXXX_YY_gnuabi.h
 if(ENABLE_GNUABI)
@@ -130,7 +130,7 @@ add_custom_target(${TARGET_HEADERS} ALL
 # TARGET_MKDISP
 # --------------------------------------------------------------------
 # Helper executable: dispatcher for the vector extensions
-add_executable(${TARGET_MKDISP} mkdisp.c)
+add_host_executable(${TARGET_MKDISP} mkdisp.c)
 
 # Set C standard requirement (-std=gnu99 for gcc)
 set_target_properties(
