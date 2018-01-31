@@ -1,16 +1,6 @@
 include_directories("common")
 include_directories("arch")
 
-function(add_test_with_simulator TESTNAME)
-  if (NOT EMULATOR AND NOT SDE_COMMAND)
-    add_test(NAME ${TESTNAME} COMMAND ${ARGN})
-  elseif(NOT EMULATOR)
-    add_test(NAME ${TESTNAME} COMMAND ${SDE_COMMAND} "--" ${ARGN})
-  else()
-    add_test(NAME ${TESTNAME} COMMAND ${EMULATOR} ${ARGN})
-  endif()
-endfunction()
-
 add_subdirectory("libm")
 add_subdirectory("libm-tester")
 add_subdirectory("common")
