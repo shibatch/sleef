@@ -66,22 +66,6 @@ macro(test_extension SIMD)
     add_test_iut(${TARGET_IUT${SIMD}})
     list(APPEND IUT_LIST ${TARGET_IUT${SIMD}})
 
-    if(ENABLE_GNUABI)
-      if (COMPILER_SUPPORTS_WEAK_ALIASES)
-	add_executable(link_finite${SIMD} finite_names_testing.c)
-	target_compile_options(link_finite${SIMD}
-	  PRIVATE ${FLAGS_ENABLE_${SIMD}})
-	target_compile_definitions(link_finite${SIMD}
-	  PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS})
-	target_link_libraries(link_finite${SIMD} ${TARGET_LIBSLEEFGNUABI} ${LIBM})
-	if (NOT EMULATOR)
-	  add_test(NAME link_finite${SIMD} COMMAND link_finite${SIMD})
-	else()
-	  add_test(NAME link_finite${SIMD} COMMAND ${EMULATOR} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/link_finite${SIMD})
-	endif()
-      endif (COMPILER_SUPPORTS_WEAK_ALIASES)
-    endif(ENABLE_GNUABI)
-
     if(LIB_MPFR AND NOT ${SIMD} STREQUAL NEON32)
       # Build tester2 SIMD
       string(TOLOWER ${SIMD} SCSIMD)
@@ -116,6 +100,9 @@ if(ENABLE_GNUABI)
       target_compile_definitions(${GNUABI_COMPATIBILITY_TEST}
 	PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS})
       target_link_libraries(${GNUABI_COMPATIBILITY_TEST} ${TARGET_LIBSLEEFGNUABI} ${LIBM})
+      # These are linker tests that don't really need to be executed,
+      # but seeing them in the report of ctest gives an idea of what
+      # has been built for testing.
       add_test(NAME ${GNUABI_COMPATIBILITY_TEST}
 	COMMAND ${GNUABI_COMPATIBILITY_TEST})
     endif (COMPILER_SUPPORTS_${SIMD})
