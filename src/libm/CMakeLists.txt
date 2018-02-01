@@ -5,6 +5,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 set(CMAKE_C_FLAGS ORG_CMAKE_C_FLAGS)
 string(CONCAT CMAKE_C_FLAGS ${SLEEF_C_FLAGS})
 
+set(EXT_ENABLE_ALIAS AVX512F ADVSIMD NEON32)
+
 # --------------------------------------------------------------------
 # sleef.h
 # --------------------------------------------------------------------
@@ -57,7 +59,7 @@ foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
       COMMAND $<TARGET_FILE:${TARGET_MKRENAME}> ${RENAME_PARAMS_${SIMD}} > ${HEADER_${SIMD}}
       DEPENDS ${TARGET_MKRENAME}
     )
-    add_custom_target(rename${SIMD}.h.generated DEPENDS ${HEADER_${SIMD}})
+    add_custom_target(rename${SIMD}.h_generated DEPENDS ${HEADER_${SIMD}})
   endif()
 endforeach()
 
@@ -127,6 +129,11 @@ add_custom_target(${TARGET_HEADERS} ALL
 )
 
 # --------------------------------------------------------------------
+# TARGET_MKALIAS
+# --------------------------------------------------------------------
+add_executable(${TARGET_MKALIAS} mkalias.c)
+
+# --------------------------------------------------------------------
 # TARGET_MKDISP
 # --------------------------------------------------------------------
 # Helper executable: dispatcher for the vector extensions
@@ -134,7 +141,7 @@ add_host_executable(${TARGET_MKDISP} mkdisp.c)
 
 # Set C standard requirement (-std=gnu99 for gcc)
 set_target_properties(
-  ${TARGET_MKRENAME} ${TARGET_MKRENAME_GNUABI} ${TARGET_MKDISP} PROPERTIES
+  ${TARGET_MKRENAME} ${TARGET_MKRENAME_GNUABI} ${TARGET_MKDISP} ${TARGET_MKALIAS} PROPERTIES
   C_STANDARD 99
 )
 
@@ -189,14 +196,37 @@ endif()
 # Note: adds object file as sources via cmake conditional generator expression
 foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
   if(COMPILER_SUPPORTS_${SIMD})
+    list(FIND EXT_ENABLE_ALIAS ${SIMD} INDEX_ALIAS)
+    string(TOLOWER ${SIMD} SIMDLC)
+
     # Create a library
     add_library(${OBJECT_${SIMD}} OBJECT ${SIMD_SOURCES} ${HEADER_${SIMD}})    
-    target_compile_definitions(${OBJECT_${SIMD}} PRIVATE
-      ENABLE_${SIMD}=1
-      DORENAME=1
-      ${COMMON_TARGET_DEFINITIONS}
-      )
-    add_dependencies(${OBJECT_${SIMD}} rename${SIMD}.h.generated)
+
+    if (INDEX_ALIAS EQUAL -1)
+      target_compile_definitions(${OBJECT_${SIMD}} PRIVATE
+	ENABLE_${SIMD}=1
+	DORENAME=1
+	${COMMON_TARGET_DEFINITIONS}
+	)
+    else()
+      add_custom_command(
+	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/alias${SIMD}.h ${CMAKE_CURRENT_BINARY_DIR}/include/alias_${SIMDLC}.h
+       	COMMENT "Generating alias_${SIMDLC}.h"
+       	COMMAND $<TARGET_FILE:${TARGET_MKALIAS}> ${ALIAS_PARAMS_${SIMD}_SP} >  ${CMAKE_CURRENT_BINARY_DIR}/include/alias_${SIMDLC}.h
+       	COMMAND $<TARGET_FILE:${TARGET_MKALIAS}> ${ALIAS_PARAMS_${SIMD}_DP} >> ${CMAKE_CURRENT_BINARY_DIR}/include/alias_${SIMDLC}.h
+       	DEPENDS ${TARGET_MKALIAS}
+       	)
+      add_custom_target(alias_${SIMDLC}.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/include/alias_${SIMDLC}.h)
+      add_dependencies(${OBJECT_${SIMD}} alias_${SIMDLC}.h_generated)
+      target_compile_definitions(${OBJECT_${SIMD}} PRIVATE
+	ENABLE_${SIMD}=1
+	DORENAME=1
+	${COMMON_TARGET_DEFINITIONS}
+	ALIAS_NO_EXT_SUFFIX=\"alias_${SIMDLC}.h\"
+	)
+    endif()
+
+    add_dependencies(${OBJECT_${SIMD}} rename${SIMD}.h_generated)
 
     set_target_properties(${OBJECT_${SIMD}} PROPERTIES
       ${COMMON_TARGET_PROPERTIES}
