@@ -45,8 +45,11 @@
 #endif /* ENABLE_ADVSIMDF */
 
 // GNUABI name mangling macro.
+#ifndef MASKED_GNUABI
 #define __MAKE_FN_NAME(name, t, vl, p) _ZGV##t##N##vl##p##_##name
-
+#else /* MASKED_GNUABI */
+#define __MAKE_FN_NAME(name, t, vl, p) _ZGV##t##M##vl##p##_##name
+#endif /* MASKED_GNUABI */
 // Level-1 expansion macros for declaration and call. The signature of
 // each function has three input paramters to avoid segfaults of
 // sincos-like functions that are effectively loading data from
@@ -85,6 +88,7 @@ DECLARE_DP(__exp10_finite, v);
 DECLARE_DP(__exp2_finite, v);
 DECLARE_DP(__exp_finite, v);
 DECLARE_DP(__fmod_finite, vv);
+DECLARE_DP(__modf_finite, vl8);
 DECLARE_DP(__hypot_finite, vv);
 DECLARE_DP(__log10_finite, v);
 // DECLARE_DP(__log2_finite,v);
@@ -159,6 +163,7 @@ DECLARE_SP(__exp10f_finite, v);
 DECLARE_SP(__exp2f_finite, v);
 DECLARE_SP(__expf_finite, v);
 DECLARE_SP(__fmodf_finite, vv);
+DECLARE_SP(__modff_finite, vl4);
 DECLARE_SP(__hypotf_finite, vv);
 DECLARE_SP(__log10f_finite, v);
 // DECLARE_SP(__log2f_finite,v);
@@ -260,6 +265,7 @@ int main(void) {
   CALL_DP(__exp2_finite, v);
   CALL_DP(__exp_finite, v);
   CALL_DP(__fmod_finite, vv);
+  CALL_DP(__modf_finite, vl8);
   CALL_DP(__hypot_finite, vv);
   CALL_DP(__log10_finite, v);
   // CALL_DP(__log2_finite,v);
@@ -330,6 +336,7 @@ int main(void) {
   CALL_SP(__exp2f_finite, v);
   CALL_SP(__expf_finite, v);
   CALL_SP(__fmodf_finite, vv);
+  CALL_SP(__modff_finite, vl4);
   CALL_SP(__hypotf_finite, vv);
   CALL_SP(__log10f_finite, v);
   // CALL_SP(__log2f_finite,v);

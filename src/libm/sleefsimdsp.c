@@ -2285,6 +2285,7 @@ EXPORT CONST vfloat __exp10f_finite    (vfloat)         __attribute__((weak, ali
 EXPORT CONST vfloat __exp2f_finite     (vfloat)         __attribute__((weak, alias(str_xexp2f     )));
 EXPORT CONST vfloat __expf_finite      (vfloat)         __attribute__((weak, alias(str_xexpf      )));
 EXPORT CONST vfloat __fmodf_finite     (vfloat, vfloat) __attribute__((weak, alias(str_xfmodf     )));
+EXPORT CONST vfloat __modff_finite      (vfloat, vfloat *) __attribute__((weak, alias(str_xmodff  )));
 EXPORT CONST vfloat __hypotf_u05_finite(vfloat, vfloat) __attribute__((weak, alias(str_xhypotf_u05)));
 EXPORT CONST vfloat __lgammaf_u1_finite(vfloat)         __attribute__((weak, alias(str_xlgammaf_u1)));
 EXPORT CONST vfloat __log10f_finite    (vfloat)         __attribute__((weak, alias(str_xlog10f    )));

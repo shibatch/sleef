@@ -2785,6 +2785,7 @@ EXPORT CONST vdouble __exp10_finite    (vdouble)          __attribute__((weak, a
 EXPORT CONST vdouble __exp2_finite     (vdouble)          __attribute__((weak, alias(str_xexp2     )));
 EXPORT CONST vdouble __exp_finite      (vdouble)          __attribute__((weak, alias(str_xexp      )));
 EXPORT CONST vdouble __fmod_finite     (vdouble, vdouble) __attribute__((weak, alias(str_xfmod     )));
+EXPORT CONST vdouble __modf_finite     (vdouble, vdouble *) __attribute__((weak, alias(str_xmodf   )));
 EXPORT CONST vdouble __hypot_u05_finite(vdouble, vdouble) __attribute__((weak, alias(str_xhypot_u05)));
 EXPORT CONST vdouble __lgamma_u1_finite(vdouble)          __attribute__((weak, alias(str_xlgamma_u1)));
 EXPORT CONST vdouble __log10_finite    (vdouble)          __attribute__((weak, alias(str_xlog10    )));
