@@ -100,6 +100,7 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
   command_arguments(HEADER_PARAMS_NEON32    2 4 - float32x4_t int32x2_t int32x4_t __ARM_NEON__ neon)
 
   command_arguments(ALIAS_PARAMS_NEON32_SP -4 float32x4_t int32x4_t - neon)
+  command_arguments(ALIAS_PARAMS_NEON32_DP 0)
 endif()
 
 # MKRename arguments per type

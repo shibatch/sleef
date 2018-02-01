@@ -11,6 +11,8 @@
 #include "funcproto.h"
 
 int main(int argc, char **argv) {
+  if (argc == 2 && strcmp(argv[1], "0") == 0) exit(0);
+
   if (argc < 6) {
     fprintf(stderr, "Usage : %s <vector width> <vector FP type> <vector int type> <mangled ISA> <extension>\n", argv[0]);
     exit(-1);
