@@ -68,14 +68,29 @@ int main(int argc, char **argv) {
 	     mangledisa, vw, vparameterStr[funcList[i].funcType], funcList[i].name, typeSpecS[fptype]);
 
     switch(funcList[i].funcType) {
-    case 0:
+    case 0: {
       printf("EXPORT CONST %s %s(%s a0, vopmask m) { return %s(a0); }\n",
-	     vfpname[fptype], funcname[1], vfpname[fptype], funcname[0]);
+             vfpname[fptype], funcname[1], vfpname[fptype], funcname[0]);
+
+      if (funcList[i].ulp < 20)
+        printf("EXPORT CONST %s %s(%s) __attribute__((weak, alias(\"%s\")));\n",
+               vfpname[fptype], funcname[3], vfpname[fptype], funcname[0]);
+      else
+        printf("EXPORT CONST %s %s_u%d(%s) __attribute__((weak, alias(\"%s\")));\n",
+               vfpname[fptype], funcname[3],funcList[i].ulp, vfpname[fptype], funcname[0]);
       break;
-    case 1:
+    }
+    case 1: {
       printf("EXPORT CONST %s %s(%s a0, %s a1, vopmask m) { return %s(a0, a1); }\n",
 	     vfpname[fptype], funcname[1], vfpname[fptype], vfpname[fptype], funcname[0]);
+      if (funcList[i].ulp < 20)
+        printf("EXPORT CONST %s %s(%s, %s, vopmask) __attribute__((weak, alias(\"%s\")));\n",
+               vfpname[fptype], funcname[3], vfpname[fptype], vfpname[fptype], funcname[0]);
+      else
+        printf("EXPORT CONST %s %s_u%d(%s, %s, vopmask) __attribute__((weak, alias(\"%s\")));\n",
+               vfpname[fptype], funcname[3],funcList[i].ulp, vfpname[fptype], vfpname[fptype], funcname[0]);
       break;
+    }
     case 2:
       if (sizeoffp[fptype] == sizeof(double)) {
 	printf("EXPORT void %s(vdouble a0, double *a1, double *a2, vopmask m) {\n", funcname[1]);
@@ -114,7 +129,24 @@ int main(int argc, char **argv) {
 	     vfpname[fptype], funcname[1], vfpname[fptype], vfpname[fptype], vfpname[fptype], 
 	     funcname[0]);
       break;
-    case 6:
+    case 6: {
+      char *ptr_type = NULL;
+
+      if (sizeoffp[fptype] == sizeof(double))
+        ptr_type = "double *";
+      if (sizeoffp[fptype] == sizeof(float))
+        ptr_type = "float *";
+
+      printf("EXPORT CONST %s %s(%s a0, %s a1, vopmask m) { return %s(a0, a1); }\n",
+             vfpname[fptype], funcname[1], vfpname[fptype], ptr_type, funcname[0]);
+
+      if (funcList[i].ulp < 20)
+        printf("EXPORT CONST %s %s(%s, %s, vopmask) __attribute__((weak, alias(\"%s\")));\n",
+               vfpname[fptype], funcname[3], vfpname[fptype], ptr_type, funcname[0]);
+      else
+        printf("EXPORT CONST %s %s_u%d(%s, %s, vopmask) __attribute__((weak, alias(\"%s\")));\n",
+               vfpname[fptype], funcname[3],funcList[i].ulp, vfpname[fptype], ptr_type, funcname[0]);
+    }
       break;
     }
   }
