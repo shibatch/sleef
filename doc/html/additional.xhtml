@@ -24,12 +24,31 @@
   <li><a class="underlined" href="dft.xhtml">DFT library reference</a></li>
   <li><a class="underlined" href="misc.xhtml">Other tools included in the package</a></li>
   <li><a class="underlined" href="benchmark.xhtml">Benchmark results</a></li>
+  <li>&nbsp;</li>
   <li><a class="underlined" href="additional.xhtml">Additional notes</a></li>
+    <ul class="disc">
+      <li><a href="additional.xhtml#gnuabi">About the GNUABI version of the library</a></li>
+      <li><a href="additional.xhtml#dispatcher">How the dispatcher works</a></li>
+      <li><a href="additional.xhtml#ulp">ULP, gradual underflow and flush-to-zero mode</a></li>
+      <li><a href="additional.xhtml#sincospi">About sincospi</a></li>
+      <li><a href="additional.xhtml#logo">About the logo</a></li>
+    </ul>
 </ul>
 
-<h2>Additional Notes</h2>
+<h2 id="gnuabi">About the GNUABI version of the library</h2>
 
-<h3 id="dispatcher">How the dispatcher works</h3>
+<p class="noindent">
+  The GNUABI version of the library (libsleefgnuabi.so) is built for
+  x86 and aarch64 architectectures. This library provides an API
+  compatible with <a class="underlined"
+  href="https://sourceware.org/glibc/wiki/libmvec">libmvec</a> in
+  glibc, and the API comforms to the <a class="underlined"
+  href="https://sourceware.org/glibc/wiki/libmvec?action=AttachFile&amp;do=view&amp;target=VectorABI.txt">vector
+  ABI</a>. This library is built and installed by default, and some
+  compilers may call the functions in this library.
+</p>
+
+<h2 id="dispatcher">How the dispatcher works</h2>
 
 <p class="noindent">
   Fig. 7.1 shows a simplified code of our dispatcher. There is only
@@ -106,7 +125,7 @@
 </p>
 
 
-<h3>ULP, gradual underflow and flush-to-zero mode</h3>
+<h2 id="ulp">ULP, gradual underflow and flush-to-zero mode</h2>
 
 <p class="noindent">
   ULP stands for "unit in the last place", which is sometimes used for
@@ -145,7 +164,7 @@
   this page.</a>
 </p>
 
-<h3>About sincospi</h3>
+<h2 id="sincospi">About sincospi</h2>
 
 <p class="noindent">
   The sincospi series of functions evaluates <i class="math">sin(
@@ -193,7 +212,7 @@
   gamma functions.
 </p>
 
-<h3>About the logo</h3>
+<h2 id="logo">About the logo</h2>
 
 <p>
   It is a soup ladle. Sleef means a soup ladle in Dutch.
@@ -207,6 +226,15 @@
   </a>
   <br />
   Fig. 7.2: SLEEF logo
+</p>
+
+<p class="footer">
+  Copyright &copy; 2018 SLEEF Project.<br/>
+  SLEEF is open-source software and is distributed under the Boost Software License, Version 1.0.
+  <br/>
+  <a href="https://sourceforge.net/p/sleef/" rel="nofollow">
+    <img src="https://sourceforge.net/sflogo.php?type=10&amp;group_id=2867658" style="margin-top: 1em;" alt="Download sleef"/>
+  </a>
 </p>
 
 <!--TEST-->
