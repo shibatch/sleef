@@ -3,6 +3,7 @@ include_directories("arch")
 
 add_subdirectory("libm")
 add_subdirectory("libm-tester")
+add_subdirectory("libm-benchmarks")
 add_subdirectory("common")
 add_subdirectory("dft")
 add_subdirectory("dft-tester")
