@@ -12,7 +12,6 @@
 #include <unistd.h>
 #include <sleef.h>
 
-uint64_t currentTimeMicros();
 void fillDP(double *buf, double min, double max);
 void fillSP(float *buf, double min, double max);
 

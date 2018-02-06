@@ -39,12 +39,6 @@ int cpuSupportsAVX512F() {
 }
 #endif
 
-uint64_t currentTimeMicros() {
-  struct timespec tp;
-  clock_gettime(CLOCK_MONOTONIC, &tp);
-  return (uint64_t)tp.tv_sec * 1000000LL + ((uint64_t)tp.tv_nsec/1000);
-}
-
 void fillDP(double *buf, double min, double max) {
   for(int i=0;i<NITER1*veclen;i++) {
     double r = ((double)random() + RAND_MAX * (double)random()) / (RAND_MAX * (double)RAND_MAX);

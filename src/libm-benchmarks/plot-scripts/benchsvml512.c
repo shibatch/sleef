@@ -12,7 +12,7 @@
 #include <unistd.h>
 #include <x86intrin.h>
 
-uint64_t currentTimeMicros();
+uint64_t Sleef_currentTimeMicros();
 void fillDP(double *buf, double min, double max);
 void fillSP(float *buf, double min, double max);
 
