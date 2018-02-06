@@ -23,7 +23,11 @@ extern FILE *fp;
 #include "bench.h"
 
 #ifdef __AVX__
+#if defined(_MSC_VER)
+#include <intrin.h>
+#else
 #include <x86intrin.h>
+#endif
 typedef __m256d vdouble;
 typedef __m256 vfloat;
 #define ENABLED

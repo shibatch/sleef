@@ -23,7 +23,11 @@ extern FILE *fp;
 #include "bench.h"
 
 #ifdef __SSE2__
+#if defined(_MSC_VER)
+#include <intrin.h>
+#else
 #include <x86intrin.h>
+#endif
 typedef __m128d vdouble;
 typedef __m128 vfloat;
 #define ENABLED
