@@ -12,6 +12,8 @@
 
 #include "misc.h"
 
+#define __SLEEFSIMDSP_C__
+
 #if (defined(_MSC_VER))
 #pragma fp_contract (off)
 #endif
@@ -2254,6 +2256,10 @@ EXPORT CONST void *xgetPtrf(int name) {
   if (name == 0) return ISANAME;
   return (void *)0;
 }
+#endif
+
+#ifdef ALIAS_NO_EXT_SUFFIX
+#include ALIAS_NO_EXT_SUFFIX
 #endif
 
 #ifdef ENABLE_MAIN
