@@ -18,7 +18,15 @@
 
 <ul class="none" style="font-family: arial, sansserif; padding-left: 0.5cm;">
   <li><a class="underlined" href="index.xhtml">Introduction</a></li>
+  <li>&nbsp;</li>
   <li><a class="underlined" href="compile.xhtml">Compiling and installing the library</a></li>
+    <ul class="disc">
+      <li><a href="compile.xhtml#cmake">About CMake</a></li>
+      <li><a href="compile.xhtml#linux">Compiling and installing library on Linux</a></li>
+      <li><a href="compile.xhtml#MSVC">Compiling library with Microsoft Visual C++</a></li>
+      <li><a href="compile.xhtml#hello">Compiling and running "Hello SLEEF"</a></li>
+    </ul>
+  <li>&nbsp;</li>
   <li><a class="underlined" href="purec.xhtml">Math library reference</a></li>
   <li><a class="underlined" href="dft.xhtml">DFT library reference</a></li>
   <li><a class="underlined" href="misc.xhtml">Other tools included in the package</a></li>
@@ -59,10 +67,10 @@ For building SLEEF, version 3.4.3 is the minimum required.
 <h3>Quick start</h3>
 
 <p class="noindent">
-1. Make sure cmake is available on the command-line.
+1. Make sure cmake is available on the command-line. The command below
+should display a version number greater than or equal to 3.4.3.
 </p>
-<pre>$ cmake --version
-(should display a version number greater than or equal to 3.4.3)</pre>
+<pre class="command">$ cmake --version</pre>
 
 <p class="noindent">
 2. Download the tar from
@@ -70,19 +78,19 @@ the <a class="underlined" href="https://sourceforge.net/projects/sleef/files/">s
 repository</a> or checkout out the source code from
 the <a class="underlined" href="https://github.com/shibatch/sleef">GitHub repository</a>.
 </p>
-<pre>$ git clone https://github.com/shibatch/sleef</pre>
+<pre class="command">$ git clone https://github.com/shibatch/sleef</pre>
 
 <p class="noindent">
 3. Make a separate directory to create an out-of-source build. SLEEF does not
 allow for in-tree builds.
 </p>
-<pre>$ cd sleef-project
-$ mkdir my-sleef-build &amp;&amp; cd my-sleef-build</pre>
+<pre class="command">$ cd sleef
+$ mkdir build &amp;&amp; cd build</pre>
 
 <p class="noindent">
 4. Run cmake to configure your project and generate the system to build it:
 </p>
-<pre>$ cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+<pre class="command">$ cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo \
 	-DCMAKE_INSTALL_PREFIX=../my-sleef-install \
 	..</pre>
 
@@ -97,7 +105,7 @@ your build.
 </p>
 
 <p>
-NOTE: On **Windows**, you need to use a specific generator like this:
+NOTE: On <b style="font-weight: bold;">Windows</b>, you need to use a specific generator like this:
 `cmake -G"Visual Studio 14 2015 Win64" ..` specifying the Visual
 Studio version and targeting specifically `Win64` (to support
 compilation of AVX/AVX2) Check `cmake -G` to get a full list of
@@ -111,17 +119,17 @@ Studio.
 5. Now that you have the build files created by cmake, proceed from the top
 of the build directory:
 </p>
-<pre>$ make sleef</pre>
+<pre class="command">$ make</pre>
 
 <p class="noindent">
 6. Install the library under ../my-sleef/install by running:
 </p>
-<pre>$ make install</pre>
+<pre class="command">$ make install</pre>
 
 <p class="noindent">
 7. You can execute the tests by running:
 </p>
-<pre>$ make test</pre>
+<pre class="command">$ make test</pre>
 
 <h3 id="build-customization">Build customization</h3>
 
@@ -129,8 +137,10 @@ of the build directory:
 Variables dictate how the build is generated; options are defined and undefined,
 respectively, on the cmake command line like this:
 </p>
-<pre>cmake -DVARIABLE=&lt;value&gt; &lt;cmake-build-dir&gt;
-cmake -UVARIABLE &lt;cmake-build-dir&gt;</pre>
+<ul style="margin-top: 1em; margin-bottom: 1em;">
+  <li>cmake -DVARIABLE=&lt;value&gt; &lt;cmake-build-dir&gt;</li>
+  <li>cmake -UVARIABLE &lt;cmake-build-dir&gt;</li>
+</ul>
 <p class="noindent">
 Build configurations allow a project to be built in different ways for debug,
 optimized, or any other special set of flags.
@@ -146,14 +156,14 @@ optimized, or any other special set of flags.
     <li>`MinSizeRel`: builds the smallest (but not fastest) object code</li>
     <li>`RelWithDebInfo`: builds optimized code with debug information as well</li>
   </ul>
-  <li style="margin-top: 1em;">`CMAKE_INSTALL_PREFIX` : The prefix the use when running `make
+  <li style="margin-top: 1em;">`CMAKE_INSTALL_PREFIX` : The prefix it uses when running `make
   install`. Defaults to /usr/local on GNU/Linux and MacOS. Defaults to
   C:/Program Files on Windows.</li>
-  <ul>
-  </ul>
+  <li style="margin-top: 1em;">`BUILD_SHARED_LIBS` : Static libs are
+  built if set to FALSE</li>
 </ul>
 
-<h3 id="install">Compiling and installing library on Linux</h3>
+<h2 id="linux">Compiling and installing library on Linux</h2>
 
 <p class="noindent">
   You need to install libmpfr and OpenMP(libmpfr is only required to
@@ -161,37 +171,31 @@ optimized, or any other special set of flags.
   build the library, please change the directory to sleef-3.X and run
   the following commands.
 
-  <ul style="margin-top: 1em; margin-bottom: 1em;">
-    <li>mkdir build (in-source build is not supported)</li>
-    <li>cd build</li>
-    <li>cmake -DCMAKE_INSTALL_PREFIX=/usr ..</li>
-    <li>make</li>
-    <li>make test (optional, this takes a few ten minutes)</li>
-    <li>sudo make install</li>
-  </ul>
+  <pre class="command">$ mkdir build
+$ cd build
+$ cmake -DCMAKE_INSTALL_PREFIX=/usr ..
+$ make
+$ make test
+$ sudo make install</pre>
 </p>
-
+  
 <p class="noindent">
   In order to uninstall the libraries and headers, run the following command.
 
-  <ul style="margin-top: 1em;">
-    <li>sudo xargs rm -v &lt; install_manifest.txt</li>
-  </ul>
+  <pre class="command" style="margin-top: 1em;">$ sudo xargs rm -v &lt; install_manifest.txt</pre>
 </p>
 
-<h3>Compiling library with Microsoft Visual C++</h3>
+<h2 id="MSVC">Compiling library with Microsoft Visual C++</h2>
 
 <p class="noindent">
   You need Visual Studio 2017. Open developer command prompt for
   VS2017, change directory to sleef-3.X, and then run the following
   commands.
   
-  <ul style="margin-top: 1em; margin-bottom: 1em;">
-    <li>mkdir build (in-source build is not supported)</li>
-    <li>cd build</li>
-    <li>cmake -G"Visual Studio 15 2017 Win64" ..</li>
-    <li>cmake --build . --config Release -- /maxcpucount:1</li>
-  </ul>
+  <pre class="command">D:\sleef-3.X> mkdir build
+D:\sleef-3.X> cd build
+D:\sleef-3.X\build> cmake -G"Visual Studio 15 2017 Win64" ..
+D:\sleef-3.X\build> cmake --build . --config Release -- /maxcpucount:1</pre>
 
   Note that parallel build is not supported on MSVC.
 </p>
@@ -200,7 +204,7 @@ optimized, or any other special set of flags.
 
 <p class="noindent">
   Now, let's try compiling the <a class="underlined"
-  href="hellox86.c">source code shown in Fig. 2.3</a>.
+  href="hellox86.c">source code shown in Fig. 2.1</a>.
 </p>
 
 <pre class="code">
@@ -228,30 +232,38 @@ optimized, or any other special set of flags.
 <code>}</code>
 </pre>
 <p style="text-align:center;">
-  Fig. 2.3: <a href="hellox86.c">Source code for testing</a>
+  Fig. 2.1: <a href="hellox86.c">Source code for testing</a>
 </p>
 
 
 
 <p style="margin-top: 2cm;">
-  Fig.2.4 shows typical commands for compiling and executing the hello
+  Fig.2.2 shows typical commands for compiling and executing the hello
   code on Linux computers.
 </p>
 
-<pre class="code">
-<code>$ gcc hellox86.c -o hellox86 -lsleef</code>
-<code>$ ./hellox86</code>
-<code>pow(2, 3) = 8</code>
-<code>pow(10, 20) = 1e+20</code>
-</pre>
+<pre class="command" style="margin-top: 2.0em; margin-bottom: 0.5cm;">$ gcc hellox86.c -o hellox86 -lsleef
+$ ./hellox86
+pow(2, 3) = 8
+pow(10, 20) = 1e+20
+$ &block;</pre>
 <p style="text-align:center;">
-  Fig. 2.4: Commands for compiling and executing hellox86.c
+  Fig. 2.2: Commands for compiling and executing hellox86.c
 </p>
 
 <p style="margin-top: 2cm;">
   You may need to set LD_LIBRARY_PATH environment variable
   appropriately. If you are trying to execute the program on Mac OSX
   or Windows, try copying the DLLs to the current directory.
+</p>
+
+<p class="footer">
+  Copyright &copy; 2018 SLEEF Project.<br/>
+  SLEEF is open-source software and is distributed under the Boost Software License, Version 1.0.
+  <br/>
+  sleef.org is hosted by <a href="https://sourceforge.net/p/sleef/" rel="nofollow">
+    <img src="https://sourceforge.net/sflogo.php?type=10&amp;group_id=2867658" style="position:relative; top:4px;" alt="Download sleef"/>
+  </a>
 </p>
 
 <!--TEST-->
