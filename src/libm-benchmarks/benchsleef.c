@@ -9,7 +9,6 @@
 #include <assert.h>
 #include <math.h>
 #include <time.h>
-#include <unistd.h>
 #include <sleef.h>
 
 #include "bench.h"

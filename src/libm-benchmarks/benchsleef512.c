@@ -9,7 +9,6 @@
 #include <assert.h>
 #include <math.h>
 #include <time.h>
-#include <unistd.h>
 #include <sleef.h>
 
 void fillDP(double *buf, double min, double max);
