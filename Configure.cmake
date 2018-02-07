@@ -156,6 +156,7 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
   set(FLAGS_STRICTMATH "-ffp-contract=off")
   set(FLAGS_FASTMATH "-ffast-math")
 
+  # Without the options below, gcc generates calls to libm
   set(FLAGS_NO_ERRNO "-fno-math-errno -fno-trapping-math")
   
   # Intel vector extensions.
