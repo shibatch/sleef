@@ -28,6 +28,7 @@
 #define VECTLENSP (1 << LOG2VECTLENSP)
 
 #define FULL_FP_ROUNDING
+#define ACCURATE_SQRT
 
 #if defined(_MSC_VER)
 #include <intrin.h>

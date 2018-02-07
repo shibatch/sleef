@@ -2407,6 +2407,9 @@ EXPORT CONST vdouble xfma(vdouble x, vdouble y, vdouble z) {
 }
 
 EXPORT CONST vdouble xsqrt_u05(vdouble d) {
+#ifdef ACCURATE_SQRT
+  return vsqrt_vd_vd(d);
+#else
   vdouble q;
   vopmask o;
   
@@ -2435,6 +2438,7 @@ EXPORT CONST vdouble xsqrt_u05(vdouble d) {
   x = vsel_vd_vo_vd_vd(veq_vo_vd_vd(d, vcast_vd_d(0)), d, x);
   
   return x;
+#endif
 }
 
 EXPORT CONST vdouble xsqrt_u35(vdouble d) { return xsqrt_u05(d); }

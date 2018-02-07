@@ -1818,6 +1818,9 @@ EXPORT CONST vfloat xfmaf(vfloat x, vfloat y, vfloat z) {
 static INLINE CONST vint2 vcast_vi2_i_i(int i0, int i1) { return vcast_vi2_vm(vcast_vm_i_i(i0, i1)); }
 
 EXPORT CONST vfloat xsqrtf_u05(vfloat d) {
+#ifdef ACCURATE_SQRT
+  return vsqrt_vf_vf(d);
+#else
   vfloat q;
   vopmask o;
   
@@ -1846,6 +1849,7 @@ EXPORT CONST vfloat xsqrtf_u05(vfloat d) {
   x = vsel_vf_vo_vf_vf(veq_vo_vf_vf(d, vcast_vf_f(0)), d, x);
   
   return x;
+#endif
 }
 
 EXPORT CONST vfloat xhypotf_u05(vfloat x, vfloat y) {

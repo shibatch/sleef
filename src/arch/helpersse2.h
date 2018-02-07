@@ -33,6 +33,8 @@
 #define LOG2VECTLENSP (LOG2VECTLENDP+1)
 #define VECTLENSP (1 << LOG2VECTLENSP)
 
+#define ACCURATE_SQRT
+
 #if defined(_MSC_VER)
 #include <intrin.h>
 #else
