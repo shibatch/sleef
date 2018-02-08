@@ -17,7 +17,7 @@ endif()
 
 # The library currently supports the following SIMD architectures
 set(SLEEF_SUPPORTED_EXTENSIONS
-  SSE2 SSE4 AVX FMA4 AVX2 AVX2128 AVX512F # x86
+  AVX512F AVX2 AVX2128 FMA4 AVX SSE4 SSE2 # x86
   ADVSIMD				  # Aarch64
   NEON32				  # Aarch32
   CACHE STRING "List of SIMD architectures supported by libsleef."
