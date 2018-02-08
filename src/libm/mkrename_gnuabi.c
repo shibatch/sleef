@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
   static char *vparameterStrSP[] = { "v", "vv", "vl4l4", "vv", "v", "vvv", "vl4" };
   
   for(int i=0;funcList[i].name != NULL;i++) {
-    if (funcList[i].ulp == -2) continue;
+    if ((funcList[i].flags & 1) != 0) continue;
     if (funcList[i].ulp < 0) {
       printf("#define x%s _ZGV%sN%d%s_%s\n", funcList[i].name,
 	     mangledisa, wdp, vparameterStrDP[funcList[i].funcType], funcList[i].name);
@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
   printf("\n");
 
   for(int i=0;funcList[i].name != NULL;i++) {
-    if (funcList[i].ulp == -2) continue;
+    if ((funcList[i].flags & 1) != 0) continue;
     if (funcList[i].ulp < 0) {
       printf("#define x%sf _ZGV%sN%d%s_%sf\n", funcList[i].name,
              mangledisa, wsp, vparameterStrSP[funcList[i].funcType], funcList[i].name);

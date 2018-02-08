@@ -443,6 +443,7 @@ EXPORT CONST vfloat xcosf_u1(vfloat d) {
 #ifdef ENABLE_GNUABI
 #define TYPE2_FUNCATR static INLINE CONST 
 #define TYPE6_FUNCATR static INLINE CONST 
+#define SQRTFU05_FUNCATR static INLINE CONST 
 #define XSINCOSF sincosfk
 #define XSINCOSF_U1 sincosfk_u1
 #define XSINCOSPIF_U05 sincospifk_u05
@@ -451,6 +452,7 @@ EXPORT CONST vfloat xcosf_u1(vfloat d) {
 #else
 #define TYPE2_FUNCATR EXPORT CONST
 #define TYPE6_FUNCATR EXPORT
+#define SQRTFU05_FUNCATR EXPORT
 #define XSINCOSF xsincosf
 #define XSINCOSF_U1 xsincosf_u1
 #define XSINCOSPIF_U05 xsincospif_u05
@@ -1817,10 +1819,7 @@ EXPORT CONST vfloat xfmaf(vfloat x, vfloat y, vfloat z) {
 
 static INLINE CONST vint2 vcast_vi2_i_i(int i0, int i1) { return vcast_vi2_vm(vcast_vm_i_i(i0, i1)); }
 
-EXPORT CONST vfloat xsqrtf_u05(vfloat d) {
-#ifdef ACCURATE_SQRT
-  return vsqrt_vf_vf(d);
-#endif
+SQRTFU05_FUNCATR vfloat xsqrtf_u05(vfloat d) {
   vfloat q;
   vopmask o;
   
@@ -1849,6 +1848,14 @@ EXPORT CONST vfloat xsqrtf_u05(vfloat d) {
   x = vsel_vf_vo_vf_vf(veq_vo_vf_vf(d, vcast_vf_f(0)), d, x);
   
   return x;
+}
+
+EXPORT CONST vfloat xsqrtf(vfloat d) {
+#ifdef ACCURATE_SQRT
+  return vsqrt_vf_vf(d);
+#endif
+  // fall back to approximation if ACCURATE_SQRT is undefined
+  return xsqrtf_u05(d);
 }
 
 EXPORT CONST vfloat xhypotf_u05(vfloat x, vfloat y) {
@@ -2265,24 +2272,6 @@ EXPORT CONST void *xgetPtrf(int name) {
 #include ALIAS_NO_EXT_SUFFIX
 #endif
 
-#ifdef ENABLE_MAIN
-// gcc -DENABLE_MAIN -Wno-attributes -I../common -I../arch -DENABLE_AVX2 -mavx2 -mfma sleefsimdsp.c ../common/common.c -lm
-#include <stdio.h>
-#include <stdlib.h>
-int main(int argc, char **argv) {
-  vfloat vf1 = vcast_vf_f(atof(argv[1]));
-  //vfloat vf2 = vcast_vf_f(atof(argv[2]));
-
-  //vfloat r = xpowf(vf1, vf2);
-  //vfloat r = xsqrtf_u05(vf1);
-  //printf("%g\n", xnextafterf(vf1, vf2)[0]);
-  //printf("%g\n", nextafterf(atof(argv[1]), atof(argv[2])));
-  printf("t = %.20g\n", xlogf_u1(vf1)[0]);
-  printf("c = %.20g\n", logf(atof(argv[1])));
-  
-}
-#endif
-
 #ifdef ENABLE_GNUABI
 EXPORT CONST vfloat __acosf_finite     (vfloat)         __attribute__((weak, alias(str_xacosf_u1  )));
 EXPORT CONST vfloat __acoshf_finite    (vfloat)         __attribute__((weak, alias(str_xacoshf    )));
@@ -2301,10 +2290,28 @@ EXPORT CONST vfloat __log10f_finite    (vfloat)         __attribute__((weak, ali
 EXPORT CONST vfloat __logf_finite      (vfloat)         __attribute__((weak, alias(str_xlogf_u1   )));
 EXPORT CONST vfloat __powf_finite      (vfloat, vfloat) __attribute__((weak, alias(str_xpowf      )));
 EXPORT CONST vfloat __sinhf_finite     (vfloat)         __attribute__((weak, alias(str_xsinhf     )));
-EXPORT CONST vfloat __sqrtf_u05_finite (vfloat)         __attribute__((weak, alias(str_xsqrtf_u05 )));
+EXPORT CONST vfloat __sqrtf_finite     (vfloat)         __attribute__((weak, alias(str_xsqrtf     )));
 EXPORT CONST vfloat __tgammaf_u1_finite(vfloat)         __attribute__((weak, alias(str_xtgammaf_u1)));
 
 #ifdef HEADER_MASKED
 #include HEADER_MASKED
 #endif
 #endif /* #ifdef ENABLE_GNUABI */
+
+#ifdef ENABLE_MAIN
+// gcc -DENABLE_MAIN -Wno-attributes -I../common -I../arch -DENABLE_AVX2 -mavx2 -mfma sleefsimdsp.c ../common/common.c -lm
+#include <stdio.h>
+#include <stdlib.h>
+int main(int argc, char **argv) {
+  vfloat vf1 = vcast_vf_f(atof(argv[1]));
+  //vfloat vf2 = vcast_vf_f(atof(argv[2]));
+
+  //vfloat r = xpowf(vf1, vf2);
+  //vfloat r = xsqrtf_u05(vf1);
+  //printf("%g\n", xnextafterf(vf1, vf2)[0]);
+  //printf("%g\n", nextafterf(atof(argv[1]), atof(argv[2])));
+  printf("t = %.20g\n", xlogf_u1(vf1)[0]);
+  printf("c = %.20g\n", logf(atof(argv[1])));
+  
+}
+#endif

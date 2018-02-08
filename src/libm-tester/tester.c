@@ -150,7 +150,9 @@ double child_atan2_u1(double y, double x) { child_d_d_d("atan2_u1", y, x); }
 Sleef_double2 child_sincos_u1(double x) { child_d2_d("sincos_u1", x); }
 
 double child_pow(double x, double y) { child_d_d_d("pow", x, y); }
+double child_sqrt(double x) { child_d_d("sqrt", x); }
 double child_sqrt_u05(double x) { child_d_d("sqrt_u05", x); }
+double child_sqrt_u35(double x) { child_d_d("sqrt_u35", x); }
 
 double child_sinh(double x) { child_d_d("sinh", x); }
 double child_cosh(double x) { child_d_d("cosh", x); }
@@ -276,6 +278,7 @@ float child_atan2f_u1(float y, float x) { child_f_f_f("atan2f_u1", y, x); }
 Sleef_float2 child_sincosf_u1(float x) { child_f2_f("sincosf_u1", x); }
 
 float child_powf(float x, float y) { child_f_f_f("powf", x, y); }
+float child_sqrtf(float x) { child_f_f("sqrtf", x); }
 float child_sqrtf_u05(float x) { child_f_f("sqrtf_u05", x); }
 float child_sqrtf_u35(float x) { child_f_f("sqrtf_u35", x); }
 
@@ -2421,9 +2424,23 @@ void do_test() {
     }
 
     {
+      fprintf(stderr, "sqrt denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_sqrt, child_sqrt, xa[i]);
+      showResult(success);
+    }
+
+    {
       fprintf(stderr, "sqrt_u05 denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_sqrt, child_sqrt_u05, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "sqrt_u35 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_sqrt, child_sqrt_u35, xa[i]);
       showResult(success);
     }
 
@@ -2941,6 +2958,13 @@ void do_test() {
       fprintf(stderr, "atanhf denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_atanh, child_atanhf, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "sqrtf denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_sqrt, child_sqrtf, xa[i]);
       showResult(success);
     }
 
@@ -3677,9 +3701,23 @@ void do_test() {
 
     //
 
+    fprintf(stderr, "sqrt : ");
+    for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_d(mpfr_sqrt, child_sqrt, d, 1.0);
+    for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_d(mpfr_sqrt, child_sqrt, pow(2.1, d), 1.0);
+    showResult(success);
+
+    //
+
     fprintf(stderr, "sqrt_u05 : ");
     for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_d(mpfr_sqrt, child_sqrt_u05, d, 0.506);
     for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_d(mpfr_sqrt, child_sqrt_u05, pow(2.1, d), 0.506);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "sqrt_u35 : ");
+    for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_d(mpfr_sqrt, child_sqrt_u35, d, 3.5);
+    for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_d(mpfr_sqrt, child_sqrt_u35, pow(2.1, d), 3.5);
     showResult(success);
 
     //
@@ -4391,13 +4429,13 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "sqrtf_u35 : ");
+    fprintf(stderr, "sqrtf : ");
     if (!enableFlushToZero) {
-      for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_f(mpfr_sqrt, child_sqrtf_u35, d, 3.5);
+      for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_f(mpfr_sqrt, child_sqrtf, d, 1.0);
     }
-    for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_f(mpfr_sqrt, child_sqrtf_u35, pow(2.1, d), 3.5);
+    for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_f(mpfr_sqrt, child_sqrtf, pow(2.1, d), 1.0);
     showResult(success);
-  
+
     //
 
     fprintf(stderr, "sqrtf_u05 : ");
@@ -4407,6 +4445,15 @@ void do_test() {
     for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_f(mpfr_sqrt, child_sqrtf_u05, pow(2.1, d), 0.506);
     showResult(success);
 
+    //
+
+    fprintf(stderr, "sqrtf_u35 : ");
+    if (!enableFlushToZero) {
+      for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_f(mpfr_sqrt, child_sqrtf_u35, d, 3.5);
+    }
+    for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_f(mpfr_sqrt, child_sqrtf_u35, pow(2.1, d), 3.5);
+    showResult(success);
+  
     //
 
     fprintf(stderr, "cbrtf : ");

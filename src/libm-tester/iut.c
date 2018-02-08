@@ -195,10 +195,20 @@ int main(int argc, char **argv) {
       sscanf(buf, "fma %" PRIx64 " %" PRIx64 " %" PRIx64, &u, &v, &w);
       u = d2u(xfma(u2d(u), u2d(v), u2d(w)));
       printf("%" PRIx64 "\n", u);
+    } else if (startsWith(buf, "sqrt ")) {
+      uint64_t u;
+      sscanf(buf, "sqrt %" PRIx64, &u);
+      u = d2u(xsqrt(u2d(u)));
+      printf("%" PRIx64 "\n", u);
     } else if (startsWith(buf, "sqrt_u05 ")) {
       uint64_t u;
       sscanf(buf, "sqrt_u05 %" PRIx64, &u);
       u = d2u(xsqrt_u05(u2d(u)));
+      printf("%" PRIx64 "\n", u);
+    } else if (startsWith(buf, "sqrt_u35 ")) {
+      uint64_t u;
+      sscanf(buf, "sqrt_u35 %" PRIx64, &u);
+      u = d2u(xsqrt_u35(u2d(u)));
       printf("%" PRIx64 "\n", u);
     } else if (startsWith(buf, "cbrt ")) {
       uint64_t u;
@@ -403,6 +413,11 @@ int main(int argc, char **argv) {
       uint32_t u;
       sscanf(buf, "cbrtf %x", &u);
       u = f2u(xcbrtf(u2f(u)));
+      printf("%x\n", u);
+    } else if (startsWith(buf, "sqrtf ")) {
+      uint32_t u;
+      sscanf(buf, "sqrtf %x", &u);
+      u = f2u(xsqrtf(u2f(u)));
       printf("%x\n", u);
     } else if (startsWith(buf, "sqrtf_u05 ")) {
       uint32_t u;

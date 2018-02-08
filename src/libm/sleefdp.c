@@ -1917,6 +1917,9 @@ EXPORT CONST double xsqrt_u05(double d) {
   return ret;
 }
 
+EXPORT CONST double xsqrt_u35(double d) { return xsqrt_u05(d); }
+EXPORT CONST double xsqrt(double d) { return SQRT(d); }
+
 EXPORT CONST double xfabs(double x) { return fabsk(x); }
 
 EXPORT CONST double xcopysign(double x, double y) { return copysignk(x, y); }

@@ -60,7 +60,9 @@ vdouble xcospi_u05(vdouble d);
 vdouble xldexp(vdouble, vint);
 vint xilogb(vdouble);
 vdouble xfma(vdouble, vdouble, vdouble);
+vdouble xsqrt(vdouble);
 vdouble xsqrt_u05(vdouble);
+vdouble xsqrt_u35(vdouble);
 
 vdouble xhypot_u05(vdouble, vdouble);
 vdouble xhypot_u35(vdouble, vdouble);
@@ -144,6 +146,7 @@ vfloat xcospif_u05(vfloat d);
 vfloat xldexpf(vfloat, vint2);
 vint2 xilogbf(vfloat);
 vfloat xfmaf(vfloat, vfloat, vfloat);
+vfloat xsqrtf(vfloat s);
 vfloat xsqrtf_u05(vfloat s);
 vfloat xsqrtf_u35(vfloat s);
 

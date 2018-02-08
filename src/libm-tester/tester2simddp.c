@@ -865,10 +865,36 @@ int main(int argc,char **argv)
       mpfr_set_d(frx, d, GMP_RNDN);
       mpfr_sqrt(frx, frx, GMP_RNDN);
 
+      double u0 = countULPdp(t = vget(xsqrt(vd), e), frx);
+      
+      if (u0 > 1.0) {
+	printf(ISANAME " sqrt arg=%.20g ulp=%.20g\n", d, u0);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_sqrt(frx, frx, GMP_RNDN);
+
       double u0 = countULPdp(t = vget(xsqrt_u05(vd), e), frx);
       
       if (u0 > 0.50001) {
 	printf(ISANAME " sqrt_u05 arg=%.20g ulp=%.20g\n", d, u0);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_sqrt(frx, frx, GMP_RNDN);
+
+      double u0 = countULPdp(t = vget(xsqrt_u35(vd), e), frx);
+      
+      if (u0 > 3.5) {
+	printf(ISANAME " sqrt_u35 arg=%.20g ulp=%.20g\n", d, u0);
 	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
 	fflush(stdout); ecnt++;
       }
