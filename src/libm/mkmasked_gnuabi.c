@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
   //
   
   for(int i=0;funcList[i].name != NULL;i++) {
-    if (funcList[i].ulp == -2) continue;
+    if ((funcList[i].flags & 1) != 0) continue;
     if (funcList[i].ulp < 20) {
       snprintf(funcname[0], LEN, "_ZGV%sN%d%s_%s%s", 
 	       mangledisa, vw, vparameterStr[funcList[i].funcType], funcList[i].name, typeSpecS[fptype]);

@@ -943,6 +943,19 @@ int main(int argc,char **argv)
       mpfr_set_d(frx, d, GMP_RNDN);
       mpfr_sqrt(frx, frx, GMP_RNDN);
 
+      double u0 = countULPsp(t = vget(xsqrtf(vd), e), frx);
+      
+      if (u0 > 1.0) {
+	printf(ISANAME " sqrtf arg=%.20g ulp=%.20g\n", d, u0);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
+	fflush(stdout); ecnt++;
+      }
+    }
+    
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_sqrt(frx, frx, GMP_RNDN);
+
       double u0 = countULPsp(t = vget(xsqrtf_u05(vd), e), frx);
       
       if (u0 > 0.5001) {

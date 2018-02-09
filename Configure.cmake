@@ -17,7 +17,7 @@ endif()
 
 # The library currently supports the following SIMD architectures
 set(SLEEF_SUPPORTED_EXTENSIONS
-  SSE2 SSE4 AVX FMA4 AVX2 AVX2128 AVX512F # x86
+  AVX512F AVX2 AVX2128 FMA4 AVX SSE4 SSE2 # x86
   ADVSIMD				  # Aarch64
   NEON32				  # Aarch32
   CACHE STRING "List of SIMD architectures supported by libsleef."
@@ -156,6 +156,9 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
   set(FLAGS_STRICTMATH "-ffp-contract=off")
   set(FLAGS_FASTMATH "-ffast-math")
 
+  # Without the options below, gcc generates calls to libm
+  set(FLAGS_NO_ERRNO "-fno-math-errno -fno-trapping-math")
+  
   # Intel vector extensions.
   foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
     set(FLAGS_ENABLE_${SIMD} ${CLANG_FLAGS_ENABLE_${SIMD}})
@@ -180,6 +183,7 @@ elseif(MSVC)
   set(FLAGS_ENABLE_AVX2128 /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /arch:AVX2)
   set(FLAGS_ENABLE_AVX512F /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /D__AVX512F__ /arch:AVX2)
   set(FLAGS_WALL "/D_CRT_SECURE_NO_WARNINGS")
+  set(FLAGS_NO_ERRNO "")
 elseif(CMAKE_C_COMPILER_ID MATCHES "Intel")
   set(FLAGS_ENABLE_SSE2 "-msse2")
   set(FLAGS_ENABLE_SSE4 "-msse4.1")
@@ -190,9 +194,10 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "Intel")
   set(FLAGS_STRICTMATH "-fp-model strict -Qoption,cpp,--extended_float_type -qoverride-limits")
   set(FLAGS_FASTMATH "-fp-model fast=2 -Qoption,cpp,--extended_float_type -qoverride-limits")
   set(FLAGS_WALL "-fmax-errors=3 -Wall -Wno-unused -Wno-attributes")
+  set(FLAGS_NO_ERRNO "")
 endif()
 
-set(SLEEF_C_FLAGS "${FLAGS_WALL} ${FLAGS_STRICTMATH}")
+set(SLEEF_C_FLAGS "${FLAGS_WALL} ${FLAGS_STRICTMATH} ${FLAGS_NO_ERRNO}")
 if(CMAKE_C_COMPILER_ID MATCHES "GNU" AND CMAKE_C_COMPILER_VERSION VERSION_GREATER 6.99)
   set(DFT_C_FLAGS "${FLAGS_WALL}")
 else()

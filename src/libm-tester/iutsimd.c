@@ -398,7 +398,9 @@ int do_test(int argc, char **argv) {
     func_d_d("log", xlog);
     func_d_d("exp", xexp);
 
+    func_d_d("sqrt", xsqrt);
     func_d_d("sqrt_u05", xsqrt_u05);
+    func_d_d("sqrt_u35", xsqrt_u35);
     func_d_d("cbrt", xcbrt);
     func_d_d("cbrt_u1", xcbrt_u1);
 
@@ -475,6 +477,7 @@ int do_test(int argc, char **argv) {
     func_f_f("logf", xlogf);
     func_f_f("expf", xexpf);
 
+    func_f_f("sqrtf", xsqrtf);
     func_f_f("sqrtf_u05", xsqrtf_u05);
     func_f_f("sqrtf_u35", xsqrtf_u35);
     func_f_f("cbrtf", xcbrtf);

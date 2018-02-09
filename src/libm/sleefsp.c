@@ -1801,6 +1801,8 @@ EXPORT CONST float xsqrtf_u35(float d) {
   return d == SLEEF_INFINITYf ? SLEEF_INFINITYf : (x * d * q);
 }
 
+EXPORT CONST float xsqrtf(float d) { return SQRTF(d); }
+
 EXPORT CONST float xfmaf(float x, float y, float z) {
   float h2 = x * y + z, q = 1;
   if (fabsfk(h2) < 1e-38f) {

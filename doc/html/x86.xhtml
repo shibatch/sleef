@@ -1513,18 +1513,18 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_expm1f_u10"><b 
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">__m128d</b> <b class="func">Sleef_sqrtd2_u05</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
-<b class="type">__m128d</b> <b class="func">Sleef_sqrtd2_u05sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
-<b class="type">__m128d</b> <b class="func">Sleef_sqrtd2_u05sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
-<b class="type">__m128d</b> <b class="func">Sleef_sqrtd2_u05avx2128</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
+<b class="type">__m128d</b> <b class="func">Sleef_sqrtd2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
+<b class="type">__m128d</b> <b class="func">Sleef_sqrtd2_sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
+<b class="type">__m128d</b> <b class="func">Sleef_sqrtd2_sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
+<b class="type">__m128d</b> <b class="func">Sleef_sqrtd2_avx2128</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <br/>
-<b class="type">__m256d</b> <b class="func">Sleef_sqrtd4_u05</b>(<b class="type">__m256d</b> <i class="var">a</i>);<br/>
-<b class="type">__m256d</b> <b class="func">Sleef_sqrtd4_u05avx</b>(<b class="type">__m256d</b> <i class="var">a</i>);<br/>
-<b class="type">__m256d</b> <b class="func">Sleef_sqrtd4_u05fma4</b>(<b class="type">__m256d</b> <i class="var">a</i>);<br/>
-<b class="type">__m256d</b> <b class="func">Sleef_sqrtd4_u05avx2</b>(<b class="type">__m256d</b> <i class="var">a</i>);<br/>
+<b class="type">__m256d</b> <b class="func">Sleef_sqrtd4</b>(<b class="type">__m256d</b> <i class="var">a</i>);<br/>
+<b class="type">__m256d</b> <b class="func">Sleef_sqrtd4_avx</b>(<b class="type">__m256d</b> <i class="var">a</i>);<br/>
+<b class="type">__m256d</b> <b class="func">Sleef_sqrtd4_fma4</b>(<b class="type">__m256d</b> <i class="var">a</i>);<br/>
+<b class="type">__m256d</b> <b class="func">Sleef_sqrtd4_avx2</b>(<b class="type">__m256d</b> <i class="var">a</i>);<br/>
 <br/>
-<b class="type">__m512d</b> <b class="func">Sleef_sqrtd8_u05</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_sqrtd8_u05avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
+<b class="type">__m512d</b> <b class="func">Sleef_sqrtd8</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
+<b class="type">__m512d</b> <b class="func">Sleef_sqrtd8_avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
 <span class="normal">Link with</span> -lsleef.
 </p>
@@ -1543,18 +1543,18 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sqrt_u05"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">__m128</b> <b class="func">Sleef_sqrtf4_u05</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
-<b class="type">__m128</b> <b class="func">Sleef_sqrtf4_u05sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
-<b class="type">__m128</b> <b class="func">Sleef_sqrtf4_u05sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
-<b class="type">__m128</b> <b class="func">Sleef_sqrtf4_u05avx2128</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
+<b class="type">__m128</b> <b class="func">Sleef_sqrtf4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
+<b class="type">__m128</b> <b class="func">Sleef_sqrtf4_sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
+<b class="type">__m128</b> <b class="func">Sleef_sqrtf4_sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
+<b class="type">__m128</b> <b class="func">Sleef_sqrtf4_avx2128</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <br/>
-<b class="type">__m256</b> <b class="func">Sleef_sqrtf8_u05</b>(<b class="type">__m256</b> <i class="var">a</i>);<br/>
-<b class="type">__m256</b> <b class="func">Sleef_sqrtf8_u05avx</b>(<b class="type">__m256</b> <i class="var">a</i>);<br/>
-<b class="type">__m256</b> <b class="func">Sleef_sqrtf8_u05fma4</b>(<b class="type">__m256</b> <i class="var">a</i>);<br/>
-<b class="type">__m256</b> <b class="func">Sleef_sqrtf8_u05avx2</b>(<b class="type">__m256</b> <i class="var">a</i>);<br/>
+<b class="type">__m256</b> <b class="func">Sleef_sqrtf8</b>(<b class="type">__m256</b> <i class="var">a</i>);<br/>
+<b class="type">__m256</b> <b class="func">Sleef_sqrtf8_avx</b>(<b class="type">__m256</b> <i class="var">a</i>);<br/>
+<b class="type">__m256</b> <b class="func">Sleef_sqrtf8_fma4</b>(<b class="type">__m256</b> <i class="var">a</i>);<br/>
+<b class="type">__m256</b> <b class="func">Sleef_sqrtf8_avx2</b>(<b class="type">__m256</b> <i class="var">a</i>);<br/>
 <br/>
-<b class="type">__m512</b> <b class="func">Sleef_sqrtf16_u05</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_sqrtf16_u05avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
+<b class="type">__m512</b> <b class="func">Sleef_sqrtf16</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
+<b class="type">__m512</b> <b class="func">Sleef_sqrtf16_avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
 <span class="normal">Link with</span> -lsleef.
 </p>

@@ -25,6 +25,7 @@
 #define ENABLE_FMA_SP
 
 #define FULL_FP_ROUNDING
+#define ACCURATE_SQRT
 
 #define ISANAME "AArch64 AdvSIMD"
 

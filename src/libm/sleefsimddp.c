@@ -421,6 +421,7 @@ EXPORT CONST vdouble xcos_u1(vdouble d) {
 #ifdef ENABLE_GNUABI
 #define TYPE2_FUNCATR static INLINE CONST 
 #define TYPE6_FUNCATR static INLINE CONST 
+#define SQRTU05_FUNCATR static INLINE CONST 
 #define XSINCOS sincosk
 #define XSINCOS_U1 sincosk_u1
 #define XSINCOSPI_U05 sincospik_u05
@@ -429,6 +430,7 @@ EXPORT CONST vdouble xcos_u1(vdouble d) {
 #else
 #define TYPE2_FUNCATR EXPORT
 #define TYPE6_FUNCATR EXPORT CONST
+#define SQRTU05_FUNCATR EXPORT CONST
 #define XSINCOS xsincos
 #define XSINCOS_U1 xsincos_u1
 #define XSINCOSPI_U05 xsincospi_u05
@@ -2406,7 +2408,7 @@ EXPORT CONST vdouble xfma(vdouble x, vdouble y, vdouble z) {
   return vsel_vd_vo_vd_vd(o, h2, vmul_vd_vd_vd(ret, q));
 }
 
-EXPORT CONST vdouble xsqrt_u05(vdouble d) {
+SQRTU05_FUNCATR vdouble xsqrt_u05(vdouble d) {
   vdouble q;
   vopmask o;
   
@@ -2435,6 +2437,14 @@ EXPORT CONST vdouble xsqrt_u05(vdouble d) {
   x = vsel_vd_vo_vd_vd(veq_vo_vd_vd(d, vcast_vd_d(0)), d, x);
   
   return x;
+}
+
+EXPORT CONST vdouble xsqrt(vdouble d) {
+#ifdef ACCURATE_SQRT
+  return vsqrt_vd_vd(d);
+#endif
+  // fall back to approximation if ACCURATE_SQRT is undefined
+  return xsqrt_u05(d);
 }
 
 EXPORT CONST vdouble xsqrt_u35(vdouble d) { return xsqrt_u05(d); }
@@ -2798,7 +2808,7 @@ EXPORT CONST vdouble __log10_finite    (vdouble)          __attribute__((weak, a
 EXPORT CONST vdouble __log_finite      (vdouble)          __attribute__((weak, alias(str_xlog_u1   )));
 EXPORT CONST vdouble __pow_finite      (vdouble, vdouble) __attribute__((weak, alias(str_xpow      )));
 EXPORT CONST vdouble __sinh_finite     (vdouble)          __attribute__((weak, alias(str_xsinh     )));
-EXPORT CONST vdouble __sqrt_u05_finite (vdouble)          __attribute__((weak, alias(str_xsqrt_u05 )));
+EXPORT CONST vdouble __sqrt_finite     (vdouble)          __attribute__((weak, alias(str_xsqrt     )));
 EXPORT CONST vdouble __tgamma_u1_finite(vdouble)          __attribute__((weak, alias(str_xtgamma_u1)));
 
 #ifdef HEADER_MASKED
