@@ -2761,33 +2761,6 @@ EXPORT CONST void *xgetPtr(int name) {
 #include ALIAS_NO_EXT_SUFFIX
 #endif
 
-#ifdef ENABLE_GNUABI
-/* "finite" aliases for compatibility with GLIBC */
-EXPORT CONST vdouble __acos_finite     (vdouble)          __attribute__((weak, alias(str_xacos     )));
-EXPORT CONST vdouble __acosh_finite    (vdouble)          __attribute__((weak, alias(str_xacosh    )));
-EXPORT CONST vdouble __asin_finite     (double)           __attribute__((weak, alias(str_xasin_u1  )));
-EXPORT CONST vdouble __atan2_finite    (vdouble, vdouble) __attribute__((weak, alias(str_xatan2_u1 )));
-EXPORT CONST vdouble __atanh_finite    (vdouble)          __attribute__((weak, alias(str_xatanh    )));
-EXPORT CONST vdouble __cosh_finite     (vdouble)          __attribute__((weak, alias(str_xcosh     )));
-EXPORT CONST vdouble __exp10_finite    (vdouble)          __attribute__((weak, alias(str_xexp10    )));
-EXPORT CONST vdouble __exp2_finite     (vdouble)          __attribute__((weak, alias(str_xexp2     )));
-EXPORT CONST vdouble __exp_finite      (vdouble)          __attribute__((weak, alias(str_xexp      )));
-EXPORT CONST vdouble __fmod_finite     (vdouble, vdouble) __attribute__((weak, alias(str_xfmod     )));
-EXPORT CONST vdouble __modf_finite     (vdouble, vdouble *) __attribute__((weak, alias(str_xmodf   )));
-EXPORT CONST vdouble __hypot_u05_finite(vdouble, vdouble) __attribute__((weak, alias(str_xhypot_u05)));
-EXPORT CONST vdouble __lgamma_u1_finite(vdouble)          __attribute__((weak, alias(str_xlgamma_u1)));
-EXPORT CONST vdouble __log10_finite    (vdouble)          __attribute__((weak, alias(str_xlog10    )));
-EXPORT CONST vdouble __log_finite      (vdouble)          __attribute__((weak, alias(str_xlog_u1   )));
-EXPORT CONST vdouble __pow_finite      (vdouble, vdouble) __attribute__((weak, alias(str_xpow      )));
-EXPORT CONST vdouble __sinh_finite     (vdouble)          __attribute__((weak, alias(str_xsinh     )));
-EXPORT CONST vdouble __sqrt_finite     (vdouble)          __attribute__((weak, alias(str_xsqrt     )));
-EXPORT CONST vdouble __tgamma_u1_finite(vdouble)          __attribute__((weak, alias(str_xtgamma_u1)));
-
-#ifdef HEADER_MASKED
-#include HEADER_MASKED
-#endif
-#endif /* #ifdef ENABLE_GNUABI */
-
 #ifdef ENABLE_MAIN
 // gcc -DENABLE_MAIN -Wno-attributes -I../common -I../arch -DENABLE_AVX2 -mavx2 -mfma sleefsimddp.c ../common/common.c -lm
 #include <stdio.h>
@@ -2815,3 +2788,30 @@ int main(int argc, char **argv) {
   //printf("%g, %g\n", vcast_d_vd(r.x), vcast_d_vd(r.y));
 }
 #endif
+
+#ifdef ENABLE_GNUABI
+/* "finite" aliases for compatibility with GLIBC */
+EXPORT CONST vdouble __acos_finite     (vdouble)          __attribute__((weak, alias(str_xacos     )));
+EXPORT CONST vdouble __acosh_finite    (vdouble)          __attribute__((weak, alias(str_xacosh    )));
+EXPORT CONST vdouble __asin_finite     (double)           __attribute__((weak, alias(str_xasin_u1  )));
+EXPORT CONST vdouble __atan2_finite    (vdouble, vdouble) __attribute__((weak, alias(str_xatan2_u1 )));
+EXPORT CONST vdouble __atanh_finite    (vdouble)          __attribute__((weak, alias(str_xatanh    )));
+EXPORT CONST vdouble __cosh_finite     (vdouble)          __attribute__((weak, alias(str_xcosh     )));
+EXPORT CONST vdouble __exp10_finite    (vdouble)          __attribute__((weak, alias(str_xexp10    )));
+EXPORT CONST vdouble __exp2_finite     (vdouble)          __attribute__((weak, alias(str_xexp2     )));
+EXPORT CONST vdouble __exp_finite      (vdouble)          __attribute__((weak, alias(str_xexp      )));
+EXPORT CONST vdouble __fmod_finite     (vdouble, vdouble) __attribute__((weak, alias(str_xfmod     )));
+EXPORT CONST vdouble __modf_finite     (vdouble, vdouble *) __attribute__((weak, alias(str_xmodf   )));
+EXPORT CONST vdouble __hypot_u05_finite(vdouble, vdouble) __attribute__((weak, alias(str_xhypot_u05)));
+EXPORT CONST vdouble __lgamma_u1_finite(vdouble)          __attribute__((weak, alias(str_xlgamma_u1)));
+EXPORT CONST vdouble __log10_finite    (vdouble)          __attribute__((weak, alias(str_xlog10    )));
+EXPORT CONST vdouble __log_finite      (vdouble)          __attribute__((weak, alias(str_xlog_u1   )));
+EXPORT CONST vdouble __pow_finite      (vdouble, vdouble) __attribute__((weak, alias(str_xpow      )));
+EXPORT CONST vdouble __sinh_finite     (vdouble)          __attribute__((weak, alias(str_xsinh     )));
+EXPORT CONST vdouble __sqrt_finite     (vdouble)          __attribute__((weak, alias(str_xsqrt     )));
+EXPORT CONST vdouble __tgamma_u1_finite(vdouble)          __attribute__((weak, alias(str_xtgamma_u1)));
+
+#ifdef HEADER_MASKED
+#include HEADER_MASKED
+#endif
+#endif /* #ifdef ENABLE_GNUABI */
