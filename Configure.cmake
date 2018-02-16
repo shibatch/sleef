@@ -2,10 +2,11 @@ include(CheckCCompilerFlag)
 include(CheckCSourceCompiles)
 include(CheckTypeSize)
 
-# Check that the library LIB_MPFR is available
+# Some toolchains require explicit linking of the libraries following.
 find_library(LIB_MPFR mpfr)
 find_library(LIBM m)
 find_library(LIBGMP gmp)
+find_library(LIBRT rt)
 
 find_path(MPFR_INCLUDE_DIR
   NAMES mpfr.h
@@ -13,6 +14,10 @@ find_path(MPFR_INCLUDE_DIR
 
 if (NOT LIBM)
   set(LIBM "")
+endif()
+
+if (NOT LIBRT)
+  set(LIBRT "")
 endif()
 
 # The library currently supports the following SIMD architectures
