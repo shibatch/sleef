@@ -10,11 +10,6 @@ if(NOT LIB_MPFR)
   find_program(TESTER_COMMAND tester)
 endif(NOT LIB_MPFR)
 
-find_library(LIBRT rt)
-if (NOT LIBRT)
-  set(LIBRT "")
-endif()
-
 set(CMAKE_C_FLAGS ORG_CMAKE_C_FLAGS)
 string(CONCAT CMAKE_C_FLAGS ${SLEEF_C_FLAGS})
 
