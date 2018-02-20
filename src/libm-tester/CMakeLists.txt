@@ -58,7 +58,7 @@ macro(test_extension SIMD)
     target_compile_options(${TARGET_IUT${SIMD}}
       PRIVATE ${FLAGS_ENABLE_${SIMD}})
     target_compile_definitions(${TARGET_IUT${SIMD}}
-      PRIVATE ENABLE_${SIMD}=1)
+      PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS})
     target_link_libraries(${TARGET_IUT${SIMD}} ${TARGET_LIBSLEEF}
       ${TARGET_LIBCOMMON_STATIC} ${LIBM} ${LIBRT})
 
