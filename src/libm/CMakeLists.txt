@@ -246,7 +246,7 @@ if(LIBM AND NOT COMPILER_SUPPORTS_BUILTIN_MATH)
   target_link_libraries(${TARGET_LIBSLEEF} ${LIBM})
 endif()
 
-target_link_libraries(${TARGET_LIBSLEEF} ${TARGET_LIBCOMMON_STATIC})
+target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:${TARGET_LIBCOMMON_OBJ}>)
 
 # --------------------------------------------------------------------
 

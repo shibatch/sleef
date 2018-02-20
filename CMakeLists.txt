@@ -85,8 +85,8 @@ set(TARGET_MKDISP "mkdisp")
 set(TARGET_MKALIAS "mkalias")
 # Generates static library common
 # Defined in src/common/CMakeLists.txt via command add_library
-set(TARGET_LIBCOMMON_STATIC "common")
-set(TARGET_LIBARRAYMAP_STATIC "arraymap")
+set(TARGET_LIBCOMMON_OBJ "common")
+set(TARGET_LIBARRAYMAP_OBJ "arraymap")
 
 # Function used to add an executable that is executed on host
 function(add_host_executable TARGETNAME)
