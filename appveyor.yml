@@ -10,9 +10,9 @@ environment:
     DO_TEST: FALSE
 install:
   - if "%DO_TEST%" == "TRUE" ( set ORGPATH="%PATH%" )
-  - if "%DO_TEST%" == "TRUE" ( "C:\\Cygwin64\\setup-x86_64.exe -q -g -P libmpfr-devel,libgmp-devel,cmake" )
+  - if "%DO_TEST%" == "TRUE" ( C:\\Cygwin64\\setup-x86_64.exe -q -g -P libmpfr-devel,libgmp-devel,cmake )
   - if "%DO_TEST%" == "TRUE" ( PATH c:\Cygwin64\bin;c:\Cygwin64\usr\bin;c:\projects\sleef\build-cygwin\bin;"%PATH%" )
-  - if "%DO_TEST%" == "TRUE" ( "C:\\Cygwin64\\bin\\bash -c 'mkdir build-cygwin;cd build-cygwin;cmake -g\"Unix Makefiles\" ..;make -j 2'" )
+  - if "%DO_TEST%" == "TRUE" ( C:\\Cygwin64\\bin\\bash -c 'mkdir build-cygwin;cd build-cygwin;cmake -g\"Unix Makefiles\" ..;make -j 2' )
   - if "%DO_TEST%" == "TRUE" ( del /Q /F c:\projects\sleef\build-cygwin\bin\iut* )
   - if "%DO_TEST%" == "TRUE" ( PATH "%ORGPATH%";c:\Cygwin64\bin;c:\Cygwin64\usr\bin;c:\projects\sleef\build-cygwin\bin;c:\projects\sleef\build\bin )
   - if "%DO_TEST%" == "TRUE" ( cd "c:\\projects\\sleef" )
