@@ -6,7 +6,3 @@ add_subdirectory("libm-tester")
 add_subdirectory("common")
 add_subdirectory("dft")
 add_subdirectory("dft-tester")
-
-if (NOT MSVC)
-  add_subdirectory("libm-benchmarks")
-endif()
