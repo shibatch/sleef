@@ -178,7 +178,7 @@ endforeach()
 # Target dftcommon.o
 
 add_library(dftcommon_obj OBJECT dftcommon.c dftcommon.h ${CMAKE_CURRENT_BINARY_DIR}/dispatchparam.h ${CMAKE_BINARY_DIR}/include/sleef.h)
-add_dependencies(dftcommon_obj ${TARGET_HEADERS} dispatchparam.h_generated)
+add_dependencies(dftcommon_obj ${TARGET_HEADERS} dispatchparam.h_generated sleefdft.h_copied)
 set_source_files_properties(${CMAKE_BINARY_DIR}/include/sleef.h PROPERTIES GENERATED TRUE)
 set_target_properties(dftcommon_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
 target_compile_definitions(dftcommon_obj PRIVATE ${COMMON_TARGET_DEFINITIONS})
@@ -192,7 +192,7 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
   string(CONCAT S "dispatch" ${ST} ".h")                    # S is "dispatchdp.h"
   add_library(${G} OBJECT dft.c dftcommon.h ${S})
   string(CONCAT SG ${S} "_generated")                       # SG is "dispatchdp.h_generated"
-  add_dependencies(${G} ${SG} ${TARGET_HEADERS})
+  add_dependencies(${G} ${SG} ${TARGET_HEADERS} sleefdft.h_copied)
   set_target_properties(${G} PROPERTIES ${COMMON_TARGET_PROPERTIES})
   list(GET LISTTYPEID ${T} ID)                              # ID is 1
   target_compile_definitions(${G} PRIVATE BASETYPEID=${ID} ${COMMON_TARGET_DEFINITIONS})
@@ -253,6 +253,13 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
   endforeach()
 endforeach()
 
+# Copy sleefdft.h to ${CMAKE_BINARY_DIR}/include
+
+add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/include/sleefdft.h
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/include/sleefdft.h ${CMAKE_BINARY_DIR}/include
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/include/sleefdft.h)
+add_custom_target(sleefdft.h_copied DEPENDS ${CMAKE_BINARY_DIR}/include/sleefdft.h)
+
 # Target libdft
 
 add_library(${TARGET_LIBDFT} $<TARGET_OBJECTS:dftcommon_obj> $<TARGET_OBJECTS:${TARGET_LIBARRAYMAP_OBJ}>)
@@ -283,7 +290,9 @@ set_target_properties(${TARGET_LIBDFT} PROPERTIES
   ${COMMON_TARGET_PROPERTIES}
   ) 
 
+add_dependencies(${TARGET_LIBDFT} sleefdft.h_copied)
+
 # Install
 
-install(FILES ${PROJECT_SOURCE_DIR}/include/sleefdft.h DESTINATION include)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/sleefdft.h DESTINATION include)
 install(TARGETS ${TARGET_LIBDFT} DESTINATION lib)

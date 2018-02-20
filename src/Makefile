@@ -9,7 +9,3 @@ clean :
 	+"$(MAKE)" --directory=./dft clean
 	+"$(MAKE)" --directory=./dft-tester clean
 	rm -f *~
-
-.PHONY: distclean
-distclean :
-	+"$(MAKE)" --directory=./dft-tester distclean

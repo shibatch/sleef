@@ -1,5 +1,0 @@
-create libsleefdftstatic.a
-addlib ../src/dft/dft.a
-addlib ../src/common/arraymap.a
-save
-end
