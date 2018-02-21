@@ -1,5 +1,0 @@
-create libsleefstatic.a
-addlib ../src/libm/libm.a
-addlib ../src/common/common.a
-save
-end
