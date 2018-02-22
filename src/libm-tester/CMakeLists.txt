@@ -68,7 +68,7 @@ macro(test_extension SIMD)
     add_test_iut(${TARGET_IUT${SIMD}})
     list(APPEND IUT_LIST ${TARGET_IUT${SIMD}})
 
-    if(LIB_MPFR AND NOT ${SIMD} STREQUAL NEON32)
+    if(LIB_MPFR AND NOT ${SIMD} STREQUAL NEON32 AND NOT MINGW)
       # Build tester2 SIMD
       string(TOLOWER ${SIMD} SCSIMD)
       foreach(P dp sp)
@@ -154,7 +154,7 @@ if (SLEEF_ARCH_X86)
   list(APPEND IUT_LIST iutdsp256)
 endif(SLEEF_ARCH_X86)
 
-if(LIB_MPFR)
+if(LIB_MPFR AND NOT MINGW)
   # Build tester2 scalar
   foreach(P dp sp)
     set(T "tester2${P}")
@@ -183,9 +183,7 @@ if(LIB_MPFR)
       target_include_directories(${TARGET_TESTER} PRIVATE ${MPFR_INCLUDE_DIR})
     endif()
   endif()
-endif(LIB_MPFR)
-
-# Set C standard requirement (-std=gnu99 for gcc)
+endif(LIB_MPFR AND NOT MINGW)
 
 # Tests depends on the library
 add_dependencies(${TARGET_IUT} ${TARGET_HEADERS})

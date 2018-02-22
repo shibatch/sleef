@@ -209,6 +209,10 @@ else()
   set(DFT_C_FLAGS "${FLAGS_WALL} ${FLAGS_FASTMATH}")
 endif()
 
+if(CYGWIN OR MINGW)
+  set(SLEEF_C_FLAGS "${SLEEF_C_FLAGS} -fno-asynchronous-unwind-tables")
+  set(DFT_C_FLAGS "${DFT_C_FLAGS} -fno-asynchronous-unwind-tables")
+endif()
 
 # FEATURE DETECTION
 
@@ -336,7 +340,7 @@ CHECK_C_SOURCE_COMPILES("
     return g(2);
   }"
   COMPILER_SUPPORTS_WEAK_ALIASES)
-if (COMPILER_SUPPORTS_WEAK_ALIASES AND NOT CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
+if (COMPILER_SUPPORTS_WEAK_ALIASES AND NOT CMAKE_SYSTEM_PROCESSOR MATCHES "arm" AND NOT MINGW)
   set(ENABLE_GNUABI ${COMPILER_SUPPORTS_WEAK_ALIASES})
 endif()
 
@@ -368,12 +372,6 @@ if(SLEEF_SHOW_ERROR_LOG)
     message("${FILE_CONTENT}")
   endif()
 endif(SLEEF_SHOW_ERROR_LOG)
-
-# Compiling AVX512F code on Cygwin does not succeed
-
-if (CMAKE_SYSTEM_NAME MATCHES "CYGWIN")
-  set(COMPILER_SUPPORTS_AVX512F FALSE)
-endif()
 
 # Detect if cmake is running on Travis
 string(COMPARE NOTEQUAL "" "$ENV{TRAVIS}" RUNNING_ON_TRAVIS)
