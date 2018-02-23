@@ -263,7 +263,7 @@ static INLINE CONST int isnanl(long double x) { return x != x; }
 
 #endif // defined(_MSC_VER)
 
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(__MINGW32__) || defined(__MINGW64__)
 static INLINE CONST int isinff(float x) { return x == SLEEF_INFINITYf || x == -SLEEF_INFINITYf; }
 static INLINE CONST int isinfl(long double x) { return x == SLEEF_INFINITYl || x == -SLEEF_INFINITYl; }
 static INLINE CONST int isnanf(float x) { return x != x; }

@@ -13,7 +13,7 @@
 
 //
 
-#ifndef _MSC_VER
+#if !(defined(__MINGW32__) || defined(__MINGW64__) || defined(_MSC_VER))
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/file.h>

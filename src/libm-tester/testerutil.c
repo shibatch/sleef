@@ -20,6 +20,10 @@
 #include <signal.h>
 #endif
 
+#if defined(__MINGW32__) || defined(__MINGW64__)
+#include <unistd.h>
+#endif
+
 #include "misc.h"
 
 #define DENORMAL_DBL_MIN (4.9406564584124654418e-324)
