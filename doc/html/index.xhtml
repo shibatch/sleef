@@ -302,17 +302,29 @@ information about Boost Software License.
 
 <h2 id="history">History</h2>
 
-<h4>3.2 (Not released yet)</h4>
+<h4>3.2 (Released on Feb 26, 2018)</h4>
 <ul class="disc">
-  <li>Migrated build system to cmake.</li>
-  <li>GNUABI version of the library is added.</li>
-  <li>fmod(FP remainder), asin, acos, log, pow, log10, exp2, exp10 and log1p functions are now faster.</li>
+  <li>The whole build system of the project migrated from makefiles to
+  cmake. The makefile build system is now removed.</li>
+  <li>GNUABI version of the library with compatibility tests is
+  added.</li>
+  <li>Benchmarks that compare `libsleef` vs `SVML` on X86 Linux are
+  available in the project tree under src/libm-benchmarks
+  directory.</li>
+  <li>Extensive upstream testing via Travis CI and Appveyor</li>
   <li>log2 is added.</li>
-  <li>Fixed a bug that was preventing the dispatcher from choosing the
-  FMA4 implementation.</li>
+  <li>The library can be compiled to an LLVM bitcode object</li>
+  <li>Added masked interface to the library to support AVX512F masked
+  vectorization.</li>
+  <li>Use native instructions if available for `sqrt`.</li>
+  <li>Removed `libm` dependency.</li>
+  <li>fmod(FP remainder), asin, acos, log, pow, log10, exp2, exp10 and
+  log1p functions are now faster.</li>
   <li>Fixed a bug that was making the error of sinpi, cospi, sincospi,
   and tgamma functions larger than the specifications on very rare
     occasions.</li>
+  <li>Fixed a bug that was preventing the dispatcher from choosing the
+  FMA4 implementation.</li>
 </ul>
 
 <h4>3.1 (Released on July 19, 2017)</h4>
@@ -361,6 +373,9 @@ information about Boost Software License.
 <h2 id="related">Related projects and links</h2>
 
 <ul class="disc">
+  <li>SLEEF is now included in <a class="underlined"
+  href="https://developer.arm.com/products/software-development-tools/hpc/arm-compiler-for-hpc">Arm
+  Compiler for HPC</a>.</li>
   <li>Mustafa A. Mohamad is developing <a class="underlined"
   href="https://github.com/musm/SLEEF.jl">a pure Julia port of the
   SLEEF math library</a>.</li>
@@ -388,10 +403,6 @@ information about Boost Software License.
 <p class="footer">
   Copyright &copy; 2018 SLEEF Project.<br/>
   SLEEF is open-source software and is distributed under the Boost Software License, Version 1.0.
-  <br/>
-  sleef.org is hosted by <a href="https://sourceforge.net/p/sleef/" rel="nofollow">
-    <img src="https://sourceforge.net/sflogo.php?type=10&amp;group_id=2867658" style="position:relative; top:4px;" alt="Download sleef"/>
-  </a>
 </p>
 
 <!--TEST-->

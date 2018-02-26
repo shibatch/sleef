@@ -137,27 +137,26 @@
 </p>
 
 <p>
-  Then, change directory to
-  sleef-3.X/src/libm-benchmarks/plot-scripts/. You also need to
-  include the bin directory under the build directory to PATH
-  environement variable.
+  Then, change directory to sleef-3.X/src/libm-benchmarks/. You also
+  need to set the build directory to BUILDDIR environment variable.
 </p>
 
-<pre class="command">$ export PATH=$PATH:`pwd`/../../../build/bin</pre>
+<pre class="command">$ export BUILDDIR=$PATH:`pwd`/../../build</pre>
 
 <p>
-  Type "make measure", and it will prompt a label for
-  measurement. After you input a label, measurement begins. After a
-  measurement finishes, you can repeat measurements under different
-  configurations. If you want to measure on a different computer,
-  please copy the entire directory on to that computer and continue
-  measurements. If you have Intel Compiler installed on your computer,
-  you can type "make measureSVML" to measure the computation time of
-  SVML functions.
+  Type "make measure". After compiling the tools, it will prompt a
+  label for measurement. After you input a label, measurement
+  begins. After a measurement finishes, you can repeat measurements
+  under different configurations. If you want to measure on a
+  different computer, please copy the entire directory on to that
+  computer and continue measurements. If you have Intel Compiler
+  installed on your computer, you can type "make measureSVML" to
+  measure the computation time of SVML functions.
 </p>
 
 <pre class="command">$ make measure
 ./measure.sh benchsleef
+     ...
 Enter label of measurement(e.g. My desktop PC) : Skylake
 Measurement in progress. This may take several minutes.
 Sleef_sind2_u10
@@ -201,10 +200,6 @@ $ &block;</pre>
 <p class="footer">
   Copyright &copy; 2018 SLEEF Project.<br/>
   SLEEF is open-source software and is distributed under the Boost Software License, Version 1.0.
-  <br/>
-  sleef.org is hosted by <a href="https://sourceforge.net/p/sleef/" rel="nofollow">
-    <img src="https://sourceforge.net/sflogo.php?type=10&amp;group_id=2867658" style="position:relative; top:4px;" alt="Download sleef"/>
-  </a>
 </p>
 
 <!--TEST-->
