@@ -24,7 +24,7 @@ endif()
 set(SLEEF_SUPPORTED_EXTENSIONS
   AVX512F AVX2 AVX2128 FMA4 AVX SSE4 SSE2 # x86
   ADVSIMD				  # Aarch64
-  NEON32				  # Aarch32
+  NEON32 NEON32VFPV4			  # Aarch32
   CACHE STRING "List of SIMD architectures supported by libsleef."
   )
 set(SLEEF_SUPPORTED_GNUABI_EXTENSIONS 
@@ -96,13 +96,16 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
   set(SLEEF_ARCH_AARCH32 ON CACHE INTERNAL "True for Aarch32 architecture.")
   set(COMPILER_SUPPORTS_NEON32 1)
+  set(COMPILER_SUPPORTS_NEON32VFPV4 1)
 
   set(SLEEF_HEADER_LIST
     NEON32_
     NEON32
+    NEON32VFPV4
   )
-  command_arguments(HEADER_PARAMS_NEON32_   2 4 - float32x4_t int32x2_t int32x4_t __ARM_NEON__)
-  command_arguments(HEADER_PARAMS_NEON32    2 4 - float32x4_t int32x2_t int32x4_t __ARM_NEON__ neon)
+  command_arguments(HEADER_PARAMS_NEON32_     2 4 - float32x4_t int32x2_t int32x4_t __ARM_NEON__)
+  command_arguments(HEADER_PARAMS_NEON32      2 4 - float32x4_t int32x2_t int32x4_t __ARM_NEON__ neon)
+  command_arguments(HEADER_PARAMS_NEON32VFPV4 2 4 - float32x4_t int32x2_t int32x4_t __ARM_NEON__ neonvfpv4)
 
   command_arguments(ALIAS_PARAMS_NEON32_SP -4 float32x4_t int32x4_t - neon)
   command_arguments(ALIAS_PARAMS_NEON32_DP 0)
@@ -118,6 +121,7 @@ command_arguments(RENAME_PARAMS_AVX2128        2 4 avx2128)
 command_arguments(RENAME_PARAMS_AVX512F        8 16 avx512f)
 command_arguments(RENAME_PARAMS_ADVSIMD        2 4 advsimd)
 command_arguments(RENAME_PARAMS_NEON32         2 4 neon)
+command_arguments(RENAME_PARAMS_NEON32VFPV4    2 4 neonvfpv4)
 
 command_arguments(RENAME_PARAMS_GNUABI_SSE2    sse2 b 2 4 _mm128d _mm128 _mm128i _mm128i __SSE2__)
 command_arguments(RENAME_PARAMS_GNUABI_AVX     avx c 4 8 __m256d __m256 __m128i "struct { __m128i x, y$<SEMICOLON> }" __AVX__)
@@ -152,6 +156,7 @@ set(CLANG_FLAGS_ENABLE_AVX2 "-mavx2;-mfma")
 set(CLANG_FLAGS_ENABLE_AVX2128 "-mavx2;-mfma")
 set(CLANG_FLAGS_ENABLE_AVX512F "-mavx512f")
 set(CLANG_FLAGS_ENABLE_NEON32 "--target=arm-linux-gnueabihf;-mcpu=cortex-a8")
+set(CLANG_FLAGS_ENABLE_NEON32VFPV4 "-march=armv7-a;-mfpu=neon-vfpv4")
 # Arm AArch64 vector extensions.
 set(CLANG_FLAGS_ENABLE_ADVSIMD "-march=armv8-a+simd")
 

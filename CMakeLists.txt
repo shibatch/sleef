@@ -74,6 +74,7 @@ set(TARGET_IUTAVX2128 "iutavx2128")
 set(TARGET_IUTAVX512F "iutavx512f")
 set(TARGET_IUTADVSIMD "iutadvsimd")
 set(TARGET_IUTNEON32 "iutneon32")
+set(TARGET_IUTNEON32VFPV4 "iutneon32vfpv4")
 # The target to generate LLVM bitcode only, available when SLEEF_ENABLE_LLVM_BITCODE is passed to cmake
 set(TARGET_LLVM_BITCODE "llvm-bitcode")
 # Generates the helper executable file mkrename needed to write the sleef header

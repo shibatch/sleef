@@ -68,7 +68,7 @@ macro(test_extension SIMD)
     add_test_iut(${TARGET_IUT${SIMD}})
     list(APPEND IUT_LIST ${TARGET_IUT${SIMD}})
 
-    if(LIB_MPFR AND NOT ${SIMD} STREQUAL NEON32 AND NOT MINGW)
+    if(LIB_MPFR AND NOT ${SIMD} STREQUAL NEON32 AND NOT ${SIMD} STREQUAL NEON32VFPV4 AND NOT MINGW)
       # Build tester2 SIMD
       string(TOLOWER ${SIMD} SCSIMD)
       foreach(P dp sp)

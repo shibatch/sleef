@@ -15,7 +15,12 @@
 #define LOG2VECTLENSP 2
 #define VECTLENSP (1 << LOG2VECTLENSP)
 
+#if CONFIG == 4
+#define ISANAME "AARCH32 NEON-VFPV4"
+#define ENABLE_FMA_SP
+#else
 #define ISANAME "AARCH32 NEON"
+#endif
 #define DFTPRIORITY 10
 
 #define ENABLE_RECSQRT_SP
@@ -135,8 +140,16 @@ static INLINE vfloat vrecsqrt_vf_vf(vfloat d) {
 
 static INLINE vfloat vabs_vf_vf(vfloat f) { return vabsq_f32(f); }
 static INLINE vfloat vneg_vf_vf(vfloat f) { return vnegq_f32(f); }
+#if CONFIG == 4
+static INLINE vfloat vmla_vf_vf_vf_vf  (vfloat x, vfloat y, vfloat z) { return vfmaq_f32(z, x, y); }
+static INLINE vfloat vmlanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vfmsq_f32(z, x, y); }
+static INLINE vfloat vfma_vf_vf_vf_vf  (vfloat x, vfloat y, vfloat z) { return vfmaq_f32(z, x, y); }
+static INLINE vfloat vfmanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vfmsq_f32(z, x, y); }
+static INLINE vfloat vfmapn_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vneg_vf_vf(vfmanp_vf_vf_vf_vf(x, y, z)); }
+#else
 static INLINE vfloat vmla_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vmlaq_f32(z, x, y); }
 static INLINE vfloat vmlanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vmlsq_f32(z, x, y); }
+#endif
 static INLINE vfloat vmax_vf_vf_vf(vfloat x, vfloat y) { return vmaxq_f32(x, y); }
 static INLINE vfloat vmin_vf_vf_vf(vfloat x, vfloat y) { return vminq_f32(x, y); }
 
