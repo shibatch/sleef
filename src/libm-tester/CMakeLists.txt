@@ -10,6 +10,11 @@ if(NOT LIB_MPFR)
   find_program(TESTER_COMMAND tester)
 endif(NOT LIB_MPFR)
 
+find_library(LIBRT rt)
+if (NOT LIBRT)
+  set(LIBRT "")
+endif()
+
 set(CMAKE_C_FLAGS ORG_CMAKE_C_FLAGS)
 string(CONCAT CMAKE_C_FLAGS ${SLEEF_C_FLAGS})
 
@@ -21,7 +26,11 @@ function(add_test_iut IUT)
   elseif(TESTER_COMMAND)
     set(TESTER ${TESTER_COMMAND})
   endif()
-
+  # When we are crosscompiling using the mkrename* tools from a native
+  # build, we use the tester executable from the native build.
+  if (CMAKE_CROSSCOMPILING AND NATIVE_BUILD_DIR)
+    set(TESTER ${NATIVE_BUILD_DIR}/bin/${TARGET_TESTER})
+  endif(CMAKE_CROSSCOMPILING AND NATIVE_BUILD_DIR)
   if (TESTER)
     if (NOT EMULATOR)
       if (SDE_COMMAND)
@@ -29,8 +38,13 @@ function(add_test_iut IUT)
       else()
 	set(FLAGS_SDE)
       endif()
+      if (ARMIE_COMMAND)
+        set(FLAGS_ARMIE ${ARMIE_COMMAND} -msve-vector-bits=${SVE_VECTOR_BITS})
+      else()
+        set(FLAGS_ARMIE)
+      endif()
       add_test(NAME ${IUT}
-	COMMAND ${TESTER} ${FLAGS_SDE} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${IUT}
+	COMMAND ${TESTER} ${FLAGS_SDE} ${FLAGS_ARMIE} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${IUT}
 	WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     else()
       add_test(NAME ${IUT}
@@ -99,6 +113,7 @@ function(add_gnuabi_compatibility_test SIMD MASKED)
     set(GNUABI_COMPATIBILITY_TEST gnuabi_compatibility_${SIMD})
   endif(MASKED)
   add_executable(${GNUABI_COMPATIBILITY_TEST} gnuabi_compatibility.c)
+  set_target_properties(${GNUABI_COMPATIBILITY_TEST} PROPERTIES C_STANDARD 99)
   target_compile_options(${GNUABI_COMPATIBILITY_TEST}
     PRIVATE ${FLAGS_ENABLE_${SIMD}})
   if (MASKED)

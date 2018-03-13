@@ -124,6 +124,18 @@
 #endif
 #endif
 
+#ifdef ENABLE_SVE
+#define CONFIG 1
+#include "helpersve.h"
+#ifdef DORENAME
+#ifdef ENABLE_GNUABI
+#include "renamesve_gnuabi.h"
+#else
+#include "renamesve.h"
+#endif /* ENABLE_GNUABI */
+#endif /* DORENAME */
+#endif /* ENABLE_SVE */
+
 //
 
 #include "dd.h"
@@ -2530,9 +2542,15 @@ EXPORT CONST vdouble xfmod(vdouble x, vdouble y) {
   return ret;
 }
 
-typedef struct {
-  vdouble2 a, b;
-} dd2;
+#ifdef ENABLE_SVE
+  typedef __sizeless_struct {
+    vdouble2 a, b;
+  } dd2;
+#else
+  typedef struct {
+    vdouble2 a, b;
+  } dd2;
+#endif
 
 /* TODO AArch64: potential optimization by using `vfmad_lane_f64` */
 static CONST dd2 gammak(vdouble a) {

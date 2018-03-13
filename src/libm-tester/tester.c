@@ -4691,6 +4691,7 @@ int main(int argc, char **argv) {
   mpfr_set_default_prec(128);
 
   startChild(argv2[0], argv2);
+  fflush(stdin);
   // BUGFIX: this flush is to prevent incorrect syncing with the
   // `iut*` executable that causes failures in the CPU detection on
   // some CI systems.

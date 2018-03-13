@@ -99,6 +99,16 @@ typedef Sleef_float64x2_t_2 vdouble2;
 typedef Sleef_float32x4_t_2 vfloat2;
 #endif
 
+#ifdef ENABLE_SVE
+#define CONFIG 1
+#include "helpersve.h"
+#ifdef DORENAME
+#include "renamesve.h"
+typedef Sleef_svfloat64_t_2 vdouble2;
+typedef Sleef_svfloat32_t_2 vfloat2;
+#endif /* DORENAME */
+#endif /* ENABLE_SVE */
+
 #define DENORMAL_DBL_MIN (4.9406564584124654418e-324)
 
 #define POSITIVE_INFINITY INFINITY
