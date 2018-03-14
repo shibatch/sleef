@@ -20,15 +20,22 @@ int main(int argc, char **argv) {
 
   //
   
-  char *isaname = argv[1];
-  char *mangledisa = argv[2];
-  int vw = atoi(argv[3]), fptype = 0;
-  
+  const char *isaname = argv[1];
+  const char *mangledisa = argv[2];
+  const int vw = atoi(argv[3]);
+  int fptype = 0;
+
+  // Remove the "-" sign in the SP <Vector width> value
+  const char *cvw = (vw < 0)  ? argv[3] + 1 : argv[3];
+
   if (vw < 0) {
-    vw = -vw;
     fptype = 1;
   }
-  
+
+  // VLA SVE does not set the vector length in the mangled names.
+  if (strcmp(isaname, "sve") == 0)
+    cvw = "x";
+
   //
   
 #define LEN 256
@@ -51,21 +58,21 @@ int main(int argc, char **argv) {
   for(int i=0;funcList[i].name != NULL;i++) {
     if ((funcList[i].flags & 1) != 0) continue;
     if (funcList[i].ulp < 20) {
-      snprintf(funcname[0], LEN, "_ZGV%sN%d%s_%s%s", 
-	       mangledisa, vw, vparameterStr[funcList[i].funcType], funcList[i].name, typeSpecS[fptype]);
-      snprintf(funcname[1], LEN, "_ZGV%sM%d%s_%s%s", 
-	       mangledisa, vw, vparameterStr[funcList[i].funcType], funcList[i].name, typeSpecS[fptype]);
+      snprintf(funcname[0], LEN, "_ZGV%sN%s%s_%s%s",
+	       mangledisa, cvw, vparameterStr[funcList[i].funcType], funcList[i].name, typeSpecS[fptype]);
+      snprintf(funcname[1], LEN, "_ZGV%sM%s%s_%s%s",
+	       mangledisa, cvw, vparameterStr[funcList[i].funcType], funcList[i].name, typeSpecS[fptype]);
     } else {
-      snprintf(funcname[0], LEN, "_ZGV%sN%d%s_%s%s_u%d", 
-	       mangledisa, vw, vparameterStr[funcList[i].funcType], funcList[i].name, typeSpecS[fptype], funcList[i].ulp);
-      snprintf(funcname[1], LEN, "_ZGV%sM%d%s_%s%s_u%d", 
-	       mangledisa, vw, vparameterStr[funcList[i].funcType], funcList[i].name, typeSpecS[fptype], funcList[i].ulp);
+      snprintf(funcname[0], LEN, "_ZGV%sN%s%s_%s%s_u%d",
+	       mangledisa, cvw, vparameterStr[funcList[i].funcType], funcList[i].name, typeSpecS[fptype], funcList[i].ulp);
+      snprintf(funcname[1], LEN, "_ZGV%sM%s%s_%s%s_u%d",
+	       mangledisa, cvw, vparameterStr[funcList[i].funcType], funcList[i].name, typeSpecS[fptype], funcList[i].ulp);
     }
 
-    snprintf(funcname[2], LEN, "_ZGV%sN%d%s___%s%s_finite",
-	     mangledisa, vw, vparameterStr[funcList[i].funcType], funcList[i].name, typeSpecS[fptype]);
-    snprintf(funcname[3], LEN, "_ZGV%sM%d%s___%s%s_finite",
-	     mangledisa, vw, vparameterStr[funcList[i].funcType], funcList[i].name, typeSpecS[fptype]);
+    snprintf(funcname[2], LEN, "_ZGV%sN%s%s___%s%s_finite",
+	     mangledisa, cvw, vparameterStr[funcList[i].funcType], funcList[i].name, typeSpecS[fptype]);
+    snprintf(funcname[3], LEN, "_ZGV%sM%s%s___%s%s_finite",
+	     mangledisa, cvw, vparameterStr[funcList[i].funcType], funcList[i].name, typeSpecS[fptype]);
 
     switch(funcList[i].funcType) {
     case 0: {
@@ -93,6 +100,7 @@ int main(int argc, char **argv) {
     }
     case 2:
       if (sizeoffp[fptype] == sizeof(double)) {
+        printf("#ifndef ENABLE_SVE\n");
 	printf("EXPORT void %s(vdouble a0, double *a1, double *a2, vopmask m) {\n", funcname[1]);
 	printf("  double s[VECTLENDP], c[VECTLENDP];\n");
 	printf("  int32_t mbuf[VECTLENSP];\n");
@@ -102,7 +110,14 @@ int main(int argc, char **argv) {
 	printf("    if (mbuf[i*2]) { *a1++ = s[i]; *a2++ = c[i]; }\n");
 	printf("  }\n");
 	printf("}\n");
+        printf("#else /* ENABLE_SVE */\n");
+        const char * function = "EXPORT void %s(vdouble a0, double *a1, double *a2, vopmask m) { "
+          "  return %s(a0, a1, a2); "
+          "}\n";
+	printf(function, funcname[1], funcname[0]);
+        printf("#endif/* ENABLE_SVE */\n");
       } else if (sizeoffp[fptype] == sizeof(float)) {
+        printf("#ifndef ENABLE_SVE\n");
 	printf("EXPORT void %s(vfloat a0, float *a1, float *a2, vopmask m) {\n", funcname[1]);
 	printf("  float s[VECTLENSP], c[VECTLENSP];\n");
 	printf("  int32_t mbuf[VECTLENSP];\n");
@@ -112,6 +127,12 @@ int main(int argc, char **argv) {
 	printf("    if (mbuf[i]) { *a1++ = s[i]; *a2++ = c[i]; }\n");
 	printf("  }\n");
 	printf("}\n");
+        printf("#else /* ENABLE_SVE */\n");
+        const char * function = "EXPORT void %s(vfloat a0, float *a1, float *a2, vopmask m) { "
+          "  return %s(a0, a1, a2); "
+          "}\n";
+	printf(function, funcname[1], funcname[0]);
+        printf("#endif/* ENABLE_SVE */\n");
       } else {
 	assert(0 && "Invalid size of FP data");
       }

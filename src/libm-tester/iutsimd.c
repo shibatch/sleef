@@ -124,6 +124,16 @@ typedef Sleef___m128d_2 vdouble2;
 typedef Sleef___m128_2 vfloat2;
 #endif
 
+#ifdef ENABLE_SVE
+#define CONFIG 1
+#include "helpersve.h"
+#ifdef DORENAME
+#include "renamesve.h"
+typedef Sleef_svfloat64_t_2 vdouble2;
+typedef Sleef_svfloat32_t_2 vfloat2;
+#endif
+#endif
+
 #ifdef ENABLE_DSP256
 #define CONFIG 1
 #include "helperavx.h"

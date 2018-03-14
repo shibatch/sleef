@@ -23,12 +23,12 @@ endif()
 # The library currently supports the following SIMD architectures
 set(SLEEF_SUPPORTED_EXTENSIONS
   AVX512F AVX2 AVX2128 FMA4 AVX SSE4 SSE2 # x86
-  ADVSIMD				  # Aarch64
+  ADVSIMD SVE				  # Aarch64
   NEON32 NEON32VFPV4			  # Aarch32
   CACHE STRING "List of SIMD architectures supported by libsleef."
   )
 set(SLEEF_SUPPORTED_GNUABI_EXTENSIONS 
-  SSE2 AVX AVX2 AVX512F ADVSIMD
+  SSE2 AVX AVX2 AVX512F ADVSIMD SVE
   CACHE STRING "List of SIMD architectures supported by libsleef for GNU ABI."
 )
 
@@ -87,9 +87,11 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
   set(SLEEF_HEADER_LIST
     ADVSIMD_
     ADVSIMD
+    SVE
   )
   command_arguments(HEADER_PARAMS_ADVSIMD_   2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON)
   command_arguments(HEADER_PARAMS_ADVSIMD    2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON advsimd)
+  command_arguments(HEADER_PARAMS_SVE    2 4 svfloat64_t svfloat32_t svint32_t svint32_t __ARM_FEATURE_SVE sve)
 
   command_arguments(ALIAS_PARAMS_ADVSIMD_DP  2 float64x2_t int32x2_t n advsimd)
   command_arguments(ALIAS_PARAMS_ADVSIMD_SP -4 float32x4_t int32x4_t n advsimd)
@@ -122,15 +124,26 @@ command_arguments(RENAME_PARAMS_AVX512F        8 16 avx512f)
 command_arguments(RENAME_PARAMS_ADVSIMD        2 4 advsimd)
 command_arguments(RENAME_PARAMS_NEON32         2 4 neon)
 command_arguments(RENAME_PARAMS_NEON32VFPV4    2 4 neonvfpv4)
+# The vector length parameters in SVE, for SP and DP, are chosen for
+# the smallest SVE vector size (128-bit). The name is generated using
+# the "x" token of VLA SVE vector functions.
+command_arguments(RENAME_PARAMS_SVE            2 4 sve)
 
 command_arguments(RENAME_PARAMS_GNUABI_SSE2    sse2 b 2 4 _mm128d _mm128 _mm128i _mm128i __SSE2__)
 command_arguments(RENAME_PARAMS_GNUABI_AVX     avx c 4 8 __m256d __m256 __m128i "struct { __m128i x, y$<SEMICOLON> }" __AVX__)
 command_arguments(RENAME_PARAMS_GNUABI_AVX2    avx2 d 4 8 __m256d __m256 __m128i __m256i __AVX2__)
 command_arguments(RENAME_PARAMS_GNUABI_AVX512F avx512f e 8 16 __m512d __m512 __m256i __m512i __AVX512F__)
 command_arguments(RENAME_PARAMS_GNUABI_ADVSIMD advsimd n 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON)
+# The vector length parameters in SVE, for SP and DP, are chosen for
+# the smallest SVE vector size (128-bit). The name is generated using
+# the "x" token of VLA SVE vector functions.
+command_arguments(RENAME_PARAMS_GNUABI_SVE sve s 2 4 svfloat64_t svfloat32_t svint32_t svint32_t __ARM_SVE)
 
 command_arguments(MKMASKED_PARAMS_GNUABI_AVX512F_dp avx512f e 8)
 command_arguments(MKMASKED_PARAMS_GNUABI_AVX512F_sp avx512f e -16)
+
+command_arguments(MKMASKED_PARAMS_GNUABI_SVE_dp sve s 2)
+command_arguments(MKMASKED_PARAMS_GNUABI_SVE_sp sve s -4)
 
 # COMPILER DETECTION
 
@@ -159,6 +172,7 @@ set(CLANG_FLAGS_ENABLE_NEON32 "--target=arm-linux-gnueabihf;-mcpu=cortex-a8")
 set(CLANG_FLAGS_ENABLE_NEON32VFPV4 "-march=armv7-a;-mfpu=neon-vfpv4")
 # Arm AArch64 vector extensions.
 set(CLANG_FLAGS_ENABLE_ADVSIMD "-march=armv8-a+simd")
+set(CLANG_FLAGS_ENABLE_SVE "-march=armv8-a+sve")
 
 # All variables storing compiler flags should be prefixed with FLAGS_
 if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
@@ -292,6 +306,13 @@ CHECK_C_SOURCE_COMPILES("
     __m256i r = _mm256_abs_epi32(_mm256_set1_epi32(1)); }"
   COMPILER_SUPPORTS_AVX2)
 
+set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_SVE})
+CHECK_C_SOURCE_COMPILES("
+  #include <arm_sve.h>
+  int main() {
+    svint32_t r = svdup_n_s32(1); }"
+  COMPILER_SUPPORTS_SVE)
+
 # AVX512F code requires optimisation flags -O3
 set (CMAKE_TRY_COMPILE_CONFIGURATION Release)
 set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX512F})
@@ -369,6 +390,12 @@ if (NOT SDE_COMMAND)
   find_program(SDE_COMMAND sde)
 endif()
 
+# Check if armie command is available
+
+find_program(ARMIE_COMMAND armie)
+if (NOT SVE_VECTOR_BITS)
+  set(SVE_VECTOR_BITS 128)
+endif()
 ##
 
 if(SLEEF_SHOW_ERROR_LOG)

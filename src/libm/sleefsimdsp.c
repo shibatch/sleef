@@ -142,6 +142,23 @@
 
 //
 
+#ifdef ENABLE_SVE
+#define CONFIG 1
+#include "helpersve.h"
+#ifdef DORENAME
+#ifdef ENABLE_GNUABI
+#include "renamesve_gnuabi.h"
+#else
+#include "renamesve.h"
+#endif /* ENABLE_GNUABI */
+#endif /* DORENAME */
+#endif /* ENABLE_SVE */
+
+//
+
+
+//
+
 #include "df.h"
 
 static INLINE CONST vopmask visnegzero_vo_vf(vfloat d) {
@@ -2096,9 +2113,15 @@ EXPORT CONST vfloat xcospif_u05(vfloat d) {
   return r;
 }
 
-typedef struct {
-  vfloat2 a, b;
-} df2;
+#ifdef ENABLE_SVE
+  typedef __sizeless_struct {
+    vfloat2 a, b;
+  } df2;
+#else
+  typedef struct {
+    vfloat2 a, b;
+  } df2;
+#endif
 
 /* TODO AArch64: potential optimization by using `vfmad_lane_f64` */
 static CONST df2 gammafk(vfloat a) {
