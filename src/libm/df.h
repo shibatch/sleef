@@ -3,10 +3,16 @@
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
+#ifdef ENABLE_SVE
+typedef __sizeless_struct vfloat2 {
+  svfloat32_t x;
+  svfloat32_t y;
+} vfloat2;
+#else
 typedef struct {
   vfloat x, y;
 } vfloat2;
-
+#endif
 static INLINE CONST vfloat vupper_vf_vf(vfloat d) {
   return vreinterpret_vf_vi2(vand_vi2_vi2_vi2(vreinterpret_vi2_vf(d), vcast_vi2_i(0xfffff000)));
 }

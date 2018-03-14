@@ -44,6 +44,14 @@
 #define VLEN_DP 2
 #endif /* ENABLE_ADVSIMDF */
 
+#ifdef ENABLE_SVE
+#include <arm_sve.h>
+#define ISA_TOKEN s
+#define VLEN_SP (svcntw())
+#define VLEN_DP (svcntd())
+#define VLA_TOKEN x
+#endif /* ENABLE_SVE */
+
 // GNUABI name mangling macro.
 #ifndef MASKED_GNUABI
 #define __MAKE_FN_NAME(name, t, vl, p) _ZGV##t##N##vl##p##_##name
@@ -72,10 +80,19 @@
 #error "Missing VLEN_SP"
 #endif
 
+#if defined(ENABLE_SVE) && !defined(VLA_TOKEN)
+#error "Missing VLA_TOKEN"
+#endif /* defined(ENABLE_SVE) && !defined(VLA_TOKEN) */
+
 // Declaration and call, first level expantion to pick up the
 // ISA_TOKEN and VLEN_* architectural macros.
+#ifndef ENABLE_SVE
 #define DECLARE_DP(name, p) __DECLARE(name, ISA_TOKEN, VLEN_DP, p)
 #define CALL_DP(name, p) __CALL(name, ISA_TOKEN, VLEN_DP, p)
+#else /* ENABLE_SVE */
+#define DECLARE_DP(name, p) __DECLARE(name, ISA_TOKEN, VLA_TOKEN, p)
+#define CALL_DP(name, p) __CALL(name, ISA_TOKEN, VLA_TOKEN, p)
+#endif /* ENABLE_SVE */
 
 // Douple precision function declarations.
 DECLARE_DP(__acos_finite, v);
@@ -149,8 +166,13 @@ DECLARE_DP(tanh, v);
 DECLARE_DP(tgamma, v);
 DECLARE_DP(trunc, v);
 
+#ifndef ENABLE_SVE
 #define DECLARE_SP(name, p) __DECLARE(name, ISA_TOKEN, VLEN_SP, p)
 #define CALL_SP(name, p) __CALL(name, ISA_TOKEN, VLEN_SP, p)
+#else /* ENABLE_SVE */
+#define DECLARE_SP(name, p) __DECLARE(name, ISA_TOKEN, VLA_TOKEN, p)
+#define CALL_SP(name, p) __CALL(name, ISA_TOKEN, VLA_TOKEN, p)
+#endif /* ENABLE_SVE */
 
 // Single precision function declarations.
 DECLARE_SP(__acosf_finite, v);
@@ -223,14 +245,6 @@ DECLARE_SP(tanhf, v);
 DECLARE_SP(tgammaf, v);
 DECLARE_SP(truncf, v);
 
-// Allocate enough memory to make sure that sincos-like functions can
-// load a full vector when invoked. All functions must operate on
-// these variables, which are printed at the end of the execution to
-// make sure that the compiler doesn't optimize out the calls.
-int b0[VLEN_SP];
-int b1[VLEN_SP];
-int b2[VLEN_SP];
-
 static jmp_buf sigjmp;
 
 static void sighandler(int signum) { longjmp(sigjmp, 1); }
@@ -239,6 +253,9 @@ int detectFeature() {
   signal(SIGILL, sighandler);
 
   if (setjmp(sigjmp) == 0) {
+    int b0[VLEN_SP];
+    int b1[VLEN_SP];
+    int b2[VLEN_SP];
     CALL_DP(__acos_finite, v);
     signal(SIGILL, SIG_DFL);
     return 1;
@@ -253,6 +270,14 @@ int main(void) {
   if (!detectFeature()) {
     return 0;
   }
+
+  // Allocate enough memory to make sure that sincos-like functions can
+  // load a full vector when invoked. All functions must operate on
+  // these variables, which are printed at the end of the execution to
+  // make sure that the compiler doesn't optimize out the calls.
+  int b0[VLEN_SP];
+  int b1[VLEN_SP];
+  int b2[VLEN_SP];
 
   // Double precision function call.
   CALL_DP(__acos_finite, v);

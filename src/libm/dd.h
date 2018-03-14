@@ -3,9 +3,16 @@
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
+#ifdef ENABLE_SVE
+typedef __sizeless_struct vdouble2 {
+  svfloat64_t x;
+  svfloat64_t y;
+} vdouble2;
+#else
 typedef struct {
   vdouble x, y;
 } vdouble2;
+#endif
 
 static INLINE CONST vdouble vupper_vd_vd(vdouble d) {
   return vreinterpret_vd_vm(vand_vm_vm_vm(vreinterpret_vm_vd(d), vcast_vm_i_i(0xffffffff, 0xf8000000)));
