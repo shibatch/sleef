@@ -14,18 +14,57 @@
 
 #include "misc.h"
 
-#define ENABLE_SP
+#if CONFIG == 1
+// Vector length agnostic
 #define VECTLENSP (svcntw())
+#define VECTLENDP (svcntd())
+#define ISANAME "AArch64 SVE"
+#define ptrue svptrue_b8()
+#elif CONFIG == 8
+// 256-bit vector length
+#define ISANAME "AArch64 SVE 256-bit"
+#define LOG2VECTLENDP 2
+#define ptrue svptrue_pat_b8(SV_VL32)
+#define DFTPRIORITY 20
+#elif CONFIG == 9
+// 512-bit vector length
+#define ISANAME "AArch64 SVE 512-bit"
+#define LOG2VECTLENDP 3
+#define ptrue svptrue_pat_b8(SV_VL64)
+#define DFTPRIORITY 21
+#elif CONFIG == 10
+// 1024-bit vector length
+#define ISANAME "AArch64 SVE 1024-bit"
+#define LOG2VECTLENDP 4
+#define ptrue svptrue_pat_b8(SV_VL128)
+#define DFTPRIORITY 22
+#elif CONFIG == 11
+// 2048-bit vector length
+#define ISANAME "AArch64 SVE 2048-bit"
+#define LOG2VECTLENDP 5
+#define ptrue svptrue_pat_b8(SV_VL256)
+#define DFTPRIORITY 23
+#else
+#error CONFIG macro invalid or not defined
+#endif
+
+#ifdef LOG2VECTLENDP
+#define LOG2VECTLENSP (LOG2VECTLENDP+1)
+#define VECTLENDP (1 << LOG2VECTLENDP)
+#define VECTLENSP (1 << LOG2VECTLENSP)
+static INLINE int vavailability_i(int name) { return svcntd() >= VECTLENDP ? 3 : 0; }
+#else
+static INLINE int vavailability_i(int name) { return 3; }
+#endif
+
+#define ENABLE_SP
 #define ENABLE_FMA_SP
 
 #define ENABLE_DP
-#define VECTLENDP (svcntd())
 #define ENABLE_FMA_DP
 
 #define FULL_FP_ROUNDING
 #define ACCURATE_SQRT
-
-#define ISANAME "AArch64 SVE"
 
 // Mask definition
 typedef svint32_t vmask;
@@ -40,13 +79,9 @@ typedef svfloat64_t vdouble;
 typedef svint32_t vint;
 
 // masking predicates
-#define ptrue svptrue_b8()
 #define ALL_TRUE_MASK svdup_n_s32(0xffffffff)
 #define ALL_FALSE_MASK svdup_n_s32(0x0)
 
-#define DFTPRIORITY 10
-
-static INLINE int vavailability_i(int name) { return 3; }
 static INLINE void vprefetch_v_p(const void *ptr) {}
 
 //
@@ -101,8 +136,8 @@ static INLINE vmask vxor_vm_vm_vm(vmask x, vmask y) {
 
 static INLINE vmask vadd64_vm_vm_vm(vmask x, vmask y) {
   return svreinterpret_s32_s64(
-           svadd_s64_x(ptrue, svreinterpret_s64_s32(x),
-                              svreinterpret_s64_s32(y)));
+			       svadd_s64_x(ptrue, svreinterpret_s64_s32(x),
+					   svreinterpret_s64_s32(y)));
 }
 
 // Mask <--> single precision reinterpret
@@ -375,6 +410,9 @@ static INLINE vmask vcast_vm_i_i(int i0, int i1) {
 /*********************************/
 
 // Vector load/store
+static INLINE vdouble vload_vd_p(const double *ptr) {
+  return svld1_f64(ptrue, ptr);
+}
 static INLINE vdouble vloadu_vd_p(const double *ptr) {
   return svld1_f64(ptrue, ptr);
 }
@@ -609,3 +647,66 @@ static INLINE vfloat vrev21_vf_vf(vfloat vf) {
 static INLINE vint2 veq_vi2_vi2_vi2(vint2 x, vint2 y) {
   return svsel_s32(svcmpeq_s32(ptrue, x, y), ALL_TRUE_MASK, ALL_FALSE_MASK);
 }
+
+
+// Operations for DFT
+
+static INLINE vdouble vposneg_vd_vd(vdouble d) {
+  vmask pnmask = svreinterpret_s32_u64(svlsl_n_u64_x(ptrue, svand_u64_x(ptrue, svindex_u64(0, 1), svdup_u64(1)), 63));
+  return vreinterpret_vd_vm(vxor_vm_vm_vm(vreinterpret_vm_vd(d), pnmask));
+}
+
+static INLINE vdouble vnegpos_vd_vd(vdouble d) {
+  vmask pnmask = svreinterpret_s32_u64(svlsl_n_u64_x(ptrue, svand_u64_x(ptrue, svindex_u64(1, 1), svdup_u64(1)), 63));
+  return vreinterpret_vd_vm(vxor_vm_vm_vm(vreinterpret_vm_vd(d), pnmask));
+}
+
+static INLINE vfloat vposneg_vf_vf(vfloat d) {
+  vmask pnmask = svreinterpret_s32_u32(svlsl_n_u32_x(ptrue, svand_u32_x(ptrue, svindex_u32(0, 1), svdup_u32(1)), 31));
+  return vreinterpret_vf_vm(vxor_vm_vm_vm(vreinterpret_vm_vf(d), pnmask));
+}
+
+static INLINE vfloat vnegpos_vf_vf(vfloat d) {
+  vmask pnmask = svreinterpret_s32_u32(svlsl_n_u32_x(ptrue, svand_u32_x(ptrue, svindex_u32(1, 1), svdup_u32(1)), 31));
+  return vreinterpret_vf_vm(vxor_vm_vm_vm(vreinterpret_vm_vf(d), pnmask));
+}
+
+static INLINE vdouble vsubadd_vd_vd_vd(vdouble x, vdouble y) { return vadd_vd_vd_vd(x, vnegpos_vd_vd(y)); }
+static INLINE vfloat vsubadd_vf_vf_vf(vfloat d0, vfloat d1) { return vadd_vf_vf_vf(d0, vnegpos_vf_vf(d1)); }
+static INLINE vdouble vmlsubadd_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return vsubadd_vd_vd_vd(vmul_vd_vd_vd(x, y), z); }
+static INLINE vfloat vmlsubadd_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vsubadd_vf_vf_vf(vmul_vf_vf_vf(x, y), z); }
+
+//
+
+static INLINE vdouble vrev21_vd_vd(vdouble x) { return svzip1_f64(svuzp2_f64(x, x), svuzp1_f64(x, x)); }
+
+static INLINE vdouble vreva2_vd_vd(vdouble vd) {
+  svint64_t x = svindex_s64((VECTLENDP-1), -1);
+  x = svzip1_s64(svuzp2_s64(x, x), svuzp1_s64(x, x));
+  return svtbl_f64(vd, svreinterpret_u64_s64(x));
+}
+
+static INLINE vfloat vreva2_vf_vf(vfloat vf) {
+  svint32_t x = svindex_s32((VECTLENSP-1), -1);
+  x = svzip1_s32(svuzp2_s32(x, x), svuzp1_s32(x, x));
+  return svtbl_f32(vf, svreinterpret_u32_s32(x));
+}
+
+//
+
+static INLINE void vscatter2_v_p_i_i_vd(double *ptr, int offset, int step, vdouble v) {
+  svuint64_t q = svindex_u64(offset*2, step*2);
+  svst1_scatter_u64index_f64(ptrue, ptr, svzip1_u64(q, svadd_u64_x(ptrue, q, svdup_u64(1))), v);
+}
+
+static INLINE void vscatter2_v_p_i_i_vf(float *ptr, int offset, int step, vfloat v) {
+  svuint32_t q = svindex_u32(offset*2, step*2);
+  svst1_scatter_u32index_f32(ptrue, ptr, svzip1_u32(q, svadd_u32_x(ptrue, q, svdup_u32(1))), v);
+}
+
+static INLINE void vstore_v_p_vd(double *ptr, vdouble v) { vstoreu_v_p_vd(ptr, v); }
+static INLINE void vstream_v_p_vd(double *ptr, vdouble v) { vstore_v_p_vd(ptr, v); }
+static INLINE void vstore_v_p_vf(float *ptr, vfloat v) { vstoreu_v_p_vf(ptr, v); }
+static INLINE void vstream_v_p_vf(float *ptr, vfloat v) { vstore_v_p_vf(ptr, v); }
+static INLINE void vsscatter2_v_p_i_i_vd(double *ptr, int offset, int step, vdouble v) { vscatter2_v_p_i_i_vd(ptr, offset, step, v); }
+static INLINE void vsscatter2_v_p_i_i_vf(float *ptr, int offset, int step, vfloat v) { vscatter2_v_p_i_i_vf(ptr, offset, step, v); }
