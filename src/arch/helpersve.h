@@ -136,8 +136,8 @@ static INLINE vmask vxor_vm_vm_vm(vmask x, vmask y) {
 
 static INLINE vmask vadd64_vm_vm_vm(vmask x, vmask y) {
   return svreinterpret_s32_s64(
-			       svadd_s64_x(ptrue, svreinterpret_s64_s32(x),
-					   svreinterpret_s64_s32(y)));
+           svadd_s64_x(ptrue, svreinterpret_s64_s32(x),
+                              svreinterpret_s64_s32(y)));
 }
 
 // Mask <--> single precision reinterpret
@@ -673,8 +673,8 @@ static INLINE vfloat vnegpos_vf_vf(vfloat d) {
 
 static INLINE vdouble vsubadd_vd_vd_vd(vdouble x, vdouble y) { return vadd_vd_vd_vd(x, vnegpos_vd_vd(y)); }
 static INLINE vfloat vsubadd_vf_vf_vf(vfloat d0, vfloat d1) { return vadd_vf_vf_vf(d0, vnegpos_vf_vf(d1)); }
-static INLINE vdouble vmlsubadd_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return vsubadd_vd_vd_vd(vmul_vd_vd_vd(x, y), z); }
-static INLINE vfloat vmlsubadd_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vsubadd_vf_vf_vf(vmul_vf_vf_vf(x, y), z); }
+static INLINE vdouble vmlsubadd_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return vfma_vd_vd_vd_vd(x, y, vnegpos_vd_vd(z)); }
+static INLINE vfloat vmlsubadd_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vfma_vf_vf_vf_vf(x, y, vnegpos_vf_vf(z)); }
 
 //
 
