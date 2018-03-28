@@ -184,6 +184,7 @@ typedef struct {
 #if defined (__GNUC__) || defined (__clang__) || defined(__INTEL_COMPILER)
 
 #define INLINE __attribute__((always_inline))
+#define RESTRICT __restrict__
 
 #ifndef __INTEL_COMPILER
 #define CONST const
@@ -220,6 +221,7 @@ typedef struct {
 
 #define INLINE __forceinline
 #define CONST
+#define RESTRICT
 
 #ifndef SLEEF_STATIC_LIBS
 #define EXPORT __declspec(dllexport)

@@ -695,11 +695,11 @@ static INLINE vfloat vreva2_vf_vf(vfloat vf) {
 //
 
 static INLINE void vscatter2_v_p_i_i_vd(double *ptr, int offset, int step, vdouble v) {
-  svst1_scatter_u64index_f64(ptrue, ptr, svzip1_u64(svindex_u64(offset*2, step*2), svindex_u64(offset*2+1, step*2)), v);
+  svst1_scatter_u64index_f64(ptrue, ptr + offset*2, svzip1_u64(svindex_u64(0, step*2), svindex_u64(1, step*2)), v);
 }
 
 static INLINE void vscatter2_v_p_i_i_vf(float *ptr, int offset, int step, vfloat v) {
-  svst1_scatter_u32index_f32(ptrue, ptr, svzip1_u32(svindex_u32(offset*2, step*2), svindex_u32(offset*2+1, step*2)), v);
+  svst1_scatter_u32index_f32(ptrue, ptr + offset*2, svzip1_u32(svindex_u32(0, step*2), svindex_u32(1, step*2)), v);
 }
 
 static INLINE void vstore_v_p_vd(double *ptr, vdouble v) { vstoreu_v_p_vd(ptr, v); }

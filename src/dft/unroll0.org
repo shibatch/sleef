@@ -3,7 +3,7 @@
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-void dft2f_%CONFIG%_%ISA%(real *out0, const real *in0, const int shift) {
+void dft2f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -17,7 +17,7 @@ void dft2f_%CONFIG%_%ISA%(real *out0, const real *in0, const int shift) {
   }
 }
 
-void but2f_%CONFIG%_%ISA%(real *out0, uint32_t *q, const int outShift, const real *in0, const int inShift, const real *tbl, const int K) {
+void but2f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -33,7 +33,7 @@ void but2f_%CONFIG%_%ISA%(real *out0, uint32_t *q, const int outShift, const rea
   }
 }
 
-void but2b_%CONFIG%_%ISA%(real *out0, uint32_t *q, const int outShift, const real *in0, const int inShift, const real *tbl, const int K) {
+void but2b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -49,7 +49,7 @@ void but2b_%CONFIG%_%ISA%(real *out0, uint32_t *q, const int outShift, const rea
   }
 }
 
-void tbut2f_%CONFIG%_%ISA%(real *out0, uint32_t *q, const real *in0, const int inShift, const real *tbl, const int K) {
+void tbut2f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -65,7 +65,7 @@ void tbut2f_%CONFIG%_%ISA%(real *out0, uint32_t *q, const real *in0, const int i
   }
 }
 
-void tbut2b_%CONFIG%_%ISA%(real *out0, uint32_t *q, const real *in0, const int inShift, const real *tbl, const int K) {
+void tbut2b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -81,7 +81,7 @@ void tbut2b_%CONFIG%_%ISA%(real *out0, uint32_t *q, const real *in0, const int i
   }
 }
 
-void dft4f_%CONFIG%_%ISA%(real *out0, const real *in0, const int shift) {
+void dft4f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -101,7 +101,7 @@ void dft4f_%CONFIG%_%ISA%(real *out0, const real *in0, const int shift) {
   }
 }
 
-void dft4b_%CONFIG%_%ISA%(real *out0, const real *in0, const int shift) {
+void dft4b_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -121,7 +121,7 @@ void dft4b_%CONFIG%_%ISA%(real *out0, const real *in0, const int shift) {
   }
 }
 
-void but4f_%CONFIG%_%ISA%(real *out0, uint32_t *q, const int outShift, const real *in0, const int inShift, const real *tbl, const int K) {
+void but4f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -145,7 +145,7 @@ void but4f_%CONFIG%_%ISA%(real *out0, uint32_t *q, const int outShift, const rea
   }
 }
 
-void but4b_%CONFIG%_%ISA%(real *out0, uint32_t *q, const int outShift, const real *in0, const int inShift, const real *tbl, const int K) {
+void but4b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -169,7 +169,7 @@ void but4b_%CONFIG%_%ISA%(real *out0, uint32_t *q, const int outShift, const rea
   }
 }
 
-void tbut4f_%CONFIG%_%ISA%(real *out0, uint32_t *q, const real *in0, const int inShift, const real *tbl, const int K) {
+void tbut4f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -193,7 +193,7 @@ void tbut4f_%CONFIG%_%ISA%(real *out0, uint32_t *q, const real *in0, const int i
   }
 }
 
-void tbut4b_%CONFIG%_%ISA%(real *out0, uint32_t *q, const real *in0, const int inShift, const real *tbl, const int K) {
+void tbut4b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -218,7 +218,7 @@ void tbut4b_%CONFIG%_%ISA%(real *out0, uint32_t *q, const real *in0, const int i
 }
 
 #if MAXBUTWIDTH >= 3
-void dft8f_%CONFIG%_%ISA%(real *out0, const real *in0, const int shift) {
+void dft8f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -256,7 +256,7 @@ void dft8f_%CONFIG%_%ISA%(real *out0, const real *in0, const int shift) {
   }
 }
 
-void dft8b_%CONFIG%_%ISA%(real *out0, const real *in0, const int shift) {
+void dft8b_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -294,7 +294,7 @@ void dft8b_%CONFIG%_%ISA%(real *out0, const real *in0, const int shift) {
   }
 }
 
-void but8f_%CONFIG%_%ISA%(real *out0, uint32_t *q, const int outShift, const real *in0, const int inShift, const real *tbl, const int K) {
+void but8f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -340,7 +340,7 @@ void but8f_%CONFIG%_%ISA%(real *out0, uint32_t *q, const int outShift, const rea
   }
 }
 
-void but8b_%CONFIG%_%ISA%(real *out0, uint32_t *q, const int outShift, const real *in0, const int inShift, const real *tbl, const int K) {
+void but8b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -386,7 +386,7 @@ void but8b_%CONFIG%_%ISA%(real *out0, uint32_t *q, const int outShift, const rea
   }
 }
 
-void tbut8f_%CONFIG%_%ISA%(real *out0, uint32_t *q, const real *in0, const int inShift, const real *tbl, const int K) {
+void tbut8f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -432,7 +432,7 @@ void tbut8f_%CONFIG%_%ISA%(real *out0, uint32_t *q, const real *in0, const int i
   }
 }
 
-void tbut8b_%CONFIG%_%ISA%(real *out0, uint32_t *q, const real *in0, const int inShift, const real *tbl, const int K) {
+void tbut8b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -480,7 +480,7 @@ void tbut8b_%CONFIG%_%ISA%(real *out0, uint32_t *q, const real *in0, const int i
 #endif
 
 #if MAXBUTWIDTH >= 4
-void dft16f_%CONFIG%_%ISA%(real *out0, const real *in0, const int shift) {
+void dft16f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -564,7 +564,7 @@ void dft16f_%CONFIG%_%ISA%(real *out0, const real *in0, const int shift) {
   }
 }
 
-void dft16b_%CONFIG%_%ISA%(real *out0, const real *in0, const int shift) {
+void dft16b_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -648,7 +648,7 @@ void dft16b_%CONFIG%_%ISA%(real *out0, const real *in0, const int shift) {
   }
 }
 
-void but16f_%CONFIG%_%ISA%(real *out0, uint32_t *q, const int outShift, const real *in0, const int inShift, const real *tbl, const int K) {
+void but16f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -748,7 +748,7 @@ void but16f_%CONFIG%_%ISA%(real *out0, uint32_t *q, const int outShift, const re
   }
 }
 
-void but16b_%CONFIG%_%ISA%(real *out0, uint32_t *q, const int outShift, const real *in0, const int inShift, const real *tbl, const int K) {
+void but16b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -848,7 +848,7 @@ void but16b_%CONFIG%_%ISA%(real *out0, uint32_t *q, const int outShift, const re
   }
 }
 
-void tbut16f_%CONFIG%_%ISA%(real *out0, uint32_t *q, const real *in0, const int inShift, const real *tbl, const int K) {
+void tbut16f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -948,7 +948,7 @@ void tbut16f_%CONFIG%_%ISA%(real *out0, uint32_t *q, const real *in0, const int 
   }
 }
 
-void tbut16b_%CONFIG%_%ISA%(real *out0, uint32_t *q, const real *in0, const int inShift, const real *tbl, const int K) {
+void tbut16b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -1050,7 +1050,7 @@ void tbut16b_%CONFIG%_%ISA%(real *out0, uint32_t *q, const real *in0, const int 
 #endif
 
 #if MAXBUTWIDTH >= 5
-void dft32f_%CONFIG%_%ISA%(real *out0, const real *in0, const int shift) {
+void dft32f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -1248,7 +1248,7 @@ void dft32f_%CONFIG%_%ISA%(real *out0, const real *in0, const int shift) {
   }
 }
 
-void dft32b_%CONFIG%_%ISA%(real *out0, const real *in0, const int shift) {
+void dft32b_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -1446,7 +1446,7 @@ void dft32b_%CONFIG%_%ISA%(real *out0, const real *in0, const int shift) {
   }
 }
 
-void but32f_%CONFIG%_%ISA%(real *out0, uint32_t *q, const int outShift, const real *in0, const int inShift, const real *tbl, const int K) {
+void but32f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -1676,7 +1676,7 @@ void but32f_%CONFIG%_%ISA%(real *out0, uint32_t *q, const int outShift, const re
   }
 }
 
-void but32b_%CONFIG%_%ISA%(real *out0, uint32_t *q, const int outShift, const real *in0, const int inShift, const real *tbl, const int K) {
+void but32b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -1906,7 +1906,7 @@ void but32b_%CONFIG%_%ISA%(real *out0, uint32_t *q, const int outShift, const re
   }
 }
 
-void tbut32f_%CONFIG%_%ISA%(real *out0, uint32_t *q, const real *in0, const int inShift, const real *tbl, const int K) {
+void tbut32f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -2136,7 +2136,7 @@ void tbut32f_%CONFIG%_%ISA%(real *out0, uint32_t *q, const real *in0, const int 
   }
 }
 
-void tbut32b_%CONFIG%_%ISA%(real *out0, uint32_t *q, const real *in0, const int inShift, const real *tbl, const int K) {
+void tbut32b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -2368,7 +2368,7 @@ void tbut32b_%CONFIG%_%ISA%(real *out0, uint32_t *q, const real *in0, const int 
 #endif
 
 #if MAXBUTWIDTH >= 6
-void dft64f_%CONFIG%_%ISA%(real *out0, const real *in0, const int shift) {
+void dft64f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -2836,7 +2836,7 @@ void dft64f_%CONFIG%_%ISA%(real *out0, const real *in0, const int shift) {
   }
 }
 
-void dft64b_%CONFIG%_%ISA%(real *out0, const real *in0, const int shift) {
+void dft64b_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -3304,7 +3304,7 @@ void dft64b_%CONFIG%_%ISA%(real *out0, const real *in0, const int shift) {
   }
 }
 
-void but64f_%CONFIG%_%ISA%(real *out0, uint32_t *q, const int outShift, const real *in0, const int inShift, const real *tbl, const int K) {
+void but64f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -3836,7 +3836,7 @@ void but64f_%CONFIG%_%ISA%(real *out0, uint32_t *q, const int outShift, const re
   }
 }
 
-void but64b_%CONFIG%_%ISA%(real *out0, uint32_t *q, const int outShift, const real *in0, const int inShift, const real *tbl, const int K) {
+void but64b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -4368,7 +4368,7 @@ void but64b_%CONFIG%_%ISA%(real *out0, uint32_t *q, const int outShift, const re
   }
 }
 
-void tbut64f_%CONFIG%_%ISA%(real *out0, uint32_t *q, const real *in0, const int inShift, const real *tbl, const int K) {
+void tbut64f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
@@ -4900,7 +4900,7 @@ void tbut64f_%CONFIG%_%ISA%(real *out0, uint32_t *q, const real *in0, const int 
   }
 }
 
-void tbut64b_%CONFIG%_%ISA%(real *out0, uint32_t *q, const real *in0, const int inShift, const real *tbl, const int K) {
+void tbut64b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
   int i;
 #pragma omp parallel for
