@@ -652,22 +652,22 @@ static INLINE vint2 veq_vi2_vi2_vi2(vint2 x, vint2 y) {
 // Operations for DFT
 
 static INLINE vdouble vposneg_vd_vd(vdouble d) {
-  vmask pnmask = svreinterpret_s32_u64(svlsl_n_u64_x(ptrue, svand_u64_x(ptrue, svindex_u64(0, 1), svdup_u64(1)), 63));
+  vmask pnmask = svreinterpret_s32_u64(svlsl_n_u64_x(ptrue, svindex_u64(0, 1), 63));
   return vreinterpret_vd_vm(vxor_vm_vm_vm(vreinterpret_vm_vd(d), pnmask));
 }
 
 static INLINE vdouble vnegpos_vd_vd(vdouble d) {
-  vmask pnmask = svreinterpret_s32_u64(svlsl_n_u64_x(ptrue, svand_u64_x(ptrue, svindex_u64(1, 1), svdup_u64(1)), 63));
+  vmask pnmask = svreinterpret_s32_u64(svlsl_n_u64_x(ptrue, svindex_u64(1, 1), 63));
   return vreinterpret_vd_vm(vxor_vm_vm_vm(vreinterpret_vm_vd(d), pnmask));
 }
 
 static INLINE vfloat vposneg_vf_vf(vfloat d) {
-  vmask pnmask = svreinterpret_s32_u32(svlsl_n_u32_x(ptrue, svand_u32_x(ptrue, svindex_u32(0, 1), svdup_u32(1)), 31));
+  vmask pnmask = svreinterpret_s32_u32(svlsl_n_u32_x(ptrue, svindex_u32(0, 1), 31));
   return vreinterpret_vf_vm(vxor_vm_vm_vm(vreinterpret_vm_vf(d), pnmask));
 }
 
 static INLINE vfloat vnegpos_vf_vf(vfloat d) {
-  vmask pnmask = svreinterpret_s32_u32(svlsl_n_u32_x(ptrue, svand_u32_x(ptrue, svindex_u32(1, 1), svdup_u32(1)), 31));
+  vmask pnmask = svreinterpret_s32_u32(svlsl_n_u32_x(ptrue, svindex_u32(1, 1), 31));
   return vreinterpret_vf_vm(vxor_vm_vm_vm(vreinterpret_vm_vf(d), pnmask));
 }
 
@@ -695,13 +695,11 @@ static INLINE vfloat vreva2_vf_vf(vfloat vf) {
 //
 
 static INLINE void vscatter2_v_p_i_i_vd(double *ptr, int offset, int step, vdouble v) {
-  svuint64_t q = svindex_u64(offset*2, step*2);
-  svst1_scatter_u64index_f64(ptrue, ptr, svzip1_u64(q, svadd_u64_x(ptrue, q, svdup_u64(1))), v);
+  svst1_scatter_u64index_f64(ptrue, ptr, svzip1_u64(svindex_u64(offset*2, step*2), svindex_u64(offset*2+1, step*2)), v);
 }
 
 static INLINE void vscatter2_v_p_i_i_vf(float *ptr, int offset, int step, vfloat v) {
-  svuint32_t q = svindex_u32(offset*2, step*2);
-  svst1_scatter_u32index_f32(ptrue, ptr, svzip1_u32(q, svadd_u32_x(ptrue, q, svdup_u32(1))), v);
+  svst1_scatter_u32index_f32(ptrue, ptr, svzip1_u32(svindex_u32(offset*2, step*2), svindex_u32(offset*2+1, step*2)), v);
 }
 
 static INLINE void vstore_v_p_vd(double *ptr, vdouble v) { vstoreu_v_p_vd(ptr, v); }
