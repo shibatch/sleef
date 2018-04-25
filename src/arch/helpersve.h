@@ -14,6 +14,10 @@
 
 #include "misc.h"
 
+#if defined(VECTLENDP) || defined(VECTLENSP)
+#error VECTLENDP or VECTLENSP already defined
+#endif
+
 #if CONFIG == 1
 // Vector length agnostic
 #define VECTLENSP (svcntw())
@@ -49,6 +53,11 @@
 #endif
 
 #ifdef LOG2VECTLENDP
+// For DFT, VECTLENDP and VECTLENSP are not the size of the available
+// vector length, but the size of the partial vectors utilized in the
+// computation. The appropriate VECTLENDP and VECTLENSP are chosen by
+// the dispatcher according to the value of svcntd().
+
 #define LOG2VECTLENSP (LOG2VECTLENDP+1)
 #define VECTLENDP (1 << LOG2VECTLENDP)
 #define VECTLENSP (1 << LOG2VECTLENSP)

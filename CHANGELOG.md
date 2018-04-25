@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Next Release
+### Added
 - SVE target support is added to libm.
   https://github.com/shibatch/sleef/pull/180
 - SVE target support is added to DFT. With this patch, DFT operations
