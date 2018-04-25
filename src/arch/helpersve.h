@@ -661,23 +661,19 @@ static INLINE vint2 veq_vi2_vi2_vi2(vint2 x, vint2 y) {
 // Operations for DFT
 
 static INLINE vdouble vposneg_vd_vd(vdouble d) {
-  vmask pnmask = svreinterpret_s32_u64(svlsl_n_u64_x(ptrue, svindex_u64(0, 1), 63));
-  return vreinterpret_vd_vm(vxor_vm_vm_vm(vreinterpret_vm_vd(d), pnmask));
+  return svneg_f64_m(d, svdupq_n_b64(false, true), d);
 }
 
 static INLINE vdouble vnegpos_vd_vd(vdouble d) {
-  vmask pnmask = svreinterpret_s32_u64(svlsl_n_u64_x(ptrue, svindex_u64(1, 1), 63));
-  return vreinterpret_vd_vm(vxor_vm_vm_vm(vreinterpret_vm_vd(d), pnmask));
+  return svneg_f64_m(d, svdupq_n_b64(true, false), d);
 }
 
 static INLINE vfloat vposneg_vf_vf(vfloat d) {
-  vmask pnmask = svreinterpret_s32_u32(svlsl_n_u32_x(ptrue, svindex_u32(0, 1), 31));
-  return vreinterpret_vf_vm(vxor_vm_vm_vm(vreinterpret_vm_vf(d), pnmask));
+  return svneg_f32_m(d, svdupq_n_b32(false, true, false, true), d);
 }
 
 static INLINE vfloat vnegpos_vf_vf(vfloat d) {
-  vmask pnmask = svreinterpret_s32_u32(svlsl_n_u32_x(ptrue, svindex_u32(1, 1), 31));
-  return vreinterpret_vf_vm(vxor_vm_vm_vm(vreinterpret_vm_vf(d), pnmask));
+  return svneg_f32_m(d, svdupq_n_b32(true, false, true, false), d);
 }
 
 static INLINE vdouble vsubadd_vd_vd_vd(vdouble x, vdouble y) { return vadd_vd_vd_vd(x, vnegpos_vd_vd(y)); }
