@@ -33,6 +33,10 @@
 #include "helperadvsimd.h"
 #endif
 
+#ifdef ENABLE_SVE
+#include "helpersve.h"
+#endif
+
 #ifdef ENABLE_VECEXT
 #include "helpervecext.h"
 #endif

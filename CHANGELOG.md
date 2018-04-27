@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## Next Release
+### Added
+- SVE target support is added to libm.
+  https://github.com/shibatch/sleef/pull/180
+- SVE target support is added to DFT. With this patch, DFT operations
+  can be carried out using 256, 512, 1024 and 2048-bit wide vectors
+  according to runtime availability of vector registers and operators.
+  https://github.com/shibatch/sleef/pull/182
 ## 3.2 - 2018-02-26
 ### Added
 - The whole build system of the project migrated from makefiles to
