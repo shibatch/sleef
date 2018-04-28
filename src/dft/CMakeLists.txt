@@ -185,13 +185,17 @@ endif()
 
 set(TARGET_MKUNROLL "mkunroll")
 add_host_executable(${TARGET_MKUNROLL} mkunroll.c)
-target_compile_definitions(${TARGET_MKUNROLL} PRIVATE ${COMMON_TARGET_DEFINITIONS})
+if (NOT CMAKE_CROSSCOMPILING)
+  target_compile_definitions(${TARGET_MKUNROLL} PRIVATE ${COMMON_TARGET_DEFINITIONS})
+endif()
 
 # Target mkdispatch
 
 set(TARGET_MKDISPATCH "mkdispatch")
 add_host_executable(${TARGET_MKDISPATCH} mkdispatch.c)
-target_compile_definitions(${TARGET_MKDISPATCH} PRIVATE ${COMMON_TARGET_DEFINITIONS})
+if (NOT CMAKE_CROSSCOMPILING)
+  target_compile_definitions(${TARGET_MKDISPATCH} PRIVATE ${COMMON_TARGET_DEFINITIONS})
+endif()
 
 # Target dispatchparam.h
 

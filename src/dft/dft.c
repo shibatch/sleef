@@ -243,8 +243,9 @@ static int omp_thread_count() {
 static void startAllThreads(const int nth) {
 #ifdef _OPENMP
   volatile int8_t *state = calloc(nth, 1);
+  int th;
 #pragma omp parallel for
-  for(int th=0;th<nth;th++) {
+  for(th=0;th<nth;th++) {
     state[th] = 1;
     for(;;) {
       int i;
@@ -912,10 +913,11 @@ static void measureBut(SleefDFT *p) {
 	    if (p->tbl[N] == NULL || p->tbl[N][level] == NULL) continue;
 	    if (p->vecwidth > (1 << N)) continue;
 	    if ((config & CONFIG_MT) != 0) {
+	      int i1;
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
-	      for(int i1=0;i1 < (1 << (p->log2len-N-p->log2vecwidth));i1++) {
+	      for(i1=0;i1 < (1 << (p->log2len-N-p->log2vecwidth));i1++) {
 		int i0 = i1 << p->log2vecwidth;
 		p->perm[level][i1] = 2*perm(p->log2len, i0, p->log2len-level, p->log2len-(level-N));
 	      }
@@ -937,10 +939,11 @@ static void measureBut(SleefDFT *p) {
 	    if (p->vecwidth > 2 && p->log2len <= N+2) continue;
 	    if ((int)p->log2len - (int)level < p->log2vecwidth) continue;
 	    if ((config & CONFIG_MT) != 0) {
+	      int i1;
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
-	      for(int i1=0;i1 < (1 << (p->log2len-N-p->log2vecwidth));i1++) {
+	      for(i1=0;i1 < (1 << (p->log2len-N-p->log2vecwidth));i1++) {
 		int i0 = i1 << p->log2vecwidth;
 		p->perm[level][i1] = 2*perm(p->log2len, i0, p->log2len-level, p->log2len-(level-N));
 	      }
