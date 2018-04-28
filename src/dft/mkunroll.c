@@ -52,6 +52,9 @@ int main(int argc, char **argv) {
   const int maxbutwidth = 6;
 
   for(int config=0;config<CONFIGMAX;config++) {
+#if ENABLE_STREAM == 0
+    if ((config & 1) != 0) continue;
+#endif
     for(int isa=isastart;isa<argc;isa++) {
       char *isaString = argv[isa];
       char configString[100];

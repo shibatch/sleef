@@ -74,4 +74,60 @@ else()
   add_test_dft(${TARGET_NAIVETESTSP}_4 $<TARGET_FILE:${TARGET_NAIVETESTSP}> 4)
   add_test_dft(${TARGET_NAIVETESTSP}_5 $<TARGET_FILE:${TARGET_NAIVETESTSP}> 5)
   add_test_dft(${TARGET_NAIVETESTSP}_10 $<TARGET_FILE:${TARGET_NAIVETESTSP}> 10)
+
+  if (LIBFFTW3)
+    # Target executable fftwtest1ddp
+    set(TARGET_FFTWTEST1DDP "fftwtest1ddp")
+    add_executable(${TARGET_FFTWTEST1DDP} fftwtest1D.c ${PROJECT_SOURCE_DIR}/include/sleefdft.h)
+    add_dependencies(${TARGET_FFTWTEST1DDP} ${TARGET_HEADERS} ${TARGET_LIBSLEEF} ${TARGET_LIBDFT})
+    target_compile_definitions(${TARGET_FFTWTEST1DDP} PRIVATE ${COMMON_TARGET_DEFINITIONS} BASETYPEID=1)
+    target_link_libraries(${TARGET_FFTWTEST1DDP} ${COMMON_LINK_LIBRARIES} ${LIBFFTW3})
+    set_target_properties(${TARGET_FFTWTEST1DDP} PROPERTIES ${COMMON_TARGET_PROPERTIES})
+
+    # Target executable fftwtest1dsp
+    set(TARGET_FFTWTEST1DSP "fftwtest1dsp")
+    add_executable(${TARGET_FFTWTEST1DSP} fftwtest1D.c ${PROJECT_SOURCE_DIR}/include/sleefdft.h)
+    add_dependencies(${TARGET_FFTWTEST1DSP} ${TARGET_HEADERS} ${TARGET_LIBSLEEF} ${TARGET_LIBDFT})
+    target_compile_definitions(${TARGET_FFTWTEST1DSP} PRIVATE ${COMMON_TARGET_DEFINITIONS} BASETYPEID=2)
+    target_link_libraries(${TARGET_FFTWTEST1DSP} ${COMMON_LINK_LIBRARIES} ${LIBFFTW3})
+    set_target_properties(${TARGET_FFTWTEST1DSP} PROPERTIES ${COMMON_TARGET_PROPERTIES})
+
+    # Target executable fftwtest2ddp
+    set(TARGET_FFTWTEST2DDP "fftwtest2ddp")
+    add_executable(${TARGET_FFTWTEST2DDP} fftwtest2D.c ${PROJECT_SOURCE_DIR}/include/sleefdft.h)
+    add_dependencies(${TARGET_FFTWTEST2DDP} ${TARGET_HEADERS} ${TARGET_LIBSLEEF} ${TARGET_LIBDFT})
+    target_compile_definitions(${TARGET_FFTWTEST2DDP} PRIVATE ${COMMON_TARGET_DEFINITIONS} BASETYPEID=1)
+    target_link_libraries(${TARGET_FFTWTEST2DDP} ${COMMON_LINK_LIBRARIES} ${LIBFFTW3})
+    set_target_properties(${TARGET_FFTWTEST2DDP} PROPERTIES ${COMMON_TARGET_PROPERTIES})
+
+    # Target executable fftwtest2dsp
+    set(TARGET_FFTWTEST2DSP "fftwtest2dsp")
+    add_executable(${TARGET_FFTWTEST2DSP} fftwtest2D.c ${PROJECT_SOURCE_DIR}/include/sleefdft.h)
+    add_dependencies(${TARGET_FFTWTEST2DSP} ${TARGET_HEADERS} ${TARGET_LIBSLEEF} ${TARGET_LIBDFT})
+    target_compile_definitions(${TARGET_FFTWTEST2DSP} PRIVATE ${COMMON_TARGET_DEFINITIONS} BASETYPEID=2)
+    target_link_libraries(${TARGET_FFTWTEST2DSP} ${COMMON_LINK_LIBRARIES} ${LIBFFTW3})
+    set_target_properties(${TARGET_FFTWTEST2DSP} PROPERTIES ${COMMON_TARGET_PROPERTIES})
+
+    # Test fftwtest1ddp
+    add_test_dft(${TARGET_FFTWTEST1DDP}_12 $<TARGET_FILE:${TARGET_FFTWTEST1DDP}> 12)
+    add_test_dft(${TARGET_FFTWTEST1DDP}_16 $<TARGET_FILE:${TARGET_FFTWTEST1DDP}> 16)
+
+    # Test fftwtest1dsp
+    add_test_dft(${TARGET_FFTWTEST1DSP}_12 $<TARGET_FILE:${TARGET_FFTWTEST1DSP}> 12)
+    add_test_dft(${TARGET_FFTWTEST1DSP}_16 $<TARGET_FILE:${TARGET_FFTWTEST1DSP}> 16)
+
+    # Test fftwtest2ddp
+    add_test_dft(${TARGET_FFTWTEST2DDP}_2_2 $<TARGET_FILE:${TARGET_FFTWTEST2DDP}> 2 2)
+    add_test_dft(${TARGET_FFTWTEST2DDP}_4_4 $<TARGET_FILE:${TARGET_FFTWTEST2DDP}> 4 4)
+    add_test_dft(${TARGET_FFTWTEST2DDP}_8_8 $<TARGET_FILE:${TARGET_FFTWTEST2DDP}> 8 8)
+    add_test_dft(${TARGET_FFTWTEST2DDP}_10_10 $<TARGET_FILE:${TARGET_FFTWTEST2DDP}> 10 10)
+    add_test_dft(${TARGET_FFTWTEST2DDP}_5_15 $<TARGET_FILE:${TARGET_FFTWTEST2DDP}> 5 15)
+
+    # Test fftwtest2dsp
+    add_test_dft(${TARGET_FFTWTEST2DSP}_2_2 $<TARGET_FILE:${TARGET_FFTWTEST2DSP}> 2 2)
+    add_test_dft(${TARGET_FFTWTEST2DSP}_4_4 $<TARGET_FILE:${TARGET_FFTWTEST2DSP}> 4 4)
+    add_test_dft(${TARGET_FFTWTEST2DSP}_8_8 $<TARGET_FILE:${TARGET_FFTWTEST2DSP}> 8 8)
+    add_test_dft(${TARGET_FFTWTEST2DSP}_10_10 $<TARGET_FILE:${TARGET_FFTWTEST2DSP}> 10 10)
+    add_test_dft(${TARGET_FFTWTEST2DSP}_5_15 $<TARGET_FILE:${TARGET_FFTWTEST2DSP}> 5 15)
+  endif()
 endif(MSVC)

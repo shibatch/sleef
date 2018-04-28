@@ -7,6 +7,7 @@ find_library(LIB_MPFR mpfr)
 find_library(LIBM m)
 find_library(LIBGMP gmp)
 find_library(LIBRT rt)
+find_library(LIBFFTW3 fftw3)
 
 find_path(MPFR_INCLUDE_DIR
   NAMES mpfr.h

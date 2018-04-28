@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+#include <ctype.h>
 #include <inttypes.h>
 #include <math.h>
 #include <assert.h>
@@ -35,23 +36,61 @@
 #define MAGIC2D_LONGDOUBLE 0x26457513
 #define MAGIC2D_QUAD 0x36055512
 
+const char *configStr[] = { "ST", "ST stream", "MT", "MT stream" };
+
+static int parsePathStr(char *p, int *path, int *config, int pathLenMax, int log2len) {
+  int pathLen = 0, l2l = 0;
+
+  for(;;) {
+    while(*p == ' ') p++;
+    if (*p == '\0') break;
+    if (!isdigit(*p)) return -1;
+
+    pathLen++;
+    if (pathLen >= pathLenMax) return -2;
+
+    int n = 0;
+    while(isdigit(*p)) n = n * 10 + *p++ - '0';
+
+    if (n > MAXBUTWIDTH) return -6;
+    path[pathLen-1] = n;
+    l2l += n;
+    config[pathLen-1] = 0;
+
+    if (*p != '(') continue;
+
+    int c;
+    for(c=3;c>=0;c--) if (strncmp(p+1, configStr[c], strlen(configStr[c])) == 0) break;
+    if (c == -1) return -3;
+    p += strlen(configStr[c]) + 1;
+    if (*p != ')') return -4;
+    p++;
+
+    config[pathLen-1] = c;
+  }
+
+  if (l2l != log2len) return -5;
+
+  return pathLen;
+}
+
 EXPORT void SleefDFT_setPath(SleefDFT *p, char *pathStr) {
   assert(p != NULL && (p->magic == MAGIC_FLOAT || p->magic == MAGIC_DOUBLE || p->magic == MAGIC_LONGDOUBLE || p->magic == MAGIC_QUAD));
 
-  int path[32];
+  int path[32], config[32];
+  int pathLen = parsePathStr(pathStr, path, config, 31, p->log2len);
 
-  int pathLen = sscanf(pathStr, "%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d", 
-		       &path[ 0], &path[ 1], &path[ 2], &path[ 3], &path[ 4], &path[ 5], &path[ 6], &path[ 7], 
-		       &path[ 8], &path[ 9], &path[10], &path[11], &path[12], &path[13], &path[14], &path[15], 
-		       &path[16], &path[17], &path[18], &path[19], &path[20], &path[21], &path[22], &path[23], 
-		       &path[24], &path[25], &path[26], &path[27], &path[28], &path[29], &path[30], &path[31]);
+  if (pathLen < 0) {
+    if ((p->mode & SLEEF_MODE_VERBOSE) != 0) printf("Error %d in parsing path string : %s\n", pathLen, pathStr);
+    return;
+  }
 
   for(uint32_t j = 0;j <= p->log2len;j++) p->bestPath[j] = 0;
 
   for(int level = p->log2len, j=0;level > 0 && j < pathLen;) {
-    p->bestPath[level] = path[j] % 10;
-    p->bestPathConfig[level] = path[j] / 10;
-    level -= ABS(path[j] % 10);
+    p->bestPath[level] = path[j];
+    p->bestPathConfig[level] = config[j];
+    level -= path[j];
     j++;
   }
 
@@ -59,8 +98,8 @@ EXPORT void SleefDFT_setPath(SleefDFT *p, char *pathStr) {
   for(int j = p->log2len;j >= 0;j--) if (p->bestPath[j] != 0) p->pathLen++;
 
   if ((p->mode & SLEEF_MODE_VERBOSE) != 0) {
-    printf("set path : ");
-    for(int j = p->log2len;j >= 0;j--) if (p->bestPath[j] != 0) printf("%d(%d) ", p->bestPath[j], p->bestPathConfig[j]);
+    printf("Set path : ");
+    for(int j = p->log2len;j >= 0;j--) if (p->bestPath[j] != 0) printf("%d(%s) ", p->bestPath[j], configStr[p->bestPathConfig[j]]);
     printf("\n");
   }
 }
@@ -99,16 +138,6 @@ EXPORT void SleefDFT_dispose(SleefDFT *p) {
     Sleef_free(p->rtCoef0);
     p->rtCoef0 = p->rtCoef1 = NULL;
   }
-
-  for(int i=0;i<p->nThread;i++) {
-    Sleef_free(p->x1[i]);
-    Sleef_free(p->x0[i]);
-    p->x0[i] = p->x1[i] = NULL;
-  }
-
-  free(p->x1);
-  free(p->x0);
-  p->x0 = p->x1 = NULL;
   
   for(int level = p->log2len;level >= 1;level--) {
     Sleef_free(p->perm[level]);
@@ -160,8 +189,19 @@ static void initPlanMapLock() {
 #endif
 }
 
+static void planMap_clear() {
+  if (planMap != NULL) ArrayMap_dispose(planMap);
+  planMap = NULL;
+}
+
 EXPORT void SleefDFT_setPlanFilePath(const char *path, const char *arch, uint64_t mode) {
   initPlanMapLock();
+
+  if ((mode & SLEEF_PLAN_RESET) != 0) {
+    planMap_clear();
+    planFileLoaded = 0;
+    planFilePathSet = 0;
+  }
 
   if (dftPlanFilePath != NULL) free(dftPlanFilePath);
   if (path != NULL) {
@@ -188,7 +228,7 @@ static void loadPlanFromFile() {
 
   if (planMap != NULL) ArrayMap_dispose(planMap);
   
-  if (dftPlanFilePath != NULL) {
+  if (dftPlanFilePath != NULL && (planMode & SLEEF_PLAN_RESET) == 0) {
     planMap = ArrayMap_load(dftPlanFilePath, archID, PLANFILEID, (planMode & SLEEF_PLAN_NOLOCK) == 0);
   }
 
