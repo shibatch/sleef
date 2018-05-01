@@ -143,12 +143,13 @@ double check_r(int n) {
 }
 
 int main(int argc, char **argv) {
-  if (argc != 2) {
-    fprintf(stderr, "%s <log2n>\n", argv[0]);
+  if (argc < 2) {
+    fprintf(stderr, "%s <log2n> [<nloop>]\n", argv[0]);
     exit(-1);
   }
 
   const int n = 1 << atoi(argv[1]);
+  const int nloop = argc >= 3 ? atoi(argv[2]) : 1;
 
   srand(time(NULL));
 
@@ -159,12 +160,14 @@ int main(int argc, char **argv) {
   int success = 1;
   double e;
 
-  e = check_c(n);
-  success = success && e < THRES;
-  printf("complex : %s (%g)\n", e < THRES ? "OK" : "NG", e);
-  e = check_r(n);
-  success = success && e < THRES;
-  printf("real    : %s (%g)\n", e < THRES ? "OK" : "NG", e);
+  for(int i=0;(nloop < 0 || i < nloop) && success;i++) {
+    e = check_c(n);
+    success = success && e < THRES;
+    printf("complex : %s (%g)\n", e < THRES ? "OK" : "NG", e);
+    e = check_r(n);
+    success = success && e < THRES;
+    printf("real    : %s (%g)\n", e < THRES ? "OK" : "NG", e);
+  }
 
   exit(!success);
 }

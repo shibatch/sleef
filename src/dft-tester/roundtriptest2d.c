@@ -89,13 +89,14 @@ double check_c(int n, int m) {
 }
 
 int main(int argc, char **argv) {
-  if (argc != 3) {
-    fprintf(stderr, "%s <log2n> <log2m>\n", argv[0]);
+  if (argc < 3) {
+    fprintf(stderr, "%s <log2n> <log2m> [<nloop>]\n", argv[0]);
     exit(-1);
   }
 
   const int n = 1 << atoi(argv[1]);
   const int m = 1 << atoi(argv[2]);
+  const int nloop = argc >= 4 ? atoi(argv[3]) : 1;
 
   srand(time(NULL));
 
@@ -106,9 +107,11 @@ int main(int argc, char **argv) {
   int success = 1;
   double e;
 
-  e = check_c(n, m);
-  success = success && e < THRES;
-  printf("complex : %s (%g)\n", e < THRES ? "OK" : "NG", e);
+  for(int i=0;(nloop < 0 || i < nloop) && success;i++) {
+    e = check_c(n, m);
+    success = success && e < THRES;
+    printf("complex : %s (%g)\n", e < THRES ? "OK" : "NG", e);
+  }
 
   exit(!success);
 }
