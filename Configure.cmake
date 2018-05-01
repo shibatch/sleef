@@ -7,6 +7,7 @@ find_library(LIB_MPFR mpfr)
 find_library(LIBM m)
 find_library(LIBGMP gmp)
 find_library(LIBRT rt)
+find_library(LIBFFTW3 fftw3)
 
 find_path(MPFR_INCLUDE_DIR
   NAMES mpfr.h
@@ -407,6 +408,10 @@ if (${RUNNING_ON_TRAVIS} AND CMAKE_C_COMPILER_ID MATCHES "Clang")
   message("Travix bug workaround turned on")
   set(COMPILER_SUPPORTS_OPENMP FALSE)   # Workaround for https://github.com/travis-ci/travis-ci/issues/8613
   set(COMPILER_SUPPORTS_FLOAT128 FALSE) # Compilation on unroll_0_vecextqp.c does not finish on Travis
+endif()
+
+if (MSVC)
+  set(COMPILER_SUPPORTS_OPENMP FALSE)   # At this time, OpenMP is not supported on MSVC
 endif()
 
 # Set common definitions

@@ -185,6 +185,11 @@ typedef struct {
 
 #define INLINE __attribute__((always_inline))
 #define RESTRICT __restrict__
+#ifndef __arm__
+#define ALIGNED(x) __attribute__((aligned(x)))
+#else
+#define ALIGNED(x)
+#endif
 
 #ifndef __INTEL_COMPILER
 #define CONST const
@@ -222,6 +227,7 @@ typedef struct {
 #define INLINE __forceinline
 #define CONST
 #define RESTRICT
+#define ALIGNED(x)
 
 #ifndef SLEEF_STATIC_LIBS
 #define EXPORT __declspec(dllexport)

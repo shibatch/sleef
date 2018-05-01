@@ -8,6 +8,10 @@
 #include <stdint.h>
 #include <string.h>
 
+#ifndef ENABLE_STREAM
+#error ENABLE_STREAM not defined
+#endif
+
 int main(int argc, char **argv) {
   if (argc < 3) {
     fprintf(stderr, "Usage : %s <basetype> <unrollmax> <unrollmax2> <maxbutwidth> <isa> ...\n", argv[0]);
@@ -19,6 +23,12 @@ int main(int argc, char **argv) {
   const int isastart = 3;
   const int isamax = argc - isastart;
 
+#if ENABLE_STREAM == 1
+  const int enable_stream = 1;
+#else
+  const int enable_stream = 0;
+#endif
+
   printf("#define MAXBUTWIDTH %d\n", maxbutwidth);
   printf("\n");
 
@@ -29,6 +39,9 @@ int main(int argc, char **argv) {
   
   for(int k=isastart;k<argc;k++) {
     for(int config=0;config<4;config++) {
+#if ENABLE_STREAM == 0
+      if ((config & 1) != 0) continue;
+#endif
       for(int j=1;j<=maxbutwidth;j++) {
 	printf("void dft%df_%d_%s(real *, const real *, const int);\n", 1 << j, config, argv[k]);
 	printf("void dft%db_%d_%s(real *, const real *, const int);\n", 1 << j, config, argv[k]);
@@ -52,7 +65,11 @@ int main(int argc, char **argv) {
     for(int k=isastart;k<argc;k++) {
       printf("    {NULL, ");
       for(int i=1;i<=maxbutwidth;i++) {
-	printf("dft%df_%d_%s, ", 1 << i, config, argv[k]);
+	if (enable_stream || (config & 1) == 0) {
+	  printf("dft%df_%d_%s, ", 1 << i, config, argv[k]);
+	} else {
+	  printf("NULL, ");
+	}
       }
       printf("},\n");
     }
@@ -66,10 +83,14 @@ int main(int argc, char **argv) {
     for(int k=isastart;k<argc;k++) {
       printf("    {NULL, ");
       for(int i=1;i<=maxbutwidth;i++) {
-	if (i == 1) {
-	  printf("dft%df_%d_%s, ", 1 << i, config, argv[k]);
+	if (enable_stream || (config & 1) == 0) {
+	  if (i == 1) {
+	    printf("dft%df_%d_%s, ", 1 << i, config, argv[k]);
+	  } else {
+	    printf("dft%db_%d_%s, ", 1 << i, config, argv[k]);
+	  }
 	} else {
-	  printf("dft%db_%d_%s, ", 1 << i, config, argv[k]);
+	  printf("NULL, ");
 	}
       }
       printf("},\n");
@@ -84,7 +105,11 @@ int main(int argc, char **argv) {
     for(int k=isastart;k<argc;k++) {
       printf("    {NULL, ");
       for(int i=1;i<=maxbutwidth;i++) {
-	printf("tbut%df_%d_%s, ", 1 << i, config, argv[k]);
+	if (enable_stream || (config & 1) == 0) {
+	  printf("tbut%df_%d_%s, ", 1 << i, config, argv[k]);
+	} else {
+	  printf("NULL, ");
+	}
       }
       printf("},\n");
     }
@@ -98,7 +123,11 @@ int main(int argc, char **argv) {
     for(int k=isastart;k<argc;k++) {
       printf("    {NULL, ");
       for(int i=1;i<=maxbutwidth;i++) {
-	printf("tbut%db_%d_%s, ", 1 << i, config, argv[k]);
+	if (enable_stream || (config & 1) == 0) {
+	  printf("tbut%db_%d_%s, ", 1 << i, config, argv[k]);
+	} else {
+	  printf("NULL, ");
+	}
       }
       printf("},\n");
     }
@@ -112,7 +141,11 @@ int main(int argc, char **argv) {
     for(int k=isastart;k<argc;k++) {
       printf("    {NULL, ");
       for(int i=1;i<=maxbutwidth;i++) {
-	printf("but%df_%d_%s, ", 1 << i, config, argv[k]);
+	if (enable_stream || (config & 1) == 0) {
+	  printf("but%df_%d_%s, ", 1 << i, config, argv[k]);
+	} else {
+	  printf("NULL, ");
+	}
       }
       printf("},\n");
     }
@@ -126,7 +159,11 @@ int main(int argc, char **argv) {
     for(int k=isastart;k<argc;k++) {
       printf("    {NULL, ");
       for(int i=1;i<=maxbutwidth;i++) {
-	printf("but%db_%d_%s, ", 1 << i, config, argv[k]);
+	if (enable_stream || (config & 1) == 0) {
+	  printf("but%db_%d_%s, ", 1 << i, config, argv[k]);
+	} else {
+	  printf("NULL, ");
+	}
       }
       printf("},\n");
     }

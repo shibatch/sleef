@@ -1,10 +1,18 @@
 # Option MAXBUTWIDTH
 
 if (COMPILER_SUPPORTS_SVE)
-  set(MAXBUTWIDTH 6 CACHE STRING "Log_2 (Maximum butterfly length) of butterflies")
+  set(SLEEFDFT_MAXBUTWIDTH 6 CACHE STRING "Log_2 (Maximum butterfly length) of butterflies")
 else()
-  set(MAXBUTWIDTH 4 CACHE STRING "Log_2 (Maximum butterfly length) of butterflies")
+  set(SLEEFDFT_MAXBUTWIDTH 4 CACHE STRING "Log_2 (Maximum butterfly length) of butterflies")
 endif()
+
+if (SLEEFDFT_MAXBUTWIDTH GREATER 7)
+  message(FATAL_ERROR "SLEEFDFT_MAXBUTWIDTH has to be smaller than 8." )
+endif()
+
+# Option
+
+option(SLEEFDFT_ENABLE_STREAM "Streaming instructions are utilized in DFT." OFF)
 
 # Compiler properties
 
@@ -16,7 +24,13 @@ set(COMMON_TARGET_PROPERTIES
   C_STANDARD 99                  # -std=gnu99
   )
 
-set(COMMON_TARGET_DEFINITIONS ${COMMON_TARGET_DEFINITIONS} MAXBUTWIDTH=${MAXBUTWIDTH})
+set(COMMON_TARGET_DEFINITIONS ${COMMON_TARGET_DEFINITIONS} MAXBUTWIDTH=${SLEEFDFT_MAXBUTWIDTH})
+
+if (SLEEFDFT_ENABLE_STREAM)
+  set(COMMON_TARGET_DEFINITIONS ${COMMON_TARGET_DEFINITIONS} ENABLE_STREAM=1)
+else()
+  set(COMMON_TARGET_DEFINITIONS ${COMMON_TARGET_DEFINITIONS} ENABLE_STREAM=0)
+endif()
 
 if (COMPILER_SUPPORTS_FLOAT128)
   set(COMMON_TARGET_DEFINITIONS ${COMMON_TARGET_DEFINITIONS} ENABLEFLOAT128)
@@ -161,21 +175,33 @@ if (COMPILER_SUPPORTS_NEON32)
   set(ISALIST_SP ${ISALIST_SP} neon32sp)
 endif(COMPILER_SUPPORTS_NEON32)
 
+if(SLEEFDFT_ENABLE_STREAM)
+  set(NLIST 0 1 2 3)
+else()
+  set(NLIST 0 2)
+endif()
+
 # Target mkunroll
 
 set(TARGET_MKUNROLL "mkunroll")
 add_host_executable(${TARGET_MKUNROLL} mkunroll.c)
+if (NOT CMAKE_CROSSCOMPILING)
+  target_compile_definitions(${TARGET_MKUNROLL} PRIVATE ${COMMON_TARGET_DEFINITIONS})
+endif()
 
 # Target mkdispatch
 
 set(TARGET_MKDISPATCH "mkdispatch")
 add_host_executable(${TARGET_MKDISPATCH} mkdispatch.c)
+if (NOT CMAKE_CROSSCOMPILING)
+  target_compile_definitions(${TARGET_MKDISPATCH} PRIVATE ${COMMON_TARGET_DEFINITIONS})
+endif()
 
 # Target dispatchparam.h
 
 add_custom_command(OUTPUT dispatchparam.h
   COMMENT "Generating dispatchparam.h"
-  COMMAND $<TARGET_FILE:${TARGET_MKDISPATCH}> paramonly ${MAXBUTWIDTH} ${ISALIST_DP} > ${CMAKE_CURRENT_BINARY_DIR}/dispatchparam.h
+  COMMAND $<TARGET_FILE:${TARGET_MKDISPATCH}> paramonly ${SLEEFDFT_MAXBUTWIDTH} ${ISALIST_DP} > ${CMAKE_CURRENT_BINARY_DIR}/dispatchparam.h
   DEPENDS ${TARGET_MKDISPATCH}
   )
 add_custom_target(dispatchparam.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/dispatchparam.h)
@@ -191,7 +217,7 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
   string(CONCAT S "dispatch" ${ST} ".h")                    # S is dispatchdp.h
   add_custom_command(OUTPUT ${S}
     COMMENT "Generating ${S}"
-    COMMAND $<TARGET_FILE:${TARGET_MKDISPATCH}> ${LT} ${MAXBUTWIDTH} ${ISALIST_${CST}} > ${S}
+    COMMAND $<TARGET_FILE:${TARGET_MKDISPATCH}> ${LT} ${SLEEFDFT_MAXBUTWIDTH} ${ISALIST_${CST}} > ${S}
     DEPENDS ${TARGET_MKDISPATCH}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
@@ -238,7 +264,7 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
   list(GET LISTLONGTYPENAME ${T} LT)                        # LT is "double"
 
   foreach(E ${ISALIST_${CST}})                              # E is "sse2dp"
-    foreach(N 0 1 2 3)
+    foreach(N ${NLIST})
       string(CONCAT UC unroll_ ${N} _ ${E} ".c")            # UC is "unroll_0_sse2dp.c"
       set(UNROLL_TARGET_${CST} ${UNROLL_TARGET_${CST}} ${UC})
     endforeach()
@@ -264,7 +290,7 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
   list(GET LISTLONGTYPENAME ${T} LT)                        # LT is "double"
 
   foreach(E ${ISALIST_${CST}})                              # E is "sse2dp"
-    foreach(N 0 1 2 3)
+    foreach(N ${NLIST})
       string(CONCAT U unroll_ ${N} _ ${E})                  # U is "unroll_0_sse2dp"
       string(CONCAT UG ${U} "_obj")                         # UG is "unroll_0_sse2dp_obj"
       string(CONCAT UC ${U} ".c")                           # UC is "unroll_0_sse2dp.c"
@@ -295,7 +321,7 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
   string(TOUPPER ${ST} CST)                                 # CST is "DP"
 
   foreach(E ${ISALIST_${CST}})                              # E is "sse2dp"
-    foreach(N 0 1 2 3)
+    foreach(N ${NLIST})
       string(CONCAT UG unroll_ ${N} _ ${E} "_obj")          # U is "unroll_0_sse2dp_obj"
       target_sources(${TARGET_LIBDFT} PRIVATE $<TARGET_OBJECTS:${UG}>)
     endforeach()
