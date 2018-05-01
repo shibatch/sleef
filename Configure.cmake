@@ -410,6 +410,10 @@ if (${RUNNING_ON_TRAVIS} AND CMAKE_C_COMPILER_ID MATCHES "Clang")
   set(COMPILER_SUPPORTS_FLOAT128 FALSE) # Compilation on unroll_0_vecextqp.c does not finish on Travis
 endif()
 
+if (MSVC)
+  set(COMPILER_SUPPORTS_OPENMP FALSE)   # At this time, OpenMP is not supported on MSVC
+endif()
+
 # Set common definitions
 
 if (NOT BUILD_SHARED_LIBS)

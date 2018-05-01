@@ -15,7 +15,7 @@
 #include "sleefdft.h"
 
 #ifndef MODE
-#define MODE SLEEF_MODE_DEBUG
+#define MODE (SLEEF_MODE_DEBUG | SLEEF_MODE_VERBOSE)
 #endif
 
 #if BASETYPEID == 1
@@ -46,7 +46,7 @@ double check_c(int n, int m) {
 
   //
 
-  p = SleefDFT_init2d(n, m, NULL, NULL, MODE | SLEEF_MODE_VERBOSE);
+  p = SleefDFT_init2d(n, m, NULL, NULL, MODE);
 
   if (p == NULL) {
     printf("SleefDFT initialization failed\n");
