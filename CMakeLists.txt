@@ -2,6 +2,9 @@
 
 option(BUILD_SHARED_LIBS "Build shared libs" ON)
 option(BUILD_DFT "libsleefdft will be built." ON)
+option(BUILD_GNUABI_LIBS "libsleefgnuabi will be built." ON)
+option(BUILD_TESTS "Tests will be built." ON)
+option(BUILD_POSITION_INDEPENDENT_CODE "Generates position independent code." ON)
 
 option(SLEEF_TEST_ALL_IUT "Perform tests on implementations with all vector extensions" OFF)
 option(SLEEF_SHOW_CONFIG "Show SLEEF configuration status messages." ON)

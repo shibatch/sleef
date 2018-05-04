@@ -150,10 +150,16 @@ set_target_properties(
 # --------------------------------------------------------------------
 # Build main library
 
-set(COMMON_TARGET_PROPERTIES 
-POSITION_INDEPENDENT_CODE ON   # -fPIC
-C_STANDARD 99                  # -std=gnu99
-)
+if (BUILD_POSITION_INDEPENDENT_CODE)
+  set(COMMON_TARGET_PROPERTIES 
+    POSITION_INDEPENDENT_CODE ON   # -fPIC
+    C_STANDARD 99                  # -std=gnu99
+    )
+else()
+  set(COMMON_TARGET_PROPERTIES 
+    C_STANDARD 99                  # -std=gnu99
+    )
+endif()
 
 # Original sleef sources
 set(STANDARD_SOURCES sleefdp.c sleefsp.c)

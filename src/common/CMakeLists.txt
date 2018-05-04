@@ -1,9 +1,15 @@
 # Compiler properties
 
-set(COMMON_TARGET_PROPERTIES 
-  POSITION_INDEPENDENT_CODE ON   # -fPIC
-  C_STANDARD 99                  # -std=gnu99
-  )
+if (BUILD_POSITION_INDEPENDENT_CODE)
+  set(COMMON_TARGET_PROPERTIES 
+    POSITION_INDEPENDENT_CODE ON   # -fPIC
+    C_STANDARD 99                  # -std=gnu99
+    )
+else()
+  set(COMMON_TARGET_PROPERTIES 
+    C_STANDARD 99                  # -std=gnu99
+    )
+endif()
 
 # This is a workaround of appveyor bug
 string(CONCAT CMAKE_C_FLAGS ${SLEEF_C_FLAGS})

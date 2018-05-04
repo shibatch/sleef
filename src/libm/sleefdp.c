@@ -221,7 +221,7 @@ static INLINE CONST Sleef_double2 ddadd_d2_d_d(double x, double y) {
   Sleef_double2 r;
 
 #ifndef NDEBUG
-  if (!(checkfp(x) || checkfp(y) || fabsk(x) >= fabsk(y) || (fabs(x+y) <= fabs(x) && fabs(x+y) <= fabs(y)))) {
+  if (!(checkfp(x) || checkfp(y) || fabsk(x) >= fabsk(y) || (fabsk(x+y) <= fabsk(x) && fabsk(x+y) <= fabsk(y)))) {
     fprintf(stderr, "[ddadd_d2_d_d : %g, %g]\n", x, y);
     fflush(stderr);
   }
@@ -249,7 +249,7 @@ static INLINE CONST Sleef_double2 ddadd_d2_d2_d(Sleef_double2 x, double y) {
   Sleef_double2 r;
 
 #ifndef NDEBUG
-  if (!(checkfp(x.x) || checkfp(y) || fabsk(x.x) >= fabsk(y) || (fabs(x.x+y) <= fabs(x.x) && fabs(x.x+y) <= fabs(y)))) {
+  if (!(checkfp(x.x) || checkfp(y) || fabsk(x.x) >= fabsk(y) || (fabsk(x.x+y) <= fabsk(x.x) && fabsk(x.x+y) <= fabsk(y)))) {
     fprintf(stderr, "[ddadd_d2_d2_d : %g %g]\n", x.x, y);
     fflush(stderr);
   }
@@ -278,7 +278,7 @@ static INLINE CONST Sleef_double2 ddadd_d2_d_d2(double x, Sleef_double2 y) {
   Sleef_double2 r;
 
 #ifndef NDEBUG
-  if (!(checkfp(x) || checkfp(y.x) || fabsk(x) >= fabsk(y.x) || (fabs(x+y.x) <= fabs(x) && fabs(x+y.x) <= fabs(y.x)))) {
+  if (!(checkfp(x) || checkfp(y.x) || fabsk(x) >= fabsk(y.x) || (fabsk(x+y.x) <= fabsk(x) && fabsk(x+y.x) <= fabsk(y.x)))) {
     fprintf(stderr, "[ddadd_d2_d_d2 : %g %g]\n", x, y.x);
     fflush(stderr);
   }
@@ -308,7 +308,7 @@ static INLINE CONST Sleef_double2 ddadd_d2_d2_d2(Sleef_double2 x, Sleef_double2 
   Sleef_double2 r;
 
 #ifndef NDEBUG
-  if (!(checkfp(x.x) || checkfp(y.x) || fabsk(x.x) >= fabsk(y.x) || (fabs(x.x+y.x) <= fabs(x.x) && fabs(x.x+y.x) <= fabs(y.x)))) {
+  if (!(checkfp(x.x) || checkfp(y.x) || fabsk(x.x) >= fabsk(y.x) || (fabsk(x.x+y.x) <= fabsk(x.x) && fabsk(x.x+y.x) <= fabsk(y.x)))) {
     fprintf(stderr, "[ddadd_d2_d2_d2 : %g %g]\n", x.x, y.x);
     fflush(stderr);
   }
@@ -337,7 +337,7 @@ static INLINE CONST Sleef_double2 ddsub_d2_d2_d2(Sleef_double2 x, Sleef_double2 
   Sleef_double2 r;
 
 #ifndef NDEBUG
-  if (!(checkfp(x.x) || checkfp(y.x) || fabsk(x.x) >= fabsk(y.x) || (fabs(x.x-y.x) <= fabs(x.x) && fabs(x.x-y.x) <= fabs(y.x)))) {
+  if (!(checkfp(x.x) || checkfp(y.x) || fabsk(x.x) >= fabsk(y.x) || (fabsk(x.x-y.x) <= fabsk(x.x) && fabsk(x.x-y.x) <= fabsk(y.x)))) {
     fprintf(stderr, "[ddsub_d2_d2_d2 : %g %g]\n", x.x, y.x);
     fflush(stderr);
   }

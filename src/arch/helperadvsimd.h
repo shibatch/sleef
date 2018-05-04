@@ -203,7 +203,6 @@ static INLINE vint2 vxor_vi2_vi2_vi2(vint2 x, vint2 y) {
 }
 
 // Shifts
-#if defined(__clang__)
 #define vsll_vi2_vi2_i(x, c) vshlq_n_s32(x, c)
 #define vsrl_vi2_vi2_i(x, c)                                                   \
   vreinterpretq_s32_u32(vshrq_n_u32(vreinterpretq_u32_s32(x), c))
@@ -213,26 +212,6 @@ static INLINE vint2 vxor_vi2_vi2_vi2(vint2 x, vint2 y) {
 #define vsll_vi_vi_i(x, c) vshl_n_s32(x, c)
 #define vsrl_vi_vi_i(x, c)                                                     \
   vreinterpret_s32_u32(vshr_n_u32(vreinterpret_u32_s32(x), c))
-#else
-static INLINE vint2 vsll_vi2_vi2_i(vint2 x, const int c) {
-  return vshlq_n_s32(x, c);
-}
-static INLINE vint vsll_vi_vi_i(vint x, const int c) {
-  return vshl_n_s32(x, c);
-}
-static INLINE vint2 vsrl_vi2_vi2_i(vint2 x, const int c) {
-  return vreinterpretq_s32_u32(vshrq_n_u32(vreinterpretq_u32_s32(x), c));
-}
-static INLINE vint vsrl_vi_vi_i(vint x, const int c) {
-  return vreinterpret_s32_u32(vshr_n_u32(vreinterpret_u32_s32(x), c));
-}
-static INLINE vint2 vsra_vi2_vi2_i(vint2 x, const int c) {
-  return vshrq_n_s32(x, c);
-}
-static INLINE vint vsra_vi_vi_i(vint x, const int c) {
-  return vshr_n_s32(x, c);
-}
-#endif
 
 // Comparison returning masks
 static INLINE vmask veq_vm_vi2_vi2(vint2 x, vint2 y) { return vceqq_s32(x, y); }

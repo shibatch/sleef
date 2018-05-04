@@ -159,15 +159,9 @@ static INLINE vint2 vxor_vi2_vi2_vi2(vint2 x, vint2 y) { return veorq_s32(x, y);
 static INLINE vint2 vand_vi2_vo_vi2(vopmask x, vint2 y) { return (vint2)vandq_u32(x, (vopmask)y); }
 static INLINE vint2 vandnot_vi2_vo_vi2(vopmask x, vint2 y) { return (vint2)vbicq_u32((vopmask)y, x); }
 
-#if defined(__clang__)
 #define vsll_vi2_vi2_i(x, c) vshlq_n_s32(x, c)
 #define vsrl_vi2_vi2_i(x, c) vreinterpretq_s32_u32(vshrq_n_u32(vreinterpretq_u32_s32(x), c))
 #define vsra_vi2_vi2_i(x, c) vshrq_n_s32(x, c)
-#else
-static INLINE vint2 vsll_vi2_vi2_i(vint2 x, int c) { return (int32x4_t) vshlq_n_u32((uint32x4_t)x, c); }
-static INLINE vint2 vsrl_vi2_vi2_i(vint2 x, int c) { return (int32x4_t) vshrq_n_u32((uint32x4_t)x, c); }
-static INLINE vint2 vsra_vi2_vi2_i(vint2 x, int c) { return vshrq_n_s32(x, c); }
-#endif
 
 static INLINE vopmask veq_vo_vi2_vi2(vint2 x, vint2 y) { return vceqq_s32(x, y); }
 static INLINE vopmask vgt_vo_vi2_vi2(vint2 x, vint2 y) { return vcgeq_s32(x, y); }
