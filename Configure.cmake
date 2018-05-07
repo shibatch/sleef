@@ -309,10 +309,9 @@ CHECK_C_SOURCE_COMPILES("
     svint32_t r = svdup_n_s32(1); }"
   COMPILER_SUPPORTS_SVE)
 
-# AVX512F code requires optimisation flags -O3
-set (CMAKE_TRY_COMPILE_CONFIGURATION Release)
-set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX512F})
-CHECK_C_SOURCE_COMPILES("
+if(NOT SLEEF_DISABLE_AVX512F)
+  set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX512F})
+  CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
   #include <intrin.h>
   #else
@@ -325,7 +324,8 @@ CHECK_C_SOURCE_COMPILES("
     __m512i a = _mm512_set1_epi32(1);
     __mmask16 m = _mm512_cmp_epi32_mask(a, a, _MM_CMPINT_EQ);
     __m512i r = _mm512_andnot_si512(a, a); }"
-  COMPILER_SUPPORTS_AVX512F)
+    COMPILER_SUPPORTS_AVX512F)
+endif()
 
 # AVX2 implies AVX2128
 if(COMPILER_SUPPORTS_AVX2)
