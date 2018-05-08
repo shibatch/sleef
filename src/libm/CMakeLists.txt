@@ -151,9 +151,12 @@ set_target_properties(
 # Build main library
 
 set(COMMON_TARGET_PROPERTIES 
-POSITION_INDEPENDENT_CODE ON   # -fPIC
-C_STANDARD 99                  # -std=gnu99
-)
+  C_STANDARD 99                  # -std=gnu99
+  )
+
+if (BUILD_SHARED_LIBS)
+  list(APPEND COMMON_TARGET_PROPERTIES POSITION_INDEPENDENT_CODE ON)   # -fPIC
+endif()
 
 # Original sleef sources
 set(STANDARD_SOURCES sleefdp.c sleefsp.c)
