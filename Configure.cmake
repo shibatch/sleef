@@ -309,9 +309,8 @@ CHECK_C_SOURCE_COMPILES("
     svint32_t r = svdup_n_s32(1); }"
   COMPILER_SUPPORTS_SVE)
 
-if(NOT SLEEF_DISABLE_AVX512F)
-  set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX512F})
-  CHECK_C_SOURCE_COMPILES("
+set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX512F})
+CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
   #include <intrin.h>
   #else
@@ -322,10 +321,10 @@ if(NOT SLEEF_DISABLE_AVX512F)
   }
   int main() {
     __m512i a = _mm512_set1_epi32(1);
+    __m256i ymm = _mm512_extracti64x4_epi64(a, 0);
     __mmask16 m = _mm512_cmp_epi32_mask(a, a, _MM_CMPINT_EQ);
     __m512i r = _mm512_andnot_si512(a, a); }"
-    COMPILER_SUPPORTS_AVX512F)
-endif()
+  COMPILER_SUPPORTS_AVX512F)
 
 # AVX2 implies AVX2128
 if(COMPILER_SUPPORTS_AVX2)

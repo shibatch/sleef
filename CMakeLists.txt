@@ -4,7 +4,6 @@ option(BUILD_SHARED_LIBS "Build shared libs" ON)
 option(BUILD_DFT "libsleefdft will be built." ON)
 option(BUILD_GNUABI_LIBS "libsleefgnuabi will be built." ON)
 option(BUILD_TESTS "Tests will be built." ON)
-option(SLEEF_DISABLE_AVX512F "Turn off support for AVX512F in order to avoid internal compiler error" OFF)
 
 option(SLEEF_TEST_ALL_IUT "Perform tests on implementations with all vector extensions" OFF)
 option(SLEEF_SHOW_CONFIG "Show SLEEF configuration status messages." ON)
