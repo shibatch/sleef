@@ -1343,6 +1343,31 @@ EXPORT CONST double xexp(double d) {
   return u;
 }
 
+static INLINE CONST double expm1k(double d) {
+  int q = (int)rintk(d * R_LN2);
+  double s, u;
+
+  s = mla(q, -L2U, d);
+  s = mla(q, -L2L, s);
+  
+  u = 2.08860621107283687536341e-09;
+  u = mla(u, s, 2.51112930892876518610661e-08);
+  u = mla(u, s, 2.75573911234900471893338e-07);
+  u = mla(u, s, 2.75572362911928827629423e-06);
+  u = mla(u, s, 2.4801587159235472998791e-05);
+  u = mla(u, s, 0.000198412698960509205564975);
+  u = mla(u, s, 0.00138888888889774492207962);
+  u = mla(u, s, 0.00833333333331652721664984);
+  u = mla(u, s, 0.0416666666666665047591422);
+  u = mla(u, s, 0.166666666666666851703837);
+  u = mla(u, s, 0.5);
+  u = s * s * u + s;
+
+  if (q != 0) u = ldexp2k(u + 1, q) - 1;
+  
+  return u;
+}
+
 static INLINE CONST Sleef_double2 logk(double d) {
   Sleef_double2 x, x2, s;
   double m, t;
@@ -1530,6 +1555,42 @@ EXPORT CONST double xtanh(double x) {
   Sleef_double2 e = ddrec_d2_d2(d);
   d = dddiv_d2_d2_d2(ddsub_d2_d2_d2(d, e), ddadd_d2_d2_d2(d, e));
   y = d.x + d.y;
+
+  y = fabsk(x) > 18.714973875 ? 1.0 : y;
+  y = xisnan(y) ? 1.0 : y;
+  y = mulsign(y, x);
+  y = xisnan(x) ? SLEEF_NAN : y;
+
+  return y;
+}
+
+EXPORT CONST double xsinh_u35(double x) {
+  double e = expm1k(fabsk(x));
+  double y = (e + 2) / (e + 1) * (0.5 * e);
+
+  y = fabsk(x) > 709 ? SLEEF_INFINITY : y;
+  y = xisnan(y) ? SLEEF_INFINITY : y;
+  y = mulsign(y, x);
+  y = xisnan(x) ? SLEEF_NAN : y;
+
+  return y;
+}
+
+EXPORT CONST double xcosh_u35(double x) {
+  double e = xexp(fabsk(x));
+  double y = 0.5 / e + 0.5 * e;
+
+  y = fabsk(x) > 709 ? SLEEF_INFINITY : y;
+  y = xisnan(y) ? SLEEF_INFINITY : y;
+  y = xisnan(x) ? SLEEF_NAN : y;
+
+  return y;
+}
+
+EXPORT CONST double xtanh_u35(double x) {
+  double y = fabsk(x);
+  double d = expm1k(2*y);
+  y = d / (d + 2);
 
   y = fabsk(x) > 18.714973875 ? 1.0 : y;
   y = xisnan(y) ? 1.0 : y;

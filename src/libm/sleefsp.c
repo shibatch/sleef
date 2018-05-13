@@ -1111,6 +1111,26 @@ static INLINE CONST float expkf(Sleef_float2 d) {
   return u;
 }
 
+static INLINE CONST float expm1kf(float d) {
+  int q = (int)rintfk(d * R_LN2f);
+  float s, u;
+
+  s = mlaf(q, -L2Uf, d);
+  s = mlaf(q, -L2Lf, s);
+
+  u = 0.000198527617612853646278381;
+  u = mlaf(u, s, 0.00139304355252534151077271);
+  u = mlaf(u, s, 0.00833336077630519866943359);
+  u = mlaf(u, s, 0.0416664853692054748535156);
+  u = mlaf(u, s, 0.166666671633720397949219);
+  u = mlaf(u, s, 0.5);
+  u = s * s * u + s;
+
+  if (q != 0) u = ldexp2kf(u + 1, q) - 1;
+
+  return u;
+}
+
 static INLINE CONST Sleef_float2 logkf(float d) {
   Sleef_float2 x, x2, s;
   float m, t;
@@ -1248,6 +1268,42 @@ EXPORT CONST float xtanhf(float x) {
   Sleef_float2 e = dfrec_f2_f2(d);
   d = dfdiv_f2_f2_f2(dfsub_f2_f2_f2(d, e), dfadd_f2_f2_f2(d, e));
   y = d.x + d.y;
+
+  y = fabsfk(x) > 18.714973875f ? 1.0f : y;
+  y = xisnanf(y) ? 1.0f : y;
+  y = mulsignf(y, x);
+  y = xisnanf(x) ? SLEEF_NANf : y;
+
+  return y;
+}
+
+EXPORT CONST float xsinhf_u35(float x) {
+  float e = expm1kf(fabsfk(x));
+  float y = (e + 2) / (e + 1) * (0.5f * e);
+
+  y = fabsfk(x) > 88 ? SLEEF_INFINITYf : y;
+  y = xisnanf(y) ? SLEEF_INFINITYf : y;
+  y = mulsignf(y, x);
+  y = xisnanf(x) ? SLEEF_NANf : y;
+
+  return y;
+}
+
+EXPORT CONST float xcoshf_u35(float x) {
+  float e = xexpf(fabsfk(x));
+  float y = 0.5f * e + 0.5f / e;
+
+  y = fabsfk(x) > 88 ? SLEEF_INFINITYf : y;
+  y = xisnanf(y) ? SLEEF_INFINITYf : y;
+  y = xisnanf(x) ? SLEEF_NANf : y;
+
+  return y;
+}
+
+EXPORT CONST float xtanhf_u35(float x) {
+  float y = fabsfk(x);
+  float d = expm1kf(2*y);
+  y = d / (d + 2);
 
   y = fabsfk(x) > 18.714973875f ? 1.0f : y;
   y = xisnanf(y) ? 1.0f : y;

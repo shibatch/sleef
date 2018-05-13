@@ -538,6 +538,44 @@ int main(int argc,char **argv)
 	fflush(stdout); ecnt++;
       }
     }
+
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_sinh(frx, frx, GMP_RNDN);
+
+      double u0 = countULPsp(t = xsinhf_u35(d), frx);
+      
+      if ((fabs(d) <= 88 && u0 > 3.5) ||
+	  (d >  88 && !(u0 <= 3.5 || (isinf(t) && t > 0))) ||
+	  (d < -88 && !(u0 <= 3.5 || (isinf(t) && t < 0)))) {
+	printf("Pure C sinhf_u35 arg=%.20g ulp=%.20g\n", d, u0);
+	fflush(stdout); ecnt++;
+      }
+    }
+    
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_cosh(frx, frx, GMP_RNDN);
+
+      double u0 = countULPsp(t = xcoshf_u35(d), frx);
+      
+      if ((fabs(d) <= 88 && u0 > 3.5) || !(u0 <= 3.5 || (isinf(t) && t > 0))) {
+	printf("Pure C coshf_u35 arg=%.20g ulp=%.20g\n", d, u0);
+	fflush(stdout); ecnt++;
+      }
+    }
+    
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_tanh(frx, frx, GMP_RNDN);
+
+      double u0 = countULPsp(t = xtanhf_u35(d), frx);
+      
+      if (u0 > 3.5) {
+	printf("Pure C tanhf_u35 arg=%.20g ulp=%.20g\n", d, u0);
+	fflush(stdout); ecnt++;
+      }
+    }
     
     {
       mpfr_set_d(frx, d, GMP_RNDN);

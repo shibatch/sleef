@@ -175,6 +175,21 @@ int main(int argc, char **argv) {
       sscanf(buf, "tanh %" PRIx64, &u);
       u = d2u(xtanh(u2d(u)));
       printf("%" PRIx64 "\n", u);
+    } else if (startsWith(buf, "sinh_u35 ")) {
+      uint64_t u;
+      sscanf(buf, "sinh_u35 %" PRIx64, &u);
+      u = d2u(xsinh_u35(u2d(u)));
+      printf("%" PRIx64 "\n", u);
+    } else if (startsWith(buf, "cosh_u35 ")) {
+      uint64_t u;
+      sscanf(buf, "cosh_u35 %" PRIx64, &u);
+      u = d2u(xcosh_u35(u2d(u)));
+      printf("%" PRIx64 "\n", u);
+    } else if (startsWith(buf, "tanh_u35 ")) {
+      uint64_t u;
+      sscanf(buf, "tanh_u35 %" PRIx64, &u);
+      u = d2u(xtanh_u35(u2d(u)));
+      printf("%" PRIx64 "\n", u);
     } else if (startsWith(buf, "asinh ")) {
       uint64_t u;
       sscanf(buf, "asinh %" PRIx64, &u);
@@ -453,6 +468,21 @@ int main(int argc, char **argv) {
       uint32_t u;
       sscanf(buf, "tanhf %x", &u);
       u = f2u(xtanhf(u2f(u)));
+      printf("%x\n", u);
+    } else if (startsWith(buf, "sinhf_u35 ")) {
+      uint32_t u;
+      sscanf(buf, "sinhf_u35 %x", &u);
+      u = f2u(xsinhf_u35(u2f(u)));
+      printf("%x\n", u);
+    } else if (startsWith(buf, "coshf_u35 ")) {
+      uint32_t u;
+      sscanf(buf, "coshf_u35 %x", &u);
+      u = f2u(xcoshf_u35(u2f(u)));
+      printf("%x\n", u);
+    } else if (startsWith(buf, "tanhf_u35 ")) {
+      uint32_t u;
+      sscanf(buf, "tanhf_u35 %x", &u);
+      u = f2u(xtanhf_u35(u2f(u)));
       printf("%x\n", u);
     } else if (startsWith(buf, "asinhf ")) {
       uint32_t u;
