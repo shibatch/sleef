@@ -1596,21 +1596,6 @@ static INLINE CONST vdouble expm1k(vdouble d) {
   s = vmla_vd_vd_vd_vd(u, vcast_vd_d(-L2U), d);
   s = vmla_vd_vd_vd_vd(u, vcast_vd_d(-L2L), s);
 
-#ifdef ENABLE_FMA_DP
-  u = vcast_vd_d(+0.2081276378237164457e-8);
-  u = vfma_vd_vd_vd_vd(u, s, vcast_vd_d(+0.2511210703042288022e-7));
-  u = vfma_vd_vd_vd_vd(u, s, vcast_vd_d(+0.2755762628169491192e-6));
-  u = vfma_vd_vd_vd_vd(u, s, vcast_vd_d(+0.2755723402025388239e-5));
-  u = vfma_vd_vd_vd_vd(u, s, vcast_vd_d(+0.2480158687479686264e-4));
-  u = vfma_vd_vd_vd_vd(u, s, vcast_vd_d(+0.1984126989855865850e-3));
-  u = vfma_vd_vd_vd_vd(u, s, vcast_vd_d(+0.1388888888914497797e-2));
-  u = vfma_vd_vd_vd_vd(u, s, vcast_vd_d(+0.8333333333314938210e-2));
-  u = vfma_vd_vd_vd_vd(u, s, vcast_vd_d(+0.4166666666666602598e-1));
-  u = vfma_vd_vd_vd_vd(u, s, vcast_vd_d(+0.1666666666666669072e+0));
-  u = vfma_vd_vd_vd_vd(u, s, vcast_vd_d(+0.5000000000000000000e+0));
-  u = vfma_vd_vd_vd_vd(u, s, vcast_vd_d(+0.1000000000000000000e+1));
-  u = vmul_vd_vd_vd(u, s);
-#else // #ifdef ENABLE_FMA_DP
   u = vcast_vd_d(2.08860621107283687536341e-09);
   u = vmla_vd_vd_vd_vd(u, s, vcast_vd_d(2.51112930892876518610661e-08));
   u = vmla_vd_vd_vd_vd(u, s, vcast_vd_d(2.75573911234900471893338e-07));
@@ -1622,9 +1607,7 @@ static INLINE CONST vdouble expm1k(vdouble d) {
   u = vmla_vd_vd_vd_vd(u, s, vcast_vd_d(0.0416666666666665047591422));
   u = vmla_vd_vd_vd_vd(u, s, vcast_vd_d(0.166666666666666851703837));
   u = vmla_vd_vd_vd_vd(u, s, vcast_vd_d(0.5));
-
   u = vmla_vd_vd_vd_vd(vmul_vd_vd_vd(s, s), u, s);
-#endif // #ifdef ENABLE_FMA_DP
   
   u = vsel_vd_vo_vd_vd(vcast_vo64_vo32(veq_vo_vi_vi(q, vcast_vi_i(0))), u,
 		       vsub_vd_vd_vd(vldexp2_vd_vd_vi(vadd_vd_vd_vd(u, vcast_vd_d(1)), q), vcast_vd_d(1)));
