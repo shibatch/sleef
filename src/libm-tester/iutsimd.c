@@ -101,6 +101,13 @@ typedef Sleef___m512_2 vfloat2;
 typedef Sleef_float32x4_t_2 vfloat2;
 #endif
 
+#ifdef ENABLE_NEON32VFPV4
+#define CONFIG 4
+#include "helperneon32.h"
+#include "renameneon32vfpv4.h"
+typedef Sleef_float32x4_t_2 vfloat2;
+#endif
+
 #ifdef ENABLE_ADVSIMD
 #define CONFIG 1
 #include "helperadvsimd.h"
@@ -380,7 +387,7 @@ int do_test(int argc, char **argv) {
 #ifdef ENABLE_SP
     k += 2;
 #endif
-#ifdef ENABLE_NEON32
+#if defined(ENABLE_NEON32) || defined(ENABLE_NEON32VFPV4)
     k += 4; // flush to zero
 #elif defined(ENABLE_VECEXT)
     if (vcast_f_vf(xpowf(vcast_vf_f(0.5f), vcast_vf_f(140))) == 0) k += 4;

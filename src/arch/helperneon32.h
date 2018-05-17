@@ -15,7 +15,12 @@
 #define LOG2VECTLENSP 2
 #define VECTLENSP (1 << LOG2VECTLENSP)
 
+#if CONFIG == 4
+#define ISANAME "AARCH32 NEON-VFPV4"
+#define ENABLE_FMA_SP
+#else
 #define ISANAME "AARCH32 NEON"
+#endif
 #define DFTPRIORITY 10
 
 #define ENABLE_RECSQRT_SP
@@ -106,17 +111,53 @@ static INLINE vfloat vadd_vf_vf_vf(vfloat x, vfloat y) { return vaddq_f32(x, y);
 static INLINE vfloat vsub_vf_vf_vf(vfloat x, vfloat y) { return vsubq_f32(x, y); }
 static INLINE vfloat vmul_vf_vf_vf(vfloat x, vfloat y) { return vmulq_f32(x, y); }
 
+static INLINE vfloat vabs_vf_vf(vfloat f) { return vabsq_f32(f); }
+static INLINE vfloat vneg_vf_vf(vfloat f) { return vnegq_f32(f); }
+#if CONFIG == 4
+static INLINE vfloat vmla_vf_vf_vf_vf  (vfloat x, vfloat y, vfloat z) { return vfmaq_f32(z, x, y); }
+static INLINE vfloat vmlanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vfmsq_f32(z, x, y); }
+static INLINE vfloat vfma_vf_vf_vf_vf  (vfloat x, vfloat y, vfloat z) { return vfmaq_f32(z, x, y); }
+static INLINE vfloat vfmanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vfmsq_f32(z, x, y); }
+static INLINE vfloat vfmapn_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vneg_vf_vf(vfmanp_vf_vf_vf_vf(x, y, z)); }
+
+static INLINE vfloat vdiv_vf_vf_vf(vfloat x, vfloat y) {
+  float32x4_t t = vrecpeq_f32(y), u;
+  t = vmulq_f32(t, vrecpsq_f32(y, t));
+  t = vfmaq_f32(t, vfmsq_f32(vdupq_n_f32(1.0f), y, t), t);
+  u = vmulq_f32(x, t);
+  return vfmaq_f32(u, vfmsq_f32(x, y, u), t);
+}
+
+static INLINE vfloat vsqrt_vf_vf(vfloat d) {
+  float32x4_t x = vrsqrteq_f32(d);
+  x = vmulq_f32(x, vrsqrtsq_f32(d, vmulq_f32(x, x)));
+  x = vmulq_f32(x, vrsqrtsq_f32(d, vmulq_f32(x, x)));
+  float32x4_t u = vmulq_f32(x, d);
+  u = vfmaq_f32(u, vfmsq_f32(d, u, u), vmulq_f32(x, vdupq_n_f32(0.5)));
+  return (float32x4_t)vbicq_u32((uint32x4_t)u, vceqq_f32(d, vdupq_n_f32(0.0f)));
+}
+
+static INLINE vfloat vrec_vf_vf(vfloat y) {
+  float32x4_t t = vrecpeq_f32(y), u;
+  t = vmulq_f32(t, vrecpsq_f32(y, t));
+  t = vfmaq_f32(t, vfmsq_f32(vdupq_n_f32(1.0f), y, t), t);
+  return vfmaq_f32(t, vfmsq_f32(vdupq_n_f32(1.0f), y, t), t);
+}
+
+static INLINE vfloat vrecsqrt_vf_vf(vfloat d) {
+  float32x4_t x = vrsqrteq_f32(d);
+  x = vmulq_f32(x, vrsqrtsq_f32(d, vmulq_f32(x, x)));
+  return vfmaq_f32(x, vfmsq_f32(vdupq_n_f32(1), x, vmulq_f32(x, d)), vmulq_f32(x, vdupq_n_f32(0.5)));
+}
+#else
+static INLINE vfloat vmla_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vmlaq_f32(z, x, y); }
+static INLINE vfloat vmlanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vmlsq_f32(z, x, y); }
+
 static INLINE vfloat vdiv_vf_vf_vf(vfloat n, vfloat d) {
   float32x4_t x = vrecpeq_f32(d);
   x = vmulq_f32(x, vrecpsq_f32(d, x));
   float32x4_t t = vmulq_f32(n, x);
   return vmlsq_f32(vaddq_f32(t, t), vmulq_f32(t, x), d);
-}
-
-static INLINE vfloat vrec_vf_vf(vfloat d) {
-  float32x4_t x = vrecpeq_f32(d);
-  x = vmulq_f32(x, vrecpsq_f32(d, x));
-  return vmlsq_f32(vaddq_f32(x, x), vmulq_f32(x, x), d);
 }
 
 static INLINE vfloat vsqrt_vf_vf(vfloat d) {
@@ -127,16 +168,18 @@ static INLINE vfloat vsqrt_vf_vf(vfloat d) {
   return (float32x4_t)vbicq_u32((uint32x4_t)u, vceqq_f32(d, vdupq_n_f32(0.0f)));
 }
 
+static INLINE vfloat vrec_vf_vf(vfloat d) {
+  float32x4_t x = vrecpeq_f32(d);
+  x = vmulq_f32(x, vrecpsq_f32(d, x));
+  return vmlsq_f32(vaddq_f32(x, x), vmulq_f32(x, x), d);
+}
+
 static INLINE vfloat vrecsqrt_vf_vf(vfloat d) {
   float32x4_t x = vrsqrteq_f32(d);
   x = vmulq_f32(x, vrsqrtsq_f32(d, vmulq_f32(x, x)));
   return vmlaq_f32(x, vmlsq_f32(vdupq_n_f32(1), x, vmulq_f32(x, d)), vmulq_f32(x, vdupq_n_f32(0.5)));
 }
-
-static INLINE vfloat vabs_vf_vf(vfloat f) { return vabsq_f32(f); }
-static INLINE vfloat vneg_vf_vf(vfloat f) { return vnegq_f32(f); }
-static INLINE vfloat vmla_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vmlaq_f32(z, x, y); }
-static INLINE vfloat vmlanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vmlsq_f32(z, x, y); }
+#endif
 static INLINE vfloat vmax_vf_vf_vf(vfloat x, vfloat y) { return vmaxq_f32(x, y); }
 static INLINE vfloat vmin_vf_vf_vf(vfloat x, vfloat y) { return vminq_f32(x, y); }
 
