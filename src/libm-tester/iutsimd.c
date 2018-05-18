@@ -417,6 +417,9 @@ int do_test(int argc, char **argv) {
     func_d_d("sinh", xsinh);
     func_d_d("cosh", xcosh);
     func_d_d("tanh", xtanh);
+    func_d_d("sinh_u35", xsinh_u35);
+    func_d_d("cosh_u35", xcosh_u35);
+    func_d_d("tanh_u35", xtanh_u35);
     func_d_d("asinh", xasinh);
     func_d_d("acosh", xacosh);
     func_d_d("atanh", xatanh);
@@ -496,6 +499,9 @@ int do_test(int argc, char **argv) {
     func_f_f("sinhf", xsinhf);
     func_f_f("coshf", xcoshf);
     func_f_f("tanhf", xtanhf);
+    func_f_f("sinhf_u35", xsinhf_u35);
+    func_f_f("coshf_u35", xcoshf_u35);
+    func_f_f("tanhf_u35", xtanhf_u35);
     func_f_f("asinhf", xasinhf);
     func_f_f("acoshf", xacoshf);
     func_f_f("atanhf", xatanhf);

@@ -157,6 +157,9 @@ double child_sqrt_u35(double x) { child_d_d("sqrt_u35", x); }
 double child_sinh(double x) { child_d_d("sinh", x); }
 double child_cosh(double x) { child_d_d("cosh", x); }
 double child_tanh(double x) { child_d_d("tanh", x); }
+double child_sinh_u35(double x) { child_d_d("sinh_u35", x); }
+double child_cosh_u35(double x) { child_d_d("cosh_u35", x); }
+double child_tanh_u35(double x) { child_d_d("tanh_u35", x); }
 double child_asinh(double x) { child_d_d("asinh", x); }
 double child_acosh(double x) { child_d_d("acosh", x); }
 double child_atanh(double x) { child_d_d("atanh", x); }
@@ -285,6 +288,9 @@ float child_sqrtf_u35(float x) { child_f_f("sqrtf_u35", x); }
 float child_sinhf(float x) { child_f_f("sinhf", x); }
 float child_coshf(float x) { child_f_f("coshf", x); }
 float child_tanhf(float x) { child_f_f("tanhf", x); }
+float child_sinhf_u35(float x) { child_f_f("sinhf_u35", x); }
+float child_coshf_u35(float x) { child_f_f("coshf_u35", x); }
+float child_tanhf_u35(float x) { child_f_f("tanhf_u35", x); }
 float child_asinhf(float x) { child_f_f("asinhf", x); }
 float child_acoshf(float x) { child_f_f("acoshf", x); }
 float child_atanhf(float x) { child_f_f("atanhf", x); }
@@ -2403,6 +2409,27 @@ void do_test() {
     }
 
     {
+      fprintf(stderr, "sinh_u35 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_sinh, child_sinh_u35, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "cosh_u35 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_cosh, child_cosh_u35, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "tanh_u35 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_tanh, child_tanh_u35, xa[i]);
+      showResult(success);
+    }
+
+    {
       fprintf(stderr, "asinh denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_asinh, child_asinh, xa[i]);
@@ -2927,6 +2954,37 @@ void do_test() {
       fprintf(stderr, "tanhf denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_tanh, child_tanhf, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "sinhf_u35 denormal/nonnumber test : ");
+      if (enableFlushToZero) {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_sinh, child_sinhf_u35, xa[i]);
+      } else {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_sinh, child_sinhf_u35, xa[i]);
+      }
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "coshf_u35 denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_cosh, child_coshf_u35, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "tanhf_u35 denormal/nonnumber test : ");
+      if (enableFlushToZero) {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_tanh, child_tanhf_u35, xa[i]);
+      } else {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_tanh, child_tanhf_u35, xa[i]);
+      }
       showResult(success);
     }
 
@@ -3817,6 +3875,27 @@ void do_test() {
 
     //
 
+    fprintf(stderr, "sinh_u35 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_sinh, child_sinh_u35, d, 3.5);
+    for(d = -709;d < 709 && success;d += 0.2) checkAccuracy_d(mpfr_sinh, child_sinh_u35, d, 3.5);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "cosh_u35 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_cosh, child_cosh_u35, d, 3.5);
+    for(d = -709;d < 709 && success;d += 0.2) checkAccuracy_d(mpfr_cosh, child_cosh_u35, d, 3.5);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "tanh_u35 : ");
+    for(d = -10;d < 10 && success;d += 0.002)   checkAccuracy_d(mpfr_tanh, child_tanh_u35, d, 3.5);
+    for(d = -1000;d < 1000 && success;d += 0.2) checkAccuracy_d(mpfr_tanh, child_tanh_u35, d, 3.5);
+    showResult(success);
+
+    //
+
     fprintf(stderr, "asinh : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_asinh, child_asinh, d, 1.0);
     for(d = -1000;d < 1000 && success;d += 0.2) checkAccuracy_d(mpfr_asinh, child_asinh, d, 1.0);
@@ -4556,6 +4635,33 @@ void do_test() {
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_tanh, child_tanhf, d, 1.0);
     if (!enableFlushToZero) {
       for(d = -1000;d < 1000 && success;d += 0.2) checkAccuracy_f(mpfr_tanh, child_tanhf, d, 1.0);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "sinhf_u35 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_sinh, child_sinhf_u35, d, 3.5);
+    if (!enableFlushToZero) {
+      for(d = -88;d < 88 && success;d += 0.2) checkAccuracy_f(mpfr_sinh, child_sinhf_u35, d, 3.5);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "coshf_u35 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_cosh, child_coshf_u35, d, 3.5);
+    if (!enableFlushToZero) {
+      for(d = -88;d < 88 && success;d += 0.2) checkAccuracy_f(mpfr_cosh, child_coshf_u35, d, 3.5);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "tanhf_u35 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_tanh, child_tanhf_u35, d, 3.5);
+    if (!enableFlushToZero) {
+      for(d = -1000;d < 1000 && success;d += 0.2) checkAccuracy_f(mpfr_tanh, child_tanhf_u35, d, 3.5);
     }
     showResult(success);
 

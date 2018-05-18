@@ -30,6 +30,9 @@
 #define xsinh Sleef_sinh_u10
 #define xcosh Sleef_cosh_u10
 #define xtanh Sleef_tanh_u10
+#define xsinh_u35 Sleef_sinh_u35
+#define xcosh_u35 Sleef_cosh_u35
+#define xtanh_u35 Sleef_tanh_u35
 #define xasinh Sleef_asinh_u10
 #define xacosh Sleef_acosh_u10
 #define xatanh Sleef_atanh_u10
@@ -106,6 +109,9 @@
 #define xsinhf Sleef_sinhf_u10
 #define xcoshf Sleef_coshf_u10
 #define xtanhf Sleef_tanhf_u10
+#define xsinhf_u35 Sleef_sinhf_u35
+#define xcoshf_u35 Sleef_coshf_u35
+#define xtanhf_u35 Sleef_tanhf_u35
 #define xasinhf Sleef_asinhf_u10
 #define xacoshf Sleef_acoshf_u10
 #define xatanhf Sleef_atanhf_u10
