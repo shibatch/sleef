@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   can be carried out using 256, 512, 1024 and 2048-bit wide vectors
   according to runtime availability of vector registers and operators.
   https://github.com/shibatch/sleef/pull/182
+- 3.5-ULP versions of sinh, cosh, tanh, sinhf, coshf, tanhf, and the
+  corresponding testing functionalities are added.
+  https://github.com/shibatch/sleef/pull/192
 ## 3.2 - 2018-02-26
 ### Added
 - The whole build system of the project migrated from makefiles to
