@@ -209,9 +209,6 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
     # src/arch/helpervecext.h:88
     string(CONCAT FLAGS_WALL ${FLAGS_WALL} " -Wno-psabi")
     set(FLAGS_ENABLE_NEON32 "-mfpu=neon")
-  else()
-    # If compiled with clang
-    set(CLANG_FLAGS_ENABLE_VSX "-target ppc64le-linux-gnu -mvsx")
   endif()
 elseif(MSVC)
   # Intel vector extensions.

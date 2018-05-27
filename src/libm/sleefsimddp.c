@@ -2852,7 +2852,6 @@ EXPORT CONST void *xgetPtr(int name) {
 // gcc -DENABLE_MAIN -Wno-attributes -I../common -I../arch -DENABLE_AVX2 -mavx2 -mfma sleefsimddp.c ../common/common.c -lm
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 int main(int argc, char **argv) {
   vdouble d1 = vcast_vd_d(atof(argv[1]));
   vdouble d2 = vcast_vd_d(atof(argv[2]));
@@ -2863,15 +2862,15 @@ int main(int argc, char **argv) {
   //printf("%.20g\n", xfma(d1, d2, d3)[0]);;
   //printf("test %.20g\n", xtgamma_u1(d1)[0]);
   //printf("corr %.20g\n", tgamma(d1[0]));
-  printf("test %.20g\n", xsinpi_u05(d1)[0]);
-  printf("corr %.20g\n", sin(d1[0] * M_PI));
+  //printf("test %.20g\n", xerf_u1(d1)[0]);
+  //printf("corr %.20g\n", erf(d1[0]));
   //printf("test %.20g\n", xerfc_u15(d1)[0]);
   //printf("corr %.20g\n", erfc(d1[0]));
   //printf("%.20g\n", nextafter(d1[0], d2[0]));;
   //printf("%.20g\n", vcast_d_vd(xhypot_u05(d1, d2)));
   //printf("%.20g\n", fr);
-  //printf("%.20g\n", fmod(atof(argv[1]), atof(argv[2])));
-  //printf("%.20g\n", xfmod(d1, d2)[0]);
+  printf("%.20g\n", fmod(atof(argv[1]), atof(argv[2])));
+  printf("%.20g\n", xfmod(d1, d2)[0]);
   //vdouble2 r = xsincospi_u35(a);
   //printf("%g, %g\n", vcast_d_vd(r.x), vcast_d_vd(r.y));
 }

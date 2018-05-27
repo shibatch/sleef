@@ -66,21 +66,17 @@ static INLINE void vstore_v_p_vf(float *ptr, vfloat v) { vec_st((vector int)v, 0
 static INLINE void vstoreu_v_p_vf(float *ptr, vfloat v) { vec_st((vector int)v, 0, (int *)ptr); }
 
 static INLINE void vscatter2_v_p_i_i_vd(double *ptr, int offset, int step, vdouble v) {
-  /*
   for(int i=0;i<VECTLENDP/2;i++) {
     *(ptr+(offset + step * i)*2 + 0) = v[i*2+0];
     *(ptr+(offset + step * i)*2 + 1) = v[i*2+1];
   }
-  */
 }
 
 static INLINE void vscatter2_v_p_i_i_vf(float *ptr, int offset, int step, vfloat v) {
-  /*
   for(int i=0;i<VECTLENSP/2;i++) {
     *(ptr+(offset + step * i)*2 + 0) = v[i*2+0];
     *(ptr+(offset + step * i)*2 + 1) = v[i*2+1];
   }
-  */
 }
 
 static INLINE vint vcast_vi_i(int i) { return (vint) { i, i }; }
