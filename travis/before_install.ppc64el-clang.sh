@@ -1,6 +1,7 @@
 #!/bin/bash
 set -ev
 export PATH=$PATH:/usr/bin
+apt-get install -y wget
 dpkg --add-architecture ppc64el
 cat /etc/apt/sources.list | sed -e 's/^deb /deb \[arch=amd64\] /g' -e 's/\[arch=amd64\] \[arch=amd64\]/\[arch=amd64\]/g' > /tmp/sources.list
 cat <<EOF | sed -e 's/CODENAME/xenial/g' >> /tmp/sources.list
