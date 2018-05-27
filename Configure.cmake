@@ -112,7 +112,6 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
   command_arguments(ALIAS_PARAMS_NEON32_DP 0)
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
   set(SLEEF_ARCH_PPC64 ON CACHE INTERNAL "True for PPC64 architecture.")
-  set(COMPILER_SUPPORTS_VSX 1)
 
   set(SLEEF_HEADER_LIST
     VSX_
@@ -347,6 +346,15 @@ CHECK_C_SOURCE_COMPILES("
 if(COMPILER_SUPPORTS_AVX2)
   set(COMPILER_SUPPORTS_AVX2128 1)
 endif()
+
+set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_VSX})
+CHECK_C_SOURCE_COMPILES("
+  #include <altivec.h>
+  int main() {
+    vector unsigned int o;
+    o = vec_perm(o, o, (vector unsigned char)(4, 5, 6, 7, 0, 1, 2, 3, 12, 13, 14, 15, 8, 9, 10, 11));
+  }"
+  COMPILER_SUPPORTS_VSX)
 
 # Check if compilation with OpenMP really succeeds
 # It does not succeed on Travis even though find_package(OpenMP) succeeds.
