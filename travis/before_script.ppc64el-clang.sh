@@ -9,7 +9,7 @@ cd /build
 mkdir bin
 cat <<EOF > /build/bin/ppc64el-cc
 #!/bin/sh
-clang-6.0 -target ppc64le-linux-gnu -mvsx -fuse-ld=lld-6.0 \$*
+clang-6.0 -target ppc64le-linux-gnu -mvsx -fuse-ld=gold \$*
 EOF
 chmod +x /build/bin/ppc64el-cc
 export PATH=$PATH:/build/bin
