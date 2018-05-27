@@ -2,7 +2,7 @@
 set -ev
 export PATH=$PATH:/usr/bin
 dpkg --add-architecture ppc64el
-cat /etc/apt/sources.list | sed -e 's/^deb /deb \[arch=ppc64el\] /g' -e 's/\[arch=ppc64el\] \[arch=ppc64el\]/\[arch=ppc64el\]/g' > /tmp/sources.list
+cat /etc/apt/sources.list | sed -e 's/^deb /deb \[arch=amd64\] /g' -e 's/\[arch=amd64\] \[arch=amd64\]/\[arch=amd64\]/g' > /tmp/sources.list
 cat <<EOF | sed -e 's/CODENAME/xenial/g' >> /tmp/sources.list
 deb [arch=ppc64el] http://ports.ubuntu.com/ubuntu-ports/ CODENAME main restricted
 deb-src http://ports.ubuntu.com/ubuntu-ports/ CODENAME main restricted
