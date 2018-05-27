@@ -8,6 +8,7 @@ make -j 2 all
 cd /build
 mkdir bin
 cat <<EOF > /build/bin/ppc64el-cc
+#!/bin/sh
 clang-5.0 -target ppc64el-linux-gnu -mvsx $*
 EOF
 chmod +x /build/bin/ppc64el-cc
