@@ -4,7 +4,7 @@ SET (CMAKE_SYSTEM_PROCESSOR "ppc64")
 
 SET(CMAKE_FIND_ROOT_PATH  /usr/powerpc64le-linux-gnu /usr/include/powerpc64le-linux-gnu /usr/lib/powerpc64le-linux-gnu)
 
-find_program(CMAKE_C_COMPILER ppc64le-cc)
+find_program(CMAKE_C_COMPILER ppc64el-cc)
 
 SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY BOTH)
