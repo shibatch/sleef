@@ -7,7 +7,7 @@ if (BUILD_TESTS)
 endif()
 add_subdirectory("common")
 
-if (BUILD_DFT AND NOT MINGW)
+if (BUILD_DFT AND NOT MINGW AND NOT CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
   add_subdirectory("dft")
   if (BUILD_TESTS)
     add_subdirectory("dft-tester")

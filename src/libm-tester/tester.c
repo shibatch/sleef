@@ -12,12 +12,19 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-#include <math.h>
 #include <float.h>
 #include <limits.h>
 #include <errno.h>
 #include <inttypes.h>
 
+#if defined(UNDEF_USE_EXTERN_INLINES)
+#include <features.h>
+#ifdef __USE_EXTERN_INLINES
+#undef __USE_EXTERN_INLINES
+#endif
+#endif
+
+#include <math.h>
 #include <mpfr.h>
 
 #include <unistd.h>

@@ -7,9 +7,17 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-#include <math.h>
 #include <inttypes.h>
 #include <assert.h>
+
+#if defined(UNDEF_USE_EXTERN_INLINES)
+#include <features.h>
+#ifdef __USE_EXTERN_INLINES
+#undef __USE_EXTERN_INLINES
+#endif
+#endif
+
+#include <math.h>
 
 #if defined(__MINGW32__) || defined(__MINGW64__) || defined(_MSC_VER)
 #define STDIN_FILENO 0

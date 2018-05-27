@@ -9,7 +9,6 @@
 
 #include <assert.h>
 #include <stdint.h>
-#include <math.h>
 #include <limits.h>
 
 #include "misc.h"
@@ -32,7 +31,7 @@ static INLINE CONST int xisinfl(long double x) { return x == SLEEF_INFINITYl || 
 static INLINE CONST int xisminfl(long double x) { return x == -SLEEF_INFINITYl; }
 static INLINE CONST int xispinfl(long double x) { return x == SLEEF_INFINITYl; }
 
-static INLINE CONST long double xfabsl(long double x) { return fabsl(x); }
+static INLINE CONST long double xfabsl(long double x) { return x >= 0 ? x : -x; }
 
 //
 

@@ -9,8 +9,16 @@
 #include <string.h>
 #include <time.h>
 #include <inttypes.h>
-#include <math.h>
 #include <assert.h>
+
+#if defined(UNDEF_USE_EXTERN_INLINES)
+#include <features.h>
+#ifdef __USE_EXTERN_INLINES
+#undef __USE_EXTERN_INLINES
+#endif
+#endif
+
+#include <math.h>
 
 #if defined(_MSC_VER)
 #define STDIN_FILENO 0
@@ -133,6 +141,14 @@ typedef Sleef_svfloat32_t_2 vfloat2;
 #include "renamedsp256.h"
 typedef Sleef___m256d_2 vdouble2;
 typedef Sleef___m256_2 vfloat2;
+#endif
+
+#ifdef ENABLE_VSX
+#define CONFIG 1
+#include "helperpower_128.h"
+#include "renamevsx.h"
+typedef Sleef_vector_double_2 vdouble2;
+typedef Sleef_vector_float_2 vfloat2;
 #endif
 
 //

@@ -8,43 +8,48 @@ dist: trusty
 # Include osx jobs
 matrix:
   include:
-    - os: osx
-      osx_image: xcode8
-      compiler: gcc
-      env:
-        - LABEL="osx-gcc"
-    - os: osx
-      compiler: clang # use default apple clang
-      env:
-        - LABEL="osx-clang"
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-7
-      env:
-        - LABEL="x86_64-gcc"
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - llvm-toolchain-trusty-5.0
-          packages:
-            - clang-5.0
-      env:
-        - LABEL="x86_64-clang"
     - os: linux
       services: docker
       env:
-        - LABEL="aarch64-gcc"
+        - LABEL="ppc64le-clang"
         - ENABLE_DOCKER="true"
-    - os: linux
-      services: docker
-      env:
-        - LABEL="armhf-gcc"
-        - ENABLE_DOCKER="true"
+#    - os: osx
+#      osx_image: xcode8
+#      compiler: gcc
+#      env:
+#        - LABEL="osx-gcc"
+#    - os: osx
+#      compiler: clang # use default apple clang
+#      env:
+#        - LABEL="osx-clang"
+#    - os: linux
+#      addons:
+#        apt:
+#          sources:
+#            - ubuntu-toolchain-r-test
+#          packages:
+#            - g++-7
+#      env:
+#        - LABEL="x86_64-gcc"
+#    - os: linux
+#      addons:
+#        apt:
+#          sources:
+#            - llvm-toolchain-trusty-5.0
+#          packages:
+#            - clang-5.0
+#      env:
+#        - LABEL="x86_64-clang"
+#    - os: linux
+#      services: docker
+#      env:
+#        - LABEL="aarch64-gcc"
+#        - ENABLE_DOCKER="true"
+#    - os: linux
+#      services: docker
+#      env:
+#        - LABEL="armhf-gcc"
+#        - ENABLE_DOCKER="true"
 
 before_install:
      - export PATH=$PATH:/usr/bin:${TRAVIS_BUILD_DIR}/sde-external-8.12.0-2017-10-23-lin

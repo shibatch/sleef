@@ -26,6 +26,7 @@ set(SLEEF_SUPPORTED_EXTENSIONS
   AVX512F AVX2 AVX2128 FMA4 AVX SSE4 SSE2 # x86
   ADVSIMD SVE				  # Aarch64
   NEON32				  # Aarch32
+  VSX				          # PPC64
   CACHE STRING "List of SIMD architectures supported by libsleef."
   )
 set(SLEEF_SUPPORTED_GNUABI_EXTENSIONS 
@@ -109,6 +110,19 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
 
   command_arguments(ALIAS_PARAMS_NEON32_SP -4 float32x4_t int32x4_t - neon)
   command_arguments(ALIAS_PARAMS_NEON32_DP 0)
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
+  set(SLEEF_ARCH_PPC64 ON CACHE INTERNAL "True for PPC64 architecture.")
+  set(COMPILER_SUPPORTS_VSX 1)
+
+  set(SLEEF_HEADER_LIST
+    VSX_
+    VSX
+  )
+
+  set(HEADER_PARAMS_VSX       2 4 "vector double" "vector float" "vector int" "vector int" __VSX__ vsx)
+  set(HEADER_PARAMS_VSX_      2 4 "vector double" "vector float" "vector int" "vector int" __VSX__ vsx)
+  set(ALIAS_PARAMS_VSX_DP  2 "vector double" "vector int" - vsx)
+  set(ALIAS_PARAMS_VSX_SP -4 "vector float" "vector int" - vsx)
 endif()
 
 # MKRename arguments per type
@@ -121,6 +135,7 @@ command_arguments(RENAME_PARAMS_AVX2128        2 4 avx2128)
 command_arguments(RENAME_PARAMS_AVX512F        8 16 avx512f)
 command_arguments(RENAME_PARAMS_ADVSIMD        2 4 advsimd)
 command_arguments(RENAME_PARAMS_NEON32         2 4 neon)
+command_arguments(RENAME_PARAMS_VSX            2 4 vsx)
 # The vector length parameters in SVE, for SP and DP, are chosen for
 # the smallest SVE vector size (128-bit). The name is generated using
 # the "x" token of VLA SVE vector functions.
@@ -169,6 +184,8 @@ set(CLANG_FLAGS_ENABLE_NEON32 "--target=arm-linux-gnueabihf;-mcpu=cortex-a8")
 # Arm AArch64 vector extensions.
 set(CLANG_FLAGS_ENABLE_ADVSIMD "-march=armv8-a+simd")
 set(CLANG_FLAGS_ENABLE_SVE "-march=armv8-a+sve")
+# PPC64
+set(CLANG_FLAGS_ENABLE_VSX "-mvsx")
 
 # All variables storing compiler flags should be prefixed with FLAGS_
 if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
@@ -192,7 +209,10 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
     # src/arch/helpervecext.h:88
     string(CONCAT FLAGS_WALL ${FLAGS_WALL} " -Wno-psabi")
     set(FLAGS_ENABLE_NEON32 "-mfpu=neon")
-  endif(CMAKE_C_COMPILER_ID MATCHES "GNU")
+  else()
+    # If compiled with clang
+    set(CLANG_FLAGS_ENABLE_VSX "-target ppc64le-linux-gnu -mvsx")
+  endif()
 elseif(MSVC)
   # Intel vector extensions.
   set(FLAGS_ENABLE_SSE2 /D__SSE2__)
@@ -361,7 +381,10 @@ CHECK_C_SOURCE_COMPILES("
     return g(2);
   }"
   COMPILER_SUPPORTS_WEAK_ALIASES)
-if (COMPILER_SUPPORTS_WEAK_ALIASES AND NOT CMAKE_SYSTEM_PROCESSOR MATCHES "arm" AND NOT MINGW AND BUILD_GNUABI_LIBS)
+if (COMPILER_SUPPORTS_WEAK_ALIASES AND
+    NOT CMAKE_SYSTEM_PROCESSOR MATCHES "arm" AND
+    NOT CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64" AND
+    NOT MINGW AND BUILD_GNUABI_LIBS)
   set(ENABLE_GNUABI ${COMPILER_SUPPORTS_WEAK_ALIASES})
 endif()
 
@@ -421,4 +444,9 @@ endif()
 
 if (COMPILER_SUPPORTS_WEAK_ALIASES)
   set(COMMON_TARGET_DEFINITIONS ${COMMON_TARGET_DEFINITIONS} ENABLE_ALIAS=1)
+endif()
+
+# When cross compiling for ppc64, this bug-workaround is needed
+if(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
+  set(COMMON_TARGET_DEFINITIONS ${COMMON_TARGET_DEFINITIONS} UNDEF_USE_EXTERN_INLINES=1)
 endif()

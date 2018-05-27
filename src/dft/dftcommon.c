@@ -9,8 +9,16 @@
 #include <string.h>
 #include <ctype.h>
 #include <inttypes.h>
-#include <math.h>
 #include <assert.h>
+
+#if defined(UNDEF_USE_EXTERN_INLINES)
+#include <features.h>
+#ifdef __USE_EXTERN_INLINES
+#undef __USE_EXTERN_INLINES
+#endif
+#endif
+
+#include <math.h>
 
 #ifdef _OPENMP
 #include <omp.h>

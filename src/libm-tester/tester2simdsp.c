@@ -10,6 +10,14 @@
 #include <time.h>
 #include <float.h>
 #include <limits.h>
+
+#if defined(UNDEF_USE_EXTERN_INLINES)
+#include <features.h>
+#ifdef __USE_EXTERN_INLINES
+#undef __USE_EXTERN_INLINES
+#endif
+#endif
+
 #include <math.h>
 
 #ifdef ENABLE_SYS_getrandom
@@ -109,6 +117,16 @@ typedef Sleef_svfloat64_t_2 vdouble2;
 typedef Sleef_svfloat32_t_2 vfloat2;
 #endif /* DORENAME */
 #endif /* ENABLE_SVE */
+
+#ifdef ENABLE_VSX
+#define CONFIG 1
+#include "helperpower_128.h"
+#include "renamevsx.h"
+typedef Sleef_vector_double_2 vdouble2;
+typedef Sleef_vector_float_2 vfloat2;
+#endif
+
+//
 
 #define DENORMAL_FLT_MIN (1.4012984643248170709e-45f)
 #define POSITIVE_INFINITYf ((float)INFINITY)

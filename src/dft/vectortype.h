@@ -6,6 +6,13 @@
 #ifndef __VECTORTYPE_H__
 #define __VECTORTYPE_H__
 
+#if defined(UNDEF_USE_EXTERN_INLINES)
+#include <features.h>
+#ifdef __USE_EXTERN_INLINES
+#undef __USE_EXTERN_INLINES
+#endif
+#endif
+
 #include <math.h>
 #include "sleef.h"
 
@@ -35,6 +42,10 @@
 
 #ifdef ENABLE_SVE
 #include "helpersve.h"
+#endif
+
+#ifdef ENABLE_VSX
+#include "helpervsx.h"
 #endif
 
 #ifdef ENABLE_VECEXT

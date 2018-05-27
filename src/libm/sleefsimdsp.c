@@ -114,6 +114,14 @@
 #endif
 #endif
 
+#ifdef ENABLE_VSX
+#define CONFIG 1
+#include "helperpower_128.h"
+#ifdef DORENAME
+#include "renamevsx.h"
+#endif
+#endif
+
 //
 
 #ifdef ENABLE_VECEXT
@@ -145,9 +153,6 @@
 #endif /* ENABLE_GNUABI */
 #endif /* DORENAME */
 #endif /* ENABLE_SVE */
-
-//
-
 
 //
 
@@ -2385,14 +2390,14 @@ EXPORT CONST vfloat __tgammaf_u1_finite(vfloat)         __attribute__((weak, ali
 #include <stdlib.h>
 int main(int argc, char **argv) {
   vfloat vf1 = vcast_vf_f(atof(argv[1]));
-  //vfloat vf2 = vcast_vf_f(atof(argv[2]));
+  vfloat vf2 = vcast_vf_f(atof(argv[2]));
 
   //vfloat r = xpowf(vf1, vf2);
   //vfloat r = xsqrtf_u05(vf1);
   //printf("%g\n", xnextafterf(vf1, vf2)[0]);
   //printf("%g\n", nextafterf(atof(argv[1]), atof(argv[2])));
-  printf("t = %.20g\n", xlogf_u1(vf1)[0]);
-  printf("c = %.20g\n", logf(atof(argv[1])));
+  printf("t = %.20g\n", xfmodf(vf1, vf2)[0]);
+  printf("c = %.20g\n", fmodf(atof(argv[1]), atof(argv[2])));
   
 }
 #endif
