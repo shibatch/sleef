@@ -28,11 +28,6 @@ int main(int argc, char **argv) {
 #else
   const int enable_stream = 0;
 #endif
-#ifdef ENABLE_MT
-  const int enable_openmp = 1;
-#else
-  const int enable_openmp = 0;
-#endif
 
   printf("#define MAXBUTWIDTH %d\n", maxbutwidth);
   printf("\n");
@@ -46,9 +41,6 @@ int main(int argc, char **argv) {
     for(int config=0;config<4;config++) {
 #if ENABLE_STREAM == 0
       if ((config & 1) != 0) continue;
-#endif
-#ifndef ENABLE_MT
-      if ((config & 2) != 0) continue;
 #endif
       for(int j=1;j<=maxbutwidth;j++) {
 	printf("void dft%df_%d_%s(real *, const real *, const int);\n", 1 << j, config, argv[k]);
@@ -73,7 +65,7 @@ int main(int argc, char **argv) {
     for(int k=isastart;k<argc;k++) {
       printf("    {NULL, ");
       for(int i=1;i<=maxbutwidth;i++) {
-	if ((enable_stream || (config & 1) == 0) && (enable_openmp || (config & 2) == 0)) {
+	if (enable_stream || (config & 1) == 0) {
 	  printf("dft%df_%d_%s, ", 1 << i, config, argv[k]);
 	} else {
 	  printf("NULL, ");
@@ -91,7 +83,7 @@ int main(int argc, char **argv) {
     for(int k=isastart;k<argc;k++) {
       printf("    {NULL, ");
       for(int i=1;i<=maxbutwidth;i++) {
-	if ((enable_stream || (config & 1) == 0) && (enable_openmp || (config & 2) == 0)) {
+	if (enable_stream || (config & 1) == 0) {
 	  if (i == 1) {
 	    printf("dft%df_%d_%s, ", 1 << i, config, argv[k]);
 	  } else {
@@ -113,7 +105,7 @@ int main(int argc, char **argv) {
     for(int k=isastart;k<argc;k++) {
       printf("    {NULL, ");
       for(int i=1;i<=maxbutwidth;i++) {
-	if ((enable_stream || (config & 1) == 0) && (enable_openmp || (config & 2) == 0)) {
+	if (enable_stream || (config & 1) == 0) {
 	  printf("tbut%df_%d_%s, ", 1 << i, config, argv[k]);
 	} else {
 	  printf("NULL, ");
@@ -131,7 +123,7 @@ int main(int argc, char **argv) {
     for(int k=isastart;k<argc;k++) {
       printf("    {NULL, ");
       for(int i=1;i<=maxbutwidth;i++) {
-	if ((enable_stream || (config & 1) == 0) && (enable_openmp || (config & 2) == 0)) {
+	if (enable_stream || (config & 1) == 0) {
 	  printf("tbut%db_%d_%s, ", 1 << i, config, argv[k]);
 	} else {
 	  printf("NULL, ");
@@ -149,7 +141,7 @@ int main(int argc, char **argv) {
     for(int k=isastart;k<argc;k++) {
       printf("    {NULL, ");
       for(int i=1;i<=maxbutwidth;i++) {
-	if ((enable_stream || (config & 1) == 0) && (enable_openmp || (config & 2) == 0)) {
+	if (enable_stream || (config & 1) == 0) {
 	  printf("but%df_%d_%s, ", 1 << i, config, argv[k]);
 	} else {
 	  printf("NULL, ");
@@ -167,7 +159,7 @@ int main(int argc, char **argv) {
     for(int k=isastart;k<argc;k++) {
       printf("    {NULL, ");
       for(int i=1;i<=maxbutwidth;i++) {
-	if ((enable_stream || (config & 1) == 0) && (enable_openmp || (config & 2) == 0)) {
+	if (enable_stream || (config & 1) == 0) {
 	  printf("but%db_%d_%s, ", 1 << i, config, argv[k]);
 	} else {
 	  printf("NULL, ");
