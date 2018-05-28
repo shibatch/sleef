@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
 #else
   const int enable_stream = 0;
 #endif
-#ifdef _OPENMP
+#ifdef ENABLE_MT
   const int enable_openmp = 1;
 #else
   const int enable_openmp = 0;
@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
 #if ENABLE_STREAM == 0
       if ((config & 1) != 0) continue;
 #endif
-#ifndef _OPENMP
+#ifndef ENABLE_MT
       if ((config & 2) != 0) continue;
 #endif
       for(int j=1;j<=maxbutwidth;j++) {
