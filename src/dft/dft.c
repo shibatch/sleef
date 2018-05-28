@@ -298,7 +298,12 @@ static void dispatch(SleefDFT *p, const int N, real *d, const real *s, const int
 
 // Transposer
 
+#if defined(__GNUC__) && __GNUC__ < 5
+#define LOG2BS 3
+#else
 #define LOG2BS 4
+#endif
+
 #define BS (1 << LOG2BS)
 #define TRANSPOSE_BLOCK(y2) do {					\
     for(int x2=y2+1;x2<BS;x2++) {					\
