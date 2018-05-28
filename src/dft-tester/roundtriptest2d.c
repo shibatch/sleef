@@ -7,9 +7,17 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <assert.h>
+#include <time.h>
+
+#if defined(UNDEF_USE_EXTERN_INLINES)
+#include <features.h>
+#ifdef __USE_EXTERN_INLINES
+#undef __USE_EXTERN_INLINES
+#endif
+#endif
+
 #include <math.h>
 #include <complex.h>
-#include <time.h>
 
 #include "sleef.h"
 #include "sleefdft.h"

@@ -6,8 +6,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <math.h>
 #include <time.h>
+
+#if defined(UNDEF_USE_EXTERN_INLINES)
+#include <features.h>
+#ifdef __USE_EXTERN_INLINES
+#undef __USE_EXTERN_INLINES
+#endif
+#endif
+
+#include <math.h>
 #include <complex.h>
 
 #include "sleef.h"
