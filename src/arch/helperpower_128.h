@@ -56,22 +56,23 @@ static vint vloadu_vi_p(int32_t *p) { return vec_ld(0, p); }
 static void vstoreu_v_p_vi(int32_t *p, vint v) { vec_st(v, 0, p); }
 
 static INLINE vdouble vload_vd_p(const double *ptr) { return (vector double)vec_ld(0, (const int *)ptr); }
-static INLINE vdouble vloadu_vd_p(const double *ptr) { return (vector double)vec_ld(0, (const int *)ptr); }
 static INLINE void vstore_v_p_vd(double *ptr, vdouble v) { vec_st((vector int)v, 0, (int *)ptr); }
-static INLINE void vstoreu_v_p_vd(double *ptr, vdouble v) { vec_st((vector int)v, 0, (int *)ptr); }
+static INLINE vdouble vloadu_vd_p(const double *ptr) { return (vector double) ( ptr[0], ptr[1] ); }
+static INLINE void vstoreu_v_p_vd(double *ptr, vdouble v) { ptr[0] = v[0]; ptr[1] = v[1]; }
 
 static INLINE vfloat vload_vf_p(const float *ptr) { return (vector float)vec_ld(0, (const int *)ptr); }
-static INLINE vfloat vloadu_vf_p(const float *ptr) { return (vector float)vec_ld(0, (const int *)ptr); }
 static INLINE void vstore_v_p_vf(float *ptr, vfloat v) { vec_st((vector int)v, 0, (int *)ptr); }
-static INLINE void vstoreu_v_p_vf(float *ptr, vfloat v) { vec_st((vector int)v, 0, (int *)ptr); }
-
-static INLINE void vscatter2_v_p_i_i_vd(double *ptr, int offset, int step, vdouble v) { vstore_v_p_vd((double *)(&ptr[2*offset]), v); }
 static INLINE void vscatter2_v_p_i_i_vf(float *ptr, int offset, int step, vfloat v) {
   *(ptr+(offset + step * 0)*2 + 0) = v[0];
   *(ptr+(offset + step * 0)*2 + 1) = v[1];
   *(ptr+(offset + step * 1)*2 + 0) = v[2];
   *(ptr+(offset + step * 1)*2 + 1) = v[3];
 }
+
+static INLINE vfloat vloadu_vf_p(const float *ptr) { return (vfloat) ( ptr[0], ptr[1], ptr[2], ptr[3] ); }
+static INLINE void vstoreu_v_p_vf(float *ptr, vfloat v) { ptr[0] = v[0]; ptr[1] = v[1]; ptr[2] = v[2]; ptr[3] = v[3]; }
+
+static INLINE void vscatter2_v_p_i_i_vd(double *ptr, int offset, int step, vdouble v) { vstore_v_p_vd((double *)(&ptr[2*offset]), v); }
 
 static INLINE vint vcast_vi_i(int i) { return (vint) { i, i }; }
 static INLINE vint2 vcast_vi2_i(int i) { return (vint2) { i, i, i, i }; }
@@ -329,4 +330,4 @@ static INLINE vopmask visminf_vo_vf(vfloat d) { return (vopmask)vec_cmpeq(d, vca
 static INLINE vopmask visnan_vo_vf(vfloat d) { return (vopmask)vnot_vo_vo(vec_cmpeq(d, d)); }
 
 static INLINE void vsscatter2_v_p_i_i_vf(float *ptr, int offset, int step, vfloat v) { vscatter2_v_p_i_i_vf(ptr, offset, step, v); }
-
+static INLINE void vstream_v_p_vf(float *ptr, vfloat v) { vstore_v_p_vf(ptr, v); }

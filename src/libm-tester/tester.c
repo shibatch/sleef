@@ -17,7 +17,8 @@
 #include <errno.h>
 #include <inttypes.h>
 
-#if defined(UNDEF_USE_EXTERN_INLINES)
+#if defined(POWER64_UNDEF_USE_EXTERN_INLINES)
+// This is a workaround required to cross compile for PPC64 binaries
 #include <features.h>
 #ifdef __USE_EXTERN_INLINES
 #undef __USE_EXTERN_INLINES

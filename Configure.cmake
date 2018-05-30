@@ -208,7 +208,7 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
     # src/arch/helpervecext.h:88
     string(CONCAT FLAGS_WALL ${FLAGS_WALL} " -Wno-psabi")
     set(FLAGS_ENABLE_NEON32 "-mfpu=neon")
-  endif()
+  endif(CMAKE_C_COMPILER_ID MATCHES "GNU")
 elseif(MSVC)
   # Intel vector extensions.
   set(FLAGS_ENABLE_SSE2 /D__SSE2__)
@@ -453,5 +453,5 @@ endif()
 
 # When cross compiling for ppc64, this bug-workaround is needed
 if(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
-  set(COMMON_TARGET_DEFINITIONS ${COMMON_TARGET_DEFINITIONS} UNDEF_USE_EXTERN_INLINES=1)
+  set(COMMON_TARGET_DEFINITIONS ${COMMON_TARGET_DEFINITIONS} POWER64_UNDEF_USE_EXTERN_INLINES=1)
 endif()

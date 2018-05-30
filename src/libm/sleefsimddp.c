@@ -265,11 +265,10 @@ EXPORT CONST vint xilogb(vdouble d) {
 EXPORT CONST vdouble xsin(vdouble d) {
   vdouble u, s, r = d;
   vdouble dqh = vtruncate_vd_vd(vmul_vd_vd_vd(d, vcast_vd_d(M_1_PI / (1 << 24))));
-
   dqh = vmul_vd_vd_vd(dqh, vcast_vd_d(1 << 24));
   vdouble dql = vrint_vd_vd(vmlapn_vd_vd_vd_vd(d, vcast_vd_d(M_1_PI), dqh));
   vint ql = vrint_vi_vd(dql);
-
+  
   d = vmla_vd_vd_vd_vd(dqh, vcast_vd_d(-PI_A), d);
   d = vmla_vd_vd_vd_vd(dql, vcast_vd_d(-PI_A), d);
   d = vmla_vd_vd_vd_vd(dqh, vcast_vd_d(-PI_B), d);
@@ -298,7 +297,7 @@ EXPORT CONST vdouble xsin(vdouble d) {
 					vor_vo_vo_vo(visnegzero_vo_vd(r),
 						     vgt_vo_vd_vd(vabs_vd_vd(r), vcast_vd_d(TRIGRANGEMAX)))),
 		       vcast_vd_d(-0.0), u);
-
+  
   return u;
 }
 
