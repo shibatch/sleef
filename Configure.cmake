@@ -351,8 +351,8 @@ set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_VSX})
 CHECK_C_SOURCE_COMPILES("
   #include <altivec.h>
   int main() {
-    vector unsigned int o;
-    o = vec_perm(o, o, (vector unsigned char)(4, 5, 6, 7, 0, 1, 2, 3, 12, 13, 14, 15, 8, 9, 10, 11));
+    vector double d;
+    d = vec_perm(d, d, (vector unsigned char)(4, 5, 6, 7, 0, 1, 2, 3, 12, 13, 14, 15, 8, 9, 10, 11));
   }"
   COMPILER_SUPPORTS_VSX)
 
