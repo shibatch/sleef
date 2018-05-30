@@ -10,6 +10,8 @@
 
 #include "funcproto.h"
 
+// In VSX intrinsics, vector data types are like "vector float".
+// This function replaces space characters with '_'.
 char *escapeSpace(char *str) {
   char *ret = malloc(strlen(str) + 10);
   strcpy(ret, str);
