@@ -268,7 +268,7 @@ EXPORT CONST vdouble xsin(vdouble d) {
   dqh = vmul_vd_vd_vd(dqh, vcast_vd_d(1 << 24));
   vdouble dql = vrint_vd_vd(vmlapn_vd_vd_vd_vd(d, vcast_vd_d(M_1_PI), dqh));
   vint ql = vrint_vi_vd(dql);
-  
+
   d = vmla_vd_vd_vd_vd(dqh, vcast_vd_d(-PI_A), d);
   d = vmla_vd_vd_vd_vd(dql, vcast_vd_d(-PI_A), d);
   d = vmla_vd_vd_vd_vd(dqh, vcast_vd_d(-PI_B), d);
@@ -276,7 +276,7 @@ EXPORT CONST vdouble xsin(vdouble d) {
   d = vmla_vd_vd_vd_vd(dqh, vcast_vd_d(-PI_C), d);
   d = vmla_vd_vd_vd_vd(dql, vcast_vd_d(-PI_C), d);
   d = vmla_vd_vd_vd_vd(vadd_vd_vd_vd(dqh, dql), vcast_vd_d(-PI_D), d);
-
+  
   s = vmul_vd_vd_vd(d, d);
 
   d = vreinterpret_vd_vm(vxor_vm_vm_vm(vand_vm_vo64_vm(vcast_vo64_vo32(veq_vo_vi_vi(vand_vi_vi_vi(ql, vcast_vi_i(1)), vcast_vi_i(1))), vreinterpret_vm_vd(vcast_vd_d(-0.0))), vreinterpret_vm_vd(d)));
