@@ -301,6 +301,11 @@ int main(int argc, char **argv) {
     }
 
     printf("#endif\n");
+
+    free(vdoublename_escspace);
+    free(vfloatname_escspace);
+    free(vintname_escspace);
+    free(vint2name_escspace);
   }
 
   exit(0);
