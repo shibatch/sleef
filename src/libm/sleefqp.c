@@ -9,7 +9,6 @@
 
 #include <assert.h>
 #include <stdint.h>
-#include <math.h>
 #include <limits.h>
 
 #include "misc.h"

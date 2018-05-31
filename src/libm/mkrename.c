@@ -10,6 +10,15 @@
 
 #include "funcproto.h"
 
+// In VSX intrinsics, vector data types are like "vector float".
+// This function replaces space characters with '_'.
+char *escapeSpace(char *str) {
+  char *ret = malloc(strlen(str) + 10);
+  strcpy(ret, str);
+  for(char *p = ret;*p != '\0';p++) if (*p == ' ') *p = '_';
+  return ret;
+}
+
 int main(int argc, char **argv) {
   if (argc < 3) {
     fprintf(stderr, "Generate a header for renaming functions\n");
@@ -61,10 +70,10 @@ int main(int argc, char **argv) {
   else {
     char *wdp = argv[1];
     char *wsp = argv[2];
-    char *vdoublename = argv[3];
-    char *vfloatname = argv[4];
-    char *vintname = argv[5];
-    char *vint2name = argv[6];
+    char *vdoublename = argv[3], *vdoublename_escspace = escapeSpace(vdoublename);
+    char *vfloatname = argv[4], *vfloatname_escspace = escapeSpace(vfloatname);
+    char *vintname = argv[5], *vintname_escspace = escapeSpace(vintname);
+    char *vint2name = argv[6], *vint2name_escspace = escapeSpace(vint2name);
     char *architecture = argv[7];
     char *isaname = argc == 9 ? argv[8] : "";
     char *isaub = argc == 9 ? "_" : "";
@@ -80,11 +89,11 @@ int main(int argc, char **argv) {
 
     if (strcmp(vdoublename, "-") != 0) {
       printf("\n");
-      printf("#ifndef Sleef_%s_2_DEFINED\n", vdoublename);
+      printf("#ifndef Sleef_%s_2_DEFINED\n", vdoublename_escspace);
       printf("typedef STRUCT_KEYWORD_%s {\n", architecture);
       printf("  %s x, y;\n", vdoublename);
-      printf("} Sleef_%s_2;\n", vdoublename);
-      printf("#define Sleef_%s_2_DEFINED\n", vdoublename);
+      printf("} Sleef_%s_2;\n", vdoublename_escspace);
+      printf("#define Sleef_%s_2_DEFINED\n", vdoublename_escspace);
       printf("#endif\n");
       printf("\n");
 
@@ -124,13 +133,13 @@ int main(int argc, char **argv) {
 	case 6:
 	  if (funcList[i].ulp >= 0) {
 	    printf("IMPORT CONST Sleef_%s_2 Sleef_%sd%s_u%02d%s(%s);\n",
-		   vdoublename,
+		   vdoublename_escspace,
 		   funcList[i].name, wdp,
 		   funcList[i].ulp, isaname,
 		   vdoublename);
 	  } else {
 	    printf("IMPORT CONST Sleef_%s_2 Sleef_%sd%s%s%s(%s);\n",
-		   vdoublename,
+		   vdoublename_escspace,
 		   funcList[i].name, wdp,
 		   isaub, isaname,
 		   vdoublename);
@@ -192,11 +201,11 @@ int main(int argc, char **argv) {
     }
 
     printf("\n");
-    printf("#ifndef Sleef_%s_2_DEFINED\n", vfloatname);
+    printf("#ifndef Sleef_%s_2_DEFINED\n", vfloatname_escspace);
     printf("typedef STRUCT_KEYWORD_%s {\n", architecture);
     printf("  %s x, y;\n", vfloatname);
-    printf("} Sleef_%s_2;\n", vfloatname);
-    printf("#define Sleef_%s_2_DEFINED\n", vfloatname);
+    printf("} Sleef_%s_2;\n", vfloatname_escspace);
+    printf("#define Sleef_%s_2_DEFINED\n", vfloatname_escspace);
     printf("#endif\n");
     printf("\n");
 
@@ -239,13 +248,13 @@ int main(int argc, char **argv) {
       case 6:
 	if (funcList[i].ulp >= 0) {
 	  printf("IMPORT CONST Sleef_%s_2 Sleef_%sf%s_u%02d%s(%s);\n",
-		 vfloatname,
+		 vfloatname_escspace,
 		 funcList[i].name, wsp,
 		 funcList[i].ulp, isaname,
 		 vfloatname);
 	} else {
 	  printf("IMPORT CONST Sleef_%s_2 Sleef_%sf%s%s%s(%s);\n",
-		 vfloatname,
+		 vfloatname_escspace,
 		 funcList[i].name, wsp,
 		 isaub, isaname,
 		 vfloatname);
@@ -292,6 +301,11 @@ int main(int argc, char **argv) {
     }
 
     printf("#endif\n");
+
+    free(vdoublename_escspace);
+    free(vfloatname_escspace);
+    free(vintname_escspace);
+    free(vint2name_escspace);
   }
 
   exit(0);

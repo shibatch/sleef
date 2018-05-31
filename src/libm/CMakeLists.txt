@@ -5,7 +5,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 set(CMAKE_C_FLAGS ORG_CMAKE_C_FLAGS)
 string(CONCAT CMAKE_C_FLAGS ${SLEEF_C_FLAGS})
 
-set(EXT_ENABLE_ALIAS AVX512F ADVSIMD NEON32)
+set(EXT_ENABLE_ALIAS AVX512F ADVSIMD NEON32 VSX)
 
 # --------------------------------------------------------------------
 # sleef.h
@@ -141,8 +141,9 @@ add_host_executable(${TARGET_MKDISP} mkdisp.c)
 
 # Set C standard requirement (-std=gnu99 for gcc)
 set_target_properties(
-  ${TARGET_MKRENAME} ${TARGET_MKRENAME_GNUABI} ${TARGET_MKDISP} ${TARGET_MKALIAS} PROPERTIES
-  C_STANDARD 99
+  ${TARGET_MKRENAME} ${TARGET_MKRENAME_GNUABI} ${TARGET_MKDISP}
+  ${TARGET_MKALIAS} ${TARGET_MKMASKED_GNUABI}
+  PROPERTIES C_STANDARD 99
 )
 
 # --------------------------------------------------------------------

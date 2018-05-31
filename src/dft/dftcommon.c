@@ -9,8 +9,17 @@
 #include <string.h>
 #include <ctype.h>
 #include <inttypes.h>
-#include <math.h>
 #include <assert.h>
+
+#if defined(POWER64_UNDEF_USE_EXTERN_INLINES)
+// This is a workaround required to cross compile for PPC64 binaries
+#include <features.h>
+#ifdef __USE_EXTERN_INLINES
+#undef __USE_EXTERN_INLINES
+#endif
+#endif
+
+#include <math.h>
 
 #ifdef _OPENMP
 #include <omp.h>

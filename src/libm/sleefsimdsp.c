@@ -114,6 +114,14 @@
 #endif
 #endif
 
+#ifdef ENABLE_VSX
+#define CONFIG 1
+#include "helperpower_128.h"
+#ifdef DORENAME
+#include "renamevsx.h"
+#endif
+#endif
+
 //
 
 #ifdef ENABLE_VECEXT
@@ -145,9 +153,6 @@
 #endif /* ENABLE_GNUABI */
 #endif /* DORENAME */
 #endif /* ENABLE_SVE */
-
-//
-
 
 //
 
