@@ -19,8 +19,9 @@ pipeline {
             steps {
 	    	sh '''
                 echo 'Testing..'
+		cd build
 		export CTEST_OUTPUT_ON_FAILURE=TRUE
-		ctest --verbose -j 2
+		ctest -j 4
 		'''
             }
         }
@@ -28,6 +29,7 @@ pipeline {
             steps {
 	    	sh '''
                 echo 'Deploying....'
+		cd build
 		make install
 		'''
             }
