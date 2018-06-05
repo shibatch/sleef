@@ -6,9 +6,8 @@ pipeline {
             steps {
 	    	sh '''
                 echo "Building.."
-		pwd
-		ls
- 		mkdir -p build
+		rm -rf build
+ 		mkdir build
 		cd build
 		export CC=gcc
 		cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 ..
