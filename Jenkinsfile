@@ -11,6 +11,7 @@ pipeline {
 		cd build
 		#export CC=gcc
 		export CC=/opt/arm/arm-hpc-compiler-18.1_Generic-AArch64_Ubuntu-16.04_aarch64-linux/bin/armclang
+		export LD_LIBRARY_PATH=/opt/arm/arm-hpc-compiler-18.1_Generic-AArch64_Ubuntu-16.04_aarch64-linux/lib
 		cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 ..
 		make -j 4 all
 		'''
@@ -21,6 +22,7 @@ pipeline {
 	    	sh '''
                 echo 'Testing..'
 		export PATH=$PATH:/opt/arm/arm-instruction-emulator-1.2.1_Generic-AArch64_Ubuntu-14.04_aarch64-linux/bin
+		export LD_LIBRARY_PATH=/opt/arm/arm-hpc-compiler-18.1_Generic-AArch64_Ubuntu-16.04_aarch64-linux/lib
 		cd build
 		export CTEST_OUTPUT_ON_FAILURE=TRUE
 		ctest -j 4
@@ -31,6 +33,7 @@ pipeline {
             steps {
 	    	sh '''
                 echo 'Deploying....'
+		export LD_LIBRARY_PATH=/opt/arm/arm-hpc-compiler-18.1_Generic-AArch64_Ubuntu-16.04_aarch64-linux/lib
 		cd build
 		make install
 		'''
