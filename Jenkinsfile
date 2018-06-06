@@ -1,7 +1,6 @@
 pipeline {
     agent any
 
-
     stages {
         stage('Everything') {
             parallel {
