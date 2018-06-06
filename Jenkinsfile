@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     stages {
+        stage('Everything') {
             parallel {
                 stage('Testing on AArch64') {
             	     agent { label 'aarch64' }
@@ -41,5 +42,6 @@ pipeline {
                     }
                 }
             }
+        }
     }
 }
