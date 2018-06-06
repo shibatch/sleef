@@ -84,9 +84,29 @@ pipeline {
             	     steps {
 	    	     	 sh '''
                 	 echo "gcc-8 on" `hostname`
-			 export PATH=$PATH:/opt/local/bin
-			 export LD_LIBRARY_PATH=/opt/local/lib
+			 export PATH=$PATH:/opt/local/bin:/opt/bin
+			 export LD_LIBRARY_PATH=/opt/local/lib:/opt/lib
 		         export CC=gcc-8.1.0
+			 rm -rf build
+ 			 mkdir build
+			 cd build
+			 cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 ..
+			 make -j 4 all
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j 4
+		         make install
+			 '''
+            	     }
+                }
+
+                stage('Testing with clang-6.0') {
+            	     agent { label 'x86' }
+            	     steps {
+	    	     	 sh '''
+                	 echo "clang-6 on" `hostname`
+			 export PATH=$PATH:/opt/local/bin:/opt/bin
+			 export LD_LIBRARY_PATH=/opt/local/lib:/opt/lib
+		         export CC=clang-6.0
 			 rm -rf build
  			 mkdir build
 			 cd build
