@@ -38,7 +38,7 @@ pipeline {
 		        cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 ..
 		        make -j 4 all
 		        export CTEST_OUTPUT_ON_FAILURE=TRUE
-		        ctest -j 4
+		        ctest -V -j 4
 		        make install
 		        '''
                     }
@@ -49,6 +49,24 @@ pipeline {
             	     steps {
 	    	     	 sh '''
                 	 echo "FMA4"
+			 rm -rf build
+ 			 mkdir build
+			 cd build
+			 cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 ..
+			 make -j 4 all
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j 4
+		         make install
+			 '''
+            	     }
+                }
+
+                stage('Testing with GCC-4.8') {
+            	     agent { label 'x86' }
+            	     steps {
+	    	     	 sh '''
+                	 echo "gcc-4"
+		         export CC=gcc-4.8
 			 rm -rf build
  			 mkdir build
 			 cd build
