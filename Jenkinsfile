@@ -84,6 +84,8 @@ pipeline {
             	     steps {
 	    	     	 sh '''
                 	 echo "gcc-8 on" `hostname`
+			 export PATH=$PATH:/opt/local/bin
+			 export LD_LIBRARY_PATH=/opt/local/lib
 		         export CC=gcc-8.1.0
 			 rm -rf build
  			 mkdir build
