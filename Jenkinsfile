@@ -2,7 +2,8 @@ pipeline {
     agent any
 
     stages {
-        stage('Build') {
+        stage('Build AArch64') {
+            agent { label 'aarch64' }
             steps {
 	    	sh '''
                 echo "Building.."
@@ -17,7 +18,8 @@ pipeline {
 		'''
             }
         }
-        stage('Test') {
+        stage('Test AArch64') {
+            agent { label 'aarch64' }
             steps {
 	    	sh '''
                 echo 'Testing..'
@@ -29,7 +31,8 @@ pipeline {
 		'''
             }
         }
-        stage('Deploy') {
+        stage('Deploy AArch64') {
+            agent { label 'aarch64' }
             steps {
 	    	sh '''
                 echo 'Deploying....'
