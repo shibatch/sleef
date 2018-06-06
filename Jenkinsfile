@@ -29,7 +29,7 @@ pipeline {
                     steps {
     	    	        sh '''
                         echo "Intel Compiler"
-			export PATH=$PATH:/export/opt/sde-avx-external-1.70-2009-01-30-lin-intel64-and-ia32:/export/opt/compilers_and_libraries_2018/linux/bin/intel64
+			export PATH=$PATH:/export/opt/sde-external-8.16.0-2018-01-30-lin:/export/opt/compilers_and_libraries_2018/linux/bin/intel64
                         export LD_LIBRARY_PATH=/export/opt/compilers_and_libraries_2018.1.163/linux/compiler/lib/intel64_lin/
 		        export CC=icc
 		        rm -rf build
