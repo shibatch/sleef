@@ -9,7 +9,7 @@ pipeline {
             	     steps {
 	    	     	 sh '''
                 	 echo "AArch64"
-			 export PATH=$PATH:/opt/arm/arm-instruction-emulator-1.2.1_Generic-AArch64_Ubuntu-14.04_aarch64-linux/bin:/import/namihei.naist.jp/opt/bin
+			 export PATH=$PATH:/opt/arm/arm-instruction-emulator-1.2.1_Generic-AArch64_Ubuntu-14.04_aarch64-linux/bin
 			 export LD_LIBRARY_PATH=/opt/arm/arm-hpc-compiler-18.1_Generic-AArch64_Ubuntu-16.04_aarch64-linux/lib
 			 export CC=/opt/arm/arm-hpc-compiler-18.1_Generic-AArch64_Ubuntu-16.04_aarch64-linux/bin/armclang
 			 rm -rf build
@@ -29,7 +29,7 @@ pipeline {
                     steps {
     	    	        sh '''
                         echo "Intel Compiler"
-			export PATH=$PATH:/import/namihei.naist.jp/opt/sde-external-8.12.0-2017-10-23-lin:/import/namihei.naist.jp/opt/intel/bin
+			export PATH=$PATH:/import/namihei.naist.jp/opt/sde-external-8.12.0-2017-10-23-lin:/import/namihei.naist.jp/opt/intel/bin:/import/namihei.naist.jp/opt/bin
                         export LD_LIBRARY_PATH=/import/namihei.naist.jp/opt/compilers_and_libraries_2018.1.163/linux/compiler/lib/intel64_lin
 		        export CC=icc
 		        rm -rf build
