@@ -2,92 +2,44 @@ pipeline {
     agent any
 
     stages {
-        stage('Build AArch64') {
-            agent { label 'aarch64' }
-            steps {
-	    	sh '''
-                echo "Building.."
-		rm -rf build
- 		mkdir build
-		cd build
-		export PATH=$PATH:/opt/arm/arm-instruction-emulator-1.2.1_Generic-AArch64_Ubuntu-14.04_aarch64-linux/bin
-		export CC=/opt/arm/arm-hpc-compiler-18.1_Generic-AArch64_Ubuntu-16.04_aarch64-linux/bin/armclang
-		export LD_LIBRARY_PATH=/opt/arm/arm-hpc-compiler-18.1_Generic-AArch64_Ubuntu-16.04_aarch64-linux/lib
-		cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 ..
-		make -j 4 all
-		'''
-            }
-        }
-        stage('Build Intel Compiler') {
-            agent { label 'icc' }
-            steps {
-	    	sh '''
-                echo "Building.."
-		rm -rf build
- 		mkdir build
-		cd build
-		export CC=icc
-		cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 ..
-		make -j 4 all
-		'''
-            }
-        }
-        stage('Build FMA4') {
-            agent { label 'fma4' }
-            steps {
-	    	sh '''
-                echo "Building.."
-		rm -rf build
- 		mkdir build
-		cd build
-		cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 ..
-		make -j 4 all
-		'''
-            }
-        }
-        stage('Test AArch64') {
-            agent { label 'aarch64' }
-            steps {
-	    	sh '''
-                echo 'Testing..'
-		export PATH=$PATH:/opt/arm/arm-instruction-emulator-1.2.1_Generic-AArch64_Ubuntu-14.04_aarch64-linux/bin
-		export LD_LIBRARY_PATH=/opt/arm/arm-hpc-compiler-18.1_Generic-AArch64_Ubuntu-16.04_aarch64-linux/lib
-		cd build
-		export CTEST_OUTPUT_ON_FAILURE=TRUE
-		ctest -j 4
-		'''
-            }
-        }
-        stage('Test x86') {
-            agent { label 'x86' }
-            steps {
-	    	sh '''
-                echo 'Testing..'
-		cd build
-		export CTEST_OUTPUT_ON_FAILURE=TRUE
-		ctest -j 4
-		'''
-            }
-        }
-        stage('Deploy AArch64') {
-            agent { label 'aarch64' }
-            steps {
-	    	sh '''
-                echo 'Deploying....'
-		export LD_LIBRARY_PATH=/opt/arm/arm-hpc-compiler-18.1_Generic-AArch64_Ubuntu-16.04_aarch64-linux/lib
-		cd build
-		make install
-		'''
-            }
-        }
-        stage('Deploy x86') {
-            agent { label 'x86' }
-            steps {
-	    	sh '''
-                echo 'Deploying....'
-		cd build
-		make install
-		'''
+            parallel {
+                stage('Testing on AArch64') {
+            	     agent { label 'aarch64' }
+            	     steps {
+	    	     	 sh '''
+                	 echo "AArch64"
+			 rm -rf build
+ 			 mkdir build
+			 cd build
+			 export PATH=$PATH:/opt/arm/arm-instruction-emulator-1.2.1_Generic-AArch64_Ubuntu-14.04_aarch64-linux/bin
+			 export CC=/opt/arm/arm-hpc-compiler-18.1_Generic-AArch64_Ubuntu-16.04_aarch64-linux/bin/armclang
+			 export LD_LIBRARY_PATH=/opt/arm/arm-hpc-compiler-18.1_Generic-AArch64_Ubuntu-16.04_aarch64-linux/lib
+			 cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 ..
+			 make -j 4 all
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j 4
+		         make install
+			 '''
+            	     }
+                }
+                
+                stage('Testing with Intel Compiler') {
+                    agent { label 'icc' }
+                    steps {
+    	    	        sh '''
+                        echo "Intel Compiler"
+		        rm -rf build
+ 		        mkdir build
+		        cd build
+		        export CC=icc
+		        cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 ..
+		        make -j 4 all
+		        export CTEST_OUTPUT_ON_FAILURE=TRUE
+		        ctest -j 4
+		        make install
+		        '''
+                    }
+                }
             }
         }
     }
