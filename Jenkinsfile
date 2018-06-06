@@ -29,8 +29,8 @@ pipeline {
                     steps {
     	    	        sh '''
                         echo "Intel Compiler"
-			export PATH=$PATH:/opt/sde-external-8.12.0-2017-10-23-lin:/opt/compilers_and_libraries_2018/linux/bin/intel64
-                        export LD_LIBRARY_PATH=/opt/compilers_and_libraries_2018.1.163/linux/compiler/lib/intel64_lin
+			export PATH=$PATH:/export/opt/sde-external-8.12.0-2017-10-23-lin:/export/opt/compilers_and_libraries_2018/linux/bin/intel64
+                        export LD_LIBRARY_PATH=/export/opt/compilers_and_libraries_2018.1.163/linux/compiler/lib/intel64_lin/
 		        export CC=icc
 		        rm -rf build
  		        mkdir build
