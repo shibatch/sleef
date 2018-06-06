@@ -8,7 +8,7 @@ pipeline {
             	     agent { label 'aarch64' }
             	     steps {
 	    	     	 sh '''
-                	 echo "AArch64"
+                	 echo "AArch64 on " $HOSTNAME
 			 export PATH=$PATH:/opt/arm/arm-instruction-emulator-1.2.1_Generic-AArch64_Ubuntu-14.04_aarch64-linux/bin
 			 export LD_LIBRARY_PATH=/opt/arm/arm-hpc-compiler-18.1_Generic-AArch64_Ubuntu-16.04_aarch64-linux/lib
 			 export CC=/opt/arm/arm-hpc-compiler-18.1_Generic-AArch64_Ubuntu-16.04_aarch64-linux/bin/armclang
@@ -28,7 +28,7 @@ pipeline {
                     agent { label 'icc' }
                     steps {
     	    	        sh '''
-                        echo "Intel Compiler"
+                        echo "Intel Compiler on " $HOSTNAME
 			export PATH=$PATH:/export/opt/sde-external-8.16.0-2018-01-30-lin:/export/opt/compilers_and_libraries_2018/linux/bin/intel64
                         export LD_LIBRARY_PATH=/export/opt/compilers_and_libraries_2018.1.163/linux/compiler/lib/intel64_lin/
 		        export CC=icc
@@ -48,7 +48,7 @@ pipeline {
             	     agent { label 'fma4' }
             	     steps {
 	    	     	 sh '''
-                	 echo "FMA4"
+                	 echo "FMA4 on " $HOSTNAME
 			 rm -rf build
  			 mkdir build
 			 cd build
@@ -65,7 +65,7 @@ pipeline {
             	     agent { label 'x86' }
             	     steps {
 	    	     	 sh '''
-                	 echo "gcc-4"
+                	 echo "gcc-4 on " $HOSTNAME
 		         export CC=gcc-4.8
 			 rm -rf build
  			 mkdir build
