@@ -4815,9 +4815,9 @@ int main(int argc, char **argv) {
     char str[256];
     int u;
 
-    if (readln(ctop[0], str, 255) < 1) stop("Feature detection(readln)");
-    if (sscanf(str, "%d", &u) != 1) stop("Feature detection(sscanf)");
-    if ((u & 3) == 0) {
+    if (readln(ctop[0], str, 255) < 1 ||
+	sscanf(str, "%d", &u) != 1 ||
+	(u & 3) == 0) {
       if (commandSde != NULL) {
 	close(ctop[0]);
 	close(ptoc[1]);
@@ -4835,6 +4835,8 @@ int main(int argc, char **argv) {
 	  fprintf(stderr, "\n\nTester : *** CPU does not support the necessary feature(SDE)\n");
 	  return 0;
 	}
+
+	printf("*** Using SDE\n");
       } else {
 	fprintf(stderr, "\n\nTester : *** CPU does not support the necessary feature\n");
 	return 0;

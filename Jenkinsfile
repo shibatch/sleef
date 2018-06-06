@@ -38,7 +38,7 @@ pipeline {
 		        cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 ..
 		        make -j 4 all
 		        export CTEST_OUTPUT_ON_FAILURE=TRUE
-		        ctest -V -j 4
+		        ctest -j 4
 		        make install
 		        '''
                     }
