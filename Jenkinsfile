@@ -84,7 +84,7 @@ pipeline {
             	     steps {
 	    	     	 sh '''
                 	 echo "gcc-8 on" `hostname`
-		         export CC=gcc-8.1
+		         export CC=gcc-8.1.0
 			 rm -rf build
  			 mkdir build
 			 cd build
