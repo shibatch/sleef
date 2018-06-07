@@ -127,7 +127,7 @@ pipeline {
             	     steps {
 	    	     	 sh '''
                 	 echo "On" `hostname`
-			 export PATH=$PATH:/opt/local/bin:/opt/local/bin:/usr/local/bin:/usr/bin:/bin:/opt/sde-external-8.12.0-2017-10-23-mac
+			 export PATH=$PATH:/opt/local/bin:/opt/local/bin:/usr/local/bin:/usr/bin:/bin
 			 rm -rf build
  			 mkdir build
 			 cd build
