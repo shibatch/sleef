@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Everything') {
             parallel {
-                stage('Testing with AArch64 SVE') {
+                stage('AArch64 SVE') {
             	     agent { label 'aarch64' }
             	     steps {
 	    	     	 sh '''
@@ -24,7 +24,7 @@ pipeline {
             	     }
                 }
                 
-                stage('Testing with Intel Compiler') {
+                stage('Intel Compiler') {
                     agent { label 'icc' }
                     steps {
     	    	        sh '''
@@ -44,11 +44,13 @@ pipeline {
                     }
                 }
 
-                stage('Testing with FMA4') {
+                stage('FMA4') {
             	     agent { label 'fma4' }
             	     steps {
 	    	     	 sh '''
                 	 echo "FMA4 on" `hostname`
+			 export PATH=$PATH:/opt/local/bin:/opt/bin:/opt/sde-external-8.16.0-2018-01-30-lin
+			 export LD_LIBRARY_PATH=/opt/local/lib:/opt/lib
 			 rm -rf build
  			 mkdir build
 			 cd build
@@ -61,7 +63,7 @@ pipeline {
             	     }
                 }
 
-                stage('Testing with GCC-4.8') {
+                stage('GCC-4.8') {
             	     agent { label 'x86' }
             	     steps {
 	    	     	 sh '''
@@ -80,7 +82,7 @@ pipeline {
             	     }
                 }
 
-                stage('Testing with GCC-8.1') {
+                stage('GCC-8.1') {
             	     agent { label 'x86' }
             	     steps {
 	    	     	 sh '''
@@ -100,12 +102,12 @@ pipeline {
             	     }
                 }
 
-                stage('Testing with clang-6.0') {
+                stage('clang-6.0') {
             	     agent { label 'x86' }
             	     steps {
 	    	     	 sh '''
                 	 echo "clang-6 on" `hostname`
-			 export PATH=$PATH:/opt/local/bin:/opt/bin:/export/opt/sde-external-8.16.0-2018-01-30-lin
+			 export PATH=$PATH:/opt/local/bin:/opt/bin:/opt/sde-external-8.16.0-2018-01-30-lin
 			 export LD_LIBRARY_PATH=/opt/local/lib:/opt/lib
 		         export CC=clang-6.0
 			 rm -rf build
@@ -115,6 +117,23 @@ pipeline {
 			 make -j 4 all
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
 		         ctest -j 4
+		         make install
+			 '''
+            	     }
+                }
+
+                stage('Static lib on mac') {
+            	     agent { label 'mac' }
+            	     steps {
+	    	     	 sh '''
+                	 echo "On" `hostname`
+			 rm -rf build
+ 			 mkdir build
+			 cd build
+			 cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DBUILD_SHARED_LIBS=FALSE ..
+			 make -j 2 all
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j 2
 		         make install
 			 '''
             	     }
