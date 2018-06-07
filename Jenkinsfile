@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     stages {
-        stage('Everything') {
+        stage('Preamble') {
             parallel {
                 stage('AArch64 SVE') {
             	     agent { label 'aarch64' }
@@ -122,11 +122,12 @@ pipeline {
             	     }
                 }
 
-                stage('Static lib on mac') {
+                stage('Static libs on mac') {
             	     agent { label 'mac' }
             	     steps {
 	    	     	 sh '''
                 	 echo "On" `hostname`
+			 export PATH=$PATH:/opt/local/bin:/opt/local/bin:/usr/local/bin:/usr/bin:/bin
 			 rm -rf build
  			 mkdir build
 			 cd build
