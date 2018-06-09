@@ -158,7 +158,7 @@ pipeline {
 			 rmdir /S /Q build-cygwin
 			 "D:/Cygwin64/bin/bash" -c 'mkdir build-cygwin;cd build-cygwin;cmake -g"Unix Makefiles" ..;make -j 4'
 			 del /Q /F "%PROJECT_DIR%"/build-cygwin/bin/iut*
-			 PATH "%ORGPATH%";c:/Cygwin64/bin;c:/Cygwin64/usr/bin;"%PROJECT_DIR%"/build-cygwin/bin;"%PROJECT_DIR%"/build/bin
+			 PATH "%ORGPATH%";d:/Cygwin64/bin;d:/Cygwin64/usr/bin;"%PROJECT_DIR%"/build-cygwin/bin;"%PROJECT_DIR%"/build/bin
 			 cd "%PROJECT_DIR%"
 			 rmdir /S /Q build
                          mkdir build
