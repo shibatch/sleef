@@ -155,10 +155,12 @@ pipeline {
 			 set "PROJECT_DIR=%cd%"
 			 set ORGPATH="%PATH%"
 			 PATH d:/Cygwin64/bin;d:/Cygwin64/usr/bin;"%PROJECT_DIR%"/build-cygwin/bin;"%PATH%"
+			 rmdir /S /Q build-cygwin
 			 "D:/Cygwin64/bin/bash" -c 'mkdir build-cygwin;cd build-cygwin;cmake -g"Unix Makefiles" ..;make -j 4'
 			 del /Q /F "%PROJECT_DIR%"/build-cygwin/bin/iut*
 			 PATH "%ORGPATH%";c:/Cygwin64/bin;c:/Cygwin64/usr/bin;"%PROJECT_DIR%"/build-cygwin/bin;"%PROJECT_DIR%"/build/bin
 			 cd "%PROJECT_DIR%"
+			 rmdir /S /Q build
                          mkdir build
                          cd build
                          cmake -G"Visual Studio 15 2017 Win64" .. -DCMAKE_INSTALL_PREFIX=install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_SHOW_ERROR_LOG=1
