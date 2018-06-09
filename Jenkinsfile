@@ -154,10 +154,10 @@ pipeline {
 	    	     	 bat '''
 			 set "PROJECT_DIR=%cd%"
 			 set ORGPATH="%PATH%"
-			 PATH d:\Cygwin64\bin;d:\Cygwin64\usr\bin;"%PROJECT_DIR%"\build-cygwin\bin;"%PATH%"
-			 "D:\\Cygwin64\\bin\\bash" -c 'mkdir build-cygwin;cd build-cygwin;cmake -g\"Unix Makefiles\" ..;make -j 2'
-			 del /Q /F "%PROJECT_DIR%"\build-cygwin\bin\iut*
-			 PATH "%ORGPATH%";c:\Cygwin64\bin;c:\Cygwin64\usr\bin;"%PROJECT_DIR%"\build-cygwin\bin;"%PROJECT_DIR%"\build\bin
+			 PATH d:/Cygwin64/bin;d:/Cygwin64/usr/bin;"%PROJECT_DIR%"/build-cygwin/bin;"%PATH%"
+			 "D:/Cygwin64/bin/bash" -c 'mkdir build-cygwin;cd build-cygwin;cmake -g"Unix Makefiles" ..;make -j 2'
+			 del /Q /F "%PROJECT_DIR%"/build-cygwin/bin/iut*
+			 PATH "%ORGPATH%";c:/Cygwin64/bin;c:/Cygwin64/usr/bin;"%PROJECT_DIR%"/build-cygwin/bin;"%PROJECT_DIR%"/build/bin
 			 cd "%PROJECT_DIR%"
                          mkdir build
                          cd build
