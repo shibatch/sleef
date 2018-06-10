@@ -147,7 +147,6 @@ pipeline {
 			 '''
             	     }
                 }
-		*/
                 stage('Windows') {
             	     agent { label 'win' }
             	     steps {
@@ -169,6 +168,32 @@ pipeline {
 			 '''
             	     }
                 }
+		*/
+		stage('PowerPC VSX') {
+            	     agent { label 'x86' }
+            	     steps {
+	    	     	 sh '''
+                	 echo "PowerPC VSX on" `hostname`
+			 rm -rf build-native
+ 			 mkdir build-native
+			 cd build-native
+			 cmake -DSLEEF_SHOW_CONFIG=1 ..
+			 make -j 4 all
+			 cd ..
+			 export PATH=$PATH:`pwd`/travis
+			 chmod +x travis/ppc64el-cc
+			 rm -rf build
+ 			 mkdir build
+			 cd build
+			 cmake -DCMAKE_TOOLCHAIN_FILE=../travis/toolchain-ppc64el.cmake -DNATIVE_BUILD_DIR=`pwd`/../build-native -DEMULATOR=qemu-ppc64le-static -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 ..
+			 make -j 4 all
+			 export OMP_WAIT_POLICY=passive
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j 4
+		         make install
+			 '''
+            	     }
+		 }
             }
         }
     }
