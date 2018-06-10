@@ -170,7 +170,7 @@ pipeline {
                 }
 		*/
 		stage('PowerPC VSX') {
-            	     agent { label 'x86' 'xenial' }
+            	     agent { label 'x86 && xenial' }
             	     steps {
 	    	     	 sh '''
                 	 echo "PowerPC VSX on" `hostname`
