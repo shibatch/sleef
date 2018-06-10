@@ -181,6 +181,7 @@ pipeline {
 			 make -j 4 all
 			 cd ..
 			 export PATH=$PATH:`pwd`/travis
+			 export QEMU_CPU=POWER8
 			 chmod +x travis/ppc64el-cc
 			 rm -rf build
  			 mkdir build
