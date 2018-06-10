@@ -28,11 +28,6 @@
 #pragma fp_contract (off)
 #endif
 
-#if defined(__powerpc64__) && defined(__clang__) && __clang_major__ == 5
-// This is yet another bug-workaround
-#pragma clang optimize off
-#endif
-
 static INLINE CONST int64_t doubleToRawLongBits(double d) {
   union {
     double f;
