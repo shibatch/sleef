@@ -9,7 +9,7 @@ cd /build
 mkdir bin
 cat <<EOF > /build/bin/ppc64el-cc
 #!/bin/sh
-clang-5.0 -target ppc64le-linux-gnu -mvsx -fuse-ld=/usr/powerpc64le-linux-gnu/bin/ld \$*
+clang-4.0 -target ppc64le-linux-gnu -mvsx -fuse-ld=/usr/powerpc64le-linux-gnu/bin/ld \$*
 EOF
 chmod +x /build/bin/ppc64el-cc
 export PATH=$PATH:/build/bin
