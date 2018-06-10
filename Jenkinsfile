@@ -4,7 +4,6 @@ pipeline {
     stages {
         stage('Preamble') {
             parallel {
-	    /*
                 stage('AArch64 SVE') {
             	     agent { label 'aarch64' }
             	     steps {
@@ -87,48 +86,6 @@ pipeline {
             	     }
                 }
 
-                stage('GCC-8.1') {
-            	     agent { label 'x86' }
-            	     steps {
-	    	     	 sh '''
-                	 echo "gcc-8 on" `hostname`
-			 export PATH=$PATH:/opt/local/bin:/opt/bin:/opt/sde-external-8.16.0-2018-01-30-lin
-			 export LD_LIBRARY_PATH=/opt/local/lib:/opt/lib
-		         export CC=gcc-8.1.0
-			 rm -rf build
- 			 mkdir build
-			 cd build
-			 cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 ..
-			 make -j 4 all
-			 export OMP_WAIT_POLICY=passive
-		         export CTEST_OUTPUT_ON_FAILURE=TRUE
-		         ctest -j 4
-		         make install
-			 '''
-            	     }
-                }
-
-                stage('clang-6.0') {
-            	     agent { label 'x86' }
-            	     steps {
-	    	     	 sh '''
-                	 echo "clang-6 on" `hostname`
-			 export PATH=$PATH:/opt/local/bin:/opt/bin:/opt/sde-external-8.16.0-2018-01-30-lin
-			 export LD_LIBRARY_PATH=/opt/local/lib:/opt/lib
-		         export CC=clang-6.0
-			 rm -rf build
- 			 mkdir build
-			 cd build
-			 cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 ..
-			 make -j 4 all
-			 export OMP_WAIT_POLICY=passive
-		         export CTEST_OUTPUT_ON_FAILURE=TRUE
-		         ctest -j 4
-		         make install
-			 '''
-            	     }
-                }
-
                 stage('Static libs on mac') {
             	     agent { label 'mac' }
             	     steps {
@@ -147,6 +104,7 @@ pipeline {
 			 '''
             	     }
                 }
+
                 stage('Windows') {
             	     agent { label 'win' }
             	     steps {
@@ -162,13 +120,13 @@ pipeline {
 			 rmdir /S /Q build
                          mkdir build
                          cd build
-                         cmake -G"Visual Studio 15 2017 Win64" .. -DCMAKE_INSTALL_PREFIX=install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_SHOW_ERROR_LOG=1
+                         cmake -G"Visual Studio 15 2017 Win64" .. -DCMAKE_INSTALL_PREFIX=install -DSLEEF_SHOW_CONFIG=1 -DBUILD_SHARED_LIBS=FALSE
                          cmake --build . --target install --config Release
 			 ctest --output-on-failure -j 4 -C Release
 			 '''
             	     }
                 }
-		*/
+
 		stage('PowerPC VSX') {
             	     agent { label 'x86 && xenial' }
             	     steps {
