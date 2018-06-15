@@ -4,34 +4,27 @@ image: Visual Studio 2017
 configuration: Release
 environment:
   matrix:
-  - CMAKE_OPTIONS: -DBUILD_DFT=FALSE
-    GENERATOR: "Visual Studio 15 2017 ARM"
-    DO_CYGWIN_BUILD: TRUE
-    DO_MINGW_BUILD: FALSE
+  - ENV_BUILD_STATIC: -DBUILD_SHARED_LIBS=TRUE
+    DO_TEST: TRUE
+  - ENV_BUILD_STATIC: -DBUILD_SHARED_LIBS=FALSE
     DO_TEST: FALSE
-  # - CMAKE_OPTIONS: -DBUILD_SHARED_LIBS=TRUE
-  #   GENERATOR: "Visual Studio 15 2017 Win64"
-  #   DO_CYGWIN_BUILD: TRUE
-  # - CMAKE_OPTIONS: -DBUILD_SHARED_LIBS=FALSE
-  #   GENERATOR: "Visual Studio 15 2017 Win64"
-  #   DO_CYGWIN_BUILD: FALSE
 install:
-  - if "%DO_CYGWIN_BUILD%" == "TRUE" set ORGPATH="%PATH%"
-  - if "%DO_CYGWIN_BUILD%" == "TRUE" "C:\\Cygwin64\\setup-x86_64.exe" -q -g -P libmpfr-devel,libgmp-devel,cmake
-  - if "%DO_CYGWIN_BUILD%" == "TRUE" PATH c:\Cygwin64\bin;c:\Cygwin64\usr\bin;c:\projects\sleef\build-cygwin\bin;"%PATH%"
-  - if "%DO_MINGW_BUILD%"  == "TRUE" "C:\\Cygwin64\\bin\\bash" -c 'mkdir build-mingw;cd build-mingw;CC=x86_64-w64-mingw32-gcc cmake -g\"Unix Makefiles\" .. -DBUILD_SHARED_LIBS=FALSE;make -j 2'
-  - if "%DO_MINGW_BUILD%"  == "TRUE" cd "c:\\projects\\sleef"
-  - if "%DO_CYGWIN_BUILD%" == "TRUE" "C:\\Cygwin64\\bin\\bash" -c 'mkdir build-cygwin;cd build-cygwin;cmake -g\"Unix Makefiles\" ..;make -j 2'
-  - if "%DO_CYGWIN_BUILD%" == "TRUE" del /Q /F c:\projects\sleef\build-cygwin\bin\iut*
-  - if "%DO_CYGWIN_BUILD%" == "TRUE" PATH "%ORGPATH%";c:\Cygwin64\bin;c:\Cygwin64\usr\bin;c:\projects\sleef\build-cygwin\bin;c:\projects\sleef\build\bin
-  - if "%DO_CYGWIN_BUILD%" == "TRUE" cd "c:\\projects\\sleef"
+  - if "%DO_TEST%" == "TRUE" set ORGPATH="%PATH%"
+  - if "%DO_TEST%" == "TRUE" "C:\\Cygwin64\\setup-x86_64.exe" -q -g -P libmpfr-devel,libgmp-devel,cmake
+  - if "%DO_TEST%" == "TRUE" PATH c:\Cygwin64\bin;c:\Cygwin64\usr\bin;c:\projects\sleef\build-cygwin\bin;"%PATH%"
+  - if "%DO_TEST%" == "TRUE" "C:\\Cygwin64\\bin\\bash" -c 'mkdir build-mingw;cd build-mingw;CC=x86_64-w64-mingw32-gcc cmake -g\"Unix Makefiles\" .. -DBUILD_SHARED_LIBS=FALSE;make -j 2'
+  - if "%DO_TEST%" == "TRUE" cd "c:\\projects\\sleef"
+  - if "%DO_TEST%" == "TRUE" "C:\\Cygwin64\\bin\\bash" -c 'mkdir build-cygwin;cd build-cygwin;cmake -g\"Unix Makefiles\" ..;make -j 2'
+  - if "%DO_TEST%" == "TRUE" del /Q /F c:\projects\sleef\build-cygwin\bin\iut*
+  - if "%DO_TEST%" == "TRUE" PATH "%ORGPATH%";c:\Cygwin64\bin;c:\Cygwin64\usr\bin;c:\projects\sleef\build-cygwin\bin;c:\projects\sleef\build\bin
+  - if "%DO_TEST%" == "TRUE" cd "c:\\projects\\sleef"
   - mkdir build
   - cd build
-  - cmake -G"%GENERATOR%" .. -DCMAKE_INSTALL_PREFIX=install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_SHOW_ERROR_LOG=1 %CMAKE_OPTIONS%
+  - cmake -G"Visual Studio 15 2017 Win64" .. -DCMAKE_INSTALL_PREFIX=install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_SHOW_ERROR_LOG=1 %ENV_BUILD_STATIC%
 build_script:
   - cmake --build . --target install --config Release
 test_script:
   - if "%DO_TEST%" == "TRUE" (ctest --output-on-failure -j 2 -C Release)
 artifacts:
 - path: build\install\**\*
-  name: SLEEFWindows
+  name: SLEEFWindowsx64
