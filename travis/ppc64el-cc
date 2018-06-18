@@ -1,0 +1,2 @@
+#!/bin/sh
+clang-5.0 -target ppc64le-linux-gnu -mvsx -fuse-ld=/usr/powerpc64le-linux-gnu/bin/ld $*
