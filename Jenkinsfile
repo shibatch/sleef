@@ -4,6 +4,8 @@ pipeline {
     stages {
         stage('Preamble') {
             parallel {
+	        /*
+		// SVE testing is temporarily disabled due to compiler bug
                 stage('AArch64 SVE') {
             	     agent { label 'aarch64' }
             	     steps {
@@ -24,7 +26,8 @@ pipeline {
 			 '''
             	     }
                 }
-                
+                */
+
                 stage('Intel Compiler') {
                     agent { label 'icc' }
                     steps {

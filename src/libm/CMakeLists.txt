@@ -160,7 +160,7 @@ if (BUILD_SHARED_LIBS)
 endif()
 
 # Original sleef sources
-set(STANDARD_SOURCES sleefdp.c sleefsp.c)
+set(STANDARD_SOURCES sleefdp.c sleefsp.c rempitab.c)
 
 # Check for different precision support and add sources accordingly
 if(COMPILER_SUPPORTS_LONG_DOUBLE)
@@ -361,7 +361,7 @@ if(ENABLE_GNUABI)
   endforeach()
 
   # Create library 
-  add_library(${TARGET_LIBSLEEFGNUABI} ${TARGET_LIBSLEEFGNUABI_OBJECTS})
+  add_library(${TARGET_LIBSLEEFGNUABI} ${TARGET_LIBSLEEFGNUABI_OBJECTS} rempitab.c)
   
   # Library properties
   set_target_properties(${TARGET_LIBSLEEFGNUABI} PROPERTIES

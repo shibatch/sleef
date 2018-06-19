@@ -1,4 +1,4 @@
-//          Copyright Naoki Shibata 2010 - 2017.
+//          Copyright Naoki Shibata 2010 - 2018.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -256,7 +256,7 @@ int main(int argc,char **argv)
   
   srandom(time(NULL));
 
-  const double rangemax = 1e+14; // 2^(24*2-1)
+  const double rangemax = 1e+299;
   
   for(cnt = 0;ecnt < 1000;cnt++) {
     int e = cnt % VECTLENDP;
@@ -268,7 +268,7 @@ int main(int argc,char **argv)
       zo = rnd();
       break;
     case 1:
-      cd.d = rint((2 * (double)random() / RAND_MAX - 1) * 1e+10) * M_PI_4;
+      cd.d = rint(rnd_zo() * 1e+10) * M_PI_4;
       cd.i64 += (random() & 0xff) - 0x7f;
       d = cd.d;
       d2 = rnd();
@@ -276,7 +276,7 @@ int main(int argc,char **argv)
       zo = rnd();
       break;
     case 2:
-      cd.d = rint((2 * (double)random() / RAND_MAX - 1) * 32) * M_PI_4;
+      cd.d = rint(rnd_zo() * 32) * M_PI_4;
       cd.i64 += (random() & 0xff) - 0x7f;
       d = cd.d;
       for(int i=0;i<VECTLENDP;i++) vd = vset(vd, i, (2 * (double)random() / RAND_MAX - 1) * 32);
@@ -432,7 +432,7 @@ int main(int argc,char **argv)
 
       double u0 = countULPdp(t = vget(xtan(vd), e), frx);
       
-      if (u0 != 0 && ((fabs(d) < 1e+7 && u0 > 3.5) || (fabs(d) <= rangemax && u0 > 5) || isnan(t))) {
+      if (u0 != 0 && ((fabs(d) <= rangemax && u0 > 3.5) || isnan(t))) {
 	printf(ISANAME " tan arg=%.20g ulp=%.20g\n", d, u0);
 	fflush(stdout); ecnt++;
       }

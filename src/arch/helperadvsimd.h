@@ -72,6 +72,19 @@ static INLINE void vstoreu_v_p_vi2(int32_t *p, vint2 v) { vst1q_s32(p, v); }
 static INLINE vint vloadu_vi_p(int32_t *p) { return vld1_s32(p); }
 static INLINE void vstoreu_v_p_vi(int32_t *p, vint v) { vst1_s32(p, v); }
 
+static INLINE vdouble vgather_vd_p_vi(const double *ptr, vint vi) {
+  return ((vdouble) { ptr[vget_lane_s32(vi, 0)], ptr[vget_lane_s32(vi, 1)]} );
+}
+
+static INLINE vfloat vgather_vf_p_vi2(const float *ptr, vint2 vi2) {
+  return ((vfloat) {
+      ptr[vgetq_lane_s32(vi2, 0)],
+      ptr[vgetq_lane_s32(vi2, 1)],
+      ptr[vgetq_lane_s32(vi2, 2)],
+      ptr[vgetq_lane_s32(vi2, 3)]
+    });
+}
+
 // Basic logical operations for mask
 static INLINE vmask vand_vm_vm_vm(vmask x, vmask y) { return vandq_u32(x, y); }
 static INLINE vmask vandnot_vm_vm_vm(vmask x, vmask y) {

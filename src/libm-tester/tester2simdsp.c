@@ -1,4 +1,4 @@
-//          Copyright Naoki Shibata 2010 - 2017.
+//          Copyright Naoki Shibata 2010 - 2018.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -228,8 +228,7 @@ int main(int argc,char **argv)
   
   srandom(time(NULL));
 
-  const float rangemax = 39000;
-  const float rangemax3 = 5e+9;
+  const float rangemax = 1e+28;
   
   for(cnt = 0;ecnt < 1000;cnt++) {
     int e = cnt % VECTLENSP;
@@ -241,7 +240,7 @@ int main(int argc,char **argv)
       zo = rnd();
       break;
     case 1:
-      cd.f = rint((2 * (double)random() / RAND_MAX - 1) * 1e+10) * M_PI_4;
+      cd.f = rint(rnd_zo() * 1e+10) * M_PI_4;
       cd.i32 += (random() & 0xff) - 0x7f;
       d = cd.f;
       d2 = rnd();
@@ -344,14 +343,14 @@ int main(int argc,char **argv)
 
       float u2 = countULPsp(t = vget(xsinf_u1(vd), e), frx);
       
-      if (u2 != 0 && ((fabs(d) <= rangemax3 && u2 > 1) || fabs(t) > 1 || !isnumber(t))) {
+      if (u2 != 0 && ((fabs(d) <= rangemax && u2 > 1) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sinf_u1 arg=%.20g ulp=%.20g\n", d, u2);
 	fflush(stdout); ecnt++;
       }
 
       float u3 = countULPsp(t = vget(sc2.x, e), frx);
       
-      if (u3 != 0 && ((fabs(d) <= rangemax3 && u3 > 1) || fabs(t) > 1 || !isnumber(t))) {
+      if (u3 != 0 && ((fabs(d) <= rangemax && u3 > 1) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincosf_u1 sin arg=%.20g ulp=%.20g\n", d, u3);
 	fflush(stdout); ecnt++;
       }
@@ -377,14 +376,14 @@ int main(int argc,char **argv)
 
       float u2 = countULPsp(t = vget(xcosf_u1(vd), e), frx);
       
-      if (u2 != 0 && ((fabs(d) <= rangemax3 && u2 > 1) || fabs(t) > 1 || !isnumber(t))) {
+      if (u2 != 0 && ((fabs(d) <= rangemax && u2 > 1) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " cosf_u1 arg=%.20g ulp=%.20g\n", d, u2);
 	fflush(stdout); ecnt++;
       }
 
       float u3 = countULPsp(t = vget(sc2.y, e), frx);
       
-      if (u3 != 0 && ((fabs(d) <= rangemax3 && u3 > 1) || fabs(t) > 1 || !isnumber(t))) {
+      if (u3 != 0 && ((fabs(d) <= rangemax && u3 > 1) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincosf_u1 cos arg=%.20g ulp=%.20g\n", d, u3);
 	fflush(stdout); ecnt++;
       }
@@ -403,7 +402,7 @@ int main(int argc,char **argv)
 
       float u1 = countULPsp(t = vget(xtanf_u1(vd), e), frx);
       
-      if (u1 != 0 && ((fabs(d) <= rangemax3 && u1 > 1) || isnan(t))) {
+      if (u1 != 0 && ((fabs(d) <= rangemax && u1 > 1) || isnan(t))) {
 	printf(ISANAME " tanf_u1 arg=%.20g ulp=%.20g\n", d, u1);
 	fflush(stdout); ecnt++;
       }

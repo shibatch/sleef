@@ -43,11 +43,8 @@ static INLINE int vtestallones_i_vo32(vopmask g) {
   return vget_lane_u32(x1, 0);
 }
 
-static vfloat vloaduf(float *p) { return vld1q_f32(p); }
-static void vstoreuf(float *p, vfloat v) { vst1q_f32(p, v); }
-
 static vint2 vloadu_vi2_p(int32_t *p) { return vld1q_s32(p); }
-static void vstoreu_p_vi2(int32_t *p, vint2 v) { vst1q_s32(p, v); }
+static void vstoreu_v_p_vi2(int32_t *p, vint2 v) { vst1q_s32(p, v); }
 
 //
 
@@ -209,6 +206,15 @@ static INLINE vfloat vloadu_vf_p(const float *ptr) { return vld1q_f32(ptr); }
 
 static INLINE void vstore_v_p_vf(float *ptr, vfloat v) { vst1q_f32(__builtin_assume_aligned(ptr, 16), v); }
 static INLINE void vstoreu_v_p_vf(float *ptr, vfloat v) { vst1q_f32(ptr, v); }
+
+static INLINE vfloat vgather_vf_p_vi2(const float *ptr, vint2 vi2) {
+  return ((vfloat) {
+      ptr[vgetq_lane_s32(vi2, 0)],
+      ptr[vgetq_lane_s32(vi2, 1)],
+      ptr[vgetq_lane_s32(vi2, 2)],
+      ptr[vgetq_lane_s32(vi2, 3)]
+    });
+}
 
 #define PNMASKf ((vfloat) { +0.0f, -0.0f, +0.0f, -0.0f })
 #define NPMASKf ((vfloat) { -0.0f, +0.0f, -0.0f, +0.0f })

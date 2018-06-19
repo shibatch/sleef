@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   https://github.com/shibatch/sleef/pull/192
 - Power VSX target support is added to libsleef.
   https://github.com/shibatch/sleef/pull/195
+- Payne-Hanek like argument reduction is added to libsleef.
+  https://github.com/shibatch/sleef/pull/???
 ## 3.2 - 2018-02-26
 ### Added
 - The whole build system of the project migrated from makefiles to

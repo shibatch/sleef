@@ -57,14 +57,14 @@
   bits. So, the maximum argument that could be correctly reduced
   should be 2^(28*2-1) PI = 1.1e+17. However, due to internal
   double precision calculation, the actual maximum argument that can
-  be correctly reduced is around 2^50 = 1.1e+15.
+  be correctly reduced is around 2^47.
  */
 
 #define PI_A 3.1415926218032836914
 #define PI_B 3.1786509424591713469e-08
 #define PI_C 1.2246467864107188502e-16
 #define PI_D 1.2736634327021899816e-24
-#define TRIGRANGEMAX 1e+15
+#define TRIGRANGEMAX 1e+14
 
 /*
   PI_A2 and PI_B2 are constants that satisfy the following two conditions.

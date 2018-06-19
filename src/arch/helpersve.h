@@ -607,6 +607,9 @@ static INLINE vint vandnot_vi_vo_vi(vopmask x, vint y) {
 static INLINE vint vand_vi_vi_vi(vint x, vint y) {
   return svand_s32_x(ptrue, x, y);
 }
+static INLINE vint vandnot_vi_vi_vi(vint x, vint y) {
+  return svbic_s32_x(ptrue, y, x);
+}
 static INLINE vint vxor_vi_vi_vi(vint x, vint y) {
   return sveor_s32_x(ptrue, x, y);
 }
@@ -657,6 +660,15 @@ static INLINE vint2 veq_vi2_vi2_vi2(vint2 x, vint2 y) {
   return svsel_s32(svcmpeq_s32(ptrue, x, y), ALL_TRUE_MASK, ALL_FALSE_MASK);
 }
 
+// Gather
+
+static INLINE vdouble vgather_vd_p_vi(const double *ptr, vint vi) {
+  return svldff1_gather_s64offset_f64(ptrue, ptr, svreinterpret_s64_s32(svzip1_s32(vi, svdup_n_s32(0))));
+}
+
+static INLINE vfloat vgather_vf_p_vi2(const float *ptr, vint2 vi2) {
+  return svldff1_gather_s32offset_f32(ptrue, ptr, vi2);
+}
 
 // Operations for DFT
 
@@ -713,3 +725,28 @@ static INLINE void vstore_v_p_vf(float *ptr, vfloat v) { vstoreu_v_p_vf(ptr, v);
 static INLINE void vstream_v_p_vf(float *ptr, vfloat v) { vstore_v_p_vf(ptr, v); }
 static INLINE void vsscatter2_v_p_i_i_vd(double *ptr, int offset, int step, vdouble v) { vscatter2_v_p_i_i_vd(ptr, offset, step, v); }
 static INLINE void vsscatter2_v_p_i_i_vf(float *ptr, int offset, int step, vfloat v) { vscatter2_v_p_i_i_vf(ptr, offset, step, v); }
+
+// These functions are for debugging
+static double vcast_d_vd(vdouble v) {
+  double a[32];
+  vstoreu_v_p_vd(a, v);
+  return a[0];
+}
+
+static float vcast_f_vf(vfloat v) {
+  float a[64];
+  vstoreu_v_p_vf(a, v);
+  return a[0];
+}
+
+static int vcast_i_vi(vint v) {
+  int a[64];
+  vstoreu_v_p_vi(a, v);
+  return a[0];
+}
+
+static int vcast_i_vi2(vint2 v) {
+  int a[64];
+  vstoreu_v_p_vi2(a, v);
+  return a[0];
+}
