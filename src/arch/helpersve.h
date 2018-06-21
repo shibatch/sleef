@@ -663,11 +663,11 @@ static INLINE vint2 veq_vi2_vi2_vi2(vint2 x, vint2 y) {
 // Gather
 
 static INLINE vdouble vgather_vd_p_vi(const double *ptr, vint vi) {
-  return svldff1_gather_s64offset_f64(ptrue, ptr, svreinterpret_s64_s32(svzip1_s32(vi, svdup_n_s32(0))));
+  return svld1_gather_s64index_f64(ptrue, ptr, svreinterpret_s64_s32(vi));
 }
 
 static INLINE vfloat vgather_vf_p_vi2(const float *ptr, vint2 vi2) {
-  return svldff1_gather_s32offset_f32(ptrue, ptr, vi2);
+  return svld1_gather_s32index_f32(ptrue, ptr, vi2);
 }
 
 // Operations for DFT

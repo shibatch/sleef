@@ -110,7 +110,7 @@
 #define PI_Df 1.2154201256553420762e-10f
 #define PI_XDf 1.2141754268668591976e-10f
 #define PI_XEf 1.2446743939339977025e-13f
-#define TRIGRANGEMAXf 1e+7 // 39000
+#define TRIGRANGEMAXf 39000
 
 #define PI_A2f 3.1414794921875f
 #define PI_B2f 0.00011315941810607910156f
@@ -183,7 +183,12 @@ typedef struct {
 
 #if defined (__GNUC__) || defined (__clang__) || defined(__INTEL_COMPILER)
 
+#ifndef __ARM_FEATURE_SVE
 #define INLINE __attribute__((always_inline))
+#else
+#define INLINE
+#endif
+
 #define RESTRICT __restrict__
 #ifndef __arm__
 #define ALIGNED(x) __attribute__((aligned(x)))

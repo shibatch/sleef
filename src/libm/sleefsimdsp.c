@@ -258,6 +258,17 @@ static INLINE CONST vfloat vldexp3_vf_vf_vi2(vfloat d, vint2 q) {
 
 EXPORT CONST vfloat xldexpf(vfloat x, vint2 q) { return vldexp_vf_vf_vi2(x, q); }
 
+#ifdef ENABLE_SVE
+typedef __sizeless_struct {
+  vfloat d;
+  vint2 i;
+} fi_t;
+
+typedef __sizeless_struct {
+  vfloat2 df;
+  vint2 i;
+} dfi_t;
+#else
 typedef struct {
   vfloat d;
   vint2 i;
@@ -267,6 +278,7 @@ typedef struct {
   vfloat2 df;
   vint2 i;
 } dfi_t;
+#endif
 
 static INLINE CONST fi_t rempisubf(vfloat x) {
 #ifdef FULL_FP_ROUNDING
@@ -324,7 +336,7 @@ EXPORT CONST vfloat xsinf(vfloat d) {
   vint2 q;
   vfloat u, s, r = d;
 
-  if (vtestallones_i_vo32(vlt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(TRIGRANGEMAX2f)))) {
+  if (vtestallones_i_vo32(vlt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(TRIGRANGEMAXf)))) {
     q = vrint_vi2_vf(vmul_vf_vf_vf(d, vcast_vf_f((float)M_1_PI)));
     u = vcast_vf_vi2(q);
     d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Af), d);
@@ -368,7 +380,7 @@ EXPORT CONST vfloat xcosf(vfloat d) {
   vint2 q;
   vfloat u, s, r = d;
 
-  if (vtestallones_i_vo32(vlt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(TRIGRANGEMAX2f)))) {
+  if (vtestallones_i_vo32(vlt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(TRIGRANGEMAXf)))) {
     q = vrint_vi2_vf(vsub_vf_vf_vf(vmul_vf_vf_vf(d, vcast_vf_f((float)M_1_PI)), vcast_vf_f(0.5f)));
     q = vadd_vi2_vi2_vi2(vadd_vi2_vi2_vi2(q, q), vcast_vi2_i(1));
 
@@ -417,7 +429,7 @@ EXPORT CONST vfloat xtanf(vfloat d) {
 
   x = d;
 
-  if (vtestallones_i_vo32(vlt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(TRIGRANGEMAX2f)))) {
+  if (vtestallones_i_vo32(vlt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(TRIGRANGEMAXf)))) {
     q = vrint_vi2_vf(vmul_vf_vf_vf(d, vcast_vf_f((float)(2 * M_1_PI))));
     u = vcast_vf_vi2(q);
     x = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Af*0.5f), x);
@@ -609,7 +621,7 @@ TYPE2_FUNCATR vfloat2 XSINCOSF(vfloat d) {
 
   s = d;
 
-  if (vtestallones_i_vo32(vlt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(TRIGRANGEMAX2f)))) {
+  if (vtestallones_i_vo32(vlt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(TRIGRANGEMAXf)))) {
     q = vrint_vi2_vf(vmul_vf_vf_vf(d, vcast_vf_f((float)M_2_PI)));
     u = vcast_vf_vi2(q);
     s = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Af*0.5f), s);
@@ -793,7 +805,7 @@ TYPE2_FUNCATR vfloat2 XSINCOSPIF_U05(vfloat d) {
   o = veq_vo_vi2_vi2(vand_vi2_vi2_vi2(vadd_vi2_vi2_vi2(q, vcast_vi2_i(2)), vcast_vi2_i(4)), vcast_vi2_i(4));
   r.y = vreinterpret_vf_vm(vxor_vm_vm_vm(vand_vm_vo32_vm(o, vreinterpret_vm_vf(vcast_vf_f(-0.0))), vreinterpret_vm_vf(r.y)));
 
-  o = vgt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(TRIGRANGEMAXf));
+  o = vgt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(1e+7f));
   r.x = vreinterpret_vf_vm(vandnot_vm_vo32_vm(o, vreinterpret_vm_vf(r.x)));
   r.y = vreinterpret_vf_vm(vandnot_vm_vo32_vm(o, vreinterpret_vm_vf(r.y)));
   
@@ -848,7 +860,7 @@ TYPE2_FUNCATR vfloat2 XSINCOSPIF_U35(vfloat d) {
   o = veq_vo_vi2_vi2(vand_vi2_vi2_vi2(vadd_vi2_vi2_vi2(q, vcast_vi2_i(2)), vcast_vi2_i(4)), vcast_vi2_i(4));
   r.y = vreinterpret_vf_vm(vxor_vm_vm_vm(vand_vm_vo32_vm(o, vreinterpret_vm_vf(vcast_vf_f(-0.0))), vreinterpret_vm_vf(r.y)));
 
-  o = vgt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(TRIGRANGEMAXf));
+  o = vgt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(1e+7f));
   r.x = vreinterpret_vf_vm(vandnot_vm_vo32_vm(o, vreinterpret_vm_vf(r.x)));
   r.y = vreinterpret_vf_vm(vandnot_vm_vo32_vm(o, vreinterpret_vm_vf(r.y)));
   

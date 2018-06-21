@@ -464,7 +464,7 @@ EXPORT CONST float xsinf(float d) {
   int q;
   float u, s, t = d;
 
-  if (fabsfk(d) < TRIGRANGEMAX2f) {
+  if (fabsfk(d) < TRIGRANGEMAXf) {
     q = (int)rintfk(d * (float)M_1_PI);
     d = mlaf(q, -PI_Af, d);
     d = mlaf(q, -PI_Bf, d);
@@ -557,7 +557,7 @@ EXPORT CONST float xcosf(float d) {
   int q;
   float u, s, t = d;
 
-  if (fabsfk(d) < TRIGRANGEMAX2f) {
+  if (fabsfk(d) < TRIGRANGEMAXf) {
     q = 1 + 2*(int)rintfk(d * (float)M_1_PI - 0.5f);
 
     d = mlaf(q, -PI_Af*0.5f, d);
@@ -655,7 +655,7 @@ EXPORT CONST Sleef_float2 xsincosf(float d) {
 
   s = d;
 
-  if (fabsfk(d) < TRIGRANGEMAX2f) {
+  if (fabsfk(d) < TRIGRANGEMAXf) {
     q = (int)rintfk(d * ((float)(2 * M_1_PI)));
     s = mlaf(q, -PI_Af*0.5f, s);
     s = mlaf(q, -PI_Bf*0.5f, s);
@@ -801,7 +801,7 @@ EXPORT CONST Sleef_float2 xsincospif_u05(float d) {
   if ((q & 4) != 0) { r.x = -r.x; }
   if (((q+2) & 4) != 0) { r.y = -r.y; }
 
-  if (fabsfk(d) > TRIGRANGEMAXf/4) { r.x = 0; r.y = 1; }
+  if (fabsfk(d) > 1e+7f) { r.x = 0; r.y = 1; }
   if (xisinff(d)) { r.x = r.y = SLEEF_NANf; }
 
   return r;
@@ -839,7 +839,7 @@ EXPORT CONST Sleef_float2 xsincospif_u35(float d) {
   if ((q & 4) != 0) { r.x = -r.x; }
   if (((q+2) & 4) != 0) { r.y = -r.y; }
 
-  if (fabsfk(d) > TRIGRANGEMAXf/4) { r.x = 0; r.y = 1; }
+  if (fabsfk(d) > 1e+7f) { r.x = 0; r.y = 1; }
   if (xisinff(d)) { r.x = r.y = SLEEF_NANf; }
 
   return r;
@@ -851,7 +851,7 @@ EXPORT CONST float xtanf(float d) {
 
   x = d;
 
-  if (fabsfk(d) < TRIGRANGEMAX2f) {
+  if (fabsfk(d) < TRIGRANGEMAXf) {
     q = (int)rintfk(d * (float)(2 * M_1_PI));
     x = mlaf(q, -PI_Af*0.5f, x);
     x = mlaf(q, -PI_Bf*0.5f, x);
