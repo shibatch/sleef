@@ -356,7 +356,7 @@ int main(int argc,char **argv)
 	fflush(stdout); ecnt++;
       }
     }
-    
+
     sc = xsincos(vd);
     sc2 = xsincos_u1(vd);
     
@@ -444,7 +444,7 @@ int main(int argc,char **argv)
 	fflush(stdout); ecnt++;
       }
     }
-    
+
     {
       mpfr_set_d(frx, fabs(d), GMP_RNDN);
       mpfr_log(frx, frx, GMP_RNDN);
@@ -532,7 +532,7 @@ int main(int argc,char **argv)
 
       double u0 = countULPdp(t = vget(xexp10(vd), e), frx);
       
-      if (u0 > 1) {
+      if (u0 > 1.09) {
 	printf(ISANAME " exp10 arg=%.20g ulp=%.20g\n", d, u0);
 	fflush(stdout); ecnt++;
       }

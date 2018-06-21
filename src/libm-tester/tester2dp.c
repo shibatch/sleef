@@ -293,7 +293,7 @@ int main(int argc,char **argv)
 	fflush(stdout); ecnt++;
       }
     }
-    
+
     {
       mpfr_set_d(frx, fabs(d), GMP_RNDN);
       mpfr_log(frx, frx, GMP_RNDN);
@@ -381,7 +381,7 @@ int main(int argc,char **argv)
 
       double u0 = countULPdp(t = xexp10(d), frx);
       
-      if (u0 > 1) {
+      if (u0 > 1.09) {
 	printf("Pure C exp10 arg=%.20g ulp=%.20g\n", d, u0);
 	fflush(stdout); ecnt++;
       }
