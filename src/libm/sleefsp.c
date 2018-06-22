@@ -478,6 +478,8 @@ EXPORT CONST float xsinf(float d) {
 					  mulsignf(-8.7422776573475857731e-08f*-0.5, dfi.df.x)));
     }
     d = dfi.df.x + dfi.df.y;
+
+    if (fabsfk(t) > 1e+28f && !xisinff(t)) d = 0;
   }
 
   s = d * d;
@@ -492,8 +494,7 @@ EXPORT CONST float xsinf(float d) {
 
   u = mlaf(s, u * d, d);
 
-  if (xisnegzerof(t) || fabsfk(t) > 1e+38) u = -0.0f;
-  if (xisinff(t)) u = SLEEF_NANf;
+  if (xisnegzerof(t)) u = -0.0f;
 
   return u;
 }
@@ -534,6 +535,8 @@ EXPORT CONST float xsinf_u1(float d) {
 					  mulsignf(-8.7422776573475857731e-08f*-0.5, dfi.df.x)));
     }
     s = dfnormalize_f2_f2(dfi.df);
+
+    if (fabsfk(d) > 1e+28f && !xisinff(d)) s = df(0, 0);
   }
   
   t = s;
@@ -548,7 +551,7 @@ EXPORT CONST float xsinf_u1(float d) {
   u = dfmul_f_f2_f2(t, x);
 
   if ((q & 1) != 0) u = -u;
-  if (!xisinff(d) && (xisnegzerof(d) || fabsfk(d) > 1e+38f)) u = -0.0f;
+  if (xisnegzerof(d)) u = d;
 
   return u;
 }
@@ -559,7 +562,6 @@ EXPORT CONST float xcosf(float d) {
 
   if (fabsfk(d) < TRIGRANGEMAXf) {
     q = 1 + 2*(int)rintfk(d * (float)M_1_PI - 0.5f);
-
     d = mlaf(q, -PI_Af*0.5f, d);
     d = mlaf(q, -PI_Bf*0.5f, d);
     d = mlaf(q, -PI_Cf*0.5f, d);
@@ -572,6 +574,8 @@ EXPORT CONST float xcosf(float d) {
 					  mulsignf(-8.7422776573475857731e-08f*-0.5, dfi.df.x > 0 ? 1 : -1)));
     }
     d = dfi.df.x + dfi.df.y;
+
+    if (!xisinff(t) && fabsfk(t) > 1e+28f) d = 0;
   }
 
   s = d * d;
@@ -584,9 +588,6 @@ EXPORT CONST float xcosf(float d) {
   u = mlaf(u, s, -0.166666597127914428710938f);
 
   u = mlaf(s, u * d, d);
-
-  if (fabsfk(t) > 1e+38f) u = 1.0f;
-  if (xisinff(t)) u = SLEEF_NANf;
   
   return u;
 }
@@ -630,6 +631,8 @@ EXPORT CONST float xcosf_u1(float d) {
 					  mulsignf(-8.7422776573475857731e-08f*-0.5, dfi.df.x > 0 ? 1 : -1)));
     }
     s = dfnormalize_f2_f2(dfi.df);
+
+    if (!xisinff(d) && d > 1e+28f) s = df(0, 0);
   }
   
   t = s;
@@ -644,7 +647,7 @@ EXPORT CONST float xcosf_u1(float d) {
   u = dfmul_f_f2_f2(t, x);
 
   if ((((int)q) & 2) == 0) u = -u;
-  if (!xisinff(d) && d > 1e+38f) u = 1.0f;
+
   return u;
 }
 
@@ -665,6 +668,9 @@ EXPORT CONST Sleef_float2 xsincosf(float d) {
     dfi_t dfi = rempif(d);
     q = dfi.i;
     s = dfi.df.x + dfi.df.y;
+
+    if (fabsfk(d) > 1e+28f) s = 0;
+    if (xisinff(d)) s = SLEEF_NANf;
   }
 
   t = s;
@@ -692,9 +698,6 @@ EXPORT CONST Sleef_float2 xsincosf(float d) {
   if ((q & 2) != 0) { r.x = -r.x; }
   if (((q+1) & 2) != 0) { r.y = -r.y; }
 
-  if (fabsfk(d) > 1e+38f) { r.x = 0; r.y = 1; }
-  if (xisinff(d)) { r.x = r.y = SLEEF_NANf; }
-
   return r;
 }
 
@@ -712,6 +715,9 @@ EXPORT CONST Sleef_float2 xsincosf_u1(float d) {
     dfi_t dfi = rempif(d);
     q = dfi.i;
     s = dfi.df;
+
+    if (fabsfk(d) > 1e+28f) s = df(0, 0);
+    if (xisinff(d)) s = df(SLEEF_NANf, SLEEF_NANf);
   }
   
   t = s;
@@ -739,9 +745,6 @@ EXPORT CONST Sleef_float2 xsincosf_u1(float d) {
   if ((q & 1) != 0) { u = r.y; r.y = r.x; r.x = u; }
   if ((q & 2) != 0) { r.x = -r.x; }
   if (((q+1) & 2) != 0) { r.y = -r.y; }
-
-  if (fabsfk(d) > 1e+38f) { r.x = 0; r.y = 1; }
-  if (xisinff(d)) { r.x = r.y = SLEEF_NAN; }
 
   return r;
 }
@@ -843,7 +846,7 @@ EXPORT CONST float xtanf(float d) {
     dfi_t dfi = rempif(d);
     q = dfi.i;
     x = dfi.df.x + dfi.df.y;
-    if (d == 0) x = d;
+    if (xisinff(d)) x = SLEEF_NANf;
   }
 
   s = x * x;
@@ -860,8 +863,6 @@ EXPORT CONST float xtanf(float d) {
   u = mlaf(s, u * x, x);
 
   if ((q & 1) != 0) u = 1.0f / u;
-
-  if (xisinff(d)) u = SLEEF_NANf;
 
   return u;
 }
@@ -902,7 +903,7 @@ EXPORT CONST float xtanf_u1(float d) {
 
   u = x.x + x.y;
 
-  if (!xisinff(d) && (xisnegzerof(d) || fabsfk(d) > 1e+38f)) u = -0.0f;
+  if (!xisinff(d) && (xisnegzerof(d) || fabsfk(d) > 1e+28f)) u = -0.0f;
 
   return u;
 }
