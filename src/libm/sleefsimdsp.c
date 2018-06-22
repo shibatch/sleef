@@ -686,24 +686,6 @@ TYPE2_FUNCATR vfloat2 XSINCOSF_U1(vfloat d) {
     v = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_A2f*0.5f), d);
     s = dfadd2_vf2_vf_vf(v, vmul_vf_vf_vf(u, vcast_vf_f(-PI_B2f*0.5f)));
     s = dfadd_vf2_vf2_vf(s, vmul_vf_vf_vf(u, vcast_vf_f(-PI_C2f*0.5f)));
-  } else if (vtestallones_i_vo32(vlt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(TRIGRANGEMAX3f)))) {
-    vfloat2 dfq = dfmul_vf2_vf2_vf(vcast_vf2_f_f(2*M_1_PI, 2*M_1_PI - (float)(2*M_1_PI)), d);
-    vfloat t = vrint_vf_vf(vmul_vf_vf_vf(dfq.x, vcast_vf_f(1.0f / (1 << 16))));
-    dfq.y = vrint_vf_vf(vadd_vf_vf_vf(vmla_vf_vf_vf_vf(t, vcast_vf_f(-(1 << 16)), dfq.x), dfq.y));
-    q = vrint_vi2_vf(dfq.y);
-    dfq.x = vmul_vf_vf_vf(t, vcast_vf_f(1 << 16));
-    dfq = dfnormalize_vf2_vf2(dfq);
-
-    s = dfadd2_vf2_vf_vf2 (d, dfmul_vf2_vf2_vf(dfq, vcast_vf_f(-PI_A3f*0.5f)));
-    s = dfnormalize_vf2_vf2(s);
-    s = dfadd2_vf2_vf2_vf2(s, dfmul_vf2_vf2_vf(dfq, vcast_vf_f(-PI_B3f*0.5f)));
-    s = dfnormalize_vf2_vf2(s);
-    s = dfadd2_vf2_vf2_vf2(s, dfmul_vf2_vf2_vf(dfq, vcast_vf_f(-PI_C3f*0.5f)));
-    s = dfnormalize_vf2_vf2(s);
-    s = dfadd2_vf2_vf2_vf2(s, dfmul_vf2_vf2_vf(dfq, vcast_vf_f(-PI_D3f*0.5f)));
-    s = dfnormalize_vf2_vf2(s);
-    s = dfadd2_vf2_vf2_vf2(s, dfmul_vf2_vf2_vf(dfq, vcast_vf_f(-PI_E3f*0.5f)));
-    s = dfnormalize_vf2_vf2(s);
   } else {
     dfi_t dfi = rempif(d);
     q = dfi.i;
@@ -927,24 +909,6 @@ EXPORT CONST vfloat xtanf_u1(vfloat d) {
     v = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_A2f*0.5f), d);
     s = dfadd2_vf2_vf_vf(v, vmul_vf_vf_vf(u, vcast_vf_f(-PI_B2f*0.5f)));
     s = dfadd_vf2_vf2_vf(s, vmul_vf_vf_vf(u, vcast_vf_f(-PI_C2f*0.5f)));
-  } else if (vtestallones_i_vo32(vlt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(TRIGRANGEMAX3f)))) {
-    vfloat2 dfq = dfmul_vf2_vf2_vf(vcast_vf2_f_f(2*M_1_PI, 2*M_1_PI - (float)(2*M_1_PI)), d);
-    vfloat t = vrint_vf_vf(vmul_vf_vf_vf(dfq.x, vcast_vf_f(1.0f / (1 << 16))));
-    dfq.y = vrint_vf_vf(vadd_vf_vf_vf(vmla_vf_vf_vf_vf(t, vcast_vf_f(-(1 << 16)), dfq.x), dfq.y));
-    q = vrint_vi2_vf(dfq.y);
-    dfq.x = vmul_vf_vf_vf(t, vcast_vf_f(1 << 16));
-    dfq = dfnormalize_vf2_vf2(dfq);
-
-    s = dfadd2_vf2_vf_vf2 (d, dfmul_vf2_vf2_vf(dfq, vcast_vf_f(-PI_A3f*0.5f)));
-    s = dfnormalize_vf2_vf2(s);
-    s = dfadd2_vf2_vf2_vf2(s, dfmul_vf2_vf2_vf(dfq, vcast_vf_f(-PI_B3f*0.5f)));
-    s = dfnormalize_vf2_vf2(s);
-    s = dfadd2_vf2_vf2_vf2(s, dfmul_vf2_vf2_vf(dfq, vcast_vf_f(-PI_C3f*0.5f)));
-    s = dfnormalize_vf2_vf2(s);
-    s = dfadd2_vf2_vf2_vf2(s, dfmul_vf2_vf2_vf(dfq, vcast_vf_f(-PI_D3f*0.5f)));
-    s = dfnormalize_vf2_vf2(s);
-    s = dfadd2_vf2_vf2_vf2(s, dfmul_vf2_vf2_vf(dfq, vcast_vf_f(-PI_E3f*0.5f)));
-    s = dfnormalize_vf2_vf2(s);
   } else {
     dfi_t dfi = rempif(d);
     q = dfi.i;

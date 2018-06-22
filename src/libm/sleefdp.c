@@ -771,7 +771,11 @@ EXPORT CONST double xsin(double d) {
   double u, s, t = d;
   int ql;
 
-  if (fabsk(d) < TRIGRANGEMAX) {
+  if (fabsk(d) < TRIGRANGEMAX2) {
+    ql = rintk(d * M_1_PI);
+    d = mla(ql, -PI_A2, d);
+    d = mla(ql, -PI_B2, d);
+  } else if (fabsk(d) < TRIGRANGEMAX) {
     double dqh = trunck(d * (M_1_PI / (1 << 24))) * (double)(1 << 24);
     ql = rintk(mla(d, M_1_PI, -dqh));
 
@@ -868,7 +872,11 @@ EXPORT CONST double xcos(double d) {
   double u, s, t = d;
   int ql;
 
-  if (fabsk(d) < TRIGRANGEMAX) {
+  if (fabsk(d) < TRIGRANGEMAX2) {
+    ql = mla(2, rintk(d * M_1_PI - 0.5), 1);
+    d = mla(ql, -PI_A2*0.5, d);
+    d = mla(ql, -PI_B2*0.5, d);
+  } else if (fabsk(d) < TRIGRANGEMAX) {
     double dqh = trunck(d * (M_1_PI / (1LL << 23)) - 0.5 * (M_1_PI / (1LL << 23)));
     ql = 2*rintk(d * M_1_PI - 0.5 - dqh * (double)(1LL << 23))+1;
     dqh *= 1 << 24;
@@ -972,7 +980,11 @@ EXPORT CONST Sleef_double2 xsincos(double d) {
 
   s = d;
 
-  if (fabsk(d) < TRIGRANGEMAX) {
+  if (fabsk(d) < TRIGRANGEMAX2) {
+    ql = rintk(s * (2 * M_1_PI));
+    s = mla(ql, -PI_A2*0.5, s);
+    s = mla(ql, -PI_B2*0.5, s);
+  } else if (fabsk(d) < TRIGRANGEMAX) {
     double dqh = trunck(d * ((2 * M_1_PI) / (1 << 24))) * (double)(1 << 24);
     ql = rintk(d * (2 * M_1_PI) - dqh);
 
@@ -1289,7 +1301,11 @@ EXPORT CONST double xtan(double d) {
   double u, s, x;
   int ql;
 
-  if (fabsk(d) < 1e+7) {
+  if (fabsk(d) < TRIGRANGEMAX2) {
+    ql = rintk(d * (2 * M_1_PI));
+    x = mla(ql, -PI_A2*0.5, d);
+    x = mla(ql, -PI_B2*0.5, x);
+  } else if (fabsk(d) < 1e+7) {
     double dqh = trunck(d * ((2 * M_1_PI) / (1 << 24))) * (double)(1 << 24);
     ql = rintk(d * (2 * M_1_PI) - dqh);
 

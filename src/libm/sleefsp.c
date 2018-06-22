@@ -708,24 +708,6 @@ EXPORT CONST Sleef_float2 xsincosf_u1(float d) {
     u = mlaf(q, -PI_A2f*0.5f, d);
     s = dfadd2_f2_f_f(u, q * (-PI_B2f*0.5f));
     s = dfadd_f2_f2_f(s, q * (-PI_C2f*0.5f));
-  } else if (fabsfk(d) < TRIGRANGEMAX3f) {
-    Sleef_float2 dfq = dfmul_f2_f2_f(df((2 * M_1_PI), (2 * M_1_PI) - (float)(2 * M_1_PI)), d);
-    float t = rintfk(dfq.x * (1.0f / (1 << 16)));
-    dfq.y = rintfk(dfq.x - t * (1 << 16) + dfq.y);
-    q = (int)dfq.y;
-    dfq.x = t * (1 << 16);
-    dfq = dfnormalize_f2_f2(dfq);
-
-    s = dfadd2_f2_f_f2 (d, dfmul_f2_f2_f(dfq, -PI_A3f*0.5f));
-    s = dfnormalize_f2_f2(s);
-    s = dfadd2_f2_f2_f2(s, dfmul_f2_f2_f(dfq, -PI_B3f*0.5f));
-    s = dfnormalize_f2_f2(s);
-    s = dfadd2_f2_f2_f2(s, dfmul_f2_f2_f(dfq, -PI_C3f*0.5f));
-    s = dfnormalize_f2_f2(s);
-    s = dfadd2_f2_f2_f2(s, dfmul_f2_f2_f(dfq, -PI_D3f*0.5f));
-    s = dfnormalize_f2_f2(s);
-    s = dfadd2_f2_f2_f2(s, dfmul_f2_f2_f(dfq, -PI_E3f*0.5f));
-    s = dfnormalize_f2_f2(s);
   } else {
     dfi_t dfi = rempif(d);
     q = dfi.i;
@@ -894,24 +876,6 @@ EXPORT CONST float xtanf_u1(float d) {
     u = mlaf(q, -PI_A2f*0.5f, d);
     s = dfadd2_f2_f_f(u, q * (-PI_B2f*0.5f));
     s = dfadd_f2_f2_f(s, q * (-PI_C2f*0.5f));
-  } else if (fabsfk(d) < TRIGRANGEMAX3f) {
-    Sleef_float2 dfq = dfmul_f2_f2_f(df((2 * M_1_PI), (2 * M_1_PI) - (float)(2 * M_1_PI)), d);
-    float t = rintfk(dfq.x * (1.0f / (1 << 16)));
-    dfq.y = rintfk(dfq.x - t * (1 << 16) + dfq.y);
-    q = (int)dfq.y;
-    dfq.x = t * (1 << 16);
-    dfq = dfnormalize_f2_f2(dfq);
-
-    s = dfadd2_f2_f_f2 (d, dfmul_f2_f2_f(dfq, -PI_A3f*0.5f));
-    s = dfnormalize_f2_f2(s);
-    s = dfadd2_f2_f2_f2(s, dfmul_f2_f2_f(dfq, -PI_B3f*0.5f));
-    s = dfnormalize_f2_f2(s);
-    s = dfadd2_f2_f2_f2(s, dfmul_f2_f2_f(dfq, -PI_C3f*0.5f));
-    s = dfnormalize_f2_f2(s);
-    s = dfadd2_f2_f2_f2(s, dfmul_f2_f2_f(dfq, -PI_D3f*0.5f));
-    s = dfnormalize_f2_f2(s);
-    s = dfadd2_f2_f2_f2(s, dfmul_f2_f2_f(dfq, -PI_E3f*0.5f));
-    s = dfnormalize_f2_f2(s);
   } else {
     dfi_t dfi = rempif(d);
     q = dfi.i;
