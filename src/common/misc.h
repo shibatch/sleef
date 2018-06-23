@@ -236,8 +236,8 @@ typedef struct {
 #define CONST
 #define RESTRICT
 #define ALIGNED(x)
-#define LIKELY(condition)
-#define UNLIKELY(condition)
+#define LIKELY(condition) (condition)
+#define UNLIKELY(condition) (condition)
 
 #ifndef SLEEF_STATIC_LIBS
 #define EXPORT __declspec(dllexport)
