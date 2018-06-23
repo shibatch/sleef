@@ -62,8 +62,8 @@ public class ProcessData {
 	public String toString() {
 	    String s = funcName + " ";
 	    s += prec == DP ? "DP " : "SP ";
-	    s += bits + "-bit ";
-	    s += " " + ulps + "-ulps ";
+	    s += bits + "bit ";
+	    s += String.format(" %.0fulp ", ulps);
 	    for(int i=0;i<range.size();i+=2) {
 		s += "[" + String.format("%.3g", range.get(i)) + ", " + String.format("%.3g", range.get(i+1)) + "]";
 		if (i + 2 < range.size()) s += " ";

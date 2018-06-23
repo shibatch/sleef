@@ -183,13 +183,16 @@ typedef struct {
 
 #if defined (__GNUC__) || defined (__clang__) || defined(__INTEL_COMPILER)
 
+#define LIKELY(condition) __builtin_expect(!!(condition), 1)
+#define UNLIKELY(condition) __builtin_expect(!!(condition), 0)
+#define RESTRICT __restrict__
+
 #ifndef __ARM_FEATURE_SVE
 #define INLINE __attribute__((always_inline))
 #else
 #define INLINE
 #endif
 
-#define RESTRICT __restrict__
 #ifndef __arm__
 #define ALIGNED(x) __attribute__((aligned(x)))
 #else
@@ -233,6 +236,8 @@ typedef struct {
 #define CONST
 #define RESTRICT
 #define ALIGNED(x)
+#define LIKELY(condition)
+#define UNLIKELY(condition)
 
 #ifndef SLEEF_STATIC_LIBS
 #define EXPORT __declspec(dllexport)
