@@ -46,6 +46,13 @@ void benchSVML512_DPTrig() {
   callFuncSVML1_1(_mm512_cos_pd   , "cos, DP, 512", 0, 1e+6, abufdp, vdouble);
   callFuncSVML1_1(_mm512_tan_pd   , "tan, DP, 512", 0, 1e+6, abufdp, vdouble);
   callFuncSVML2_1(_mm512_sincos_pd, "sincos, DP, 512", 0, 1e+6, abufdp, vdouble);
+
+  fillDP(abufdp, 0, 1e+100);
+  
+  callFuncSVML1_1(_mm512_sin_pd   , "sin, DP, 512", 0, 1e+100, abufdp, vdouble);
+  callFuncSVML1_1(_mm512_cos_pd   , "cos, DP, 512", 0, 1e+100, abufdp, vdouble);
+  callFuncSVML1_1(_mm512_tan_pd   , "tan, DP, 512", 0, 1e+100, abufdp, vdouble);
+  callFuncSVML2_1(_mm512_sincos_pd, "sincos, DP, 512", 0, 1e+100, abufdp, vdouble);
 }
   
 void benchSVML512_DPNontrig() {
@@ -89,12 +96,12 @@ void benchSVML512_SPTrig() {
   callFuncSVML1_1(_mm512_tan_ps   , "tan, SP, 512", 0, 6.28, abufsp, vfloat);
   callFuncSVML2_1(_mm512_sincos_ps, "sincos, SP, 512", 0, 6.28, abufsp, vfloat);
 
-  fillSP(abufsp, 0, 3e+4);
+  fillSP(abufsp, 0, 1e+20);
   
-  callFuncSVML1_1(_mm512_sin_ps   , "sin, SP, 512", 0, 3e+4, abufsp, vfloat);
-  callFuncSVML1_1(_mm512_cos_ps   , "cos, SP, 512", 0, 3e+4, abufsp, vfloat);
-  callFuncSVML1_1(_mm512_tan_ps   , "tan, SP, 512", 0, 3e+4, abufsp, vfloat);
-  callFuncSVML2_1(_mm512_sincos_ps, "sincos, SP, 512", 0, 3e+4, abufsp, vfloat);
+  callFuncSVML1_1(_mm512_sin_ps   , "sin, SP, 512", 0, 1e+20, abufsp, vfloat);
+  callFuncSVML1_1(_mm512_cos_ps   , "cos, SP, 512", 0, 1e+20, abufsp, vfloat);
+  callFuncSVML1_1(_mm512_tan_ps   , "tan, SP, 512", 0, 1e+20, abufsp, vfloat);
+  callFuncSVML2_1(_mm512_sincos_ps, "sincos, SP, 512", 0, 1e+20, abufsp, vfloat);
 }
 
 void benchSVML512_SPNontrig() {

@@ -48,6 +48,13 @@ void benchSVML256_DPTrig() {
   callFuncSVML1_1(_mm256_cos_pd   , "cos, DP, 256", 0, 1e+6, abufdp, vdouble);
   callFuncSVML1_1(_mm256_tan_pd   , "tan, DP, 256", 0, 1e+6, abufdp, vdouble);
   callFuncSVML2_1(_mm256_sincos_pd, "sincos, DP, 256", 0, 1e+6, abufdp, vdouble);
+
+  fillDP(abufdp, 0, 1e+100);
+  
+  callFuncSVML1_1(_mm256_sin_pd   , "sin, DP, 256", 0, 1e+100, abufdp, vdouble);
+  callFuncSVML1_1(_mm256_cos_pd   , "cos, DP, 256", 0, 1e+100, abufdp, vdouble);
+  callFuncSVML1_1(_mm256_tan_pd   , "tan, DP, 256", 0, 1e+100, abufdp, vdouble);
+  callFuncSVML2_1(_mm256_sincos_pd, "sincos, DP, 256", 0, 1e+100, abufdp, vdouble);
 }
   
 void benchSVML256_DPNontrig() {
@@ -91,12 +98,12 @@ void benchSVML256_SPTrig() {
   callFuncSVML1_1(_mm256_tan_ps   , "tan, SP, 256", 0, 6.28, abufsp, vfloat);
   callFuncSVML2_1(_mm256_sincos_ps, "sincos, SP, 256", 0, 6.28, abufsp, vfloat);
 
-  fillSP(abufsp, 0, 3e+4);
+  fillSP(abufsp, 0, 1e+20);
   
-  callFuncSVML1_1(_mm256_sin_ps   , "sin, SP, 256", 0, 3e+4, abufsp, vfloat);
-  callFuncSVML1_1(_mm256_cos_ps   , "cos, SP, 256", 0, 3e+4, abufsp, vfloat);
-  callFuncSVML1_1(_mm256_tan_ps   , "tan, SP, 256", 0, 3e+4, abufsp, vfloat);
-  callFuncSVML2_1(_mm256_sincos_ps, "sincos, SP, 256", 0, 3e+4, abufsp, vfloat);
+  callFuncSVML1_1(_mm256_sin_ps   , "sin, SP, 256", 0, 1e+20, abufsp, vfloat);
+  callFuncSVML1_1(_mm256_cos_ps   , "cos, SP, 256", 0, 1e+20, abufsp, vfloat);
+  callFuncSVML1_1(_mm256_tan_ps   , "tan, SP, 256", 0, 1e+20, abufsp, vfloat);
+  callFuncSVML2_1(_mm256_sincos_ps, "sincos, SP, 256", 0, 1e+20, abufsp, vfloat);
 }
 
 void benchSVML256_SPNontrig() {

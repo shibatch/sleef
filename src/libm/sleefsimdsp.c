@@ -336,13 +336,12 @@ EXPORT CONST vfloat xsinf(vfloat d) {
   vint2 q;
   vfloat u, s, r = d;
 
-  if (LIKELY(vtestallones_i_vo32(vlt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(TRIGRANGEMAXf))))) {
+  if (LIKELY(vtestallones_i_vo32(vlt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(TRIGRANGEMAX2f))))) {
     q = vrint_vi2_vf(vmul_vf_vf_vf(d, vcast_vf_f((float)M_1_PI)));
     u = vcast_vf_vi2(q);
-    d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Af), d);
-    d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Bf), d);
-    d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Cf), d);
-    d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Df), d);
+    d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_A2f), d);
+    d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_B2f), d);
+    d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_C2f), d);
   } else {
     dfi_t dfi = rempif(d);
     q = vand_vi2_vi2_vi2(dfi.i, vcast_vi2_i(3));
@@ -380,15 +379,14 @@ EXPORT CONST vfloat xcosf(vfloat d) {
   vint2 q;
   vfloat u, s, r = d;
 
-  if (LIKELY(vtestallones_i_vo32(vlt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(TRIGRANGEMAXf))))) {
+  if (LIKELY(vtestallones_i_vo32(vlt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(TRIGRANGEMAX2f))))) {
     q = vrint_vi2_vf(vsub_vf_vf_vf(vmul_vf_vf_vf(d, vcast_vf_f((float)M_1_PI)), vcast_vf_f(0.5f)));
     q = vadd_vi2_vi2_vi2(vadd_vi2_vi2_vi2(q, q), vcast_vi2_i(1));
 
     u = vcast_vf_vi2(q);
-    d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Af*0.5f), d);
-    d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Bf*0.5f), d);
-    d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Cf*0.5f), d);
-    d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Df*0.5f), d);
+    d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_A2f*0.5f), d);
+    d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_B2f*0.5f), d);
+    d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_C2f*0.5f), d);
   } else {
     dfi_t dfi = rempif(d);
     q = vand_vi2_vi2_vi2(dfi.i, vcast_vi2_i(3));
@@ -428,13 +426,12 @@ EXPORT CONST vfloat xtanf(vfloat d) {
 
   x = d;
 
-  if (LIKELY(vtestallones_i_vo32(vlt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(TRIGRANGEMAXf))))) {
+  if (LIKELY(vtestallones_i_vo32(vlt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(TRIGRANGEMAX2f))))) {
     q = vrint_vi2_vf(vmul_vf_vf_vf(d, vcast_vf_f((float)(2 * M_1_PI))));
     u = vcast_vf_vi2(q);
-    x = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Af*0.5f), x);
-    x = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Bf*0.5f), x);
-    x = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Cf*0.5f), x);
-    x = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Df*0.5f), x);
+    x = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_A2f*0.5f), x);
+    x = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_B2f*0.5f), x);
+    x = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_C2f*0.5f), x);
   } else {
     dfi_t dfi = rempif(d);
     q = dfi.i;
@@ -472,24 +469,6 @@ EXPORT CONST vfloat xsinf_u1(vfloat d) {
     v = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_A2f), d);
     s = dfadd2_vf2_vf_vf(v, vmul_vf_vf_vf(u, vcast_vf_f(-PI_B2f)));
     s = dfadd_vf2_vf2_vf(s, vmul_vf_vf_vf(u, vcast_vf_f(-PI_C2f)));
-  } else if (LIKELY(vtestallones_i_vo32(vlt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(TRIGRANGEMAX3f))))) {
-    vfloat2 dfq = dfmul_vf2_vf2_vf(vcast_vf2_f_f(M_1_PI, M_1_PI - (float)M_1_PI), d);
-    vfloat t = vrint_vf_vf(vmul_vf_vf_vf(dfq.x, vcast_vf_f(1.0f / (1 << 16))));
-    dfq.y = vrint_vf_vf(vadd_vf_vf_vf(vmla_vf_vf_vf_vf(t, vcast_vf_f(-(1 << 16)), dfq.x), dfq.y));
-    q = vrint_vi2_vf(dfq.y);
-    dfq.x = vmul_vf_vf_vf(t, vcast_vf_f(1 << 16));
-    dfq = dfnormalize_vf2_vf2(dfq);
-
-    s = dfadd2_vf2_vf_vf2 (d, dfmul_vf2_vf2_vf(dfq, vcast_vf_f(-PI_A3f)));
-    s = dfnormalize_vf2_vf2(s);
-    s = dfadd2_vf2_vf2_vf2(s, dfmul_vf2_vf2_vf(dfq, vcast_vf_f(-PI_B3f)));
-    s = dfnormalize_vf2_vf2(s);
-    s = dfadd2_vf2_vf2_vf2(s, dfmul_vf2_vf2_vf(dfq, vcast_vf_f(-PI_C3f)));
-    s = dfnormalize_vf2_vf2(s);
-    s = dfadd2_vf2_vf2_vf2(s, dfmul_vf2_vf2_vf(dfq, vcast_vf_f(-PI_D3f)));
-    s = dfnormalize_vf2_vf2(s);
-    s = dfadd2_vf2_vf2_vf2(s, dfmul_vf2_vf2_vf(dfq, vcast_vf_f(-PI_E3f)));
-    s = dfnormalize_vf2_vf2(s);
   } else {
     dfi_t dfi = rempif(d);
     q = vand_vi2_vi2_vi2(dfi.i, vcast_vi2_i(3));
@@ -536,25 +515,6 @@ EXPORT CONST vfloat xcosf_u1(vfloat d) {
     s = dfadd2_vf2_vf_vf (d, vmul_vf_vf_vf(dq, vcast_vf_f(-PI_A2f*0.5f)));
     s = dfadd2_vf2_vf2_vf(s, vmul_vf_vf_vf(dq, vcast_vf_f(-PI_B2f*0.5f)));
     s = dfadd2_vf2_vf2_vf(s, vmul_vf_vf_vf(dq, vcast_vf_f(-PI_C2f*0.5f)));
-  } else if (LIKELY(vtestallones_i_vo32(vlt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(TRIGRANGEMAX3f))))) {
-    vfloat2 dfq = dfadd2_vf2_vf2_vf(dfmul_vf2_vf2_vf(vcast_vf2_f_f(M_1_PI, M_1_PI - (float)M_1_PI), d), vcast_vf_f(-0.5f));
-    vfloat t = vrint_vf_vf(vmul_vf_vf_vf(dfq.x, vcast_vf_f(1.0f / (1 << 16))));
-    dfq.y = vmla_vf_vf_vf_vf(vrint_vf_vf(vadd_vf_vf_vf(vmla_vf_vf_vf_vf(t, vcast_vf_f(-(1 << 16)), dfq.x), dfq.y)),
-			     vcast_vf_f(2), vcast_vf_f(1));
-    q = vrint_vi2_vf(dfq.y);
-    dfq.x = vmul_vf_vf_vf(t, vcast_vf_f(1 << 17));
-    dfq = dfnormalize_vf2_vf2(dfq);
-
-    s = dfadd2_vf2_vf_vf2 (d, dfmul_vf2_vf2_vf(dfq, vcast_vf_f(-PI_A3f*0.5f)));
-    s = dfnormalize_vf2_vf2(s);
-    s = dfadd2_vf2_vf2_vf2(s, dfmul_vf2_vf2_vf(dfq, vcast_vf_f(-PI_B3f*0.5f)));
-    s = dfnormalize_vf2_vf2(s);
-    s = dfadd2_vf2_vf2_vf2(s, dfmul_vf2_vf2_vf(dfq, vcast_vf_f(-PI_C3f*0.5f)));
-    s = dfnormalize_vf2_vf2(s);
-    s = dfadd2_vf2_vf2_vf2(s, dfmul_vf2_vf2_vf(dfq, vcast_vf_f(-PI_D3f*0.5f)));
-    s = dfnormalize_vf2_vf2(s);
-    s = dfadd2_vf2_vf2_vf2(s, dfmul_vf2_vf2_vf(dfq, vcast_vf_f(-PI_E3f*0.5f)));
-    s = dfnormalize_vf2_vf2(s);
   } else {
     dfi_t dfi = rempif(d);
     q = vand_vi2_vi2_vi2(dfi.i, vcast_vi2_i(3));
@@ -616,13 +576,12 @@ TYPE2_FUNCATR vfloat2 XSINCOSF(vfloat d) {
 
   s = d;
 
-  if (LIKELY(vtestallones_i_vo32(vlt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(TRIGRANGEMAXf))))) {
+  if (LIKELY(vtestallones_i_vo32(vlt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(TRIGRANGEMAX2f))))) {
     q = vrint_vi2_vf(vmul_vf_vf_vf(d, vcast_vf_f((float)M_2_PI)));
     u = vcast_vf_vi2(q);
-    s = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Af*0.5f), s);
-    s = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Bf*0.5f), s);
-    s = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Cf*0.5f), s);
-    s = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Df*0.5f), s);
+    s = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_A2f*0.5f), s);
+    s = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_B2f*0.5f), s);
+    s = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_C2f*0.5f), s);
   } else {
     dfi_t dfi = rempif(d);
     q = dfi.i;
