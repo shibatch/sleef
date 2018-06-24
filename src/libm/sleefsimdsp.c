@@ -437,6 +437,7 @@ EXPORT CONST vfloat xtanf(vfloat d) {
     q = dfi.i;
     x = vadd_vf_vf_vf(dfi.df.x, dfi.df.y);
     x = vreinterpret_vf_vm(vor_vm_vo32_vm(visinf_vo_vf(d), vreinterpret_vm_vf(x)));
+    x = vsel_vf_vo_vf_vf(visnegzero_vo_vf(d), d, x);
   }
 
   s = vmul_vf_vf_vf(x, x);
