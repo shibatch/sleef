@@ -82,8 +82,6 @@ int main(int argc, char **argv) {
   int do512bit = cpuSupportsAVX512F();
 #elif defined(__ARM_NEON)
   int do128bit = 1;
-  int do256bit = 0;
-  int do512bit = 0;
 #else
 #error Unsupported architecture
 #endif
@@ -99,8 +97,10 @@ int main(int argc, char **argv) {
   fprintf(fp, "%s\n", columnTitle);
 
   if (do128bit) benchSleef128_DPTrig();
+#if defined(__i386__) || defined(__x86_64__)
   if (do256bit) benchSleef256_DPTrig();
   if (do512bit) benchSleef512_DPTrig();
+#endif
   
   fclose(fp);
   
@@ -109,8 +109,10 @@ int main(int argc, char **argv) {
   fprintf(fp, "%s\n", columnTitle);
 
   if (do128bit) benchSleef128_DPNontrig();
+#if defined(__i386__) || defined(__x86_64__)
   if (do256bit) benchSleef256_DPNontrig();
   if (do512bit) benchSleef512_DPNontrig();
+#endif
   
   fclose(fp);
   
@@ -119,8 +121,10 @@ int main(int argc, char **argv) {
   fprintf(fp, "%s\n", columnTitle);
 
   if (do128bit) benchSleef128_SPTrig();
+#if defined(__i386__) || defined(__x86_64__)
   if (do256bit) benchSleef256_SPTrig();
   if (do512bit) benchSleef512_SPTrig();
+#endif
 
   fclose(fp);
   
@@ -129,8 +133,10 @@ int main(int argc, char **argv) {
   fprintf(fp, "%s\n", columnTitle);
 
   if (do128bit) benchSleef128_SPNontrig();
+#if defined(__i386__) || defined(__x86_64__)
   if (do256bit) benchSleef256_SPNontrig();
   if (do512bit) benchSleef512_SPNontrig();
+#endif
   
   fclose(fp);
   

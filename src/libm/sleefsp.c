@@ -469,6 +469,12 @@ EXPORT CONST float xsinf(float d) {
     d = mlaf(q, -PI_A2f, d);
     d = mlaf(q, -PI_B2f, d);
     d = mlaf(q, -PI_C2f, d);
+  } else if (fabsfk(d) < TRIGRANGEMAXf) {
+    q = (int)rintfk(d * (float)M_1_PI);
+    d = mlaf(q, -PI_Af, d);
+    d = mlaf(q, -PI_Bf, d);
+    d = mlaf(q, -PI_Cf, d);
+    d = mlaf(q, -PI_Df, d);
   } else {
     dfi_t dfi = rempif(t);
     q = ((dfi.i & 3) * 2 + (dfi.df.x > 0) + 1) >> 2;
@@ -483,7 +489,6 @@ EXPORT CONST float xsinf(float d) {
 
   s = d * d;
 
-  if (floatToRawIntBits(d) == floatToRawIntBits(-0.0f)) s = -0.0f;
   if ((q & 1) != 0) d = -d;
 
   u = 2.6083159809786593541503e-06f;
@@ -546,6 +551,12 @@ EXPORT CONST float xcosf(float d) {
     d = mlaf(q, -PI_A2f*0.5f, d);
     d = mlaf(q, -PI_B2f*0.5f, d);
     d = mlaf(q, -PI_C2f*0.5f, d);
+  } else if (fabsfk(d) < TRIGRANGEMAXf) {
+    q = 1 + 2*(int)rintfk(d * (float)M_1_PI - 0.5f);
+    d = mlaf(q, -PI_Af*0.5f, d);
+    d = mlaf(q, -PI_Bf*0.5f, d);
+    d = mlaf(q, -PI_Cf*0.5f, d);
+    d = mlaf(q, -PI_Df*0.5f, d);
   } else {
     dfi_t dfi = rempif(t);
     q = ((dfi.i & 3) * 2 + (dfi.df.x > 0) + 7) >> 1;
@@ -624,6 +635,12 @@ EXPORT CONST Sleef_float2 xsincosf(float d) {
     s = mlaf(q, -PI_A2f*0.5f, s);
     s = mlaf(q, -PI_B2f*0.5f, s);
     s = mlaf(q, -PI_C2f*0.5f, s);
+  } else if (fabsfk(d) < TRIGRANGEMAXf) {
+    q = (int)rintfk(d * ((float)(2 * M_1_PI)));
+    s = mlaf(q, -PI_Af*0.5f, s);
+    s = mlaf(q, -PI_Bf*0.5f, s);
+    s = mlaf(q, -PI_Cf*0.5f, s);
+    s = mlaf(q, -PI_Df*0.5f, s);
   } else {
     dfi_t dfi = rempif(d);
     q = dfi.i;
@@ -801,6 +818,12 @@ EXPORT CONST float xtanf(float d) {
     x = mlaf(q, -PI_A2f*0.5f, x);
     x = mlaf(q, -PI_B2f*0.5f, x);
     x = mlaf(q, -PI_C2f*0.5f, x);
+  } else if (fabsfk(d) < TRIGRANGEMAXf) {
+    q = (int)rintfk(d * (float)(2 * M_1_PI));
+    x = mlaf(q, -PI_Af*0.5f, x);
+    x = mlaf(q, -PI_Bf*0.5f, x);
+    x = mlaf(q, -PI_Cf*0.5f, x);
+    x = mlaf(q, -PI_Df*0.5f, x);
   } else {
     dfi_t dfi = rempif(d);
     q = dfi.i;

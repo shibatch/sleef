@@ -1,4 +1,5 @@
 ICCAVAILABLE := $(shell command -v icc 2> /dev/null)
+ARCH := $(shell uname -p)
 
 all :
 ifndef BUILDDIR
@@ -46,6 +47,16 @@ benchsvml_40 : benchsvml.c benchsvml128_40.o benchsvml256_40.o benchsvml512_40.o
 
 #
 
+ifeq ($(ARCH),aarch64)
+
+benchsleef : benchsleef.c benchsleef128.o bench.h
+	$(CC) benchsleef.c benchsleef128.o -Wall -O0 -g -I$(BUILDDIR)/include -L$(BUILDDIR)/lib -Wno-attributes -lsleef -lm -o benchsleef
+
+benchsleef128.o : benchsleef128.c bench.h
+	$(CC) benchsleef128.c -Wall -march=native -O0 -g -I$(BUILDDIR)/include -L$(BUILDDIR)/lib -Wno-attributes -c
+
+else
+
 benchsleef : benchsleef.c benchsleef128.o benchsleef256.o benchsleef512.o bench.h
 	$(CC) benchsleef.c benchsleef128.o benchsleef256.o benchsleef512.o -Wall -O0 -g -I$(BUILDDIR)/include -L$(BUILDDIR)/lib -Wno-attributes -lsleef -lm -o benchsleef
 
@@ -57,6 +68,8 @@ benchsleef256.o : benchsleef256.c bench.h
 
 benchsleef512.o : benchsleef512.c bench.h
 	$(CC) benchsleef512.c -Wall -mavx512f -O0 -g -I$(BUILDDIR)/include -L$(BUILDDIR)/lib -Wno-attributes -c
+
+endif
 
 #
 

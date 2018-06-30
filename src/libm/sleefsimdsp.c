@@ -342,6 +342,13 @@ EXPORT CONST vfloat xsinf(vfloat d) {
     d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_A2f), d);
     d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_B2f), d);
     d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_C2f), d);
+  } else if (LIKELY(vtestallones_i_vo32(vlt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(TRIGRANGEMAXf))))) {
+    q = vrint_vi2_vf(vmul_vf_vf_vf(d, vcast_vf_f((float)M_1_PI)));
+    u = vcast_vf_vi2(q);
+    d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Af), d);
+    d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Bf), d);
+    d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Cf), d);
+    d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Df), d);
   } else {
     dfi_t dfi = rempif(d);
     q = vand_vi2_vi2_vi2(dfi.i, vcast_vi2_i(3));
@@ -387,6 +394,15 @@ EXPORT CONST vfloat xcosf(vfloat d) {
     d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_A2f*0.5f), d);
     d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_B2f*0.5f), d);
     d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_C2f*0.5f), d);
+  } else if (LIKELY(vtestallones_i_vo32(vlt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(TRIGRANGEMAXf))))) {
+    q = vrint_vi2_vf(vsub_vf_vf_vf(vmul_vf_vf_vf(d, vcast_vf_f((float)M_1_PI)), vcast_vf_f(0.5f)));
+    q = vadd_vi2_vi2_vi2(vadd_vi2_vi2_vi2(q, q), vcast_vi2_i(1));
+
+    u = vcast_vf_vi2(q);
+    d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Af*0.5f), d);
+    d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Bf*0.5f), d);
+    d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Cf*0.5f), d);
+    d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Df*0.5f), d);
   } else {
     dfi_t dfi = rempif(d);
     q = vand_vi2_vi2_vi2(dfi.i, vcast_vi2_i(3));
@@ -432,6 +448,13 @@ EXPORT CONST vfloat xtanf(vfloat d) {
     x = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_A2f*0.5f), x);
     x = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_B2f*0.5f), x);
     x = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_C2f*0.5f), x);
+  } else if (LIKELY(vtestallones_i_vo32(vlt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(TRIGRANGEMAXf))))) {
+    q = vrint_vi2_vf(vmul_vf_vf_vf(d, vcast_vf_f((float)(2 * M_1_PI))));
+    u = vcast_vf_vi2(q);
+    x = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Af*0.5f), x);
+    x = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Bf*0.5f), x);
+    x = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Cf*0.5f), x);
+    x = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Df*0.5f), x);
   } else {
     dfi_t dfi = rempif(d);
     q = dfi.i;
@@ -583,6 +606,13 @@ TYPE2_FUNCATR vfloat2 XSINCOSF(vfloat d) {
     s = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_A2f*0.5f), s);
     s = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_B2f*0.5f), s);
     s = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_C2f*0.5f), s);
+  } else if (LIKELY(vtestallones_i_vo32(vlt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(TRIGRANGEMAXf))))) {
+    q = vrint_vi2_vf(vmul_vf_vf_vf(d, vcast_vf_f((float)M_2_PI)));
+    u = vcast_vf_vi2(q);
+    s = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Af*0.5f), s);
+    s = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Bf*0.5f), s);
+    s = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Cf*0.5f), s);
+    s = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_Df*0.5f), s);
   } else {
     dfi_t dfi = rempif(d);
     q = dfi.i;
