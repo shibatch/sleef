@@ -181,6 +181,7 @@ typedef struct {
 #ifndef __ARM_FEATURE_SVE
 #define INLINE __attribute__((always_inline))
 #else
+// This is a workaround of a bug in armclang
 #define INLINE
 #endif
 
@@ -199,11 +200,14 @@ typedef struct {
 #if defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__)
 #ifndef SLEEF_STATIC_LIBS
 #define EXPORT __stdcall __declspec(dllexport)
+#define NOEXPORT
 #else // #ifndef SLEEF_STATIC_LIBS
 #define EXPORT
+#define NOEXPORT
 #endif // #ifndef SLEEF_STATIC_LIBS
 #else // #if defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__)
 #define EXPORT __attribute__((visibility("default")))
+#define NOEXPORT __attribute__ ((visibility ("hidden")))
 #endif // #if defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__)
 
 #define SLEEF_NAN __builtin_nan("")
@@ -232,8 +236,10 @@ typedef struct {
 
 #ifndef SLEEF_STATIC_LIBS
 #define EXPORT __declspec(dllexport)
+#define NOEXPORT
 #else
 #define EXPORT
+#define NOEXPORT
 #endif
 
 #if (defined(__GNUC__) || defined(__CLANG__)) && (defined(__i386__) || defined(__x86_64__))
