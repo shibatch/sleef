@@ -268,7 +268,7 @@ static INLINE void vstore_v_p_vd(double *ptr, vdouble v) { _mm_store_pd(ptr, v);
 static INLINE void vstoreu_v_p_vd(double *ptr, vdouble v) { _mm_storeu_pd(ptr, v); }
 
 static INLINE vdouble vgather_vd_p_vi(const double *ptr, vint vi) {
-  int a[VECTLENDP];
+  int a[sizeof(vint)/sizeof(int)];
   vstoreu_v_p_vi(a, vi);
   return _mm_set_pd(ptr[a[1]], ptr[a[0]]);
 }
