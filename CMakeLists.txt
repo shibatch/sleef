@@ -15,7 +15,7 @@ cmake_minimum_required(VERSION 3.4.3)
 enable_testing()
 
 set(SLEEF_VERSION_MAJOR 3)
-set(SLEEF_VERSION_MINOR 2)
+set(SLEEF_VERSION_MINOR 3)
 set(SLEEF_SOVERSION ${SLEEF_VERSION_MAJOR})
 
 project(SLEEF

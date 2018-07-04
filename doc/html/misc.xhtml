@@ -3,15 +3,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<meta name="viewport" content="width=1024" />
+<meta name="viewport" content="width=device-width, initial-scale=0.4"/>
 <meta name="google" content="notranslate" />
-<link rel="canonical" href="http://sleef.org/misc.xhtml" />
+<link rel="canonical" href="https://sleef.org/misc.xhtml" />
 <link rel="icon" href="favicon.png" />
 <link rel="stylesheet" type="text/css" href="texlike.css"/>
 <link rel="stylesheet" type="text/css" href="sleef.css"/>
 <title>SLEEF Documentation</title>
 </head>
-<body>
+<body translate="no" class="notranslate">
 <h1>SLEEF Documentation - Other tools included in the package</h1>
 
 <h2>Table of contents</h2>
@@ -37,11 +37,12 @@
 <h2 id="testerlibm">Libm tester</h2>
 
 <p class="noindent">
-  SLEEF has two kinds of testers, and each kind of testers has its own role.
+  SLEEF libm has two kinds of testers, and each kind of testers has
+  its own role.
 </p>
 
 <p>
-  The first kind of testers is separated into tester and iut (which
+  The first kind of testers consist of a tester and an IUT (which
   stands for Implementation Under Test.) Those two are built as
   separate executables, and communicate with each other using a
   pipe. The role for this tester is to perform a perfunctory set of
@@ -63,8 +64,19 @@
 <h2 id="testerdft">DFT tester</h2>
 
 <p class="noindent">
-  The DFT has its own tester. This tester compares the results
-  computed by SLEEF DFT with a naive implementation.
+  SLEEF DFT has three kinds of testers. The first ones, named
+  naivetest, compare the results computed by SLEEF DFT with that from
+  a naive DFT implementation. These testers cannot be built with MSVC
+  since complex data types are not supported. The second testers,
+  named fftwtest, compare the results of computation between SLEEF DFT
+  and FFTW. Rigorous testing is possible with the second testers, but
+  obviously it requires FFTW to run. The third testers, named
+  roundtriptest, executes a forward transform followed by a backward
+  transform. Then, it compares the results with the original data. An
+  advantage of the third testers is that it does not require external
+  library and it runs on all environment, but there could be many
+  cases that this testing does not find flaw. The third testers are
+  used only if FFTW is not available.
 </p>
 
 

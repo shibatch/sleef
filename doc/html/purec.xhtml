@@ -3,16 +3,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<meta name="viewport" content="width=1024" />
+<meta name="viewport" content="width=device-width, initial-scale=0.4"/>
 <meta name="google" content="notranslate" />
-<link rel="canonical" href="http://sleef.org/purec.xhtml" />
+<link rel="canonical" href="https://sleef.org/purec.xhtml" />
 <link rel="icon" href="favicon.png" />
 <link rel="stylesheet" type="text/css" href="texlike.css"/>
 <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Ubuntu" />
 <link rel="stylesheet" type="text/css" href="sleef.css"/>
 <title>SLEEF Documentation</title>
 </head>
-<body>
+<body translate="no" class="notranslate">
 <h1>SLEEF Documentation - Math library reference</h1>
 
 <h2>Table of contents</h2>
@@ -37,6 +37,7 @@
     <li><a class="underlined" href="x86.xhtml">Data types and functions for x86 architectures</a></li>
     <li><a class="underlined" href="aarch64.xhtml">Data types and functions for AArch64 architectures</a></li>
     <li><a class="underlined" href="aarch32.xhtml">Data types and functions for AArch32 architectures</a></li>
+    <li><a class="underlined" href="ppc64.xhtml">Data types and functions for PPC64 architecture</a></li>
   </ul>
   </li>
   <li>&nbsp;</li>
@@ -119,8 +120,8 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="noindent">
   These functions evaluates the sine function of a value
   in <i class="var">a</i>. The error bound of the returned value is 1.0 ULP
-  if <i class="var">a</i> is in [-1e+14, 1e+14]
-  for the double-precision function or [-5e+9, 5e+9]
+  if <i class="var">a</i> is in [-1e+299, 1e+299]
+  for the double-precision function or [-1e+28, 1e+28]
   for the single-precision function. If <i class="var">a</i> is a finite
   value out of this range, an arbitrary value within [-1, 1] is
   returned. These functions treat the non-number arguments and return
@@ -149,8 +150,8 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="noindent">
   These functions evaluates the sine function of a value
   in <i class="var">a</i>. The error bound of the returned value is 3.5 ULP
-  if <i class="var">a</i> is in [-1e+14, 1e+14]
-  for the double-precision function or [-39000, 39000]
+  if <i class="var">a</i> is in [-1e+299, 1e+299]
+  for the double-precision function or [-1e+28, 1e+28]
   for the single-precision function. If <i class="var">a</i> is a finite
   value out of this range, an arbitrary value within [-1, 1] is
   returned. These functions treat the non-number arguments and return
@@ -179,8 +180,8 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="noindent">
   These functions evaluates the cosine function of a value
   in <i class="var">a</i>. The error bound of the returned value is 1.0 ULP
-  if <i class="var">a</i> is in [-1e+14, 1e+14]
-  for the double-precision function or [-5e+9, 5e+9]
+  if <i class="var">a</i> is in [-1e+299, 1e+299]
+  for the double-precision function or [-1e+28, 1e+28]
   for the single-precision function. If <i class="var">a</i> is a finite
   value out of this range, an arbitrary value within [-1, 1] is
   returned. These functions treat the non-number arguments and return
@@ -209,8 +210,8 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="noindent">
   These functions evaluates the cosine function of a value
   in <i class="var">a</i>. The error bound of the returned value is 3.5 ULP
-  if <i class="var">a</i> is in [-1e+14, 1e+14]
-  for the double-precision function or [-39000, 39000]
+  if <i class="var">a</i> is in [-1e+299, 1e+299]
+  for the double-precision function or [-1e+28, 1e+28]
   for the single-precision function. If <i class="var">a</i> is a finite
   value out of this range, an arbitrary value within [-1, 1] is
   returned. These functions treat the non-number arguments and return
@@ -240,8 +241,8 @@ extended-precision (80-bit) floating point values, which is defined in
   Evaluates the sine and cosine functions of a value in <i class="var">a</i> at a
   time, and store the two values in <i class="var">x</i> and <i class="var">y</i> elements in
   the returned value, respectively. The error bound of the returned
-  values is 1.0 ULP if <i class="var">a</i> is in [-1e+14, 1e+14]
-  for the double-precision function or [-5e+9, 5e+9]
+  values is 1.0 ULP if <i class="var">a</i> is in [-1e+299, 1e+299]
+  for the double-precision function or [-1e+28, 1e+28]
   for the single-precision function. If <i class="var">a</i> is a finite
   value out of this range, an arbitrary value within [-1, 1] is
   returned. If <i class="var">a</i> is a NaN or infinity, a NaN is returned.
@@ -269,8 +270,8 @@ extended-precision (80-bit) floating point values, which is defined in
   Evaluates the sine and cosine functions of a value in <i class="var">a</i> at a
   time, and store the two values in <i class="var">x</i> and <i class="var">y</i> elements in
   the returned value, respectively. The error bound of the returned
-  values is 3.5 ULP if <i class="var">a</i> is in [-1e+14, 1e+14]
-  for the double-precision function or [-39000, 39000]
+  values is 3.5 ULP if <i class="var">a</i> is in [-1e+299, 1e+299]
+  for the double-precision function or [-1e+28, 1e+28]
   for the single-precision function. If <i class="var">a</i> is a finite
   value out of this range, an arbitrary value within [-1, 1] is
   returned. If <i class="var">a</i> is a NaN or infinity, a NaN is returned.
@@ -419,8 +420,8 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="noindent">
   These functions evaluates the tangent function of a value
   in <i class="var">a</i>. The error bound of the returned value is 1.0 ULP
-  if <i class="var">a</i> is in [-1e+14, 1e+14]
-  for the double-precision function or [-5e+9, 5e+9]
+  if <i class="var">a</i> is in [-1e+299, 1e+299]
+  for the double-precision function or [-1e+28, 1e+28]
   for the single-precision function. If <i class="var">a</i> is a finite
   value out of this range, an arbitrary value within [-1, 1] is
   returned. These functions treat the non-number arguments and return
@@ -449,8 +450,8 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="noindent">
   These functions evaluates the tangent function of a value
   in <i class="var">a</i>. The error bound of the returned value is 3.5 ULP
-  if <i class="var">a</i> is in [-1e+14, 1e+14]
-  for the double-precision function or [-39000, 39000]
+  if <i class="var">a</i> is in [-1e+299, 1e+299]
+  for the double-precision function or [-1e+28, 1e+28]
   for the single-precision function. If <i class="var">a</i> is a finite
   value out of this range, an arbitrary value within [-1, 1] is
   returned. These functions treat the non-number arguments and return
@@ -1111,6 +1112,36 @@ extended-precision (80-bit) floating point values, which is defined in
 
 <hr/>
 
+<p class="funcname"><b id="Sleef_sinh_u35" class="func">Sleef_sinh_u35</b>, <b id="Sleef_sinhf_u35" class="func">Sleef_sinhf_u35</b> - hyperbolic sine functions</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b class="type">double</b> <b class="func">Sleef_sinh_u35</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
+<b class="type">float</b> <b class="func">Sleef_sinhf_u35</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
+<!--<b class="type">long double</b> <b class="func">Sleef_sinhl_u35</b>(<b class="type">long double</b> <i class="var">a</i>);<br/>-->
+<br/>
+<span class="normal">Link with</span> -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="noindent">
+  These functions evaluates the hyperbolic sine function of a value
+  in <i class="var">a</i>. The error bound of the returned value is 3.5 ULP
+  if <i class="var">a</i> is in [-709, 709] for the double-precision function or
+  [-88, 88] for the single-precision function . If <i class="var">a</i> is a
+  finite value out of this range, infinity with a correct sign or a
+  correct value with 3.5 ULP error bound is returned. These functions
+  treat the non-number arguments and return non-numbers as specified
+  in the C99 specification. These functions do not set errno nor raise
+  an exception.
+</p>
+
+<hr/>
+
 <p class="funcname"><b id="Sleef_cosh_u10" class="func">Sleef_cosh_u10</b>, <b id="Sleef_coshf_u10" class="func">Sleef_coshf_u10</b> - hyperbolic cosine functions</p>
 
 <p class="header">Synopsis</p>
@@ -1141,6 +1172,36 @@ extended-precision (80-bit) floating point values, which is defined in
 
 <hr/>
 
+<p class="funcname"><b id="Sleef_cosh_u35" class="func">Sleef_cosh_u35</b>, <b id="Sleef_coshf_u35" class="func">Sleef_coshf_u35</b> - hyperbolic cosine functions</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b class="type">double</b> <b class="func">Sleef_cosh_u35</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
+<b class="type">float</b> <b class="func">Sleef_coshf_u35</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
+<!--<b class="type">long double</b> <b class="func">Sleef_coshl_u35</b>(<b class="type">long double</b> <i class="var">a</i>);<br/>-->
+<br/>
+<span class="normal">Link with</span> -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="noindent">
+  These functions evaluates the hyperbolic cosine function of a value
+  in <i class="var">a</i>. The error bound of the returned value is 3.5 ULP
+  if <i class="var">a</i> is in [-709, 709] for the double-precision function or
+  [-88, 88] for the single-precision function . If <i class="var">a</i> is a
+  finite value out of this range, infinity with a correct sign or a
+  correct value with 3.5 ULP error bound is returned. These functions
+  treat the non-number arguments and return non-numbers as specified
+  in the C99 specification. These functions do not set errno nor raise
+  an exception.
+</p>
+
+<hr/>
+
 <p class="funcname"><b id="Sleef_tanh_u10" class="func">Sleef_tanh_u10</b>, <b id="Sleef_tanhf_u10" class="func">Sleef_tanhf_u10</b> - hyperbolic tangent functions</p>
 
 <p class="header">Synopsis</p>
@@ -1161,6 +1222,33 @@ extended-precision (80-bit) floating point values, which is defined in
   These functions evaluates the hyperbolic tangent function of a value
   in <i class="var">a</i>. The error bound of the returned value is 1.0 ULP for
   the double-precision function or 1.0001 ULP for the single-precision
+  function. These functions treat the non-number arguments and return
+  non-numbers as specified in the C99 specification. These functions
+  do not set errno nor raise an exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b id="Sleef_tanh_u35" class="func">Sleef_tanh_u35</b>, <b id="Sleef_tanhf_u35" class="func">Sleef_tanhf_u35</b> - hyperbolic tangent functions</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b class="type">double</b> <b class="func">Sleef_tanh_u35</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
+<b class="type">float</b> <b class="func">Sleef_tanhf_u35</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
+<!--<b class="type">long double</b> <b class="func">Sleef_tanhl_u35</b>(<b class="type">long double</b> <i class="var">a</i>);<br/>-->
+<br/>
+<span class="normal">Link with</span> -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="noindent">
+  These functions evaluates the hyperbolic tangent function of a value
+  in <i class="var">a</i>. The error bound of the returned value is 3.5 ULP for
+  the double-precision function or 3.5 ULP for the single-precision
   function. These functions treat the non-number arguments and return
   non-numbers as specified in the C99 specification. These functions
   do not set errno nor raise an exception.
