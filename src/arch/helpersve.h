@@ -728,25 +728,25 @@ static INLINE void vsscatter2_v_p_i_i_vf(float *ptr, int offset, int step, vfloa
 
 // These functions are for debugging
 static double vcast_d_vd(vdouble v) {
-  double a[32];
+  double a[svcntd()];
   vstoreu_v_p_vd(a, v);
   return a[0];
 }
 
 static float vcast_f_vf(vfloat v) {
-  float a[64];
+  float a[svcntw()];
   vstoreu_v_p_vf(a, v);
   return a[0];
 }
 
 static int vcast_i_vi(vint v) {
-  int a[64];
+  int a[svcntw()];
   vstoreu_v_p_vi(a, v);
   return a[0];
 }
 
 static int vcast_i_vi2(vint2 v) {
-  int a[64];
+  int a[svcntw()];
   vstoreu_v_p_vi2(a, v);
   return a[0];
 }

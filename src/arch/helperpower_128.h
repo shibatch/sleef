@@ -75,13 +75,13 @@ static INLINE void vstoreu_v_p_vf(float *ptr, vfloat v) { ptr[0] = v[0]; ptr[1] 
 static INLINE void vscatter2_v_p_i_i_vd(double *ptr, int offset, int step, vdouble v) { vstore_v_p_vd((double *)(&ptr[2*offset]), v); }
 
 static INLINE vdouble vgather_vd_p_vi(const double *ptr, vint vi) {
-  int a[4];
+  int a[VECTLENDP];
   vstoreu_v_p_vi(a, vi);
   return ((vdouble) { ptr[a[0]], ptr[a[1]] });
 }
 
 static INLINE vfloat vgather_vf_p_vi2(const float *ptr, vint2 vi2) {
-  int a[4];
+  int a[VECTLENSP];
   vstoreu_v_p_vi2(a, vi2);
   return ((vfloat) { ptr[a[0]], ptr[a[1]], ptr[a[2]], ptr[a[3]] });
 }

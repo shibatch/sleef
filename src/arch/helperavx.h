@@ -291,7 +291,7 @@ static INLINE void vstore_v_p_vd(double *ptr, vdouble v) { _mm256_store_pd(ptr, 
 static INLINE void vstoreu_v_p_vd(double *ptr, vdouble v) { _mm256_storeu_pd(ptr, v); }
 
 static INLINE vdouble vgather_vd_p_vi(const double *ptr, vint vi) {
-  int a[4];
+  int a[VECTLENDP];
   vstoreu_v_p_vi(a, vi);
   return _mm256_set_pd(ptr[a[3]], ptr[a[2]], ptr[a[1]], ptr[a[0]]);
 }
@@ -484,7 +484,7 @@ static INLINE void vstore_v_p_vf(float *ptr, vfloat v) { _mm256_store_ps(ptr, v)
 static INLINE void vstoreu_v_p_vf(float *ptr, vfloat v) { _mm256_storeu_ps(ptr, v); }
 
 static INLINE vfloat vgather_vf_p_vi2(const float *ptr, vint2 vi2) {
-  int a[8];
+  int a[VECTLENSP];
   vstoreu_v_p_vi2(a, vi2);
   return _mm256_set_ps(ptr[a[7]], ptr[a[6]], ptr[a[5]], ptr[a[4]],
 		       ptr[a[3]], ptr[a[2]], ptr[a[1]], ptr[a[0]]);
