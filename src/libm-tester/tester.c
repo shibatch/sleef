@@ -1,4 +1,4 @@
-//          Copyright Naoki Shibata 2010 - 2017.
+//          Copyright Naoki Shibata 2010 - 2018.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -3520,6 +3520,7 @@ void do_test() {
     fprintf(stderr, "sin : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_sin, child_sin, d, 3.5);
     for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracy_d(mpfr_sin, child_sin, d, 3.5);
+    for(i = 0;i < 920 && success;i++) checkAccuracy_d(mpfr_sin, child_sin, pow(2.1, i), 3.5);
     for(i64=(int64_t)-1e+14;i64<(int64_t)1e+14 && success;i64+=(int64_t)1e+12) {
       double start = u2d(d2u(M_PI_4 * i64)-20), end = u2d(d2u(M_PI_4 * i64)+20);
       for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracy_d(mpfr_sin, child_sin, d, 3.5);
@@ -3531,6 +3532,7 @@ void do_test() {
     fprintf(stderr, "sin_u1 : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_sin, child_sin_u1, d, 1.0);
     for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracy_d(mpfr_sin, child_sin_u1, d, 1.0);
+    for(i = 0;i < 920 && success;i++) checkAccuracy_d(mpfr_sin, child_sin_u1, pow(2.1, i), 1.0);
     for(i64=(int64_t)-1e+14;i64<(int64_t)1e+14 && success;i64+=(int64_t)1e+12) {
       double start = u2d(d2u(M_PI_4 * i64)-20), end = u2d(d2u(M_PI_4 * i64)+20);
       for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracy_d(mpfr_sin, child_sin_u1, d, 1.0);
@@ -3542,6 +3544,7 @@ void do_test() {
     fprintf(stderr, "sin in sincos : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracyX_d(mpfr_sin, child_sincos, d, 3.5);
     for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracyX_d(mpfr_sin, child_sincos, d, 3.5);
+    for(i = 0;i < 920 && success;i++) checkAccuracyX_d(mpfr_sin, child_sincos, pow(2.1, i), 3.5);
     for(i=1;i<10000 && success;i+=31) {
       double start = u2d(d2u(M_PI_4 * i)-20), end = u2d(d2u(M_PI_4 * i)+20);
       for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyX_d(mpfr_sin, child_sincos, d, 3.5);
@@ -3553,6 +3556,7 @@ void do_test() {
     fprintf(stderr, "sin in sincos_u1 : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracyX_d(mpfr_sin, child_sincos_u1, d, 1.0);
     for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracyX_d(mpfr_sin, child_sincos_u1, d, 1.0);
+    for(i = 0;i < 920 && success;i++) checkAccuracyX_d(mpfr_sin, child_sincos_u1, pow(2.1, i), 1.0);
     for(i=1;i<10000 && success;i+=31) {
       double start = u2d(d2u(M_PI_4 * i)-20), end = u2d(d2u(M_PI_4 * i)+20);
       for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyX_d(mpfr_sin, child_sincos_u1, d, 1.0);
@@ -3628,6 +3632,7 @@ void do_test() {
     fprintf(stderr, "cos : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_cos, child_cos, d, 3.5);
     for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracy_d(mpfr_cos, child_cos, d, 3.5);
+    for(i = 0;i < 920 && success;i++) checkAccuracy_d(mpfr_cos, child_cos, pow(2.1, i), 3.5);
     for(i64=(int64_t)-1e+14;i64<(int64_t)1e+14 && success;i64+=(int64_t)1e+12) {
       double start = u2d(d2u(M_PI_4 * i64)-20), end = u2d(d2u(M_PI_4 * i64)+20);
       for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracy_d(mpfr_cos, child_cos, d, 3.5);
@@ -3639,6 +3644,7 @@ void do_test() {
     fprintf(stderr, "cos_u1 : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_cos, child_cos_u1, d, 1.0);
     for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracy_d(mpfr_cos, child_cos_u1, d, 1.0);
+    for(i = 0;i < 920 && success;i++) checkAccuracy_d(mpfr_cos, child_cos_u1, pow(2.1, i), 1.0);
     for(i64=(int64_t)-1e+14;i64<(int64_t)1e+14 && success;i64+=(int64_t)1e+12) {
       double start = u2d(d2u(M_PI_4 * i64)-20), end = u2d(d2u(M_PI_4 * i64)+20);
       for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracy_d(mpfr_cos, child_cos_u1, d, 1.0);
@@ -3650,6 +3656,7 @@ void do_test() {
     fprintf(stderr, "cos in sincos : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracyY_d(mpfr_cos, child_sincos, d, 3.5);
     for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracyY_d(mpfr_cos, child_sincos, d, 3.5);
+    for(i = 0;i < 920 && success;i++) checkAccuracyY_d(mpfr_cos, child_sincos, pow(2.1, i), 3.5);
     for(i=1;i<10000 && success;i+=31) {
       double start = u2d(d2u(M_PI_4 * i)-20), end = u2d(d2u(M_PI_4 * i)+20);
       for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyY_d(mpfr_cos, child_sincos, d, 3.5);
@@ -3661,6 +3668,7 @@ void do_test() {
     fprintf(stderr, "cos in sincos_u1 : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracyY_d(mpfr_cos, child_sincos_u1, d, 1.0);
     for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracyY_d(mpfr_cos, child_sincos_u1, d, 1.0);
+    for(i = 0;i < 920 && success;i++) checkAccuracyY_d(mpfr_cos, child_sincos_u1, pow(2.1, i), 1.0);
     for(i=1;i<10000 && success;i+=31) {
       double start = u2d(d2u(M_PI_4 * i)-20), end = u2d(d2u(M_PI_4 * i)+20);
       for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyY_d(mpfr_cos, child_sincos_u1, d, 1.0);
@@ -3706,7 +3714,8 @@ void do_test() {
     fprintf(stderr, "tan : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_tan, child_tan, d, 3.5);
     for(d = -1e+7;d < 1e+7 && success;d += 1000.1) checkAccuracy_d(mpfr_tan, child_tan, d, 3.5);
-    for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracy_d(mpfr_tan, child_tan, d, 5);
+    for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracy_d(mpfr_tan, child_tan, d, 3.5);
+    for(i = 0;i < 920 && success;i++) checkAccuracy_d(mpfr_tan, child_tan, pow(2.1, i), 3.5);
     for(i=1;i<10000 && success;i+=31) {
       double start = u2d(d2u(M_PI_4 * i)-20), end = u2d(d2u(M_PI_4 * i)+20);
       for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracy_d(mpfr_tan, child_tan, d, 3.5);
@@ -3719,6 +3728,7 @@ void do_test() {
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_tan, child_tan_u1, d, 1.0);
     for(d = -1e+7;d < 1e+7 && success;d += 1000.1) checkAccuracy_d(mpfr_tan, child_tan_u1, d, 1.0);
     for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracy_d(mpfr_tan, child_tan_u1, d, 1.0);
+    for(i = 0;i < 920 && success;i++) checkAccuracy_d(mpfr_tan, child_tan_u1, pow(2.1, i), 1.0);
     for(i=1;i<10000 && success;i+=31) {
       double start = u2d(d2u(M_PI_4 * i)-20), end = u2d(d2u(M_PI_4 * i)+20);
       for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracy_d(mpfr_tan, child_tan_u1, d, 1.0);
@@ -4256,6 +4266,7 @@ void do_test() {
     fprintf(stderr, "sinf : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_sin, child_sinf, d, 3.5);
     for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_sin, child_sinf, d, 3.5);
+    for(i = 0;i < 1000 && success;i++) checkAccuracy_f(mpfr_sin, child_sinf, pow(1.06, i), 3.5);
     for(i64=(int64_t)-1000;i64<(int64_t)1000 && success;i64+=(int64_t)1) {
       double start = u2f(f2u(M_PI_4 * i64)-20), end = u2f(f2u(M_PI_4 * i64)+20);
       for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracy_f(mpfr_sin, child_sinf, d, 3.5);
@@ -4267,6 +4278,7 @@ void do_test() {
     fprintf(stderr, "sinf_u1 : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_sin, child_sinf_u1, d, 1.0);
     for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_sin, child_sinf_u1, d, 1.0);
+    for(i = 0;i < 1000 && success;i++) checkAccuracy_f(mpfr_sin, child_sinf_u1, pow(1.06, i), 1.0);
     for(i64=(int64_t)-1000;i64<(int64_t)1000 && success;i64+=(int64_t)1) {
       double start = u2f(f2u(M_PI_4 * i64)-20), end = u2f(f2u(M_PI_4 * i64)+20);
       for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracy_f(mpfr_sin, child_sinf_u1, d, 1.0);
@@ -4278,6 +4290,7 @@ void do_test() {
     fprintf(stderr, "sin in sincosf : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracyX_f(mpfr_sin, child_sincosf, d, 3.5);
     for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracyX_f(mpfr_sin, child_sincosf, d, 3.5);
+    for(i = 0;i < 1000 && success;i++) checkAccuracyX_f(mpfr_sin, child_sincosf, pow(1.06, i), 3.5);
     for(i=1;i<10000 && success;i+=31) {
       double start = u2f(f2u(M_PI_4 * i)-20), end = u2f(f2u(M_PI_4 * i)+20);
       for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyX_f(mpfr_sin, child_sincosf, d, 3.5);
@@ -4289,6 +4302,7 @@ void do_test() {
     fprintf(stderr, "sin in sincosf_u1 : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracyX_f(mpfr_sin, child_sincosf_u1, d, 1.0);
     for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracyX_f(mpfr_sin, child_sincosf_u1, d, 1.0);
+    for(i = 0;i < 1000 && success;i++) checkAccuracyX_f(mpfr_sin, child_sincosf_u1, pow(1.06, i), 1.0);
     for(i=1;i<10000 && success;i+=31) {
       double start = u2f(f2u(M_PI_4 * i)-20), end = u2f(f2u(M_PI_4 * i)+20);
       for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyX_f(mpfr_sin, child_sincosf_u1, d, 1.0);
@@ -4364,6 +4378,7 @@ void do_test() {
     fprintf(stderr, "cosf : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_cos, child_cosf, d, 3.5);
     for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_cos, child_cosf, d, 3.5);
+    for(i = 0;i < 1000 && success;i++) checkAccuracy_f(mpfr_cos, child_cosf, pow(1.06, i), 3.5);
     for(i64=(int64_t)-1000;i64<(int64_t)1000 && success;i64+=(int64_t)1) {
       double start = u2f(f2u(M_PI_4 * i64)-20), end = u2f(f2u(M_PI_4 * i64)+20);
       for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracy_f(mpfr_cos, child_cosf, d, 3.5);
@@ -4375,6 +4390,7 @@ void do_test() {
     fprintf(stderr, "cosf_u1 : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_cos, child_cosf_u1, d, 1.0);
     for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_cos, child_cosf_u1, d, 1.0);
+    for(i = 0;i < 1000 && success;i++) checkAccuracy_f(mpfr_cos, child_cosf_u1, pow(1.06, i), 1.0);
     for(i64=(int64_t)-1000;i64<(int64_t)1000 && success;i64+=(int64_t)1) {
       double start = u2f(f2u(M_PI_4 * i64)-20), end = u2f(f2u(M_PI_4 * i64)+20);
       for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracy_f(mpfr_cos, child_cosf_u1, d, 1.0);
@@ -4386,6 +4402,7 @@ void do_test() {
     fprintf(stderr, "cos in sincosf : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracyY_f(mpfr_cos, child_sincosf, d, 3.5);
     for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracyY_f(mpfr_cos, child_sincosf, d, 3.5);
+    for(i = 0;i < 1000 && success;i++) checkAccuracyY_f(mpfr_cos, child_sincosf, pow(1.06, i), 3.5);
     for(i=1;i<10000 && success;i+=31) {
       double start = u2f(f2u(M_PI_4 * i)-20), end = u2f(f2u(M_PI_4 * i)+20);
       for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyY_f(mpfr_cos, child_sincosf, d, 3.5);
@@ -4397,6 +4414,7 @@ void do_test() {
     fprintf(stderr, "cos in sincosf_u1 : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracyY_f(mpfr_cos, child_sincosf_u1, d, 1.0);
     for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracyY_f(mpfr_cos, child_sincosf_u1, d, 1.0);
+    for(i = 0;i < 1000 && success;i++) checkAccuracyY_f(mpfr_cos, child_sincosf_u1, pow(1.06, i), 1.0);
     for(i=1;i<10000 && success;i+=31) {
       double start = u2f(f2u(M_PI_4 * i)-20), end = u2f(f2u(M_PI_4 * i)+20);
       for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyY_f(mpfr_cos, child_sincosf_u1, d, 1.0);
@@ -4442,6 +4460,7 @@ void do_test() {
     fprintf(stderr, "tanf : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_tan, child_tanf, d, 3.5);
     for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_tan, child_tanf, d, 3.5);
+    for(i = 0;i < 1000 && success;i++) checkAccuracy_f(mpfr_tan, child_tanf, pow(1.06, i), 3.5);
     for(i=1;i<10000 && success;i+=31) {
       double start = u2f(f2u(M_PI_4 * i)-20), end = u2f(f2u(M_PI_4 * i)+20);
       for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracy_f(mpfr_tan, child_tanf, d, 3.5);
@@ -4453,6 +4472,7 @@ void do_test() {
     fprintf(stderr, "tanf_u1 : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_tan, child_tanf_u1, d, 1.0);
     for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_tan, child_tanf_u1, d, 1.0);
+    for(i = 0;i < 1000 && success;i++) checkAccuracy_f(mpfr_tan, child_tanf_u1, pow(1.06, i), 1.0);
     for(i=1;i<10000 && success;i+=31) {
       double start = u2f(f2u(M_PI_4 * i)-20), end = u2f(f2u(M_PI_4 * i)+20);
       for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracy_f(mpfr_tan, child_tanf_u1, d, 1.0);

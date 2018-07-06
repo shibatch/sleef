@@ -1,4 +1,4 @@
-//          Copyright Naoki Shibata 2010 - 2017.
+//          Copyright Naoki Shibata 2010 - 2018.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -109,7 +109,7 @@ int main(int argc,char **argv)
   
   srandom(time(NULL));
 
-  const double rangemax = 1e+14; // 2^(24*2-1)
+  const double rangemax = 1e+299;
   
   for(cnt = 0;ecnt < 1000;cnt++) {
     switch(cnt & 7) {
@@ -120,7 +120,7 @@ int main(int argc,char **argv)
       zo = rnd();
       break;
     case 1:
-      cd.d = rint((2 * (double)random() / RAND_MAX - 1) * 1e+10) * M_PI_4;
+      cd.d = rint(rnd_zo() * 1e+10) * M_PI_4;
       cd.i64 += (random() & 0xff) - 0x7f;
       d = cd.d;
       d2 = rnd();
@@ -128,7 +128,7 @@ int main(int argc,char **argv)
       zo = rnd();
       break;
     case 2:
-      cd.d = rint((2 * (double)random() / RAND_MAX - 1) * 32) * M_PI_4;
+      cd.d = rint(rnd_zo() * 32) * M_PI_4;
       cd.i64 += (random() & 0xff) - 0x7f;
       d = cd.d;
       d2 = rnd();
@@ -213,7 +213,7 @@ int main(int argc,char **argv)
       
       if (u0 != 0 && ((fabs(d) <= rangemax && u0 > 3.5) || fabs(t) > 1 || !isnumber(t))) {
 	printf("Pure C sin arg=%.20g ulp=%.20g\n", d, u0);
-	printf("correct = %g, test = %g\n", mpfr_get_d(frx, GMP_RNDN), t);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
 	fflush(stdout); ecnt++;
       }
 
@@ -221,6 +221,7 @@ int main(int argc,char **argv)
       
       if (u1 != 0 && ((fabs(d) <= rangemax && u1 > 3.5) || fabs(t) > 1 || !isnumber(t))) {
 	printf("Pure C sincos sin arg=%.20g ulp=%.20g\n", d, u1);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
 	fflush(stdout); ecnt++;
       }
 
@@ -228,6 +229,7 @@ int main(int argc,char **argv)
       
       if (u2 != 0 && ((fabs(d) <= rangemax && u2 > 1) || fabs(t) > 1 || !isnumber(t))) {
 	printf("Pure C sin_u1 arg=%.20g ulp=%.20g\n", d, u2);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
 	fflush(stdout); ecnt++;
       }
 
@@ -235,6 +237,7 @@ int main(int argc,char **argv)
       
       if (u3 != 0 && ((fabs(d) <= rangemax && u3 > 1) || fabs(t) > 1 || !isnumber(t))) {
 	printf("Pure C sincos_u1 sin arg=%.20g ulp=%.20g\n", d, u3);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
 	fflush(stdout); ecnt++;
       }
     }
@@ -278,7 +281,7 @@ int main(int argc,char **argv)
 
       double u0 = countULPdp(t = xtan(d), frx);
       
-      if (u0 != 0 && ((fabs(d) < 1e+7 && u0 > 3.5) || (fabs(d) <= rangemax && u0 > 5) || isnan(t))) {
+      if (u0 != 0 && ((fabs(d) <= rangemax && u0 > 3.5) || isnan(t))) {
 	printf("Pure C tan arg=%.20g ulp=%.20g\n", d, u0);
 	fflush(stdout); ecnt++;
       }
@@ -290,7 +293,7 @@ int main(int argc,char **argv)
 	fflush(stdout); ecnt++;
       }
     }
-    
+
     {
       mpfr_set_d(frx, fabs(d), GMP_RNDN);
       mpfr_log(frx, frx, GMP_RNDN);
@@ -378,7 +381,7 @@ int main(int argc,char **argv)
 
       double u0 = countULPdp(t = xexp10(d), frx);
       
-      if (u0 > 1) {
+      if (u0 > 1.09) {
 	printf("Pure C exp10 arg=%.20g ulp=%.20g\n", d, u0);
 	fflush(stdout); ecnt++;
       }

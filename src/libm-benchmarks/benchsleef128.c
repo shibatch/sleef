@@ -63,6 +63,18 @@ void benchSleef128_DPTrig() {
   callFuncSLEEF1_1(Sleef_cosd2_u35   , "cos, DP, 128", 0, 1e+6, 4.0, abufdp, vdouble);
   callFuncSLEEF1_1(Sleef_tand2_u35   , "tan, DP, 128", 0, 1e+6, 4.0, abufdp, vdouble);
   callFuncSLEEF1_1(Sleef_sincosd2_u35, "sincos, DP, 128", 0, 1e+6, 4.0, abufdp, vdouble);
+
+  fillDP(abufdp, 0, 1e+100);
+  
+  callFuncSLEEF1_1(Sleef_sind2_u10   , "sin, DP, 128", 0, 1e+100, 1.0, abufdp, vdouble);
+  callFuncSLEEF1_1(Sleef_cosd2_u10   , "cos, DP, 128", 0, 1e+100, 1.0, abufdp, vdouble);
+  callFuncSLEEF1_1(Sleef_tand2_u10   , "tan, DP, 128", 0, 1e+100, 1.0, abufdp, vdouble);
+  callFuncSLEEF1_1(Sleef_sincosd2_u10, "sincos, DP, 128", 0, 1e+100, 1.0, abufdp, vdouble);
+
+  callFuncSLEEF1_1(Sleef_sind2_u35   , "sin, DP, 128", 0, 1e+100, 4.0, abufdp, vdouble);
+  callFuncSLEEF1_1(Sleef_cosd2_u35   , "cos, DP, 128", 0, 1e+100, 4.0, abufdp, vdouble);
+  callFuncSLEEF1_1(Sleef_tand2_u35   , "tan, DP, 128", 0, 1e+100, 4.0, abufdp, vdouble);
+  callFuncSLEEF1_1(Sleef_sincosd2_u35, "sincos, DP, 128", 0, 1e+100, 4.0, abufdp, vdouble);
 }
   
 void benchSleef128_DPNontrig() {
@@ -113,17 +125,17 @@ void benchSleef128_SPTrig() {
   callFuncSLEEF1_1(Sleef_tanf4_u35   , "tan, SP, 128", 0, 6.28, 4.0, abufsp, vfloat);
   callFuncSLEEF1_1(Sleef_sincosf4_u35, "sincos, SP, 128", 0, 6.28, 4.0, abufsp, vfloat);
 
-  fillSP(abufsp, 0, 3e+4);
+  fillSP(abufsp, 0, 1e+20);
   
-  callFuncSLEEF1_1(Sleef_sinf4_u10   , "sin, SP, 128", 0, 3e+4, 1.0, abufsp, vfloat);
-  callFuncSLEEF1_1(Sleef_cosf4_u10   , "cos, SP, 128", 0, 3e+4, 1.0, abufsp, vfloat);
-  callFuncSLEEF1_1(Sleef_tanf4_u10   , "tan, SP, 128", 0, 3e+4, 1.0, abufsp, vfloat);
-  callFuncSLEEF1_1(Sleef_sincosf4_u10, "sincos, SP, 128", 0, 3e+4, 1.0, abufsp, vfloat);
+  callFuncSLEEF1_1(Sleef_sinf4_u10   , "sin, SP, 128", 0, 1e+20, 1.0, abufsp, vfloat);
+  callFuncSLEEF1_1(Sleef_cosf4_u10   , "cos, SP, 128", 0, 1e+20, 1.0, abufsp, vfloat);
+  callFuncSLEEF1_1(Sleef_tanf4_u10   , "tan, SP, 128", 0, 1e+20, 1.0, abufsp, vfloat);
+  callFuncSLEEF1_1(Sleef_sincosf4_u10, "sincos, SP, 128", 0, 1e+20, 1.0, abufsp, vfloat);
 
-  callFuncSLEEF1_1(Sleef_sinf4_u35   , "sin, SP, 128", 0, 3e+4, 4.0, abufsp, vfloat);
-  callFuncSLEEF1_1(Sleef_cosf4_u35   , "cos, SP, 128", 0, 3e+4, 4.0, abufsp, vfloat);
-  callFuncSLEEF1_1(Sleef_tanf4_u35   , "tan, SP, 128", 0, 3e+4, 4.0, abufsp, vfloat);
-  callFuncSLEEF1_1(Sleef_sincosf4_u35, "sincos, SP, 128", 0, 3e+4, 4.0, abufsp, vfloat);
+  callFuncSLEEF1_1(Sleef_sinf4_u35   , "sin, SP, 128", 0, 1e+20, 4.0, abufsp, vfloat);
+  callFuncSLEEF1_1(Sleef_cosf4_u35   , "cos, SP, 128", 0, 1e+20, 4.0, abufsp, vfloat);
+  callFuncSLEEF1_1(Sleef_tanf4_u35   , "tan, SP, 128", 0, 1e+20, 4.0, abufsp, vfloat);
+  callFuncSLEEF1_1(Sleef_sincosf4_u35, "sincos, SP, 128", 0, 1e+20, 4.0, abufsp, vfloat);
 }
 
 void benchSleef128_SPNontrig() {

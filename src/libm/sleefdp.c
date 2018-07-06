@@ -1,4 +1,4 @@
-//          Copyright Naoki Shibata 2010 - 2017.
+//          Copyright Naoki Shibata 2010 - 2018.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -19,6 +19,8 @@
 #endif
 
 #include "misc.h"
+
+extern const double rempitabdp[];
 
 #ifdef DORENAME
 #include "rename.h"
@@ -714,20 +716,88 @@ EXPORT CONST double xatan_u1(double d) {
   return mulsign(r, d);
 }
 
+typedef struct {
+  double d;
+  int32_t i;
+} di_t;
+
+typedef struct {
+  Sleef_double2 dd;
+  int32_t i;
+} ddi_t;
+
+static CONST di_t rempisub(double x) {
+  // This function is equivalent to :
+  // di_t ret = { x - round(4 * x) * 0.25, (int32_t)(round(4 * x) - round(x) * 4) };
+  di_t ret;
+  double fr = x - (double)(1LL << 28) * (int32_t)(x * (1.0 / (1LL << 28)));
+  ret.i = ((7 & ((x > 0 ? 4 : 3) + (int32_t)(fr * 8))) - 3) >> 1;
+  fr = fr - 0.25 * (int32_t)(fr * 4 + mulsign(0.5, x));
+  fr = fabsk(fr) > 0.25 ? (fr - mulsign(0.5, x)) : fr;
+  fr = fabsk(fr) > 1e+10 ? 0 : fr;
+  if (fabsk(x) == 0.12499999999999998612) { fr = x; ret.i = 0; }
+  ret.d = fr;
+  return ret;
+}
+
+// Payne-Hanek like argument reduction
+static CONST ddi_t rempi(double a) {
+  Sleef_double2 x, y, z;
+  di_t di;
+  double t;
+  int ex = ilogb2k(a) - 55, q;
+  if (ex < 0) ex = 0;
+  ex *= 4;
+  x = ddmul_d2_d_d(a, rempitabdp[ex]);
+  di = rempisub(x.x);
+  q = di.i;
+  x.x = di.d;
+  x = ddnormalize_d2_d2(x);
+  y = ddmul_d2_d_d(a, rempitabdp[ex+1]);
+  x = ddadd2_d2_d2_d2(x, y);
+  di = rempisub(x.x);
+  q += di.i;
+  x.x = di.d;
+  x = ddnormalize_d2_d2(x);
+  y = ddmul_d2_d2_d(dd(rempitabdp[ex+2], rempitabdp[ex+3]), a);
+  x = ddadd2_d2_d2_d2(x, y);
+  x = ddnormalize_d2_d2(x);
+  x = ddmul_d2_d2_d2(x, dd(3.141592653589793116*2, 1.2246467991473532072e-16*2));
+  ddi_t ret = { fabsk(a) < 0.7 ? dd(a, 0) : x, q };
+  return ret;
+}
+
 EXPORT CONST double xsin(double d) {
   double u, s, t = d;
+  int ql;
 
-  double dqh = trunck(d * (M_1_PI / (1 << 24))) * (double)(1 << 24);
-  int ql = rintk(mla(d, M_1_PI, -dqh));
+  if (fabsk(d) < TRIGRANGEMAX2) {
+    ql = rintk(d * M_1_PI);
+    d = mla(ql, -PI_A2, d);
+    d = mla(ql, -PI_B2, d);
+  } else if (fabsk(d) < TRIGRANGEMAX) {
+    double dqh = trunck(d * (M_1_PI / (1 << 24))) * (double)(1 << 24);
+    ql = rintk(mla(d, M_1_PI, -dqh));
 
-  d = mla(dqh, -PI_A, d);
-  d = mla( ql, -PI_A, d);
-  d = mla(dqh, -PI_B, d);
-  d = mla( ql, -PI_B, d);
-  d = mla(dqh, -PI_C, d);
-  d = mla( ql, -PI_C, d);
-  d = mla(dqh + ql, -PI_D, d);
-  
+    d = mla(dqh, -PI_A, d);
+    d = mla( ql, -PI_A, d);
+    d = mla(dqh, -PI_B, d);
+    d = mla( ql, -PI_B, d);
+    d = mla(dqh, -PI_C, d);
+    d = mla( ql, -PI_C, d);
+    d = mla(dqh + ql, -PI_D, d);
+  } else {
+    ddi_t ddi = rempi(t);
+    ql = ((ddi.i & 3) * 2 + (ddi.dd.x > 0) + 1) >> 2;
+    if ((ddi.i & 1) != 0) {
+      ddi.dd = ddadd2_d2_d2_d2(ddi.dd, dd(mulsign(3.141592653589793116*-0.5, ddi.dd.x),
+					  mulsign(1.2246467991473532072e-16*-0.5, ddi.dd.x)));
+    }
+    d = ddi.dd.x + ddi.dd.y;
+
+    if (fabsk(t) > 1e+299 && !xisinf(t)) d = 0;
+  }
+
   s = d * d;
 
   if ((ql & 1) != 0) d = -d;
@@ -744,7 +814,7 @@ EXPORT CONST double xsin(double d) {
 
   u = mla(s, u * d, d);
 
-  if (!xisinf(t) && (xisnegzero(t) || fabsk(t) > TRIGRANGEMAX)) u = -0.0;
+  if (xisnegzero(t)) u = t;
 
   return u;
 }
@@ -758,7 +828,7 @@ EXPORT CONST double xsin_u1(double d) {
     ql = rintk(d * M_1_PI);
     u = mla(ql, -PI_A2, d);
     s = ddadd_d2_d_d (u,  ql * -PI_B2);
-  } else {
+  } else if (fabsk(d) < TRIGRANGEMAX) {
     const double dqh = trunck(d * (M_1_PI / (1 << 24))) * (double)(1 << 24);
     ql = rintk(mla(d, M_1_PI, -dqh));
 
@@ -769,6 +839,16 @@ EXPORT CONST double xsin_u1(double d) {
     s = ddadd2_d2_d2_d(s, dqh * -PI_C);
     s = ddadd2_d2_d2_d(s,  ql * -PI_C);
     s = ddadd_d2_d2_d (s, (dqh + ql) * -PI_D);
+  } else {
+    ddi_t ddi = rempi(d);
+    ql = ((ddi.i & 3) * 2 + (ddi.dd.x > 0) + 1) >> 2;
+    if ((ddi.i & 1) != 0) {
+      ddi.dd = ddadd2_d2_d2_d2(ddi.dd, dd(mulsign(3.141592653589793116*-0.5, ddi.dd.x),
+					  mulsign(1.2246467991473532072e-16*-0.5, ddi.dd.x)));
+    }
+    s = ddnormalize_d2_d2(ddi.dd);
+
+    if (fabsk(d) > 1e+299 && !xisinf(d)) s = dd(0, 0);
   }
 
   t = s;
@@ -787,25 +867,42 @@ EXPORT CONST double xsin_u1(double d) {
   u = ddmul_d_d2_d2(t, x);
   
   if ((ql & 1) != 0) u = -u;
-  if (!xisinf(d) && (xisnegzero(d) || fabsk(d) > TRIGRANGEMAX)) u = -0.0;
+  if (xisnegzero(d)) u = d;
   
   return u;
 }
 
 EXPORT CONST double xcos(double d) {
   double u, s, t = d;
+  int ql;
 
-  double dqh = trunck(d * (M_1_PI / (1LL << 23)) - 0.5 * (M_1_PI / (1LL << 23)));
-  int ql = 2*rintk(d * M_1_PI - 0.5 - dqh * (double)(1LL << 23))+1;
-  dqh *= 1 << 24;
+  if (fabsk(d) < TRIGRANGEMAX2) {
+    ql = mla(2, rintk(d * M_1_PI - 0.5), 1);
+    d = mla(ql, -PI_A2*0.5, d);
+    d = mla(ql, -PI_B2*0.5, d);
+  } else if (fabsk(d) < TRIGRANGEMAX) {
+    double dqh = trunck(d * (M_1_PI / (1LL << 23)) - 0.5 * (M_1_PI / (1LL << 23)));
+    ql = 2*rintk(d * M_1_PI - 0.5 - dqh * (double)(1LL << 23))+1;
+    dqh *= 1 << 24;
 
-  d = mla(dqh, -PI_A*0.5, d);
-  d = mla( ql, -PI_A*0.5, d);
-  d = mla(dqh, -PI_B*0.5, d);
-  d = mla( ql, -PI_B*0.5, d);
-  d = mla(dqh, -PI_C*0.5, d);
-  d = mla( ql, -PI_C*0.5, d);
-  d = mla(dqh + ql , -PI_D*0.5, d);
+    d = mla(dqh, -PI_A*0.5, d);
+    d = mla( ql, -PI_A*0.5, d);
+    d = mla(dqh, -PI_B*0.5, d);
+    d = mla( ql, -PI_B*0.5, d);
+    d = mla(dqh, -PI_C*0.5, d);
+    d = mla( ql, -PI_C*0.5, d);
+    d = mla(dqh + ql , -PI_D*0.5, d);
+  } else {
+    ddi_t ddi = rempi(t);
+    ql = ((ddi.i & 3) * 2 + (ddi.dd.x > 0) + 7) >> 1;
+    if ((ddi.i & 1) == 0) {
+      ddi.dd = ddadd2_d2_d2_d2(ddi.dd, dd(mulsign(3.141592653589793116*-0.5, ddi.dd.x > 0 ? 1 : -1),
+					  mulsign(1.2246467991473532072e-16*-0.5, ddi.dd.x > 0 ? 1 : -1)));
+    }
+    d = ddi.dd.x + ddi.dd.y;
+
+    if (!xisinf(t) && fabsk(t) > 1e+299) d = 0;
+  }
   
   s = d * d;
 
@@ -823,8 +920,6 @@ EXPORT CONST double xcos(double d) {
 
   u = mla(s, u * d, d);
 
-  if (!xisinf(t) && fabsk(t) > TRIGRANGEMAX) u = 1.0;
-
   return u;
 }
 
@@ -839,7 +934,7 @@ EXPORT CONST double xcos_u1(double d) {
     ql = mla(2, rintk(d * M_1_PI - 0.5), 1);
     s = ddadd2_d2_d_d(d, ql * (-PI_A2*0.5));
     s = ddadd_d2_d2_d(s, ql * (-PI_B2*0.5));
-  } else {
+  } else if (d < TRIGRANGEMAX) {
     double dqh = trunck(d * (M_1_PI / (1LL << 23)) - 0.5 * (M_1_PI / (1LL << 23)));
     ql = 2*rintk(d * M_1_PI - 0.5 - dqh * (double)(1LL << 23))+1;
     dqh *= 1 << 24;
@@ -851,6 +946,16 @@ EXPORT CONST double xcos_u1(double d) {
     s = ddadd2_d2_d2_d(s, dqh * (-PI_C*0.5));
     s = ddadd2_d2_d2_d(s,  ql * (-PI_C*0.5));
     s = ddadd_d2_d2_d(s, (dqh + ql) * (-PI_D*0.5));
+  } else {
+    ddi_t ddi = rempi(d);
+    ql = ((ddi.i & 3) * 2 + (ddi.dd.x > 0) + 7) >> 1;
+    if ((ddi.i & 1) == 0) {
+      ddi.dd = ddadd2_d2_d2_d2(ddi.dd, dd(mulsign(3.141592653589793116*-0.5, ddi.dd.x > 0 ? 1 : -1),
+					  mulsign(1.2246467991473532072e-16*-0.5, ddi.dd.x > 0 ? 1 : -1)));
+    }
+    s = ddnormalize_d2_d2(ddi.dd);
+
+    if (!xisinf(d) && d > 1e+299) s = dd(0, 0);
   }
   
   t = s;
@@ -869,7 +974,6 @@ EXPORT CONST double xcos_u1(double d) {
   u = ddmul_d_d2_d2(t, x);
   
   if ((((int)ql) & 2) == 0) u = -u;
-  if (!xisinf(d) && d > TRIGRANGEMAX) u = 1.0;
 
   return u;
 }
@@ -877,20 +981,34 @@ EXPORT CONST double xcos_u1(double d) {
 EXPORT CONST Sleef_double2 xsincos(double d) {
   double u, s, t;
   Sleef_double2 r;
+  int ql;
 
   s = d;
 
-  double dqh = trunck(d * ((2 * M_1_PI) / (1 << 24))) * (double)(1 << 24);
-  int ql = rintk(d * (2 * M_1_PI) - dqh);
+  if (fabsk(d) < TRIGRANGEMAX2) {
+    ql = rintk(s * (2 * M_1_PI));
+    s = mla(ql, -PI_A2*0.5, s);
+    s = mla(ql, -PI_B2*0.5, s);
+  } else if (fabsk(d) < TRIGRANGEMAX) {
+    double dqh = trunck(d * ((2 * M_1_PI) / (1 << 24))) * (double)(1 << 24);
+    ql = rintk(d * (2 * M_1_PI) - dqh);
 
-  s = mla(dqh, -PI_A * 0.5, s);
-  s = mla( ql, -PI_A * 0.5, s);
-  s = mla(dqh, -PI_B * 0.5, s);
-  s = mla( ql, -PI_B * 0.5, s);
-  s = mla(dqh, -PI_C * 0.5, s);
-  s = mla( ql, -PI_C * 0.5, s);
-  s = mla(dqh + ql, -PI_D * 0.5, s);
-  
+    s = mla(dqh, -PI_A * 0.5, s);
+    s = mla( ql, -PI_A * 0.5, s);
+    s = mla(dqh, -PI_B * 0.5, s);
+    s = mla( ql, -PI_B * 0.5, s);
+    s = mla(dqh, -PI_C * 0.5, s);
+    s = mla( ql, -PI_C * 0.5, s);
+    s = mla(dqh + ql, -PI_D * 0.5, s);
+  } else {
+    ddi_t ddi = rempi(d);
+    ql = ddi.i;
+    s = ddi.dd.x + ddi.dd.y;
+
+    if (fabsk(d) > 1e+299) s = 0;
+    if (xisinf(d)) s = SLEEF_NAN;
+  }  
+
   t = s;
 
   s = s * s;
@@ -921,9 +1039,6 @@ EXPORT CONST Sleef_double2 xsincos(double d) {
   if ((ql & 2) != 0) { r.x = -r.x; }
   if (((ql+1) & 2) != 0) { r.y = -r.y; }
 
-  if (fabsk(d) > TRIGRANGEMAX) { r.x = 0; r.y = 1; }
-  if (xisinf(d)) { r.x = r.y = SLEEF_NAN; }
-
   return r;
 }
 
@@ -936,7 +1051,7 @@ EXPORT CONST Sleef_double2 xsincos_u1(double d) {
     ql = rintk(d * (2 * M_1_PI));
     u = mla(ql, -PI_A2*0.5, d);
     s = ddadd_d2_d_d (u,  ql * (-PI_B2*0.5));
-  } else {
+  } else if (fabsk(d) < TRIGRANGEMAX) {
     const double dqh = trunck(d * ((2 * M_1_PI) / (1 << 24))) * (double)(1 << 24);
     ql = rintk(d * (2 * M_1_PI) - dqh);
 
@@ -947,6 +1062,13 @@ EXPORT CONST Sleef_double2 xsincos_u1(double d) {
     s = ddadd2_d2_d2_d(s, dqh * (-PI_C*0.5));
     s = ddadd2_d2_d2_d(s, ql * (-PI_C*0.5));
     s = ddadd_d2_d2_d(s, (dqh + ql) * (-PI_D*0.5));
+  } else {
+    ddi_t ddi = rempi(d);
+    ql = ddi.i;
+    s = ddi.dd;
+
+    if (fabsk(d) > 1e+299) s = dd(0, 0);
+    if (xisinf(d)) s = dd(SLEEF_NAN, SLEEF_NAN);
   }
   
   t = s;
@@ -981,9 +1103,6 @@ EXPORT CONST Sleef_double2 xsincos_u1(double d) {
   if ((ql & 1) != 0) { u = r.y; r.y = r.x; r.x = u; }
   if ((ql & 2) != 0) { r.x = -r.x; }
   if (((ql+1) & 2) != 0) { r.y = -r.y; }
-
-  if (fabsk(d) > TRIGRANGEMAX) { r.x = 0; r.y = 1; }
-  if (xisinf(d)) { r.x = r.y = SLEEF_NAN; }
 
   return r;
 }
@@ -1185,17 +1304,29 @@ EXPORT CONST double xcospi_u05(double d) {
 
 EXPORT CONST double xtan(double d) {
   double u, s, x;
+  int ql;
 
-  double dqh = trunck(d * ((2 * M_1_PI) / (1 << 24))) * (double)(1 << 24);
-  int ql = rintk(d * (2 * M_1_PI) - dqh);
+  if (fabsk(d) < TRIGRANGEMAX2) {
+    ql = rintk(d * (2 * M_1_PI));
+    x = mla(ql, -PI_A2*0.5, d);
+    x = mla(ql, -PI_B2*0.5, x);
+  } else if (fabsk(d) < 1e+7) {
+    double dqh = trunck(d * ((2 * M_1_PI) / (1 << 24))) * (double)(1 << 24);
+    ql = rintk(d * (2 * M_1_PI) - dqh);
 
-  x = mla(dqh, -PI_A * 0.5, d);
-  x = mla( ql, -PI_A * 0.5, x);
-  x = mla(dqh, -PI_B * 0.5, x);
-  x = mla( ql, -PI_B * 0.5, x);
-  x = mla(dqh, -PI_C * 0.5, x);
-  x = mla( ql, -PI_C * 0.5, x);
-  x = mla(dqh + ql, -PI_D * 0.5, x);
+    x = mla(dqh, -PI_A * 0.5, d);
+    x = mla( ql, -PI_A * 0.5, x);
+    x = mla(dqh, -PI_B * 0.5, x);
+    x = mla( ql, -PI_B * 0.5, x);
+    x = mla(dqh, -PI_C * 0.5, x);
+    x = mla( ql, -PI_C * 0.5, x);
+    x = mla(dqh + ql, -PI_D * 0.5, x);
+  } else {
+    ddi_t ddi = rempi(d);
+    ql = ddi.i;
+    x = ddi.dd.x + ddi.dd.y;
+    if (xisinf(d)) x = SLEEF_NAN;
+  }
   
   s = x * x;
 
@@ -1222,8 +1353,6 @@ EXPORT CONST double xtan(double d) {
 
   if ((ql & 1) != 0) u = 1.0 / u;
 
-  if (xisinf(d)) u = SLEEF_NAN;
-
   return u;
 }
 
@@ -1236,7 +1365,7 @@ EXPORT CONST double xtan_u1(double d) {
     ql = rintk(d * (2 * M_1_PI));
     u = mla(ql, -PI_A2*0.5, d);
     s = ddadd_d2_d_d(u,  ql * (-PI_B2*0.5));
-  } else {
+  } else if (fabsk(d) < TRIGRANGEMAX) {
     const double dqh = trunck(d * (M_2_PI / (1 << 24))) * (double)(1 << 24);
     s = ddadd2_d2_d2_d(ddmul_d2_d2_d(dd(M_2_PI_H, M_2_PI_L), d), (d < 0 ? -0.5 : 0.5) - dqh);
     ql = s.x + s.y;
@@ -1248,6 +1377,12 @@ EXPORT CONST double xtan_u1(double d) {
     s = ddadd2_d2_d2_d(s, dqh * (-PI_C*0.5));
     s = ddadd2_d2_d2_d(s,  ql * (-PI_C*0.5));
     s = ddadd_d2_d2_d(s, (dqh + ql) * (-PI_D*0.5));
+  } else {
+    ddi_t ddi = rempi(d);
+    ql = ddi.i;
+    s = ddi.dd;
+
+    if (xisinf(d)) s = dd(SLEEF_NAN, SLEEF_NAN);
   }
   
   if ((ql & 1) != 0) s = ddneg_d2_d2(s);
@@ -1277,7 +1412,7 @@ EXPORT CONST double xtan_u1(double d) {
 
   u = x.x + x.y;
 
-  if (!xisinf(d) && (xisnegzero(d) || fabsk(d) > TRIGRANGEMAX)) u = -0.0;
+  if (xisnegzero(d)) u = d;
   
   return u;
 }
@@ -1932,7 +2067,7 @@ EXPORT CONST double xfma(double x, double y, double z) {
     z *= c2;
     q = 1.0 / c2;
   }
-  if (fabsk(h2) > 1e+300) {
+  if (fabsk(h2) > 1e+299) {
     const double c0 = 1ULL << 54, c1 = c0 * c0, c2 = c1 * c1;
     x *= 1.0 / c1;
     y *= 1.0 / c1;

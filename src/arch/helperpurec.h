@@ -304,6 +304,12 @@ static INLINE double vcast_d_vd(vdouble v) { return v.d[0]; }
 static INLINE vdouble vload_vd_p(const double *ptr) { return *(vdouble *)ptr; }
 static INLINE vdouble vloadu_vd_p(const double *ptr) { vdouble vd; for(int i=0;i<VECTLENDP;i++) vd.d[i] = ptr[i]; return vd; }
 
+static INLINE vdouble vgather_vd_p_vi(const double *ptr, vint vi) {
+  vdouble vd;
+  for(int i=0;i<VECTLENDP;i++) vd.d[i] = ptr[vi.i[i]];
+  return vd;
+}
+
 static INLINE void vstore_v_p_vd(double *ptr, vdouble v) { *(vdouble *)ptr = v; }
 static INLINE void vstoreu_v_p_vd(double *ptr, vdouble v) { for(int i=0;i<VECTLENDP;i++) ptr[i] = v.d[i]; }
 static INLINE void vstream_v_p_vd(double *ptr, vdouble v) { *(vdouble *)ptr = v; }
@@ -415,6 +421,12 @@ static INLINE vfloat vload_vf_p(const float *ptr) { return *(vfloat *)ptr; }
 static INLINE vfloat vloadu_vf_p(const float *ptr) {
   vfloat vf;
   for(int i=0;i<VECTLENSP;i++) vf.f[i] = ptr[i];
+  return vf;
+}
+
+static INLINE vfloat vgather_vf_p_vi2(const float *ptr, vint2 vi2) {
+  vfloat vf;
+  for(int i=0;i<VECTLENSP;i++) vf.f[i] = ptr[vi2.i[i]];
   return vf;
 }
 

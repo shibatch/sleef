@@ -57,14 +57,14 @@
   bits. So, the maximum argument that could be correctly reduced
   should be 2^(28*2-1) PI = 1.1e+17. However, due to internal
   double precision calculation, the actual maximum argument that can
-  be correctly reduced is around 2^50 = 1.1e+15.
+  be correctly reduced is around 2^47.
  */
 
 #define PI_A 3.1415926218032836914
 #define PI_B 3.1786509424591713469e-08
 #define PI_C 1.2246467864107188502e-16
 #define PI_D 1.2736634327021899816e-24
-#define TRIGRANGEMAX 1e+15
+#define TRIGRANGEMAX 1e+14
 
 /*
   PI_A2 and PI_B2 are constants that satisfy the following two conditions.
@@ -108,21 +108,12 @@
 #define PI_Bf 0.0009670257568359375f
 #define PI_Cf 6.2771141529083251953e-07f
 #define PI_Df 1.2154201256553420762e-10f
-#define PI_XDf 1.2141754268668591976e-10f
-#define PI_XEf 1.2446743939339977025e-13f
-#define TRIGRANGEMAXf 1e+7 // 39000
+#define TRIGRANGEMAXf 39000
 
 #define PI_A2f 3.1414794921875f
 #define PI_B2f 0.00011315941810607910156f
 #define PI_C2f 1.9841872589410058936e-09f
 #define TRIGRANGEMAX2f 125.0f
-
-#define PI_A3f 3.14154052734375f
-#define PI_B3f 5.212612450122833252e-05f
-#define PI_C3f 1.2154188766544393729e-10f
-#define PI_D3f 1.2246402351402674302e-16f
-#define PI_E3f 6.5640073364868052239e-22f
-#define TRIGRANGEMAX3f 5e+9f
 
 #define TRIGRANGEMAX4f 8e+6f
 
@@ -183,8 +174,17 @@ typedef struct {
 
 #if defined (__GNUC__) || defined (__clang__) || defined(__INTEL_COMPILER)
 
-#define INLINE __attribute__((always_inline))
+#define LIKELY(condition) __builtin_expect(!!(condition), 1)
+#define UNLIKELY(condition) __builtin_expect(!!(condition), 0)
 #define RESTRICT __restrict__
+
+#ifndef __ARM_FEATURE_SVE
+#define INLINE __attribute__((always_inline))
+#else
+// This is a workaround of a bug in armclang
+#define INLINE
+#endif
+
 #ifndef __arm__
 #define ALIGNED(x) __attribute__((aligned(x)))
 #else
@@ -200,11 +200,14 @@ typedef struct {
 #if defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__)
 #ifndef SLEEF_STATIC_LIBS
 #define EXPORT __stdcall __declspec(dllexport)
+#define NOEXPORT
 #else // #ifndef SLEEF_STATIC_LIBS
 #define EXPORT
+#define NOEXPORT
 #endif // #ifndef SLEEF_STATIC_LIBS
 #else // #if defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__)
 #define EXPORT __attribute__((visibility("default")))
+#define NOEXPORT __attribute__ ((visibility ("hidden")))
 #endif // #if defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__)
 
 #define SLEEF_NAN __builtin_nan("")
@@ -228,11 +231,15 @@ typedef struct {
 #define CONST
 #define RESTRICT
 #define ALIGNED(x)
+#define LIKELY(condition) (condition)
+#define UNLIKELY(condition) (condition)
 
 #ifndef SLEEF_STATIC_LIBS
 #define EXPORT __declspec(dllexport)
+#define NOEXPORT
 #else
 #define EXPORT
+#define NOEXPORT
 #endif
 
 #if (defined(__GNUC__) || defined(__CLANG__)) && (defined(__i386__) || defined(__x86_64__))

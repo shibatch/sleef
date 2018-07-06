@@ -228,6 +228,8 @@ static INLINE vdouble vloadu_vd_p(const double *ptr) { return _mm_loadu_pd(ptr);
 static INLINE void vstore_v_p_vd(double *ptr, vdouble v) { _mm_store_pd(ptr, v); }
 static INLINE void vstoreu_v_p_vd(double *ptr, vdouble v) { _mm_storeu_pd(ptr, v); }
 
+static INLINE vdouble vgather_vd_p_vi(const double *ptr, vint vi) { return _mm_i32gather_pd(ptr, vi, 8); }
+
 #if defined(_MSC_VER)
 // This function is needed when debugging on MSVC.
 static INLINE double vcast_d_vd(vdouble v) {
@@ -329,6 +331,8 @@ static INLINE vfloat vloadu_vf_p(const float *ptr) { return _mm_loadu_ps(ptr); }
 
 static INLINE void vstore_v_p_vf(float *ptr, vfloat v) { _mm_store_ps(ptr, v); }
 static INLINE void vstoreu_v_p_vf(float *ptr, vfloat v) { _mm_storeu_ps(ptr, v); }
+
+static INLINE vfloat vgather_vf_p_vi2(const float *ptr, vint2 vi2) { return _mm_i32gather_ps(ptr, vi2, 4); }
 
 #ifdef _MSC_VER
 // This function is needed when debugging on MSVC.
