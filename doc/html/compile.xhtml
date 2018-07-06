@@ -3,15 +3,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<meta name="viewport" content="width=1024" />
+<meta name="viewport" content="width=device-width, initial-scale=0.4"/>
 <meta name="google" content="notranslate" />
-<link rel="canonical" href="http://sleef.org/compile.xhtml" />
+<link rel="canonical" href="https://sleef.org/compile.xhtml" />
 <link rel="icon" href="favicon.png" />
 <link rel="stylesheet" type="text/css" href="texlike.css"/>
 <link rel="stylesheet" type="text/css" href="sleef.css"/>
 <title>SLEEF Documentation</title>
 </head>
-<body>
+<body translate="no" class="notranslate">
 <h1>SLEEF Documentation - Compiling and installing the library</h1>
 
 <h2>Table of contents</h2>
@@ -25,6 +25,7 @@
       <li><a href="compile.xhtml#linux">Compiling and installing library on Linux</a></li>
       <li><a href="compile.xhtml#MSVC">Compiling library with Microsoft Visual C++</a></li>
       <li><a href="compile.xhtml#hello">Compiling and running "Hello SLEEF"</a></li>
+      <li><a href="compile.xhtml#import">Importing SLEEF into your project</a></li>
     </ul>
   <li>&nbsp;</li>
   <li><a class="underlined" href="purec.xhtml">Math library reference</a></li>
@@ -106,7 +107,7 @@ your build.
 
 <p>
 NOTE: On <b style="font-weight: bold;">Windows</b>, you need to use a specific generator like this:
-`cmake -G"Visual Studio 14 2015 Win64" ..` specifying the Visual
+`cmake -G"Visual Studio 15 2017 Win64" ..` specifying the Visual
 Studio version and targeting specifically `Win64` (to support
 compilation of AVX/AVX2) Check `cmake -G` to get a full list of
 supported Visual Studio project generators.  This generator will
@@ -151,16 +152,28 @@ optimized, or any other special set of flags.
 <ul style="margin-top: 1em; margin-bottom: 1em;">
   <li>`CMAKE_BUILD_TYPE`: By default, CMake supports the following configuration:</li>
   <ul>
-    <li>`Debug`: basic debug flags turned on</li>
-    <li>`Release`: basic optimizations turned on</li>
-    <li>`MinSizeRel`: builds the smallest (but not fastest) object code</li>
-    <li>`RelWithDebInfo`: builds optimized code with debug information as well</li>
+    <li>`Release`: Basic optimizations are turned on. This is the default setting.</li>
+    <li>`Debug`: Basic debug flags are turned on. Optimization is disabled.</li>
+    <li>`MinSizeRel`: Builds the smallest (but not fastest) object code</li>
+    <li>`RelWithDebInfo`: Builds optimized code with debug information as well</li>
   </ul>
-  <li style="margin-top: 1em;">`CMAKE_INSTALL_PREFIX` : The prefix it uses when running `make
-  install`. Defaults to /usr/local on GNU/Linux and MacOS. Defaults to
-  C:/Program Files on Windows.</li>
+  <li style="margin-top: 1em;">`CMAKE_INSTALL_PREFIX` : The prefix it
+  uses when running `make install`. Defaults to /usr/local on
+  GNU/Linux and MacOS. Defaults to C:/Program Files on Windows.</li>
+  <li style="margin-top: 1em;">`CMAKE_C_FLAGS_RELEASE` : The
+  optimization options used by the compiler.</li>
+  <li style="margin-top: 1em;">`BUILD_TESTS` : Avoid building testing
+  tools if set to FALSE</li>
+  <li style="margin-top: 1em;">`BUILD_GNUABI_LIBS` : Avoid building
+  libraries with GNU ABI if set to FALSE</li>
+  <li style="margin-top: 1em;">`BUILD_DFT` : Avoid building DFT
+  libraries if set to FALSE</li>
   <li style="margin-top: 1em;">`BUILD_SHARED_LIBS` : Static libs are
   built if set to FALSE</li>
+  <li style="margin-top: 1em;">`SLEEFDFT_MAXBUTWIDTH` : This variable
+  specifies the maximum length of combined butterfly block used in the
+  DFT. Setting this value to 7 makes DFT faster but compilation takes
+  more time and the library size will be larger.</li>
 </ul>
 
 <h2 id="linux">Compiling and installing library on Linux</h2>
@@ -255,6 +268,40 @@ $ &block;</pre>
   You may need to set LD_LIBRARY_PATH environment variable
   appropriately. If you are trying to execute the program on Mac OSX
   or Windows, try copying the DLLs to the current directory.
+</p>
+
+<h2 id="import">Importing SLEEF into your project</h2>
+
+
+<p class="noindent">
+  Below is an example <a class="underlined"
+  href="CMakeLists.txt">CMakeLists.txt</a> for compiling the above
+  hellox86.c. CMake will automatically download SLEEF from GitHub
+  repository, and thus there is no need to include SLEEF in your
+  software package. If you prefer importing SLEEF as a submodule in
+  git, you can use SOURCE_DIR option instead of GIT_REPOSITORY option
+  for ExternalProject_Add.
+</p>
+
+<pre class="code">
+<code>cmake_minimum_required(VERSION 3.4.3)</code>
+<code>include(ExternalProject)</code>
+<code>find_package(Git REQUIRED)</code>
+<code></code>
+<code>ExternalProject_Add(libsleef</code>
+<code>  GIT_REPOSITORY https://github.com/shibatch/sleef</code>
+<code>  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/contrib</code>
+<code>)</code>
+<code></code>
+<code>include_directories(${CMAKE_BINARY_DIR}/contrib/include)</code>
+<code>link_directories(${CMAKE_BINARY_DIR}/contrib/lib)</code>
+<code></code>
+<code>add_executable(hellox86 hellox86.c)</code>
+<code>add_dependencies(hellox86 libsleef)</code>
+<code>target_link_libraries(hellox86 sleef)</code>
+</pre>
+<p style="text-align:center;">
+  Fig. 2.3: <a href="CMakeLists.txt">Example CMakeLists.txt</a>
 </p>
 
 <p class="footer">

@@ -3,21 +3,21 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<meta name="viewport" content="width=1024" />
+<meta name="viewport" content="width=device-width, initial-scale=0.4"/>
 <meta name="description" content="SLEEF implements vectorized C99 math functions. It utilizes vector extensions including SSE2, AVX, AVX2, AVX512F for x86, and Advanced SIMD for ARM processors." />
 <meta name="google" content="notranslate" />
-<link rel="canonical" href="http://sleef.org/" />
+<link rel="canonical" href="https://sleef.org/" />
 <link rel="icon" href="favicon.png" />
 <link rel="stylesheet" type="text/css" href="texlike.css"/>
 <link rel="stylesheet" type="text/css" href="sleef.css"/>
 <title>SLEEF Vectorized Math Library</title>
 </head>
-<body>
-<h1>SLEEF Vectorized Math Library<img src="sleeflogo2.png" alt="logo" width="25%" height="25%" style="float: right" /></h1>
+<body translate="no" class="notranslate">
+<h1>SLEEF Vectorized Math Library<img src="sleeflogo3.png" alt="logo" width="25%" height="25%" style="float: right" /></h1>
 
 <ul class="none" style="font-family: arial, sansserif; margin-top: 1.0cm;">
-  <li><a class="underlined" style="color:#a00000;" href="https://sourceforge.net/projects/sleef/files/">Download the latest version</a></li>
-  <li><a class="underlined" href="http://sleef.org/">Latest documentation on the web</a></li>
+  <li><a class="underlined" style="color:#a00000;" href="https://github.com/shibatch/sleef/releases">Download the latest version</a></li>
+  <li><a class="underlined" href="https://sleef.org/">Latest documentation on the web</a></li>
   <li><a class="underlined" href="https://github.com/shibatch/sleef">GitHub repository</a></li>
   <li><a class="underlined" href="https://sourceforge.net/p/sleef/mailman/">Mailing list</a></li>
   <li><a class="underlined" href="https://sourceforge.net/p/sleef/discussion/general/">Discussion forum</a></li>
@@ -33,6 +33,7 @@
       <!--<li><a href="index.xhtml#compatibility">Compatibility with other libraries</a></li>-->
       <!--<li><a href="index.xhtml#porting">Porting</a></li>-->
       <li><a href="index.xhtml#credit">Credit</a></li>
+      <li><a href="index.xhtml#partners">Partners</a></li>
       <li><a href="index.xhtml#license">License</a></li>
       <li><a href="index.xhtml#history">History of this software</a></li>
       <li><a href="index.xhtml#related">Related projects</a></li>
@@ -61,8 +62,7 @@
   vendor-tuned libraries, SLEEF is portable : it can be easily ported
   to other architectures by writing a helper file, which is a thin
   abstraction layer of SIMD intrinsics. SLEEF is also designed to work
-  with various operating systems and compilers. It also includes
-  vectorized DFT subroutines.
+  with various operating systems and compilers.
 </p>
 
 <p>
@@ -82,6 +82,23 @@
   multiple of <i class="math">&pi;</i>/2.
 </p>
 
+<p>
+  SLEEF also includes subroutines for discrete Fourier
+  transform(DFT). These subroutines are fully vectorized, heavily
+  unrolled, and parallelized so that modern SIMD instructions and
+  multiple cores can be utilized for efficient computation. It has
+  an API similar to that of FFTW for easy migration, and distributed under 
+  <a class="underlined"
+  href="http://www.boost.org/users/license.html">BSL</a>, which is a
+  permissive open source license. The subroutines can utilize long
+  vectors up to 2048 bits, and even longer vectors can be utilized by
+  a small modification. The helper files for abstracting SIMD
+  intrinsics are shared with SLEEF libm, and thus it is easy to port
+  DFT subroutines to other architectures. <a class="underlined"
+  href="https://github.com/shibatch/sleef/wiki/DFT-Performance">Preliminary
+  results of benchmark</a> are now available.
+</p>
+
 <h2 id="environment">Supported environments</h2>
 
 <p class="noindent">
@@ -91,9 +108,10 @@
 <div><br/></div>
 
 <ul class="disc">
-  <li>x86 - SSE2, SSE4.1, AVX, FMA4, AVX2+FMA3, AVX512F</li>
-  <li>AArch64 - Advanced SIMD</li>
-  <li>AArch32 - NEON</li>
+  <li><a href="x86.xhtml">x86 - SSE2, SSE4.1, AVX, FMA4, AVX2+FMA3, AVX512F</a></li>
+  <li><a href="aarch64.xhtml">AArch64 - Advanced SIMD, SVE</a></li>
+  <li><a href="aarch32.xhtml">AArch32 - NEON</a></li>
+  <li><a href="ppc64.xhtml">PowerPC64 - VSX</a></li>
 </ul>
 
 <div><br/></div>
@@ -172,6 +190,14 @@
 	  <td class="lt-" align="center">N/A</td>
 	</tr>
 	<tr>
+	  <td class="lt-r" align="left">PowerPC, Linux</td>
+	  <td></td>
+	  <td class="lt-lr" align="center"></td>
+	  <td class="lt-r" align="center">Supported(*4)</td>
+	  <td class="lt-r" align="center">N/A</td>
+	  <td class="lt-" align="center">N/A</td>
+	</tr>
+	<tr>
 	  <td class="lt-r" align="left">x86 (64bit), OS X</td>
 	  <td></td>
 	  <td class="lt-lr" align="center">Supported</td>
@@ -180,20 +206,12 @@
 	  <td class="lt-" align="center">N/A</td>
 	</tr>
 	<tr>
-	  <td class="lt-r" align="left">x86 (64bit), Windows</td>
-	  <td></td>
-	  <td class="lt-lr" align="center">Supported(Cygwin)(*4)</td>
-	  <td class="lt-r" align="center">Supported(Cygwin)(*4)</td>
-	  <td class="lt-r" align="center"></td>
-	  <td class="lt-" align="center">Supported(*5)</td>
-	</tr>
-	<tr>
-	  <td class="lt-br" align="left">Generic</td>
+	  <td class="lt-br" align="left">x86 (64bit), Windows</td>
 	  <td class="lt-hl"></td>
-	  <td class="lt-blr" align="center">Supported(*6)</td>
-	  <td class="lt-br" align="center">Supported(*6)</td>
+	  <td class="lt-blr" align="center">Supported(Cygwin)(*5)</td>
+	  <td class="lt-br" align="center">Supported(Cygwin)(*5)</td>
 	  <td class="lt-br" align="center"></td>
-	  <td class="lt-b" align="center"></td>
+	  <td class="lt-b" align="center">Supported</td>
 	</tr>
       </table>
     </td>
@@ -212,7 +230,7 @@
   <li>GCC : version 5 and later</li>
   <li>Clang : version 3.9 and later</li>
   <li>Intel Compiler : ICC version 17</li>
-  <li>MSVC : Visual Studio 2015</li>
+  <li>MSVC : Visual Studio 2017</li>
 </ul>
 
 <div><br/></div>
@@ -232,18 +250,12 @@
 </p>
 
 <p>
-  *4 AVX functions are not supported for Cygwin, since AVX is not
+  *4 Clang-5.0 and later are supported.
+</p>
+
+<p>
+  *5 AVX functions are not supported for Cygwin, since AVX is not
   supported by Cygwin ABI.
-</p>
-
-<p>
-  *5 AVX512F is not supported by Visual Studio 2015.
-</p>
-
-<p>
-  *6 Generic architecture is supported through GCC/Clang vector
-  extensions. IEEE 754-compliant 64-bit and 32-bit calculation is
-  required.
 </p>
 
 <div style="margin-top: 1.0cm;"></div>
@@ -262,10 +274,10 @@
   at Nara Institute of Science and Technology.</li>
   <li><a class="underlined"
   href="https://github.com/fpetrogalli-arm">Francesco Petrogalli</a>
-  at ARM Ltd. contributed the helper for AArch64 (helperadvsimd.h) and
-  GNUABI interface of the library. He also worked on migrating the
-  build system to cmake, and reviewed the code, gave precious comments
-  and suggestions.</li>
+  at ARM Ltd. contributed the helper for AArch64 (helperadvsimd.h,
+  helpersve.h) and GNUABI interface of the library. He also worked on
+  migrating the build system to cmake, and reviewed the code, gave
+  precious comments and suggestions.</li>
   <li><a class="underlined" href="https://github.com/hfinkel">Hal Finkel</a> at Argonne
   Leadership Computing Facility is now working
   on <a class="underlined"
@@ -280,6 +292,52 @@
   Krastev</a> at Chaos Group contributed faster implementation of fmin
   and fmax functions.</li>
 </ul>
+
+<h2 id="partners">Partner institutes and corporations</h2>
+
+<table style="margin-top:1cm;">
+  <tr><td>&nbsp;</td></tr>
+  <tr>
+    <td style="text-align:center;"><a href="https://www.naist.jp/en/"><img src="naistlogo.svg"
+    height="135px" alt="NAIST logo"/></a></td>
+    <td style="vertical-align: top;">
+      <p class="noindent" style="margin-left:2em;">
+The <a class="underlined" href="http://ito-lab.naist.jp/">Mobile
+Computing Lab</a> at Division of Information Science of Nara Institute
+of Science and Technology participates through Naoki Shibata.
+      </p>
+    </td>
+  </tr>
+  <tr><td>&nbsp;</td></tr>
+  <tr><td>&nbsp;</td></tr>
+  <tr><td>&nbsp;</td></tr>
+  <tr>
+    <td style="text-align:center;"><a href="https://www.arm.com/"><img src="https://sleef.org/Arm-logo-blue-pms313.svg" alt="ARM logo" 
+    height="60px" /></a></td>
+    <td style="vertical-align: top;">
+      <p class="noindent" style="margin-left:2em;">
+As the leading IP company in semiconductors
+design, <a class="underlined" href="https://www.arm.com/">ARM</a>
+participates through Francesco Petrogalli.
+      </p>
+    </td>
+  </tr>
+  <tr><td>&nbsp;</td></tr>
+  <tr><td>&nbsp;</td></tr>
+  <tr><td>&nbsp;</td></tr>
+  <tr>
+    <td style="text-align:center;"><a href="https://unity3d.com/"><img src="https://sleef.org/Unity_Technologies_logo.svg" alt="Unity Technologies logo" 
+    height="92px" /></a></td>
+    <td style="vertical-align: top;">
+      <p class="noindent" style="margin-left:2em;">As the leading
+company in developing a video game engine, <a class="underlined"
+href="https://unity3d.com/">Unity Technologies</a> participates
+through Alexandre Mutel.
+      </p>
+    </td>
+  </tr>
+  <tr><td>&nbsp;</td></tr>
+</table>
 
 <h2 id="license">License</h2>
 
@@ -301,6 +359,22 @@ information about Boost Software License.
 </p>
 
 <h2 id="history">History</h2>
+
+<h4>3.3 (Not released yet)</h4>
+<ul class="disc">
+  <li>AArch64 SVE target support is added (PR <a class="underlined"
+  href="https://github.com/shibatch/sleef/pull/180">#180</a>, <a class="underlined"
+  href="https://github.com/shibatch/sleef/pull/182">#182</a>)</li>
+  <li>DFT is now faster (PR <a class="underlined"
+  href="https://github.com/shibatch/sleef/pull/186">#186</a>)</li>
+  <li>3.5-ULP hyperbolic functions are added (PR <a class="underlined"
+  href="https://github.com/shibatch/sleef/pull/192">#192</a>)</li>
+  <li>PowerPC VSX target support is added (PR <a class="underlined"
+  href="https://github.com/shibatch/sleef/pull/195">#195</a>)</li>
+  <li>Modified Payne-Hanek argument reduction is added to the
+  trigonometric functions in libsleef (PR <a class="underlined"
+  href="https://github.com/shibatch/sleef/pull/197">#197</a>)</li>
+</ul>
 
 <h4>3.2 (Released on Feb 26, 2018)</h4>
 <ul class="disc">
@@ -374,8 +448,8 @@ information about Boost Software License.
 
 <ul class="disc">
   <li>SLEEF is now included in <a class="underlined"
-  href="https://developer.arm.com/products/software-development-tools/hpc/arm-compiler-for-hpc">Arm
-  Compiler for HPC</a>.</li>
+  href="https://developer.arm.com/products/software-development-tools/hpc/documentation/vector-math-routines">
+  Arm Compiler for HPC</a>.</li>
   <li>Mustafa A. Mohamad is developing <a class="underlined"
   href="https://github.com/musm/SLEEF.jl">a pure Julia port of the
   SLEEF math library</a>.</li>
@@ -383,13 +457,16 @@ information about Boost Software License.
   href="https://github.com/hfinkel/sleef-bgq">adapted SLEEF to
   PowerPC/QPX</a>. SLEEF is running on Mira IBM BG/Q supercomputer at
   Argonne National Laboratory.</li>
-  <li>SLEEF is adopted in <a class="underlined"
-  href="http://www.menuetos.net/sc151.html">MenuetOS</a>, <a class="underlined"
-  href="https://github.com/Beep6581/RawTherapee/tree/dev/rtengine">RawTherapee</a>,
-  <a class="underlined"
-     href="http://buraphakit.sourceforge.net/BASIC.shtml">John's ECMA-55 Minimal BASIC Compiler</a> and
-  <a class="underlined"
-     href="https://github.com/pocl/pocl/tree/master/lib/kernel/sleef">Portable Computing Language(pocl)</a>.</li>
+  <li>SLEEF is adopted in the following projects.
+    <ul class="circle">
+      <li><a href="http://www.menuetos.net/sc151.html">MenuetOS</a></li>
+      <li><a href="https://github.com/Beep6581/RawTherapee/tree/dev/rtengine">RawTherapee</a></li>
+      <li><a href="http://buraphakit.sourceforge.net/BASIC.shtml">John's ECMA-55 Minimal BASIC Compiler</a></li>
+      <li><a href="https://github.com/pocl/pocl/tree/master/lib/kernel/sleef">Portable Computing Language(pocl)</a></li>
+      <li><a href="https://github.com/pytorch/pytorch/pull/6725">PyTorch</a></li>
+    </ul>
+  </li>
+
   <li style="margin-top: 1em;"><a class="underlined"
   href="https://software.intel.com/en-us/node/524289">Intel Short
   Vector Math Library (SVML)</a> is a commercial library of vectorized
