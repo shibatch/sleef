@@ -309,8 +309,7 @@ static INLINE CONST dfi_t rempif(vfloat a) {
 #endif
   ex = vsub_vi2_vi2_vi2(ex, vcast_vi2_i(25));
   ex = vandnot_vi2_vi2_vi2(vsra_vi2_vi2_i(ex, 31), ex);
-  ex = vadd_vi2_vi2_vi2(ex, ex);
-  ex = vadd_vi2_vi2_vi2(ex, ex);
+  ex = vsll_vi2_vi2_i(ex, 2);
   x = dfmul_vf2_vf_vf(a, vgather_vf_p_vi2(rempitabsp, ex));
   fi_t di = rempisubf(x.x);
   q = di.i;

@@ -315,8 +315,7 @@ static INLINE CONST ddi_t rempi(vdouble a) {
 #endif
   ex = vsub_vi_vi_vi(ex, vcast_vi_i(55));
   ex = vandnot_vi_vi_vi(vsra_vi_vi_i(ex, 31), ex);
-  ex = vadd_vi_vi_vi(ex, ex);
-  ex = vadd_vi_vi_vi(ex, ex);
+  ex = vsll_vi_vi_i(ex, 2);
   x = ddmul_vd2_vd_vd(a, vgather_vd_p_vi(rempitabdp, ex));
   di_t di = rempisub(x.x);
   q = di.i;
