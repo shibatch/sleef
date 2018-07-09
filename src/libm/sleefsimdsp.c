@@ -116,6 +116,14 @@ extern const float rempitabsp[];
 #endif
 #endif
 
+#ifdef ENABLE_NEON32VFPV4
+#define CONFIG 4
+#include "helperneon32.h"
+#ifdef DORENAME
+#include "renameneon32vfpv4.h"
+#endif
+#endif
+
 #ifdef ENABLE_VSX
 #define CONFIG 1
 #include "helperpower_128.h"
@@ -949,7 +957,7 @@ EXPORT CONST vfloat xatanf(vfloat d) {
 
   t = vreinterpret_vf_vm(vxor_vm_vm_vm(vand_vm_vo32_vm(veq_vo_vi2_vi2(vand_vi2_vi2_vi2(q, vcast_vi2_i(2)), vcast_vi2_i(2)), vreinterpret_vm_vf(vcast_vf_f(-0.0f))), vreinterpret_vm_vf(t)));
 
-#ifdef ENABLE_NEON32
+#if defined(ENABLE_NEON32) || defined(ENABLE_NEON32VFPV4)
   t = vsel_vf_vo_vf_vf(visinf_vo_vf(d), vmulsign_vf_vf_vf(vcast_vf_f(1.5874010519681994747517056f), d), t);
 #endif
 
@@ -1236,7 +1244,7 @@ static INLINE CONST vfloat expm1fk(vfloat d) {
   return u;
 }
 
-#ifdef ENABLE_NEON32
+#if defined(ENABLE_NEON32) || defined(ENABLE_NEON32VFPV4)
 EXPORT CONST vfloat xsqrtf_u35(vfloat d) {
   vfloat e = vreinterpret_vf_vi2(vadd_vi2_vi2_vi2(vcast_vi2_i(0x20000000), vand_vi2_vi2_vi2(vcast_vi2_i(0x7f000000), vsrl_vi2_vi2_i(vreinterpret_vi2_vf(d), 1))));
   vfloat m = vreinterpret_vf_vi2(vadd_vi2_vi2_vi2(vcast_vi2_i(0x3f000000), vand_vi2_vi2_vi2(vcast_vi2_i(0x01ffffff), vreinterpret_vi2_vf(d))));
@@ -1467,7 +1475,7 @@ EXPORT CONST vfloat xpowf(vfloat x, vfloat y) {
   vopmask yisodd = vand_vo_vo_vo(vand_vo_vo_vo(veq_vo_vi2_vi2(vand_vi2_vi2_vi2(vtruncate_vi2_vf(y), vcast_vi2_i(1)), vcast_vi2_i(1)), yisint),
 				 vlt_vo_vf_vf(vabs_vf_vf(y), vcast_vf_f(1 << 24)));
 
-#ifdef ENABLE_NEON32
+#if defined(ENABLE_NEON32) || defined(ENABLE_NEON32VFPV4)
   yisodd = vandnot_vm_vo32_vm(visinf_vo_vf(y), yisodd);
 #endif
 
@@ -2131,7 +2139,7 @@ EXPORT CONST vfloat xfmodf(vfloat x, vfloat y) {
   de = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(de, vcast_vf_f(1ULL << 25)), de);
   s  = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(s , vcast_vf_f(1.0f / (1ULL << 25))), s);
   vfloat rde = vtoward0f(vrec_vf_vf(de));
-#ifdef ENABLE_NEON32
+#if defined(ENABLE_NEON32) || defined(ENABLE_NEON32VFPV4)
   rde = vtoward0f(rde);
 #endif
   vfloat2 r = vcast_vf2_vf_vf(nu, vcast_vf_f(0));
