@@ -15,8 +15,10 @@
 #define CONST
 #endif
 
-#if (defined(__AVX2__) || defined(__VSX__)) && !defined(FP_FAST_FMA)
+#if defined(__AVX2__) || defined(__VSX__) || defined(__amd64__) || defined(__arm__)
+#ifndef FP_FAST_FMA
 #define FP_FAST_FMA
+#endif
 #endif
 
 #if (defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)) && !defined(SLEEF_STATIC_LIBS)

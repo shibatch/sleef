@@ -29,7 +29,16 @@
 #define ENABLE_FMA_DP
 #define ENABLE_FMA_SP
 
-#if !defined(__AVX2__) && !defined(__VSX__) && (!defined(FP_FAST_FMA) || !defined(FP_FAST_FMAF))
+#if defined(__AVX2__) || defined(__VSX__) || defined(__amd64__) || defined(__arm__)
+#ifndef FP_FAST_FMA
+#define FP_FAST_FMA
+#endif
+#ifndef FP_FAST_FMAF
+#define FP_FAST_FMAF
+#endif
+#endif
+
+#if !defined(FP_FAST_FMA) || !defined(FP_FAST_FMAF)
 #error FP_FAST_FMA or FP_FAST_FMAF not defined
 #endif
 #define ISANAME "Pure C scalar with FMA"
