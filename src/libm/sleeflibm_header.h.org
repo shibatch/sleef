@@ -15,7 +15,7 @@
 #define CONST
 #endif
 
-#if defined(__AVX2__) && !defined(FP_FAST_FMA)
+#if (defined(__AVX2__) || defined(__VSX__)) && !defined(FP_FAST_FMA)
 #define FP_FAST_FMA
 #endif
 

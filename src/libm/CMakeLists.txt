@@ -208,6 +208,10 @@ foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
     # Create a library
     add_library(${OBJECT_${SIMD}} OBJECT ${SIMD_SOURCES} ${HEADER_${SIMD}})    
 
+    if(COMPILER_SUPPORTS_BUILTIN_MATH)
+      target_compile_definitions(${OBJECT_${SIMD}} PRIVATE ENABLE_BUILTIN_MATH=1)
+    endif()
+
     if (INDEX_ALIAS EQUAL -1)
       target_compile_definitions(${OBJECT_${SIMD}} PRIVATE
 	ENABLE_${SIMD}=1
