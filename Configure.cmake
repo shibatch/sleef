@@ -139,7 +139,7 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
   set(ALIAS_PARAMS_VSX_DP  2 "vector double" "vector int" - vsx)
   set(ALIAS_PARAMS_VSX_SP -4 "vector float" "vector int" - vsx)
 
-  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mfused-madd")
+  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mvsx")
 endif()
 
 command_arguments(HEADER_PARAMS_PUREC_SCALAR    1 1 double float int32_t int32_t __STDC__ purec)
