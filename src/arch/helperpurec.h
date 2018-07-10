@@ -171,6 +171,8 @@ static INLINE vfloat vrev21_vf_vf(vfloat d0) {
   return r;
 }
 
+static INLINE vint2 vrev21_vi2_vi2(vint2 i) { return vreinterpret_vi2_vf(vrev21_vf_vf(vreinterpret_vf_vi2(i))); }
+
 static INLINE vfloat vreva2_vf_vf(vfloat d0) {
   vfloat r;
   for(int i=0;i<VECTLENSP/2;i++) {
@@ -229,7 +231,7 @@ static INLINE vdouble vrint_vd_vd(vdouble vd) { return vcast_vd_vi(vrint_vi_vd(v
 static INLINE vint vcast_vi_i(int j) { vint ret; for(int i=0;i<VECTLENDP;i++) ret.i[i] = j; return ret; }
 
 static INLINE vopmask veq64_vo_vm_vm(vmask x, vmask y) { vopmask ret; for(int i=0;i<VECTLENDP;i++) ret.x[i] = x.x[i] == y.x[i] ? -1 : 0; return ret; }
-static INLINE vmask vadd64_vo_vm_vm(vmask x, vmask y) { vmask ret; for(int i=0;i<VECTLENDP;i++) ret.x[i] = x.x[i] + y.x[i]; return ret; }
+static INLINE vmask vadd64_vm_vm_vm(vmask x, vmask y) { vmask ret; for(int i=0;i<VECTLENDP;i++) ret.x[i] = x.x[i] + y.x[i]; return ret; }
 
 //
 

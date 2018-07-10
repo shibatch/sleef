@@ -27,6 +27,7 @@ set(SLEEF_SUPPORTED_EXTENSIONS
   ADVSIMD SVE				  # Aarch64
   NEON32 NEON32VFPV4			  # Aarch32
   VSX				          # PPC64
+  PUREC_SCALAR PURECFMA_SCALAR            # Generic type
   CACHE STRING "List of SIMD architectures supported by libsleef."
   )
 set(SLEEF_SUPPORTED_GNUABI_EXTENSIONS 
@@ -67,6 +68,8 @@ if((CMAKE_SYSTEM_PROCESSOR MATCHES "x86") OR (CMAKE_SYSTEM_PROCESSOR MATCHES "AM
     AVX2128
     AVX512F_
     AVX512F
+    PUREC_SCALAR
+    PURECFMA_SCALAR
   )
   command_arguments(HEADER_PARAMS_SSE_      2 4 __m128d __m128 __m128i __m128i __SSE2__)
   command_arguments(HEADER_PARAMS_SSE2      2 4 __m128d __m128 __m128i __m128i __SSE2__ sse2)
@@ -81,6 +84,8 @@ if((CMAKE_SYSTEM_PROCESSOR MATCHES "x86") OR (CMAKE_SYSTEM_PROCESSOR MATCHES "AM
 
   command_arguments(ALIAS_PARAMS_AVX512F_DP   8 __m512d __m256i e avx512f)
   command_arguments(ALIAS_PARAMS_AVX512F_SP -16 __m512  __m512i e avx512f)
+
+  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mfma")
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
   set(SLEEF_ARCH_AARCH64 ON CACHE INTERNAL "True for Aarch64 architecture.")
   # Aarch64 requires support for advsimdfma4
@@ -90,6 +95,8 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
     ADVSIMD_
     ADVSIMD
     SVE
+    PUREC_SCALAR
+    PURECFMA_SCALAR
   )
   command_arguments(HEADER_PARAMS_ADVSIMD_   2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON)
   command_arguments(HEADER_PARAMS_ADVSIMD    2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON advsimd)
@@ -106,6 +113,8 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
     NEON32_
     NEON32
     NEON32VFPV4
+    PUREC_SCALAR
+    PURECFMA_SCALAR
   )
   command_arguments(HEADER_PARAMS_NEON32_   2 4 - float32x4_t int32x2_t int32x4_t __ARM_NEON__)
   command_arguments(HEADER_PARAMS_NEON32    2 4 - float32x4_t int32x2_t int32x4_t __ARM_NEON__ neon)
@@ -113,32 +122,45 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
 
   command_arguments(ALIAS_PARAMS_NEON32_SP -4 float32x4_t int32x4_t - neon)
   command_arguments(ALIAS_PARAMS_NEON32_DP 0)
+
+  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mfpu=vfpv4")
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
   set(SLEEF_ARCH_PPC64 ON CACHE INTERNAL "True for PPC64 architecture.")
 
   set(SLEEF_HEADER_LIST
     VSX_
     VSX
+    PUREC_SCALAR
+    PURECFMA_SCALAR
   )
 
   set(HEADER_PARAMS_VSX       2 4 "vector double" "vector float" "vector int" "vector int" __VSX__ vsx)
   set(HEADER_PARAMS_VSX_      2 4 "vector double" "vector float" "vector int" "vector int" __VSX__ vsx)
   set(ALIAS_PARAMS_VSX_DP  2 "vector double" "vector int" - vsx)
   set(ALIAS_PARAMS_VSX_SP -4 "vector float" "vector int" - vsx)
+
+  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mfused-madd")
 endif()
 
+command_arguments(HEADER_PARAMS_PUREC_SCALAR    1 1 double float int32_t int32_t __STDC__ purec)
+command_arguments(HEADER_PARAMS_PURECFMA_SCALAR 1 1 double float int32_t int32_t FP_FAST_FMA purecfma)
+set(COMPILER_SUPPORTS_PUREC_SCALAR 1)
+set(COMPILER_SUPPORTS_PURECFMA_SCALAR 1)
+
 # MKRename arguments per type
-command_arguments(RENAME_PARAMS_SSE2           2 4 sse2)
-command_arguments(RENAME_PARAMS_SSE4           2 4 sse4)
-command_arguments(RENAME_PARAMS_AVX            4 8 avx)
-command_arguments(RENAME_PARAMS_FMA4           4 8 fma4)
-command_arguments(RENAME_PARAMS_AVX2           4 8 avx2)
-command_arguments(RENAME_PARAMS_AVX2128        2 4 avx2128)
-command_arguments(RENAME_PARAMS_AVX512F        8 16 avx512f)
-command_arguments(RENAME_PARAMS_ADVSIMD        2 4 advsimd)
-command_arguments(RENAME_PARAMS_NEON32         2 4 neon)
-command_arguments(RENAME_PARAMS_NEON32VFPV4    2 4 neonvfpv4)
-command_arguments(RENAME_PARAMS_VSX            2 4 vsx)
+command_arguments(RENAME_PARAMS_SSE2            2 4 sse2)
+command_arguments(RENAME_PARAMS_SSE4            2 4 sse4)
+command_arguments(RENAME_PARAMS_AVX             4 8 avx)
+command_arguments(RENAME_PARAMS_FMA4            4 8 fma4)
+command_arguments(RENAME_PARAMS_AVX2            4 8 avx2)
+command_arguments(RENAME_PARAMS_AVX2128         2 4 avx2128)
+command_arguments(RENAME_PARAMS_AVX512F         8 16 avx512f)
+command_arguments(RENAME_PARAMS_ADVSIMD         2 4 advsimd)
+command_arguments(RENAME_PARAMS_NEON32          2 4 neon)
+command_arguments(RENAME_PARAMS_NEON32VFPV4     2 4 neonvfpv4)
+command_arguments(RENAME_PARAMS_VSX             2 4 vsx)
+command_arguments(RENAME_PARAMS_PUREC_SCALAR    1 1 purec)
+command_arguments(RENAME_PARAMS_PURECFMA_SCALAR 1 1 purecfma)
 # The vector length parameters in SVE, for SP and DP, are chosen for
 # the smallest SVE vector size (128-bit). The name is generated using
 # the "x" token of VLA SVE vector functions.

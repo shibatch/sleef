@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Next Release
 ### Added
+- AArch32 NEON+VFPV4 target support is added to libsleef.
+  https://github.com/shibatch/sleef/pull/199
+## 3.3 - 2018-07-06
+### Added
 - SVE target support is added to libsleef.
   https://github.com/shibatch/sleef/pull/180
 - SVE target support is added to DFT. With this patch, DFT operations

@@ -191,10 +191,6 @@ endif()
 
 # Compile SIMD versions
 # Single precision and double precision
-set(SIMD_SOURCES sleefsimdsp.c sleefsimddp.c)
-if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
-  set(SIMD_SOURCES sleefsimdsp.c)
-endif()
 
 # Include symbols for each SIMD architecture (if supported by the platform)
 # Note: adds object file as sources via cmake conditional generator expression
@@ -202,6 +198,12 @@ foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
   if(COMPILER_SUPPORTS_${SIMD})
     list(FIND EXT_ENABLE_ALIAS ${SIMD} INDEX_ALIAS)
     string(TOLOWER ${SIMD} SIMDLC)
+
+    if (${SIMD} STREQUAL "NEON32" OR ${SIMD} STREQUAL "NEON32VFPV4")
+      set(SIMD_SOURCES sleefsimdsp.c)
+    else()
+      set(SIMD_SOURCES sleefsimdsp.c sleefsimddp.c)
+    endif()
 
     # Create a library
     add_library(${OBJECT_${SIMD}} OBJECT ${SIMD_SOURCES} ${HEADER_${SIMD}})    
@@ -410,6 +412,12 @@ if(CLANG_EXE_PATH AND SLEEF_ENABLE_LLVM_BITCODE)
 
   # Generate LLVM bitcode for SIMD SLEEF
   foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
+    if (${SIMD} STREQUAL "NEON32" OR ${SIMD} STREQUAL "NEON32VFPV4")
+      set(SIMD_SOURCES sleefsimdsp.c)
+    else()
+      set(SIMD_SOURCES sleefsimdsp.c sleefsimddp.c)
+    endif()
+
     if(COMPILER_SUPPORTS_${SIMD})
       foreach(SIMD_SOURCE ${SIMD_SOURCES})
         get_filename_component(SIMD_SOURCE_WITHOUT_EXT ${SIMD_SOURCE} NAME_WE)

@@ -108,6 +108,18 @@ extern const float rempitabsp[];
 #endif
 #endif
 
+#ifdef ENABLE_SVE
+#define CONFIG 1
+#include "helpersve.h"
+#ifdef DORENAME
+#ifdef ENABLE_GNUABI
+#include "renamesve_gnuabi.h"
+#else
+#include "renamesve.h"
+#endif /* ENABLE_GNUABI */
+#endif /* DORENAME */
+#endif /* ENABLE_SVE */
+
 #ifdef ENABLE_NEON32
 #define CONFIG 1
 #include "helperneon32.h"
@@ -150,19 +162,21 @@ extern const float rempitabsp[];
 #endif
 #endif
 
-//
-
-#ifdef ENABLE_SVE
+#ifdef ENABLE_PUREC_SCALAR
 #define CONFIG 1
-#include "helpersve.h"
+#include "helperpurec_scalar.h"
 #ifdef DORENAME
-#ifdef ENABLE_GNUABI
-#include "renamesve_gnuabi.h"
-#else
-#include "renamesve.h"
-#endif /* ENABLE_GNUABI */
-#endif /* DORENAME */
-#endif /* ENABLE_SVE */
+#include "renamepurec_scalar.h"
+#endif
+#endif
+
+#ifdef ENABLE_PURECFMA_SCALAR
+#define CONFIG 2
+#include "helperpurec_scalar.h"
+#ifdef DORENAME
+#include "renamepurecfma_scalar.h"
+#endif
+#endif
 
 //
 

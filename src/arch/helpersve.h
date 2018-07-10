@@ -655,6 +655,8 @@ static INLINE vfloat vrev21_vf_vf(vfloat vf) {
   return svreinterpret_f32_u64(svrevw_u64_x(ptrue, svreinterpret_u64_f32(vf)));
 }
 
+static INLINE vint2 vrev21_vi2_vi2(vint2 i) { return vreinterpret_vi2_vf(vrev21_vf_vf(vreinterpret_vf_vi2(i))); }
+
 // Comparison returning integer
 static INLINE vint2 veq_vi2_vi2_vi2(vint2 x, vint2 y) {
   return svsel_s32(svcmpeq_s32(ptrue, x, y), ALL_TRUE_MASK, ALL_FALSE_MASK);

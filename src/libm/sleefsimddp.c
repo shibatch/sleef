@@ -108,6 +108,18 @@ extern const double rempitabdp[];
 #endif
 #endif
 
+#ifdef ENABLE_SVE
+#define CONFIG 1
+#include "helpersve.h"
+#ifdef DORENAME
+#ifdef ENABLE_GNUABI
+#include "renamesve_gnuabi.h"
+#else
+#include "renamesve.h"
+#endif /* ENABLE_GNUABI */
+#endif /* DORENAME */
+#endif /* ENABLE_SVE */
+
 #ifdef ENABLE_VSX
 #define CONFIG 1
 #include "helperpower_128.h"
@@ -134,17 +146,21 @@ extern const double rempitabdp[];
 #endif
 #endif
 
-#ifdef ENABLE_SVE
+#ifdef ENABLE_PUREC_SCALAR
 #define CONFIG 1
-#include "helpersve.h"
+#include "helperpurec_scalar.h"
 #ifdef DORENAME
-#ifdef ENABLE_GNUABI
-#include "renamesve_gnuabi.h"
-#else
-#include "renamesve.h"
-#endif /* ENABLE_GNUABI */
-#endif /* DORENAME */
-#endif /* ENABLE_SVE */
+#include "renamepurec_scalar.h"
+#endif
+#endif
+
+#ifdef ENABLE_PURECFMA_SCALAR
+#define CONFIG 2
+#include "helperpurec_scalar.h"
+#ifdef DORENAME
+#include "renamepurecfma_scalar.h"
+#endif
+#endif
 
 //
 
@@ -2490,7 +2506,6 @@ EXPORT CONST vdouble xlog1p(vdouble d) {
 //
 
 static INLINE CONST vint2 vcast_vi2_i_i(int i0, int i1) { return vcast_vi2_vm(vcast_vm_i_i(i0, i1)); }
-static INLINE CONST vint2 vrev21_vi2_vi2(vint2 i) { return vreinterpret_vi2_vf(vrev21_vf_vf(vreinterpret_vf_vi2(i))); }
 
 EXPORT CONST vdouble xfabs(vdouble x) { return vabs_vd_vd(x); }
 
