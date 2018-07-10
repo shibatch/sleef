@@ -29,7 +29,7 @@
 #define ENABLE_FMA_DP
 #define ENABLE_FMA_SP
 
-#if defined(__AVX2__) || defined(__VSX__) || defined(__amd64__) || defined(__arm__)
+#if defined(__AVX2__) || defined(__VSX__) || defined(__aarch64__) || defined(__arm__)
 #ifndef FP_FAST_FMA
 #define FP_FAST_FMA
 #endif
