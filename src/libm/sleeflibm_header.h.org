@@ -21,6 +21,10 @@
 #endif
 #endif
 
+#if defined(_MSC_VER) && !defined(__STDC__)
+#define __STDC__ 1
+#endif
+
 #if (defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)) && !defined(SLEEF_STATIC_LIBS)
 #ifdef IMPORT_IS_EXPORT
 #define IMPORT __declspec(dllexport)
