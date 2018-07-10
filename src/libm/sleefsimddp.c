@@ -108,6 +108,18 @@ extern const double rempitabdp[];
 #endif
 #endif
 
+#ifdef ENABLE_SVE
+#define CONFIG 1
+#include "helpersve.h"
+#ifdef DORENAME
+#ifdef ENABLE_GNUABI
+#include "renamesve_gnuabi.h"
+#else
+#include "renamesve.h"
+#endif /* ENABLE_GNUABI */
+#endif /* DORENAME */
+#endif /* ENABLE_SVE */
+
 #ifdef ENABLE_VSX
 #define CONFIG 1
 #include "helperpower_128.h"
@@ -134,17 +146,21 @@ extern const double rempitabdp[];
 #endif
 #endif
 
-#ifdef ENABLE_SVE
+#ifdef ENABLE_PUREC_SCALAR
 #define CONFIG 1
-#include "helpersve.h"
+#include "helperpurec_scalar.h"
 #ifdef DORENAME
-#ifdef ENABLE_GNUABI
-#include "renamesve_gnuabi.h"
-#else
-#include "renamesve.h"
-#endif /* ENABLE_GNUABI */
-#endif /* DORENAME */
-#endif /* ENABLE_SVE */
+#include "renamepurec_scalar.h"
+#endif
+#endif
+
+#ifdef ENABLE_PURECFMA_SCALAR
+#define CONFIG 2
+#include "helperpurec_scalar.h"
+#ifdef DORENAME
+#include "renamepurecfma_scalar.h"
+#endif
+#endif
 
 //
 
@@ -453,7 +469,8 @@ EXPORT CONST vdouble xsin_u1(vdouble d) {
   
   u = vreinterpret_vd_vm(vxor_vm_vm_vm(vand_vm_vo64_vm(vcast_vo64_vo32(veq_vo_vi_vi(vand_vi_vi_vi(ql, vcast_vi_i(1)), vcast_vi_i(1))),
 						       vreinterpret_vm_vd(vcast_vd_d(-0.0))), vreinterpret_vm_vd(u)));
-  u = vsel_vd_vo_vd_vd(visnegzero_vo_vd(d), d, u);
+
+  u = vsel_vd_vo_vd_vd(veq_vo_vd_vd(d, vcast_vd_d(0)), d, u);
   
   return u;
 }
@@ -1105,6 +1122,10 @@ EXPORT CONST vdouble xtan(vdouble d) {
   u = vmla_vd_vd_vd_vd(s, vmul_vd_vd_vd(u, x), x);
 
   u = vsel_vd_vo_vd_vd(o, vrec_vd_vd(u), u);
+
+#if defined(__INTEL_COMPILER) && defined(ENABLE_PURECFMA_SCALAR)
+  u = vsel_vd_vo_vd_vd(veq_vo_vd_vd(d, vcast_vd_d(0)), d, u);
+#endif
   
   return u;
 }
@@ -1197,7 +1218,7 @@ EXPORT CONST vdouble xtan_u1(vdouble d) {
 
   u = vadd_vd_vd_vd(x.x, x.y);
 
-  u = vsel_vd_vo_vd_vd(visnegzero_vo_vd(d), d, u);
+  u = vsel_vd_vo_vd_vd(veq_vo_vd_vd(d, vcast_vd_d(0)), d, u);
 
   return u;
 }
@@ -1586,6 +1607,9 @@ EXPORT CONST vdouble xatan_u1(vdouble d) {
 EXPORT CONST vdouble xatan(vdouble s) {
   vdouble t, u;
   vint q;
+#if defined(__INTEL_COMPILER) && defined(ENABLE_PURECFMA_SCALAR)
+  vdouble w = s;
+#endif
 
   q = vsel_vi_vd_vi(s, vcast_vi_i(2));
   s = vabs_vd_vd(s);
@@ -1646,6 +1670,10 @@ EXPORT CONST vdouble xatan(vdouble s) {
 
   t = vsel_vd_vo_vd_vd(vcast_vo64_vo32(veq_vo_vi_vi(vand_vi_vi_vi(q, vcast_vi_i(1)), vcast_vi_i(1))), vsub_vd_vd_vd(vcast_vd_d(M_PI/2), t), t);
   t = vreinterpret_vd_vm(vxor_vm_vm_vm(vand_vm_vo64_vm(vcast_vo64_vo32(veq_vo_vi_vi(vand_vi_vi_vi(q, vcast_vi_i(2)), vcast_vi_i(2))), vreinterpret_vm_vd(vcast_vd_d(-0.0))), vreinterpret_vm_vd(t)));
+
+#if defined(__INTEL_COMPILER) && defined(ENABLE_PURECFMA_SCALAR)
+  t = vsel_vd_vo_vd_vd(veq_vo_vd_vd(w, vcast_vd_d(0)), w, t);
+#endif
 
   return t;
 }
@@ -2490,7 +2518,6 @@ EXPORT CONST vdouble xlog1p(vdouble d) {
 //
 
 static INLINE CONST vint2 vcast_vi2_i_i(int i0, int i1) { return vcast_vi2_vm(vcast_vm_i_i(i0, i1)); }
-static INLINE CONST vint2 vrev21_vi2_vi2(vint2 i) { return vreinterpret_vi2_vf(vrev21_vf_vf(vreinterpret_vf_vi2(i))); }
 
 EXPORT CONST vdouble xfabs(vdouble x) { return vabs_vd_vd(x); }
 

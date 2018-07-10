@@ -68,6 +68,8 @@ set(TARGET_HEADERS "headers")
 # Defined in src/libm-tester/CMakeLists.txt via command add_executable
 set(TARGET_TESTER "tester")
 set(TARGET_IUT "iut")
+set(TARGET_IUTPUREC_SCALAR "iutpurec_scalar")
+set(TARGET_IUTPURECFMA_SCALAR "iutpurecfma_scalar")
 set(TARGET_IUTSSE2 "iutsse2")
 set(TARGET_IUTSSE4 "iutsse4")
 set(TARGET_IUTAVX "iutavx")

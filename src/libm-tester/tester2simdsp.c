@@ -95,12 +95,6 @@ typedef Sleef___m512_2 vfloat2;
 #include "norename.h"
 #endif
 
-#ifdef ENABLE_PUREC
-#define CONFIG 1
-#include "helperpurec.h"
-#include "norename.h"
-#endif
-
 #ifdef ENABLE_ADVSIMD
 #define CONFIG 1
 #include "helperadvsimd.h"
@@ -125,6 +119,28 @@ typedef Sleef_svfloat32_t_2 vfloat2;
 #include "renamevsx.h"
 typedef Sleef_vector_double_2 vdouble2;
 typedef Sleef_vector_float_2 vfloat2;
+#endif
+
+#ifdef ENABLE_PUREC
+#define CONFIG 1
+#include "helperpurec.h"
+#include "norename.h"
+#endif
+
+#ifdef ENABLE_PUREC_SCALAR
+#define CONFIG 1
+#include "helperpurec_scalar.h"
+#include "renamepurec_scalar.h"
+typedef Sleef_double_2 vdouble2;
+typedef Sleef_float_2 vfloat2;
+#endif
+
+#ifdef ENABLE_PURECFMA_SCALAR
+#define CONFIG 2
+#include "helperpurec_scalar.h"
+#include "renamepurecfma_scalar.h"
+typedef Sleef_double_2 vdouble2;
+typedef Sleef_float_2 vfloat2;
 #endif
 
 //

@@ -91,18 +91,6 @@ typedef Sleef___m512d_2 vdouble2;
 typedef Sleef___m512_2 vfloat2;
 #endif
 
-#ifdef ENABLE_VECEXT
-#define CONFIG 1
-#include "helpervecext.h"
-#include "norename.h"
-#endif
-
-#ifdef ENABLE_PUREC
-#define CONFIG 1
-#include "helperpurec.h"
-#include "norename.h"
-#endif
-
 #ifdef ENABLE_NEON32
 #define CONFIG 1
 #include "helperneon32.h"
@@ -136,11 +124,9 @@ typedef Sleef___m128_2 vfloat2;
 #ifdef ENABLE_SVE
 #define CONFIG 1
 #include "helpersve.h"
-#ifdef DORENAME
 #include "renamesve.h"
 typedef Sleef_svfloat64_t_2 vdouble2;
 typedef Sleef_svfloat32_t_2 vfloat2;
-#endif
 #endif
 
 #ifdef ENABLE_DSP256
@@ -157,6 +143,34 @@ typedef Sleef___m256_2 vfloat2;
 #include "renamevsx.h"
 typedef Sleef_vector_double_2 vdouble2;
 typedef Sleef_vector_float_2 vfloat2;
+#endif
+
+#ifdef ENABLE_VECEXT
+#define CONFIG 1
+#include "helpervecext.h"
+#include "norename.h"
+#endif
+
+#ifdef ENABLE_PUREC
+#define CONFIG 1
+#include "helperpurec.h"
+#include "norename.h"
+#endif
+
+#ifdef ENABLE_PUREC_SCALAR
+#define CONFIG 1
+#include "helperpurec_scalar.h"
+#include "renamepurec_scalar.h"
+typedef Sleef_double_2 vdouble2;
+typedef Sleef_float_2 vfloat2;
+#endif
+
+#ifdef ENABLE_PURECFMA_SCALAR
+#define CONFIG 2
+#include "helperpurec_scalar.h"
+#include "renamepurecfma_scalar.h"
+typedef Sleef_double_2 vdouble2;
+typedef Sleef_float_2 vfloat2;
 #endif
 
 //
