@@ -9,10 +9,14 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#if (defined(__GNUC__) || defined(__CLANG__)) && !defined(__INTEL_COMPILER)
+#if (defined(__GNUC__) || defined(__clang__)) && !defined(__INTEL_COMPILER)
 #define CONST const
 #else
 #define CONST
+#endif
+
+#if defined(__AVX2__) && !defined(FP_FAST_FMA)
+#define FP_FAST_FMA
 #endif
 
 #if (defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)) && !defined(SLEEF_STATIC_LIBS)
@@ -28,7 +32,7 @@
 #define IMPORT
 #endif // #if (defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)) && !defined(SLEEF_STATIC_LIBS)
 
-#if (defined(__GNUC__) || defined(__CLANG__)) && (defined(__i386__) || defined(__x86_64__))
+#if (defined(__GNUC__) || defined(__clang__)) && (defined(__i386__) || defined(__x86_64__))
 #include <x86intrin.h>
 #endif
 
