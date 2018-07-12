@@ -1446,6 +1446,32 @@ EXPORT CONST vdouble xasin(vdouble d) {
   return vmulsign_vd_vd_vd(r, d);
 }
 
+#ifndef ENABLE_GNUABI
+EXPORT CONST vdouble yasin(vdouble d) {
+  vopmask o = vlt_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(0.5));
+  vdouble x2 = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(d, d), vmul_vd_vd_vd(vsub_vd_vd_vd(vcast_vd_d(1), vabs_vd_vd(d)), vcast_vd_d(0.5)));
+  vdouble x = vsel_vd_vo_vd_vd(o, vabs_vd_vd(d), vsqrt_vd_vd(x2)), u;
+
+  u = vcast_vd_d(+0.3161587650653934628e-1);
+  u = vmla_vd_vd_vd_vd(u, x2, vcast_vd_d(-0.1581918243329996643e-1));
+  u = vmla_vd_vd_vd_vd(u, x2, vcast_vd_d(+0.1929045477267910674e-1));
+  u = vmla_vd_vd_vd_vd(u, x2, vcast_vd_d(+0.6606077476277170610e-2));
+  u = vmla_vd_vd_vd_vd(u, x2, vcast_vd_d(+0.1215360525577377331e-1));
+  u = vmla_vd_vd_vd_vd(u, x2, vcast_vd_d(+0.1388715184501609218e-1));
+  u = vmla_vd_vd_vd_vd(u, x2, vcast_vd_d(+0.1735956991223614604e-1));
+  u = vmla_vd_vd_vd_vd(u, x2, vcast_vd_d(+0.2237176181932048341e-1));
+  u = vmla_vd_vd_vd_vd(u, x2, vcast_vd_d(+0.3038195928038132237e-1));
+  u = vmla_vd_vd_vd_vd(u, x2, vcast_vd_d(+0.4464285681377102438e-1));
+  u = vmla_vd_vd_vd_vd(u, x2, vcast_vd_d(+0.7500000000378581611e-1));
+  u = vmla_vd_vd_vd_vd(u, x2, vcast_vd_d(+0.1666666666666497543e+0));
+
+  u = vmla_vd_vd_vd_vd(u, vmul_vd_vd_vd(x, x2), x);
+  
+  vdouble r = vsel_vd_vo_vd_vd(o, u, vmla_vd_vd_vd_vd(u, vcast_vd_d(-2), vcast_vd_d(M_PI/2)));
+  return vmulsign_vd_vd_vd(r, d);
+}
+#endif
+
 EXPORT CONST vdouble xasin_u1(vdouble d) {
   vopmask o = vlt_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(0.5));
   vdouble x2 = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(d, d), vmul_vd_vd_vd(vsub_vd_vd_vd(vcast_vd_d(1), vabs_vd_vd(d)), vcast_vd_d(0.5))), u;

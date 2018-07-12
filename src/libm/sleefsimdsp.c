@@ -12,6 +12,9 @@
 
 #include "misc.h"
 
+#define stringify(s) stringify_(s)
+#define stringify_(s) #s
+
 extern const float rempitabsp[];
 
 #define __SLEEFSIMDSP_C__
@@ -1041,6 +1044,14 @@ EXPORT CONST vfloat xasinf(vfloat d) {
   vfloat r = vsel_vf_vo_vf_vf(o, u, vmla_vf_vf_vf_vf(u, vcast_vf_f(-2), vcast_vf_f(M_PIf/2)));
   return vmulsign_vf_vf_vf(r, d);
 }
+
+#ifndef ENABLE_GNUABI
+#ifdef ENABLE_ALIAS
+EXPORT CONST vfloat yasinf(vfloat) __attribute__((alias( stringify(xasinf) )));
+#else
+EXPORT CONST vfloat yasinf(vfloat d) { return xasinf(d); }
+#endif
+#endif
 
 EXPORT CONST vfloat xacosf(vfloat d) {
   vopmask o = vlt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(0.5f));

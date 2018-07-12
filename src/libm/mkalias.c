@@ -13,25 +13,22 @@
 int main(int argc, char **argv) {
   if (argc == 2 && strcmp(argv[1], "0") == 0) exit(0);
 
-  if (argc < 6) {
-    fprintf(stderr, "Usage : %s <vector width> <vector FP type> <vector int type> <mangled ISA> <extension>\n", argv[0]);
+  if (argc < 7) {
+    fprintf(stderr, "Usage : %s <vector width> <vector FP type> <vector int type> <mangled ISA> <extension> <atr prefix>\n", argv[0]);
     exit(-1);
   }
 
   int vw = atoi(argv[1]);
   int fptype = vw >= 0 ? 0 : 1;
   vw = vw < 0 ? -vw : vw;
-  char *mangledisa = argv[4];
-  char *isaname = argc == 6 ? argv[5] : "";
+  char *isaname = argc == 7 ? argv[5] : "";
+  char *atrPrefix = argv[6];
 
   static char *argType2[] = {
     "a0", "a0, a1", "a0", "a0, a1",
     "a0", "a0, a1, a2", "a0", "a0", "a0"
   };
-  static char *typeSpecS[] = { "", "f" };
   static char *typeSpec[] = { "d", "f" };
-  static char *ulpSuffixStr[] = { "", "_u1", "_u05", "_u35", "_u15" };
-  static char *vparameterStr[7] = { "v", "vv", "", "vv", "v", "vvv", "" };
 
   static char returnType[9][1000];
   static char argType0[9][1000];
@@ -76,20 +73,24 @@ int main(int argc, char **argv) {
   }
   printf("#ifdef ENABLE_ALIAS\n");
 
-  if (argc == 6) {
+  if (argc == 7) {
     for(int i=0;funcList[i].name != NULL;i++) {
       if (funcList[i].ulp >= 0) {
-	printf("EXPORT CONST %s Sleef_%s%s%d_u%02d(%s) __attribute__((alias(\"Sleef_%s%s%d_u%02d%s\")));\n",
+	printf("EXPORT CONST %s Sleef_%s%s%s%d_u%02d(%s) __attribute__((alias(\"Sleef_%s%s%s%d_u%02d%s\")));\n",
 	       returnType[funcList[i].funcType],
+	       (funcList[i].flags & DET) == 0 ? "" : atrPrefix,
 	       funcList[i].name, typeSpec[fptype], vw, funcList[i].ulp,
 	       argType0[funcList[i].funcType],
+	       (funcList[i].flags & DET) == 0 ? "" : atrPrefix,
 	       funcList[i].name, typeSpec[fptype], vw, funcList[i].ulp, isaname
 	       );
       } else {
-	printf("EXPORT CONST %s Sleef_%s%s%d(%s) __attribute__((alias(\"Sleef_%s%s%d_%s\")));\n",
+	printf("EXPORT CONST %s Sleef_%s%s%s%d(%s) __attribute__((alias(\"Sleef_%s%s%s%d_%s\")));\n",
 	       returnType[funcList[i].funcType],
+	       (funcList[i].flags & DET) == 0 ? "" : atrPrefix,
 	       funcList[i].name, typeSpec[fptype], vw,
 	       argType0[funcList[i].funcType],
+	       (funcList[i].flags & DET) == 0 ? "" : atrPrefix,
 	       funcList[i].name, typeSpec[fptype], vw, isaname
 	       );
       }
@@ -100,21 +101,25 @@ int main(int argc, char **argv) {
   
   printf("#else // #ifdef ENABLE_ALIAS\n");
 
-  if (argc == 6) {
+  if (argc == 7) {
     for(int i=0;funcList[i].name != NULL;i++) {
       if (funcList[i].ulp >= 0) {
-	printf("EXPORT CONST %s Sleef_%s%s%d_u%02d(%s) { return Sleef_%s%s%d_u%02d%s(%s); }\n",
+	printf("EXPORT CONST %s Sleef_%s%s%s%d_u%02d(%s) { return Sleef_%s%s%s%d_u%02d%s(%s); }\n",
 	       returnType[funcList[i].funcType],
+	       (funcList[i].flags & DET) == 0 ? "" : atrPrefix,
 	       funcList[i].name, typeSpec[fptype], vw, funcList[i].ulp,
 	       argType1[funcList[i].funcType],
+	       (funcList[i].flags & DET) == 0 ? "" : atrPrefix,
 	       funcList[i].name, typeSpec[fptype], vw, funcList[i].ulp, isaname,
 	       argType2[funcList[i].funcType]
 	       );
       } else {
-	printf("EXPORT CONST %s Sleef_%s%s%d(%s) { return Sleef_%s%s%d_%s(%s); }\n",
+	printf("EXPORT CONST %s Sleef_%s%s%s%d(%s) { return Sleef_%s%s%s%d_%s(%s); }\n",
 	       returnType[funcList[i].funcType],
+	       (funcList[i].flags & DET) == 0 ? "" : atrPrefix,
 	       funcList[i].name, typeSpec[fptype], vw,
 	       argType1[funcList[i].funcType],
+	       (funcList[i].flags & DET) == 0 ? "" : atrPrefix,
 	       funcList[i].name, typeSpec[fptype], vw, isaname,
 	       argType2[funcList[i].funcType]
 	       );
