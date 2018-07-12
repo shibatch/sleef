@@ -1,9 +1,9 @@
-//          Copyright Naoki Shibata 2010 - 2017.
+//          Copyright Naoki Shibata 2010 - 2018.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#if CONFIG == 1
+#if CONFIG == 1 || CONFIG == 2
 
 #ifndef __AVX512F__
 #error Please specify -mavx512f.
@@ -16,12 +16,15 @@
 #define ENABLE_DP
 #define LOG2VECTLENDP 3
 #define VECTLENDP (1 << LOG2VECTLENDP)
-#define ENABLE_FMA_DP
 
 #define ENABLE_SP
 #define LOG2VECTLENSP (LOG2VECTLENDP+1)
 #define VECTLENSP (1 << LOG2VECTLENSP)
+
+#if CONFIG == 1
+#define ENABLE_FMA_DP
 #define ENABLE_FMA_SP
+#endif
 
 #define FULL_FP_ROUNDING
 #define SPLIT_KERNEL
@@ -64,6 +67,15 @@ static INLINE int vavailability_i(int name) {
 }
 #define ISANAME "AVX512F"
 #define DFTPRIORITY 30
+#endif
+
+#if CONFIG == 2 && defined(__AVX512F__)
+static INLINE int vavailability_i(int name) {
+  int d = cpuSupportsAVX512F();
+  return d ? 3 : 0;
+}
+#define ISANAME "AVX512FNOFMA"
+#define DFTPRIORITY 0
 #endif
 
 static INLINE void vprefetch_v_p(const void *ptr) { _mm_prefetch(ptr, _MM_HINT_T0); }

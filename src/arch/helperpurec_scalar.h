@@ -78,7 +78,7 @@
 
 #define ACCURATE_SQRT
 
-#if defined(__SSE4_1__) || defined(__aarch64__) || 1
+#if defined(__SSE4_1__) || defined(__aarch64__)
 #define FULL_FP_ROUNDING
 #endif
 

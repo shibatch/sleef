@@ -18,7 +18,7 @@
 #error VECTLENDP or VECTLENSP already defined
 #endif
 
-#if CONFIG == 1
+#if CONFIG == 1 || CONFIG == 2
 // Vector length agnostic
 #define VECTLENSP (svcntw())
 #define VECTLENDP (svcntd())
@@ -67,10 +67,12 @@ static INLINE int vavailability_i(int name) { return 3; }
 #endif
 
 #define ENABLE_SP
-#define ENABLE_FMA_SP
-
 #define ENABLE_DP
+
+#if CONFIG != 2
+#define ENABLE_FMA_SP
 #define ENABLE_FMA_DP
+#endif
 
 #define FULL_FP_ROUNDING
 #define ACCURATE_SQRT

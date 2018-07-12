@@ -17,12 +17,15 @@
 #define ENABLE_DP
 #define LOG2VECTLENDP 1
 #define VECTLENDP (1 << LOG2VECTLENDP)
-#define ENABLE_FMA_DP
 
 #define ENABLE_SP
 #define LOG2VECTLENSP 2
 #define VECTLENSP (1 << LOG2VECTLENSP)
+
+#if CONFIG == 1
+#define ENABLE_FMA_DP
 #define ENABLE_FMA_SP
+#endif
 
 #define FULL_FP_ROUNDING
 #define ACCURATE_SQRT

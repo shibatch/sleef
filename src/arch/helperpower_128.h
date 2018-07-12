@@ -3,7 +3,7 @@
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#if CONFIG == 1
+#if CONFIG == 1 || CONFIG == 2
 
 #ifndef __VSX__
 #error Please specify -mvsx.
@@ -16,12 +16,15 @@
 #define ENABLE_DP
 #define LOG2VECTLENDP 1
 #define VECTLENDP (1 << LOG2VECTLENDP)
-#define ENABLE_FMA_DP
 
 #define ENABLE_SP
 #define LOG2VECTLENSP (LOG2VECTLENDP+1)
 #define VECTLENSP (1 << LOG2VECTLENSP)
+
+#if CONFIG == 1
+#define ENABLE_FMA_DP
 #define ENABLE_FMA_SP
+#endif
 
 #define ACCURATE_SQRT
 #define FULL_FP_ROUNDING
