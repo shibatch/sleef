@@ -1064,13 +1064,11 @@ EXPORT CONST vdouble xtan(vdouble d) {
     x = vmla_vd_vd_vd_vd(dqh, vcast_vd_d(-PI_C * 0.5), x);
     x = vmla_vd_vd_vd_vd(dql, vcast_vd_d(-PI_C * 0.5), x);
     x = vmla_vd_vd_vd_vd(vadd_vd_vd_vd(dqh, dql), vcast_vd_d(-PI_D * 0.5), x);
-    x = vsel_vd_vo_vd_vd(visnegzero_vo_vd(d), d, x);
   } else {
     ddi_t ddi = rempi(d);
     ql = ddi.i;
     x = vadd_vd_vd_vd(ddi.dd.x, ddi.dd.y);
     x = vreinterpret_vd_vm(vor_vm_vo64_vm(visinf_vo_vd(d), vreinterpret_vm_vd(x)));
-    x = vsel_vd_vo_vd_vd(visnegzero_vo_vd(d), d, x);
   }
 
   s = vmul_vd_vd_vd(x, x);
@@ -1123,9 +1121,7 @@ EXPORT CONST vdouble xtan(vdouble d) {
 
   u = vsel_vd_vo_vd_vd(o, vrec_vd_vd(u), u);
 
-#if defined(__INTEL_COMPILER) && defined(ENABLE_PURECFMA_SCALAR)
   u = vsel_vd_vo_vd_vd(veq_vo_vd_vd(d, vcast_vd_d(0)), d, u);
-#endif
   
   return u;
 }
