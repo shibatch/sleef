@@ -156,7 +156,7 @@ extern const double rempitabdp[];
 #define CONFIG 2
 #include "helperpower_128.h"
 #ifdef DORENAME
-#include "renamevsx.h"
+#include "renamevsx_nofma.h"
 #endif
 #endif
 
