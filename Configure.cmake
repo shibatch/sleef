@@ -177,7 +177,7 @@ command_arguments(RENAME_PARAMS_PURECFMA_SCALAR finz_ 1 1 purecfma)
 # the smallest SVE vector size (128-bit). The name is generated using
 # the "x" token of VLA SVE vector functions.
 command_arguments(RENAME_PARAMS_SVE             finz_ 2 4 sve)
-command_arguments(RENAME_PARAMS_SVE_NOFMA       cinz_ 2 4 sve)
+command_arguments(RENAME_PARAMS_SVE_NOFMA       cinz_ 2 4 svenofma)
 
 command_arguments(RENAME_PARAMS_GNUABI_SSE2    sse2 b 2 4 _mm128d _mm128 _mm128i _mm128i __SSE2__)
 command_arguments(RENAME_PARAMS_GNUABI_AVX     avx c 4 8 __m256d __m256 __m128i "struct { __m128i x, y$<SEMICOLON> }" __AVX__)

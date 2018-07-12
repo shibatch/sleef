@@ -312,7 +312,7 @@ static INLINE CONST vfloat vldexp3_vf_vf_vi2(vfloat d, vint2 q) {
 
 EXPORT CONST vfloat xldexpf(vfloat x, vint2 q) { return vldexp_vf_vf_vi2(x, q); }
 
-#ifdef ENABLE_SVE
+#if defined(ENABLE_SVE) || defined(ENABLE_SVE_NOFMA)
 typedef __sizeless_struct {
   vfloat d;
   vint2 i;
@@ -2314,7 +2314,7 @@ EXPORT CONST vfloat xcospif_u05(vfloat d) {
   return r;
 }
 
-#ifdef ENABLE_SVE
+#if defined(ENABLE_SVE) || defined(ENABLE_SVE_NOFMA)
   typedef __sizeless_struct {
     vfloat2 a, b;
   } df2;

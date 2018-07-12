@@ -312,7 +312,7 @@ EXPORT CONST vint xilogb(vdouble d) {
   return vrint_vi_vd(e);
 }
 
-#ifdef ENABLE_SVE
+#if defined(ENABLE_SVE) || defined(ENABLE_SVE_NOFMA)
 typedef __sizeless_struct {
   vdouble d;
   vint i;
@@ -2852,7 +2852,7 @@ EXPORT CONST vdouble xfmod(vdouble x, vdouble y) {
   return ret;
 }
 
-#ifdef ENABLE_SVE
+#if defined(ENABLE_SVE) || defined(ENABLE_SVE_NOFMA)
   typedef __sizeless_struct {
     vdouble2 a, b;
   } dd2;
