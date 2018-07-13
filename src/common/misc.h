@@ -139,6 +139,9 @@
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 #endif
 
+#define stringify(s) stringify_(s)
+#define stringify_(s) #s
+
 typedef long double longdouble;
 
 #ifndef Sleef_double2_DEFINED

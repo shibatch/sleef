@@ -89,6 +89,14 @@ typedef Sleef___m512d_2 vdouble2;
 typedef Sleef___m512_2 vfloat2;
 #endif
 
+#ifdef ENABLE_AVX512F_NOFMA
+#define CONFIG 2
+#include "helperavx512f.h"
+#include "renameavx512f_nofma.h"
+typedef Sleef___m512d_2 vdouble2;
+typedef Sleef___m512_2 vfloat2;
+#endif
+
 #ifdef ENABLE_VECEXT
 #define CONFIG 1
 #include "helpervecext.h"
@@ -103,6 +111,14 @@ typedef Sleef_float64x2_t_2 vdouble2;
 typedef Sleef_float32x4_t_2 vfloat2;
 #endif
 
+#ifdef ENABLE_ADVSIMD_NOFMA
+#define CONFIG 2
+#include "helperadvsimd.h"
+#include "renameadvsimd_nofma.h"
+typedef Sleef_float64x2_t_2 vdouble2;
+typedef Sleef_float32x4_t_2 vfloat2;
+#endif
+
 #ifdef ENABLE_SVE
 #define CONFIG 1
 #include "helpersve.h"
@@ -113,10 +129,26 @@ typedef Sleef_svfloat32_t_2 vfloat2;
 #endif /* DORENAME */
 #endif /* ENABLE_SVE */
 
+#ifdef ENABLE_SVE_NOFMA
+#define CONFIG 2
+#include "helpersve.h"
+#include "renamesve_nofma.h"
+typedef Sleef_svfloat64_t_2 vdouble2;
+typedef Sleef_svfloat32_t_2 vfloat2;
+#endif
+
 #ifdef ENABLE_VSX
 #define CONFIG 1
 #include "helperpower_128.h"
 #include "renamevsx.h"
+typedef Sleef_vector_double_2 vdouble2;
+typedef Sleef_vector_float_2 vfloat2;
+#endif
+
+#ifdef ENABLE_VSX_NOFMA
+#define CONFIG 2
+#include "helperpower_128.h"
+#include "renamevsx_nofma.h"
 typedef Sleef_vector_double_2 vdouble2;
 typedef Sleef_vector_float_2 vfloat2;
 #endif

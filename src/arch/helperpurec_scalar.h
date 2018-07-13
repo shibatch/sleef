@@ -4,18 +4,42 @@
 //          http://www.boost.org/LICENSE_1_0.txt)
 
 #include <stdint.h>
+
 #ifndef ENABLE_BUILTIN_MATH
 #include <math.h>
+
 #define SQRT sqrt
 #define SQRTF sqrtf
 #define FMA fma
 #define FMAF fmaf
+#ifndef __powerpc64__
+#define RINT rint
+#define RINTF rintf
 #else
+#define RINT round
+#define RINTF roundf
+#endif
+#define TRUNC trunc
+#define TRUNCF truncf
+
+#else
+
 #define SQRT __builtin_sqrt
 #define SQRTF __builtin_sqrtf
 #define FMA __builtin_fma
 #define FMAF __builtin_fmaf
+#ifndef __powerpc64__
+#define RINT __builtin_rint
+#define RINTF __builtin_rintf
+#else
+#define RINT __builtin_round
+#define RINTF __builtin_roundf
 #endif
+#define TRUNC __builtin_trunc
+#define TRUNCF __builtin_truncf
+
+#endif
+
 #include "misc.h"
 
 #ifndef CONFIG
@@ -29,7 +53,7 @@
 #define ENABLE_FMA_DP
 #define ENABLE_FMA_SP
 
-#if defined(__AVX2__) || defined(__VSX__) || defined(__aarch64__) || defined(__arm__)
+#if defined(__AVX2__) || defined(__aarch64__) || defined(__arm__) || defined(__powerpc64__)
 #ifndef FP_FAST_FMA
 #define FP_FAST_FMA
 #endif
@@ -53,6 +77,10 @@
 #define VECTLENSP (1 << LOG2VECTLENSP)
 
 #define ACCURATE_SQRT
+
+#if defined(__SSE4_1__) || defined(__aarch64__)
+#define FULL_FP_ROUNDING
+#endif
 
 #define DFTPRIORITY LOG2VECTLENDP
 
@@ -142,10 +170,17 @@ static INLINE vdouble vsel_vd_vo_vo_vo_d_d_d_d(vopmask o0, vopmask o1, vopmask o
 static INLINE vdouble vcast_vd_vi(vint vi) { return vi; }
 static INLINE vint vcast_vi_i(int j) { return j; }
 
+#ifdef FULL_FP_ROUNDING
+static INLINE vint vrint_vi_vd(vdouble d) { return (int32_t)RINT(d); }
+static INLINE vdouble vrint_vd_vd(vdouble vd) { return RINT(vd); }
+static INLINE vdouble vtruncate_vd_vd(vdouble vd) { return TRUNC(vd); }
+static INLINE vint vtruncate_vi_vd(vdouble vd) { return (int32_t)TRUNC(vd); }
+#else
 static INLINE vint vrint_vi_vd(vdouble d) { return d > 0 ? (int)(d + 0.5) : (int)(d - 0.5); }
 static INLINE vdouble vrint_vd_vd(vdouble vd) { return vcast_vd_vi(vrint_vi_vd(vd)); }
 static INLINE vint vtruncate_vi_vd(vdouble vd) { return vd; }
 static INLINE vdouble vtruncate_vd_vd(vdouble vd) { return vcast_vd_vi(vtruncate_vi_vd(vd)); }
+#endif
 
 static INLINE vopmask veq64_vo_vm_vm(vmask x, vmask y) { return x == y ? ~(uint32_t)0 : 0; }
 static INLINE vmask vadd64_vm_vm_vm(vmask x, vmask y) { return x + y; }
@@ -217,6 +252,7 @@ static INLINE vopmask visminf_vo_vd(vdouble d) { return d == -SLEEF_INFINITY ? ~
 static INLINE vopmask visnan_vo_vd(vdouble d)  { return d != d ? ~(uint32_t)0 : 0; }
 
 static INLINE vdouble vsqrt_vd_vd(vdouble d) { return SQRT(d); }
+static INLINE vfloat vsqrt_vf_vf(vfloat x) { return SQRTF(x); }
 
 static INLINE double vcast_d_vd(vdouble v) { return v; }
 
@@ -236,11 +272,17 @@ static INLINE vmask vcast_vm_vi2(vint2 vi) { union { vint2 vi2; vmask vm; } cnv;
 static INLINE vfloat vcast_vf_vi2(vint2 vi) { return (int32_t)vi; }
 static INLINE vint2 vcast_vi2_i(int j) { return j; }
 
+#ifdef FULL_FP_ROUNDING
+static INLINE vint2 vrint_vi2_vf(vfloat d) { return (int)RINTF(d); }
+static INLINE vfloat vrint_vf_vf(vfloat vd) { return RINTF(vd); }
+static INLINE vfloat vtruncate_vf_vf(vfloat vd) { return TRUNCF(vd); }
+static INLINE vint2 vtruncate_vi2_vf(vfloat vf) { return (int32_t)TRUNCF(vf); }
+#else
 static INLINE vint2 vrint_vi2_vf(vfloat d) { return d > 0 ? (int)(d + 0.5) : (int)(d - 0.5); }
 static INLINE vfloat vrint_vf_vf(vfloat vd) { return vcast_vf_vi2(vrint_vi2_vf(vd)); }
-
 static INLINE vint2 vtruncate_vi2_vf(vfloat vf) { return vf; }
 static INLINE vfloat vtruncate_vf_vf(vfloat vd) { return vcast_vf_vi2(vtruncate_vi2_vf(vd)); }
+#endif
 
 static INLINE vfloat vcast_vf_f(float f) { return f; }
 static INLINE vmask vreinterpret_vm_vf(vfloat vf) { union { vfloat vf; vmask vm; } cnv; cnv.vf = vf; return cnv.vm; }
@@ -317,8 +359,6 @@ static INLINE vopmask veq_vo_vi2_vi2 (vint2 x, vint2 y) { return (int32_t)x == (
 static INLINE vopmask vgt_vo_vi2_vi2 (vint2 x, vint2 y) { return (int32_t)x >  (int32_t)y ? ~(uint32_t)0 : 0; }
 static INLINE vint2   veq_vi2_vi2_vi2(vint2 x, vint2 y) { return (int32_t)x == (int32_t)y ? ~(uint32_t)0 : 0; }
 static INLINE vint2   vgt_vi2_vi2_vi2(vint2 x, vint2 y) { return (int32_t)x >  (int32_t)y ? ~(uint32_t)0 : 0; }
-
-static INLINE vfloat vsqrt_vf_vf(vfloat x) { return SQRTF(x); }
 
 static INLINE float vcast_f_vf(vfloat v) { return v; }
 

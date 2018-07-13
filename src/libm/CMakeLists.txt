@@ -275,7 +275,7 @@ if (SLEEF_ARCH_X86)
 
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h
     COMMENT "Generating renamedsp128.h"
-    COMMAND $<TARGET_FILE:${TARGET_MKRENAME}> 2 4 > ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h
+    COMMAND $<TARGET_FILE:${TARGET_MKRENAME}> - 2 4 > ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h
     DEPENDS ${TARGET_MKRENAME}
     )
   add_custom_target(renamedsp128.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h)
@@ -294,7 +294,7 @@ if (SLEEF_ARCH_X86)
 
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp256.h
     COMMENT "Generating renamedsp256.h"
-    COMMAND $<TARGET_FILE:${TARGET_MKRENAME}> 4 8 > ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp256.h
+    COMMAND $<TARGET_FILE:${TARGET_MKRENAME}> - 4 8 > ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp256.h
     DEPENDS ${TARGET_MKRENAME}
     )
   add_custom_target(renamedsp256.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp256.h)
