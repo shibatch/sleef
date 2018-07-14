@@ -41,9 +41,6 @@ int main(int argc, char **argv) {
     char *isaname = argc == 4 ? "" : argv[4];
     char *isaub = argc == 5 ? "_" : "";
 
-    if (strcmp(isaname, "sve") == 0)
-      wdp = wsp = "x";
-
     for(int i=0;funcList[i].name != NULL;i++) {
       if ((funcList[i].flags & DET) != 0 && strcmp(atrPrefix, "-") == 0) continue;
       if (funcList[i].ulp >= 0) {

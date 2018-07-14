@@ -116,8 +116,8 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
   command_arguments(HEADER_PARAMS_ADVSIMD_      finz_ 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON)
   command_arguments(HEADER_PARAMS_ADVSIMD       finz_ 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON advsimd)
   command_arguments(HEADER_PARAMS_ADVSIMD_NOFMA cinz_ 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON advsimdnofma)
-  command_arguments(HEADER_PARAMS_SVE           finz_ 2 4 svfloat64_t svfloat32_t svint32_t svint32_t __ARM_FEATURE_SVE sve)
-  command_arguments(HEADER_PARAMS_SVE_NOFMA     cinz_ 2 4 svfloat64_t svfloat32_t svint32_t svint32_t __ARM_FEATURE_SVE svenofma)
+  command_arguments(HEADER_PARAMS_SVE           finz_ x x svfloat64_t svfloat32_t svint32_t svint32_t __ARM_FEATURE_SVE sve)
+  command_arguments(HEADER_PARAMS_SVE_NOFMA     cinz_ x x svfloat64_t svfloat32_t svint32_t svint32_t __ARM_FEATURE_SVE svenofma)
   command_arguments(ALIAS_PARAMS_ADVSIMD_DP  2 float64x2_t int32x2_t n advsimd finz_)
   command_arguments(ALIAS_PARAMS_ADVSIMD_SP -4 float32x4_t int32x4_t n advsimd finz_)
   set(TESTER3_DEFINITIONS_ADVSIMD       ATR=finz_ DPTYPE=float64x2_t SPTYPE=float32x4_t DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=advsimd)
@@ -160,8 +160,8 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
   set(HEADER_PARAMS_VSX_NOFMA cinz_ 2 4 "vector double" "vector float" "vector int" "vector int" __VSX__ vsxnofma)
   set(ALIAS_PARAMS_VSX_DP  2 "vector double" "vector int" - vsx finz_)
   set(ALIAS_PARAMS_VSX_SP -4 "vector float"  "vector int" - vsx finz_)
-  set(TESTER3_DEFINITIONS_SVE       ATR=finz_ DPTYPE=vectordouble SPTYPE=vectorfloat DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vsx)
-  set(TESTER3_DEFINITIONS_SVE_NOFMA ATR=cinz_ DPTYPE=vectordouble SPTYPE=vectorfloat DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vsxnofma)
+  set(TESTER3_DEFINITIONS_VSX       ATR=finz_ DPTYPE=vectordouble SPTYPE=vectorfloat DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vsx)
+  set(TESTER3_DEFINITIONS_VSX_NOFMA ATR=cinz_ DPTYPE=vectordouble SPTYPE=vectorfloat DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vsxnofma)
 
   set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mvsx")
 endif()
@@ -193,8 +193,8 @@ command_arguments(RENAME_PARAMS_PURECFMA_SCALAR finz_ 1 1 purecfma)
 # The vector length parameters in SVE, for SP and DP, are chosen for
 # the smallest SVE vector size (128-bit). The name is generated using
 # the "x" token of VLA SVE vector functions.
-command_arguments(RENAME_PARAMS_SVE             finz_ 2 4 sve)
-command_arguments(RENAME_PARAMS_SVE_NOFMA       cinz_ 2 4 svenofma)
+command_arguments(RENAME_PARAMS_SVE             finz_ x x sve)
+command_arguments(RENAME_PARAMS_SVE_NOFMA       cinz_ x x svenofma)
 
 command_arguments(RENAME_PARAMS_GNUABI_SSE2    sse2 b 2 4 _mm128d _mm128 _mm128i _mm128i __SSE2__)
 command_arguments(RENAME_PARAMS_GNUABI_AVX     avx c 4 8 __m256d __m256 __m128i "struct { __m128i x, y$<SEMICOLON> }" __AVX__)
@@ -204,7 +204,7 @@ command_arguments(RENAME_PARAMS_GNUABI_ADVSIMD advsimd n 2 4 float64x2_t float32
 # The vector length parameters in SVE, for SP and DP, are chosen for
 # the smallest SVE vector size (128-bit). The name is generated using
 # the "x" token of VLA SVE vector functions.
-command_arguments(RENAME_PARAMS_GNUABI_SVE sve s 2 4 svfloat64_t svfloat32_t svint32_t svint32_t __ARM_SVE)
+command_arguments(RENAME_PARAMS_GNUABI_SVE sve s x x svfloat64_t svfloat32_t svint32_t svint32_t __ARM_SVE)
 
 command_arguments(MKMASKED_PARAMS_GNUABI_AVX512F_dp avx512f e 8)
 command_arguments(MKMASKED_PARAMS_GNUABI_AVX512F_sp avx512f e -16)
