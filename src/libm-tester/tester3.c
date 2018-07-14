@@ -73,7 +73,7 @@ float get__m512(__m512 v, int r) { float a[16]; _mm512_storeu_ps(a, v); return a
 #endif
 #endif // #if defined(__i386__) || defined(__x86_64__) || defined(_MSC_VER)
 
-#ifdef __ARM_NEON
+#if defined(__aarch64__) && defined(__ARM_NEON)
 float64x2_t setfloat64x2_t(double d, int r) { double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return vld1q_f64(a); }
 double getfloat64x2_t(float64x2_t v, int r) { double a[2]; vst1q_f64(a, v); return a[r & 1]; }
 float32x4_t setfloat32x4_t(float d, int r) { float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return vld1q_f32(a); }
@@ -122,8 +122,6 @@ float getvectorfloat(vectorfloat v, int r) { float a[4]; return v[r & 3]; }
 
 //
 
-#define STEPSCALE 10
-
 #define exec_d_d(ATR, NAME, ULP, TYPE, TSX, EXT, arg) do {		\
     int r = rand();							\
     DPTYPE vx = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (arg, r));	\
@@ -131,18 +129,29 @@ float getvectorfloat(vectorfloat v, int r) { float a[4]; return v[r & 3]; }
     MD5_Update(&ctx, &fx, sizeof(double));				\
   } while(0)
 
-#define test_d_d(NAME, ULP, START, END, STEP) do {			\
+#define test_d_d(NAME, ULP, START, END, NSTEP) do {		\
+    MD5_CTX ctx;						\
+    memset(&ctx, 1, sizeof(MD5_CTX));				\
+    MD5_Init(&ctx);						\
+    double step = ((double)(END) - (double)(START))/NSTEP;	\
+    for(double d = (START);d < (END);d += step)			\
+      exec_d_d(ATR, NAME, ULP, DPTYPE, DPTYPESPEC, EXTSPEC, d);	\
+    checkDigest(NAME);						\
+  } while(0)
+
+#define testu_d_d(NAME, ULP, START, END, NSTEP) do {			\
     MD5_CTX ctx;							\
     memset(&ctx, 1, sizeof(MD5_CTX));					\
     MD5_Init(&ctx);							\
-    for(double d = (START);d < (END);d += (STEP)*STEPSCALE)		\
-      exec_d_d(ATR, NAME, ULP, DPTYPE, DPTYPESPEC, EXTSPEC, d);	\
+    uint64_t step = (d2u(END) - d2u(START))/NSTEP;			\
+    for(uint64_t u = d2u(START);u < d2u(END);u += step)			\
+      exec_d_d(ATR, NAME, ULP, DPTYPE, DPTYPESPEC, EXTSPEC, u2d(u));	\
     checkDigest(NAME);							\
   } while(0)
 
 //
 
-#define exec_d2_d(ATR, NAME, ULP, TYPE, TSX, EXT, arg) do { \
+#define exec_d2_d(ATR, NAME, ULP, TYPE, TSX, EXT, arg) do {		\
     int r = rand();							\
     TYPE2(TYPE) vx2 = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (arg, r)); \
     double fxx = GET(TYPE)(vx2.x, r), fxy = GET(TYPE)(vx2.y, r);	\
@@ -150,81 +159,97 @@ float getvectorfloat(vectorfloat v, int r) { float a[4]; return v[r & 3]; }
     MD5_Update(&ctx, &fxy, sizeof(double));				\
   } while(0)
 
-#define test_d2_d(NAME, ULP, START, END, STEP) do {		\
-    MD5_CTX ctx;						\
-    MD5_Init(&ctx);						\
-    for(double d = (START);d < (END);d += (STEP)*STEPSCALE)	\
+#define test_d2_d(NAME, ULP, START, END, NSTEP) do {			\
+    MD5_CTX ctx;							\
+    MD5_Init(&ctx);							\
+    double step = ((double)(END) - (double)(START))/NSTEP;		\
+    for(double d = (START);d < (END);d += step)				\
       exec_d2_d(ATR, NAME, ULP, DPTYPE, DPTYPESPEC, EXTSPEC, d);	\
-    checkDigest(NAME);						\
+    checkDigest(NAME);							\
   } while(0)
 
 //
 
-#define exec_d_d_d(ATR, NAME, ULP, TYPE, TSX, EXT, argu, argv) do { \
+#define exec_d_d_d(ATR, NAME, ULP, TYPE, TSX, EXT, argu, argv) do {	\
     int r = rand();							\
     DPTYPE vx = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (argu, r), SET(TYPE) (argv, r)); \
     double fx = GET(TYPE)(vx, r);					\
     MD5_Update(&ctx, &fx, sizeof(double));				\
   } while(0)
 
-#define test_d_d_d(NAME, ULP, STARTU, ENDU, STEPU, STARTV, ENDV, STEPV) do { \
+#define test_d_d_d(NAME, ULP, STARTU, ENDU, NSTEPU, STARTV, ENDV, NSTEPV) do { \
     MD5_CTX ctx;							\
     MD5_Init(&ctx);							\
-    for(double u = (STARTU);u < (ENDU);u += (STEPU) * sqrt(STEPSCALE))	\
-      for(double v = (STARTV);v < (ENDV);v += (STEPV) * sqrt(STEPSCALE)) \
+    double stepu = ((double)(ENDU) - (double)(STARTU))/NSTEPU;		\
+    double stepv = ((double)(ENDV) - (double)(STARTV))/NSTEPV;		\
+    for(double u = (STARTU);u < (ENDU);u += stepu)			\
+      for(double v = (STARTV);v < (ENDV);v += stepv)			\
 	exec_d_d_d(ATR, NAME, ULP, DPTYPE, DPTYPESPEC, EXTSPEC, u, v);	\
     checkDigest(NAME);							\
   } while(0)
 
 //
 
-#define exec_f_f(ATR, NAME, ULP, TYPE, TSX, EXT, arg) do { \
+#define exec_f_f(ATR, NAME, ULP, TYPE, TSX, EXT, arg) do {		\
     int r = rand();							\
     SPTYPE vx = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (arg, r));	\
     float fx = GET(TYPE)(vx, r);					\
     MD5_Update(&ctx, &fx, sizeof(float));				\
   } while(0)
 
-#define test_f_f(NAME, ULP, START, END, STEP) do {		\
+#define test_f_f(NAME, ULP, START, END, NSTEP) do {		\
     MD5_CTX ctx;						\
     MD5_Init(&ctx);						\
-    for(float d = (START);d < (END);d += (STEP)*STEPSCALE)	\
+    float step = ((double)(END) - (double)(START))/NSTEP;	\
+    for(float d = (START);d < (END);d += step)			\
       exec_f_f(ATR, NAME, ULP, SPTYPE, SPTYPESPEC, EXTSPEC, d);	\
     checkDigest(NAME);						\
   } while(0)
 
+#define testu_f_f(NAME, ULP, START, END, NSTEP) do {			\
+    MD5_CTX ctx;							\
+    MD5_Init(&ctx);							\
+    uint32_t step = (f2u(END) - f2u(START))/NSTEP;			\
+    for(uint32_t u = f2u(START);u < f2u(END);u += step)			\
+      exec_f_f(ATR, NAME, ULP, SPTYPE, SPTYPESPEC, EXTSPEC, u2f(u));	\
+    checkDigest(NAME);							\
+  } while(0)
+
 //
 
-#define exec_f2_f(ATR, NAME, ULP, TYPE, TSX, EXT, arg) do { \
+#define exec_f2_f(ATR, NAME, ULP, TYPE, TSX, EXT, arg) do {		\
     int r = rand();							\
     TYPE2(TYPE) vx2 = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (arg, r)); \
-    float fxx = GET(TYPE)(vx2.x, r), fxy = GET(TYPE)(vx2.y, r);	\
+    float fxx = GET(TYPE)(vx2.x, r), fxy = GET(TYPE)(vx2.y, r);		\
     MD5_Update(&ctx, &fxx, sizeof(float));				\
     MD5_Update(&ctx, &fxy, sizeof(float));				\
   } while(0)
 
-#define test_f2_f(NAME, ULP, START, END, STEP) do {		\
-    MD5_CTX ctx;						\
-    MD5_Init(&ctx);						\
-    for(float d = (START);d < (END);d += (STEP)*STEPSCALE)	\
+#define test_f2_f(NAME, ULP, START, END, NSTEP) do {			\
+    MD5_CTX ctx;							\
+    MD5_Init(&ctx);							\
+    float step = ((float)(END) - (float)(START))/NSTEP;			\
+    for(float d = (START);d < (END);d += step)				\
       exec_f2_f(ATR, NAME, ULP, SPTYPE, SPTYPESPEC, EXTSPEC, d);	\
-    checkDigest(NAME);						\
+    checkDigest(NAME);							\
   } while(0)
 
 //
 
-#define exec_f_f_f(ATR, NAME, ULP, TYPE, TSX, EXT, argu, argv) do { \
+#define exec_f_f_f(ATR, NAME, ULP, TYPE, TSX, EXT, argu, argv) do {	\
     int r = rand();							\
     SPTYPE vx = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (argu, r), SET(TYPE) (argv, r)); \
     float fx = GET(TYPE)(vx, r);					\
     MD5_Update(&ctx, &fx, sizeof(float));				\
   } while(0)
 
-#define test_f_f_f(NAME, ULP, STARTU, ENDU, STEPU, STARTV, ENDV, STEPV) do { \
+#define test_f_f_f(NAME, ULP, STARTU, ENDU, NSTEPU, STARTV, ENDV, NSTEPV) do { \
     MD5_CTX ctx;							\
     MD5_Init(&ctx);							\
-    for(float u = (STARTU);u < (ENDU);u += (STEPU) * sqrt(STEPSCALE))	\
-      for(float v = (STARTV);v < (ENDV);v += (STEPV) * sqrt(STEPSCALE))	\
+    float stepu = ((float)(ENDU) - (float)(STARTU))/NSTEPU;		\
+    float stepv = ((float)(ENDV) - (float)(STARTV))/NSTEPV;		\
+    for(float u = (STARTU);u < (ENDU);u += stepu)			\
+      for(float v = (STARTV);v < (ENDV);v += stepv)			\
 	exec_f_f_f(ATR, NAME, ULP, SPTYPE, SPTYPESPEC, EXTSPEC, u, v);	\
     checkDigest(NAME);							\
   } while(0)
@@ -245,11 +270,11 @@ int do_test(int argc, char **argv)
 
   srand(seed = time(NULL));
 
-  test_d_d(asin, u35, -1, 1, 1.1e-6);
-  test_d_d(acos, u35, -1, 1, 1.1e-6);
+  test_d_d(asin, u35, -1.0, 1.0, 2000001);
+  test_d_d(acos, u35, -1.0, 1.0, 2000001);
 
-  test_f_f(asin, u35, -1, 1, 1.1e-6);
-  test_f_f(acos, u35, -1, 1, 1.1e-6);
+  test_f_f(asin, u35, -1.0, 1.0, 2000001);
+  test_f_f(acos, u35, -1.0, 1.0, 2000001);
 
   if (fp != NULL) fclose(fp);
 
