@@ -300,6 +300,11 @@ static INLINE vdouble vmla_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) {
 static INLINE vdouble vmlanp_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) {
   return vfmsq_f64(z, x, y);
 }
+
+//[z = x * y - z]
+static INLINE vdouble vmlapn_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) {
+  return vneg_vd_vd(vfmanp_vd_vd_vd_vd(x, y, z));
+}
 #else
 static INLINE vdouble vmla_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return vadd_vd_vd_vd(vmul_vd_vd_vd(x, y), z); }
 static INLINE vdouble vmlapn_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return vsub_vd_vd_vd(vmul_vd_vd_vd(x, y), z); }
@@ -311,11 +316,6 @@ static INLINE vdouble vfma_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { // z +
 
 static INLINE vdouble vfmanp_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { // z - x * y
   return vfmsq_f64(z, x, y);
-}
-
-//[z = x * y - z]
-static INLINE vdouble vmlapn_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) {
-  return vneg_vd_vd(vfmanp_vd_vd_vd_vd(x, y, z));
 }
 
 static INLINE vdouble vfmapn_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { // x * y - z

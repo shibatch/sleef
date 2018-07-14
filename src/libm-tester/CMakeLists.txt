@@ -81,10 +81,6 @@ set(IUT_LIST ${TARGET_IUT})
 
 set(IUT_SRC iutsimd.c iutsimdmain.c testerutil)
 
-# Target libmd5_static
-add_library(libmd5_static STATIC md5.c md5.h)
-set_target_properties(libmd5_static PROPERTIES C_STANDARD 99)
-
 # Add vector extension `iut`s
 macro(test_extension SIMD)
   if(COMPILER_SUPPORTS_${SIMD})
@@ -123,23 +119,31 @@ macro(test_extension SIMD)
     # Build tester3
     string(TOLOWER ${SIMD} SCSIMD)
     set(T "tester3${SCSIMD}")
-    add_executable(${T} tester3.c tester3main.c)
+    add_executable(${T} tester3.c tester3main.c md5.c md5.h)
     target_compile_options(${T} PRIVATE ${FLAGS_ENABLE_${SIMD}})
-    target_compile_definitions(${T} PRIVATE ${TESTER3_DEFINITIONS_${SIMD}})
+    target_compile_definitions(${T} PRIVATE ${COMMON_TARGET_DEFINITIONS} ${TESTER3_DEFINITIONS_${SIMD}})
     set_target_properties(${T} PROPERTIES C_STANDARD 99)
-    target_link_libraries(${T} ${TARGET_LIBSLEEF} ${LIBM} libmd5_static)
+    target_link_libraries(${T} ${TARGET_LIBSLEEF} ${LIBM})
     add_dependencies(${T} ${TARGET_HEADERS})
     add_dependencies(${T} ${TARGET_LIBSLEEF})
 
     # Add test with tester3
     list(FIND TEST3_CINZ ${SCSIMD} INDEX_TEST3_CINZ)
     if (NOT INDEX_TEST3_CINZ EQUAL -1)
-      add_test(NAME tester3${SCSIMD} COMMAND tester3${SCSIMD} ${CMAKE_SOURCE_DIR}/src/libm-tester/hash_cinz.txt)
+      if (SDE_COMMAND)
+	add_test(NAME tester3${SCSIMD} COMMAND ${SDE_COMMAND} "--" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tester3${SCSIMD} ${CMAKE_SOURCE_DIR}/src/libm-tester/hash_cinz.txt)
+      else()
+	add_test(NAME tester3${SCSIMD} COMMAND tester3${SCSIMD} ${CMAKE_SOURCE_DIR}/src/libm-tester/hash_cinz.txt)
+      endif()
     endif()
 
     list(FIND TEST3_FINZ ${SCSIMD} INDEX_TEST3_FINZ)
     if (NOT INDEX_TEST3_FINZ EQUAL -1)
-      add_test(NAME tester3${SCSIMD} COMMAND tester3${SCSIMD} ${CMAKE_SOURCE_DIR}/src/libm-tester/hash_finz.txt)
+      if (SDE_COMMAND)
+	add_test(NAME tester3${SCSIMD} COMMAND ${SDE_COMMAND} "--" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tester3${SCSIMD} ${CMAKE_SOURCE_DIR}/src/libm-tester/hash_finz.txt)
+      else()
+	add_test(NAME tester3${SCSIMD} COMMAND tester3${SCSIMD} ${CMAKE_SOURCE_DIR}/src/libm-tester/hash_finz.txt)
+      endif()
     endif()
   endif(COMPILER_SUPPORTS_${SIMD})
 endmacro(test_extension)
