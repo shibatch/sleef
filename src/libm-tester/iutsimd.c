@@ -455,6 +455,9 @@ int do_test(int argc, char **argv) {
 #elif defined(ENABLE_VECEXT)
     if (vcast_f_vf(xpowf(vcast_vf_f(0.5f), vcast_vf_f(140))) == 0) k += 4;
 #endif
+#if defined(ENABLE_DSP128) || defined(ENABLE_DSP256)
+    k += 8; // dispatcher
+#endif
 
     printf("%d\n", k);
     fflush(stdout);
@@ -548,6 +551,11 @@ int do_test(int argc, char **argv) {
     func_d_d("lgamma_u1", xlgamma_u1);
     func_d_d("erf_u1", xerf_u1);
     func_d_d("erfc_u15", xerfc_u15);
+
+#if !defined(ENABLE_DSP128) && !defined(ENABLE_DSP256)
+    func_d_d("yasin", yasin);
+    func_d_d("yacos", yacos);
+#endif
 #endif
 
 #ifdef ENABLE_SP
@@ -625,6 +633,11 @@ int do_test(int argc, char **argv) {
     func_f_f("lgammaf_u1", xlgammaf_u1);
     func_f_f("erff_u1", xerff_u1);
     func_f_f("erfcf_u15", xerfcf_u15);
+
+#if !defined(ENABLE_DSP128) && !defined(ENABLE_DSP256)
+    func_f_f("yasinf", yasinf);
+    func_f_f("yacosf", yacosf);
+#endif
 #endif
   }
 

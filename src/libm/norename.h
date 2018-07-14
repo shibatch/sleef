@@ -1,4 +1,4 @@
-//          Copyright Naoki Shibata 2010 - 2017.
+//          Copyright Naoki Shibata 2010 - 2018.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -98,6 +98,9 @@ vdouble xtgamma_u1(vdouble);
 
 vdouble xerf_u1(vdouble);
 vdouble xerfc_u15(vdouble);
+
+vdouble yasin(vdouble s);
+vdouble yacos(vdouble s);
 #endif
 
 //
@@ -194,4 +197,7 @@ vfloat xtgammaf_u1(vfloat);
 
 vfloat xerff_u1(vfloat);
 vfloat xerfcf_u15(vfloat);
+
+vfloat yasinf(vfloat s);
+vfloat yacosf(vfloat s);
 #endif

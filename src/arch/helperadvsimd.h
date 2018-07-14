@@ -147,6 +147,7 @@ static INLINE vfloat vdiv_vf_vf_vf(vfloat n, vfloat d) {
 }
 static INLINE vfloat vsqrt_vf_vf(vfloat d) { return vsqrtq_f32(d); }
 
+#if CONFIG == 1
 // Multiply accumulate: z = z + x * y
 static INLINE vfloat vmla_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) {
   return vfmaq_f32(z, x, y);
@@ -155,6 +156,10 @@ static INLINE vfloat vmla_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) {
 static INLINE vfloat vmlanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) {
   return vfmsq_f32(z, x, y);
 }
+#else
+static INLINE vdouble vmla_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return vadd_vd_vd_vd(vmul_vd_vd_vd(x, y), z); }
+static INLINE vdouble vmlapn_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return vsub_vd_vd_vd(vmul_vd_vd_vd(x, y), z); }
+#endif
 
 // |x|, -x
 static INLINE vfloat vabs_vf_vf(vfloat f) { return vabsq_f32(f); }
@@ -286,6 +291,7 @@ static INLINE vdouble vmin_vd_vd_vd(vdouble x, vdouble y) {
   return vminq_f64(x, y);
 }
 
+#if CONFIG == 1
 // Multiply accumulate: z = z + x * y
 static INLINE vdouble vmla_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) {
   return vfmaq_f64(z, x, y);
@@ -294,6 +300,10 @@ static INLINE vdouble vmla_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) {
 static INLINE vdouble vmlanp_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) {
   return vfmsq_f64(z, x, y);
 }
+#else
+static INLINE vfloat vmla_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vadd_vf_vf_vf(vmul_vf_vf_vf(x, y), z); }
+static INLINE vfloat vmlanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vsub_vf_vf_vf(z, vmul_vf_vf_vf(x, y)); }
+#endif
 
 static INLINE vdouble vfma_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { // z + x * y
   return vfmaq_f64(z, x, y);

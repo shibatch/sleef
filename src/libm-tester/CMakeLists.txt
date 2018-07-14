@@ -65,6 +65,10 @@ set(IUT_LIST ${TARGET_IUT})
 
 set(IUT_SRC iutsimd.c iutsimdmain.c testerutil)
 
+# Target libmd5_static
+add_library(libmd5_static STATIC md5.c md5.h)
+set_target_properties(libmd5_static PROPERTIES C_STANDARD 99)
+
 # Add vector extension `iut`s
 macro(test_extension SIMD)
   if(COMPILER_SUPPORTS_${SIMD})
@@ -99,6 +103,17 @@ macro(test_extension SIMD)
 	      endif()
       endforeach()
     endif()
+
+    # Build tester3
+    string(TOLOWER ${SIMD} SCSIMD)
+    set(T "tester3${SCSIMD}")
+    add_executable(${T} tester3.c tester3main.c)
+    target_compile_options(${T} PRIVATE ${FLAGS_ENABLE_${SIMD}})
+    target_compile_definitions(${T} PRIVATE ${TESTER3_DEFINITIONS_${SIMD}})
+    set_target_properties(${T} PROPERTIES C_STANDARD 99)
+    target_link_libraries(${T} ${TARGET_LIBSLEEF} ${LIBM} libmd5_static)
+    add_dependencies(${T} ${TARGET_HEADERS})
+    add_dependencies(${T} ${TARGET_LIBSLEEF})
   endif(COMPILER_SUPPORTS_${SIMD})
 endmacro(test_extension)
 
@@ -205,3 +220,27 @@ endif(LIB_MPFR AND NOT MINGW)
 
 # Tests depends on the library
 add_dependencies(${TARGET_IUT} ${TARGET_HEADERS})
+
+# Tester3
+
+if (SLEEF_ARCH_X86)
+  set(TEST3_CINZ purec_scalar sse2 sse4 avx avx512f_nofma)
+  set(TEST3_FINZ purecfma_scalar avx2128 avx2 avx512f)
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
+  set(TEST3_CINZ purec_scalar advsimdnofma svenofma)
+  set(TEST3_FINZ purecfma_scalar advsimd sve)
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
+  set(TEST3_CINZ purec_scalar)
+  set(TEST3_FINZ purecfma_scalar)
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
+  set(TEST3_CINZ purec_scalar vsxnofma)
+  set(TEST3_FINZ purecfma_scalar vsx)
+endif()
+  
+foreach(T ${TEST3_CINZ})
+  add_test(NAME tester3${T} COMMAND tester3${T} ${CMAKE_SOURCE_DIR}/src/libm-tester/hash_cinz.txt)
+endforeach()
+
+foreach(T ${TEST3_FINZ})
+  add_test(NAME tester3${T} COMMAND tester3${T} ${CMAKE_SOURCE_DIR}/src/libm-tester/hash_finz.txt)
+endforeach()

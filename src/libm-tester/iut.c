@@ -39,7 +39,7 @@
 int main(int argc, char **argv) {
   char buf[BUFSIZE];
 
-  printf("3\n");
+  printf("11\n");
   fflush(stdout);
 
   //fprintf(stderr, "IUT start\n");

@@ -1074,14 +1074,6 @@ EXPORT CONST vfloat xasinf(vfloat d) {
   return vmulsign_vf_vf_vf(r, d);
 }
 
-#ifndef ENABLE_GNUABI
-#ifdef ENABLE_ALIAS
-EXPORT CONST vfloat yasinf(vfloat) __attribute__((alias( stringify(xasinf) )));
-#else
-EXPORT CONST vfloat yasinf(vfloat d) { return xasinf(d); }
-#endif
-#endif
-
 EXPORT CONST vfloat xacosf(vfloat d) {
   vopmask o = vlt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(0.5f));
   vfloat x2 = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(d, d),
@@ -1103,6 +1095,16 @@ EXPORT CONST vfloat xacosf(vfloat d) {
 			  dfadd_vf2_vf2_vf(vcast_vf2_f_f(3.1415927410125732422f,-8.7422776573475857731e-08f),
 					   vneg_vf_vf(r)).x, r);
 }
+
+#ifndef ENABLE_GNUABI
+#ifdef ENABLE_ALIAS
+EXPORT CONST vfloat yasinf(vfloat) __attribute__((alias( stringify(xasinf) )));
+EXPORT CONST vfloat yacosf(vfloat) __attribute__((alias( stringify(xacosf) )));
+#else
+EXPORT CONST vfloat yasinf(vfloat d) { return xasinf(d); }
+EXPORT CONST vfloat yacosf(vfloat d) { return xacosf(d); }
+#endif
+#endif
 
 //
 
