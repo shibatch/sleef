@@ -20,6 +20,22 @@ string(CONCAT CMAKE_C_FLAGS ${SLEEF_C_FLAGS})
 
 #
 
+if (SLEEF_ARCH_X86)
+  set(TEST3_CINZ purec_scalar sse2 sse4 avx avx512f_nofma)
+  set(TEST3_FINZ purecfma_scalar avx2128 avx2 avx512f)
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
+  set(TEST3_CINZ purec_scalar advsimdnofma svenofma)
+  set(TEST3_FINZ purecfma_scalar advsimd sve)
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
+  set(TEST3_CINZ purec_scalar)
+  set(TEST3_FINZ purecfma_scalar)
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
+  set(TEST3_CINZ purec_scalar vsxnofma)
+  set(TEST3_FINZ purecfma_scalar vsx)
+endif()
+
+#
+
 function(add_test_iut IUT)
   if (LIB_MPFR)
     set(TESTER ${TARGET_TESTER})
@@ -114,6 +130,17 @@ macro(test_extension SIMD)
     target_link_libraries(${T} ${TARGET_LIBSLEEF} ${LIBM} libmd5_static)
     add_dependencies(${T} ${TARGET_HEADERS})
     add_dependencies(${T} ${TARGET_LIBSLEEF})
+
+    # Add test with tester3
+    list(FIND TEST3_CINZ ${SCSIMD} INDEX_TEST3_CINZ)
+    if (NOT INDEX_TEST3_CINZ EQUAL -1)
+      add_test(NAME tester3${SCSIMD} COMMAND tester3${SCSIMD} ${CMAKE_SOURCE_DIR}/src/libm-tester/hash_cinz.txt)
+    endif()
+
+    list(FIND TEST3_FINZ ${SCSIMD} INDEX_TEST3_FINZ)
+    if (NOT INDEX_TEST3_FINZ EQUAL -1)
+      add_test(NAME tester3${SCSIMD} COMMAND tester3${SCSIMD} ${CMAKE_SOURCE_DIR}/src/libm-tester/hash_finz.txt)
+    endif()
   endif(COMPILER_SUPPORTS_${SIMD})
 endmacro(test_extension)
 
@@ -220,27 +247,3 @@ endif(LIB_MPFR AND NOT MINGW)
 
 # Tests depends on the library
 add_dependencies(${TARGET_IUT} ${TARGET_HEADERS})
-
-# Tester3
-
-if (SLEEF_ARCH_X86)
-  set(TEST3_CINZ purec_scalar sse2 sse4 avx avx512f_nofma)
-  set(TEST3_FINZ purecfma_scalar avx2128 avx2 avx512f)
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
-  set(TEST3_CINZ purec_scalar advsimdnofma svenofma)
-  set(TEST3_FINZ purecfma_scalar advsimd sve)
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
-  set(TEST3_CINZ purec_scalar)
-  set(TEST3_FINZ purecfma_scalar)
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
-  set(TEST3_CINZ purec_scalar vsxnofma)
-  set(TEST3_FINZ purecfma_scalar vsx)
-endif()
-  
-foreach(T ${TEST3_CINZ})
-  add_test(NAME tester3${T} COMMAND tester3${T} ${CMAKE_SOURCE_DIR}/src/libm-tester/hash_cinz.txt)
-endforeach()
-
-foreach(T ${TEST3_FINZ})
-  add_test(NAME tester3${T} COMMAND tester3${T} ${CMAKE_SOURCE_DIR}/src/libm-tester/hash_finz.txt)
-endforeach()
