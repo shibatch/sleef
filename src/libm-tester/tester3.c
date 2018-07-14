@@ -18,8 +18,8 @@
 #include "testerutil.h"
 
 #ifdef __VSX__
-typedef vector double vectordouble
-typedef vector float  vectorfloat
+typedef vector double vectordouble;
+typedef vector float  vectorfloat;
 #endif
 
 //
