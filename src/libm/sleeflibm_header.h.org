@@ -15,7 +15,7 @@
 #define CONST
 #endif
 
-#if defined(__AVX2__) || defined(__VSX__) || defined(__arm64__) || defined(__arm__)
+#if defined(__AVX2__) || defined(__aarch64__) || defined(__arm__) || defined(__powerpc64__)
 #ifndef FP_FAST_FMA
 #define FP_FAST_FMA
 #endif

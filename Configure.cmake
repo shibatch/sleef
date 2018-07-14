@@ -23,10 +23,10 @@ endif()
 
 # The library currently supports the following SIMD architectures
 set(SLEEF_SUPPORTED_EXTENSIONS
-  AVX512F AVX512F_NOFMA AVX2 AVX2128 FMA4 AVX SSE4 SSE2 # x86
-  ADVSIMD ADVSIMD_NOFMA SVE SVE_NOFMA                   # Aarch64
+  AVX512F AVX512FNOFMA AVX2 AVX2128 FMA4 AVX SSE4 SSE2  # x86
+  ADVSIMD ADVSIMDNOFMA SVE SVENOFMA                     # Aarch64
   NEON32 NEON32VFPV4			                # Aarch32
-  VSX VSX_NOFMA				                # PPC64
+  VSX VSXNOFMA				                # PPC64
   PUREC_SCALAR PURECFMA_SCALAR                          # Generic type
   CACHE STRING "List of SIMD architectures supported by libsleef."
   )
@@ -68,7 +68,7 @@ if((CMAKE_SYSTEM_PROCESSOR MATCHES "x86") OR (CMAKE_SYSTEM_PROCESSOR MATCHES "AM
     AVX2128
     AVX512F_
     AVX512F
-    AVX512F_NOFMA
+    AVX512FNOFMA
     PUREC_SCALAR
     PURECFMA_SCALAR
   )
@@ -82,35 +82,52 @@ if((CMAKE_SYSTEM_PROCESSOR MATCHES "x86") OR (CMAKE_SYSTEM_PROCESSOR MATCHES "AM
   command_arguments(HEADER_PARAMS_AVX2128       finz_ 2 4 __m128d __m128 __m128i __m128i __SSE2__ avx2128)
   command_arguments(HEADER_PARAMS_AVX512F_      finz_ 8 16 __m512d __m512 __m256i __m512i __AVX512F__)
   command_arguments(HEADER_PARAMS_AVX512F       finz_ 8 16 __m512d __m512 __m256i __m512i __AVX512F__ avx512f)
-  command_arguments(HEADER_PARAMS_AVX512F_NOFMA cinz_ 8 16 __m512d __m512 __m256i __m512i __AVX512F__ avx512fnofma)
+  command_arguments(HEADER_PARAMS_AVX512FNOFMA  cinz_ 8 16 __m512d __m512 __m256i __m512i __AVX512F__ avx512fnofma)
 
   command_arguments(ALIAS_PARAMS_AVX512F_DP   8 __m512d __m256i e avx512f finz_)
   command_arguments(ALIAS_PARAMS_AVX512F_SP -16 __m512  __m512i e avx512f finz_)
 
   set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mavx2;-mfma")
+
+  set(TESTER3_DEFINITIONS_SSE2          ATR=cinz_ DPTYPE=__m128d SPTYPE=__m128 DPTYPESPEC=d2 SPTYPESPEC=f4  EXTSPEC=sse2)
+  set(TESTER3_DEFINITIONS_SSE4          ATR=cinz_ DPTYPE=__m128d SPTYPE=__m128 DPTYPESPEC=d2 SPTYPESPEC=f4  EXTSPEC=sse4)
+  set(TESTER3_DEFINITIONS_AVX2128       ATR=finz_ DPTYPE=__m128d SPTYPE=__m128 DPTYPESPEC=d2 SPTYPESPEC=f4  EXTSPEC=avx2128)
+  set(TESTER3_DEFINITIONS_AVX           ATR=cinz_ DPTYPE=__m256d SPTYPE=__m256 DPTYPESPEC=d4 SPTYPESPEC=f8  EXTSPEC=avx)
+  set(TESTER3_DEFINITIONS_FMA4          ATR=finz_ DPTYPE=__m256d SPTYPE=__m256 DPTYPESPEC=d4 SPTYPESPEC=f8  EXTSPEC=fma4)
+  set(TESTER3_DEFINITIONS_AVX2          ATR=finz_ DPTYPE=__m256d SPTYPE=__m256 DPTYPESPEC=d4 SPTYPESPEC=f8  EXTSPEC=avx2)
+  set(TESTER3_DEFINITIONS_AVX512F       ATR=finz_ DPTYPE=__m512d SPTYPE=__m512 DPTYPESPEC=d8 SPTYPESPEC=f16 EXTSPEC=avx512f)
+  set(TESTER3_DEFINITIONS_AVX512FNOFMA  ATR=cinz_ DPTYPE=__m512d SPTYPE=__m512 DPTYPESPEC=d8 SPTYPESPEC=f16 EXTSPEC=avx512fnofma)
+
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
   set(SLEEF_ARCH_AARCH64 ON CACHE INTERNAL "True for Aarch64 architecture.")
   # Aarch64 requires support for advsimdfma4
   set(COMPILER_SUPPORTS_ADVSIMD 1)
-  set(COMPILER_SUPPORTS_ADVSIMD_NOFMA 1)
+  set(COMPILER_SUPPORTS_ADVSIMDNOFMA 1)
 
   set(SLEEF_HEADER_LIST
     ADVSIMD_
     ADVSIMD
-    ADVSIMD_NOFMA
+    ADVSIMDNOFMA
     SVE
-    SVE_NOFMA
+    SVENOFMA
     PUREC_SCALAR
     PURECFMA_SCALAR
   )
   command_arguments(HEADER_PARAMS_ADVSIMD_      finz_ 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON)
   command_arguments(HEADER_PARAMS_ADVSIMD       finz_ 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON advsimd)
-  command_arguments(HEADER_PARAMS_ADVSIMD_NOFMA cinz_ 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON advsimdnofma)
-  command_arguments(HEADER_PARAMS_SVE           finz_ 2 4 svfloat64_t svfloat32_t svint32_t svint32_t __ARM_FEATURE_SVE sve)
-  command_arguments(HEADER_PARAMS_SVE_NOFMA     cinz_ 2 4 svfloat64_t svfloat32_t svint32_t svint32_t __ARM_FEATURE_SVE svenofma)
-
+  command_arguments(HEADER_PARAMS_ADVSIMDNOFMA  cinz_ 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON advsimdnofma)
+  command_arguments(HEADER_PARAMS_SVE           finz_ x x svfloat64_t svfloat32_t svint32_t svint32_t __ARM_FEATURE_SVE sve)
+  command_arguments(HEADER_PARAMS_SVENOFMA      cinz_ x x svfloat64_t svfloat32_t svint32_t svint32_t __ARM_FEATURE_SVE svenofma)
   command_arguments(ALIAS_PARAMS_ADVSIMD_DP  2 float64x2_t int32x2_t n advsimd finz_)
   command_arguments(ALIAS_PARAMS_ADVSIMD_SP -4 float32x4_t int32x4_t n advsimd finz_)
+
+  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-march=armv8-a+simd")
+
+  set(TESTER3_DEFINITIONS_ADVSIMD       ATR=finz_ DPTYPE=float64x2_t SPTYPE=float32x4_t DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=advsimd)
+  set(TESTER3_DEFINITIONS_ADVSIMDNOFMA  ATR=cinz_ DPTYPE=float64x2_t SPTYPE=float32x4_t DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=advsimdnofma)
+  set(TESTER3_DEFINITIONS_SVE           ATR=finz_ DPTYPE=svfloat64_t SPTYPE=svfloat32_t DPTYPESPEC=dx SPTYPESPEC=fx EXTSPEC=sve)
+  set(TESTER3_DEFINITIONS_SVENOFMA      ATR=cinz_ DPTYPE=svfloat64_t SPTYPE=svfloat32_t DPTYPESPEC=dx SPTYPESPEC=fx EXTSPEC=svenofma)
+
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
   set(SLEEF_ARCH_AARCH32 ON CACHE INTERNAL "True for Aarch32 architecture.")
   set(COMPILER_SUPPORTS_NEON32 1)
@@ -126,7 +143,6 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
   command_arguments(HEADER_PARAMS_NEON32_     cinz_ 2 4 - float32x4_t int32x2_t int32x4_t __ARM_NEON__)
   command_arguments(HEADER_PARAMS_NEON32      cinz_ 2 4 - float32x4_t int32x2_t int32x4_t __ARM_NEON__ neon)
   command_arguments(HEADER_PARAMS_NEON32VFPV4 finz_ 2 4 - float32x4_t int32x2_t int32x4_t __ARM_NEON__ neonvfpv4)
-
   command_arguments(ALIAS_PARAMS_NEON32_SP -4 float32x4_t int32x4_t - neon cinz_)
   command_arguments(ALIAS_PARAMS_NEON32_DP 0)
 
@@ -137,22 +153,26 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
   set(SLEEF_HEADER_LIST
     VSX_
     VSX
-    VSX_NOFMA
+    VSXNOFMA
     PUREC_SCALAR
     PURECFMA_SCALAR
   )
 
   set(HEADER_PARAMS_VSX       finz_ 2 4 "vector double" "vector float" "vector int" "vector int" __VSX__ vsx)
   set(HEADER_PARAMS_VSX_      finz_ 2 4 "vector double" "vector float" "vector int" "vector int" __VSX__ vsx)
-  set(HEADER_PARAMS_VSX_NOFMA cinz_ 2 4 "vector double" "vector float" "vector int" "vector int" __VSX__ vsxnofma)
+  set(HEADER_PARAMS_VSXNOFMA  cinz_ 2 4 "vector double" "vector float" "vector int" "vector int" __VSX__ vsxnofma)
   set(ALIAS_PARAMS_VSX_DP  2 "vector double" "vector int" - vsx finz_)
-  set(ALIAS_PARAMS_VSX_SP -4 "vector float" "vector int" - vsx finz_)
+  set(ALIAS_PARAMS_VSX_SP -4 "vector float"  "vector int" - vsx finz_)
+  set(TESTER3_DEFINITIONS_VSX      ATR=finz_ DPTYPE=vectordouble SPTYPE=vectorfloat DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vsx)
+  set(TESTER3_DEFINITIONS_VSXNOFMA ATR=cinz_ DPTYPE=vectordouble SPTYPE=vectorfloat DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vsxnofma)
 
   set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mvsx")
 endif()
 
 command_arguments(HEADER_PARAMS_PUREC_SCALAR    cinz_ 1 1 double float int32_t int32_t __STDC__ purec)
 command_arguments(HEADER_PARAMS_PURECFMA_SCALAR finz_ 1 1 double float int32_t int32_t FP_FAST_FMA purecfma)
+set(TESTER3_DEFINITIONS_PUREC_SCALAR    ATR=cinz_ DPTYPE=double SPTYPE=float DPTYPESPEC=d1 SPTYPESPEC=f1 EXTSPEC=purec)
+set(TESTER3_DEFINITIONS_PURECFMA_SCALAR ATR=finz_ DPTYPE=double SPTYPE=float DPTYPESPEC=d1 SPTYPESPEC=f1 EXTSPEC=purecfma)
 set(COMPILER_SUPPORTS_PUREC_SCALAR 1)
 set(COMPILER_SUPPORTS_PURECFMA_SCALAR 1)
 
@@ -164,20 +184,20 @@ command_arguments(RENAME_PARAMS_FMA4            finz_ 4 8 fma4)
 command_arguments(RENAME_PARAMS_AVX2            finz_ 4 8 avx2)
 command_arguments(RENAME_PARAMS_AVX2128         finz_ 2 4 avx2128)
 command_arguments(RENAME_PARAMS_AVX512F         finz_ 8 16 avx512f)
-command_arguments(RENAME_PARAMS_AVX512F_NOFMA   cinz_ 8 16 avx512fnofma)
+command_arguments(RENAME_PARAMS_AVX512FNOFMA    cinz_ 8 16 avx512fnofma)
 command_arguments(RENAME_PARAMS_ADVSIMD         finz_ 2 4 advsimd)
-command_arguments(RENAME_PARAMS_ADVSIMD_NOFMA   cinz_ 2 4 advsimdnofma)
+command_arguments(RENAME_PARAMS_ADVSIMDNOFMA    cinz_ 2 4 advsimdnofma)
 command_arguments(RENAME_PARAMS_NEON32          cinz_ 2 4 neon)
 command_arguments(RENAME_PARAMS_NEON32VFPV4     finz_ 2 4 neonvfpv4)
 command_arguments(RENAME_PARAMS_VSX             finz_ 2 4 vsx)
-command_arguments(RENAME_PARAMS_VSX_NOFMA       cinz_ 2 4 vsxnofma)
+command_arguments(RENAME_PARAMS_VSXNOFMA        cinz_ 2 4 vsxnofma)
 command_arguments(RENAME_PARAMS_PUREC_SCALAR    cinz_ 1 1 purec)
 command_arguments(RENAME_PARAMS_PURECFMA_SCALAR finz_ 1 1 purecfma)
 # The vector length parameters in SVE, for SP and DP, are chosen for
 # the smallest SVE vector size (128-bit). The name is generated using
 # the "x" token of VLA SVE vector functions.
-command_arguments(RENAME_PARAMS_SVE             finz_ 2 4 sve)
-command_arguments(RENAME_PARAMS_SVE_NOFMA       cinz_ 2 4 svenofma)
+command_arguments(RENAME_PARAMS_SVE             finz_ x x sve)
+command_arguments(RENAME_PARAMS_SVENOFMA        cinz_ x x svenofma)
 
 command_arguments(RENAME_PARAMS_GNUABI_SSE2    sse2 b 2 4 _mm128d _mm128 _mm128i _mm128i __SSE2__)
 command_arguments(RENAME_PARAMS_GNUABI_AVX     avx c 4 8 __m256d __m256 __m128i "struct { __m128i x, y$<SEMICOLON> }" __AVX__)
@@ -187,7 +207,7 @@ command_arguments(RENAME_PARAMS_GNUABI_ADVSIMD advsimd n 2 4 float64x2_t float32
 # The vector length parameters in SVE, for SP and DP, are chosen for
 # the smallest SVE vector size (128-bit). The name is generated using
 # the "x" token of VLA SVE vector functions.
-command_arguments(RENAME_PARAMS_GNUABI_SVE sve s 2 4 svfloat64_t svfloat32_t svint32_t svint32_t __ARM_SVE)
+command_arguments(RENAME_PARAMS_GNUABI_SVE sve s x x svfloat64_t svfloat32_t svint32_t svint32_t __ARM_SVE)
 
 command_arguments(MKMASKED_PARAMS_GNUABI_AVX512F_dp avx512f e 8)
 command_arguments(MKMASKED_PARAMS_GNUABI_AVX512F_sp avx512f e -16)
@@ -218,17 +238,17 @@ set(CLANG_FLAGS_ENABLE_FMA4 "-mfma4")
 set(CLANG_FLAGS_ENABLE_AVX2 "-mavx2;-mfma")
 set(CLANG_FLAGS_ENABLE_AVX2128 "-mavx2;-mfma")
 set(CLANG_FLAGS_ENABLE_AVX512F "-mavx512f")
-set(CLANG_FLAGS_ENABLE_AVX512F_NOFMA "-mavx512f")
+set(CLANG_FLAGS_ENABLE_AVX512FNOFMA "-mavx512f")
 set(CLANG_FLAGS_ENABLE_NEON32 "--target=arm-linux-gnueabihf;-mcpu=cortex-a8")
 set(CLANG_FLAGS_ENABLE_NEON32VFPV4 "-march=armv7-a;-mfpu=neon-vfpv4")
 # Arm AArch64 vector extensions.
 set(CLANG_FLAGS_ENABLE_ADVSIMD "-march=armv8-a+simd")
-set(CLANG_FLAGS_ENABLE_ADVSIMD_NOFMA "-march=armv8-a+simd")
+set(CLANG_FLAGS_ENABLE_ADVSIMDNOFMA "-march=armv8-a+simd")
 set(CLANG_FLAGS_ENABLE_SVE "-march=armv8-a+sve")
-set(CLANG_FLAGS_ENABLE_SVE_NOFMA "-march=armv8-a+sve")
+set(CLANG_FLAGS_ENABLE_SVENOFMA "-march=armv8-a+sve")
 # PPC64
 set(CLANG_FLAGS_ENABLE_VSX "-mvsx")
-set(CLANG_FLAGS_ENABLE_VSX_NOFMA "-mvsx")
+set(CLANG_FLAGS_ENABLE_VSXNOFMA "-mvsx")
 
 # All variables storing compiler flags should be prefixed with FLAGS_
 if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
@@ -262,7 +282,7 @@ elseif(MSVC)
   set(FLAGS_ENABLE_AVX2 /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /arch:AVX2)
   set(FLAGS_ENABLE_AVX2128 /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /arch:AVX2)
   set(FLAGS_ENABLE_AVX512F /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /D__AVX512F__ /arch:AVX2)
-  set(FLAGS_ENABLE_AVX512F_NOFMA /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /D__AVX512F__ /arch:AVX2)
+  set(FLAGS_ENABLE_AVX512FNOFMA /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /D__AVX512F__ /arch:AVX2)
   set(FLAGS_ENABLE_PURECFMA_SCALAR /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /arch:AVX2)
   set(FLAGS_WALL "/D_CRT_SECURE_NO_WARNINGS")
   set(FLAGS_NO_ERRNO "")
@@ -273,7 +293,7 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "Intel")
   set(FLAGS_ENABLE_AVX2 "-march=core-avx2")
   set(FLAGS_ENABLE_AVX2128 "-march=core-avx2")
   set(FLAGS_ENABLE_AVX512F "-xCOMMON-AVX512")
-  set(FLAGS_ENABLE_AVX512F_NOFMA "-xCOMMON-AVX512")
+  set(FLAGS_ENABLE_AVX512FNOFMA "-xCOMMON-AVX512")
   set(FLAGS_ENABLE_PURECFMA_SCALAR "-march=core-avx2")
   set(FLAGS_STRICTMATH "-fp-model strict -Qoption,cpp,--extended_float_type -qoverride-limits")
   set(FLAGS_FASTMATH "-fp-model fast=2 -Qoption,cpp,--extended_float_type -qoverride-limits")
@@ -374,7 +394,7 @@ CHECK_C_SOURCE_COMPILES("
   COMPILER_SUPPORTS_SVE)
 
 if(COMPILER_SUPPORTS_SVE)
-  set(COMPILER_SUPPORTS_SVE_NOFMA 1)
+  set(COMPILER_SUPPORTS_SVENOFMA 1)
 endif()
 
 set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX512F})
@@ -400,7 +420,7 @@ if(COMPILER_SUPPORTS_AVX2)
 endif()
 
 if (COMPILER_SUPPORTS_AVX512F)
-  set(COMPILER_SUPPORTS_AVX512F_NOFMA 1)
+  set(COMPILER_SUPPORTS_AVX512FNOFMA 1)
 endif()
 
 set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_VSX})
@@ -413,7 +433,7 @@ CHECK_C_SOURCE_COMPILES("
   COMPILER_SUPPORTS_VSX)
 
 if (COMPILER_SUPPORTS_VSX)
-  set(COMPILER_SUPPORTS_VSX_NOFMA 1)
+  set(COMPILER_SUPPORTS_VSXNOFMA 1)
 endif()
 
 # Check if compilation with OpenMP really succeeds

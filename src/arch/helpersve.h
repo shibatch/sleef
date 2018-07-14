@@ -220,6 +220,7 @@ static INLINE vint2 vrint_vi2_vf(vfloat d) {
   return svcvt_s32_f32_x(ptrue, svrinta_f32_x(ptrue, d));
 }
 
+#if CONFIG == 1
 // Multiply accumulate: z = z + x * y
 static INLINE vfloat vmla_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) {
   return svmad_f32_x(ptrue, x, y, z);
@@ -228,6 +229,10 @@ static INLINE vfloat vmla_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) {
 static INLINE vfloat vmlanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) {
   return svmsb_f32_x(ptrue, x, y, z);
 }
+#else
+static INLINE vfloat vmla_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vadd_vf_vf_vf(vmul_vf_vf_vf(x, y), z); }
+static INLINE vfloat vmlanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vsub_vf_vf_vf(z, vmul_vf_vf_vf(x, y)); }
+#endif
 
 // fused multiply add / sub
 static INLINE vfloat vfma_vf_vf_vf_vf(vfloat x, vfloat y,
@@ -526,11 +531,21 @@ static INLINE vdouble vmin_vd_vd_vd(vdouble x, vdouble y) {
   return svmin_f64_x(ptrue, x, y);
 }
 
+#if CONFIG == 1
 // Multiply accumulate / subtract
 static INLINE vdouble vmla_vd_vd_vd_vd(vdouble x, vdouble y,
                                        vdouble z) { // z = x*y + z
   return svmad_f64_x(ptrue, x, y, z);
 }
+static INLINE vdouble vmlapn_vd_vd_vd_vd(vdouble x, vdouble y,
+                                         vdouble z) { // z = x * y - z
+  return svnmsb_f64_x(ptrue, x, y, z);
+}
+#else
+static INLINE vdouble vmla_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return vadd_vd_vd_vd(vmul_vd_vd_vd(x, y), z); }
+static INLINE vdouble vmlapn_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return vsub_vd_vd_vd(vmul_vd_vd_vd(x, y), z); }
+#endif
+
 static INLINE vdouble vfma_vd_vd_vd_vd(vdouble x, vdouble y,
                                        vdouble z) { // z + x * y
   return svmad_f64_x(ptrue, x, y, z);
@@ -541,10 +556,6 @@ static INLINE vdouble vfmanp_vd_vd_vd_vd(vdouble x, vdouble y,
 }
 static INLINE vdouble vfmapn_vd_vd_vd_vd(vdouble x, vdouble y,
                                          vdouble z) { // x * y - z
-  return svnmsb_f64_x(ptrue, x, y, z);
-}
-static INLINE vdouble vmlapn_vd_vd_vd_vd(vdouble x, vdouble y,
-                                         vdouble z) { // z = x * y - z
   return svnmsb_f64_x(ptrue, x, y, z);
 }
 

@@ -53,6 +53,7 @@ pipeline {
                 	 echo "FMA4 on" `hostname`
 			 export PATH=$PATH:/opt/local/bin:/opt/bin:/opt/sde-external-8.16.0-2018-01-30-lin
 			 export LD_LIBRARY_PATH=/opt/local/lib:/opt/lib
+		         export CC=gcc-8.1.0
 			 rm -rf build
  			 mkdir build
 			 cd build
