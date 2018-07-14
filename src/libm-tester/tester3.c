@@ -55,38 +55,44 @@ float getfloat(float v, int r) { return v; }
 
 #if defined(__i386__) || defined(__x86_64__) || defined(_MSC_VER)
 __m128d set__m128d(double d, int r) { double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return _mm_loadu_pd(a); }
-__m128d set2__m128d(double d, int r) { double a[2]; memranddp(a, 2); a[r & 1] = d; return _mm_loadu_pd(a); }
 double get__m128d(__m128d v, int r) { double a[2]; _mm_storeu_pd(a, v); return a[r & 1]; }
 __m128 set__m128(float d, int r) { float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return _mm_loadu_ps(a); }
-__m128 set2__m128(float d, int r) { float a[4]; memrandsp(a, 4); a[r & 3] = d; return _mm_loadu_ps(a); }
 float get__m128(__m128 v, int r) { float a[4]; _mm_storeu_ps(a, v); return a[r & 3]; }
 
 #if defined(__AVX__)
 __m256d set__m256d(double d, int r) { double a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return _mm256_loadu_pd(a); }
-__m256d set2__m256d(double d, int r) { double a[4]; memranddp(a, 4); a[r & 3] = d; return _mm256_loadu_pd(a); }
 double get__m256d(__m256d v, int r) { double a[4]; _mm256_storeu_pd(a, v); return a[r & 3]; }
 __m256 set__m256(float d, int r) { float a[8]; memrand(a, sizeof(a)); a[r & 7] = d; return _mm256_loadu_ps(a); }
-__m256 set2__m256(float d, int r) { float a[8]; memrandsp(a, 8); a[r & 7] = d; return _mm256_loadu_ps(a); }
 float get__m256(__m256 v, int r) { float a[8]; _mm256_storeu_ps(a, v); return a[r & 7]; }
 #endif
 
 #if defined(__AVX512F__)
 __m512d set__m512d(double d, int r) { double a[8]; memrand(a, sizeof(a)); a[r & 7] = d; return _mm512_loadu_pd(a); }
-__m512d set2__m512d(double d, int r) { double a[8]; memranddp(a, 8); a[r & 7] = d; return _mm512_loadu_pd(a); }
 double get__m512d(__m512d v, int r) { double a[8]; _mm512_storeu_pd(a, v); return a[r & 7]; }
 __m512 set__m512(float d, int r) { float a[16]; memrand(a, sizeof(a)); a[r & 15] = d; return _mm512_loadu_ps(a); }
-__m512 set2__m512(float d, int r) { float a[16]; memrandsp(a, 16); a[r & 15] = d; return _mm512_loadu_ps(a); }
 float get__m512(__m512 v, int r) { float a[16]; _mm512_storeu_ps(a, v); return a[r & 15]; }
 #endif
 #endif // #if defined(__i386__) || defined(__x86_64__) || defined(_MSC_VER)
 
 #ifdef __ARM_NEON
 float64x2_t setfloat64x2_t(double d, int r) { double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return vld1q_f64(a); }
-float64x2_t set2float64x2_t(double d, int r) { double a[2]; memranddp(a, 2); a[r & 1] = d; return vld1q_f64(a); }
 double getfloat64x2_t(float64x2_t v, int r) { double a[2]; vst1q_f64(a, v); return a[r & 1]; }
 float32x4_t setfloat32x4_t(float d, int r) { float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return vld1q_f32(a); }
-float32x4_t set2float32x4_t(float d, int r) { float a[4]; memrandsp(a, 4); a[r & 3] = d; return vld1q_f32(a); }
 float getfloat32x4_t(float32x4_t v, int r) { float a[4]; vst1q_f32(a, v); return a[r & 3]; }
+#endif
+
+#ifdef __ARM_FEATURE_SVE
+svfloat64_t setsvfloat64_t(double d, int r) { double a[svcntd()]; memrand(a, sizeof(a)); a[r & (svcntd()-1)] = d; return svld1_f64(svptrue_b8(), a); }
+double getsvfloat64_t(svfloat64_t v, int r) { double a[svcntd()]; svst1_f64(svptrue_b8(), a, v); return a[r & (svcntd()-1)]; }
+svfloat32_t setsvfloat32_t(float d, int r)  { float  a[svcntw()]; memrand(a, sizeof(a)); a[r & (svcntw()-1)] = d; return svld1_f32(svptrue_b8(), a); }
+float getsvfloat32_t(svfloat32_t v, int r)  { float  a[svcntw()]; svst1_f32(svptrue_b8(), a, v); return a[r & (svcntw()-1)]; }
+#endif
+
+#ifdef __VSX__
+vectordouble setvectordouble(double d, int r) { double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return (vector double) ( a[0], a[1] ); }
+double getvectordouble(vector double v, int r) { double a[2]; return v[r & 1]; }
+vectorfloat setvectorfloat(float d, int r) { float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return (vector float) ( a[0], a[1], a[2], a[3] ); }
+float getvectorfloat(vectorfloat v, int r) { float a[4]; return v[r & 3]; }
 #endif
 
 //
@@ -95,7 +101,6 @@ float getfloat32x4_t(float32x4_t v, int r) { float a[4]; vst1q_f32(a, v); return
 #define FUNC(ATR, NAME, TYPE, ULP, EXT) Sleef_ ## ATR ## NAME ## TYPE ## _ ## ULP ## EXT
 #define TYPE2(TYPE) Sleef_ ## TYPE ## _2
 #define SET(TYPE) set ## TYPE
-#define SET2(TYPE) set2 ## TYPE
 #define GET(TYPE) get ## TYPE
 
 //
