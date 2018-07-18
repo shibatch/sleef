@@ -51,8 +51,8 @@ static inline void memrandsp(float *p, int size) {
 
 //
 
-double unifyNaN(double x) { return x != x ? (0.0 / 0.0) : x; }
-float unifyNaNf(float  x) { return x != x ? (0.0 / 0.0) : x; }
+double unifyNaN(double x) { return x != x ? ((1e+300 * 1e+300) - (1e+300 * 1e+300)) : x; }
+float unifyNaNf(float  x) { return x != x ? ((1e+300 * 1e+300) - (1e+300 * 1e+300)) : x; }
 
 double setdouble(double d, int r) { return d; }
 double set2double(double d, int r) { return d; }
