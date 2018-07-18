@@ -12,13 +12,8 @@
 #define SQRTF sqrtf
 #define FMA fma
 #define FMAF fmaf
-#ifndef __powerpc64__
 #define RINT rint
 #define RINTF rintf
-#else
-#define RINT round
-#define RINTF roundf
-#endif
 #define TRUNC trunc
 #define TRUNCF truncf
 
@@ -28,13 +23,8 @@
 #define SQRTF __builtin_sqrtf
 #define FMA __builtin_fma
 #define FMAF __builtin_fmaf
-#ifndef __powerpc64__
 #define RINT __builtin_rint
 #define RINTF __builtin_rintf
-#else
-#define RINT __builtin_round
-#define RINTF __builtin_roundf
-#endif
 #define TRUNC __builtin_trunc
 #define TRUNCF __builtin_truncf
 
@@ -176,7 +166,11 @@ static INLINE vdouble vrint_vd_vd(vdouble vd) { return RINT(vd); }
 static INLINE vdouble vtruncate_vd_vd(vdouble vd) { return TRUNC(vd); }
 static INLINE vint vtruncate_vi_vd(vdouble vd) { return (int32_t)TRUNC(vd); }
 #else
-static INLINE vint vrint_vi_vd(vdouble d) { return d > 0 ? (int)(d + 0.5) : (int)(d - 0.5); }
+static INLINE vint vrint_vi_vd(vdouble a) {
+  a += a > 0 ? 0.5 : -0.5;
+  versatileVector v = { .d = a }; v.x -= 1 & (int)a;
+  return (int32_t)v.d;
+}
 static INLINE vdouble vrint_vd_vd(vdouble vd) { return vcast_vd_vi(vrint_vi_vd(vd)); }
 static INLINE vint vtruncate_vi_vd(vdouble vd) { return vd; }
 static INLINE vdouble vtruncate_vd_vd(vdouble vd) { return vcast_vd_vi(vtruncate_vi_vd(vd)); }
@@ -278,7 +272,11 @@ static INLINE vfloat vrint_vf_vf(vfloat vd) { return RINTF(vd); }
 static INLINE vfloat vtruncate_vf_vf(vfloat vd) { return TRUNCF(vd); }
 static INLINE vint2 vtruncate_vi2_vf(vfloat vf) { return (int32_t)TRUNCF(vf); }
 #else
-static INLINE vint2 vrint_vi2_vf(vfloat d) { return d > 0 ? (int)(d + 0.5) : (int)(d - 0.5); }
+static INLINE vint2 vrint_vi2_vf(vfloat a) {
+  a += a > 0 ? 0.5f : -0.5f;
+  versatileVector v = { .f = a }; v.u[0] -= 1 & (int)a;
+  return (int32_t)v.f;
+}
 static INLINE vfloat vrint_vf_vf(vfloat vd) { return vcast_vf_vi2(vrint_vi2_vf(vd)); }
 static INLINE vint2 vtruncate_vi2_vf(vfloat vf) { return vf; }
 static INLINE vfloat vtruncate_vf_vf(vfloat vd) { return vcast_vf_vi2(vtruncate_vi2_vf(vd)); }
@@ -304,7 +302,7 @@ static INLINE vfloat vmin_vf_vf_vf(vfloat x, vfloat y) { return x < y ? x : y; }
 
 #ifndef ENABLE_FMA_SP
 static INLINE vfloat vmla_vf_vf_vf_vf  (vfloat x, vfloat y, vfloat z) { return x * y + z; }
-static INLINE vfloat vmlanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return x * y - z; }
+static INLINE vfloat vmlanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return - x * y + z; }
 #else
 static INLINE vfloat vmla_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return FMAF(x, y, z); }
 static INLINE vfloat vmlapn_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return FMAF(x, y, -z); }

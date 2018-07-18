@@ -35,6 +35,12 @@ static inline void memrand(void *p, int size) {
   }
 }
 
+static int16_t myrand() {
+  int16_t ret = seed >> 16;
+  seed = seed * 1103515245 + 12345; 
+  return ret;
+}
+
 static inline void memranddp(double *p, int size) {
   for(int i=0;i<size;i++) p[i] = (2.0 * rand() / RAND_MAX - 1) * 4 * M_PI;
 }
@@ -96,7 +102,7 @@ float getvectorfloat(vectorfloat v, int r) { float a[4]; return v[r & 3]; }
 
 //
 
-// ATR = "cinz_", NAME = sin, TYPE = d2, ULP = u35, EXT = sse2
+// ATR = cinz_, NAME = sin, TYPE = d2, ULP = u35, EXT = sse2
 #define FUNC(ATR, NAME, TYPE, ULP, EXT) Sleef_ ## ATR ## NAME ## TYPE ## _ ## ULP ## EXT
 #define TYPE2(TYPE) Sleef_ ## TYPE ## _2
 #define SET(TYPE) set ## TYPE
@@ -104,26 +110,27 @@ float getvectorfloat(vectorfloat v, int r) { float a[4]; return v[r & 3]; }
 
 //
 
-#define checkDigest(NAME) do {						\
+#define checkDigest(NAME, ULP) do {					\
     unsigned char d[16], mes[64], buf[64];				\
     MD5_Final(d, &ctx);							\
-    sprintf((char *)mes, "%s %02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",	\
-	    #NAME, d[0],d[1],d[2],d[3],d[4],d[5],d[6],d[7],		\
+    snprintf((char *)mes, 60, "%s %02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",	\
+	    #NAME " " #ULP, d[0],d[1],d[2],d[3],d[4],d[5],d[6],d[7],	\
 	    d[8],d[9],d[10],d[11],d[12],d[13],d[14],d[15]);		\
     if (fp != NULL) {							\
       fgets((char *)buf, 60, fp);					\
-      puts((char *)mes);						\
-      puts((char *)buf);						\
       if (strncmp((char *)mes, (char *)buf, strlen((char *)mes)) != 0) { \
-	fprintf(stderr, "%s\n", #NAME); exit(-1);			\
+	puts((char *)mes);						\
+	puts((char *)buf);						\
+	fprintf(stderr, "%s\n", #NAME " " #ULP); exit(-1);		\
       }									\
     } else puts((char *)mes);						\
   } while(0)
 
 //
+//     printf("%.10g %.10g\n", arg, GET(TYPE)(vx, r));
 
 #define exec_d_d(ATR, NAME, ULP, TYPE, TSX, EXT, arg) do {		\
-    int r = rand();							\
+    int r = myrand();							\
     DPTYPE vx = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (arg, r));	\
     double fx = GET(TYPE)(vx, r);					\
     MD5_Update(&ctx, &fx, sizeof(double));				\
@@ -136,7 +143,7 @@ float getvectorfloat(vectorfloat v, int r) { float a[4]; return v[r & 3]; }
     double step = ((double)(END) - (double)(START))/NSTEP;	\
     for(double d = (START);d < (END);d += step)			\
       exec_d_d(ATR, NAME, ULP, DPTYPE, DPTYPESPEC, EXTSPEC, d);	\
-    checkDigest(NAME);						\
+    checkDigest(NAME, ULP);					\
   } while(0)
 
 #define testu_d_d(NAME, ULP, START, END, NSTEP) do {			\
@@ -146,14 +153,16 @@ float getvectorfloat(vectorfloat v, int r) { float a[4]; return v[r & 3]; }
     uint64_t step = (d2u(END) - d2u(START))/NSTEP;			\
     for(uint64_t u = d2u(START);u < d2u(END);u += step)			\
       exec_d_d(ATR, NAME, ULP, DPTYPE, DPTYPESPEC, EXTSPEC, u2d(u));	\
-    checkDigest(NAME);							\
+    checkDigest(NAME, ULP);						\
   } while(0)
 
 //
 
+    //TYPE2(TYPE) vx2 = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (arg, r));
+
 #define exec_d2_d(ATR, NAME, ULP, TYPE, TSX, EXT, arg) do {		\
-    int r = rand();							\
-    TYPE2(TYPE) vx2 = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (arg, r)); \
+    int r = myrand();							\
+    TYPE2(TYPE) vx2 = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE)(arg, r)); \
     double fxx = GET(TYPE)(vx2.x, r), fxy = GET(TYPE)(vx2.y, r);	\
     MD5_Update(&ctx, &fxx, sizeof(double));				\
     MD5_Update(&ctx, &fxy, sizeof(double));				\
@@ -165,13 +174,13 @@ float getvectorfloat(vectorfloat v, int r) { float a[4]; return v[r & 3]; }
     double step = ((double)(END) - (double)(START))/NSTEP;		\
     for(double d = (START);d < (END);d += step)				\
       exec_d2_d(ATR, NAME, ULP, DPTYPE, DPTYPESPEC, EXTSPEC, d);	\
-    checkDigest(NAME);							\
+    checkDigest(NAME, ULP);						\
   } while(0)
 
 //
 
 #define exec_d_d_d(ATR, NAME, ULP, TYPE, TSX, EXT, argu, argv) do {	\
-    int r = rand();							\
+    int r = myrand();							\
     DPTYPE vx = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (argu, r), SET(TYPE) (argv, r)); \
     double fx = GET(TYPE)(vx, r);					\
     MD5_Update(&ctx, &fx, sizeof(double));				\
@@ -185,13 +194,13 @@ float getvectorfloat(vectorfloat v, int r) { float a[4]; return v[r & 3]; }
     for(double u = (STARTU);u < (ENDU);u += stepu)			\
       for(double v = (STARTV);v < (ENDV);v += stepv)			\
 	exec_d_d_d(ATR, NAME, ULP, DPTYPE, DPTYPESPEC, EXTSPEC, u, v);	\
-    checkDigest(NAME);							\
+    checkDigest(NAME, ULP);						\
   } while(0)
 
 //
 
 #define exec_f_f(ATR, NAME, ULP, TYPE, TSX, EXT, arg) do {		\
-    int r = rand();							\
+    int r = myrand();							\
     SPTYPE vx = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (arg, r));	\
     float fx = GET(TYPE)(vx, r);					\
     MD5_Update(&ctx, &fx, sizeof(float));				\
@@ -203,7 +212,7 @@ float getvectorfloat(vectorfloat v, int r) { float a[4]; return v[r & 3]; }
     float step = ((double)(END) - (double)(START))/NSTEP;	\
     for(float d = (START);d < (END);d += step)			\
       exec_f_f(ATR, NAME, ULP, SPTYPE, SPTYPESPEC, EXTSPEC, d);	\
-    checkDigest(NAME);						\
+    checkDigest(NAME ## f, ULP);				\
   } while(0)
 
 #define testu_f_f(NAME, ULP, START, END, NSTEP) do {			\
@@ -212,13 +221,13 @@ float getvectorfloat(vectorfloat v, int r) { float a[4]; return v[r & 3]; }
     uint32_t step = (f2u(END) - f2u(START))/NSTEP;			\
     for(uint32_t u = f2u(START);u < f2u(END);u += step)			\
       exec_f_f(ATR, NAME, ULP, SPTYPE, SPTYPESPEC, EXTSPEC, u2f(u));	\
-    checkDigest(NAME);							\
+    checkDigest(NAME ## f, ULP);					\
   } while(0)
 
 //
 
 #define exec_f2_f(ATR, NAME, ULP, TYPE, TSX, EXT, arg) do {		\
-    int r = rand();							\
+    int r = myrand();							\
     TYPE2(TYPE) vx2 = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (arg, r)); \
     float fxx = GET(TYPE)(vx2.x, r), fxy = GET(TYPE)(vx2.y, r);		\
     MD5_Update(&ctx, &fxx, sizeof(float));				\
@@ -231,13 +240,13 @@ float getvectorfloat(vectorfloat v, int r) { float a[4]; return v[r & 3]; }
     float step = ((float)(END) - (float)(START))/NSTEP;			\
     for(float d = (START);d < (END);d += step)				\
       exec_f2_f(ATR, NAME, ULP, SPTYPE, SPTYPESPEC, EXTSPEC, d);	\
-    checkDigest(NAME);							\
+    checkDigest(NAME ## f, ULP);					\
   } while(0)
 
 //
 
 #define exec_f_f_f(ATR, NAME, ULP, TYPE, TSX, EXT, argu, argv) do {	\
-    int r = rand();							\
+    int r = myrand();							\
     SPTYPE vx = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (argu, r), SET(TYPE) (argv, r)); \
     float fx = GET(TYPE)(vx, r);					\
     MD5_Update(&ctx, &fx, sizeof(float));				\
@@ -251,7 +260,7 @@ float getvectorfloat(vectorfloat v, int r) { float a[4]; return v[r & 3]; }
     for(float u = (STARTU);u < (ENDU);u += stepu)			\
       for(float v = (STARTV);v < (ENDV);v += stepv)			\
 	exec_f_f_f(ATR, NAME, ULP, SPTYPE, SPTYPESPEC, EXTSPEC, u, v);	\
-    checkDigest(NAME);							\
+    checkDigest(NAME ## f, ULP);					\
   } while(0)
 
 //
@@ -268,13 +277,151 @@ int do_test(int argc, char **argv)
     }
   }
 
-  srand(seed = time(NULL));
+  seed = time(NULL);
 
-  test_d_d(asin, u35, -1.0, 1.0, 2000001);
-  test_d_d(acos, u35, -1.0, 1.0, 2000001);
+  //
 
-  test_f_f(asin, u35, -1.0, 1.0, 2000001);
-  test_f_f(acos, u35, -1.0, 1.0, 2000001);
+  test_d2_d(sincospi, u05, -1e+14, 1e+14, 200001);
+  test_d2_d(sincospi, u35, -1e+14, 1e+14, 200001);
+  test_d2_d(modf, , -1e+14, 1e+14, 200001);
+
+  testu_d_d(log, u10, 1e-300, 1e+14, 200001);
+  testu_d_d(log, u35, 1e-300, 1e+14, 200001);
+  testu_d_d(log10, u10, 1e-300, 1e+14, 200001);
+  testu_d_d(log1p, u10, 1e-300, 1e+14, 200001);
+  test_d_d(exp, u10, -1000, 1000, 200001);
+  test_d_d(exp2, u10, -1000, 1000, 200001);
+  test_d_d(exp10, u10, -1000, 1000, 200001);
+  test_d_d(expm1, u10, -1000, 1000, 200001);
+  test_d_d_d(pow, u10, -100, 100, 451, -100, 100, 451);
+  
+  testu_d_d(cbrt, u10, 1e-14, 1e+14, 100001);
+  testu_d_d(cbrt, u10, -1e-14, -1e+14, 100001);
+  testu_d_d(cbrt, u35, 1e-14, 1e+14, 100001);
+  testu_d_d(cbrt, u35, -1e-14, -1e+14, 100001);
+  test_d_d_d(hypot, u05, -1e7, 1e7, 451, -1e7, 1e7, 451);
+  test_d_d_d(hypot, u35, -1e7, 1e7, 451, -1e7, 1e7, 451);
+
+  test_d_d(asin, u10, -1, 1, 200001);
+  test_d_d(asin, u35, -1, 1, 200001);
+  test_d_d(acos, u10, -1, 1, 200001);
+  test_d_d(acos, u35, -1, 1, 200001);
+  testu_d_d(atan, u10,  1e-3,  1e+7, 100001);
+  testu_d_d(atan, u10, -1e-2, -1e+8, 100001);
+  testu_d_d(atan, u35,  1e-3,  1e+7, 100001);
+  testu_d_d(atan, u35, -1e-2, -1e+8, 100001);
+  test_d_d_d(atan2, u10, -10, 10, 451, -10, 10, 451);
+  test_d_d_d(atan2, u35, -10, 10, 451, -10, 10, 451);
+
+  test_d_d(sinh, u10, -700, 700, 200001);
+  test_d_d(cosh, u10, -700, 700, 200001);
+  test_d_d(tanh, u10, -700, 700, 200001);
+  test_d_d(asinh, u10, -700, 700, 200001);
+  test_d_d(acosh, u10, 1, 700, 200001);
+  test_d_d(atanh, u10, -700, 700, 200001);
+  
+  test_d_d(lgamma, u10, -5000, 5000, 200001);
+  test_d_d(tgamma, u10, -10, 10, 200001);
+  test_d_d(erf, u10, -100, 100, 200001);
+  test_d_d(erfc, u15, -1, 100, 200001);
+
+  test_d_d(fabs, , -100.5, 100.5, 200001);
+  test_d_d_d(copysign, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
+  test_d_d_d(fmax, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
+  test_d_d_d(fmin, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
+  test_d_d_d(fdim, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
+  test_d_d_d(fmod, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
+  test_d2_d(modf, , -1e+14, 1e+14, 200001);
+  test_d_d_d(nextafter, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
+
+  test_d_d(trunc, , -100, 100, 800);
+  test_d_d(floor, , -100, 100, 800);
+  test_d_d(ceil, , -100, 100, 800);
+  test_d_d(round, , -100, 100, 800);
+  test_d_d(rint, , -100, 100, 800);
+
+  //
+
+  test_f2_f(sincospi, u05, -10000, 10000, 200001);
+  test_f2_f(sincospi, u35, -10000, 10000, 200001);
+  test_f2_f(modf, , -10000, 10000, 200001);
+
+  testu_f_f(log, u10, 1e-300, 1e+14, 200001);
+  testu_f_f(log, u35, 1e-300, 1e+14, 200001);
+  testu_f_f(log10, u10, 1e-300, 1e+14, 200001);
+  testu_f_f(log1p, u10, 1e-300, 1e+14, 200001);
+  test_f_f(exp, u10, -1000, 1000, 200001);
+  test_f_f(exp2, u10, -1000, 1000, 200001);
+  test_f_f(exp10, u10, -1000, 1000, 200001);
+  test_f_f(expm1, u10, -1000, 1000, 200001);
+  test_f_f_f(pow, u10, -100, 100, 451, -100, 100, 451);
+  
+  testu_f_f(cbrt, u10, 1e-14, 1e+14, 100001);
+  testu_f_f(cbrt, u10, -1e-14, -1e+14, 100001);
+  testu_f_f(cbrt, u35, 1e-14, 1e+14, 100001);
+  testu_f_f(cbrt, u35, -1e-14, -1e+14, 100001);
+  test_f_f_f(hypot, u05, -1e7, 1e7, 451, -1e7, 1e7, 451);
+  test_f_f_f(hypot, u35, -1e7, 1e7, 451, -1e7, 1e7, 451);
+
+  test_f_f(asin, u10, -1, 1, 200001);
+  test_f_f(asin, u35, -1, 1, 200001);
+  test_f_f(acos, u10, -1, 1, 200001);
+  test_f_f(acos, u35, -1, 1, 200001);
+  testu_f_f(atan, u10,  1e-3,  1e+7, 100001);
+  testu_f_f(atan, u10, -1e-2, -1e+8, 100001);
+  testu_f_f(atan, u35,  1e-3,  1e+7, 100001);
+  testu_f_f(atan, u35, -1e-2, -1e+8, 100001);
+  test_f_f_f(atan2, u10, -10, 10, 451, -10, 10, 451);
+  test_f_f_f(atan2, u35, -10, 10, 451, -10, 10, 451);
+
+  test_f_f(sinh, u10, -88, 88, 200001);
+  test_f_f(cosh, u10, -88, 88, 200001);
+  test_f_f(tanh, u10, -88, 88, 200001);
+  test_f_f(asinh, u10, -88, 88, 200001);
+  test_f_f(acosh, u10, 1, 88, 200001);
+  test_f_f(atanh, u10, -88, 88, 200001);
+  
+  test_f_f(lgamma, u10, -5000, 5000, 200001);
+  test_f_f(tgamma, u10, -10, 10, 200001);
+  test_f_f(erf, u10, -100, 100, 200001);
+  test_f_f(erfc, u15, -1, 100, 200001);
+
+  test_f_f(fabs, , -100.5, 100.5, 200001);
+  test_f_f_f(copysign, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
+  test_f_f_f(fmax, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
+  test_f_f_f(fmin, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
+  test_f_f_f(fdim, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
+  test_f_f_f(fmod, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
+  test_f2_f(modf, , -1e+14, 1e+14, 200001);
+  test_f_f_f(nextafter, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
+
+  test_f_f(trunc, , -100, 100, 800);
+  test_f_f(floor, , -100, 100, 800);
+  test_f_f(ceil, , -100, 100, 800);
+  test_f_f(round, , -100, 100, 800);
+  test_f_f(rint, , -100, 100, 800);
+
+  testu_d_d(sin, u35, 1e-300, 1e+8, 200001);
+  testu_d_d(sin, u10, 1e-300, 1e+8, 200001);
+  testu_d_d(cos, u35, 1e-300, 1e+8, 200001);
+  testu_d_d(cos, u10, 1e-300, 1e+8, 200001);
+  testu_d_d(tan, u35, 1e-300, 1e+8, 200001);
+  testu_d_d(tan, u10, 1e-300, 1e+8, 200001);
+
+  test_d2_d(sincos, u10, -1e+14, 1e+14, 200001);
+  test_d2_d(sincos, u35, -1e+14, 1e+14, 200001);
+
+  testu_f_f(sin, u35, 1e-300, 1e+8, 200001);
+  testu_f_f(sin, u10, 1e-300, 1e+8, 200001);
+  testu_f_f(cos, u35, 1e-300, 1e+8, 200001);
+  testu_f_f(cos, u10, 1e-300, 1e+8, 200001);
+  testu_f_f(tan, u35, 1e-300, 1e+8, 200001);
+  testu_f_f(tan, u10, 1e-300, 1e+8, 200001);
+
+  test_f2_f(sincos, u10, -1e+14, 1e+14, 200001);
+  test_f2_f(sincos, u35, -1e+14, 1e+14, 200001);
+
+  //
 
   if (fp != NULL) fclose(fp);
 

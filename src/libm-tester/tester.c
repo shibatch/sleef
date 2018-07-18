@@ -205,8 +205,76 @@ double child_lgamma_u1(double x) { child_d_d("lgamma_u1", x); }
 double child_erf_u1(double x) { child_d_d("erf_u1", x); }
 double child_erfc_u15(double x) { child_d_d("erfc_u15", x); }
 
+//
+
+double child_ysin(double x) { child_d_d("ysin", x); }
+double child_ycos(double x) { child_d_d("ycos", x); }
+double child_ytan(double x) { child_d_d("ytan", x); }
 double child_yasin(double x) { child_d_d("yasin", x); }
 double child_yacos(double x) { child_d_d("yacos", x); }
+double child_yatan(double x) { child_d_d("yatan", x); }
+double child_ylog(double x) { child_d_d("ylog", x); }
+double child_yexp(double x) { child_d_d("yexp", x); }
+double child_ycbrt(double x) { child_d_d("ycbrt", x); }
+double child_yatan2(double y, double x) { child_d_d_d("yatan2", y, x); }
+Sleef_double2 child_ysincos(double x) { child_d2_d("ysincos", x); }
+
+double child_ysin_u1(double x) { child_d_d("ysin_u1", x); }
+double child_ycos_u1(double x) { child_d_d("ycos_u1", x); }
+double child_ytan_u1(double x) { child_d_d("ytan_u1", x); }
+double child_yasin_u1(double x) { child_d_d("yasin_u1", x); }
+double child_yacos_u1(double x) { child_d_d("yacos_u1", x); }
+double child_yatan_u1(double x) { child_d_d("yatan_u1", x); }
+double child_ylog_u1(double x) { child_d_d("ylog_u1", x); }
+double child_yexp_u1(double x) { child_d_d("yexp_u1", x); }
+double child_ycbrt_u1(double x) { child_d_d("ycbrt_u1", x); }
+double child_yatan2_u1(double y, double x) { child_d_d_d("yatan2_u1", y, x); }
+Sleef_double2 child_ysincos_u1(double x) { child_d2_d("ysincos_u1", x); }
+
+double child_ypow(double x, double y) { child_d_d_d("ypow", x, y); }
+
+double child_ysinh(double x) { child_d_d("ysinh", x); }
+double child_ycosh(double x) { child_d_d("ycosh", x); }
+double child_ytanh(double x) { child_d_d("ytanh", x); }
+double child_ysinh_u35(double x) { child_d_d("ysinh_u35", x); }
+double child_ycosh_u35(double x) { child_d_d("ycosh_u35", x); }
+double child_ytanh_u35(double x) { child_d_d("ytanh_u35", x); }
+double child_yasinh(double x) { child_d_d("yasinh", x); }
+double child_yacosh(double x) { child_d_d("yacosh", x); }
+double child_yatanh(double x) { child_d_d("yatanh", x); }
+
+double child_ylog10(double x) { child_d_d("ylog10", x); }
+double child_ylog2(double x) { child_d_d("ylog2", x); }
+double child_ylog1p(double x) { child_d_d("ylog1p", x); }
+double child_yexp2(double x) { child_d_d("yexp2", x); }
+double child_yexp10(double x) { child_d_d("yexp10", x); }
+double child_yexpm1(double x) { child_d_d("yexpm1", x); }
+
+Sleef_double2 child_ysincospi_u05(double x) { child_d2_d("ysincospi_u05", x); }
+Sleef_double2 child_ysincospi_u35(double x) { child_d2_d("ysincospi_u35", x); }
+double child_ysinpi_u05(double x) { child_d_d("ysinpi_u05", x); }
+double child_ycospi_u05(double x) { child_d_d("ycospi_u05", x); }
+
+double child_yhypot_u05(double x, double y) { child_d_d_d("yhypot_u05", x, y); }
+double child_yhypot_u35(double x, double y) { child_d_d_d("yhypot_u35", x, y); }
+double child_ycopysign(double x, double y) { child_d_d_d("ycopysign", x, y); }
+double child_yfmax(double x, double y) { child_d_d_d("yfmax", x, y); }
+double child_yfmin(double x, double y) { child_d_d_d("yfmin", x, y); }
+double child_yfdim(double x, double y) { child_d_d_d("yfdim", x, y); }
+double child_ynextafter(double x, double y) { child_d_d_d("ynextafter", x, y); }
+double child_yfmod(double x, double y) { child_d_d_d("yfmod", x, y); }
+double child_yfabs(double x) { child_d_d("yfabs", x); }
+double child_ytrunc(double x) { child_d_d("ytrunc", x); }
+double child_yfloor(double x) { child_d_d("yfloor", x); }
+double child_yceil(double x) { child_d_d("yceil", x); }
+double child_yround(double x) { child_d_d("yround", x); }
+double child_yrint(double x) { child_d_d("yrint", x); }
+double child_yfrfrexp(double x) { child_d_d("yfrfrexp", x); }
+Sleef_double2 child_ymodf(double x) { child_d2_d("ymodf", x); }
+double child_ytgamma_u1(double x) { child_d_d("ytgamma_u1", x); }
+double child_ylgamma_u1(double x) { child_d_d("ylgamma_u1", x); }
+double child_yerf_u1(double x) { child_d_d("yerf_u1", x); }
+double child_yerfc_u15(double x) { child_d_d("yerfc_u15", x); }
 
 //
 
@@ -228,6 +296,28 @@ int child_ilogb(double x) {
   sprintf(str, "ilogb %" PRIx64 "\n", d2u(x));
   write(ptoc[1], str, strlen(str));
   if (readln(ctop[0], str, 255) < 1) stop("child_ilogb");
+  sscanf(str, "%d", &i);
+  return i;
+}
+
+double child_yldexp(double x, int q) {
+  char str[256];
+  uint64_t u;
+
+  sprintf(str, "yldexp %" PRIx64 " %" PRIx64 "\n", d2u(x), d2u(q));
+  write(ptoc[1], str, strlen(str));
+  if (readln(ctop[0], str, 255) < 1) stop("child_yldexp");
+  sscanf(str, "%" PRIx64, &u);
+  return u2d(u);
+}
+
+int child_yilogb(double x) {
+  char str[256];
+  int i;
+  
+  sprintf(str, "yilogb %" PRIx64 "\n", d2u(x));
+  write(ptoc[1], str, strlen(str));
+  if (readln(ctop[0], str, 255) < 1) stop("child_yilogb");
   sscanf(str, "%d", &i);
   return i;
 }
@@ -339,8 +429,78 @@ float child_lgammaf_u1(float x) { child_f_f("lgammaf_u1", x); }
 float child_erff_u1(float x) { child_f_f("erff_u1", x); }
 float child_erfcf_u15(float x) { child_f_f("erfcf_u15", x); }
 
+//
+
+float child_ysinf(float x) { child_f_f("ysinf", x); }
+float child_ycosf(float x) { child_f_f("ycosf", x); }
+float child_ytanf(float x) { child_f_f("ytanf", x); }
 float child_yasinf(float x) { child_f_f("yasinf", x); }
 float child_yacosf(float x) { child_f_f("yacosf", x); }
+float child_yatanf(float x) { child_f_f("yatanf", x); }
+float child_ylogf(float x) { child_f_f("ylogf", x); }
+float child_yexpf(float x) { child_f_f("yexpf", x); }
+float child_ycbrtf(float x) { child_f_f("ycbrtf", x); }
+float child_yatan2f(float y, float x) { child_f_f_f("yatan2f", y, x); }
+Sleef_float2 child_ysincosf(float x) { child_f2_f("ysincosf", x); }
+
+float child_ysinf_u1(float x) { child_f_f("ysinf_u1", x); }
+float child_ycosf_u1(float x) { child_f_f("ycosf_u1", x); }
+float child_ytanf_u1(float x) { child_f_f("ytanf_u1", x); }
+float child_yasinf_u1(float x) { child_f_f("yasinf_u1", x); }
+float child_yacosf_u1(float x) { child_f_f("yacosf_u1", x); }
+float child_yatanf_u1(float x) { child_f_f("yatanf_u1", x); }
+float child_ylogf_u1(float x) { child_f_f("ylogf_u1", x); }
+float child_yexpf_u1(float x) { child_f_f("yexpf_u1", x); }
+float child_ycbrtf_u1(float x) { child_f_f("ycbrtf_u1", x); }
+float child_yatan2f_u1(float y, float x) { child_f_f_f("yatan2f_u1", y, x); }
+Sleef_float2 child_ysincosf_u1(float x) { child_f2_f("ysincosf_u1", x); }
+
+float child_ypowf(float x, float y) { child_f_f_f("ypowf", x, y); }
+
+float child_ysinhf(float x) { child_f_f("ysinhf", x); }
+float child_ycoshf(float x) { child_f_f("ycoshf", x); }
+float child_ytanhf(float x) { child_f_f("ytanhf", x); }
+float child_ysinhf_u35(float x) { child_f_f("ysinhf_u35", x); }
+float child_ycoshf_u35(float x) { child_f_f("ycoshf_u35", x); }
+float child_ytanhf_u35(float x) { child_f_f("ytanhf_u35", x); }
+float child_yasinhf(float x) { child_f_f("yasinhf", x); }
+float child_yacoshf(float x) { child_f_f("yacoshf", x); }
+float child_yatanhf(float x) { child_f_f("yatanhf", x); }
+
+float child_ylog10f(float x) { child_f_f("ylog10f", x); }
+float child_ylog2f(float x) { child_f_f("ylog2f", x); }
+float child_ylog1pf(float x) { child_f_f("ylog1pf", x); }
+float child_yexp2f(float x) { child_f_f("yexp2f", x); }
+float child_yexp10f(float x) { child_f_f("yexp10f", x); }
+float child_yexpm1f(float x) { child_f_f("yexpm1f", x); }
+
+Sleef_float2 child_ysincospif_u05(float x) { child_f2_f("ysincospif_u05", x); }
+Sleef_float2 child_ysincospif_u35(float x) { child_f2_f("ysincospif_u35", x); }
+float child_ysinpif_u05(float x) { child_f_f("ysinpif_u05", x); }
+float child_ycospif_u05(float x) { child_f_f("ycospif_u05", x); }
+
+float child_yhypotf_u05(float x, float y) { child_f_f_f("yhypotf_u05", x, y); }
+float child_yhypotf_u35(float x, float y) { child_f_f_f("yhypotf_u35", x, y); }
+float child_ycopysignf(float x, float y) { child_f_f_f("ycopysignf", x, y); }
+float child_yfmaxf(float x, float y) { child_f_f_f("yfmaxf", x, y); }
+float child_yfminf(float x, float y) { child_f_f_f("yfminf", x, y); }
+float child_yfdimf(float x, float y) { child_f_f_f("yfdimf", x, y); }
+float child_ynextafterf(float x, float y) { child_f_f_f("ynextafterf", x, y); }
+float child_yfmodf(float x, float y) { child_f_f_f("yfmodf", x, y); }
+float child_yfabsf(float x) { child_f_f("yfabsf", x); }
+float child_ytruncf(float x) { child_f_f("ytruncf", x); }
+float child_yfloorf(float x) { child_f_f("yfloorf", x); }
+float child_yceilf(float x) { child_f_f("yceilf", x); }
+float child_yroundf(float x) { child_f_f("yroundf", x); }
+float child_yrintf(float x) { child_f_f("yrintf", x); }
+float child_yfrfrexpf(float x) { child_f_f("yfrfrexpf", x); }
+Sleef_float2 child_ymodff(float x) { child_f2_f("ymodff", x); }
+float child_ytgammaf_u1(float x) { child_f_f("ytgammaf_u1", x); }
+float child_ylgammaf_u1(float x) { child_f_f("ylgammaf_u1", x); }
+float child_yerff_u1(float x) { child_f_f("yerff_u1", x); }
+float child_yerfcf_u15(float x) { child_f_f("yerfcf_u15", x); }
+
+//
 
 float child_ldexpf(float x, int q) {
   char str[256];
@@ -360,6 +520,28 @@ int child_ilogbf(float x) {
   sprintf(str, "ilogbf %x\n", f2u(x));
   write(ptoc[1], str, strlen(str));
   if (readln(ctop[0], str, 255) < 1) stop("child_ilogbf");
+  sscanf(str, "%d", &i);
+  return i;
+}
+
+float child_yldexpf(float x, int q) {
+  char str[256];
+  uint32_t u;
+
+  sprintf(str, "yldexpf %x %x\n", f2u(x), f2u(q));
+  write(ptoc[1], str, strlen(str));
+  if (readln(ctop[0], str, 255) < 1) stop("child_ypowf");
+  sscanf(str, "%x", &u);
+  return u2f(u);
+}
+
+int child_yilogbf(float x) {
+  char str[256];
+  int i;
+  
+  sprintf(str, "yilogbf %x\n", f2u(x));
+  write(ptoc[1], str, strlen(str));
+  if (readln(ctop[0], str, 255) < 1) stop("child_yilogbf");
   sscanf(str, "%d", &i);
   return i;
 }
@@ -1143,7 +1325,763 @@ void do_test() {
 
       showResult(success);
     }
-  }
+  } // if (enableDP)
+
+  if (enableDP && !noSupportForYFuncs) {
+    fprintf(stderr, "Denormal/nonnumber test yatan2(y, x)\n\n");
+
+    fprintf(stderr, "If y is +0 and x is -0, +pi is returned : ");
+    showResult(child_yatan2(+0.0, -0.0) == M_PI);
+
+    fprintf(stderr, "If y is -0 and x is -0, -pi is returned : ");
+    showResult(child_yatan2(-0.0, -0.0) == -M_PI);
+
+    fprintf(stderr, "If y is +0 and x is +0, +0 is returned : ");
+    showResult(isPlusZero(child_yatan2(+0.0, +0.0)));
+
+    fprintf(stderr, "If y is -0 and x is +0, -0 is returned : ");
+    showResult(isMinusZero(child_yatan2(-0.0, +0.0)));
+
+    fprintf(stderr, "If y is positive infinity and x is negative infinity, +3*pi/4 is returned : ");
+    showResult(child_yatan2(POSITIVE_INFINITY, NEGATIVE_INFINITY) == 3*M_PI/4);
+
+    fprintf(stderr, "If y is negative infinity and x is negative infinity, -3*pi/4 is returned : ");
+    showResult(child_yatan2(NEGATIVE_INFINITY, NEGATIVE_INFINITY) == -3*M_PI/4);
+
+    fprintf(stderr, "If y is positive infinity and x is positive infinity, +pi/4 is returned : ");
+    showResult(child_yatan2(POSITIVE_INFINITY, POSITIVE_INFINITY) == M_PI/4);
+
+    fprintf(stderr, "If y is negative infinity and x is positive infinity, -pi/4 is returned : ");
+    showResult(child_yatan2(NEGATIVE_INFINITY, POSITIVE_INFINITY) == -M_PI/4);
+
+    {
+      fprintf(stderr, "If y is +0 and x is less than 0, +pi is returned : ");
+
+      double ya[] = { +0.0 };
+      double xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (child_yatan2(ya[j], xa[i]) != M_PI) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is -0 and x is less than 0, -pi is returned : ");
+
+      double ya[] = { -0.0 };
+      double xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (child_yatan2(ya[j], xa[i]) != -M_PI) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is less than 0 and x is 0, -pi/2 is returned : ");
+
+      double ya[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
+      double xa[] = { +0.0, -0.0 };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (child_yatan2(ya[j], xa[i]) != -M_PI/2) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is greater than 0 and x is 0, pi/2 is returned : ");
+
+      double ya[] = { 100000.5, 100000, 3, 2.5, 2, 1.5, 1.0, 0.5 };
+      double xa[] = { +0.0, -0.0 };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (child_yatan2(ya[j], xa[i]) != M_PI/2) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is greater than 0 and x is -0, pi/2 is returned : ");
+
+      double ya[] = { 100000.5, 100000, 3, 2.5, 2, 1.5, 1.0, 0.5 };
+      double xa[] = { -0.0 };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (child_yatan2(ya[j], xa[i]) != M_PI/2) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is positive infinity, and x is finite, pi/2 is returned : ");
+
+      double ya[] = { POSITIVE_INFINITY };
+      double xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (child_yatan2(ya[j], xa[i]) != M_PI/2) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is negative infinity, and x is finite, -pi/2 is returned : ");
+
+      double ya[] = { NEGATIVE_INFINITY };
+      double xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (child_yatan2(ya[j], xa[i]) != -M_PI/2) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is a finite value greater than 0, and x is negative infinity, +pi is returned : ");
+
+      double ya[] = { 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
+      double xa[] = { NEGATIVE_INFINITY };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (child_yatan2(ya[j], xa[i]) != M_PI) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is a finite value less than 0, and x is negative infinity, -pi is returned : ");
+
+      double ya[] = { -0.5, -1.5, -2.0, -2.5, -3.0, -100000, -100000.5 };
+      double xa[] = { NEGATIVE_INFINITY };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (child_yatan2(ya[j], xa[i]) != -M_PI) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is a finite value greater than 0, and x is positive infinity, +0 is returned : ");
+
+      double ya[] = { 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
+      double xa[] = { POSITIVE_INFINITY };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (!isPlusZero(child_yatan2(ya[j], xa[i]))) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is a finite value less than 0, and x is positive infinity, -0 is returned : ");
+
+      double ya[] = { -0.5, -1.5, -2.0, -2.5, -3.0, -100000, -100000.5 };
+      double xa[] = { POSITIVE_INFINITY };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (!isMinusZero(child_yatan2(ya[j], xa[i]))) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If x is NaN, a NaN is returned : ");
+
+      double ya[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5, NAN };
+      double xa[] = { NAN };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (!xisnan(child_yatan2(ya[j], xa[i]))) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is a NaN, the result is a NaN : ");
+
+      double ya[] = { NAN };
+      double xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5, NAN };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (!xisnan(child_yatan2(ya[j], xa[i]))) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    fprintf(stderr, "\nend of yatan2 denormal/nonnumber test\n");
+
+    //
+
+    fprintf(stderr, "\nDenormal/nonnumber test yatan2_u1(y, x)\n\n");
+
+    fprintf(stderr, "If y is +0 and x is -0, +pi is returned : ");
+    showResult(child_yatan2_u1(+0.0, -0.0) == M_PI);
+
+    fprintf(stderr, "If y is -0 and x is -0, -pi is returned : ");
+    showResult(child_yatan2_u1(-0.0, -0.0) == -M_PI);
+
+    fprintf(stderr, "If y is +0 and x is +0, +0 is returned : ");
+    showResult(isPlusZero(child_yatan2_u1(+0.0, +0.0)));
+
+    fprintf(stderr, "If y is -0 and x is +0, -0 is returned : ");
+    showResult(isMinusZero(child_yatan2_u1(-0.0, +0.0)));
+
+    fprintf(stderr, "If y is positive infinity and x is negative infinity, +3*pi/4 is returned : ");
+    showResult(child_yatan2_u1(POSITIVE_INFINITY, NEGATIVE_INFINITY) == 3*M_PI/4);
+
+    fprintf(stderr, "If y is negative infinity and x is negative infinity, -3*pi/4 is returned : ");
+    showResult(child_yatan2_u1(NEGATIVE_INFINITY, NEGATIVE_INFINITY) == -3*M_PI/4);
+
+    fprintf(stderr, "If y is positive infinity and x is positive infinity, +pi/4 is returned : ");
+    showResult(child_yatan2_u1(POSITIVE_INFINITY, POSITIVE_INFINITY) == M_PI/4);
+
+    fprintf(stderr, "If y is negative infinity and x is positive infinity, -pi/4 is returned : ");
+    showResult(child_yatan2_u1(NEGATIVE_INFINITY, POSITIVE_INFINITY) == -M_PI/4);
+
+    {
+      fprintf(stderr, "If y is +0 and x is less than 0, +pi is returned : ");
+
+      double ya[] = { +0.0 };
+      double xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (child_yatan2_u1(ya[j], xa[i]) != M_PI) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is -0 and x is less than 0, -pi is returned : ");
+
+      double ya[] = { -0.0 };
+      double xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (child_yatan2_u1(ya[j], xa[i]) != -M_PI) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is less than 0 and x is 0, -pi/2 is returned : ");
+
+      double ya[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
+      double xa[] = { +0.0, -0.0 };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (child_yatan2_u1(ya[j], xa[i]) != -M_PI/2) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is greater than 0 and x is 0, pi/2 is returned : ");
+
+
+      double ya[] = { 100000.5, 100000, 3, 2.5, 2, 1.5, 1.0, 0.5 };
+      double xa[] = { +0.0, -0.0 };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (child_yatan2_u1(ya[j], xa[i]) != M_PI/2) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is greater than 0 and x is -0, pi/2 is returned : ");
+
+      double ya[] = { 100000.5, 100000, 3, 2.5, 2, 1.5, 1.0, 0.5 };
+      double xa[] = { -0.0 };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (child_yatan2_u1(ya[j], xa[i]) != M_PI/2) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is positive infinity, and x is finite, pi/2 is returned : ");
+
+      double ya[] = { POSITIVE_INFINITY };
+      double xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (child_yatan2_u1(ya[j], xa[i]) != M_PI/2) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is negative infinity, and x is finite, -pi/2 is returned : ");
+
+      double ya[] = { NEGATIVE_INFINITY };
+      double xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (child_yatan2_u1(ya[j], xa[i]) != -M_PI/2) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is a finite value greater than 0, and x is negative infinity, +pi is returned : ");
+
+      double ya[] = { 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
+      double xa[] = { NEGATIVE_INFINITY };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (child_yatan2_u1(ya[j], xa[i]) != M_PI) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is a finite value less than 0, and x is negative infinity, -pi is returned : ");
+
+      double ya[] = { -0.5, -1.5, -2.0, -2.5, -3.0, -100000, -100000.5 };
+      double xa[] = { NEGATIVE_INFINITY };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (child_yatan2_u1(ya[j], xa[i]) != -M_PI) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is a finite value greater than 0, and x is positive infinity, +0 is returned : ");
+
+      double ya[] = { 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
+      double xa[] = { POSITIVE_INFINITY };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (!isPlusZero(child_yatan2_u1(ya[j], xa[i]))) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is a finite value less than 0, and x is positive infinity, -0 is returned : ");
+
+      double ya[] = { -0.5, -1.5, -2.0, -2.5, -3.0, -100000, -100000.5 };
+      double xa[] = { POSITIVE_INFINITY };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (!isMinusZero(child_yatan2_u1(ya[j], xa[i]))) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If x is NaN, a NaN is returned : ");
+
+      double ya[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5, NAN };
+      double xa[] = { NAN };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (!xisnan(child_yatan2_u1(ya[j], xa[i]))) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is a NaN, the result is a NaN : ");
+
+      double ya[] = { NAN };
+      double xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5, NAN };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (!xisnan(child_yatan2_u1(ya[j], xa[i]))) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    fprintf(stderr, "\nend of yatan2_u1 denormal/nonnumber test\n");
+  
+    //
+
+    fprintf(stderr, "\nDenormal/nonnumber test ypow(x, y)\n\n");
+
+    fprintf(stderr, "If x is +1 and y is a NaN, the result is 1.0 : ");
+    showResult(child_ypow(1, NAN) == 1.0);
+
+    fprintf(stderr, "If y is 0 and x is a NaN, the result is 1.0 : ");
+    showResult(child_ypow(NAN, 0) == 1.0);
+
+    fprintf(stderr, "If x is -1, and y is positive infinity, the result is 1.0 : ");
+    showResult(child_ypow(-1, POSITIVE_INFINITY) == 1.0);
+
+    fprintf(stderr, "If x is -1, and y is negative infinity, the result is 1.0 : ");
+    showResult(child_ypow(-1, NEGATIVE_INFINITY) == 1.0);
+
+    {
+      fprintf(stderr, "If x is a finite value less than 0, and y is a finite non-integer, a NaN is returned : ");
+
+      double xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
+      double ya[] = { -100000.5, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5, 100000.5 };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (!xisnan(child_ypow(xa[i], ya[j]))) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If x is a NaN, the result is a NaN : ");
+
+      double xa[] = { NAN };
+      double ya[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (!xisnan(child_ypow(xa[i], ya[j]))) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is a NaN, the result is a NaN : ");
+
+      double xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
+      double ya[] = { NAN };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (!xisnan(child_ypow(xa[i], ya[j]))) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If x is +0, and y is an odd integer greater than 0, the result is +0 : ");
+
+      double xa[] = { +0.0 };
+      double ya[] = { 1, 3, 5, 7, 100001 };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (!isPlusZero(child_ypow(xa[i], ya[j]))) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If x is -0, and y is an odd integer greater than 0, the result is -0 : ");
+
+      double xa[] = { -0.0 };
+      double ya[] = { 1, 3, 5, 7, 100001 };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  double test = child_ypow(xa[i], ya[j]);
+	  if (!isMinusZero(test)) {
+	    fprintf(stderr, "arg = %.20g, %.20g, test = %.20g, correct = %.20g\n", xa[i], ya[j], test, -0.0);
+	    success = 0;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If x is 0, and y greater than 0 and not an odd integer, the result is +0 : ");
+
+      double xa[] = { +0.0, -0.0 };
+      double ya[] = { 0.5, 1.5, 2.0, 2.5, 4.0, 100000, 100000.5 };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (!isPlusZero(child_ypow(xa[i], ya[j]))) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If the absolute value of x is less than 1, and y is negative infinity, the result is positive infinity : ");
+
+      double xa[] = { -0.999, -0.5, -0.0, +0.0, +0.5, +0.999 };
+      double ya[] = { NEGATIVE_INFINITY };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (child_ypow(xa[i], ya[j]) != POSITIVE_INFINITY) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If the absolute value of x is greater than 1, and y is negative infinity, the result is +0 : ");
+
+      double xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
+      double ya[] = { NEGATIVE_INFINITY };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (!isPlusZero(child_ypow(xa[i], ya[j]))) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If the absolute value of x is less than 1, and y is positive infinity, the result is +0 : ");
+
+      double xa[] = { -0.999, -0.5, -0.0, +0.0, +0.5, +0.999 };
+      double ya[] = { POSITIVE_INFINITY };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (!isPlusZero(child_ypow(xa[i], ya[j]))) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If the absolute value of x is greater than 1, and y is positive infinity, the result is positive infinity : ");
+
+      double xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
+      double ya[] = { POSITIVE_INFINITY };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (child_ypow(xa[i], ya[j]) != POSITIVE_INFINITY) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If x is negative infinity, and y is an odd integer less than 0, the result is -0 : ");
+
+      double xa[] = { NEGATIVE_INFINITY };
+      double ya[] = { -100001, -5, -3, -1 };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (!isMinusZero(child_ypow(xa[i], ya[j]))) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If x is negative infinity, and y less than 0 and not an odd integer, the result is +0 : ");
+
+      double xa[] = { NEGATIVE_INFINITY };
+      double ya[] = { -100000.5, -100000, -4, -2.5, -2, -1.5, -0.5 };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (!isPlusZero(child_ypow(xa[i], ya[j]))) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If x is negative infinity, and y is an odd integer greater than 0, the result is negative infinity : ");
+
+      double xa[] = { NEGATIVE_INFINITY };
+      double ya[] = { 1, 3, 5, 7, 100001 };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (child_ypow(xa[i], ya[j]) != NEGATIVE_INFINITY) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If x is negative infinity, and y greater than 0 and not an odd integer, the result is positive infinity : ");
+
+      double xa[] = { NEGATIVE_INFINITY };
+      double ya[] = { 0.5, 1.5, 2, 2.5, 3.5, 4, 100000, 100000.5 };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (child_ypow(xa[i], ya[j]) != POSITIVE_INFINITY) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If x is positive infinity, and y less than 0, the result is +0 : ");
+
+      double xa[] = { POSITIVE_INFINITY };
+      double ya[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (!isPlusZero(child_ypow(xa[i], ya[j]))) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If x is positive infinity, and y greater than 0, the result is positive infinity : ");
+
+      double xa[] = { POSITIVE_INFINITY };
+      double ya[] = { 0.5, 1, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (child_ypow(xa[i], ya[j]) != POSITIVE_INFINITY) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If x is +0, and y is an odd integer less than 0, +HUGE_VAL is returned : ");
+
+      double xa[] = { +0.0 };
+      double ya[] = { -100001, -5, -3, -1 };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (child_ypow(xa[i], ya[j]) != POSITIVE_INFINITY) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If x is -0, and y is an odd integer less than 0, -HUGE_VAL is returned : ");
+
+      double xa[] = { -0.0 };
+      double ya[] = { -100001, -5, -3, -1 };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (child_ypow(xa[i], ya[j]) != NEGATIVE_INFINITY) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If x is 0, and y is less than 0 and not an odd integer, +HUGE_VAL is returned : ");
+
+      double xa[] = { +0.0, -0.0 };
+      double ya[] = { -100000.5, -100000, -4, -2.5, -2, -1.5, -0.5 };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (child_ypow(xa[i], ya[j]) != POSITIVE_INFINITY) success = 0;
+	}
+      }
+
+      showResult(success);
+    }
+  } // if (enableDP && !noSupportForYFuncs)
 
   //
 
@@ -2158,7 +3096,960 @@ void do_test() {
     }
 
     fprintf(stderr, "\nEnd of pow denormal/nonnumber test\n\n");
-  }
+  } // if (enableSP)
+
+  if (enableSP && !noSupportForYFuncs) {
+    fprintf(stderr, "\nDenormal/nonnumber test yatan2f(y, x)\n\n");
+
+    fprintf(stderr, "If y is +0 and x is -0, +pi is returned ... ");
+    showResult(child_yatan2f(+0.0, -0.0) == M_PIf);
+
+    fprintf(stderr, "If y is -0 and x is -0, -pi is returned ... ");
+    showResult(child_yatan2f(-0.0, -0.0) == -M_PIf);
+
+    fprintf(stderr, "If y is +0 and x is +0, +0 is returned ... ");
+    showResult(isPlusZerof(child_yatan2f(+0.0, +0.0)));
+
+    fprintf(stderr, "If y is -0 and x is +0, -0 is returned ... ");
+    showResult(isMinusZerof(child_yatan2f(-0.0, +0.0)));
+
+    fprintf(stderr, "If y is positive infinity and x is negative infinity, +3*pi/4 is returned ... ");
+    showResult(child_yatan2f(POSITIVE_INFINITYf, NEGATIVE_INFINITYf) == 3*M_PIf/4);
+
+    fprintf(stderr, "If y is negative infinity and x is negative infinity, -3*pi/4 is returned ... ");
+    showResult(child_yatan2f(NEGATIVE_INFINITYf, NEGATIVE_INFINITYf) == -3*M_PIf/4);
+
+    fprintf(stderr, "If y is positive infinity and x is positive infinity, +pi/4 is returned ... ");
+    showResult(child_yatan2f(POSITIVE_INFINITYf, POSITIVE_INFINITYf) == M_PIf/4);
+
+    fprintf(stderr, "If y is negative infinity and x is positive infinity, -pi/4 is returned ... ");
+    showResult(child_yatan2f(NEGATIVE_INFINITYf, POSITIVE_INFINITYf) == -M_PIf/4);
+
+    {
+      fprintf(stderr, "If y is +0 and x is less than 0, +pi is returned ... ");
+
+      float ya[] = { +0.0 };
+      float xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
+
+      int success = 1;
+
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (child_yatan2f(ya[j], xa[i]) != M_PIf) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is -0 and x is less than 0, -pi is returned ... ");
+
+      float ya[] = { -0.0 };
+      float xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (child_yatan2f(ya[j], xa[i]) != -M_PIf) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is less than 0 and x is 0, -pi/2 is returned ... ");
+
+      float ya[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
+      float xa[] = { +0.0, -0.0 };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (child_yatan2f(ya[j], xa[i]) != -M_PIf/2) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is greater than 0 and x is 0, pi/2 is returned ... ");
+
+
+      float ya[] = { 100000.5, 100000, 3, 2.5, 2, 1.5, 1.0, 0.5 };
+      float xa[] = { +0.0, -0.0 };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (child_yatan2f(ya[j], xa[i]) != M_PIf/2) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is greater than 0 and x is -0, pi/2 is returned ... ");
+
+      float ya[] = { 100000.5, 100000, 3, 2.5, 2, 1.5, 1.0, 0.5 };
+      float xa[] = { -0.0 };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (child_yatan2f(ya[j], xa[i]) != M_PIf/2) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is positive infinity, and x is finite, pi/2 is returned ... ");
+
+      float ya[] = { POSITIVE_INFINITYf };
+      float xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (child_yatan2f(ya[j], xa[i]) != M_PIf/2) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is negative infinity, and x is finite, -pi/2 is returned ... ");
+
+      float ya[] = { NEGATIVE_INFINITYf };
+      float xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (child_yatan2f(ya[j], xa[i]) != -M_PIf/2) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is a finite value greater than 0, and x is negative infinity, +pi is returned ... ");
+
+      float ya[] = { 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
+      float xa[] = { NEGATIVE_INFINITYf };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (child_yatan2f(ya[j], xa[i]) != M_PIf) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is a finite value less than 0, and x is negative infinity, -pi is returned ... ");
+
+      float ya[] = { -0.5, -1.5, -2.0, -2.5, -3.0, -100000, -100000.5 };
+      float xa[] = { NEGATIVE_INFINITYf };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (child_yatan2f(ya[j], xa[i]) != -M_PIf) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is a finite value greater than 0, and x is positive infinity, +0 is returned ... ");
+
+      float ya[] = { 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
+      float xa[] = { POSITIVE_INFINITYf };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (!isPlusZerof(child_yatan2f(ya[j], xa[i]))) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is a finite value less than 0, and x is positive infinity, -0 is returned ... ");
+
+      float ya[] = { -0.5, -1.5, -2.0, -2.5, -3.0, -100000, -100000.5 };
+      float xa[] = { POSITIVE_INFINITYf };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (!isMinusZerof(child_yatan2f(ya[j], xa[i]))) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If x is NaN, a NaN is returned ... ");
+
+      float ya[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5, NANf };
+      float xa[] = { NANf };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (!xisnanf(child_yatan2f(ya[j], xa[i]))) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is a NaN, the result is a NaN ... ");
+
+      float ya[] = { NANf };
+      float xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5, NANf };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (!xisnanf(child_yatan2f(ya[j], xa[i]))) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    fprintf(stderr, "\nend of yatan2f denormal/nonnumber test\n\n");
+
+    //
+
+    fprintf(stderr, "\nDenormal/nonnumber test yatan2f_u1(y, x)\n\n");
+
+    fprintf(stderr, "If y is +0 and x is -0, +pi is returned ... ");
+    showResult(child_yatan2f_u1(+0.0, -0.0) == M_PIf);
+
+    fprintf(stderr, "If y is -0 and x is -0, -pi is returned ... ");
+    showResult(child_yatan2f_u1(-0.0, -0.0) == -M_PIf);
+
+    fprintf(stderr, "If y is +0 and x is +0, +0 is returned ... ");
+    showResult(isPlusZerof(child_yatan2f_u1(+0.0, +0.0)));
+
+    fprintf(stderr, "If y is -0 and x is +0, -0 is returned ... ");
+    showResult(isMinusZerof(child_yatan2f_u1(-0.0, +0.0)));
+
+    fprintf(stderr, "If y is positive infinity and x is negative infinity, +3*pi/4 is returned ... ");
+    showResult(child_yatan2f_u1(POSITIVE_INFINITYf, NEGATIVE_INFINITYf) == 3*M_PIf/4);
+
+    fprintf(stderr, "If y is negative infinity and x is negative infinity, -3*pi/4 is returned ... ");
+    showResult(child_yatan2f_u1(NEGATIVE_INFINITYf, NEGATIVE_INFINITYf) == -3*M_PIf/4);
+
+    fprintf(stderr, "If y is positive infinity and x is positive infinity, +pi/4 is returned ... ");
+    showResult(child_yatan2f_u1(POSITIVE_INFINITYf, POSITIVE_INFINITYf) == M_PIf/4);
+
+    fprintf(stderr, "If y is negative infinity and x is positive infinity, -pi/4 is returned ... ");
+    showResult(child_yatan2f_u1(NEGATIVE_INFINITYf, POSITIVE_INFINITYf) == -M_PIf/4);
+
+    {
+      fprintf(stderr, "If y is +0 and x is less than 0, +pi is returned ... ");
+
+      float ya[] = { +0.0 };
+      float xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
+
+      int success = 1;
+
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (child_yatan2f_u1(ya[j], xa[i]) != M_PIf) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is -0 and x is less than 0, -pi is returned ... ");
+
+      float ya[] = { -0.0 };
+      float xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (child_yatan2f_u1(ya[j], xa[i]) != -M_PIf) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is less than 0 and x is 0, -pi/2 is returned ... ");
+
+      float ya[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
+      float xa[] = { +0.0, -0.0 };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (child_yatan2f_u1(ya[j], xa[i]) != -M_PIf/2) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is greater than 0 and x is 0, pi/2 is returned ... ");
+
+
+      float ya[] = { 100000.5, 100000, 3, 2.5, 2, 1.5, 1.0, 0.5 };
+      float xa[] = { +0.0, -0.0 };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (child_yatan2f_u1(ya[j], xa[i]) != M_PIf/2) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is greater than 0 and x is -0, pi/2 is returned ... ");
+
+      float ya[] = { 100000.5, 100000, 3, 2.5, 2, 1.5, 1.0, 0.5 };
+      float xa[] = { -0.0 };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (child_yatan2f_u1(ya[j], xa[i]) != M_PIf/2) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is positive infinity, and x is finite, pi/2 is returned ... ");
+
+      float ya[] = { POSITIVE_INFINITYf };
+      float xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (child_yatan2f_u1(ya[j], xa[i]) != M_PIf/2) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is negative infinity, and x is finite, -pi/2 is returned ... ");
+
+      float ya[] = { NEGATIVE_INFINITYf };
+      float xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (child_yatan2f_u1(ya[j], xa[i]) != -M_PIf/2) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is a finite value greater than 0, and x is negative infinity, +pi is returned ... ");
+
+      float ya[] = { 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
+      float xa[] = { NEGATIVE_INFINITYf };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (child_yatan2f_u1(ya[j], xa[i]) != M_PIf) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is a finite value less than 0, and x is negative infinity, -pi is returned ... ");
+
+      float ya[] = { -0.5, -1.5, -2.0, -2.5, -3.0, -100000, -100000.5 };
+      float xa[] = { NEGATIVE_INFINITYf };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (child_yatan2f_u1(ya[j], xa[i]) != -M_PIf) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is a finite value greater than 0, and x is positive infinity, +0 is returned ... ");
+
+      float ya[] = { 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
+      float xa[] = { POSITIVE_INFINITYf };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (!isPlusZerof(child_yatan2f_u1(ya[j], xa[i]))) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is a finite value less than 0, and x is positive infinity, -0 is returned ... ");
+
+      float ya[] = { -0.5, -1.5, -2.0, -2.5, -3.0, -100000, -100000.5 };
+      float xa[] = { POSITIVE_INFINITYf };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (!isMinusZerof(child_yatan2f_u1(ya[j], xa[i]))) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If x is NaN, a NaN is returned ... ");
+
+      float ya[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5, NANf };
+      float xa[] = { NANf };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (!xisnanf(child_yatan2f_u1(ya[j], xa[i]))) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is a NaN, the result is a NaN ... ");
+
+      float ya[] = { NANf };
+      float xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5, NANf };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (!xisnanf(child_yatan2f_u1(ya[j], xa[i]))) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    fprintf(stderr, "\nend of yatan2f_u1 denormal/nonnumber test\n\n");
+  
+    //
+
+    fprintf(stderr, "\nDenormal/nonnumber test ypowf(x, y)\n\n");
+
+    fprintf(stderr, "If x is +1 and y is a NaN, the result is 1.0 ... ");
+    showResult(child_ypowf(1, NANf) == 1.0);
+
+    fprintf(stderr, "If y is 0 and x is a NaN, the result is 1.0 ... ");
+    showResult(child_ypowf(NANf, 0) == 1.0);
+
+    fprintf(stderr, "If x is -1, and y is positive infinity, the result is 1.0 ... ");
+    showResult(child_ypowf(-1, POSITIVE_INFINITYf) == 1.0);
+
+    fprintf(stderr, "If x is -1, and y is negative infinity, the result is 1.0 ... ");
+    showResult(child_ypowf(-1, NEGATIVE_INFINITYf) == 1.0);
+
+    {
+      fprintf(stderr, "If x is a finite value less than 0, and y is a finite non-integer, a NaN is returned ... ");
+
+      float xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
+      float ya[] = { -100000.5, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5, 100000.5 };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (!xisnanf(child_ypowf(xa[i], ya[j]))) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If x is a NaN, the result is a NaN ... ");
+
+      float xa[] = { NANf };
+      float ya[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (!xisnanf(child_ypowf(xa[i], ya[j]))) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If y is a NaN, the result is a NaN ... ");
+
+      float xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5, -0.0, +0.0, 0.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
+      float ya[] = { NANf };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (!xisnanf(child_ypowf(xa[i], ya[j]))) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If x is +0, and y is an odd integer greater than 0, the result is +0 ... ");
+
+      float xa[] = { +0.0 };
+      float ya[] = { 1, 3, 5, 7, 100001 };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (!isPlusZerof(child_ypowf(xa[i], ya[j]))) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If x is -0, and y is an odd integer greater than 0, the result is -0 ... ");
+
+      float xa[] = { -0.0 };
+      float ya[] = { 1, 3, 5, 7, 100001 };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (!isMinusZerof(child_ypowf(xa[i], ya[j]))) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If x is 0, and y greater than 0 and not an odd integer, the result is +0 ... ");
+
+      float xa[] = { +0.0, -0.0 };
+      float ya[] = { 0.5, 1.5, 2.0, 2.5, 4.0, 100000, 100000.5 };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (!isPlusZerof(child_ypowf(xa[i], ya[j]))) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If the absolute value of x is less than 1, and y is negative infinity, the result is positive infinity ... ");
+
+      float xa[] = { -0.999, -0.5, -0.0, +0.0, +0.5, +0.999 };
+      float ya[] = { NEGATIVE_INFINITYf };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (child_ypowf(xa[i], ya[j]) != POSITIVE_INFINITYf) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If the absolute value of x is greater than 1, and y is negative infinity, the result is +0 ... ");
+
+      float xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
+      float ya[] = { NEGATIVE_INFINITYf };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (!isPlusZerof(child_ypowf(xa[i], ya[j]))) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If the absolute value of x is less than 1, and y is positive infinity, the result is +0 ... ");
+
+      float xa[] = { -0.999, -0.5, -0.0, +0.0, +0.5, +0.999 };
+      float ya[] = { POSITIVE_INFINITYf };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (!isPlusZerof(child_ypowf(xa[i], ya[j]))) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If the absolute value of x is greater than 1, and y is positive infinity, the result is positive infinity ... ");
+
+      float xa[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
+      float ya[] = { POSITIVE_INFINITYf };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (child_ypowf(xa[i], ya[j]) != POSITIVE_INFINITYf) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If x is negative infinity, and y is an odd integer less than 0, the result is -0 ... ");
+
+      float xa[] = { NEGATIVE_INFINITYf };
+      float ya[] = { -100001, -5, -3, -1 };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (!isMinusZerof(child_ypowf(xa[i], ya[j]))) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If x is negative infinity, and y less than 0 and not an odd integer, the result is +0 ... ");
+
+      float xa[] = { NEGATIVE_INFINITYf };
+      float ya[] = { -100000.5, -100000, -4, -2.5, -2, -1.5, -0.5 };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (!isPlusZerof(child_ypowf(xa[i], ya[j]))) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If x is negative infinity, and y is an odd integer greater than 0, the result is negative infinity ... ");
+
+      float xa[] = { NEGATIVE_INFINITYf };
+      float ya[] = { 1, 3, 5, 7, 100001 };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (child_ypowf(xa[i], ya[j]) != NEGATIVE_INFINITYf) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If x is negative infinity, and y greater than 0 and not an odd integer, the result is positive infinity ... ");
+
+      float xa[] = { NEGATIVE_INFINITYf };
+      float ya[] = { 0.5, 1.5, 2, 2.5, 3.5, 4, 100000, 100000.5 };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (child_ypowf(xa[i], ya[j]) != POSITIVE_INFINITYf) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If x is positive infinity, and y less than 0, the result is +0 ... ");
+
+      float xa[] = { POSITIVE_INFINITYf };
+      float ya[] = { -100000.5, -100000, -3, -2.5, -2, -1.5, -1.0, -0.5 };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (!isPlusZerof(child_ypowf(xa[i], ya[j]))) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If x is positive infinity, and y greater than 0, the result is positive infinity ... ");
+
+      float xa[] = { POSITIVE_INFINITYf };
+      float ya[] = { 0.5, 1, 1.5, 2.0, 2.5, 3.0, 100000, 100000.5 };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (child_ypowf(xa[i], ya[j]) != POSITIVE_INFINITYf) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If x is +0, and y is an odd integer less than 0, +HUGE_VAL is returned ... ");
+
+      float xa[] = { +0.0 };
+      float ya[] = { -100001, -5, -3, -1 };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (child_ypowf(xa[i], ya[j]) != POSITIVE_INFINITYf) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If x is -0, and y is an odd integer less than 0, -HUGE_VAL is returned ... ");
+
+      float xa[] = { -0.0 };
+      float ya[] = { -100001, -5, -3, -1 };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (child_ypowf(xa[i], ya[j]) != NEGATIVE_INFINITYf) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If x is 0, and y is less than 0 and not an odd integer, +HUGE_VAL is returned ... ");
+
+      float xa[] = { +0.0, -0.0 };
+      float ya[] = { -100000.5, -100000, -4, -2.5, -2, -1.5, -0.5 };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  if (child_ypowf(xa[i], ya[j]) != POSITIVE_INFINITYf) {
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "If the result overflows, the functions return HUGE_VAL with the mathematically correct sign ... ");
+
+      float xa[] = { 1000, -1000 };
+      float ya[] = { 1000, 1000.5, 1001 };
+
+      int success = 1;
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  cmpDenorm_f_f(mpfr_pow, child_ypowf, xa[i], ya[i]);
+	}
+      }
+
+      showResult(success);
+    }
+
+    fprintf(stderr, "\nEnd of pow denormal/nonnumber test\n\n");
+  } // if (enableSP && !noSupportForYFuncs)
   
   //
   
@@ -2342,14 +4233,6 @@ void do_test() {
       showResult(success);
     }
 
-    if (!noSupportForYFuncs) {
-      fprintf(stderr, "yasin denormal/nonnumber test : ");
-      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN,
-		      POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, nextafter(1, 2), nextafter(-1, -2) };
-      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_asin, child_yasin, xa[i]);
-      showResult(success);
-    }
-
     {
       fprintf(stderr, "asin_u1 denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN,
@@ -2363,14 +4246,6 @@ void do_test() {
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN,
 		      POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, nextafter(1, 2), nextafter(-1, -2) };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_acos, child_acos, xa[i]);
-      showResult(success);
-    }
-
-    if (!noSupportForYFuncs) {
-      fprintf(stderr, "yacos denormal/nonnumber test : ");
-      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN,
-		      POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, nextafter(1, 2), nextafter(-1, -2) };
-      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_acos, child_yacos, xa[i]);
       showResult(success);
     }
 
@@ -2902,20 +4777,6 @@ void do_test() {
       showResult(success);
     }
 
-    if (!noSupportForYFuncs) {
-      fprintf(stderr, "yasinf denormal/nonnumber test : ");
-      if (enableFlushToZero) {
-	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX,
-		       POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(1, 2), nextafterf(-1, -2) };
-	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_asin, child_yasinf, xa[i]);
-      } else {
-	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN,
-		       POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(1, 2), nextafterf(-1, -2) };
-	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_asin, child_yasinf, xa[i]);
-      }
-      showResult(success);
-    }
-
     {
       fprintf(stderr, "asinf_u1 denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN,
@@ -2929,14 +4790,6 @@ void do_test() {
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN,
 		     POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(1, 2), nextafterf(-1, -2) };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_acos, child_acosf, xa[i]);
-      showResult(success);
-    }
-
-    if (!noSupportForYFuncs) {
-      fprintf(stderr, "yacosf denormal/nonnumber test : ");
-      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN,
-		     POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(1, 2), nextafterf(-1, -2) };
-      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_acos, child_yacosf, xa[i]);
       showResult(success);
     }
 
@@ -3350,6 +5203,1060 @@ void do_test() {
       showResult(success);
     }
   }
+
+  if (enableDP && !noSupportForYFuncs) {
+    {
+      fprintf(stderr, "ysin denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_sin, child_ysin, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ysin_u1 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_sin, child_ysin_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ysin in sincos denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenormX_d(mpfr_sin, child_ysincos, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ysin in sincos_u1 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenormX_d(mpfr_sin, child_ysincos_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ysin in sincospi_u05 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenormX_d(mpfr_sinpi, child_ysincospi_u05, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ysin in sincospi_u35 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenormX_d(mpfr_sinpi, child_ysincospi_u35, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ysinpi_u05 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_sinpi, child_ysinpi_u05, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ycospi_u05 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_cospi, child_ycospi_u05, xa[i]);
+      showResult(success);
+    }
+    
+    //
+  
+    {
+      fprintf(stderr, "ycos denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_cos, child_ycos, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ycos_u1 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_cos, child_ycos_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ycos in sincos denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenormY_d(mpfr_cos, child_ysincos, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ycos in sincos_u1 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenormY_d(mpfr_cos, child_ysincos_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ycos in sincospi_u05 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenormY_d(mpfr_cospi, child_ysincospi_u05, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ycos in sincospi_u35 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenormY_d(mpfr_cospi, child_ysincospi_u35, xa[i]);
+      showResult(success);
+    }
+
+    //
+  
+    {
+      fprintf(stderr, "ytan denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, M_PI/2, -M_PI/2 };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_tan, child_ytan, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ytan_u1 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, M_PI/2, -M_PI/2 };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_tan, child_ytan_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yasin denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN,
+		      POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, nextafter(1, 2), nextafter(-1, -2) };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_asin, child_yasin, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yasin_u1 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN,
+		      POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, nextafter(1, 2), nextafter(-1, -2) };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_asin, child_yasin_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yacos denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN,
+		      POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, nextafter(1, 2), nextafter(-1, -2) };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_acos, child_yacos, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yacos_u1 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN,
+		      POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, nextafter(1, 2), nextafter(-1, -2) };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_acos, child_yacos_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yatan denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_atan, child_yatan, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yatan_u1 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_atan, child_yatan_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ylog denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, nextafter(0, -1) };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_log, child_ylog, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ylog_u1 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, nextafter(0, -1) };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_log, child_ylog_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yexp denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_exp, child_yexp, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ysinh denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_sinh, child_ysinh, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ycosh denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_cosh, child_ycosh, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ytanh denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_tanh, child_ytanh, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ysinh_u35 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_sinh, child_ysinh_u35, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ycosh_u35 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_cosh, child_ycosh_u35, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ytanh_u35 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_tanh, child_ytanh_u35, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yasinh denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_asinh, child_yasinh, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yacosh denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_acosh, child_yacosh, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yatanh denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_atanh, child_yatanh, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ycbrt denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_cbrt, child_ycbrt, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ycbrt_u1 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_cbrt, child_ycbrt_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yexp2 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_exp2, child_yexp2, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yexp10 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_exp10, child_yexp10, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yexpm1 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_expm1, child_yexpm1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ylog10 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_log10, child_ylog10, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ylog2 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_log2, child_ylog2, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ylog1p denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, nextafter(-1, -2), -2 };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_log1p, child_ylog1p, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yldexp denormal/nonnumber test : ");
+    
+      for(i=-10000;i<=10000 && success;i++) {
+	d = child_yldexp(1.0, i);
+	mpfr_set_d(frx, 1.0, GMP_RNDN);
+	mpfr_set_exp(frx, mpfr_get_exp(frx) + i);
+	double c = mpfr_get_d(frx, GMP_RNDN);
+
+	if (c != d) {
+	  fprintf(stderr, "arg = %.20g, correct = %.20g, test = %.20g\n", (double)i, c, d);
+	  success = 0;
+	  break;
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yilogb denormal/nonnumber test : ");
+
+      double xa[] = { POSITIVE_INFINITY, NEGATIVE_INFINITY, -1, };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	if (child_yilogb(xa[i]) != ilogb(xa[i])) {
+	  fprintf(stderr, "arg = %.20g, correct = %d, test = %d\n", xa[i], ilogb(xa[i]), child_yilogb(xa[i]));
+	  success = 0;
+	  break;
+	}
+      }
+
+      {
+	int t = child_yilogb(NAN);
+	if (t != INT_MAX && t != INT_MIN) success = 0;
+      }
+
+      {
+	int t = child_yilogb(0);
+	if (t != INT_MIN && t != -INT_MAX) success = 0;
+      }
+    
+      showResult(success);
+    }
+  
+    {
+      fprintf(stderr, "yhypot_u35 denormal/nonnumber test : ");
+
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      double ya[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  cmpDenorm_d_d(mpfr_hypot, child_yhypot_u35, xa[i], ya[i]);
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yhypot_u05 denormal/nonnumber test : ");
+
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      double ya[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  cmpDenorm_d_d(mpfr_hypot, child_yhypot_u05, xa[i], ya[i]);
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ycopysign denormal/nonnumber test : ");
+
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      double ya[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  cmpDenorm_d_d(mpfr_copysign, child_ycopysign, xa[i], ya[i]);
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yfmax denormal/nonnumber test : ");
+
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, SLEEF_SNAN };
+      double ya[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, SLEEF_SNAN };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  cmpDenorm_d_d(mpfr_max, child_yfmax, xa[i], ya[i]);
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yfmin denormal/nonnumber test : ");
+
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, SLEEF_SNAN };
+      double ya[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, SLEEF_SNAN };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  cmpDenorm_d_d(mpfr_min, child_yfmin, xa[i], ya[i]);
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yfdim denormal/nonnumber test : ");
+
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      double ya[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  cmpDenorm_d_d(mpfr_dim, child_yfdim, xa[i], ya[i]);
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yfmod denormal/nonnumber test : ");
+
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      double ya[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  cmpDenorm_d_d(mpfr_fmod, child_yfmod, xa[i], ya[i]);
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ytrunc denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenormNR_d(mpfr_trunc, child_ytrunc, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yfloor denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenormNR_d(mpfr_floor, child_yfloor, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yceil denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenormNR_d(mpfr_ceil, child_yceil, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yround denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenormNR_d(mpfr_round, child_yround, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yrint denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_rint, child_yrint, xa[i]);
+      showResult(success);
+    }
+    
+    {
+      fprintf(stderr, "ylgamma_u1 denormal/nonnumber test : ");
+      double xa[] = { -4, -3, -2, -1, +0.0, -0.0, +1, +2, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_lgamma_nosign, child_ylgamma_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ytgamma_u1 denormal/nonnumber test : ");
+      double xa[] = { -4, -3, -2, -1, +0.0, -0.0, +1, +2, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_gamma, child_ytgamma_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yerf_u1 denormal/nonnumber test : ");
+      double xa[] = { -1, +0.0, -0.0, +1, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_erf, child_yerf_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yerfc_u15 denormal/nonnumber test : ");
+      double xa[] = { -1, +0.0, -0.0, +1, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_erfc, child_yerfc_u15, xa[i]);
+      showResult(success);
+    }
+  }
+
+  if (enableSP && !noSupportForYFuncs) {
+    {
+      fprintf(stderr, "ysinf denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_sin, child_ysinf, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ysinf_u1 denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_sin, child_ysinf_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ysin in sincosf denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenormX_f(mpfr_sin, child_ysincosf, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ysin in sincosf_u1 denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenormX_f(mpfr_sin, child_ysincosf_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ysin in sincospif_u05 denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenormX_f(mpfr_sinpi, child_ysincospif_u05, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ysin in sincospif_u35 denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenormX_f(mpfr_sinpi, child_ysincospif_u35, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ysinpif_u05 denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_sinpi, child_ysinpif_u05, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ycospif_u05 denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_cospi, child_ycospif_u05, xa[i]);
+      showResult(success);
+    }
+
+    //
+  
+    {
+      fprintf(stderr, "ycosf denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_cos, child_ycosf, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ycosf_u1 denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_cos, child_ycosf_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ycosf in sincos denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenormY_f(mpfr_cos, child_ysincosf, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ycosf in sincos_u1 denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenormY_f(mpfr_cos, child_ysincosf_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ycosf in sincospi_u05 denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenormY_f(mpfr_cospi, child_ysincospif_u05, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ycosf in sincospi_u35 denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenormY_f(mpfr_cospi, child_ysincospif_u35, xa[i]);
+      showResult(success);
+    }
+
+    //
+  
+    {
+      fprintf(stderr, "ytanf denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, M_PI/2, -M_PI/2 };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_tan, child_ytanf, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ytanf_u1 denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, M_PI/2, -M_PI/2 };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_tan, child_ytanf_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yasinf denormal/nonnumber test : ");
+      if (enableFlushToZero) {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX,
+		       POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(1, 2), nextafterf(-1, -2) };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_asin, child_yasinf, xa[i]);
+      } else {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN,
+		       POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(1, 2), nextafterf(-1, -2) };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_asin, child_yasinf, xa[i]);
+      }
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yasinf_u1 denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN,
+		     POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(1, 2), nextafterf(-1, -2) };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_asin, child_yasinf_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yacosf denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN,
+		     POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(1, 2), nextafterf(-1, -2) };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_acos, child_yacosf, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yacosf_u1 denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN,
+		     POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(1, 2), nextafterf(-1, -2) };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_acos, child_yacosf_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yatanf denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_atan, child_yatanf, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yatanf_u1 denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_atan, child_yatanf_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ylogf denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(0, -1) };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_log, child_ylogf, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ylogf_u1 denormal/nonnumber test : ");
+      if (enableFlushToZero) {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(0, -1) };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_log, child_ylogf_u1, xa[i]);
+      } else {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(0, -1) };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_log, child_ylogf_u1, xa[i]);
+      }
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yexpf denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_exp, child_yexpf, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ysinhf denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_sinh, child_ysinhf, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ycoshf denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_cosh, child_ycoshf, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ytanhf denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_tanh, child_ytanhf, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ysinhf_u35 denormal/nonnumber test : ");
+      if (enableFlushToZero) {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_sinh, child_ysinhf_u35, xa[i]);
+      } else {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_sinh, child_ysinhf_u35, xa[i]);
+      }
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ycoshf_u35 denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_cosh, child_ycoshf_u35, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ytanhf_u35 denormal/nonnumber test : ");
+      if (enableFlushToZero) {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_tanh, child_ytanhf_u35, xa[i]);
+      } else {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_tanh, child_ytanhf_u35, xa[i]);
+      }
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yasinhf denormal/nonnumber test : ");
+      if (enableFlushToZero) {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_asinh, child_yasinhf, xa[i]);
+      } else {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_asinh, child_yasinhf, xa[i]);
+      }
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yacoshf denormal/nonnumber test : ");
+      if (enableFlushToZero) {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_acosh, child_yacoshf, xa[i]);
+      } else {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_acosh, child_yacoshf, xa[i]);
+      }
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yatanhf denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_atanh, child_yatanhf, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ycbrtf denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_cbrt, child_ycbrtf, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ycbrtf_u1 denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_cbrt, child_ycbrtf_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yexp2f denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_exp2, child_yexp2f, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yexp10f denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_exp10, child_yexp10f, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yexpm1f denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_expm1, child_yexpm1f, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ylog10f denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_log10, child_ylog10f, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ylog2f denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_log2, child_ylog2f, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ylog1pf denormal/nonnumber test : ");
+      if (enableFlushToZero) {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(-1, -2), -2 };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_log1p, child_ylog1pf, xa[i]);
+      } else {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(-1, -2), -2 };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_log1p, child_ylog1pf, xa[i]);
+      }
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yhypotf_u35 denormal/nonnumber test : ");
+
+      if (enableFlushToZero) {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	  for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	    cmpDenorm_f_f(mpfr_hypot, child_yhypotf_u35, xa[i], ya[i]);
+	  }
+	}
+      } else {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	  for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	    cmpDenorm_f_f(mpfr_hypot, child_yhypotf_u35, xa[i], ya[i]);
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yhypotf_u05 denormal/nonnumber test : ");
+
+      if (enableFlushToZero) {
+	float xa[] = { +0.0, -0.0, +1, -1, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	float ya[] = { +0.0, -0.0, +1, -1, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	  for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	    cmpDenorm_f_f(mpfr_hypot, child_yhypotf_u05, xa[i], ya[i]);
+	  }
+	}
+      } else {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	  for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	    cmpDenorm_f_f(mpfr_hypot, child_yhypotf_u05, xa[i], ya[i]);
+	  }
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ycopysignf denormal/nonnumber test : ");
+
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  cmpDenorm_f_f(mpfr_copysign, child_ycopysignf, xa[i], ya[i]);
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yfmaxf denormal/nonnumber test : ");
+
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, SLEEF_SNANf };
+      float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, SLEEF_SNANf };
+
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  cmpDenorm_f_f(mpfr_max, child_yfmaxf, xa[i], ya[i]);
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yfminf denormal/nonnumber test : ");
+
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, SLEEF_SNANf };
+      float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, SLEEF_SNANf };
+
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  cmpDenorm_f_f(mpfr_min, child_yfminf, xa[i], ya[i]);
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yfdimf denormal/nonnumber test : ");
+
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	  cmpDenorm_f_f(mpfr_dim, child_yfdimf, xa[i], ya[i]);
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yfmodf denormal/nonnumber test : ");
+
+      if (enableFlushToZero) {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	  for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	    cmpDenorm_f_f(mpfr_fmod, child_yfmodf, xa[i], ya[i]);
+	  }
+	}
+      } else {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	  for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	    cmpDenorm_f_f(mpfr_fmod, child_yfmodf, xa[i], ya[i]);
+	  }
+	}
+      }
+      
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ytruncf denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenormNR_f(mpfr_trunc, child_ytruncf, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yfloorf denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenormNR_f(mpfr_floor, child_yfloorf, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yceilf denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenormNR_f(mpfr_ceil, child_yceilf, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yroundf denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenormNR_f(mpfr_round, child_yroundf, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yrintf denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_rint, child_yrintf, xa[i]);
+      showResult(success);
+    }
+
+    //
+    
+    {
+      fprintf(stderr, "ylgammaf_u1 denormal/nonnumber test : ");
+      float xa[] = { -4, -3, -2, -1, +0.0, -0.0, +1, +2, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_lgamma_nosign, child_ylgammaf_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "ytgammaf_u1 denormal/nonnumber test : ");
+      float xa[] = { -4, -3, -2, -1, +0.0, -0.0, +1, +2, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_gamma, child_ytgammaf_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yerff_u1 denormal/nonnumber test : ");
+      float xa[] = { -1, +0.0, -0.0, +1, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_erf, child_yerff_u1, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "yerfcf_u15 denormal/nonnumber test : ");
+      float xa[] = { -1, +0.0, -0.0, +1, +1e+10, -1e+10, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_erfc, child_yerfcf_u15, xa[i]);
+      showResult(success);
+    }
+  }
   
   //
 
@@ -3584,7 +6491,7 @@ void do_test() {
     showResult(success);
 
     //
-
+  
     fprintf(stderr, "sin in sincos : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracyX_d(mpfr_sin, child_sincos, d, 3.5);
     for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracyX_d(mpfr_sin, child_sincos, d, 3.5);
@@ -3862,14 +6769,6 @@ void do_test() {
 
     //
 
-    if (!noSupportForYFuncs) {
-      fprintf(stderr, "yasin : ");
-      for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_d(mpfr_asin, child_yasin, d, 3.5);
-      showResult(success);
-    }
-
-    //
-
     fprintf(stderr, "asin_u1 : ");
     for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_d(mpfr_asin, child_asin_u1, d, 1.0);
     showResult(success);
@@ -3879,14 +6778,6 @@ void do_test() {
     fprintf(stderr, "acos : ");
     for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_d(mpfr_acos, child_acos, d, 3.5);
     showResult(success);
-
-    //
-
-    if (!noSupportForYFuncs) {
-      fprintf(stderr, "yacos : ");
-      for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_d(mpfr_acos, child_yacos, d, 3.5);
-      showResult(success);
-    }
 
     //
 
@@ -4115,6 +7006,671 @@ void do_test() {
     }
   }
   
+  if (enableDP && !noSupportForYFuncs) {
+    fprintf(stderr, "yhypot_u35 : ");
+    for(y = -10;y < 10 && success;y += 0.15) {
+      for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_d_d(mpfr_hypot, child_yhypot_u35, y, x, 3.5);
+    }
+    for(y = -1e+10;y < 1e+10 && success;y += 1.51e+8) {
+      for(x = -1e+10;x < 1e+10 && success;x += 1.51e+8) checkAccuracy_d_d(mpfr_hypot, child_yhypot_u35, y, x, 3.5);
+    }
+    showResult(success);
+  
+    //
+
+    fprintf(stderr, "yhypot_u05 : ");
+    for(y = -10;y < 10 && success;y += 0.15) {
+      for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_d_d(mpfr_hypot, child_yhypot_u05, y, x, 0.5);
+    }
+    for(y = -1e+10;y < 1e+10 && success;y += 1.51e+8) {
+      for(x = -1e+10;x < 1e+10 && success;x += 1.51e+8) checkAccuracy_d_d(mpfr_hypot, child_yhypot_u05, y, x, 0.5);
+    }
+    showResult(success);
+  
+    //
+
+    fprintf(stderr, "ycopysign : ");
+    for(y = -10;y < 10 && success;y += 0.15) {
+      for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_d_d(mpfr_copysign, child_ycopysign, y, x, 0);
+    }
+    for(y = -1e+10;y < 1e+10 && success;y += 1.51e+8) {
+      for(x = -1e+10;x < 1e+10 && success;x += 1.51e+8) checkAccuracy_d_d(mpfr_copysign, child_ycopysign, y, x, 0);
+    }
+    showResult(success);
+  
+    //
+
+    fprintf(stderr, "yfmax : ");
+    for(y = -10;y < 10 && success;y += 0.15) {
+      for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_d_d(mpfr_max, child_yfmax, y, x, 0);
+    }
+    for(y = -1e+10;y < 1e+10 && success;y += 1.51e+8) {
+      for(x = -1e+10;x < 1e+10 && success;x += 1.51e+8) checkAccuracy_d_d(mpfr_max, child_yfmax, y, x, 0);
+    }
+    showResult(success);
+  
+    //
+
+    fprintf(stderr, "yfmin : ");
+    for(y = -10;y < 10 && success;y += 0.15) {
+      for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_d_d(mpfr_min, child_yfmin, y, x, 0);
+    }
+    for(y = -1e+10;y < 1e+10 && success;y += 1.51e+8) {
+      for(x = -1e+10;x < 1e+10 && success;x += 1.51e+8) checkAccuracy_d_d(mpfr_min, child_yfmin, y, x, 0);
+    }
+    showResult(success);
+  
+    //
+
+    fprintf(stderr, "yfdim : ");
+    for(y = -10;y < 10 && success;y += 0.15) {
+      for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_d_d(mpfr_dim, child_yfdim, y, x, 0.5);
+    }
+    for(y = -1e+10;y < 1e+10 && success;y += 1.51e+8) {
+      for(x = -1e+10;x < 1e+10 && success;x += 1.51e+8) checkAccuracy_d_d(mpfr_dim, child_yfdim, y, x, 0.5);
+    }
+    showResult(success);
+  
+    //
+
+    fprintf(stderr, "yfmod : ");
+    for(y = -10;y < 10 && success;y += 0.15) {
+      for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_d_d(mpfr_fmod, child_yfmod, y, x, 0.5);
+    }
+    for(y = -1e+10;y < 1e+10 && success;y += 1.51e+8) {
+      for(x = -1e+10;x < 1e+10 && success;x += 1.51e+8) checkAccuracy_d_d(mpfr_fmod, child_yfmod, y, x, 0.5);
+    }
+    showResult(success);
+  
+    //
+
+    fprintf(stderr, "ytrunc : ");
+    for(x = -100.5;x <= 100.5;x+=0.5) {
+      for(d = u2d(d2u(x)-3);d <= u2d(d2u(x)+3) && success;d = u2d(d2u(d)+1)) checkAccuracyNR_d(mpfr_trunc, child_ytrunc, d, 0);
+    }
+    for(d = -10000;d < 10000 && success;d += 2.5) checkAccuracyNR_d(mpfr_trunc, child_ytrunc, d, 0);
+    {
+      double start = u2d(d2u((double)(1LL << 52))-20), end = u2d(d2u((double)(1LL << 52))+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyNR_d(mpfr_trunc, child_ytrunc,  d, 0);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyNR_d(mpfr_trunc, child_ytrunc, -d, 0);
+    }
+    showResult(success);
+  
+    //
+
+    fprintf(stderr, "yfloor : ");
+    for(x = -100.5;x <= 100.5;x+=0.5) {
+      for(d = u2d(d2u(x)-3);d <= u2d(d2u(x)+3) && success;d = u2d(d2u(d)+1)) checkAccuracyNR_d(mpfr_floor, child_yfloor, d, 0);
+    }
+    for(d = -10000;d < 10000 && success;d += 2.5) checkAccuracyNR_d(mpfr_floor, child_yfloor, d, 0);
+    {
+      double start = u2d(d2u((double)(1LL << 52))-20), end = u2d(d2u((double)(1LL << 52))+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyNR_d(mpfr_floor, child_yfloor,  d, 0);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyNR_d(mpfr_floor, child_yfloor, -d, 0);
+    }
+    showResult(success);
+  
+    //
+
+    fprintf(stderr, "yceil : ");
+    for(x = -100.5;x <= 100.5;x+=0.5) {
+      for(d = u2d(d2u(x)-3);d <= u2d(d2u(x)+3) && success;d = u2d(d2u(d)+1)) checkAccuracyNR_d(mpfr_ceil, child_yceil, d, 0);
+    }
+    for(d = -10000;d < 10000 && success;d += 2.5) checkAccuracyNR_d(mpfr_ceil, child_yceil, d, 0);
+    {
+      double start = u2d(d2u((double)(1LL << 52))-20), end = u2d(d2u((double)(1LL << 52))+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyNR_d(mpfr_ceil, child_yceil,  d, 0);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyNR_d(mpfr_ceil, child_yceil, -d, 0);
+    }
+    showResult(success);
+  
+    //
+
+    fprintf(stderr, "yround : ");
+    for(x = -100.5;x <= 100.5;x+=0.5) {
+      for(d = u2d(d2u(x)-3);d <= u2d(d2u(x)+3) && success;d = u2d(d2u(d)+1)) checkAccuracyNR_d(mpfr_round, child_yround, d, 0);
+    }
+    for(d = -10000;d < 10000 && success;d += 2.5) checkAccuracyNR_d(mpfr_round, child_yround, d, 0);
+    {
+      double start = u2d(d2u((double)(1LL << 52))-20), end = u2d(d2u((double)(1LL << 52))+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyNR_d(mpfr_round, child_yround,  d, 0);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyNR_d(mpfr_round, child_yround, -d, 0);
+    }
+    showResult(success);
+  
+    //
+
+    fprintf(stderr, "yrint : ");
+    for(x = -100.5;x <= 100.5;x+=0.5) {
+      for(d = u2d(d2u(x)-3);d <= u2d(d2u(x)+3) && success;d = u2d(d2u(d)+1)) checkAccuracy_d(mpfr_rint, child_yrint, d, 0);
+    }
+    for(d = -10000;d < 10000 && success;d += 2.5) checkAccuracy_d(mpfr_rint, child_yrint, d, 0);
+    {
+      double start = u2d(d2u((double)(1LL << 52))-20), end = u2d(d2u((double)(1LL << 52))+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracy_d(mpfr_rint, child_yrint,  d, 0);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracy_d(mpfr_rint, child_yrint, -d, 0);
+    }
+    showResult(success);
+  
+    //
+  
+    fprintf(stderr, "ysin : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_sin, child_ysin, d, 3.5);
+    for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracy_d(mpfr_sin, child_ysin, d, 3.5);
+    for(i = 0;i < 920 && success;i++) checkAccuracy_d(mpfr_sin, child_ysin, pow(2.1, i), 3.5);
+    for(i64=(int64_t)-1e+14;i64<(int64_t)1e+14 && success;i64+=(int64_t)1e+12) {
+      double start = u2d(d2u(M_PI_4 * i64)-20), end = u2d(d2u(M_PI_4 * i64)+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracy_d(mpfr_sin, child_ysin, d, 3.5);
+    }
+    showResult(success);
+
+    //
+  
+    fprintf(stderr, "ysin_u1 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_sin, child_ysin_u1, d, 1.0);
+    for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracy_d(mpfr_sin, child_ysin_u1, d, 1.0);
+    for(i = 0;i < 920 && success;i++) checkAccuracy_d(mpfr_sin, child_ysin_u1, pow(2.1, i), 1.0);
+    for(i64=(int64_t)-1e+14;i64<(int64_t)1e+14 && success;i64+=(int64_t)1e+12) {
+      double start = u2d(d2u(M_PI_4 * i64)-20), end = u2d(d2u(M_PI_4 * i64)+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracy_d(mpfr_sin, child_ysin_u1, d, 1.0);
+    }
+    showResult(success);
+
+    //
+  
+    fprintf(stderr, "ysin in sincos : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracyX_d(mpfr_sin, child_ysincos, d, 3.5);
+    for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracyX_d(mpfr_sin, child_ysincos, d, 3.5);
+    for(i = 0;i < 920 && success;i++) checkAccuracyX_d(mpfr_sin, child_ysincos, pow(2.1, i), 3.5);
+    for(i=1;i<10000 && success;i+=31) {
+      double start = u2d(d2u(M_PI_4 * i)-20), end = u2d(d2u(M_PI_4 * i)+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyX_d(mpfr_sin, child_ysincos, d, 3.5);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ysin in sincos_u1 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracyX_d(mpfr_sin, child_ysincos_u1, d, 1.0);
+    for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracyX_d(mpfr_sin, child_ysincos_u1, d, 1.0);
+    for(i = 0;i < 920 && success;i++) checkAccuracyX_d(mpfr_sin, child_ysincos_u1, pow(2.1, i), 1.0);
+    for(i=1;i<10000 && success;i+=31) {
+      double start = u2d(d2u(M_PI_4 * i)-20), end = u2d(d2u(M_PI_4 * i)+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyX_d(mpfr_sin, child_ysincos_u1, d, 1.0);
+    }
+    showResult(success);
+
+    //
+
+    mpfr_set_default_prec(1280);
+
+    fprintf(stderr, "ysin in sincospi_u35 : ");
+    for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracyX_d(mpfr_sinpi, child_ysincospi_u35, d, 3.5);
+    for(d = -1e+8-0.1;d < 1e+8 && success;d += (1e+10 + 0.1)) checkAccuracyX_d(mpfr_sinpi, child_ysincospi_u35, d, 3.5);
+    for(i=1;i<10000 && success;i+=31) {
+      double start = u2d(d2u(i)-20), end = u2d(d2u(i)+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyX_d(mpfr_sinpi, child_ysincospi_u35, d, 3.5);
+    }
+    for(i=1;i<=20 && success;i++) {
+      double start = u2d(d2u(0.25 * i)-20), end = u2d(d2u(0.25 * i)+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyX_d(mpfr_sinpi, child_ysincospi_u35, d, 3.5);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ysin in sincospi_u05 : ");
+    for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracyX_d(mpfr_sinpi, child_ysincospi_u05, d, 0.506);
+    for(d = -1e+8-0.1;d < 1e+8 && success;d += (1e+10 + 0.1)) checkAccuracyX_d(mpfr_sinpi, child_ysincospi_u05, d, 0.506);
+    for(i=1;i<10000 && success;i+=31) {
+      double start = u2d(d2u(i)-20), end = u2d(d2u(i)+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyX_d(mpfr_sinpi, child_ysincospi_u05, d, 0.506);
+    }
+    for(i=1;i<=20 && success;i++) {
+      double start = u2d(d2u(0.25 * i)-20), end = u2d(d2u(0.25 * i)+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyX_d(mpfr_sinpi, child_ysincospi_u05, d, 0.506);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ysinpi_u05 : ");
+    for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracy_d(mpfr_sinpi, child_ysinpi_u05, d, 0.506);
+    for(d = -1e+8-0.1;d < 1e+8 && success;d += (1e+10 + 0.1)) checkAccuracy_d(mpfr_sinpi, child_ysinpi_u05, d, 0.506);
+    for(i=1;i<10000 && success;i+=31) {
+      double start = u2d(d2u(i)-20), end = u2d(d2u(i)+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracy_d(mpfr_sinpi, child_ysinpi_u05, d, 0.506);
+    }
+    for(i=1;i<=20 && success;i++) {
+      double start = u2d(d2u(0.25 * i)-20), end = u2d(d2u(0.25 * i)+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracy_d(mpfr_sinpi, child_ysinpi_u05, d, 0.506);
+    }
+    showResult(success);
+    
+    //
+
+    fprintf(stderr, "ycospi_u05 : ");
+    for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracy_d(mpfr_cospi, child_ycospi_u05, d, 0.506);
+    for(d = -1e+8-0.1;d < 1e+8 && success;d += (1e+10 + 0.1)) checkAccuracy_d(mpfr_cospi, child_ycospi_u05, d, 0.506);
+    for(i=1;i<10000 && success;i+=31) {
+      double start = u2d(d2u(i)-20), end = u2d(d2u(i)+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracy_d(mpfr_cospi, child_ycospi_u05, d, 0.506);
+    }
+    for(i=1;i<=20 && success;i++) {
+      double start = u2d(d2u(0.25 * i)-20), end = u2d(d2u(0.25 * i)+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracy_d(mpfr_cospi, child_ycospi_u05, d, 0.506);
+    }
+    showResult(success);
+
+    mpfr_set_default_prec(128);
+  
+    //
+
+    fprintf(stderr, "ycos : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_cos, child_ycos, d, 3.5);
+    for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracy_d(mpfr_cos, child_ycos, d, 3.5);
+    for(i = 0;i < 920 && success;i++) checkAccuracy_d(mpfr_cos, child_ycos, pow(2.1, i), 3.5);
+    for(i64=(int64_t)-1e+14;i64<(int64_t)1e+14 && success;i64+=(int64_t)1e+12) {
+      double start = u2d(d2u(M_PI_4 * i64)-20), end = u2d(d2u(M_PI_4 * i64)+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracy_d(mpfr_cos, child_ycos, d, 3.5);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ycos_u1 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_cos, child_ycos_u1, d, 1.0);
+    for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracy_d(mpfr_cos, child_ycos_u1, d, 1.0);
+    for(i = 0;i < 920 && success;i++) checkAccuracy_d(mpfr_cos, child_ycos_u1, pow(2.1, i), 1.0);
+    for(i64=(int64_t)-1e+14;i64<(int64_t)1e+14 && success;i64+=(int64_t)1e+12) {
+      double start = u2d(d2u(M_PI_4 * i64)-20), end = u2d(d2u(M_PI_4 * i64)+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracy_d(mpfr_cos, child_ycos_u1, d, 1.0);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ycos in sincos : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracyY_d(mpfr_cos, child_ysincos, d, 3.5);
+    for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracyY_d(mpfr_cos, child_ysincos, d, 3.5);
+    for(i = 0;i < 920 && success;i++) checkAccuracyY_d(mpfr_cos, child_ysincos, pow(2.1, i), 3.5);
+    for(i=1;i<10000 && success;i+=31) {
+      double start = u2d(d2u(M_PI_4 * i)-20), end = u2d(d2u(M_PI_4 * i)+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyY_d(mpfr_cos, child_ysincos, d, 3.5);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ycos in sincos_u1 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracyY_d(mpfr_cos, child_ysincos_u1, d, 1.0);
+    for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracyY_d(mpfr_cos, child_ysincos_u1, d, 1.0);
+    for(i = 0;i < 920 && success;i++) checkAccuracyY_d(mpfr_cos, child_ysincos_u1, pow(2.1, i), 1.0);
+    for(i=1;i<10000 && success;i+=31) {
+      double start = u2d(d2u(M_PI_4 * i)-20), end = u2d(d2u(M_PI_4 * i)+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyY_d(mpfr_cos, child_ysincos_u1, d, 1.0);
+    }
+    showResult(success);
+
+    //
+
+    mpfr_set_default_prec(1280);
+
+    fprintf(stderr, "ycos in sincospi_u35 : ");
+    for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracyY_d(mpfr_cospi, child_ysincospi_u35, d, 3.5);
+    for(d = -1e+8-0.1;d < 1e+8 && success;d += (1e+10 + 0.1)) checkAccuracyY_d(mpfr_cospi, child_ysincospi_u35, d, 3.5);
+    for(i=1;i<10000 && success;i+=31) {
+      double start = u2d(d2u(i)-20), end = u2d(d2u(i)+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyY_d(mpfr_cospi, child_ysincospi_u35, d, 3.5);
+    }
+    for(i=1;i<=20 && success;i++) {
+      double start = u2d(d2u(0.25 * i)-20), end = u2d(d2u(0.25 * i)+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyY_d(mpfr_cospi, child_ysincospi_u35, d, 3.5);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ycos in sincospi_u05 : ");
+    for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracyY_d(mpfr_cospi, child_ysincospi_u05, d, 0.506);
+    for(d = -1e+8-0.1;d < 1e+8 && success;d += (1e+10 + 0.1)) checkAccuracyY_d(mpfr_cospi, child_ysincospi_u05, d, 0.506);
+    for(i=1;i<10000 && success;i+=31) {
+      double start = u2d(d2u(i)-20), end = u2d(d2u(i)+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyY_d(mpfr_cospi, child_ysincospi_u05, d, 0.506);
+    }
+    for(i=1;i<=20 && success;i++) {
+      double start = u2d(d2u(0.25 * i)-20), end = u2d(d2u(0.25 * i)+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracyY_d(mpfr_cospi, child_ysincospi_u05, d, 0.506);
+    }
+    showResult(success);
+
+    mpfr_set_default_prec(128);
+  
+    //
+
+    fprintf(stderr, "ytan : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_tan, child_ytan, d, 3.5);
+    for(d = -1e+7;d < 1e+7 && success;d += 1000.1) checkAccuracy_d(mpfr_tan, child_ytan, d, 3.5);
+    for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracy_d(mpfr_tan, child_ytan, d, 3.5);
+    for(i = 0;i < 920 && success;i++) checkAccuracy_d(mpfr_tan, child_ytan, pow(2.1, i), 3.5);
+    for(i=1;i<10000 && success;i+=31) {
+      double start = u2d(d2u(M_PI_4 * i)-20), end = u2d(d2u(M_PI_4 * i)+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracy_d(mpfr_tan, child_ytan, d, 3.5);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ytan_u1 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_tan, child_ytan_u1, d, 1.0);
+    for(d = -1e+7;d < 1e+7 && success;d += 1000.1) checkAccuracy_d(mpfr_tan, child_ytan_u1, d, 1.0);
+    for(d = -1e+14;d < 1e+14 && success;d += (1e+10 + 0.1)) checkAccuracy_d(mpfr_tan, child_ytan_u1, d, 1.0);
+    for(i = 0;i < 920 && success;i++) checkAccuracy_d(mpfr_tan, child_ytan_u1, pow(2.1, i), 1.0);
+    for(i=1;i<10000 && success;i+=31) {
+      double start = u2d(d2u(M_PI_4 * i)-20), end = u2d(d2u(M_PI_4 * i)+20);
+      for(d = start;d <= end;d = u2d(d2u(d)+1)) checkAccuracy_d(mpfr_tan, child_ytan_u1, d, 1.0);
+    }
+    showResult(success);
+
+    //
+  
+    fprintf(stderr, "ylog : ");
+    for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_d(mpfr_log, child_ylog, d, 3.5);
+    for(d = 0.0001;d < 10000 && success;d += 1.1) checkAccuracy_d(mpfr_log, child_ylog, d, 3.5);
+    for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_d(mpfr_log, child_ylog, pow(2.1, i), 3.5);
+    for(i=0;i<10000 && success;i+=10) checkAccuracy_d(mpfr_log, child_ylog, DBL_MAX * pow(0.9314821319758632, i), 3.5);
+    for(i=0;i<10000 && success;i+=10) checkAccuracy_d(mpfr_log, child_ylog, pow(0.933254300796991, i), 3.5);
+    for(i=0;i<10000 && success;i+=10) checkAccuracy_d(mpfr_log, child_ylog, DBL_MIN * pow(0.996323, i), 3.5);
+    showResult(success);
+
+    //
+  
+    fprintf(stderr, "ylog_u1 : ");
+    for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_d(mpfr_log, child_ylog_u1, d, 1.0);
+    for(d = 0.0001;d < 10000 && success;d += 1.1) checkAccuracy_d(mpfr_log, child_ylog_u1, d, 1.0);
+    for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_d(mpfr_log, child_ylog_u1, pow(2.1, i), 1.0);
+    for(i=0;i<10000 && success;i+=10) checkAccuracy_d(mpfr_log, child_ylog_u1, DBL_MAX * pow(0.9314821319758632, i), 1.0);
+    for(i=0;i<10000 && success;i+=10) checkAccuracy_d(mpfr_log, child_ylog_u1, pow(0.933254300796991, i), 1.0);
+    for(i=0;i<10000 && success;i+=10) checkAccuracy_d(mpfr_log, child_ylog_u1, DBL_MIN * pow(0.996323, i), 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "yexp : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_exp, child_yexp, d, 1.0);
+    for(d = -1000;d < 1000 && success;d += 1.1) checkAccuracy_d(mpfr_exp, child_yexp, d, 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ypow : ");
+    for(y = 0.1;y < 100 && success;y += 0.6) {
+      for(x = -100;x < 100 && success;x += 0.6) {
+	checkAccuracy_d_d(mpfr_pow, child_ypow, x, y, 1.0);
+      }
+    }
+    for(y = -1000;y < 1000 && success;y += 0.1) checkAccuracy_d_d(mpfr_pow, child_ypow, 2.1, y, 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ycbrt : ");
+    for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_d(mpfr_cbrt, child_ycbrt, d, 3.5);
+    for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_d(mpfr_cbrt, child_ycbrt, pow(2.1, d), 3.5);
+    showResult(success);
+  
+    //
+
+    fprintf(stderr, "ycbrt_u1 : ");
+    for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_d(mpfr_cbrt, child_ycbrt_u1, d, 1.0);
+    for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_d(mpfr_cbrt, child_ycbrt_u1, pow(2.1, d), 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "yasin : ");
+    for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_d(mpfr_asin, child_yasin, d, 3.5);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "yasin_u1 : ");
+    for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_d(mpfr_asin, child_yasin_u1, d, 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "yacos : ");
+    for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_d(mpfr_acos, child_yacos, d, 3.5);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "yacos_u1 : ");
+    for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_d(mpfr_acos, child_yacos_u1, d, 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "yatan : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_atan, child_yatan, d, 3.5);
+    for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_d(mpfr_atan, child_yatan, d, 3.5);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "yatan_u1 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_atan, child_yatan_u1, d, 1.0);
+    for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_d(mpfr_atan, child_yatan_u1, d, 1.0);
+    showResult(success);
+
+    //
+  
+    fprintf(stderr, "yatan2 : ");
+    for(y = -10;y < 10 && success;y += 0.15) {
+      for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_d_d(mpfr_atan2, child_yatan2, y, x, 3.5);
+    }
+    for(y = -100;y < 100 && success;y += 1.51) {
+      for(x = -100;x < 100 && success;x += 1.51) checkAccuracy_d_d(mpfr_atan2, child_yatan2, y, x, 3.5);
+    }
+    showResult(success);
+
+    //
+  
+    fprintf(stderr, "yatan2_u1 : ");
+    for(y = -10;y < 10 && success;y += 0.15) {
+      for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_d_d(mpfr_atan2, child_yatan2_u1, y, x, 1.0);
+    }
+    for(y = -100;y < 100 && success;y += 1.51) {
+      for(x = -100;x < 100 && success;x += 1.51) checkAccuracy_d_d(mpfr_atan2, child_yatan2_u1, y, x, 1.0);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ysinh : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_sinh, child_ysinh, d, 1.0);
+    for(d = -709;d < 709 && success;d += 0.2) checkAccuracy_d(mpfr_sinh, child_ysinh, d, 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ycosh : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_cosh, child_ycosh, d, 1.0);
+    for(d = -709;d < 709 && success;d += 0.2) checkAccuracy_d(mpfr_cosh, child_ycosh, d, 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ytanh : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_tanh, child_ytanh, d, 1.0);
+    for(d = -1000;d < 1000 && success;d += 0.2) checkAccuracy_d(mpfr_tanh, child_ytanh, d, 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ysinh_u35 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_sinh, child_ysinh_u35, d, 3.5);
+    for(d = -709;d < 709 && success;d += 0.2) checkAccuracy_d(mpfr_sinh, child_ysinh_u35, d, 3.5);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ycosh_u35 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_cosh, child_ycosh_u35, d, 3.5);
+    for(d = -709;d < 709 && success;d += 0.2) checkAccuracy_d(mpfr_cosh, child_ycosh_u35, d, 3.5);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ytanh_u35 : ");
+    for(d = -10;d < 10 && success;d += 0.002)   checkAccuracy_d(mpfr_tanh, child_ytanh_u35, d, 3.5);
+    for(d = -1000;d < 1000 && success;d += 0.2) checkAccuracy_d(mpfr_tanh, child_ytanh_u35, d, 3.5);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "yasinh : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_asinh, child_yasinh, d, 1.0);
+    for(d = -1000;d < 1000 && success;d += 0.2) checkAccuracy_d(mpfr_asinh, child_yasinh, d, 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "yacosh : ");
+    for(d = 1;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_acosh, child_yacosh, d, 1.0);
+    for(d = 1;d < 1000 && success;d += 0.2) checkAccuracy_d(mpfr_acosh, child_yacosh, d, 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "yatanh : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_atanh, child_yatanh, d, 1.0);
+    for(d = -1000;d < 1000 && success;d += 0.2) checkAccuracy_d(mpfr_atanh, child_yatanh, d, 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "yexp2 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_exp2, child_yexp2, d, 1.0);
+    for(d = -1000;d < 1000 && success;d += 0.2) checkAccuracy_d(mpfr_exp2, child_yexp2, d, 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "yexp10 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_exp10, child_yexp10, d, 1.0);
+    for(d = -300;d < 300 && success;d += 0.1) checkAccuracy_d(mpfr_exp10, child_yexp10, d, 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "yexpm1 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_expm1, child_yexpm1, d, 1.0);
+    for(d = -1000;d < 1000 && success;d += 0.21) checkAccuracy_d(mpfr_expm1, child_yexpm1, d, 1.0);
+    for(d = 0;d < 300 && success;d += 0.21) checkAccuracy_d(mpfr_expm1, child_yexpm1, pow(10, -d), 1.0);
+    for(d = 0;d < 300 && success;d += 0.21) checkAccuracy_d(mpfr_expm1, child_yexpm1, (-pow(10, -d)), 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ylog10 : ");
+    for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_d(mpfr_log10, child_ylog10, d, 1.0);
+    for(d = 0.0001;d < 10000 && success;d += 1.1) checkAccuracy_d(mpfr_log10, child_ylog10, d, 1.0);
+    for(i=0;i<10000 && success;i++) checkAccuracy_d(mpfr_log10, child_ylog10, (DBL_MIN * pow(0.996323, i)), 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ylog2 : ");
+    for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_d(mpfr_log2, child_ylog2, d, 1.0);
+    for(d = 0.0001;d < 10000 && success;d += 1.1) checkAccuracy_d(mpfr_log2, child_ylog2, d, 1.0);
+    for(i=0;i<10000 && success;i++) checkAccuracy_d(mpfr_log2, child_ylog2, (DBL_MIN * pow(0.996323, i)), 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ylog1p : ");
+    for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_d(mpfr_log1p, child_ylog1p, d, 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ylgamma_u1 : ");
+    for(d = -5000;d < 5000 && success;d += 1.1) checkAccuracy_d(mpfr_lgamma_nosign, child_ylgamma_u1, d, 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ytgamma_u1 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_gamma, child_ytgamma_u1, d, 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "yerf_u1 : ");
+    for(d = -100;d < 100 && success;d += 0.02) checkAccuracy_d(mpfr_erf, child_yerf_u1, d, 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "yerfc_u15 : ");
+    for(d = -1;d < 100 && success;d += 0.01) checkAccuracy_d(mpfr_erfc, child_yerfc_u15, d, 1.5);
+    showResult(success);
+
+    //
+
+    {
+      fprintf(stderr, "yilogb : ");
+
+      for(d = 0.0001;d < 10;d += 0.001) {
+	int q = child_yilogb(d);
+	int c = ilogb(d);
+	if (q != c) {
+	  fprintf(stderr, "yilogb : arg = %.20g, test = %d, correct = %d\n", d, ilogb(d), child_yilogb(d));
+	  success = 0;
+	  showResult(success);
+	}
+      }
+
+      for(d = 0.0001;d < 10000;d += 1.1) {
+	int q = child_yilogb(d);
+	int c = ilogb(d);
+	if (q != c) {
+	  fprintf(stderr, "yilogb : arg = %.20g, test = %d, correct = %d\n", d, ilogb(d), child_yilogb(d));
+	  success = 0;
+	  showResult(success);
+	}
+      }
+
+      for(i=0;i<10000;i+=10) {
+	d = DBL_MIN * pow(0.996323, i);
+	if (d == 0) continue;
+	int q = child_yilogb(d);
+	int c = ilogb(d);
+	if (q != c) {
+	  fprintf(stderr, "yilogb : arg = %.20g, test = %d, correct = %d\n", d, ilogb(d), child_yilogb(d));
+	  success = 0;
+	  showResult(success);
+	}
+      }
+    
+      for(i=0;i<10000;i+=10) {
+	d = pow(0.933254300796991, i);
+	if (d == 0) continue;
+	int q = child_yilogb(d);
+	int c = ilogb(d);
+	if (q != c) {
+	  fprintf(stderr, "yilogb : arg = %.20g, test = %d, correct = %d\n", d, ilogb(d), child_yilogb(d));
+	  success = 0;
+	  showResult(success);
+	}
+      }
+
+      showResult(success);
+    }
+  }
+
   //
 
 #define checkAccuracy_f(mpfrFunc, childFunc, argx, bound) do {		\
@@ -4647,14 +8203,6 @@ void do_test() {
 
     //
 
-    if (!noSupportForYFuncs) {
-      fprintf(stderr, "yasinf : ");
-      for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_f(mpfr_asin, child_yasinf, d, 3.5);
-      showResult(success);
-    }
-
-    //
-
     fprintf(stderr, "asinf_u1 : ");
     for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_f(mpfr_asin, child_asinf_u1, d, 1.0);
     showResult(success);
@@ -4665,13 +8213,6 @@ void do_test() {
     for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_f(mpfr_acos, child_acosf, d, 3.5);
     showResult(success);
 
-    //
-
-    if (!noSupportForYFuncs) {
-      fprintf(stderr, "yacosf : ");
-      for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_f(mpfr_acos, child_yacosf, d, 3.5);
-      showResult(success);
-    }
     //
 
     fprintf(stderr, "acosf_u1 : ");
@@ -4868,6 +8409,660 @@ void do_test() {
 
     fprintf(stderr, "erfcf_u15 : ");
     for(d = -1;d < 8 && success;d += 0.001) checkAccuracy_f(mpfr_erfc, child_erfcf_u15, d, 1.5);
+    showResult(success);
+  }
+
+  if (enableSP && !noSupportForYFuncs) {
+    fprintf(stderr, "yhypotf_u35 : ");
+    for(y = -10;y < 10 && success;y += 0.15) {
+      for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_f_f(mpfr_hypot, child_yhypotf_u35, y, x, 3.5);
+    }
+    for(y = -1e+7;y < 1e+7 && success;y += 1.51e+5) {
+      for(x = -1e+7;x < 1e+7 && success;x += 1.51e+5) checkAccuracy_f_f(mpfr_hypot, child_yhypotf_u35, y, x, 3.5);
+    }
+    showResult(success);
+  
+    //
+
+    fprintf(stderr, "yhypotf_u05 : ");
+    for(y = -10;y < 10 && success;y += 0.15) {
+      for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_f_f(mpfr_hypot, child_yhypotf_u05, y, x, 0.5);
+    }
+    for(y = -1e+7;y < 1e+7 && success;y += 1.51e+5) {
+      for(x = -1e+7;x < 1e+7 && success;x += 1.51e+5) checkAccuracy_f_f(mpfr_hypot, child_yhypotf_u05, y, x, 0.5);
+    }
+    showResult(success);
+  
+    //
+
+    fprintf(stderr, "ycopysignf : ");
+    for(y = -10;y < 10 && success;y += 0.15) {
+      for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_f_f(mpfr_copysign, child_ycopysignf, y, x, 0);
+    }
+    for(y = -1e+7;y < 1e+7 && success;y += 1.51e+5) {
+      for(x = -1e+7;x < 1e+7 && success;x += 1.51e+5) checkAccuracy_f_f(mpfr_copysign, child_ycopysignf, y, x, 0);
+    }
+    showResult(success);
+  
+    //
+
+    fprintf(stderr, "yfmaxf : ");
+    for(y = -10;y < 10 && success;y += 0.15) {
+      for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_f_f(mpfr_max, child_yfmaxf, y, x, 0);
+    }
+    for(y = -1e+7;y < 1e+7 && success;y += 1.51e+5) {
+      for(x = -1e+7;x < 1e+7 && success;x += 1.51e+5) checkAccuracy_f_f(mpfr_max, child_yfmaxf, y, x, 0);
+    }
+    showResult(success);
+  
+    //
+
+    fprintf(stderr, "yfminf : ");
+    for(y = -10;y < 10 && success;y += 0.15) {
+      for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_f_f(mpfr_min, child_yfminf, y, x, 0);
+    }
+    for(y = -1e+7;y < 1e+7 && success;y += 1.51e+5) {
+      for(x = -1e+7;x < 1e+7 && success;x += 1.51e+5) checkAccuracy_f_f(mpfr_min, child_yfminf, y, x, 0);
+    }
+    showResult(success);
+  
+    //
+
+    fprintf(stderr, "yfdimf : ");
+    for(y = -10;y < 10 && success;y += 0.15) {
+      for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_f_f(mpfr_dim, child_yfdimf, y, x, 0.5);
+    }
+    for(y = -1e+7;y < 1e+7 && success;y += 1.51e+5) {
+      for(x = -1e+7;x < 1e+7 && success;x += 1.51e+5) checkAccuracy_f_f(mpfr_dim, child_yfdimf, y, x, 0.5);
+    }
+    showResult(success);
+  
+    //
+
+    fprintf(stderr, "yfmodf : ");
+    for(y = -10;y < 10 && success;y += 0.15) {
+      for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_f_f(mpfr_fmod, child_yfmodf, y, x, 0.5);
+    }
+    for(y = -1e+7;y < 1e+7 && success;y += 1.51e+5) {
+      for(x = -1e+7;x < 1e+7 && success;x += 1.51e+5) checkAccuracy_f_f(mpfr_fmod, child_yfmodf, y, x, 0.5);
+    }
+    showResult(success);
+  
+    //
+
+    fprintf(stderr, "ytruncf : ");
+    for(x = -100.5;x <= 100.5;x+=0.5) {
+      for(d = u2d(d2u(x)-3);d <= u2d(d2u(x)+3) && success;d = u2d(d2u(d)+1)) checkAccuracyNR_f(mpfr_trunc, child_ytruncf, d, 0);
+    }
+    for(d = -10000;d < 10000 && success;d += 2.5) checkAccuracyNR_f(mpfr_trunc, child_ytruncf, d, 0);
+    {
+      double start = u2f(f2u((double)(1LL << 23))-20), end = u2f(f2u((double)(1LL << 23))+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyNR_f(mpfr_trunc, child_ytruncf,  d, 0);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyNR_f(mpfr_trunc, child_ytruncf, -d, 0);
+    }
+    showResult(success);
+  
+    //
+
+    fprintf(stderr, "yfloorf : ");
+    for(x = -100.5;x <= 100.5;x+=0.5) {
+      for(d = u2d(d2u(x)-3);d <= u2d(d2u(x)+3) && success;d = u2d(d2u(d)+1)) checkAccuracyNR_f(mpfr_floor, child_yfloorf, d, 0);
+    }
+    for(d = -10000;d < 10000 && success;d += 2.5) checkAccuracyNR_f(mpfr_floor, child_yfloorf, d, 0);
+    {
+      double start = u2f(f2u((double)(1LL << 23))-20), end = u2f(f2u((double)(1LL << 23))+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyNR_f(mpfr_floor, child_yfloorf,  d, 0);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyNR_f(mpfr_floor, child_yfloorf, -d, 0);
+    }
+    showResult(success);
+  
+    //
+
+    fprintf(stderr, "yceilf : ");
+    for(x = -100.5;x <= 100.5;x+=0.5) {
+      for(d = u2d(d2u(x)-3);d <= u2d(d2u(x)+3) && success;d = u2d(d2u(d)+1)) checkAccuracyNR_f(mpfr_ceil, child_yceilf, d, 0);
+    }
+    for(d = -10000;d < 10000 && success;d += 2.5) checkAccuracyNR_f(mpfr_ceil, child_yceilf, d, 0);
+    {
+      double start = u2f(f2u((double)(1LL << 23))-20), end = u2f(f2u((double)(1LL << 23))+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyNR_f(mpfr_ceil, child_yceilf,  d, 0);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyNR_f(mpfr_ceil, child_yceilf, -d, 0);
+    }
+    showResult(success);
+  
+    //
+
+    fprintf(stderr, "yroundf : ");
+    for(x = -100.5;x <= 100.5;x+=0.5) {
+      for(d = u2d(d2u(x)-3);d <= u2d(d2u(x)+3) && success;d = u2d(d2u(d)+1)) checkAccuracyNR_f(mpfr_round, child_yroundf, d, 0);
+    }
+    for(d = -10000;d < 10000 && success;d += 2.5) checkAccuracyNR_f(mpfr_round, child_yroundf, d, 0);
+    {
+      double start = u2f(f2u((double)(1LL << 23))-20), end = u2f(f2u((double)(1LL << 23))+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyNR_f(mpfr_round, child_yroundf,  d, 0);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyNR_f(mpfr_round, child_yroundf, -d, 0);
+    }
+    showResult(success);
+  
+    //
+
+    fprintf(stderr, "yrintf : ");
+    for(x = -100.5;x <= 100.5;x+=0.5) {
+      for(d = u2d(d2u(x)-3);d <= u2d(d2u(x)+3) && success;d = u2d(d2u(d)+1)) checkAccuracy_f(mpfr_rint, child_yrintf, d, 0);
+    }
+    for(d = -10000;d < 10000 && success;d += 2.5) checkAccuracy_f(mpfr_rint, child_yrintf, d, 0);
+    {
+      double start = u2f(f2u((double)(1LL << 23))-20), end = u2f(f2u((double)(1LL << 23))+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracy_f(mpfr_rint, child_yrintf,  d, 0);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracy_f(mpfr_rint, child_yrintf, -d, 0);
+    }
+    showResult(success);
+  
+    //
+  
+    fprintf(stderr, "ysinf : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_sin, child_ysinf, d, 3.5);
+    for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_sin, child_ysinf, d, 3.5);
+    for(i = 0;i < 1000 && success;i++) checkAccuracy_f(mpfr_sin, child_ysinf, pow(1.06, i), 3.5);
+    for(i64=(int64_t)-1000;i64<(int64_t)1000 && success;i64+=(int64_t)1) {
+      double start = u2f(f2u(M_PI_4 * i64)-20), end = u2f(f2u(M_PI_4 * i64)+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracy_f(mpfr_sin, child_ysinf, d, 3.5);
+    }
+    showResult(success);
+
+    //
+  
+    fprintf(stderr, "ysinf_u1 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_sin, child_ysinf_u1, d, 1.0);
+    for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_sin, child_ysinf_u1, d, 1.0);
+    for(i = 0;i < 1000 && success;i++) checkAccuracy_f(mpfr_sin, child_ysinf_u1, pow(1.06, i), 1.0);
+    for(i64=(int64_t)-1000;i64<(int64_t)1000 && success;i64+=(int64_t)1) {
+      double start = u2f(f2u(M_PI_4 * i64)-20), end = u2f(f2u(M_PI_4 * i64)+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracy_f(mpfr_sin, child_ysinf_u1, d, 1.0);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ysin in sincosf : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracyX_f(mpfr_sin, child_ysincosf, d, 3.5);
+    for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracyX_f(mpfr_sin, child_ysincosf, d, 3.5);
+    for(i = 0;i < 1000 && success;i++) checkAccuracyX_f(mpfr_sin, child_ysincosf, pow(1.06, i), 3.5);
+    for(i=1;i<10000 && success;i+=31) {
+      double start = u2f(f2u(M_PI_4 * i)-20), end = u2f(f2u(M_PI_4 * i)+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyX_f(mpfr_sin, child_ysincosf, d, 3.5);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ysin in sincosf_u1 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracyX_f(mpfr_sin, child_ysincosf_u1, d, 1.0);
+    for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracyX_f(mpfr_sin, child_ysincosf_u1, d, 1.0);
+    for(i = 0;i < 1000 && success;i++) checkAccuracyX_f(mpfr_sin, child_ysincosf_u1, pow(1.06, i), 1.0);
+    for(i=1;i<10000 && success;i+=31) {
+      double start = u2f(f2u(M_PI_4 * i)-20), end = u2f(f2u(M_PI_4 * i)+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyX_f(mpfr_sin, child_ysincosf_u1, d, 1.0);
+    }
+    showResult(success);
+
+    //
+
+    mpfr_set_default_prec(1280);
+
+    fprintf(stderr, "ysin in sincospif_u35 : ");
+    for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracyX_f(mpfr_sinpi, child_ysincospif_u35, d, 3.5);
+    for(d = -10000-0.1;d < 10000 && success;d += 1.1) checkAccuracyX_f(mpfr_sinpi, child_ysincospif_u35, d, 3.5);
+    for(i=1;i<10000 && success;i+=31) {
+      double start = u2f(f2u(i)-20), end = u2f(f2u(i)+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyX_f(mpfr_sinpi, child_ysincospif_u35, d, 3.5);
+    }
+    for(i=1;i<=20 && success;i++) {
+      double start = u2f(f2u(0.25 * i)-20), end = u2f(f2u(0.25 * i)+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyX_f(mpfr_sinpi, child_ysincospif_u35, d, 3.5);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ysin in sincospif_u05 : ");
+    for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracyX_f(mpfr_sinpi, child_ysincospif_u05, d, 0.506);
+    for(d = -10000-0.1;d < 10000 && success;d += 1.1) checkAccuracyX_f(mpfr_sinpi, child_ysincospif_u05, d, 0.506);
+    for(i=1;i<10000 && success;i+=31) {
+      double start = u2f(f2u(i)-20), end = u2f(f2u(i)+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyX_f(mpfr_sinpi, child_ysincospif_u05, d, 0.506);
+    }
+    for(i=1;i<=20 && success;i++) {
+      double start = u2f(f2u(0.25 * i)-20), end = u2f(f2u(0.25 * i)+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyX_f(mpfr_sinpi, child_ysincospif_u05, d, 0.506);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ysinpif_u05 : ");
+    for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracy_f(mpfr_sinpi, child_ysinpif_u05, d, 0.506);
+    for(d = -10000-0.1;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_sinpi, child_ysinpif_u05, d, 0.506);
+    for(i=1;i<10000 && success;i+=31) {
+      double start = u2f(f2u(i)-20), end = u2f(f2u(i)+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracy_f(mpfr_sinpi, child_ysinpif_u05, d, 0.506);
+    }
+    for(i=1;i<=20 && success;i++) {
+      double start = u2f(f2u(0.25 * i)-20), end = u2f(f2u(0.25 * i)+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracy_f(mpfr_sinpi, child_ysinpif_u05, d, 0.506);
+    }
+    showResult(success);
+    
+    //
+
+    fprintf(stderr, "ycospif_u05 : ");
+    for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracy_f(mpfr_cospi, child_ycospif_u05, d, 0.506);
+    for(d = -10000-0.1;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_cospi, child_ycospif_u05, d, 0.506);
+    for(i=1;i<10000 && success;i+=31) {
+      double start = u2f(f2u(i)-20), end = u2f(f2u(i)+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracy_f(mpfr_cospi, child_ycospif_u05, d, 0.506);
+    }
+    for(i=1;i<=20 && success;i++) {
+      double start = u2f(f2u(0.25 * i)-20), end = u2f(f2u(0.25 * i)+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracy_f(mpfr_cospi, child_ycospif_u05, d, 0.506);
+    }
+    showResult(success);
+
+    mpfr_set_default_prec(128);
+  
+    //
+
+    fprintf(stderr, "ycosf : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_cos, child_ycosf, d, 3.5);
+    for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_cos, child_ycosf, d, 3.5);
+    for(i = 0;i < 1000 && success;i++) checkAccuracy_f(mpfr_cos, child_ycosf, pow(1.06, i), 3.5);
+    for(i64=(int64_t)-1000;i64<(int64_t)1000 && success;i64+=(int64_t)1) {
+      double start = u2f(f2u(M_PI_4 * i64)-20), end = u2f(f2u(M_PI_4 * i64)+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracy_f(mpfr_cos, child_ycosf, d, 3.5);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ycosf_u1 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_cos, child_ycosf_u1, d, 1.0);
+    for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_cos, child_ycosf_u1, d, 1.0);
+    for(i = 0;i < 1000 && success;i++) checkAccuracy_f(mpfr_cos, child_ycosf_u1, pow(1.06, i), 1.0);
+    for(i64=(int64_t)-1000;i64<(int64_t)1000 && success;i64+=(int64_t)1) {
+      double start = u2f(f2u(M_PI_4 * i64)-20), end = u2f(f2u(M_PI_4 * i64)+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracy_f(mpfr_cos, child_ycosf_u1, d, 1.0);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ycos in sincosf : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracyY_f(mpfr_cos, child_ysincosf, d, 3.5);
+    for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracyY_f(mpfr_cos, child_ysincosf, d, 3.5);
+    for(i = 0;i < 1000 && success;i++) checkAccuracyY_f(mpfr_cos, child_ysincosf, pow(1.06, i), 3.5);
+    for(i=1;i<10000 && success;i+=31) {
+      double start = u2f(f2u(M_PI_4 * i)-20), end = u2f(f2u(M_PI_4 * i)+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyY_f(mpfr_cos, child_ysincosf, d, 3.5);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ycos in sincosf_u1 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracyY_f(mpfr_cos, child_ysincosf_u1, d, 1.0);
+    for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracyY_f(mpfr_cos, child_ysincosf_u1, d, 1.0);
+    for(i = 0;i < 1000 && success;i++) checkAccuracyY_f(mpfr_cos, child_ysincosf_u1, pow(1.06, i), 1.0);
+    for(i=1;i<10000 && success;i+=31) {
+      double start = u2f(f2u(M_PI_4 * i)-20), end = u2f(f2u(M_PI_4 * i)+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyY_f(mpfr_cos, child_ysincosf_u1, d, 1.0);
+    }
+    showResult(success);
+
+    //
+
+    mpfr_set_default_prec(1280);
+
+    fprintf(stderr, "ycos in sincospif_u35 : ");
+    for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracyY_f(mpfr_cospi, child_ysincospif_u35, d, 3.5);
+    for(d = -10000-0.1;d < 10000 && success;d += 1.1) checkAccuracyY_f(mpfr_cospi, child_ysincospif_u35, d, 3.5);
+    for(i=1;i<10000 && success;i+=31) {
+      double start = u2f(f2u(i)-20), end = u2f(f2u(i)+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyY_f(mpfr_cospi, child_ysincospif_u35, d, 3.5);
+    }
+    for(i=1;i<=20 && success;i++) {
+      double start = u2f(f2u(0.25 * i)-20), end = u2f(f2u(0.25 * i)+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyY_f(mpfr_cospi, child_ysincospif_u35, d, 3.5);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ycos in sincospif_u05 : ");
+    for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracyY_f(mpfr_cospi, child_ysincospif_u05, d, 0.506);
+    for(d = -10000-0.1;d < 10000 && success;d += 1.1) checkAccuracyY_f(mpfr_cospi, child_ysincospif_u05, d, 0.506);
+    for(i=1;i<10000 && success;i+=31) {
+      double start = u2f(f2u(i)-20), end = u2f(f2u(i)+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyY_f(mpfr_cospi, child_ysincospif_u05, d, 0.506);
+    }
+    for(i=1;i<=20 && success;i++) {
+      double start = u2f(f2u(0.25 * i)-20), end = u2f(f2u(0.25 * i)+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracyY_f(mpfr_cospi, child_ysincospif_u05, d, 0.506);
+    }
+    showResult(success);
+
+    mpfr_set_default_prec(128);
+  
+    //
+
+    fprintf(stderr, "ytanf : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_tan, child_ytanf, d, 3.5);
+    for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_tan, child_ytanf, d, 3.5);
+    for(i = 0;i < 1000 && success;i++) checkAccuracy_f(mpfr_tan, child_ytanf, pow(1.06, i), 3.5);
+    for(i=1;i<10000 && success;i+=31) {
+      double start = u2f(f2u(M_PI_4 * i)-20), end = u2f(f2u(M_PI_4 * i)+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracy_f(mpfr_tan, child_ytanf, d, 3.5);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ytanf_u1 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_tan, child_ytanf_u1, d, 1.0);
+    for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_tan, child_ytanf_u1, d, 1.0);
+    for(i = 0;i < 1000 && success;i++) checkAccuracy_f(mpfr_tan, child_ytanf_u1, pow(1.06, i), 1.0);
+    for(i=1;i<10000 && success;i+=31) {
+      double start = u2f(f2u(M_PI_4 * i)-20), end = u2f(f2u(M_PI_4 * i)+20);
+      for(d = start;d <= end;d = u2f(f2u(d)+1)) checkAccuracy_f(mpfr_tan, child_ytanf_u1, d, 1.0);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ylogf : ");
+    for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_f(mpfr_log, child_ylogf, d, 3.5);
+    for(d = 0.0001;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_log, child_ylogf, d, 3.5);
+    for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_f(mpfr_log, child_ylogf, pow(2.1, i), 3.5);
+    for(i=0;i<10000 && success;i+=10) checkAccuracy_f(mpfr_log, child_ylogf, FLT_MAX * pow(0.9314821319758632, i), 3.5);
+    for(i=0;i<10000 && success;i+=10) checkAccuracy_f(mpfr_log, child_ylogf, pow(0.933254300796991, i), 3.5);
+    for(i=0;i<10000 && success;i+=10) checkAccuracy_f(mpfr_log, child_ylogf, FLT_MIN * pow(0.996323, i), 3.5);
+    showResult(success);
+
+    //
+  
+    fprintf(stderr, "ylogf_u1 : ");
+    for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_f(mpfr_log, child_ylogf_u1, d, 1.0);
+    for(d = 0.0001;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_log, child_ylogf_u1, d, 1.0);
+
+    if (!enableFlushToZero) {
+      for(i=0;i<10000 && success;i+=10) checkAccuracy_f(mpfr_log, child_ylogf_u1, FLT_MAX * pow(0.9314821319758632, i), 1.0);
+      for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_f(mpfr_log, child_ylogf_u1, pow(2.1, i), 1.0);
+      for(i=0;i<10000 && success;i+=10) checkAccuracy_f(mpfr_log, child_ylogf_u1, pow(0.933254300796991, i), 1.0);
+      for(i=0;i<10000 && success;i+=10) checkAccuracy_f(mpfr_log, child_ylogf_u1, FLT_MIN * pow(0.996323, i), 1.0);
+      for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_f(mpfr_log, child_ylogf_u1, d, 1.0);
+      for(d = 0.0001;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_log, child_ylogf_u1, d, 1.0);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "yexpf : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_exp, child_yexpf, d, 1.0);
+    if (!enableFlushToZero) {
+      for(d = -1000;d < 1000 && success;d += 1.1) checkAccuracy_f(mpfr_exp, child_yexpf, d, 1.0);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ypowf : ");
+    if (!enableFlushToZero) {
+      for(y = 0.1;y < 100 && success;y += 0.6) {
+	for(x = -100;x < 100 && success;x += 0.6) {
+	  checkAccuracy_f_f(mpfr_pow, child_ypowf, x, y, 1.0);
+	}
+      }
+      for(y = -1000;y < 1000 && success;y += 0.1) checkAccuracy_f_f(mpfr_pow, child_ypowf, 2.1, y, 1.0);
+    } else {
+      for(y = 0.1;y < 10 && success;y += 0.06) {
+	for(x = -100;x < 10 && success;x += 0.06) {
+	  checkAccuracy_f_f(mpfr_pow, child_ypowf, x, y, 1.0);
+	}
+      }
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ycbrtf : ");
+    if (!enableFlushToZero) {
+      for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_f(mpfr_cbrt, child_ycbrtf, d, 3.5);
+    }
+    for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_f(mpfr_cbrt, child_ycbrtf, pow(2.1, d), 3.5);
+    showResult(success);
+  
+    //
+
+    fprintf(stderr, "ycbrtf_u1 : ");
+    if (!enableFlushToZero) {
+      for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_f(mpfr_cbrt, child_ycbrtf_u1, d, 1.0);
+    }
+    for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_f(mpfr_cbrt, child_ycbrtf_u1, pow(2.1, d), 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "yasinf : ");
+    for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_f(mpfr_asin, child_yasinf, d, 3.5);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "yasinf_u1 : ");
+    for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_f(mpfr_asin, child_yasinf_u1, d, 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "yacosf : ");
+    for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_f(mpfr_acos, child_yacosf, d, 3.5);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "yacosf_u1 : ");
+    for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_f(mpfr_acos, child_yacosf_u1, d, 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "yatanf : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_atan, child_yatanf, d, 3.5);
+    for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_f(mpfr_atan, child_yatanf, d, 3.5);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "yatanf_u1 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_atan, child_yatanf_u1, d, 1.0);
+    for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_f(mpfr_atan, child_yatanf_u1, d, 1.0);
+    showResult(success);
+
+    //
+  
+    fprintf(stderr, "yatan2f : ");
+    for(y = -10;y < 10 && success;y += 0.15) {
+      for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_f_f(mpfr_atan2, child_yatan2f, y, x, 3.5);
+    }
+    for(y = -100;y < 100 && success;y += 1.51) {
+      for(x = -100;x < 100 && success;x += 1.51) checkAccuracy_f_f(mpfr_atan2, child_yatan2f, y, x, 3.5);
+    }
+    showResult(success);
+
+    //
+  
+    fprintf(stderr, "yatan2f_u1 : ");
+    for(y = -10;y < 10 && success;y += 0.15) {
+      for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_f_f(mpfr_atan2, child_yatan2f_u1, y, x, 1.0);
+    }
+    for(y = -100;y < 100 && success;y += 1.51) {
+      for(x = -100;x < 100 && success;x += 1.51) checkAccuracy_f_f(mpfr_atan2, child_yatan2f_u1, y, x, 1.0);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ysinhf : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_sinh, child_ysinhf, d, 1.0);
+    if (!enableFlushToZero) {
+      for(d = -88;d < 88 && success;d += 0.2) checkAccuracy_f(mpfr_sinh, child_ysinhf, d, 1.0);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ycoshf : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_cosh, child_ycoshf, d, 1.0);
+    if (!enableFlushToZero) {
+      for(d = -88;d < 88 && success;d += 0.2) checkAccuracy_f(mpfr_cosh, child_ycoshf, d, 1.0);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ytanhf : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_tanh, child_ytanhf, d, 1.0);
+    if (!enableFlushToZero) {
+      for(d = -1000;d < 1000 && success;d += 0.2) checkAccuracy_f(mpfr_tanh, child_ytanhf, d, 1.0);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ysinhf_u35 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_sinh, child_ysinhf_u35, d, 3.5);
+    if (!enableFlushToZero) {
+      for(d = -88;d < 88 && success;d += 0.2) checkAccuracy_f(mpfr_sinh, child_ysinhf_u35, d, 3.5);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ycoshf_u35 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_cosh, child_ycoshf_u35, d, 3.5);
+    if (!enableFlushToZero) {
+      for(d = -88;d < 88 && success;d += 0.2) checkAccuracy_f(mpfr_cosh, child_ycoshf_u35, d, 3.5);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ytanhf_u35 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_tanh, child_ytanhf_u35, d, 3.5);
+    if (!enableFlushToZero) {
+      for(d = -1000;d < 1000 && success;d += 0.2) checkAccuracy_f(mpfr_tanh, child_ytanhf_u35, d, 3.5);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "yasinhf : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_asinh, child_yasinhf, d, 1.0);
+    if (!enableFlushToZero) {
+      for(d = -1000;d < 1000 && success;d += 0.2) checkAccuracy_f(mpfr_asinh, child_yasinhf, d, 1.0);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "yacoshf : ");
+    for(d = 1;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_acosh, child_yacoshf, d, 1.0);
+    if (!enableFlushToZero) {
+      for(d = 1;d < 1000 && success;d += 0.2) checkAccuracy_f(mpfr_acosh, child_yacoshf, d, 1.0);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "yatanhf : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_atanh, child_yatanhf, d, 1.0);
+    if (!enableFlushToZero) {
+      for(d = -1000;d < 1000 && success;d += 0.2) checkAccuracy_f(mpfr_atanh, child_yatanhf, d, 1.0);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "yexp2f : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_exp2, child_yexp2f, d, 1.0);
+    if (!enableFlushToZero) {
+      for(d = -1000;d < 1000 && success;d += 0.2) checkAccuracy_f(mpfr_exp2, child_yexp2f, d, 1.0);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "yexp10f : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_exp10, child_yexp10f, d, 1.0);
+    if (!enableFlushToZero) {
+      for(d = -300;d < 300 && success;d += 0.1) checkAccuracy_f(mpfr_exp10, child_yexp10f, d, 1.0);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "yexpm1f : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_expm1, child_yexpm1f, d, 1.0);
+    if (!enableFlushToZero) {
+      for(d = -1000;d < 1000 && success;d += 0.21) checkAccuracy_f(mpfr_expm1, child_yexpm1f, d, 1.0);
+      for(d = 0;d < 300 && success;d += 0.21) checkAccuracy_f(mpfr_expm1, child_yexpm1f, pow(10, -d), 1.0);
+      for(d = 0;d < 300 && success;d += 0.21) checkAccuracy_f(mpfr_expm1, child_yexpm1f, (-pow(10, -d)), 1.0);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ylog10f : ");
+    for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_f(mpfr_log10, child_ylog10f, d, 1.0);
+    for(d = 0.0001;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_log10, child_ylog10f, d, 1.0);
+    for(i=0;i<10000 && success;i++) checkAccuracy_f(mpfr_log10, child_ylog10f, (FLT_MIN * pow(0.996323, i)), 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ylog2f : ");
+    for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_f(mpfr_log2, child_ylog2f, d, 1.0);
+    for(d = 0.0001;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_log2, child_ylog2f, d, 1.0);
+    for(i=0;i<10000 && success;i++) checkAccuracy_f(mpfr_log2, child_ylog2f, (FLT_MIN * pow(0.996323, i)), 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ylog1pf : ");
+    for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_f(mpfr_log1p, child_ylog1pf, d, 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ylgammaf_u1 : ");
+    for(d = -5000;d < 5000 && success;d += 1.1) checkAccuracy_f(mpfr_lgamma_nosign, child_ylgammaf_u1, d, 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "ytgammaf_u1 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_gamma, child_ytgammaf_u1, d, 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "yerff_u1 : ");
+    for(d = -100;d < 100 && success;d += 0.02) checkAccuracy_f(mpfr_erf, child_yerff_u1, d, 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "yerfcf_u15 : ");
+    for(d = -1;d < 8 && success;d += 0.001) checkAccuracy_f(mpfr_erfc, child_yerfcf_u15, d, 1.5);
     showResult(success);
   }
 }
