@@ -18,8 +18,8 @@
 #include "testerutil.h"
 
 #ifdef __VSX__
-typedef vector double vectordouble;
-typedef vector float  vectorfloat;
+typedef vector double vector_double;
+typedef vector float  vector_float;
 #endif
 
 //
@@ -121,7 +121,7 @@ float getvectorfloat(vectorfloat v, int r) { float a[4]; return v[r & 3]; }
       if (strncmp((char *)mes, (char *)buf, strlen((char *)mes)) != 0) { \
 	puts((char *)mes);						\
 	puts((char *)buf);						\
-	fprintf(stderr, "%s\n", #NAME " " #ULP); exit(-1);		\
+	success = 0;							\
       }									\
     } else puts((char *)mes);						\
   } while(0)
@@ -265,6 +265,8 @@ float getvectorfloat(vectorfloat v, int r) { float a[4]; return v[r & 3]; }
 
 //
 
+int success = 1;
+
 int do_test(int argc, char **argv)
 {
   FILE *fp = NULL;
@@ -281,9 +283,16 @@ int do_test(int argc, char **argv)
 
   //
 
+  testu_d_d(sin, u35, 1e-300, 1e+8, 200001);
+  testu_d_d(sin, u10, 1e-300, 1e+8, 200001);
+  testu_d_d(cos, u35, 1e-300, 1e+8, 200001);
+  testu_d_d(cos, u10, 1e-300, 1e+8, 200001);
+  testu_d_d(tan, u35, 1e-300, 1e+8, 200001);
+  testu_d_d(tan, u10, 1e-300, 1e+8, 200001);
+  test_d2_d(sincos, u10, -1e+14, 1e+14, 200001);
+  test_d2_d(sincos, u35, -1e+14, 1e+14, 200001);
   test_d2_d(sincospi, u05, -1e+14, 1e+14, 200001);
   test_d2_d(sincospi, u35, -1e+14, 1e+14, 200001);
-  test_d2_d(modf, , -1e+14, 1e+14, 200001);
 
   testu_d_d(log, u10, 1e-300, 1e+14, 200001);
   testu_d_d(log, u35, 1e-300, 1e+14, 200001);
@@ -342,14 +351,21 @@ int do_test(int argc, char **argv)
 
   //
 
+  testu_f_f(sin, u35, 1e-30, 1e+8, 200001);
+  testu_f_f(sin, u10, 1e-30, 1e+8, 200001);
+  testu_f_f(cos, u35, 1e-30, 1e+8, 200001);
+  testu_f_f(cos, u10, 1e-30, 1e+8, 200001);
+  testu_f_f(tan, u35, 1e-30, 1e+8, 200001);
+  testu_f_f(tan, u10, 1e-30, 1e+8, 200001);
+  test_f2_f(sincos, u10, -1e+14, 1e+14, 200001);
+  test_f2_f(sincos, u35, -1e+14, 1e+14, 200001);
   test_f2_f(sincospi, u05, -10000, 10000, 200001);
   test_f2_f(sincospi, u35, -10000, 10000, 200001);
-  test_f2_f(modf, , -10000, 10000, 200001);
 
-  testu_f_f(log, u10, 1e-300, 1e+14, 200001);
-  testu_f_f(log, u35, 1e-300, 1e+14, 200001);
-  testu_f_f(log10, u10, 1e-300, 1e+14, 200001);
-  testu_f_f(log1p, u10, 1e-300, 1e+14, 200001);
+  testu_f_f(log, u10, 1e-30, 1e+14, 200001);
+  testu_f_f(log, u35, 1e-30, 1e+14, 200001);
+  testu_f_f(log10, u10, 1e-30, 1e+14, 200001);
+  testu_f_f(log1p, u10, 1e-30, 1e+14, 200001);
   test_f_f(exp, u10, -1000, 1000, 200001);
   test_f_f(exp2, u10, -1000, 1000, 200001);
   test_f_f(exp10, u10, -1000, 1000, 200001);
@@ -401,29 +417,9 @@ int do_test(int argc, char **argv)
   test_f_f(round, , -100, 100, 800);
   test_f_f(rint, , -100, 100, 800);
 
-  testu_d_d(sin, u35, 1e-300, 1e+8, 200001);
-  testu_d_d(sin, u10, 1e-300, 1e+8, 200001);
-  testu_d_d(cos, u35, 1e-300, 1e+8, 200001);
-  testu_d_d(cos, u10, 1e-300, 1e+8, 200001);
-  testu_d_d(tan, u35, 1e-300, 1e+8, 200001);
-  testu_d_d(tan, u10, 1e-300, 1e+8, 200001);
-
-  test_d2_d(sincos, u10, -1e+14, 1e+14, 200001);
-  test_d2_d(sincos, u35, -1e+14, 1e+14, 200001);
-
-  testu_f_f(sin, u35, 1e-300, 1e+8, 200001);
-  testu_f_f(sin, u10, 1e-300, 1e+8, 200001);
-  testu_f_f(cos, u35, 1e-300, 1e+8, 200001);
-  testu_f_f(cos, u10, 1e-300, 1e+8, 200001);
-  testu_f_f(tan, u35, 1e-300, 1e+8, 200001);
-  testu_f_f(tan, u10, 1e-300, 1e+8, 200001);
-
-  test_f2_f(sincos, u10, -1e+14, 1e+14, 200001);
-  test_f2_f(sincos, u35, -1e+14, 1e+14, 200001);
-
   //
 
   if (fp != NULL) fclose(fp);
 
-  exit(0);
+  exit(success ? 0 : -1);
 }
