@@ -51,53 +51,56 @@ static inline void memrandsp(float *p, int size) {
 
 //
 
+double unifyNaN(double x) { return x != x ? (0.0 / 0.0) : x; }
+float unifyNaNf(float  x) { return x != x ? (0.0 / 0.0) : x; }
+
 double setdouble(double d, int r) { return d; }
 double set2double(double d, int r) { return d; }
-double getdouble(double v, int r) { return v; }
+double getdouble(double v, int r) { return unifyNaN(v); }
 float setfloat(float d, int r) { return d; }
 float set2float(float d, int r) { return d; }
-float getfloat(float v, int r) { return v; }
+float getfloat(float v, int r) { return unifyNaNf(v); }
 
 #if defined(__i386__) || defined(__x86_64__) || defined(_MSC_VER)
 __m128d set__m128d(double d, int r) { double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return _mm_loadu_pd(a); }
-double get__m128d(__m128d v, int r) { double a[2]; _mm_storeu_pd(a, v); return a[r & 1]; }
+double get__m128d(__m128d v, int r) { double a[2]; _mm_storeu_pd(a, v); return unifyNaN(a[r & 1]); }
 __m128 set__m128(float d, int r) { float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return _mm_loadu_ps(a); }
-float get__m128(__m128 v, int r) { float a[4]; _mm_storeu_ps(a, v); return a[r & 3]; }
+float get__m128(__m128 v, int r) { float a[4]; _mm_storeu_ps(a, v); return unifyNaNf(a[r & 3]); }
 
 #if defined(__AVX__)
 __m256d set__m256d(double d, int r) { double a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return _mm256_loadu_pd(a); }
-double get__m256d(__m256d v, int r) { double a[4]; _mm256_storeu_pd(a, v); return a[r & 3]; }
+double get__m256d(__m256d v, int r) { double a[4]; _mm256_storeu_pd(a, v); return unifyNaN(a[r & 3]); }
 __m256 set__m256(float d, int r) { float a[8]; memrand(a, sizeof(a)); a[r & 7] = d; return _mm256_loadu_ps(a); }
-float get__m256(__m256 v, int r) { float a[8]; _mm256_storeu_ps(a, v); return a[r & 7]; }
+float get__m256(__m256 v, int r) { float a[8]; _mm256_storeu_ps(a, v); return unifyNaNf(a[r & 7]); }
 #endif
 
 #if defined(__AVX512F__)
 __m512d set__m512d(double d, int r) { double a[8]; memrand(a, sizeof(a)); a[r & 7] = d; return _mm512_loadu_pd(a); }
-double get__m512d(__m512d v, int r) { double a[8]; _mm512_storeu_pd(a, v); return a[r & 7]; }
+double get__m512d(__m512d v, int r) { double a[8]; _mm512_storeu_pd(a, v); return unifyNaN(a[r & 7]); }
 __m512 set__m512(float d, int r) { float a[16]; memrand(a, sizeof(a)); a[r & 15] = d; return _mm512_loadu_ps(a); }
-float get__m512(__m512 v, int r) { float a[16]; _mm512_storeu_ps(a, v); return a[r & 15]; }
+float get__m512(__m512 v, int r) { float a[16]; _mm512_storeu_ps(a, v); return unifyNaNf(a[r & 15]); }
 #endif
 #endif // #if defined(__i386__) || defined(__x86_64__) || defined(_MSC_VER)
 
 #if defined(__aarch64__) && defined(__ARM_NEON)
 float64x2_t setfloat64x2_t(double d, int r) { double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return vld1q_f64(a); }
-double getfloat64x2_t(float64x2_t v, int r) { double a[2]; vst1q_f64(a, v); return a[r & 1]; }
+double getfloat64x2_t(float64x2_t v, int r) { double a[2]; vst1q_f64(a, v); return unifyNaN(a[r & 1]); }
 float32x4_t setfloat32x4_t(float d, int r) { float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return vld1q_f32(a); }
-float getfloat32x4_t(float32x4_t v, int r) { float a[4]; vst1q_f32(a, v); return a[r & 3]; }
+float getfloat32x4_t(float32x4_t v, int r) { float a[4]; vst1q_f32(a, v); return unifyNaNf(a[r & 3]); }
 #endif
 
 #ifdef __ARM_FEATURE_SVE
 svfloat64_t setsvfloat64_t(double d, int r) { double a[svcntd()]; memrand(a, sizeof(a)); a[r & (svcntd()-1)] = d; return svld1_f64(svptrue_b8(), a); }
-double getsvfloat64_t(svfloat64_t v, int r) { double a[svcntd()]; svst1_f64(svptrue_b8(), a, v); return a[r & (svcntd()-1)]; }
+double getsvfloat64_t(svfloat64_t v, int r) { double a[svcntd()]; svst1_f64(svptrue_b8(), a, v); return unifyNaN(a[r & (svcntd()-1)]); }
 svfloat32_t setsvfloat32_t(float d, int r)  { float  a[svcntw()]; memrand(a, sizeof(a)); a[r & (svcntw()-1)] = d; return svld1_f32(svptrue_b8(), a); }
-float getsvfloat32_t(svfloat32_t v, int r)  { float  a[svcntw()]; svst1_f32(svptrue_b8(), a, v); return a[r & (svcntw()-1)]; }
+float getsvfloat32_t(svfloat32_t v, int r)  { float  a[svcntw()]; svst1_f32(svptrue_b8(), a, v); return unifyNaNf(a[r & (svcntw()-1)]); }
 #endif
 
 #ifdef __VSX__
 vectordouble setvectordouble(double d, int r) { double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return (vector double) ( a[0], a[1] ); }
-double getvectordouble(vector double v, int r) { double a[2]; return v[r & 1]; }
+double getvectordouble(vector double v, int r) { double a[2]; return unifyNaN(v[r & 1]); }
 vectorfloat setvectorfloat(float d, int r) { float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return (vector float) ( a[0], a[1], a[2], a[3] ); }
-float getvectorfloat(vectorfloat v, int r) { float a[4]; return v[r & 3]; }
+float getvectorfloat(vectorfloat v, int r) { float a[4]; return unifyNaNf(v[r & 3]); }
 #endif
 
 //

@@ -22,7 +22,7 @@ string(CONCAT CMAKE_C_FLAGS ${SLEEF_C_FLAGS})
 
 if (SLEEF_ARCH_X86)
   set(TEST3_CINZ purec_scalar sse2 sse4 avx avx512fnofma)
-  set(TEST3_FINZ purecfma_scalar avx2128 fma4 avx2 avx512f)
+  set(TEST3_FINZ purecfma_scalar avx2128 avx2 avx512f)
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
   set(TEST3_CINZ purec_scalar advsimdnofma svenofma)
   set(TEST3_FINZ purecfma_scalar advsimd sve)
