@@ -453,10 +453,14 @@ int main(int argc, char **argv) {
       case 7:
 	printf("IMPORT CONST int Sleef_%sf%s%s%s(int);\n",
 	       funcList[i].name, wsp, isaub, isaname);
+	printf("IMPORT CONST int Sleef_%s%sf%s%s%s(int);\n",
+	       atrPrefix, funcList[i].name, wsp, isaub, isaname);
 	break;
       case 8:
 	printf("IMPORT CONST void *Sleef_%sf%s%s%s(int);\n",
 	       funcList[i].name, wsp, isaub, isaname);
+	printf("IMPORT CONST void *Sleef_%s%sf%s%s%s(int);\n",
+	       atrPrefix, funcList[i].name, wsp, isaub, isaname);
 	break;
       }
     }

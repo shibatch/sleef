@@ -455,8 +455,8 @@ int do_test(int argc, char **argv) {
 #elif defined(ENABLE_VECEXT)
     if (vcast_f_vf(xpowf(vcast_vf_f(0.5f), vcast_vf_f(140))) == 0) k += 4;
 #endif
-#if defined(ENABLE_DSP128) || defined(ENABLE_DSP256)
-    k += 8; // dispatcher
+#if defined(DETERMINISTIC)
+    k += 8;
 #endif
 
     printf("%d\n", k);
@@ -481,9 +481,11 @@ int do_test(int argc, char **argv) {
     func_d_d("log", xlog);
     func_d_d("exp", xexp);
 
+#ifndef DETERMINISTIC
     func_d_d("sqrt", xsqrt);
     func_d_d("sqrt_u05", xsqrt_u05);
     func_d_d("sqrt_u35", xsqrt_u35);
+#endif
     func_d_d("cbrt", xcbrt);
     func_d_d("cbrt_u1", xcbrt_u1);
 
@@ -551,85 +553,6 @@ int do_test(int argc, char **argv) {
     func_d_d("lgamma_u1", xlgamma_u1);
     func_d_d("erf_u1", xerf_u1);
     func_d_d("erfc_u15", xerfc_u15);
-
-#if !defined(ENABLE_DSP128) && !defined(ENABLE_DSP256)
-    func_d_d("ysin", ysin);
-    func_d_d("ycos", ycos);
-    func_d_d("ytan", ytan);
-    func_d_d("yasin", yasin);
-    func_d_d("yacos", yacos);
-    func_d_d("yatan", yatan);
-    func_d_d("ylog", ylog);
-    func_d_d("yexp", yexp);
-
-    func_d_d("ycbrt", ycbrt);
-    func_d_d("ycbrt_u1", ycbrt_u1);
-
-    func_d_d("ysinh", ysinh);
-    func_d_d("ycosh", ycosh);
-    func_d_d("ytanh", ytanh);
-    func_d_d("ysinh_u35", ysinh_u35);
-    func_d_d("ycosh_u35", ycosh_u35);
-    func_d_d("ytanh_u35", ytanh_u35);
-    func_d_d("yasinh", yasinh);
-    func_d_d("yacosh", yacosh);
-    func_d_d("yatanh", yatanh);
-
-    func_d_d("ysin_u1", ysin_u1);
-    func_d_d("ycos_u1", ycos_u1);
-    func_d_d("ytan_u1", ytan_u1);
-    func_d_d("ysinpi_u05", ysinpi_u05);
-    func_d_d("ycospi_u05", ycospi_u05);
-    func_d_d("yasin_u1", yasin_u1);
-    func_d_d("yacos_u1", yacos_u1);
-    func_d_d("yatan_u1", yatan_u1);
-    func_d_d("ylog_u1", ylog_u1);
-
-    func_d_d("yexp2", yexp2);
-    func_d_d("yexp10", yexp10);
-    func_d_d("yexpm1", yexpm1);
-    func_d_d("ylog10", ylog10);
-    func_d_d("ylog2", ylog2);
-    func_d_d("ylog1p", ylog1p);
-
-    func_d2_d("ysincos", ysincos);
-    func_d2_d("ysincos_u1", ysincos_u1);
-    func_d2_d("ysincospi_u35", ysincospi_u35);
-    func_d2_d("ysincospi_u05", ysincospi_u05);
-
-    func_d_d_d("ypow", ypow);
-    func_d_d_d("yatan2", yatan2);
-    func_d_d_d("yatan2_u1", yatan2_u1);
-
-    func_d_d_i("yldexp", yldexp);
-
-    func_i_d("yilogb", yilogb);
-
-    func_d_d("yfabs", yfabs);
-    func_d_d("ytrunc", ytrunc);
-    func_d_d("yfloor", yfloor);
-    func_d_d("yceil", yceil);
-    func_d_d("yround", yround);
-    func_d_d("yrint", yrint);
-    func_d_d("yfrfrexp", yfrfrexp);
-    func_i_d("yexpfrexp", yexpfrexp);
-
-    func_d_d_d("yhypot_u05", yhypot_u05);
-    func_d_d_d("yhypot_u35", yhypot_u35);
-    func_d_d_d("ycopysign", ycopysign);
-    func_d_d_d("yfmax", yfmax);
-    func_d_d_d("yfmin", yfmin);
-    func_d_d_d("yfdim", yfdim);
-    func_d_d_d("ynextafter", ynextafter);
-    func_d_d_d("yfmod", yfmod);
-
-    func_d2_d("ymodf", ymodf);
-
-    func_d_d("ytgamma_u1", ytgamma_u1);
-    func_d_d("ylgamma_u1", ylgamma_u1);
-    func_d_d("yerf_u1", yerf_u1);
-    func_d_d("yerfc_u15", yerfc_u15);
-#endif
 #endif
 
 #ifdef ENABLE_SP
@@ -642,9 +565,11 @@ int do_test(int argc, char **argv) {
     func_f_f("logf", xlogf);
     func_f_f("expf", xexpf);
 
+#ifndef DETERMINISTIC
     func_f_f("sqrtf", xsqrtf);
     func_f_f("sqrtf_u05", xsqrtf_u05);
     func_f_f("sqrtf_u35", xsqrtf_u35);
+#endif
     func_f_f("cbrtf", xcbrtf);
     func_f_f("cbrtf_u1", xcbrtf_u1);
 
@@ -707,80 +632,6 @@ int do_test(int argc, char **argv) {
     func_f_f("lgammaf_u1", xlgammaf_u1);
     func_f_f("erff_u1", xerff_u1);
     func_f_f("erfcf_u15", xerfcf_u15);
-
-#if !defined(ENABLE_DSP128) && !defined(ENABLE_DSP256)
-    func_f_f("ysinf", ysinf);
-    func_f_f("ycosf", ycosf);
-    func_f_f("ytanf", ytanf);
-    func_f_f("yasinf", yasinf);
-    func_f_f("yacosf", yacosf);
-    func_f_f("yatanf", yatanf);
-    func_f_f("ylogf", ylogf);
-    func_f_f("yexpf", yexpf);
-
-    func_f_f("ycbrtf", ycbrtf);
-    func_f_f("ycbrtf_u1", ycbrtf_u1);
-
-    func_f_f("ysinhf", ysinhf);
-    func_f_f("ycoshf", ycoshf);
-    func_f_f("ytanhf", ytanhf);
-    func_f_f("ysinhf_u35", ysinhf_u35);
-    func_f_f("ycoshf_u35", ycoshf_u35);
-    func_f_f("ytanhf_u35", ytanhf_u35);
-    func_f_f("yasinhf", yasinhf);
-    func_f_f("yacoshf", yacoshf);
-    func_f_f("yatanhf", yatanhf);
-
-    func_f_f("ysinf_u1", ysinf_u1);
-    func_f_f("ycosf_u1", ycosf_u1);
-    func_f_f("ytanf_u1", ytanf_u1);
-    func_f_f("ysinpif_u05", ysinpif_u05);
-    func_f_f("ycospif_u05", ycospif_u05);
-    func_f_f("yasinf_u1", yasinf_u1);
-    func_f_f("yacosf_u1", yacosf_u1);
-    func_f_f("yatanf_u1", yatanf_u1);
-    func_f_f("ylogf_u1", ylogf_u1);
-
-    func_f_f("yexp2f", yexp2f);
-    func_f_f("yexp10f", yexp10f);
-    func_f_f("yexpm1f", yexpm1f);
-    func_f_f("ylog10f", ylog10f);
-    func_f_f("ylog2f", ylog2f);
-    func_f_f("ylog1pf", ylog1pf);
-
-    func_f2_f("ysincosf", ysincosf);
-    func_f2_f("ysincosf_u1", ysincosf_u1);
-    func_f2_f("ysincospif_u35", ysincospif_u35);
-    func_f2_f("ysincospif_u05", ysincospif_u05);
-
-    func_f_f_f("ypowf", ypowf);
-    func_f_f_f("yatan2f", yatan2f);
-    func_f_f_f("yatan2f_u1", yatan2f_u1);
-
-    func_f_f("yfabsf", yfabsf);
-    func_f_f("ytruncf", ytruncf);
-    func_f_f("yfloorf", yfloorf);
-    func_f_f("yceilf", yceilf);
-    func_f_f("yroundf", yroundf);
-    func_f_f("yrintf", yrintf);
-    func_f_f("yfrfrexpf", yfrfrexpf);
-
-    func_f_f_f("yhypotf_u05", yhypotf_u05);
-    func_f_f_f("yhypotf_u35", yhypotf_u35);
-    func_f_f_f("ycopysignf", ycopysignf);
-    func_f_f_f("yfmaxf", yfmaxf);
-    func_f_f_f("yfminf", yfminf);
-    func_f_f_f("yfdimf", yfdimf);
-    func_f_f_f("ynextafterf", ynextafterf);
-    func_f_f_f("yfmodf", yfmodf);
-
-    func_f2_f("ymodff", ymodff);
-
-    func_f_f("ytgammaf_u1", ytgammaf_u1);
-    func_f_f("ylgammaf_u1", ylgammaf_u1);
-    func_f_f("yerff_u1", yerff_u1);
-    func_f_f("yerfcf_u15", yerfcf_u15);
-#endif
 #endif
   }
 

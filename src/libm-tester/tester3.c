@@ -46,39 +46,40 @@ static inline void memranddp(double *p, int size) {
 }
 
 static inline void memrandsp(float *p, int size) {
-  for(int i=0;i<size;i++) p[i] = (2.0 * rand() / RAND_MAX - 1) * 4 * M_PI;
+  for(int i=0;i<size;i++) p[i] = (float)((2.0 * rand() / RAND_MAX - 1) * 4 * M_PI);
 }
 
 //
 
-double unifyValue(double x) { x = !(x == x) ? (0.0 * (1e+300 * 1e+300)) : x; x = (x == 0) ? 0.0 : x; return x; }
-float unifyValuef(float  x) { x = !(x == x) ? (0.0 * (1e+300 * 1e+300)) : x; x = (x == 0) ? 0.0 : x; return x; }
+#define XNAN  (((union { long long int u; double d; })  { .u = 0xffffffffffffffffLL }).d)
+#define XNANf (((union { long int u; float d; })  { .u = 0xffffffff }).d)
+
+double unifyValue(double x) { x = !(x == x) ? XNAN  : x; return x; }
+float unifyValuef(float  x) { x = !(x == x) ? XNANf : x; return x; }
 
 double setdouble(double d, int r) { return d; }
-double set2double(double d, int r) { return d; }
 double getdouble(double v, int r) { return unifyValue(v); }
 float setfloat(float d, int r) { return d; }
-float set2float(float d, int r) { return d; }
 float getfloat(float v, int r) { return unifyValuef(v); }
 
 #if defined(__i386__) || defined(__x86_64__) || defined(_MSC_VER)
-__m128d set__m128d(double d, int r) { double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return _mm_loadu_pd(a); }
-double get__m128d(__m128d v, int r) { double a[2]; _mm_storeu_pd(a, v); return unifyValue(a[r & 1]); }
-__m128 set__m128(float d, int r) { float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return _mm_loadu_ps(a); }
-float get__m128(__m128 v, int r) { float a[4]; _mm_storeu_ps(a, v); return unifyValuef(a[r & 3]); }
+__m128d set__m128d(double d, int r) { static double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return _mm_loadu_pd(a); }
+double get__m128d(__m128d v, int r) { static double a[2]; _mm_storeu_pd(a, v); return unifyValue(a[r & 1]); }
+__m128 set__m128(float d, int r) { static float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return _mm_loadu_ps(a); }
+float get__m128(__m128 v, int r) { static float a[4]; _mm_storeu_ps(a, v); return unifyValuef(a[r & 3]); }
 
 #if defined(__AVX__)
-__m256d set__m256d(double d, int r) { double a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return _mm256_loadu_pd(a); }
-double get__m256d(__m256d v, int r) { double a[4]; _mm256_storeu_pd(a, v); return unifyValue(a[r & 3]); }
-__m256 set__m256(float d, int r) { float a[8]; memrand(a, sizeof(a)); a[r & 7] = d; return _mm256_loadu_ps(a); }
-float get__m256(__m256 v, int r) { float a[8]; _mm256_storeu_ps(a, v); return unifyValuef(a[r & 7]); }
+__m256d set__m256d(double d, int r) { static double a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return _mm256_loadu_pd(a); }
+double get__m256d(__m256d v, int r) { static double a[4]; _mm256_storeu_pd(a, v); return unifyValue(a[r & 3]); }
+__m256 set__m256(float d, int r) { static float a[8]; memrand(a, sizeof(a)); a[r & 7] = d; return _mm256_loadu_ps(a); }
+float get__m256(__m256 v, int r) { static float a[8]; _mm256_storeu_ps(a, v); return unifyValuef(a[r & 7]); }
 #endif
 
 #if defined(__AVX512F__)
-__m512d set__m512d(double d, int r) { double a[8]; memrand(a, sizeof(a)); a[r & 7] = d; return _mm512_loadu_pd(a); }
-double get__m512d(__m512d v, int r) { double a[8]; _mm512_storeu_pd(a, v); return unifyValue(a[r & 7]); }
-__m512 set__m512(float d, int r) { float a[16]; memrand(a, sizeof(a)); a[r & 15] = d; return _mm512_loadu_ps(a); }
-float get__m512(__m512 v, int r) { float a[16]; _mm512_storeu_ps(a, v); return unifyValuef(a[r & 15]); }
+__m512d set__m512d(double d, int r) { static double a[8]; memrand(a, sizeof(a)); a[r & 7] = d; return _mm512_loadu_pd(a); }
+double get__m512d(__m512d v, int r) { static double a[8]; _mm512_storeu_pd(a, v); return unifyValue(a[r & 7]); }
+__m512 set__m512(float d, int r) { static float a[16]; memrand(a, sizeof(a)); a[r & 15] = d; return _mm512_loadu_ps(a); }
+float get__m512(__m512 v, int r) { static float a[16]; _mm512_storeu_ps(a, v); return unifyValuef(a[r & 15]); }
 #endif
 #endif // #if defined(__i386__) || defined(__x86_64__) || defined(_MSC_VER)
 
@@ -97,10 +98,10 @@ float getsvfloat32_t(svfloat32_t v, int r)  { float  a[svcntw()]; svst1_f32(svpt
 #endif
 
 #ifdef __VSX__
-vectordouble setvectordouble(double d, int r) { double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return (vector double) ( a[0], a[1] ); }
-double getvectordouble(vector double v, int r) { double a[2]; return unifyValue(v[r & 1]); }
-vectorfloat setvectorfloat(float d, int r) { float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return (vector float) ( a[0], a[1], a[2], a[3] ); }
-float getvectorfloat(vectorfloat v, int r) { float a[4]; return unifyValuef(v[r & 3]); }
+vector_double setvector_double(double d, int r) { double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return (vector double) ( a[0], a[1] ); }
+double getvector_double(vector double v, int r) { double a[2]; return unifyValue(v[r & 1]); }
+vector_float setvector_float(float d, int r) { float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return (vector float) ( a[0], a[1], a[2], a[3] ); }
+float getvector_float(vector float v, int r) { float a[4]; return unifyValuef(v[r & 3]); }
 #endif
 
 //
@@ -130,7 +131,7 @@ float getvectorfloat(vectorfloat v, int r) { float a[4]; return unifyValuef(v[r 
   } while(0)
 
 //
-//     printf("%.10g %.10g\n", arg, GET(TYPE)(vx, r));
+//  printf("%.10g %.10g\n", arg, GET(TYPE)(vx, r));
 
 #define exec_d_d(ATR, NAME, ULP, TYPE, TSX, EXT, arg) do {		\
     int r = myrand();							\
@@ -140,8 +141,8 @@ float getvectorfloat(vectorfloat v, int r) { float a[4]; return unifyValuef(v[r 
   } while(0)
 
 #define test_d_d(NAME, ULP, START, END, NSTEP) do {		\
-    MD5_CTX ctx;						\
-    memset(&ctx, 1, sizeof(MD5_CTX));				\
+    static MD5_CTX ctx;						\
+    memset(&ctx, 0, sizeof(MD5_CTX));				\
     MD5_Init(&ctx);						\
     double step = ((double)(END) - (double)(START))/NSTEP;	\
     for(double d = (START);d < (END);d += step)			\
@@ -150,8 +151,8 @@ float getvectorfloat(vectorfloat v, int r) { float a[4]; return unifyValuef(v[r 
   } while(0)
 
 #define testu_d_d(NAME, ULP, START, END, NSTEP) do {			\
-    MD5_CTX ctx;							\
-    memset(&ctx, 1, sizeof(MD5_CTX));					\
+    static MD5_CTX ctx;							\
+    memset(&ctx, 0, sizeof(MD5_CTX));					\
     MD5_Init(&ctx);							\
     uint64_t step = (d2u(END) - d2u(START))/NSTEP;			\
     for(uint64_t u = d2u(START);u < d2u(END);u += step)			\
@@ -160,8 +161,6 @@ float getvectorfloat(vectorfloat v, int r) { float a[4]; return unifyValuef(v[r 
   } while(0)
 
 //
-
-    //TYPE2(TYPE) vx2 = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (arg, r));
 
 #define exec_d2_d(ATR, NAME, ULP, TYPE, TSX, EXT, arg) do {		\
     int r = myrand();							\
@@ -172,7 +171,7 @@ float getvectorfloat(vectorfloat v, int r) { float a[4]; return unifyValuef(v[r 
   } while(0)
 
 #define test_d2_d(NAME, ULP, START, END, NSTEP) do {			\
-    MD5_CTX ctx;							\
+    static MD5_CTX ctx;							\
     MD5_Init(&ctx);							\
     double step = ((double)(END) - (double)(START))/NSTEP;		\
     for(double d = (START);d < (END);d += step)				\
@@ -190,7 +189,7 @@ float getvectorfloat(vectorfloat v, int r) { float a[4]; return unifyValuef(v[r 
   } while(0)
 
 #define test_d_d_d(NAME, ULP, STARTU, ENDU, NSTEPU, STARTV, ENDV, NSTEPV) do { \
-    MD5_CTX ctx;							\
+    static MD5_CTX ctx;							\
     MD5_Init(&ctx);							\
     double stepu = ((double)(ENDU) - (double)(STARTU))/NSTEPU;		\
     double stepv = ((double)(ENDV) - (double)(STARTV))/NSTEPV;		\
@@ -210,7 +209,7 @@ float getvectorfloat(vectorfloat v, int r) { float a[4]; return unifyValuef(v[r 
   } while(0)
 
 #define test_f_f(NAME, ULP, START, END, NSTEP) do {		\
-    MD5_CTX ctx;						\
+    static MD5_CTX ctx;						\
     MD5_Init(&ctx);						\
     float step = ((double)(END) - (double)(START))/NSTEP;	\
     for(float d = (START);d < (END);d += step)			\
@@ -219,7 +218,7 @@ float getvectorfloat(vectorfloat v, int r) { float a[4]; return unifyValuef(v[r 
   } while(0)
 
 #define testu_f_f(NAME, ULP, START, END, NSTEP) do {			\
-    MD5_CTX ctx;							\
+    static MD5_CTX ctx;							\
     MD5_Init(&ctx);							\
     uint32_t step = (f2u(END) - f2u(START))/NSTEP;			\
     for(uint32_t u = f2u(START);u < f2u(END);u += step)			\
@@ -238,7 +237,7 @@ float getvectorfloat(vectorfloat v, int r) { float a[4]; return unifyValuef(v[r 
   } while(0)
 
 #define test_f2_f(NAME, ULP, START, END, NSTEP) do {			\
-    MD5_CTX ctx;							\
+    static MD5_CTX ctx;							\
     MD5_Init(&ctx);							\
     float step = ((float)(END) - (float)(START))/NSTEP;			\
     for(float d = (START);d < (END);d += step)				\
@@ -256,7 +255,7 @@ float getvectorfloat(vectorfloat v, int r) { float a[4]; return unifyValuef(v[r 
   } while(0)
 
 #define test_f_f_f(NAME, ULP, STARTU, ENDU, NSTEPU, STARTV, ENDV, NSTEPV) do { \
-    MD5_CTX ctx;							\
+    static MD5_CTX ctx;							\
     MD5_Init(&ctx);							\
     float stepu = ((float)(ENDU) - (float)(STARTU))/NSTEPU;		\
     float stepv = ((float)(ENDV) - (float)(STARTV))/NSTEPV;		\
@@ -282,7 +281,7 @@ int do_test(int argc, char **argv)
     }
   }
 
-  seed = time(NULL);
+  seed = (int)time(NULL);
 
   //
 
