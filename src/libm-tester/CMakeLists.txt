@@ -84,19 +84,35 @@ set(IUT_SRC iutsimd.c iutsimdmain.c testerutil)
 # Add vector extension `iut`s
 macro(test_extension SIMD)
   if(COMPILER_SUPPORTS_${SIMD})
-    add_executable(${TARGET_IUT${SIMD}} ${IUT_SRC})
-    target_compile_options(${TARGET_IUT${SIMD}}
-      PRIVATE ${FLAGS_ENABLE_${SIMD}})
-    target_compile_definitions(${TARGET_IUT${SIMD}}
-      PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS})
-    target_link_libraries(${TARGET_IUT${SIMD}} ${TARGET_LIBSLEEF}
-      ${LIBM} ${LIBRT})
+    string(TOLOWER ${SIMD} LCSIMD)
 
-    add_dependencies(${TARGET_IUT${SIMD}} ${TARGET_HEADERS})
-    add_dependencies(${TARGET_IUT${SIMD}} ${TARGET_LIBSLEEF})
-    set_target_properties(${TARGET_IUT${SIMD}} PROPERTIES C_STANDARD 99)
-    add_test_iut(${TARGET_IUT${SIMD}})
-    list(APPEND IUT_LIST ${TARGET_IUT${SIMD}})
+    string(CONCAT IUTNAME "iut" ${LCSIMD})
+    add_executable(${IUTNAME} ${IUT_SRC})
+    target_compile_options(${IUTNAME}
+      PRIVATE ${FLAGS_ENABLE_${SIMD}})
+    target_compile_definitions(${IUTNAME}
+      PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS})
+    target_link_libraries(${IUTNAME} ${TARGET_LIBSLEEF}
+      ${LIBM} ${LIBRT})
+    add_dependencies(${IUTNAME} ${TARGET_HEADERS})
+    add_dependencies(${IUTNAME} ${TARGET_LIBSLEEF})
+    set_target_properties(${IUTNAME} PROPERTIES C_STANDARD 99)
+    add_test_iut(${IUTNAME})
+    list(APPEND IUT_LIST ${IUTNAME})
+
+    string(CONCAT IUTYNAME "iuty" ${LCSIMD})
+    add_executable(${IUTYNAME} ${IUT_SRC})
+    target_compile_options(${IUTYNAME}
+      PRIVATE ${FLAGS_ENABLE_${SIMD}})
+    target_compile_definitions(${IUTYNAME}
+      PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS} DETERMINISTIC=1)
+    target_link_libraries(${IUTYNAME} ${TARGET_LIBSLEEF}
+      ${LIBM} ${LIBRT})
+    add_dependencies(${IUTYNAME} ${TARGET_HEADERS})
+    add_dependencies(${IUTYNAME} ${TARGET_LIBSLEEF})
+    set_target_properties(${IUTYNAME} PROPERTIES C_STANDARD 99)
+    add_test_iut(${IUTYNAME})
+    list(APPEND IUT_LIST ${IUTYNAME})
 
     if(LIB_MPFR AND NOT ${SIMD} STREQUAL NEON32 AND NOT ${SIMD} STREQUAL NEON32VFPV4 AND NOT MINGW)
       # Build tester2 SIMD
@@ -113,6 +129,18 @@ macro(test_extension SIMD)
 	      if (MPFR_INCLUDE_DIR)
 		target_include_directories(${T} PRIVATE ${MPFR_INCLUDE_DIR})
 	      endif()
+
+	      set(T "tester2y${SCSIMD}${P}")
+	      add_executable(${T} tester2simd${P}.c testerutil.c)
+	      target_compile_options(${T} PRIVATE ${FLAGS_ENABLE_${SIMD}})
+	      target_compile_definitions(${T} PRIVATE ENABLE_${SIMD}=1 USEMPFR=1 ${COMMON_TARGET_DEFINITIONS} DETERMINISTIC=1)
+	      set_target_properties(${T} PROPERTIES C_STANDARD 99)
+	      target_link_libraries(${T} ${TARGET_LIBSLEEF} ${LIB_MPFR} ${LIBM} ${LIBGMP})
+	      add_dependencies(${T} ${TARGET_HEADERS})
+	      add_dependencies(${T} ${TARGET_LIBSLEEF})
+	      if (MPFR_INCLUDE_DIR)
+		target_include_directories(${T} PRIVATE ${MPFR_INCLUDE_DIR})
+	      endif()
       endforeach()
     endif()
 
@@ -120,7 +148,7 @@ macro(test_extension SIMD)
       # Build tester3
       string(TOLOWER ${SIMD} SCSIMD)
       set(T "tester3${SCSIMD}")
-      add_executable(${T} tester3.c tester3main.c md5.c md5.h)
+      add_executable(${T} tester3.c tester3main.c testerutil.c md5.c md5.h)
       target_compile_options(${T} PRIVATE ${FLAGS_ENABLE_${SIMD}})
       target_compile_definitions(${T} PRIVATE ${COMMON_TARGET_DEFINITIONS} ${TESTER3_DEFINITIONS_${SIMD}})
       set_target_properties(${T} PROPERTIES C_STANDARD 99)

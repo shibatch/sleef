@@ -24,11 +24,11 @@
 #if CONFIG == 1
 #define ENABLE_FMA_DP
 #define ENABLE_FMA_SP
+//#define SPLIT_KERNEL // Benchmark comparison is needed to determine whether this option should be enabled.
 #endif
 
 #define ACCURATE_SQRT
 #define FULL_FP_ROUNDING
-//#define SPLIT_KERNEL // Benchmark comparison is needed to determine whether this option should be enabled.
 
 #include <altivec.h>
 

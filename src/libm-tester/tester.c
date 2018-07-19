@@ -205,9 +205,6 @@ double child_lgamma_u1(double x) { child_d_d("lgamma_u1", x); }
 double child_erf_u1(double x) { child_d_d("erf_u1", x); }
 double child_erfc_u15(double x) { child_d_d("erfc_u15", x); }
 
-double child_yasin(double x) { child_d_d("yasin", x); }
-double child_yacos(double x) { child_d_d("yacos", x); }
-
 //
 
 double child_ldexp(double x, int q) {
@@ -339,9 +336,6 @@ float child_lgammaf_u1(float x) { child_f_f("lgammaf_u1", x); }
 float child_erff_u1(float x) { child_f_f("erff_u1", x); }
 float child_erfcf_u15(float x) { child_f_f("erfcf_u15", x); }
 
-float child_yasinf(float x) { child_f_f("yasinf", x); }
-float child_yacosf(float x) { child_f_f("yacosf", x); }
-
 float child_ldexpf(float x, int q) {
   char str[256];
   uint32_t u;
@@ -378,7 +372,7 @@ void showResult(int success) {
   }
 }
 
-int enableDP = 0, enableSP = 0, noSupportForYFuncs = 0;
+int enableDP = 0, enableSP = 0, deterministicMode = 0;
 
 void do_test() {
   mpfr_t frc, frt, frx, fry, frz;
@@ -2342,14 +2336,6 @@ void do_test() {
       showResult(success);
     }
 
-    if (!noSupportForYFuncs) {
-      fprintf(stderr, "yasin denormal/nonnumber test : ");
-      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN,
-		      POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, nextafter(1, 2), nextafter(-1, -2) };
-      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_asin, child_yasin, xa[i]);
-      showResult(success);
-    }
-
     {
       fprintf(stderr, "asin_u1 denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN,
@@ -2363,14 +2349,6 @@ void do_test() {
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN,
 		      POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, nextafter(1, 2), nextafter(-1, -2) };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_acos, child_acos, xa[i]);
-      showResult(success);
-    }
-
-    if (!noSupportForYFuncs) {
-      fprintf(stderr, "yacos denormal/nonnumber test : ");
-      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN,
-		      POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, nextafter(1, 2), nextafter(-1, -2) };
-      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_acos, child_yacos, xa[i]);
       showResult(success);
     }
 
@@ -2480,21 +2458,21 @@ void do_test() {
       showResult(success);
     }
 
-    {
+    if (!deterministicMode) {
       fprintf(stderr, "sqrt denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_sqrt, child_sqrt, xa[i]);
       showResult(success);
     }
 
-    {
+    if (!deterministicMode) {
       fprintf(stderr, "sqrt_u05 denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_sqrt, child_sqrt_u05, xa[i]);
       showResult(success);
     }
 
-    {
+    if (!deterministicMode) {
       fprintf(stderr, "sqrt_u35 denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_sqrt, child_sqrt_u35, xa[i]);
@@ -2902,20 +2880,6 @@ void do_test() {
       showResult(success);
     }
 
-    if (!noSupportForYFuncs) {
-      fprintf(stderr, "yasinf denormal/nonnumber test : ");
-      if (enableFlushToZero) {
-	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX,
-		       POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(1, 2), nextafterf(-1, -2) };
-	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_asin, child_yasinf, xa[i]);
-      } else {
-	float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN,
-		       POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(1, 2), nextafterf(-1, -2) };
-	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_asin, child_yasinf, xa[i]);
-      }
-      showResult(success);
-    }
-
     {
       fprintf(stderr, "asinf_u1 denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN,
@@ -2929,14 +2893,6 @@ void do_test() {
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN,
 		     POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(1, 2), nextafterf(-1, -2) };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_acos, child_acosf, xa[i]);
-      showResult(success);
-    }
-
-    if (!noSupportForYFuncs) {
-      fprintf(stderr, "yacosf denormal/nonnumber test : ");
-      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN,
-		     POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, nextafterf(1, 2), nextafterf(-1, -2) };
-      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_acos, child_yacosf, xa[i]);
       showResult(success);
     }
 
@@ -3071,21 +3027,21 @@ void do_test() {
       showResult(success);
     }
 
-    {
+    if (!deterministicMode) {
       fprintf(stderr, "sqrtf denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_sqrt, child_sqrtf, xa[i]);
       showResult(success);
     }
 
-    {
+    if (!deterministicMode) {
       fprintf(stderr, "sqrtf_u05 denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_sqrt, child_sqrtf_u05, xa[i]);
       showResult(success);
     }
 
-    {
+    if (!deterministicMode) {
       fprintf(stderr, "sqrtf_u35 denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_sqrt, child_sqrtf_u35, xa[i]);
@@ -3821,24 +3777,26 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "sqrt : ");
-    for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_d(mpfr_sqrt, child_sqrt, d, 1.0);
-    for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_d(mpfr_sqrt, child_sqrt, pow(2.1, d), 1.0);
-    showResult(success);
+    if (!deterministicMode) {
+      fprintf(stderr, "sqrt : ");
+      for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_d(mpfr_sqrt, child_sqrt, d, 1.0);
+      for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_d(mpfr_sqrt, child_sqrt, pow(2.1, d), 1.0);
+      showResult(success);
 
-    //
+      //
 
-    fprintf(stderr, "sqrt_u05 : ");
-    for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_d(mpfr_sqrt, child_sqrt_u05, d, 0.506);
-    for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_d(mpfr_sqrt, child_sqrt_u05, pow(2.1, d), 0.506);
-    showResult(success);
+      fprintf(stderr, "sqrt_u05 : ");
+      for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_d(mpfr_sqrt, child_sqrt_u05, d, 0.506);
+      for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_d(mpfr_sqrt, child_sqrt_u05, pow(2.1, d), 0.506);
+      showResult(success);
 
-    //
+      //
 
-    fprintf(stderr, "sqrt_u35 : ");
-    for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_d(mpfr_sqrt, child_sqrt_u35, d, 3.5);
-    for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_d(mpfr_sqrt, child_sqrt_u35, pow(2.1, d), 3.5);
-    showResult(success);
+      fprintf(stderr, "sqrt_u35 : ");
+      for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_d(mpfr_sqrt, child_sqrt_u35, d, 3.5);
+      for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_d(mpfr_sqrt, child_sqrt_u35, pow(2.1, d), 3.5);
+      showResult(success);
+    }
 
     //
 
@@ -3862,14 +3820,6 @@ void do_test() {
 
     //
 
-    if (!noSupportForYFuncs) {
-      fprintf(stderr, "yasin : ");
-      for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_d(mpfr_asin, child_yasin, d, 3.5);
-      showResult(success);
-    }
-
-    //
-
     fprintf(stderr, "asin_u1 : ");
     for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_d(mpfr_asin, child_asin_u1, d, 1.0);
     showResult(success);
@@ -3879,14 +3829,6 @@ void do_test() {
     fprintf(stderr, "acos : ");
     for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_d(mpfr_acos, child_acos, d, 3.5);
     showResult(success);
-
-    //
-
-    if (!noSupportForYFuncs) {
-      fprintf(stderr, "yacos : ");
-      for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_d(mpfr_acos, child_yacos, d, 3.5);
-      showResult(success);
-    }
 
     //
 
@@ -4596,30 +4538,32 @@ void do_test() {
 
     //
 
-    fprintf(stderr, "sqrtf : ");
-    if (!enableFlushToZero) {
-      for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_f(mpfr_sqrt, child_sqrtf, d, 1.0);
+    if (!deterministicMode) {
+      fprintf(stderr, "sqrtf : ");
+      if (!enableFlushToZero) {
+	for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_f(mpfr_sqrt, child_sqrtf, d, 1.0);
+      }
+      for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_f(mpfr_sqrt, child_sqrtf, pow(2.1, d), 1.0);
+      showResult(success);
+
+      //
+
+      fprintf(stderr, "sqrtf_u05 : ");
+      if (!enableFlushToZero) {
+	for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_f(mpfr_sqrt, child_sqrtf_u05, d, 0.506);
+      }
+      for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_f(mpfr_sqrt, child_sqrtf_u05, pow(2.1, d), 0.506);
+      showResult(success);
+
+      //
+
+      fprintf(stderr, "sqrtf_u35 : ");
+      if (!enableFlushToZero) {
+	for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_f(mpfr_sqrt, child_sqrtf_u35, d, 3.5);
+      }
+      for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_f(mpfr_sqrt, child_sqrtf_u35, pow(2.1, d), 3.5);
+      showResult(success);
     }
-    for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_f(mpfr_sqrt, child_sqrtf, pow(2.1, d), 1.0);
-    showResult(success);
-
-    //
-
-    fprintf(stderr, "sqrtf_u05 : ");
-    if (!enableFlushToZero) {
-      for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_f(mpfr_sqrt, child_sqrtf_u05, d, 0.506);
-    }
-    for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_f(mpfr_sqrt, child_sqrtf_u05, pow(2.1, d), 0.506);
-    showResult(success);
-
-    //
-
-    fprintf(stderr, "sqrtf_u35 : ");
-    if (!enableFlushToZero) {
-      for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_f(mpfr_sqrt, child_sqrtf_u35, d, 3.5);
-    }
-    for(i = -1000;i <= 1000 && success;i+=10) checkAccuracy_f(mpfr_sqrt, child_sqrtf_u35, pow(2.1, d), 3.5);
-    showResult(success);
   
     //
 
@@ -4647,14 +4591,6 @@ void do_test() {
 
     //
 
-    if (!noSupportForYFuncs) {
-      fprintf(stderr, "yasinf : ");
-      for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_f(mpfr_asin, child_yasinf, d, 3.5);
-      showResult(success);
-    }
-
-    //
-
     fprintf(stderr, "asinf_u1 : ");
     for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_f(mpfr_asin, child_asinf_u1, d, 1.0);
     showResult(success);
@@ -4665,13 +4601,6 @@ void do_test() {
     for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_f(mpfr_acos, child_acosf, d, 3.5);
     showResult(success);
 
-    //
-
-    if (!noSupportForYFuncs) {
-      fprintf(stderr, "yacosf : ");
-      for(d = -1;d < 1 && success;d += 0.0002) checkAccuracy_f(mpfr_acos, child_yacosf, d, 3.5);
-      showResult(success);
-    }
     //
 
     fprintf(stderr, "acosf_u1 : ");
@@ -4941,7 +4870,7 @@ int main(int argc, char **argv) {
     enableDP = (u & 1) != 0;
     enableSP = (u & 2) != 0;
     enableFlushToZero |= ((u & 4) != 0);
-    noSupportForYFuncs = (u & 8) != 0;
+    deterministicMode |= ((u & 8) != 0);
   }
 
   if (enableFlushToZero) fprintf(stderr, "\n\n*** Flush to zero enabled\n");

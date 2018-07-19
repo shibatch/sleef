@@ -25,6 +25,7 @@
 #if CONFIG == 1
 #define ENABLE_FMA_DP
 #define ENABLE_FMA_SP
+//#define SPLIT_KERNEL // Benchmark comparison is needed to determine whether this option should be enabled.
 #endif
 
 #define FULL_FP_ROUNDING
@@ -193,7 +194,7 @@ static INLINE vint2 vtruncate_vi2_vf(vfloat vf) { return vcvtq_s32_f32(vf); }
 static INLINE vfloat vcast_vf_vi2(vint2 vi) { return vcvtq_f32_s32(vi); }
 static INLINE vint2 vcast_vi2_i(int i) { return vdupq_n_s32(i); }
 static INLINE vint2 vrint_vi2_vf(vfloat d) {
-  return vcvtq_s32_f32(vrndaq_f32(d));
+  return vcvtq_s32_f32(vrndnq_f32(d));
 }
 
 /***************************************/
@@ -411,7 +412,7 @@ static INLINE vdouble vcast_vd_vi(vint vi) {
 }
 static INLINE vint vcast_vi_i(int i) { return vdup_n_s32(i); }
 static INLINE vint vrint_vi_vd(vdouble d) {
-  return vqmovn_s64(vcvtq_s64_f64(vrndaq_f64(d)));
+  return vqmovn_s64(vcvtq_s64_f64(vrndnq_f64(d)));
 }
 
 /***************************************/

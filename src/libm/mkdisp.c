@@ -22,8 +22,6 @@ int main(int argc, char **argv) {
   const int isastart = 6, nisa = argc - isastart;
   
   for(int i=0;funcList[i].name != NULL;i++) {
-    if ((funcList[i].flags & DET) != 0) continue;
-
     char ulpSuffix0[100] = "", ulpSuffix1[100] = "_";
     if (funcList[i].ulp >= 0) {
       sprintf(ulpSuffix0, "_u%02d", funcList[i].ulp);

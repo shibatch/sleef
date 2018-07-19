@@ -72,6 +72,7 @@ static INLINE int vavailability_i(int name) { return 3; }
 #if CONFIG != 2
 #define ENABLE_FMA_SP
 #define ENABLE_FMA_DP
+//#define SPLIT_KERNEL // Benchmark comparison is needed to determine whether this option should be enabled.
 #endif
 
 #define FULL_FP_ROUNDING
@@ -217,7 +218,7 @@ static INLINE vfloat vcast_vf_vi2(vint2 vi) {
 }
 static INLINE vint2 vcast_vi2_i(int i) { return svdup_n_s32(i); }
 static INLINE vint2 vrint_vi2_vf(vfloat d) {
-  return svcvt_s32_f32_x(ptrue, svrinta_f32_x(ptrue, d));
+  return svcvt_s32_f32_x(ptrue, svrintn_f32_x(ptrue, d));
 }
 
 #if CONFIG == 1
@@ -290,7 +291,7 @@ static INLINE vfloat vtruncate_vf_vf(vfloat vd) {
 //
 //
 static INLINE vfloat vrint_vf_vf(vfloat vf) {
-  return svrinta_f32_x(svptrue_b32(), vf);
+  return svrintn_f32_x(svptrue_b32(), vf);
 }
 //
 //
@@ -499,10 +500,10 @@ static INLINE vint vtruncate_vi_vd(vdouble vd) {
   return svcvt_s32_f64_x(ptrue, vd);
 }
 static INLINE vint vrint_vi_vd(vdouble vd) {
-  return svcvt_s32_f64_x(ptrue, svrinta_f64_x(ptrue, vd));
+  return svcvt_s32_f64_x(ptrue, svrintn_f64_x(ptrue, vd));
 }
 static INLINE vdouble vrint_vd_vd(vdouble vd) {
-  return svrinta_f64_x(ptrue, vd);
+  return svrintn_f64_x(ptrue, vd);
 }
 
 // FP math operations

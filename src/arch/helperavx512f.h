@@ -24,10 +24,10 @@
 #if CONFIG == 1
 #define ENABLE_FMA_DP
 #define ENABLE_FMA_SP
+#define SPLIT_KERNEL
 #endif
 
 #define FULL_FP_ROUNDING
-#define SPLIT_KERNEL
 #define ACCURATE_SQRT
 
 #if defined(_MSC_VER)
