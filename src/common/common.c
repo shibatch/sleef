@@ -35,7 +35,11 @@ EXPORT uint64_t Sleef_currentTimeMicros() {
 #else
 #include <time.h>
 #include <unistd.h>
+#ifdef __FreeBSD__
+#include <stdlib.h>
+#else
 #include <malloc.h>
+#endif
 
 EXPORT void *Sleef_malloc(size_t z) { void *ptr = NULL; posix_memalign(&ptr, 4096, z); return ptr; }
 EXPORT void Sleef_free(void *ptr) { free(ptr); }
