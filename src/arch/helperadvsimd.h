@@ -501,10 +501,10 @@ static INLINE vopmask veq_vo_vi2_vi2(vint2 x, vint2 y) {
   return vceqq_s32(x, y);
 }
 static INLINE vopmask vgt_vo_vi2_vi2(vint2 x, vint2 y) {
-  return vcgeq_s32(x, y);
+  return vcgtq_s32(x, y);
 }
 static INLINE vopmask vgt_vo_vi_vi(vint x, vint y) {
-  return vcombine_u32(vcge_s32(x, y), vdup_n_u32(0));
+  return vcombine_u32(vcgt_s32(x, y), vdup_n_u32(0));
 }
 static INLINE vopmask visinf_vo_vf(vfloat d) {
   return veq_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(SLEEF_INFINITYf));

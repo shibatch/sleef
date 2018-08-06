@@ -356,12 +356,14 @@ static INLINE CONST fi_t rempisubf(vfloat x) {
 
 static INLINE CONST dfi_t rempif(vfloat a) {
   vfloat2 x, y, z;
-  vint2 ex = vilogb2k_vi2_vf(a), q;
+  vint2 ex = vilogb2k_vi2_vf(a);
 #if defined(ENABLE_AVX512F) || defined(ENABLE_AVX512FNOFMA)
   ex = vandnot_vi2_vi2_vi2(vsra_vi2_vi2_i(ex, 31), ex);
   ex = vand_vi2_vi2_vi2(ex, vcast_vi2_i(127));
 #endif
   ex = vsub_vi2_vi2_vi2(ex, vcast_vi2_i(25));
+  vint2 q = vand_vi2_vo_vi2(vgt_vo_vi2_vi2(ex, vcast_vi2_i(90-25)), vcast_vi2_i(-48));
+  a = vldexp3_vf_vf_vi2(a, q);
   ex = vandnot_vi2_vi2_vi2(vsra_vi2_vi2_i(ex, 31), ex);
   ex = vsll_vi2_vi2_i(ex, 2);
   x = dfmul_vf2_vf_vf(a, vgather_vf_p_vi2(rempitabsp, ex));
@@ -380,7 +382,7 @@ static INLINE CONST dfi_t rempif(vfloat a) {
   x = dfadd2_vf2_vf2_vf2(x, y);
   x = dfnormalize_vf2_vf2(x);
   x = dfmul_vf2_vf2_vf2(x, vcast_vf2_f_f(3.1415927410125732422f*2, -8.7422776573475857731e-08f*2));
-  x = vsel_vf2_vo_vf2_vf2(vlt_vo_vf_vf(vabs_vf_vf(a), vcast_vf_f(0.7)), vcast_vf2_vf_vf(a, vcast_vf_f(0)), x);
+  x = vsel_vf2_vo_vf2_vf2(vlt_vo_vf_vf(vabs_vf_vf(a), vcast_vf_f(0.7f)), vcast_vf2_vf_vf(a, vcast_vf_f(0)), x);
   dfi_t ret = { x, q };
   return ret;
 }
@@ -415,9 +417,7 @@ EXPORT CONST vfloat xsinf(vfloat d) {
     dfi.df = vsel_vf2_vo_vf2_vf2(o, x, dfi.df);
     d = vadd_vf_vf_vf(dfi.df.x, dfi.df.y);
 
-    d = vsel_vf_vo_vf_vf(vandnot_vo_vo_vo(visinf_vo_vf(r),
-					  vgt_vo_vf_vf(vabs_vf_vf(r), vcast_vf_f(1e+28f))),
-			 vcast_vf_f(0), d);
+    d = vreinterpret_vf_vm(vor_vm_vo32_vm(vor_vo_vo_vo(visinf_vo_vf(r), visnan_vo_vf(r)), vreinterpret_vm_vf(d)));
   }
 
   s = vmul_vf_vf_vf(d, d);
@@ -469,9 +469,7 @@ EXPORT CONST vfloat xsinf(vfloat d) {
       dfi.df = vsel_vf2_vo_vf2_vf2(o, x, dfi.df);
       u = vadd_vf_vf_vf(dfi.df.x, dfi.df.y);
 
-      u = vsel_vf_vo_vf_vf(vandnot_vo_vo_vo(visinf_vo_vf(r),
-					    vgt_vo_vf_vf(vabs_vf_vf(r), vcast_vf_f(1e+28f))),
-			   vcast_vf_f(0), u);
+      u = vreinterpret_vf_vm(vor_vm_vo32_vm(vor_vo_vo_vo(visinf_vo_vf(r), visnan_vo_vf(r)), vreinterpret_vm_vf(u)));
 
       q = vsel_vi2_vo_vi2_vi2(g, q, q2);
       d = vsel_vf_vo_vf_vf(g, d, u);
@@ -530,9 +528,7 @@ EXPORT CONST vfloat xcosf(vfloat d) {
     dfi.df = vsel_vf2_vo_vf2_vf2(o, x, dfi.df);
     d = vadd_vf_vf_vf(dfi.df.x, dfi.df.y);
 
-    d = vsel_vf_vo_vf_vf(vandnot_vo_vo_vo(visinf_vo_vf(r),
-					  vgt_vo_vf_vf(vabs_vf_vf(r), vcast_vf_f(1e+28f))),
-			 vcast_vf_f(0), d);
+    d = vreinterpret_vf_vm(vor_vm_vo32_vm(vor_vo_vo_vo(visinf_vo_vf(r), visnan_vo_vf(r)), vreinterpret_vm_vf(d)));
   }
 
   s = vmul_vf_vf_vf(d, d);
@@ -584,9 +580,7 @@ EXPORT CONST vfloat xcosf(vfloat d) {
       dfi.df = vsel_vf2_vo_vf2_vf2(o, x, dfi.df);
       u = vadd_vf_vf_vf(dfi.df.x, dfi.df.y);
 
-      u = vsel_vf_vo_vf_vf(vandnot_vo_vo_vo(visinf_vo_vf(r),
-					    vgt_vo_vf_vf(vabs_vf_vf(r), vcast_vf_f(1e+28f))),
-			   vcast_vf_f(0), u);
+      u = vreinterpret_vf_vm(vor_vm_vo32_vm(vor_vo_vo_vo(visinf_vo_vf(r), visnan_vo_vf(r)), vreinterpret_vm_vf(u)));
 
       q = vsel_vi2_vo_vi2_vi2(g, q, q2);
       d = vsel_vf_vo_vf_vf(g, d, u);
@@ -633,7 +627,7 @@ EXPORT CONST vfloat xtanf(vfloat d) {
     dfi_t dfi = rempif(d);
     q = dfi.i;
     x = vadd_vf_vf_vf(dfi.df.x, dfi.df.y);
-    x = vreinterpret_vf_vm(vor_vm_vo32_vm(visinf_vo_vf(d), vreinterpret_vm_vf(x)));
+    x = vreinterpret_vf_vm(vor_vm_vo32_vm(vor_vo_vo_vo(visinf_vo_vf(d), visnan_vo_vf(d)), vreinterpret_vm_vf(x)));
     x = vsel_vf_vo_vf_vf(visnegzero_vo_vf(d), d, x);
   }
 
@@ -683,7 +677,7 @@ EXPORT CONST vfloat xtanf(vfloat d) {
     if (!LIKELY(vtestallones_i_vo32(g))) {
       dfi_t dfi = rempif(d);
       u = vadd_vf_vf_vf(dfi.df.x, dfi.df.y);
-      u = vreinterpret_vf_vm(vor_vm_vo32_vm(visinf_vo_vf(d), vreinterpret_vm_vf(u)));
+      u = vreinterpret_vf_vm(vor_vm_vo32_vm(vor_vo_vo_vo(visinf_vo_vf(d), visnan_vo_vf(d)), vreinterpret_vm_vf(u)));
       u = vsel_vf_vo_vf_vf(visnegzero_vo_vf(d), d, u);
       q = vsel_vi2_vo_vi2_vi2(g, q, dfi.i);
       x = vsel_vf_vo_vf_vf(g, x, u);
@@ -734,8 +728,7 @@ EXPORT CONST vfloat xsinf_u1(vfloat d) {
     dfi.df = vsel_vf2_vo_vf2_vf2(o, x, dfi.df);
     s = dfnormalize_vf2_vf2(dfi.df);
 
-    s = vsel_vf2_vo_vf2_vf2(vandnot_vo_vo_vo(visinf_vo_vf(d), vgt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(1e+28f))),
-			    vcast_vf2_f_f(0, 0), s);
+    s.x = vreinterpret_vf_vm(vor_vm_vo32_vm(vor_vo_vo_vo(visinf_vo_vf(d), visnan_vo_vf(d)), vreinterpret_vm_vf(s.x)));
   }
 
   t = s;
@@ -780,8 +773,7 @@ EXPORT CONST vfloat xsinf_u1(vfloat d) {
     dfi.df = vsel_vf2_vo_vf2_vf2(o, x, dfi.df);
     t = dfnormalize_vf2_vf2(dfi.df);
 
-    t = vsel_vf2_vo_vf2_vf2(vandnot_vo_vo_vo(visinf_vo_vf(d), vgt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(1e+28f))),
-			    vcast_vf2_f_f(0, 0), t);
+    t.x = vreinterpret_vf_vm(vor_vm_vo32_vm(vor_vo_vo_vo(visinf_vo_vf(d), visnan_vo_vf(d)), vreinterpret_vm_vf(t.x)));
 
     q = vsel_vi2_vo_vi2_vi2(g, q, q2);
     s = vsel_vf2_vo_vf2_vf2(g, s, t);
@@ -832,8 +824,7 @@ EXPORT CONST vfloat xcosf_u1(vfloat d) {
     dfi.df = vsel_vf2_vo_vf2_vf2(o, x, dfi.df);
     s = dfnormalize_vf2_vf2(dfi.df);
 
-    s = vsel_vf2_vo_vf2_vf2(vandnot_vo_vo_vo(visinf_vo_vf(d), vgt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(1e+28f))),
-			    vcast_vf2_f_f(0, 0), s);
+    s.x = vreinterpret_vf_vm(vor_vm_vo32_vm(vor_vo_vo_vo(visinf_vo_vf(d), visnan_vo_vf(d)), vreinterpret_vm_vf(s.x)));
   }
 
   t = s;
@@ -878,8 +869,7 @@ EXPORT CONST vfloat xcosf_u1(vfloat d) {
     dfi.df = vsel_vf2_vo_vf2_vf2(o, x, dfi.df);
     t = dfnormalize_vf2_vf2(dfi.df);
 
-    t = vsel_vf2_vo_vf2_vf2(vandnot_vo_vo_vo(visinf_vo_vf(d), vgt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(1e+28f))),
-			    vcast_vf2_f_f(0, 0), t);
+    t.x = vreinterpret_vf_vm(vor_vm_vo32_vm(vor_vo_vo_vo(visinf_vo_vf(d), visnan_vo_vf(d)), vreinterpret_vm_vf(t.x)));
 
     q = vsel_vi2_vo_vi2_vi2(g, q, q2);
     s = vsel_vf2_vo_vf2_vf2(g, s, t);
@@ -948,8 +938,7 @@ TYPE2_FUNCATR vfloat2 XSINCOSF(vfloat d) {
     dfi_t dfi = rempif(d);
     q = dfi.i;
     s = vadd_vf_vf_vf(dfi.df.x, dfi.df.y);
-    s = vreinterpret_vf_vm(vandnot_vm_vo32_vm(vgt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(1e+28f)), vreinterpret_vm_vf(s)));
-    s = vreinterpret_vf_vm(vor_vm_vo32_vm(visinf_vo_vf(d), vreinterpret_vm_vf(s)));
+    s = vreinterpret_vf_vm(vor_vm_vo32_vm(vor_vo_vo_vo(visinf_vo_vf(d), visnan_vo_vf(d)), vreinterpret_vm_vf(s)));
   }
 
   t = s;
@@ -1012,8 +1001,7 @@ TYPE2_FUNCATR vfloat2 XSINCOSF(vfloat d) {
     if (!LIKELY(vtestallones_i_vo32(g))) {
       dfi_t dfi = rempif(d);
       t = vadd_vf_vf_vf(dfi.df.x, dfi.df.y);
-      t = vreinterpret_vf_vm(vandnot_vm_vo32_vm(vgt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(1e+28f)), vreinterpret_vm_vf(t)));
-      t = vreinterpret_vf_vm(vor_vm_vo32_vm(visinf_vo_vf(d), vreinterpret_vm_vf(t)));
+      t = vreinterpret_vf_vm(vor_vm_vo32_vm(vor_vo_vo_vo(visinf_vo_vf(d), visnan_vo_vf(d)), vreinterpret_vm_vf(t)));
 
       q = vsel_vi2_vo_vi2_vi2(g, q, dfi.i);
       s = vsel_vf_vo_vf_vf(g, s, t);
@@ -1070,12 +1058,8 @@ TYPE2_FUNCATR vfloat2 XSINCOSF_U1(vfloat d) {
     dfi_t dfi = rempif(d);
     q = dfi.i;
     s = dfi.df;
-    o = vgt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(1e+28f));
-    s.x = vreinterpret_vf_vm(vandnot_vm_vo32_vm(o, vreinterpret_vm_vf(s.x)));
-    s.y = vreinterpret_vf_vm(vandnot_vm_vo32_vm(o, vreinterpret_vm_vf(s.y)));
-    o = visinf_vo_vf(d);
+    o = vor_vo_vo_vo(visinf_vo_vf(d), visnan_vo_vf(d));
     s.x = vreinterpret_vf_vm(vor_vm_vo32_vm(o, vreinterpret_vm_vf(s.x)));
-    s.y = vreinterpret_vf_vm(vor_vm_vo32_vm(o, vreinterpret_vm_vf(s.y)));
   }
 
   t = s;
@@ -1131,12 +1115,8 @@ TYPE2_FUNCATR vfloat2 XSINCOSF_U1(vfloat d) {
   if (!LIKELY(vtestallones_i_vo32(g))) {
     dfi_t dfi = rempif(d);
     t = dfi.df;
-    o = vgt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(1e+28f));
-    t.x = vreinterpret_vf_vm(vandnot_vm_vo32_vm(o, vreinterpret_vm_vf(t.x)));
-    t.y = vreinterpret_vf_vm(vandnot_vm_vo32_vm(o, vreinterpret_vm_vf(t.y)));
-    o = visinf_vo_vf(d);
+    o = vor_vo_vo_vo(visinf_vo_vf(d), visnan_vo_vf(d));
     t.x = vreinterpret_vf_vm(vor_vm_vo32_vm(o, vreinterpret_vm_vf(t.x)));
-    t.y = vreinterpret_vf_vm(vor_vm_vo32_vm(o, vreinterpret_vm_vf(t.y)));
     q = vsel_vi2_vo_vi2_vi2(g, q, dfi.i);
     s = vsel_vf2_vo_vf2_vf2(g, s, t);
   }
@@ -1358,7 +1338,7 @@ EXPORT CONST vfloat xtanf_u1(vfloat d) {
     dfi_t dfi = rempif(d);
     q = dfi.i;
     s = dfi.df;
-    o = visinf_vo_vf(d);
+    o = vor_vo_vo_vo(visinf_vo_vf(d), visnan_vo_vf(d));
     s.x = vreinterpret_vf_vm(vor_vm_vo32_vm(o, vreinterpret_vm_vf(s.x)));
     s.y = vreinterpret_vf_vm(vor_vm_vo32_vm(o, vreinterpret_vm_vf(s.y)));
   }
@@ -1407,7 +1387,7 @@ EXPORT CONST vfloat xtanf_u1(vfloat d) {
   if (!LIKELY(vtestallones_i_vo32(g))) {
     dfi_t dfi = rempif(d);
     t = dfi.df;
-    o = visinf_vo_vf(d);
+    o = vor_vo_vo_vo(visinf_vo_vf(d), visnan_vo_vf(d));
     t.x = vreinterpret_vf_vm(vor_vm_vo32_vm(o, vreinterpret_vm_vf(t.x)));
     t.y = vreinterpret_vf_vm(vor_vm_vo32_vm(o, vreinterpret_vm_vf(t.y)));
     q = vsel_vi2_vo_vi2_vi2(g, q, dfi.i);

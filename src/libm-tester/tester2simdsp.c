@@ -276,8 +276,6 @@ int main(int argc,char **argv)
   
   srandom(time(NULL));
 
-  const float rangemax = 1e+28;
-  
   for(cnt = 0;ecnt < 1000;cnt++) {
     int e = cnt % VECTLENSP;
     switch(cnt & 7) {
@@ -377,28 +375,28 @@ int main(int argc,char **argv)
 
       float u0 = countULPsp(t = vget(xsinf(vd), e), frx);
       
-      if (u0 != 0 && ((fabs(d) <= rangemax && u0 > 3.5) || fabs(t) > 1 || !isnumber(t))) {
+      if (u0 != 0 && (u0 > 3.5 || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sinf arg=%.20g ulp=%.20g\n", d, u0);
 	fflush(stdout); ecnt++;
       }
 
       float u1 = countULPsp(t = vget(sc.x, e), frx);
       
-      if (u1 != 0 && ((fabs(d) <= rangemax && u1 > 3.5) || fabs(t) > 1 || !isnumber(t))) {
+      if (u1 != 0 && (u1 > 3.5 || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincosf sin arg=%.20g ulp=%.20g\n", d, u1);
 	fflush(stdout); ecnt++;
       }
 
       float u2 = countULPsp(t = vget(xsinf_u1(vd), e), frx);
       
-      if (u2 != 0 && ((fabs(d) <= rangemax && u2 > 1) || fabs(t) > 1 || !isnumber(t))) {
+      if (u2 != 0 && (u2 > 1 || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sinf_u1 arg=%.20g ulp=%.20g\n", d, u2);
 	fflush(stdout); ecnt++;
       }
 
       float u3 = countULPsp(t = vget(sc2.x, e), frx);
       
-      if (u3 != 0 && ((fabs(d) <= rangemax && u3 > 1) || fabs(t) > 1 || !isnumber(t))) {
+      if (u3 != 0 && (u3 > 1 || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincosf_u1 sin arg=%.20g ulp=%.20g\n", d, u3);
 	fflush(stdout); ecnt++;
       }
@@ -410,28 +408,28 @@ int main(int argc,char **argv)
 
       float u0 = countULPsp(t = vget(xcosf(vd), e), frx);
       
-      if (u0 != 0 && ((fabs(d) <= rangemax && u0 > 3.5) || fabs(t) > 1 || !isnumber(t))) {
+      if (u0 != 0 && (u0 > 3.5 || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " cosf arg=%.20g ulp=%.20g\n", d, u0);
 	fflush(stdout); ecnt++;
       }
 
       float u1 = countULPsp(t = vget(sc.y, e), frx);
       
-      if (u1 != 0 && ((fabs(d) <= rangemax && u1 > 3.5) || fabs(t) > 1 || !isnumber(t))) {
+      if (u1 != 0 && (u1 > 3.5 || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincosf cos arg=%.20g ulp=%.20g\n", d, u1);
 	fflush(stdout); ecnt++;
       }
 
       float u2 = countULPsp(t = vget(xcosf_u1(vd), e), frx);
       
-      if (u2 != 0 && ((fabs(d) <= rangemax && u2 > 1) || fabs(t) > 1 || !isnumber(t))) {
+      if (u2 != 0 && (u2 > 1 || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " cosf_u1 arg=%.20g ulp=%.20g\n", d, u2);
 	fflush(stdout); ecnt++;
       }
 
       float u3 = countULPsp(t = vget(sc2.y, e), frx);
       
-      if (u3 != 0 && ((fabs(d) <= rangemax && u3 > 1) || fabs(t) > 1 || !isnumber(t))) {
+      if (u3 != 0 && (u3 > 1 || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincosf_u1 cos arg=%.20g ulp=%.20g\n", d, u3);
 	fflush(stdout); ecnt++;
       }
@@ -443,14 +441,14 @@ int main(int argc,char **argv)
 
       float u0 = countULPsp(t = vget(xtanf(vd), e), frx);
       
-      if (u0 != 0 && ((fabs(d) < rangemax && u0 > 3.5) || isnan(t))) {
+      if (u0 != 0 && (u0 > 3.5 || isnan(t))) {
 	printf(ISANAME " tanf arg=%.20g ulp=%.20g\n", d, u0);
 	fflush(stdout); ecnt++;
       }
 
       float u1 = countULPsp(t = vget(xtanf_u1(vd), e), frx);
       
-      if (u1 != 0 && ((fabs(d) <= rangemax && u1 > 1) || isnan(t))) {
+      if (u1 != 0 && (u1 > 1 || isnan(t))) {
 	printf(ISANAME " tanf_u1 arg=%.20g ulp=%.20g\n", d, u1);
 	fflush(stdout); ecnt++;
       }

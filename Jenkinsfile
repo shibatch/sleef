@@ -10,8 +10,8 @@ pipeline {
 	    	     	 sh '''
                 	 echo "AArch64 SVE on" `hostname`
 			 export PATH=$PATH:/opt/arm/arm-instruction-emulator-1.2.1_Generic-AArch64_Ubuntu-14.04_aarch64-linux/bin
-			 export LD_LIBRARY_PATH=/opt/arm/arm-instruction-emulator-1.2.1_Generic-AArch64_Ubuntu-14.04_aarch64-linux/lib:/opt/arm/arm-hpc-compiler-18.3_Generic-AArch64_Ubuntu-16.04_aarch64-linux/lib
-			 export CC=/opt/arm/arm-hpc-compiler-18.3_Generic-AArch64_Ubuntu-16.04_aarch64-linux/bin/armclang
+			 export LD_LIBRARY_PATH=/opt/arm/arm-instruction-emulator-1.2.1_Generic-AArch64_Ubuntu-14.04_aarch64-linux/lib:/opt/arm/arm-hpc-compiler-18.4_Generic-AArch64_Ubuntu-16.04_aarch64-linux/lib
+			 export CC=/opt/arm/arm-hpc-compiler-18.4_Generic-AArch64_Ubuntu-16.04_aarch64-linux/bin/armclang
 			 rm -rf build
  			 mkdir build
 			 cd build

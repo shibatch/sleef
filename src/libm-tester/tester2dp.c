@@ -109,8 +109,6 @@ int main(int argc,char **argv)
   
   srandom(time(NULL));
 
-  const double rangemax = 1e+299;
-  
   for(cnt = 0;ecnt < 1000;cnt++) {
     switch(cnt & 7) {
     case 0:
@@ -211,7 +209,7 @@ int main(int argc,char **argv)
 
       double u0 = countULPdp(t = xsin(d), frx);
       
-      if (u0 != 0 && ((fabs(d) <= rangemax && u0 > 3.5) || fabs(t) > 1 || !isnumber(t))) {
+      if (u0 != 0 && (u0 > 3.5 || fabs(t) > 1 || !isnumber(t))) {
 	printf("Pure C sin arg=%.20g ulp=%.20g\n", d, u0);
 	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
 	fflush(stdout); ecnt++;
@@ -219,7 +217,7 @@ int main(int argc,char **argv)
 
       double u1 = countULPdp(sc.x, frx);
       
-      if (u1 != 0 && ((fabs(d) <= rangemax && u1 > 3.5) || fabs(t) > 1 || !isnumber(t))) {
+      if (u1 != 0 && (u1 > 3.5 || fabs(t) > 1 || !isnumber(t))) {
 	printf("Pure C sincos sin arg=%.20g ulp=%.20g\n", d, u1);
 	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
 	fflush(stdout); ecnt++;
@@ -227,7 +225,7 @@ int main(int argc,char **argv)
 
       double u2 = countULPdp(t = xsin_u1(d), frx);
       
-      if (u2 != 0 && ((fabs(d) <= rangemax && u2 > 1) || fabs(t) > 1 || !isnumber(t))) {
+      if (u2 != 0 && (u2 > 1 || fabs(t) > 1 || !isnumber(t))) {
 	printf("Pure C sin_u1 arg=%.20g ulp=%.20g\n", d, u2);
 	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
 	fflush(stdout); ecnt++;
@@ -235,7 +233,7 @@ int main(int argc,char **argv)
 
       double u3 = countULPdp(t = sc2.x, frx);
       
-      if (u3 != 0 && ((fabs(d) <= rangemax && u3 > 1) || fabs(t) > 1 || !isnumber(t))) {
+      if (u3 != 0 && (u3 > 1 || fabs(t) > 1 || !isnumber(t))) {
 	printf("Pure C sincos_u1 sin arg=%.20g ulp=%.20g\n", d, u3);
 	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
 	fflush(stdout); ecnt++;
@@ -248,28 +246,28 @@ int main(int argc,char **argv)
 
       double u0 = countULPdp(t = xcos(d), frx);
       
-      if (u0 != 0 && ((fabs(d) <= rangemax && u0 > 3.5) || fabs(t) > 1 || !isnumber(t))) {
+      if (u0 != 0 && (u0 > 3.5 || fabs(t) > 1 || !isnumber(t))) {
 	printf("Pure C cos arg=%.20g ulp=%.20g\n", d, u0);
 	fflush(stdout); ecnt++;
       }
 
       double u1 = countULPdp(t = sc.y, frx);
       
-      if (u1 != 0 && ((fabs(d) <= rangemax && u1 > 3.5) || fabs(t) > 1 || !isnumber(t))) {
+      if (u1 != 0 && (u1 > 3.5 || fabs(t) > 1 || !isnumber(t))) {
 	printf("Pure C sincos cos arg=%.20g ulp=%.20g\n", d, u1);
 	fflush(stdout); ecnt++;
       }
 
       double u2 = countULPdp(t = xcos_u1(d), frx);
       
-      if (u2 != 0 && ((fabs(d) <= rangemax && u2 > 1) || fabs(t) > 1 || !isnumber(t))) {
+      if (u2 != 0 && (u2 > 1 || fabs(t) > 1 || !isnumber(t))) {
 	printf("Pure C cos_u1 arg=%.20g ulp=%.20g\n", d, u2);
 	fflush(stdout); ecnt++;
       }
 
       double u3 = countULPdp(t = sc2.y, frx);
       
-      if (u3 != 0 && ((fabs(d) <= rangemax && u3 > 1) || fabs(t) > 1 || !isnumber(t))) {
+      if (u3 != 0 && (u3 > 1 || fabs(t) > 1 || !isnumber(t))) {
 	printf("Pure C sincos_u1 cos arg=%.20g ulp=%.20g\n", d, u3);
 	fflush(stdout); ecnt++;
       }
@@ -281,14 +279,14 @@ int main(int argc,char **argv)
 
       double u0 = countULPdp(t = xtan(d), frx);
       
-      if (u0 != 0 && ((fabs(d) <= rangemax && u0 > 3.5) || isnan(t))) {
+      if (u0 != 0 && (u0 > 3.5 || isnan(t))) {
 	printf("Pure C tan arg=%.20g ulp=%.20g\n", d, u0);
 	fflush(stdout); ecnt++;
       }
 
       double u1 = countULPdp(t = xtan_u1(d), frx);
       
-      if (u1 != 0 && ((fabs(d) <= rangemax && u1 > 1) || isnan(t))) {
+      if (u1 != 0 && (u1 > 1 || isnan(t))) {
 	printf("Pure C tan_u1 arg=%.20g ulp=%.20g\n", d, u1);
 	fflush(stdout); ecnt++;
       }
