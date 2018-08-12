@@ -485,6 +485,17 @@ CHECK_C_SOURCE_COMPILES("
   }"
   COMPILER_SUPPORTS_BUILTIN_MATH)
 
+CHECK_C_SOURCE_COMPILES("
+#define _GNU_SOURCE
+#include <unistd.h>
+#include <sys/syscall.h>
+#include <linux/random.h>
+  int main(void) {
+    int i;
+    syscall(SYS_getrandom, &i, sizeof(i), 0);
+  }"
+  COMPILER_SUPPORTS_SYS_GETRANDOM)
+
 # Reset used flags
 set(CMAKE_REQUIRED_FLAGS)
 
@@ -541,6 +552,6 @@ if(CMAKE_CROSSCOMPILING AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
   set(COMMON_TARGET_DEFINITIONS ${COMMON_TARGET_DEFINITIONS} POWER64_UNDEF_USE_EXTERN_INLINES=1)
 endif()
 
-if (CMAKE_SYSTEM MATCHES "Linux")
+if (COMPILER_SUPPORTS_SYS_GETRANDOM)
   set(COMMON_TARGET_DEFINITIONS ${COMMON_TARGET_DEFINITIONS} ENABLE_SYS_getrandom=1)
 endif()
