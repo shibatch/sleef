@@ -438,7 +438,7 @@ static CONST dfi_t rempif(float a) {
   Sleef_float2 x, y, z;
   fi_t di;
   float t;
-  int ex = ilogb2kf(a) - 25, q = ex > (90 - 25) ? -48 : 0;
+  int ex = ilogb2kf(a) - 25, q = ex > (90 - 25) ? -64 : 0;
   a = ldexp3kf(a, q);
   if (ex < 0) ex = 0;
   ex *= 4;

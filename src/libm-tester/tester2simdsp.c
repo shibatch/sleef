@@ -293,6 +293,14 @@ int main(int argc,char **argv)
       d3 = rnd();
       zo = rnd();
       break;
+    case 2:
+      cd.f = rnd_fr() * M_PI_4;
+      cd.i32 += (random() & 0xf) - 0x7;
+      d = cd.f;
+      d2 = rnd();
+      d3 = rnd();
+      zo = rnd();
+      break;
     default:
       d = rnd_fr();
       d2 = rnd_fr();

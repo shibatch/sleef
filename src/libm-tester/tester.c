@@ -4460,6 +4460,7 @@ void do_test() {
     //
 
     fprintf(stderr, "tanf : ");
+    checkAccuracy_f(mpfr_tan, child_tanf, 70.936981201171875, 3.5);
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_tan, child_tanf, d, 3.5);
     for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_tan, child_tanf, d, 3.5);
     for(i = 0;i < 1000 && success;i++) checkAccuracy_f(mpfr_tan, child_tanf, pow(1.06, i), 3.5);
@@ -4472,6 +4473,7 @@ void do_test() {
     //
 
     fprintf(stderr, "tanf_u1 : ");
+    checkAccuracy_f(mpfr_tan, child_tanf_u1, 70.936981201171875, 1.0);
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_tan, child_tanf_u1, d, 1.0);
     for(d = -10000;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_tan, child_tanf_u1, d, 1.0);
     for(i = 0;i < 1000 && success;i++) checkAccuracy_f(mpfr_tan, child_tanf_u1, pow(1.06, i), 1.0);

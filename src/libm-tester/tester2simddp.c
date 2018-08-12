@@ -320,10 +320,9 @@ int main(int argc,char **argv)
       zo = rnd();
       break;
     case 2:
-      cd.d = rint(rnd_zo() * 32) * M_PI_4;
-      cd.i64 += (random() & 0xff) - 0x7f;
+      cd.d = rnd_fr() * M_PI_4;
+      cd.i64 += (random() & 0xf) - 0x7;
       d = cd.d;
-      for(int i=0;i<VECTLENDP;i++) vd = vset(vd, i, (2 * (double)random() / RAND_MAX - 1) * 32);
       d2 = rnd();
       d3 = rnd();
       zo = rnd();
