@@ -11,6 +11,8 @@ option(SLEEF_SHOW_ERROR_LOG "Show cmake error log." OFF)
 
 # See doc/build-with-cmake.md for instructions on how to build Sleef.
 cmake_minimum_required(VERSION 3.4.3)
+# Set to NEW when updating cmake_minimum_required to VERSION >= 3.7.2
+cmake_policy(SET CMP0066 OLD)
 
 enable_testing()
 
