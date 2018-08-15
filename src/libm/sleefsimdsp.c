@@ -302,8 +302,8 @@ static INLINE CONST fi_t rempisubf(vfloat x) {
 
 static INLINE CONST dfi_t rempif(vfloat a) {
   vfloat2 x, y, z;
-#ifdef ENABLE_AVX512F
   vint2 ex = vilogb2k_vi2_vf(a);
+#if defined(ENABLE_AVX512F)
   ex = vandnot_vi2_vi2_vi2(vsra_vi2_vi2_i(ex, 31), ex);
   ex = vand_vi2_vi2_vi2(ex, vcast_vi2_i(127));
 #endif

@@ -308,8 +308,8 @@ static INLINE CONST di_t rempisub(vdouble x) {
 
 static INLINE CONST ddi_t rempi(vdouble a) {
   vdouble2 x, y, z;
-#ifdef ENABLE_AVX512F
   vint ex = vilogb2k_vi_vd(a);
+#if defined(ENABLE_AVX512F)
   ex = vandnot_vi_vi_vi(vsra_vi_vi_i(ex, 31), ex);
   ex = vand_vi_vi_vi(ex, vcast_vi_i(1023));
 #endif
