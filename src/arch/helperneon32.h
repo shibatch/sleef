@@ -149,7 +149,7 @@ static INLINE vfloat vrecsqrt_vf_vf(vfloat d) {
   x = vmulq_f32(x, vrsqrtsq_f32(d, vmulq_f32(x, x)));
   return vfmaq_f32(x, vfmsq_f32(vdupq_n_f32(1), x, vmulq_f32(x, d)), vmulq_f32(x, vdupq_n_f32(0.5)));
 }
-#else
+#else // #if CONFIG == 4
 static INLINE vfloat vmla_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vmlaq_f32(z, x, y); }
 static INLINE vfloat vmlanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vmlsq_f32(z, x, y); }
 
@@ -165,7 +165,7 @@ static INLINE vfloat vsqrt_vf_vf(vfloat d) {
   x = vmulq_f32(x, vrsqrtsq_f32(d, vmulq_f32(x, x)));
   float32x4_t u = vmulq_f32(x, d);
   u = vmlaq_f32(u, vmlsq_f32(d, u, u), vmulq_f32(x, vdupq_n_f32(0.5)));
-  return (float32x4_t)vbicq_u32((uint32x4_t)u, vceqq_f32(d, vdupq_n_f32(0.0f)));
+  return vreinterpretq_f32_u32(vbicq_u32(vreinterpretq_u32_f32(u), vceqq_f32(d, vdupq_n_f32(0.0f))));
 }
 
 static INLINE vfloat vrec_vf_vf(vfloat d) {
@@ -179,7 +179,7 @@ static INLINE vfloat vrecsqrt_vf_vf(vfloat d) {
   x = vmulq_f32(x, vrsqrtsq_f32(d, vmulq_f32(x, x)));
   return vmlaq_f32(x, vmlsq_f32(vdupq_n_f32(1), x, vmulq_f32(x, d)), vmulq_f32(x, vdupq_n_f32(0.5)));
 }
-#endif
+#endif // #if CONFIG == 4
 static INLINE vfloat vmax_vf_vf_vf(vfloat x, vfloat y) { return vmaxq_f32(x, y); }
 static INLINE vfloat vmin_vf_vf_vf(vfloat x, vfloat y) { return vminq_f32(x, y); }
 
@@ -202,15 +202,9 @@ static INLINE vint2 vxor_vi2_vi2_vi2(vint2 x, vint2 y) { return veorq_s32(x, y);
 static INLINE vint2 vand_vi2_vo_vi2(vopmask x, vint2 y) { return (vint2)vandq_u32(x, (vopmask)y); }
 static INLINE vint2 vandnot_vi2_vo_vi2(vopmask x, vint2 y) { return (vint2)vbicq_u32((vopmask)y, x); }
 
-#if defined(__clang__)
 #define vsll_vi2_vi2_i(x, c) vshlq_n_s32(x, c)
 #define vsrl_vi2_vi2_i(x, c) vreinterpretq_s32_u32(vshrq_n_u32(vreinterpretq_u32_s32(x), c))
 #define vsra_vi2_vi2_i(x, c) vshrq_n_s32(x, c)
-#else
-static INLINE vint2 vsll_vi2_vi2_i(vint2 x, int c) { return (int32x4_t) vshlq_n_u32((uint32x4_t)x, c); }
-static INLINE vint2 vsrl_vi2_vi2_i(vint2 x, int c) { return (int32x4_t) vshrq_n_u32((uint32x4_t)x, c); }
-static INLINE vint2 vsra_vi2_vi2_i(vint2 x, int c) { return vshrq_n_s32(x, c); }
-#endif
 
 static INLINE vopmask veq_vo_vi2_vi2(vint2 x, vint2 y) { return vceqq_s32(x, y); }
 static INLINE vopmask vgt_vo_vi2_vi2(vint2 x, vint2 y) { return vcgeq_s32(x, y); }
