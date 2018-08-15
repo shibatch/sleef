@@ -134,7 +134,7 @@ static INLINE vfloat vsqrt_vf_vf(vfloat d) {
   x = vmulq_f32(x, vrsqrtsq_f32(d, vmulq_f32(x, x)));
   float32x4_t u = vmulq_f32(x, d);
   u = vfmaq_f32(u, vfmsq_f32(d, u, u), vmulq_f32(x, vdupq_n_f32(0.5)));
-  return (float32x4_t)vbicq_u32((uint32x4_t)u, vceqq_f32(d, vdupq_n_f32(0.0f)));
+  return vreinterpretq_f32_u32(vbicq_u32(vreinterpretq_u32_f32(u), vceqq_f32(d, vdupq_n_f32(0.0f))));
 }
 
 static INLINE vfloat vrec_vf_vf(vfloat y) {
