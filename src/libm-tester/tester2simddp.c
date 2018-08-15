@@ -30,8 +30,6 @@
 #include "sleef.h"
 #include "testerutil.h"
 
-#define DORENAME
-
 #ifdef ENABLE_SSE2
 #define CONFIG 2
 #include "helpersse2.h"
@@ -88,6 +86,18 @@ typedef Sleef___m512d_2 vdouble2;
 typedef Sleef___m512_2 vfloat2;
 #endif
 
+#ifdef ENABLE_VECEXT
+#define CONFIG 1
+#include "helpervecext.h"
+#include "norename.h"
+#endif
+
+#ifdef ENABLE_PUREC
+#define CONFIG 1
+#include "helperpurec.h"
+#include "norename.h"
+#endif
+
 #ifdef ENABLE_ADVSIMD
 #define CONFIG 1
 #include "helperadvsimd.h"
@@ -110,18 +120,6 @@ typedef Sleef_svfloat32_t_2 vfloat2;
 #include "renamevsx.h"
 typedef Sleef_vector_double_2 vdouble2;
 typedef Sleef_vector_float_2 vfloat2;
-#endif
-
-#ifdef ENABLE_VECEXT
-#define CONFIG 1
-#include "helpervecext.h"
-#include "norename.h"
-#endif
-
-#ifdef ENABLE_PUREC
-#define CONFIG 1
-#include "helperpurec.h"
-#include "norename.h"
 #endif
 
 //

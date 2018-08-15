@@ -2463,7 +2463,6 @@ EXPORT CONST vfloat __tgammaf_u1_finite(vfloat)         __attribute__((weak, ali
 // gcc -DENABLE_MAIN -Wno-attributes -I../common -I../arch -DENABLE_AVX2 -mavx2 -mfma sleefsimdsp.c ../common/common.c -lm
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 int main(int argc, char **argv) {
   vfloat vf1 = vcast_vf_f(atof(argv[1]));
   //vfloat vf2 = vcast_vf_f(atof(argv[2]));
