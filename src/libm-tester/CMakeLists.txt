@@ -68,6 +68,9 @@ set(IUT_SRC iutsimd.c iutsimdmain.c testerutil)
 # Add vector extension `iut`s
 macro(test_extension SIMD)
   if(COMPILER_SUPPORTS_${SIMD})
+    string(TOLOWER ${SIMD} LCSIMD)
+    string(CONCAT TARGET_IUT${SIMD} "iut" ${LCSIMD})
+
     add_executable(${TARGET_IUT${SIMD}} ${IUT_SRC})
     target_compile_options(${TARGET_IUT${SIMD}}
       PRIVATE ${FLAGS_ENABLE_${SIMD}})
