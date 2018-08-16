@@ -185,7 +185,7 @@ static INLINE vint2 vtruncate_vi2_vf(vfloat vf) { return vcvtq_s32_f32(vf); }
 static INLINE vfloat vcast_vf_vi2(vint2 vi) { return vcvtq_f32_s32(vi); }
 static INLINE vint2 vcast_vi2_i(int i) { return vdupq_n_s32(i); }
 static INLINE vint2 vrint_vi2_vf(vfloat d) {
-  return vcvtq_s32_f32(vrndaq_f32(d));
+  return vcvtq_s32_f32(vrndnq_f32(d));
 }
 
 /***************************************/
@@ -398,7 +398,7 @@ static INLINE vdouble vcast_vd_vi(vint vi) {
 }
 static INLINE vint vcast_vi_i(int i) { return vdup_n_s32(i); }
 static INLINE vint vrint_vi_vd(vdouble d) {
-  return vqmovn_s64(vcvtq_s64_f64(vrndaq_f64(d)));
+  return vqmovn_s64(vcvtq_s64_f64(vrndnq_f64(d)));
 }
 
 /***************************************/
@@ -487,10 +487,10 @@ static INLINE vopmask veq_vo_vi2_vi2(vint2 x, vint2 y) {
   return vceqq_s32(x, y);
 }
 static INLINE vopmask vgt_vo_vi2_vi2(vint2 x, vint2 y) {
-  return vcgeq_s32(x, y);
+  return vcgtq_s32(x, y);
 }
 static INLINE vopmask vgt_vo_vi_vi(vint x, vint y) {
-  return vcombine_u32(vcge_s32(x, y), vdup_n_u32(0));
+  return vcombine_u32(vcgt_s32(x, y), vdup_n_u32(0));
 }
 static INLINE vopmask visinf_vo_vf(vfloat d) {
   return veq_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(SLEEF_INFINITYf));

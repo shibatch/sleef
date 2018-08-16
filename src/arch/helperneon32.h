@@ -161,9 +161,9 @@ static INLINE vint2 vandnot_vi2_vo_vi2(vopmask x, vint2 y) { return (vint2)vbicq
 #define vsra_vi2_vi2_i(x, c) vshrq_n_s32(x, c)
 
 static INLINE vopmask veq_vo_vi2_vi2(vint2 x, vint2 y) { return vceqq_s32(x, y); }
-static INLINE vopmask vgt_vo_vi2_vi2(vint2 x, vint2 y) { return vcgeq_s32(x, y); }
+static INLINE vopmask vgt_vo_vi2_vi2(vint2 x, vint2 y) { return vcgtq_s32(x, y); }
 static INLINE vint2 veq_vi2_vi2_vi2(vint2 x, vint2 y) { return (vint2)vceqq_s32(x, y); }
-static INLINE vint2 vgt_vi2_vi2_vi2(vint2 x, vint2 y) { return (vint2)vcgeq_s32(x, y); }
+static INLINE vint2 vgt_vi2_vi2_vi2(vint2 x, vint2 y) { return (vint2)vcgtq_s32(x, y); }
 
 static INLINE vint2 vsel_vi2_vo_vi2_vi2(vopmask m, vint2 x, vint2 y) { return (vint2)vbslq_u32(m, (vmask)x, (vmask)y); }
 
