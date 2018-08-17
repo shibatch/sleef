@@ -1055,6 +1055,7 @@ int main(int argc,char **argv)
       }
     }
 
+#ifndef DETERMINISTIC
     {
       mpfr_set_d(frx, d, GMP_RNDN);
       mpfr_sqrt(frx, frx, GMP_RNDN);
@@ -1093,6 +1094,7 @@ int main(int argc,char **argv)
 	fflush(stdout); ecnt++;
       }
     }
+#endif // #ifndef DETERMINISTIC
 
     {
       mpfr_set_d(frx, d, GMP_RNDN);
