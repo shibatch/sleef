@@ -229,7 +229,7 @@ static INLINE vdouble vrint_vd_vd(vdouble vd) { return vcast_vd_vi(vrint_vi_vd(v
 static INLINE vint vcast_vi_i(int j) { vint ret; for(int i=0;i<VECTLENDP;i++) ret.i[i] = j; return ret; }
 
 static INLINE vopmask veq64_vo_vm_vm(vmask x, vmask y) { vopmask ret; for(int i=0;i<VECTLENDP;i++) ret.x[i] = x.x[i] == y.x[i] ? -1 : 0; return ret; }
-static INLINE vmask vadd64_vo_vm_vm(vmask x, vmask y) { vmask ret; for(int i=0;i<VECTLENDP;i++) ret.x[i] = x.x[i] + y.x[i]; return ret; }
+static INLINE vmask vadd64_vm_vm_vm(vmask x, vmask y) { vmask ret; for(int i=0;i<VECTLENDP;i++) ret.x[i] = x.x[i] + y.x[i]; return ret; }
 
 //
 
@@ -340,6 +340,8 @@ static INLINE vmask vreinterpret_vm_vf(vfloat vf) { union { vfloat vf; vmask vm;
 static INLINE vfloat vreinterpret_vf_vm(vmask vm) { union { vfloat vf; vmask vm; } cnv; cnv.vm = vm; return cnv.vf; }
 static INLINE vfloat vreinterpret_vf_vi2(vint2 vi) { union { vfloat vf; vint2 vi2; } cnv; cnv.vi2 = vi; return cnv.vf; }
 static INLINE vint2 vreinterpret_vi2_vf(vfloat vf) { union { vfloat vf; vint2 vi2; } cnv; cnv.vf = vf; return cnv.vi2; }
+
+static INLINE vint2 vrev21_vi2_vi2(vint2 i) { return vreinterpret_vi2_vf(vrev21_vf_vf(vreinterpret_vf_vi2(i))); }
 
 static INLINE vfloat vadd_vf_vf_vf(vfloat x, vfloat y) { vfloat ret; for(int i=0;i<VECTLENSP;i++) ret.f[i] = x.f[i] + y.f[i]; return ret; }
 static INLINE vfloat vsub_vf_vf_vf(vfloat x, vfloat y) { vfloat ret; for(int i=0;i<VECTLENSP;i++) ret.f[i] = x.f[i] - y.f[i]; return ret; }

@@ -23,10 +23,11 @@ endif()
 
 # The library currently supports the following SIMD architectures
 set(SLEEF_SUPPORTED_EXTENSIONS
-  AVX512F AVX2 AVX2128 FMA4 AVX SSE4 SSE2 # x86
-  ADVSIMD SVE				  # Aarch64
-  NEON32 NEON32VFPV4			  # Aarch32
-  VSX				          # PPC64
+  AVX512F AVX512FNOFMA AVX2 AVX2128 FMA4 AVX SSE4 SSE2  # x86
+  ADVSIMD ADVSIMDNOFMA SVE SVENOFMA                     # Aarch64
+  NEON32 NEON32VFPV4			                # Aarch32
+  VSX VSXNOFMA				                # PPC64
+  PUREC_SCALAR PURECFMA_SCALAR                          # Generic type
   CACHE STRING "List of SIMD architectures supported by libsleef."
   )
 set(SLEEF_SUPPORTED_GNUABI_EXTENSIONS 
@@ -67,6 +68,9 @@ if((CMAKE_SYSTEM_PROCESSOR MATCHES "x86") OR (CMAKE_SYSTEM_PROCESSOR MATCHES "AM
     AVX2128
     AVX512F_
     AVX512F
+    AVX512FNOFMA
+    PUREC_SCALAR
+    PURECFMA_SCALAR
   )
   command_arguments(HEADER_PARAMS_SSE_      2 4 __m128d __m128 __m128i __m128i __SSE2__)
   command_arguments(HEADER_PARAMS_SSE2      2 4 __m128d __m128 __m128i __m128i __SSE2__ sse2)
@@ -78,25 +82,37 @@ if((CMAKE_SYSTEM_PROCESSOR MATCHES "x86") OR (CMAKE_SYSTEM_PROCESSOR MATCHES "AM
   command_arguments(HEADER_PARAMS_AVX2128   2 4 __m128d __m128 __m128i __m128i __SSE2__ avx2128)
   command_arguments(HEADER_PARAMS_AVX512F_  8 16 __m512d __m512 __m256i __m512i __AVX512F__)
   command_arguments(HEADER_PARAMS_AVX512F   8 16 __m512d __m512 __m256i __m512i __AVX512F__ avx512f)
+  command_arguments(HEADER_PARAMS_AVX512FNOFMA   8 16 __m512d __m512 __m256i __m512i __AVX512F__ avx512fnofma)
 
   command_arguments(ALIAS_PARAMS_AVX512F_DP   8 __m512d __m256i e avx512f)
   command_arguments(ALIAS_PARAMS_AVX512F_SP -16 __m512  __m512i e avx512f)
+
+  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mavx2;-mfma")
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
   set(SLEEF_ARCH_AARCH64 ON CACHE INTERNAL "True for Aarch64 architecture.")
   # Aarch64 requires support for advsimdfma4
   set(COMPILER_SUPPORTS_ADVSIMD 1)
+  set(COMPILER_SUPPORTS_ADVSIMDNOFMA 1)
 
   set(SLEEF_HEADER_LIST
     ADVSIMD_
     ADVSIMD
+    ADVSIMDNOFMA
     SVE
+    SVENOFMA
+    PUREC_SCALAR
+    PURECFMA_SCALAR
   )
   command_arguments(HEADER_PARAMS_ADVSIMD_   2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON)
   command_arguments(HEADER_PARAMS_ADVSIMD    2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON advsimd)
-  command_arguments(HEADER_PARAMS_SVE    2 4 svfloat64_t svfloat32_t svint32_t svint32_t __ARM_FEATURE_SVE sve)
+  command_arguments(HEADER_PARAMS_ADVSIMDNOFMA  2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON advsimdnofma)
+  command_arguments(HEADER_PARAMS_SVE           x x svfloat64_t svfloat32_t svint32_t svint32_t __ARM_FEATURE_SVE sve)
+  command_arguments(HEADER_PARAMS_SVENOFMA      x x svfloat64_t svfloat32_t svint32_t svint32_t __ARM_FEATURE_SVE svenofma)
 
   command_arguments(ALIAS_PARAMS_ADVSIMD_DP  2 float64x2_t int32x2_t n advsimd)
   command_arguments(ALIAS_PARAMS_ADVSIMD_SP -4 float32x4_t int32x4_t n advsimd)
+
+  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-march=armv8-a+simd")
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
   set(SLEEF_ARCH_AARCH32 ON CACHE INTERNAL "True for Aarch32 architecture.")
   set(COMPILER_SUPPORTS_NEON32 1)
@@ -106,6 +122,8 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
     NEON32_
     NEON32
     NEON32VFPV4
+    PUREC_SCALAR
+    PURECFMA_SCALAR
   )
   command_arguments(HEADER_PARAMS_NEON32_   2 4 - float32x4_t int32x2_t int32x4_t __ARM_NEON__)
   command_arguments(HEADER_PARAMS_NEON32    2 4 - float32x4_t int32x2_t int32x4_t __ARM_NEON__ neon)
@@ -113,19 +131,37 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
 
   command_arguments(ALIAS_PARAMS_NEON32_SP -4 float32x4_t int32x4_t - neon)
   command_arguments(ALIAS_PARAMS_NEON32_DP 0)
+
+  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mfpu=vfpv4")
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
   set(SLEEF_ARCH_PPC64 ON CACHE INTERNAL "True for PPC64 architecture.")
 
   set(SLEEF_HEADER_LIST
     VSX_
     VSX
+    VSXNOFMA
+    PUREC_SCALAR
+    PURECFMA_SCALAR
   )
 
   set(HEADER_PARAMS_VSX       2 4 "vector double" "vector float" "vector int" "vector int" __VSX__ vsx)
   set(HEADER_PARAMS_VSX_      2 4 "vector double" "vector float" "vector int" "vector int" __VSX__ vsx)
+  set(HEADER_PARAMS_VSXNOFMA  2 4 "vector double" "vector float" "vector int" "vector int" __VSX__ vsxnofma)
   set(ALIAS_PARAMS_VSX_DP  2 "vector double" "vector int" - vsx)
   set(ALIAS_PARAMS_VSX_SP -4 "vector float" "vector int" - vsx)
+
+  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mvsx")
 endif()
+
+command_arguments(HEADER_PARAMS_PUREC_SCALAR       1 1 double float int32_t int32_t __STDC__ purec)
+command_arguments(HEADER_PARAMS_PURECFMA_SCALAR    1 1 double float int32_t int32_t FP_FAST_FMA purecfma)
+command_arguments(ALIAS_PARAMS_PUREC_SCALAR_DP     1 double int32_t purec)
+command_arguments(ALIAS_PARAMS_PUREC_SCALAR_SP    -1 float  int32_t purec)
+command_arguments(ALIAS_PARAMS_PURECFMA_SCALAR_DP  1 double int32_t purecfma)
+command_arguments(ALIAS_PARAMS_PURECFMA_SCALAR_SP -1 float  int32_t purecfma)
+
+set(COMPILER_SUPPORTS_PUREC_SCALAR 1)
+set(COMPILER_SUPPORTS_PURECFMA_SCALAR 1)
 
 # MKRename arguments per type
 command_arguments(RENAME_PARAMS_SSE2           2 4 sse2)
@@ -135,14 +171,20 @@ command_arguments(RENAME_PARAMS_FMA4           4 8 fma4)
 command_arguments(RENAME_PARAMS_AVX2           4 8 avx2)
 command_arguments(RENAME_PARAMS_AVX2128        2 4 avx2128)
 command_arguments(RENAME_PARAMS_AVX512F        8 16 avx512f)
+command_arguments(RENAME_PARAMS_AVX512FNOFMA   8 16 avx512fnofma)
 command_arguments(RENAME_PARAMS_ADVSIMD        2 4 advsimd)
+command_arguments(RENAME_PARAMS_ADVSIMDNOFMA   2 4 advsimdnofma)
 command_arguments(RENAME_PARAMS_NEON32         2 4 neon)
 command_arguments(RENAME_PARAMS_NEON32VFPV4    2 4 neonvfpv4)
 command_arguments(RENAME_PARAMS_VSX            2 4 vsx)
+command_arguments(RENAME_PARAMS_VSXNOFMA        2 4 vsxnofma)
+command_arguments(RENAME_PARAMS_PUREC_SCALAR    1 1 purec)
+command_arguments(RENAME_PARAMS_PURECFMA_SCALAR 1 1 purecfma)
 # The vector length parameters in SVE, for SP and DP, are chosen for
 # the smallest SVE vector size (128-bit). The name is generated using
 # the "x" token of VLA SVE vector functions.
 command_arguments(RENAME_PARAMS_SVE            2 4 sve)
+command_arguments(RENAME_PARAMS_SVENOFMA       x x svenofma)
 
 command_arguments(RENAME_PARAMS_GNUABI_SSE2    sse2 b 2 4 _mm128d _mm128 _mm128i _mm128i __SSE2__)
 command_arguments(RENAME_PARAMS_GNUABI_AVX     avx c 4 8 __m256d __m256 __m128i "struct { __m128i x, y$<SEMICOLON> }" __AVX__)
@@ -152,7 +194,7 @@ command_arguments(RENAME_PARAMS_GNUABI_ADVSIMD advsimd n 2 4 float64x2_t float32
 # The vector length parameters in SVE, for SP and DP, are chosen for
 # the smallest SVE vector size (128-bit). The name is generated using
 # the "x" token of VLA SVE vector functions.
-command_arguments(RENAME_PARAMS_GNUABI_SVE sve s 2 4 svfloat64_t svfloat32_t svint32_t svint32_t __ARM_SVE)
+command_arguments(RENAME_PARAMS_GNUABI_SVE sve s x x svfloat64_t svfloat32_t svint32_t svint32_t __ARM_SVE)
 
 command_arguments(MKMASKED_PARAMS_GNUABI_AVX512F_dp avx512f e 8)
 command_arguments(MKMASKED_PARAMS_GNUABI_AVX512F_sp avx512f e -16)
@@ -183,13 +225,17 @@ set(CLANG_FLAGS_ENABLE_FMA4 "-mfma4")
 set(CLANG_FLAGS_ENABLE_AVX2 "-mavx2;-mfma")
 set(CLANG_FLAGS_ENABLE_AVX2128 "-mavx2;-mfma")
 set(CLANG_FLAGS_ENABLE_AVX512F "-mavx512f")
+set(CLANG_FLAGS_ENABLE_AVX512FNOFMA "-mavx512f")
 set(CLANG_FLAGS_ENABLE_NEON32 "--target=arm-linux-gnueabihf;-mcpu=cortex-a8")
 set(CLANG_FLAGS_ENABLE_NEON32VFPV4 "-march=armv7-a;-mfpu=neon-vfpv4")
 # Arm AArch64 vector extensions.
 set(CLANG_FLAGS_ENABLE_ADVSIMD "-march=armv8-a+simd")
+set(CLANG_FLAGS_ENABLE_ADVSIMDNOFMA "-march=armv8-a+simd")
 set(CLANG_FLAGS_ENABLE_SVE "-march=armv8-a+sve")
+set(CLANG_FLAGS_ENABLE_SVENOFMA "-march=armv8-a+sve")
 # PPC64
 set(CLANG_FLAGS_ENABLE_VSX "-mvsx")
+set(CLANG_FLAGS_ENABLE_VSXNOFMA "-mvsx")
 
 # All variables storing compiler flags should be prefixed with FLAGS_
 if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
@@ -223,6 +269,8 @@ elseif(MSVC)
   set(FLAGS_ENABLE_AVX2 /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /arch:AVX2)
   set(FLAGS_ENABLE_AVX2128 /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /arch:AVX2)
   set(FLAGS_ENABLE_AVX512F /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /D__AVX512F__ /arch:AVX2)
+  set(FLAGS_ENABLE_AVX512FNOFMA /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /D__AVX512F__ /arch:AVX2)
+  set(FLAGS_ENABLE_PURECFMA_SCALAR /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /arch:AVX2)
   set(FLAGS_WALL "/D_CRT_SECURE_NO_WARNINGS")
   set(FLAGS_NO_ERRNO "")
 elseif(CMAKE_C_COMPILER_ID MATCHES "Intel")
@@ -232,6 +280,8 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "Intel")
   set(FLAGS_ENABLE_AVX2 "-march=core-avx2")
   set(FLAGS_ENABLE_AVX2128 "-march=core-avx2")
   set(FLAGS_ENABLE_AVX512F "-xCOMMON-AVX512")
+  set(FLAGS_ENABLE_AVX512FNOFMA "-xCOMMON-AVX512")
+  set(FLAGS_ENABLE_PURECFMA_SCALAR "-march=core-avx2")
   set(FLAGS_STRICTMATH "-fp-model strict -Qoption,cpp,--extended_float_type -qoverride-limits")
   set(FLAGS_FASTMATH "-fp-model fast=2 -Qoption,cpp,--extended_float_type -qoverride-limits")
   set(FLAGS_WALL "-fmax-errors=3 -Wall -Wno-unused -Wno-attributes")
@@ -429,6 +479,10 @@ if(SLEEF_ARCH_X86 AND NOT DISABLE_AVX512F)
     __mmask16 m = _mm512_cmp_epi32_mask(a, a, _MM_CMPINT_EQ);
     __m512i r = _mm512_andnot_si512(a, a); }"
     COMPILER_SUPPORTS_AVX512F)
+
+  if (COMPILER_SUPPORTS_AVX512F)
+    set(COMPILER_SUPPORTS_AVX512FNOFMA 1)
+  endif()
 endif()
 
 if (ENFORCE_AVX512F AND NOT COMPILER_SUPPORTS_AVX512F)
@@ -447,6 +501,10 @@ if(SLEEF_ARCH_AARCH64 AND NOT DISABLE_SVE)
   int main() {
     svint32_t r = svdup_n_s32(1); }"
     COMPILER_SUPPORTS_SVE)
+
+  if(COMPILER_SUPPORTS_SVE)
+    set(COMPILER_SUPPORTS_SVENOFMA 1)
+  endif()
 endif()
 
 if (ENFORCE_SVE AND NOT COMPILER_SUPPORTS_SVE)
@@ -467,6 +525,10 @@ if(SLEEF_ARCH_PPC64 AND NOT DISABLE_VSX)
     d = vec_perm(d, d, (vector unsigned char)(4, 5, 6, 7, 0, 1, 2, 3, 12, 13, 14, 15, 8, 9, 10, 11));
   }"
     COMPILER_SUPPORTS_VSX)
+
+  if (COMPILER_SUPPORTS_VSX)
+    set(COMPILER_SUPPORTS_VSXNOFMA 1)
+  endif()
 endif()
 
 if (ENFORCE_VSX AND NOT COMPILER_SUPPORTS_VSX)

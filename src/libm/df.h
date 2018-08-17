@@ -3,7 +3,7 @@
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#ifdef ENABLE_SVE
+#if defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA)
 typedef __sizeless_struct vfloat2 {
   svfloat32_t x;
   svfloat32_t y;

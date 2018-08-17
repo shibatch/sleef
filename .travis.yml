@@ -52,13 +52,11 @@ matrix:
         - ENABLE_DOCKER="true"
 
 before_install:
-     - export PATH=$PATH:/usr/bin:${TRAVIS_BUILD_DIR}/sde-external-8.12.0-2017-10-23-lin
+     - export PATH=$PATH:/usr/bin
      - cd ${TRAVIS_BUILD_DIR}
      - chmod +x ${TRAVIS_BUILD_DIR}/travis/*.sh
      - if [[ "${ENABLE_DOCKER}" == "true" ]]; then ${TRAVIS_BUILD_DIR}/travis/setupdocker.sh; fi
      - if [[ "${ENABLE_DOCKER}" == "true" ]]; then docker exec xenial /build/travis/before_install.${LABEL}.sh; fi
-     - if [[ ( "${LABEL}" == "x86_64-gcc"   ) && ( "${SDE_URL}" != "" ) ]]; then wget -q ${SDE_URL}; fi
-     - if [[ ( "${LABEL}" == "x86_64-clang" ) && ( "${SDE_URL}" != "" ) ]]; then wget -q ${SDE_URL}; fi
      - if [[ "${ENABLE_DOCKER}" != "true" ]]; then ${TRAVIS_BUILD_DIR}/travis/before_install.${LABEL}.sh; fi
 
 before_script:

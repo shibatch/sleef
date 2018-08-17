@@ -273,14 +273,12 @@ static INLINE vdouble vgather_vd_p_vi(const double *ptr, vint vi) {
   return _mm_set_pd(ptr[a[1]], ptr[a[0]]);
 }
 
-#if defined(_MSC_VER)
-// This function is needed when debugging on MSVC.
+// This function is for debugging
 static INLINE double vcast_d_vd(vdouble v) {
   double a[VECTLENDP];
   vstoreu_v_p_vd(a, v);
   return a[0];
 }
-#endif
 
 //
 
@@ -385,14 +383,13 @@ static INLINE vfloat vgather_vf_p_vi2(const float *ptr, vint2 vi) {
   return _mm_set_ps(ptr[a[3]], ptr[a[2]], ptr[a[1]], ptr[a[0]]);
 }
 
-#ifdef _MSC_VER
-// This function is useful when debugging on MSVC.
+// This function is for debugging
 static INLINE float vcast_f_vf(vfloat v) {
   float a[VECTLENSP];
   vstoreu_v_p_vf(a, v);
   return a[0];
 }
-#endif
+
 //
 
 #define PNMASK ((vdouble) { +0.0, -0.0 })
@@ -426,6 +423,7 @@ static INLINE void vsscatter2_v_p_i_i_vd(double *ptr, int offset, int step, vdou
 
 static INLINE vfloat vrev21_vf_vf(vfloat d0) { return _mm_shuffle_ps(d0, d0, (2 << 6) | (3 << 4) | (0 << 2) | (1 << 0)); }
 static INLINE vfloat vreva2_vf_vf(vfloat d0) { return _mm_shuffle_ps(d0, d0, (1 << 6) | (0 << 4) | (3 << 2) | (2 << 0)); }
+static INLINE vint2 vrev21_vi2_vi2(vint2 i) { return vreinterpret_vi2_vf(vrev21_vf_vf(vreinterpret_vf_vi2(i))); }
 
 static INLINE void vstream_v_p_vf(float *ptr, vfloat v) { _mm_stream_ps(ptr, v); }
 

@@ -18,7 +18,7 @@
 #error VECTLENDP or VECTLENSP already defined
 #endif
 
-#if CONFIG == 1
+#if CONFIG == 1 || CONFIG == 2
 // Vector length agnostic
 #define VECTLENSP (svcntw())
 #define VECTLENDP (svcntd())
@@ -67,10 +67,13 @@ static INLINE int vavailability_i(int name) { return 3; }
 #endif
 
 #define ENABLE_SP
-#define ENABLE_FMA_SP
-
 #define ENABLE_DP
+
+#if CONFIG != 2
+#define ENABLE_FMA_SP
 #define ENABLE_FMA_DP
+//#define SPLIT_KERNEL // Benchmark comparison is needed to determine whether this option should be enabled.
+#endif
 
 #define FULL_FP_ROUNDING
 #define ACCURATE_SQRT
@@ -215,9 +218,10 @@ static INLINE vfloat vcast_vf_vi2(vint2 vi) {
 }
 static INLINE vint2 vcast_vi2_i(int i) { return svdup_n_s32(i); }
 static INLINE vint2 vrint_vi2_vf(vfloat d) {
-  return svcvt_s32_f32_x(ptrue, svrinta_f32_x(ptrue, d));
+  return svcvt_s32_f32_x(ptrue, svrintn_f32_x(ptrue, d));
 }
 
+#if CONFIG == 1
 // Multiply accumulate: z = z + x * y
 static INLINE vfloat vmla_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) {
   return svmad_f32_x(ptrue, x, y, z);
@@ -226,6 +230,10 @@ static INLINE vfloat vmla_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) {
 static INLINE vfloat vmlanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) {
   return svmsb_f32_x(ptrue, x, y, z);
 }
+#else
+static INLINE vfloat vmla_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vadd_vf_vf_vf(vmul_vf_vf_vf(x, y), z); }
+static INLINE vfloat vmlanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vsub_vf_vf_vf(z, vmul_vf_vf_vf(x, y)); }
+#endif
 
 // fused multiply add / sub
 static INLINE vfloat vfma_vf_vf_vf_vf(vfloat x, vfloat y,
@@ -283,7 +291,7 @@ static INLINE vfloat vtruncate_vf_vf(vfloat vd) {
 //
 //
 static INLINE vfloat vrint_vf_vf(vfloat vf) {
-  return svrinta_f32_x(svptrue_b32(), vf);
+  return svrintn_f32_x(svptrue_b32(), vf);
 }
 //
 //
@@ -492,10 +500,10 @@ static INLINE vint vtruncate_vi_vd(vdouble vd) {
   return svcvt_s32_f64_x(ptrue, vd);
 }
 static INLINE vint vrint_vi_vd(vdouble vd) {
-  return svcvt_s32_f64_x(ptrue, svrinta_f64_x(ptrue, vd));
+  return svcvt_s32_f64_x(ptrue, svrintn_f64_x(ptrue, vd));
 }
 static INLINE vdouble vrint_vd_vd(vdouble vd) {
-  return svrinta_f64_x(ptrue, vd);
+  return svrintn_f64_x(ptrue, vd);
 }
 
 // FP math operations
@@ -524,11 +532,21 @@ static INLINE vdouble vmin_vd_vd_vd(vdouble x, vdouble y) {
   return svmin_f64_x(ptrue, x, y);
 }
 
+#if CONFIG == 1
 // Multiply accumulate / subtract
 static INLINE vdouble vmla_vd_vd_vd_vd(vdouble x, vdouble y,
                                        vdouble z) { // z = x*y + z
   return svmad_f64_x(ptrue, x, y, z);
 }
+static INLINE vdouble vmlapn_vd_vd_vd_vd(vdouble x, vdouble y,
+                                         vdouble z) { // z = x * y - z
+  return svnmsb_f64_x(ptrue, x, y, z);
+}
+#else
+static INLINE vdouble vmla_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return vadd_vd_vd_vd(vmul_vd_vd_vd(x, y), z); }
+static INLINE vdouble vmlapn_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return vsub_vd_vd_vd(vmul_vd_vd_vd(x, y), z); }
+#endif
+
 static INLINE vdouble vfma_vd_vd_vd_vd(vdouble x, vdouble y,
                                        vdouble z) { // z + x * y
   return svmad_f64_x(ptrue, x, y, z);
@@ -539,10 +557,6 @@ static INLINE vdouble vfmanp_vd_vd_vd_vd(vdouble x, vdouble y,
 }
 static INLINE vdouble vfmapn_vd_vd_vd_vd(vdouble x, vdouble y,
                                          vdouble z) { // x * y - z
-  return svnmsb_f64_x(ptrue, x, y, z);
-}
-static INLINE vdouble vmlapn_vd_vd_vd_vd(vdouble x, vdouble y,
-                                         vdouble z) { // z = x * y - z
   return svnmsb_f64_x(ptrue, x, y, z);
 }
 
@@ -654,6 +668,8 @@ static INLINE vmask vor_vm_vo64_vm(vopmask x, vmask y) {
 static INLINE vfloat vrev21_vf_vf(vfloat vf) {
   return svreinterpret_f32_u64(svrevw_u64_x(ptrue, svreinterpret_u64_f32(vf)));
 }
+
+static INLINE vint2 vrev21_vi2_vi2(vint2 i) { return vreinterpret_vi2_vf(vrev21_vf_vf(vreinterpret_vf_vi2(i))); }
 
 // Comparison returning integer
 static INLINE vint2 veq_vi2_vi2_vi2(vint2 x, vint2 y) {

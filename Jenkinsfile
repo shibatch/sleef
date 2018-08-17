@@ -53,6 +53,7 @@ pipeline {
                 	 echo "FMA4 on" `hostname`
 			 export PATH=$PATH:/opt/local/bin:/opt/bin:/opt/sde-external-8.16.0-2018-01-30-lin
 			 export LD_LIBRARY_PATH=/opt/local/lib:/opt/lib
+		         export CC=gcc-8.2.0
 			 rm -rf build
  			 mkdir build
 			 cd build
@@ -153,6 +154,24 @@ pipeline {
 			 '''
             	     }
 		 }
+
+                stage('AArch32') {
+            	     agent { label 'aarch32' }
+            	     steps {
+	    	     	 sh '''
+                	 echo "aarch32 on" `hostname`
+			 rm -rf build
+ 			 mkdir build
+			 cd build
+			 cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 ..
+			 make -j 4 all
+			 export OMP_WAIT_POLICY=passive
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j 4
+		         make install
+			 '''
+            	     }
+                }
             }
         }
     }
