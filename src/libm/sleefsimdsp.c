@@ -389,8 +389,8 @@ static INLINE CONST dfi_t rempif(vfloat a) {
   return ret;
 }
 
-#if !defined(DETERMINISTIC)
 EXPORT CONST vfloat xsinf(vfloat d) {
+#if !defined(DETERMINISTIC)
   vint2 q;
   vfloat u, s, r = d;
 
@@ -436,9 +436,9 @@ EXPORT CONST vfloat xsinf(vfloat d) {
   u = vsel_vf_vo_vf_vf(visnegzero_vo_vf(r), r, u);
 
   return u;
-}
+
 #else // #if !defined(DETERMINISTIC)
-EXPORT CONST vfloat xsinf(vfloat d) {
+
   vint2 q;
   vfloat u, s, r = d;
 
@@ -492,11 +492,11 @@ EXPORT CONST vfloat xsinf(vfloat d) {
   u = vsel_vf_vo_vf_vf(visnegzero_vo_vf(r), r, u);
 
   return u;
-}
 #endif // #if !defined(DETERMINISTIC)
+}
 
-#if !defined(DETERMINISTIC)
 EXPORT CONST vfloat xcosf(vfloat d) {
+#if !defined(DETERMINISTIC)
   vint2 q;
   vfloat u, s, r = d;
 
@@ -545,9 +545,9 @@ EXPORT CONST vfloat xcosf(vfloat d) {
   u = vadd_vf_vf_vf(vmul_vf_vf_vf(s, vmul_vf_vf_vf(u, d)), d);
 
   return u;
-}
+
 #else // #if !defined(DETERMINISTIC)
-EXPORT CONST vfloat xcosf(vfloat d) {
+
   vint2 q;
   vfloat u, s, r = d;
 
@@ -601,11 +601,11 @@ EXPORT CONST vfloat xcosf(vfloat d) {
   u = vadd_vf_vf_vf(vmul_vf_vf_vf(s, vmul_vf_vf_vf(u, d)), d);
 
   return u;
-}
 #endif // #if !defined(DETERMINISTIC)
+}
 
-#if !defined(DETERMINISTIC)
 EXPORT CONST vfloat xtanf(vfloat d) {
+#if !defined(DETERMINISTIC)
   vint2 q;
   vopmask o;
   vfloat u, s, x;
@@ -650,9 +650,9 @@ EXPORT CONST vfloat xtanf(vfloat d) {
   u = vsel_vf_vo_vf_vf(o, vrec_vf_vf(u), u);
 
   return u;
-}
+
 #else // #if !defined(DETERMINISTIC)
-EXPORT CONST vfloat xtanf(vfloat d) {
+
   vint2 q;
   vopmask o;
   vfloat u, s, x;
@@ -703,11 +703,11 @@ EXPORT CONST vfloat xtanf(vfloat d) {
   u = vsel_vf_vo_vf_vf(o, vrec_vf_vf(u), u);
 
   return u;
-}
 #endif // #if !defined(DETERMINISTIC)
+}
 
-#if !defined(DETERMINISTIC)
 EXPORT CONST vfloat xsinf_u1(vfloat d) {
+#if !defined(DETERMINISTIC)
   vint2 q;
   vfloat u, v;
   vfloat2 s, t, x;
@@ -749,9 +749,9 @@ EXPORT CONST vfloat xsinf_u1(vfloat d) {
   u = vsel_vf_vo_vf_vf(visnegzero_vo_vf(d), d, u);
 
   return u;
-}
+
 #else // #if !defined(DETERMINISTIC)
-EXPORT CONST vfloat xsinf_u1(vfloat d) {
+
   vint2 q;
   vfloat u, v;
   vfloat2 s, t, x;
@@ -797,11 +797,11 @@ EXPORT CONST vfloat xsinf_u1(vfloat d) {
   u = vsel_vf_vo_vf_vf(visnegzero_vo_vf(d), d, u);
 
   return u;
-}
 #endif // #if !defined(DETERMINISTIC)
+}
 
-#if !defined(DETERMINISTIC)
 EXPORT CONST vfloat xcosf_u1(vfloat d) {
+#if !defined(DETERMINISTIC)
   vint2 q;
   vfloat u;
   vfloat2 s, t, x;
@@ -843,9 +843,9 @@ EXPORT CONST vfloat xcosf_u1(vfloat d) {
   u = vreinterpret_vf_vm(vxor_vm_vm_vm(vand_vm_vo32_vm(veq_vo_vi2_vi2(vand_vi2_vi2_vi2(q, vcast_vi2_i(2)), vcast_vi2_i(0)), vreinterpret_vm_vf(vcast_vf_f(-0.0))), vreinterpret_vm_vf(u)));
   
   return u;
-}
+
 #else // #if !defined(DETERMINISTIC)
-EXPORT CONST vfloat xcosf_u1(vfloat d) {
+
   vint2 q;
   vfloat u;
   vfloat2 s, t, x;
@@ -891,8 +891,8 @@ EXPORT CONST vfloat xcosf_u1(vfloat d) {
   u = vreinterpret_vf_vm(vxor_vm_vm_vm(vand_vm_vo32_vm(veq_vo_vi2_vi2(vand_vi2_vi2_vi2(q, vcast_vi2_i(2)), vcast_vi2_i(0)), vreinterpret_vm_vf(vcast_vf_f(-0.0))), vreinterpret_vm_vf(u)));
   
   return u;
-}
 #endif // #if !defined(DETERMINISTIC)
+}
 
 #ifdef ENABLE_GNUABI
 #define TYPE2_FUNCATR static INLINE CONST 
@@ -914,8 +914,8 @@ EXPORT CONST vfloat xcosf_u1(vfloat d) {
 #define XMODFF xmodff
 #endif
 
-#if !defined(DETERMINISTIC)
 TYPE2_FUNCATR vfloat2 XSINCOSF(vfloat d) {
+#if !defined(DETERMINISTIC)
   vint2 q;
   vopmask o;
   vfloat u, s, t, rx, ry;
@@ -973,9 +973,9 @@ TYPE2_FUNCATR vfloat2 XSINCOSF(vfloat d) {
   r.y = vreinterpret_vf_vm(vxor_vm_vm_vm(vand_vm_vo32_vm(o, vreinterpret_vm_vf(vcast_vf_f(-0.0))), vreinterpret_vm_vf(r.y)));
 
   return r;
-}
+
 #else // #if !defined(DETERMINISTIC)
-TYPE2_FUNCATR vfloat2 XSINCOSF(vfloat d) {
+
   vint2 q;
   vopmask o;
   vfloat u, s, t, rx, ry;
@@ -1040,11 +1040,11 @@ TYPE2_FUNCATR vfloat2 XSINCOSF(vfloat d) {
   r.y = vreinterpret_vf_vm(vxor_vm_vm_vm(vand_vm_vo32_vm(o, vreinterpret_vm_vf(vcast_vf_f(-0.0))), vreinterpret_vm_vf(r.y)));
 
   return r;
-}
 #endif // #if !defined(DETERMINISTIC)
+}
 
-#if !defined(DETERMINISTIC)
 TYPE2_FUNCATR vfloat2 XSINCOSF_U1(vfloat d) {
+#if !defined(DETERMINISTIC)
   vint2 q;
   vopmask o;
   vfloat u, v, rx, ry;
@@ -1099,9 +1099,9 @@ TYPE2_FUNCATR vfloat2 XSINCOSF_U1(vfloat d) {
   r.y = vreinterpret_vf_vm(vxor_vm_vm_vm(vand_vm_vo32_vm(o, vreinterpret_vm_vf(vcast_vf_f(-0.0))), vreinterpret_vm_vf(r.y)));
 
   return r;
-}
+
 #else // #if !defined(DETERMINISTIC)
-TYPE2_FUNCATR vfloat2 XSINCOSF_U1(vfloat d) {
+
   vint2 q;
   vopmask o;
   vfloat u, v, rx, ry;
@@ -1158,8 +1158,8 @@ TYPE2_FUNCATR vfloat2 XSINCOSF_U1(vfloat d) {
   r.y = vreinterpret_vf_vm(vxor_vm_vm_vm(vand_vm_vo32_vm(o, vreinterpret_vm_vf(vcast_vf_f(-0.0))), vreinterpret_vm_vf(r.y)));
 
   return r;
-}
 #endif // #if !defined(DETERMINISTIC)
+}
 
 #if !defined(DETERMINISTIC)
 TYPE2_FUNCATR vfloat2 XSINCOSPIF_U05(vfloat d) {
@@ -1323,8 +1323,8 @@ EXPORT CONST vfloat xmodff(vfloat a, float *iptr) {
 #endif // #ifdef ENABLE_GNUABI
 #endif // #if !defined(DETERMINISTIC)
 
-#if !defined(DETERMINISTIC)
 EXPORT CONST vfloat xtanf_u1(vfloat d) {
+#if !defined(DETERMINISTIC)
   vint2 q;
   vfloat u, v;
   vfloat2 s, t, x;
@@ -1371,9 +1371,9 @@ EXPORT CONST vfloat xtanf_u1(vfloat d) {
   u = vsel_vf_vo_vf_vf(visnegzero_vo_vf(d), d, u);
   
   return u;
-}
+
 #else // #if !defined(DETERMINISTIC)
-EXPORT CONST vfloat xtanf_u1(vfloat d) {
+
   vint2 q;
   vfloat u, v;
   vfloat2 s, t, x;
@@ -1422,8 +1422,8 @@ EXPORT CONST vfloat xtanf_u1(vfloat d) {
   u = vsel_vf_vo_vf_vf(visnegzero_vo_vf(d), d, u);
   
   return u;
-}
 #endif // #if !defined(DETERMINISTIC)
+}
 
 #if !defined(DETERMINISTIC)
 EXPORT CONST vfloat xatanf(vfloat d) {

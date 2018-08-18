@@ -393,6 +393,7 @@ static INLINE CONST ddi_t rempi(vdouble a) {
   return ret;
 }
 
+EXPORT CONST vdouble xsin(vdouble d) {
 #if !defined(DETERMINISTIC)
 // The SIMD source files(sleefsimd?p.c) are compiled twice for each
 // vector extension, with DETERMINISTIC macro turned on and off.
@@ -400,7 +401,6 @@ static INLINE CONST ddi_t rempi(vdouble a) {
 // function name xsin will be renamed to Sleef_sind2_u35sse2 with
 // renamesse2.h, for example.
 
-EXPORT CONST vdouble xsin(vdouble d) {
   vdouble u, s, r = d;
   vint ql;
 
@@ -455,15 +455,14 @@ EXPORT CONST vdouble xsin(vdouble d) {
   u = vsel_vd_vo_vd_vd(visnegzero_vo_vd(r), r, u);
   
   return u;
-}
+
 #else // #if !defined(DETERMINISTIC)
+
 // This is the deterministic implementation of sin function. Returned
 // values from deterministic functions are bitwise consistent across
 // all platforms. The function name xsin will be renamed to
 // Sleef_cinz_sind2_u35sse2 with renamesse2.h, for example. The
 // renaming by rename*.h is switched according to DETERMINISTIC macro.
-
-EXPORT CONST vdouble xsin(vdouble d) {
   vdouble u, s, r = d;
   vint ql;
 
@@ -526,11 +525,11 @@ EXPORT CONST vdouble xsin(vdouble d) {
   u = vsel_vd_vo_vd_vd(visnegzero_vo_vd(r), r, u);
   
   return u;
-}
 #endif // #if !defined(DETERMINISTIC)
+}
 
-#if !defined(DETERMINISTIC)
 EXPORT CONST vdouble xsin_u1(vdouble d) {
+#if !defined(DETERMINISTIC)
   vdouble u;
   vdouble2 s, t, x;
   vint ql;
@@ -587,9 +586,9 @@ EXPORT CONST vdouble xsin_u1(vdouble d) {
   u = vsel_vd_vo_vd_vd(veq_vo_vd_vd(d, vcast_vd_d(0)), d, u);
   
   return u;
-}
+
 #else // #if !defined(DETERMINISTIC)
-EXPORT CONST vdouble xsin_u1(vdouble d) {
+
   vdouble u;
   vdouble2 s, t, x;
   vint ql;
@@ -655,11 +654,11 @@ EXPORT CONST vdouble xsin_u1(vdouble d) {
   u = vsel_vd_vo_vd_vd(veq_vo_vd_vd(d, vcast_vd_d(0)), d, u);
   
   return u;
-}
 #endif // #if !defined(DETERMINISTIC)
+}
 
-#if !defined(DETERMINISTIC)
 EXPORT CONST vdouble xcos(vdouble d) {
+#if !defined(DETERMINISTIC)
   vdouble u, s, r = d;
   vint ql;
 
@@ -717,9 +716,9 @@ EXPORT CONST vdouble xcos(vdouble d) {
   u = vadd_vd_vd_vd(vmul_vd_vd_vd(s, vmul_vd_vd_vd(u, d)), d);
   
   return u;
-}
+
 #else // #if !defined(DETERMINISTIC)
-EXPORT CONST vdouble xcos(vdouble d) {
+
   vdouble u, s, r = d;
   vint ql;
 
@@ -786,11 +785,11 @@ EXPORT CONST vdouble xcos(vdouble d) {
   u = vadd_vd_vd_vd(vmul_vd_vd_vd(s, vmul_vd_vd_vd(u, d)), d);
   
   return u;
-}
 #endif // #if !defined(DETERMINISTIC)
+}
 
-#if !defined(DETERMINISTIC)
 EXPORT CONST vdouble xcos_u1(vdouble d) {
+#if !defined(DETERMINISTIC)
   vdouble u;
   vdouble2 s, t, x;
   vint ql;
@@ -849,9 +848,9 @@ EXPORT CONST vdouble xcos_u1(vdouble d) {
   u = vreinterpret_vd_vm(vxor_vm_vm_vm(vand_vm_vo64_vm(vcast_vo64_vo32(veq_vo_vi_vi(vand_vi_vi_vi(ql, vcast_vi_i(2)), vcast_vi_i(0))), vreinterpret_vm_vd(vcast_vd_d(-0.0))), vreinterpret_vm_vd(u)));
   
   return u;
-}
+
 #else // #if !defined(DETERMINISTIC)
-EXPORT CONST vdouble xcos_u1(vdouble d) {
+
   vdouble u;
   vdouble2 s, t, x;
   vint ql;
@@ -919,8 +918,8 @@ EXPORT CONST vdouble xcos_u1(vdouble d) {
   u = vreinterpret_vd_vm(vxor_vm_vm_vm(vand_vm_vo64_vm(vcast_vo64_vo32(veq_vo_vi_vi(vand_vi_vi_vi(ql, vcast_vi_i(2)), vcast_vi_i(0))), vreinterpret_vm_vd(vcast_vd_d(-0.0))), vreinterpret_vm_vd(u)));
   
   return u;
-}
 #endif // #if !defined(DETERMINISTIC)
+}
 
 #ifdef ENABLE_GNUABI
 #define TYPE2_FUNCATR static INLINE CONST 
@@ -942,8 +941,8 @@ EXPORT CONST vdouble xcos_u1(vdouble d) {
 #define XMODF xmodf
 #endif
 
-#if !defined(DETERMINISTIC)
 TYPE2_FUNCATR vdouble2 XSINCOS(vdouble d) {
+#if !defined(DETERMINISTIC)
   vopmask o;
   vdouble u, t, rx, ry, s;
   vdouble2 r;
@@ -1009,9 +1008,9 @@ TYPE2_FUNCATR vdouble2 XSINCOS(vdouble d) {
   r.y = vreinterpret_vd_vm(vxor_vm_vm_vm(vand_vm_vo64_vm(o, vreinterpret_vm_vd(vcast_vd_d(-0.0))), vreinterpret_vm_vd(r.y)));
   
   return r;
-}
+
 #else // #if !defined(DETERMINISTIC)
-TYPE2_FUNCATR vdouble2 XSINCOS(vdouble d) {
+
   vopmask o;
   vdouble u, t, rx, ry, s = d;
   vdouble2 r;
@@ -1085,11 +1084,11 @@ TYPE2_FUNCATR vdouble2 XSINCOS(vdouble d) {
   r.y = vreinterpret_vd_vm(vxor_vm_vm_vm(vand_vm_vo64_vm(o, vreinterpret_vm_vd(vcast_vd_d(-0.0))), vreinterpret_vm_vd(r.y)));
   
   return r;
-}
 #endif // #if !defined(DETERMINISTIC)
+}
 
-#if !defined(DETERMINISTIC)
 TYPE2_FUNCATR vdouble2 XSINCOS_U1(vdouble d) {
+#if !defined(DETERMINISTIC)
   vopmask o;
   vdouble u, rx, ry;
   vdouble2 r, s, t, x;
@@ -1162,9 +1161,9 @@ TYPE2_FUNCATR vdouble2 XSINCOS_U1(vdouble d) {
   r.y = vreinterpret_vd_vm(vxor_vm_vm_vm(vand_vm_vo64_vm(o, vreinterpret_vm_vd(vcast_vd_d(-0.0))), vreinterpret_vm_vd(r.y)));
 
   return r;
-}
+
 #else // #if !defined(DETERMINISTIC)
-TYPE2_FUNCATR vdouble2 XSINCOS_U1(vdouble d) {
+
   vopmask o;
   vdouble u, rx, ry;
   vdouble2 r, s, t, x;
@@ -1245,8 +1244,8 @@ TYPE2_FUNCATR vdouble2 XSINCOS_U1(vdouble d) {
   r.y = vreinterpret_vd_vm(vxor_vm_vm_vm(vand_vm_vo64_vm(o, vreinterpret_vm_vd(vcast_vd_d(-0.0))), vreinterpret_vm_vd(r.y)));
 
   return r;
-}
 #endif // #if !defined(DETERMINISTIC)
+}
 
 #if !defined(DETERMINISTIC)
 TYPE2_FUNCATR vdouble2 XSINCOSPI_U05(vdouble d) {
@@ -1524,8 +1523,8 @@ EXPORT CONST vdouble xcospi_u05(vdouble d) {
   return r;
 }
 
-#if !defined(DETERMINISTIC)
 EXPORT CONST vdouble xtan(vdouble d) {
+#if !defined(DETERMINISTIC)
   vdouble u, s, x;
   vopmask o;
   vint ql;
@@ -1608,9 +1607,9 @@ EXPORT CONST vdouble xtan(vdouble d) {
   u = vsel_vd_vo_vd_vd(veq_vo_vd_vd(d, vcast_vd_d(0)), d, u);
   
   return u;
-}
+
 #else // #if !defined(DETERMINISTIC)
-EXPORT CONST vdouble xtan(vdouble d) {
+
   vdouble u, s, x;
   vopmask o;
   vint ql;
@@ -1700,14 +1699,15 @@ EXPORT CONST vdouble xtan(vdouble d) {
   u = vmla_vd_vd_vd_vd(s, vmul_vd_vd_vd(u, x), x);
 
   u = vsel_vd_vo_vd_vd(o, vrec_vd_vd(u), u);
+
   u = vsel_vd_vo_vd_vd(veq_vo_vd_vd(d, vcast_vd_d(0)), d, u);
   
   return u;
-}
 #endif // #if !defined(DETERMINISTIC)
+}
 
-#if !defined(DETERMINISTIC)
 EXPORT CONST vdouble xtan_u1(vdouble d) {
+#if !defined(DETERMINISTIC)
   vdouble u;
   vdouble2 s, t, x;
   vopmask o;
@@ -1798,9 +1798,9 @@ EXPORT CONST vdouble xtan_u1(vdouble d) {
   u = vsel_vd_vo_vd_vd(veq_vo_vd_vd(d, vcast_vd_d(0)), d, u);
 
   return u;
-}
+
 #else // #if !defined(DETERMINISTIC)
-EXPORT CONST vdouble xtan_u1(vdouble d) {
+
   vdouble u;
   vdouble2 s, t, x;
   vopmask o;
@@ -1899,8 +1899,8 @@ EXPORT CONST vdouble xtan_u1(vdouble d) {
   u = vsel_vd_vo_vd_vd(veq_vo_vd_vd(d, vcast_vd_d(0)), d, u);
 
   return u;
-}
 #endif // #if !defined(DETERMINISTIC)
+}
 
 static INLINE CONST vdouble atan2k(vdouble y, vdouble x) {
   vdouble s, t, u;
