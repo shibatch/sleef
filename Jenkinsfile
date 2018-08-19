@@ -155,6 +155,10 @@ pipeline {
 			 cd build
 			 cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 ..
 			 make -j 2 all
+			 export OMP_WAIT_POLICY=passive
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j 2
+		         make install
 			 '''
             	     }
                 }

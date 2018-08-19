@@ -143,7 +143,7 @@ static INLINE CONST Sleef_float2 df(float h, float l) {
   return ret;
 }
 
-static INLINE CONST Sleef_float2 dfx(float d) {
+static INLINE CONST Sleef_float2 dfx(double d) {
   Sleef_float2 ret;
   ret.x = d; ret.y = d - ret.x;
   return ret;
