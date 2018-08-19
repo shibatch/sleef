@@ -285,4 +285,11 @@ static INLINE CONST int isnanf(float x) { return x != x; }
 static INLINE CONST int isnanl(long double x) { return x != x; }
 #endif
 
+#if defined(__FreeBSD__) 
+#define isinff(x) ((x) == SLEEF_INFINITYf || (x) == -SLEEF_INFINITYf)
+#define isinfl(x) ((x) == SLEEF_INFINITYl || (x) == -SLEEF_INFINITYl)
+#define isnanf(x) ((x) != (x))
+#define isnanl(x) ((x) != (x))
+#endif
+
 #endif // #ifndef __MISC_H__

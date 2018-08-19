@@ -56,7 +56,7 @@ static INLINE CONST float mulsignf(float x, float y) {
   return intBitsToFloat(floatToRawIntBits(x) ^ (floatToRawIntBits(y) & (1 << 31)));
 }
 
-static INLINE CONST double copysignfk(double x, double y) {
+static INLINE CONST float copysignfk(float x, float y) {
   return intBitsToFloat((floatToRawIntBits(x) & ~(1 << 31)) ^ (floatToRawIntBits(y) & (1 << 31)));
 }
 
@@ -73,7 +73,7 @@ static INLINE CONST int xisinff(float x) { return x == SLEEF_INFINITYf || x == -
 static INLINE CONST int xisminff(float x) { return x == -SLEEF_INFINITYf; }
 static INLINE CONST int xispinff(float x) { return x == SLEEF_INFINITYf; }
 static INLINE CONST int xisnegzerof(float x) { return floatToRawIntBits(x) == floatToRawIntBits(-0.0); }
-static INLINE CONST int xisnumberf(double x) { return !xisinff(x) && !xisnanf(x); }
+static INLINE CONST int xisnumberf(float x) { return !xisinff(x) && !xisnanf(x); }
 
 static INLINE CONST int ilogbkf(float d) {
   int m = d < 5.421010862427522E-20f;
@@ -143,7 +143,7 @@ static INLINE CONST Sleef_float2 df(float h, float l) {
   return ret;
 }
 
-static INLINE CONST Sleef_float2 dfx(double d) {
+static INLINE CONST Sleef_float2 dfx(float d) {
   Sleef_float2 ret;
   ret.x = d; ret.y = d - ret.x;
   return ret;

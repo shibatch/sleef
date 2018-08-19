@@ -81,7 +81,7 @@ void startChild(const char *path, char *const argv[]) {
     fflush(stdin);
     fflush(stdout);
 
-#if !defined(__APPLE__)
+#if !defined(__APPLE__) && !defined(__FreeBSD__)
     execvpe(path, argv, environ);
 #else
     execvp(path, argv);

@@ -145,6 +145,20 @@ pipeline {
             	     }
                 }
 
+                stage('FreeBSD') {
+            	     agent { label 'freebsd' }
+            	     steps {
+	    	     	 sh '''
+                	 echo "FreeBSD on" `hostname`
+			 rm -rf build
+ 			 mkdir build
+			 cd build
+			 cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 ..
+			 make -j 2 all
+			 '''
+            	     }
+                }
+
 		stage('PowerPC VSX') {
             	     agent { label 'x86 && xenial' }
             	     steps {
