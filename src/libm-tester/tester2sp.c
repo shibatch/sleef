@@ -38,6 +38,10 @@
 static int isinff(float x) { return x == __builtin_inff() || x == -__builtin_inff(); }
 #endif
 
+#if defined(__FreeBSD__) 
+#define isinff(x) ((x) == (float)(1e+300) || (x) == -(float)(1e+300))
+#endif
+
 #define DENORMAL_FLT_MIN (1.4012984643248170709e-45f)
 #define POSITIVE_INFINITYf ((float)INFINITY)
 #define NEGATIVE_INFINITYf (-(float)INFINITY)

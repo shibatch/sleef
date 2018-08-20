@@ -608,10 +608,23 @@ CHECK_C_SOURCE_COMPILES("
   }"
   COMPILER_SUPPORTS_SYS_GETRANDOM)
 
+# Check if compilation with FFTW3 really succeeds
+
+if(LIBFFTW3)
+  set (CMAKE_REQUIRED_LIBRARIES ${LIBFFTW3})
+  CHECK_C_SOURCE_COMPILES("
+  #include <fftw3.h>
+  int main() {
+  fftw_complex *in  = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * 16);
+  }"
+  COMPILER_SUPPORTS_FFTW3)
+endif(LIBFFTW3)
+
 #
 
 # Reset used flags
 set(CMAKE_REQUIRED_FLAGS)
+set(CMAKE_REQUIRED_LIBRARIES)
 
 # Save the default C flags
 set(ORG_CMAKE_C_FLAGS CMAKE_C_FLAGS)
