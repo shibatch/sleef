@@ -222,6 +222,8 @@ DECLARE_SP(fmodf, vv);
 DECLARE_SP(frfrexpf, v);
 DECLARE_SP(hypotf, vv);
 #ifndef ENABLE_AVX
+// These two functions are not checked in some configurations due to
+// the issue in https://github.com/shibatch/sleef/issues/221
 DECLARE_SP(expfrexpf, v);
 DECLARE_SP(ilogbf, v);
 #endif
@@ -400,6 +402,8 @@ int main(void) {
   CALL_SP(frfrexpf, v);
   CALL_SP(hypotf, vv);
 #ifndef ENABLE_AVX
+// These two functions are not checked in some configurations due to
+// the issue in https://github.com/shibatch/sleef/issues/221
   CALL_SP(expfrexpf, v);
   CALL_SP(ilogbf, v);
 #endif
