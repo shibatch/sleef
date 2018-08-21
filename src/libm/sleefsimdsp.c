@@ -2968,6 +2968,7 @@ EXPORT CONST vfloat xerfcf_u15(vfloat a) {
 #endif // #if !defined(DETERMINISTIC)
 
 #if !defined(DETERMINISTIC) && !defined(ENABLE_GNUABI)
+// See sleefsimddp.c for explanation of these macros
 
 #ifdef ENABLE_ALIAS
 #define DALIAS_vf_vf(FUNC) EXPORT CONST vfloat y ## FUNC(vfloat) __attribute__((alias( stringify(x ## FUNC) )));

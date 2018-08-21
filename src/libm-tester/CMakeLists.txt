@@ -78,12 +78,17 @@ macro(test_extension SIMD)
       PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS})
     target_link_libraries(${TARGET_IUT${SIMD}} ${TARGET_LIBSLEEF}
       ${LIBM} ${LIBRT})
-
     add_dependencies(${TARGET_IUT${SIMD}} ${TARGET_HEADERS})
     add_dependencies(${TARGET_IUT${SIMD}} ${TARGET_LIBSLEEF})
     set_target_properties(${TARGET_IUT${SIMD}} PROPERTIES C_STANDARD 99)
     add_test_iut(${TARGET_IUT${SIMD}})
     list(APPEND IUT_LIST ${TARGET_IUT${SIMD}})
+
+# The iut programs whose name begins with "iuty" are the iut for the
+# deterministic version of functions. By checking the result of
+# testing with iutysse2, for example, it can be checked that the
+# corresponding deterministic functions passes the accuracy and
+# nonnumber tests.
 
     string(CONCAT IUTYNAME "iuty" ${LCSIMD})
     add_executable(${IUTYNAME} ${IUT_SRC})
@@ -114,6 +119,9 @@ macro(test_extension SIMD)
 	      if (MPFR_INCLUDE_DIR)
 		target_include_directories(${T} PRIVATE ${MPFR_INCLUDE_DIR})
 	      endif()
+
+# The tester2 programs whose name begins with "tester2y" are the
+# testing program for the deterministic version of functions.
 
 	      set(T "tester2y${SCSIMD}${P}")
 	      add_executable(${T} tester2simd${P}.c testerutil.c)
