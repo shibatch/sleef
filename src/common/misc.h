@@ -273,7 +273,7 @@ typedef struct {
 
 #endif // defined(_MSC_VER)
 
-#if defined(__APPLE__) || defined(__MINGW32__) || defined(__MINGW64__) || defined(__FreeBSD__) || defined(_MSC_VER)
+#if !defined(__linux__)
 #define isinff(x) ((x) == SLEEF_INFINITYf || (x) == -SLEEF_INFINITYf)
 #define isinfl(x) ((x) == SLEEF_INFINITYl || (x) == -SLEEF_INFINITYl)
 #define isnanf(x) ((x) != (x))
