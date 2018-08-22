@@ -13,6 +13,10 @@ find_path(MPFR_INCLUDE_DIR
   NAMES mpfr.h
   ONLY_CMAKE_FIND_ROOT_PATH)
 
+find_path(FFTW3_INCLUDE_DIR
+  NAMES fftw3.h
+  ONLY_CMAKE_FIND_ROOT_PATH)
+
 if (NOT LIBM)
   set(LIBM "")
 endif()
@@ -620,6 +624,7 @@ CHECK_C_SOURCE_COMPILES("
 
 # Reset used flags
 set(CMAKE_REQUIRED_FLAGS)
+set(CMAKE_REQUIRED_LIBRARIES)
 
 # Save the default C flags
 set(ORG_CMAKE_C_FLAGS CMAKE_C_FLAGS)

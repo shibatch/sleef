@@ -271,18 +271,13 @@ typedef struct {
 #endif
 #endif
 
-static INLINE CONST int isinff(float x) { return x == SLEEF_INFINITYf || x == -SLEEF_INFINITYf; }
-static INLINE CONST int isinfl(long double x) { return x == SLEEF_INFINITYl || x == -SLEEF_INFINITYl; }
-static INLINE CONST int isnanf(float x) { return x != x; }
-static INLINE CONST int isnanl(long double x) { return x != x; }
-
 #endif // defined(_MSC_VER)
 
-#if defined(__APPLE__) || defined(__MINGW32__) || defined(__MINGW64__)
-static INLINE CONST int isinff(float x) { return x == SLEEF_INFINITYf || x == -SLEEF_INFINITYf; }
-static INLINE CONST int isinfl(long double x) { return x == SLEEF_INFINITYl || x == -SLEEF_INFINITYl; }
-static INLINE CONST int isnanf(float x) { return x != x; }
-static INLINE CONST int isnanl(long double x) { return x != x; }
+#if !defined(__linux__)
+#define isinff(x) ((x) == SLEEF_INFINITYf || (x) == -SLEEF_INFINITYf)
+#define isinfl(x) ((x) == SLEEF_INFINITYl || (x) == -SLEEF_INFINITYl)
+#define isnanf(x) ((x) != (x))
+#define isnanl(x) ((x) != (x))
 #endif
 
 #endif // #ifndef __MISC_H__

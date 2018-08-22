@@ -25,6 +25,9 @@ endfunction()
 
 include_directories(${PROJECT_SOURCE_DIR}/include)        # sleefdft.h
 include_directories(${CMAKE_BINARY_DIR}/include)          # sleef.h
+if (FFTW3_INCLUDE_DIR)
+  include_directories(${FFTW3_INCLUDE_DIR})               # fftw3.h
+endif()
 
 # Link directories
 

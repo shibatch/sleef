@@ -32,7 +32,7 @@ EXPORT uint64_t Sleef_currentTimeMicros() {
   gettimeofday(&time, NULL);
   return (uint64_t)((time.tv_sec * 1000000LL) + time.tv_usec);
 }
-#else
+#else // #if defined(__MINGW32__) || defined(__MINGW64__) || defined(_MSC_VER)
 #include <time.h>
 #include <unistd.h>
 #ifdef __FreeBSD__
@@ -49,7 +49,7 @@ EXPORT uint64_t Sleef_currentTimeMicros() {
   clock_gettime(CLOCK_MONOTONIC, &tp);
   return (uint64_t)tp.tv_sec * 1000000LL + ((uint64_t)tp.tv_nsec/1000);
 }
-#endif
+#endif // #if defined(__MINGW32__) || defined(__MINGW64__) || defined(_MSC_VER)
 
 #ifdef _MSC_VER
 #include <intrin.h>

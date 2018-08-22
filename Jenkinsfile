@@ -190,6 +190,24 @@ pipeline {
 			 '''
             	     }
                 }
+
+                stage('FreeBSD') {
+            	     agent { label 'freebsd' }
+            	     steps {
+	    	     	 sh '''
+                	 echo "FreeBSD on" `hostname`
+			 rm -rf build
+ 			 mkdir build
+			 cd build
+			 cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 ..
+			 make -j 3 all
+			 export OMP_WAIT_POLICY=passive
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j 3
+		         make install
+			 '''
+            	     }
+                }
             }
         }
     }
