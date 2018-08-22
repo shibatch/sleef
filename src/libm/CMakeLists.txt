@@ -310,6 +310,7 @@ if (SLEEF_ARCH_X86)
   endif()
 
   add_library(dispsse_obj OBJECT dispsse.c)
+  target_compile_options(dispsse_obj PRIVATE ${FLAGS_ENABLE_SSE2})
   set_target_properties(dispsse_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
   target_compile_definitions(dispsse_obj PRIVATE ${COMMON_TARGET_DEFINITIONS} ${DISPATCHER_DEFINITIONS})
   target_include_directories(dispsse_obj PRIVATE ${CMAKE_BINARY_DIR}/include)

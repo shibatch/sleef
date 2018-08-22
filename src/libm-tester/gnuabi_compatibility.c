@@ -211,7 +211,6 @@ DECLARE_SP(erfcf, v);
 DECLARE_SP(expf, v);
 DECLARE_SP(exp10f, v);
 DECLARE_SP(exp2f, v);
-DECLARE_SP(expfrexpf, v);
 DECLARE_SP(expm1f, v);
 DECLARE_SP(fabsf, v);
 DECLARE_SP(fdimf, vv);
@@ -222,7 +221,12 @@ DECLARE_SP(fminf, vv);
 DECLARE_SP(fmodf, vv);
 DECLARE_SP(frfrexpf, v);
 DECLARE_SP(hypotf, vv);
+#ifndef ENABLE_AVX
+// These two functions are not checked in some configurations due to
+// the issue in https://github.com/shibatch/sleef/issues/221
+DECLARE_SP(expfrexpf, v);
 DECLARE_SP(ilogbf, v);
+#endif
 DECLARE_SP(ldexpf, vv);
 DECLARE_SP(lgammaf, v);
 DECLARE_SP(logf, v);
@@ -387,7 +391,6 @@ int main(void) {
   CALL_SP(expf, v);
   CALL_SP(exp10f, v);
   CALL_SP(exp2f, v);
-  CALL_SP(expfrexpf, v);
   CALL_SP(expm1f, v);
   CALL_SP(fabsf, v);
   CALL_SP(fdimf, vv);
@@ -398,7 +401,12 @@ int main(void) {
   CALL_SP(fmodf, vv);
   CALL_SP(frfrexpf, v);
   CALL_SP(hypotf, vv);
+#ifndef ENABLE_AVX
+// These two functions are not checked in some configurations due to
+// the issue in https://github.com/shibatch/sleef/issues/221
+  CALL_SP(expfrexpf, v);
   CALL_SP(ilogbf, v);
+#endif
   CALL_SP(ldexpf, vv);
   CALL_SP(lgammaf, v);
   CALL_SP(logf, v);
