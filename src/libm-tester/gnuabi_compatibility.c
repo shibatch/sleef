@@ -221,6 +221,10 @@ DECLARE_SP(fminf, vv);
 DECLARE_SP(fmodf, vv);
 DECLARE_SP(frfrexpf, v);
 DECLARE_SP(hypotf, vv);
+#ifndef ENABLE_AVX
+DECLARE_SP(expfrexpf, v);
+DECLARE_SP(ilogbf, v);
+#endif
 DECLARE_SP(ldexpf, vv);
 DECLARE_SP(lgammaf, v);
 DECLARE_SP(logf, v);
@@ -395,6 +399,10 @@ int main(void) {
   CALL_SP(fmodf, vv);
   CALL_SP(frfrexpf, v);
   CALL_SP(hypotf, vv);
+#ifndef ENABLE_AVX
+  CALL_SP(expfrexpf, v);
+  CALL_SP(ilogbf, v);
+#endif
   CALL_SP(ldexpf, vv);
   CALL_SP(lgammaf, v);
   CALL_SP(logf, v);

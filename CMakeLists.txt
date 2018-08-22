@@ -16,10 +16,12 @@ enable_testing()
 
 set(SLEEF_VERSION_MAJOR 3)
 set(SLEEF_VERSION_MINOR 3)
+set(SLEEF_VERSION_PATCHLEVEL 1)
+set(SLEEF_VERSION ${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}.${SLEEF_VERSION_PATCHLEVEL})
 set(SLEEF_SOVERSION ${SLEEF_VERSION_MAJOR})
 
 project(SLEEF
-	VERSION ${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}
+	VERSION ${SLEEF_VERSION}
 	LANGUAGES C)
 
 # Sanity check for in-source builds which we do not want to happen
@@ -113,8 +115,7 @@ add_subdirectory("src")
 # Extra messages at configuration time. By default is active, it can be
 # turned off by invoking cmake with "-DSLEEF_SHOW_CONFIG=OFF".
 if(SLEEF_SHOW_CONFIG)
-  message(STATUS "Configuring build for \
-${PROJECT_NAME}-v${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}")
+  message(STATUS "Configuring build for ${PROJECT_NAME}-v${SLEEF_VERSION}")
   message("   Target system: ${CMAKE_SYSTEM}")
   message("   Target processor: ${CMAKE_SYSTEM_PROCESSOR}")
   message("   Host system: ${CMAKE_HOST_SYSTEM}")

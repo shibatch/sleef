@@ -13,6 +13,10 @@ find_path(MPFR_INCLUDE_DIR
   NAMES mpfr.h
   ONLY_CMAKE_FIND_ROOT_PATH)
 
+find_path(FFTW3_INCLUDE_DIR
+  NAMES fftw3.h
+  ONLY_CMAKE_FIND_ROOT_PATH)
+
 if (NOT LIBM)
   set(LIBM "")
 endif()
@@ -407,17 +411,6 @@ CHECK_C_SOURCE_COMPILES("
     float  b = __builtin_sqrtf(2);
   }"
   COMPILER_SUPPORTS_BUILTIN_MATH)
-
-# Check if compilation with FFTW3 really succeeds
-if(LIBFFTW3)
-  set (CMAKE_REQUIRED_LIBRARIES ${LIBFFTW3})
-  CHECK_C_SOURCE_COMPILES("
-  #include <fftw3.h>
-  int main() {
-  fftw_complex *in  = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * 16);
-  }"
-  COMPILER_SUPPORTS_FFTW3)
-endif(LIBFFTW3)
 
 # Reset used flags
 set(CMAKE_REQUIRED_FLAGS)

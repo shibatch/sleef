@@ -25,6 +25,9 @@ endfunction()
 
 include_directories(${PROJECT_SOURCE_DIR}/include)        # sleefdft.h
 include_directories(${CMAKE_BINARY_DIR}/include)          # sleef.h
+if (FFTW3_INCLUDE_DIR)
+  include_directories(${FFTW3_INCLUDE_DIR})               # fftw3.h
+endif()
 
 # Link directories
 
@@ -104,7 +107,7 @@ target_compile_definitions(${TARGET_ROUNDTRIPTEST2DSP} PRIVATE ${COMMON_TARGET_D
 target_link_libraries(${TARGET_ROUNDTRIPTEST2DSP} ${COMMON_LINK_LIBRARIES})
 set_target_properties(${TARGET_ROUNDTRIPTEST2DSP} PROPERTIES ${COMMON_TARGET_PROPERTIES})
 
-if (COMPILER_SUPPORTS_FFTW3)
+if (LIBFFTW3)
   # Target executable fftwtest1ddp
   set(TARGET_FFTWTEST1DDP "fftwtest1ddp")
   add_executable(${TARGET_FFTWTEST1DDP} fftwtest1d.c ${PROJECT_SOURCE_DIR}/include/sleefdft.h)
@@ -158,7 +161,7 @@ if (COMPILER_SUPPORTS_FFTW3)
   add_test_dft(${TARGET_FFTWTEST2DSP}_8_8 $<TARGET_FILE:${TARGET_FFTWTEST2DSP}> 8 8)
   add_test_dft(${TARGET_FFTWTEST2DSP}_10_10 $<TARGET_FILE:${TARGET_FFTWTEST2DSP}> 10 10)
   add_test_dft(${TARGET_FFTWTEST2DSP}_5_15 $<TARGET_FILE:${TARGET_FFTWTEST2DSP}> 5 15)
-else(COMPILER_SUPPORTS_FFTW3)
+else(LIBFFTW3)
   if(MSVC)
     # Test roundtriptestdp
     add_test_dft(${TARGET_ROUNDTRIPTEST1DDP}_1 $<TARGET_FILE:${TARGET_ROUNDTRIPTEST1DDP}> 1 10)
@@ -195,4 +198,4 @@ else(COMPILER_SUPPORTS_FFTW3)
   add_test_dft(${TARGET_ROUNDTRIPTEST2DSP}_8_8 $<TARGET_FILE:${TARGET_ROUNDTRIPTEST2DSP}> 8 8 10)
   add_test_dft(${TARGET_ROUNDTRIPTEST2DSP}_10_10 $<TARGET_FILE:${TARGET_ROUNDTRIPTEST2DSP}> 10 10 2)
   add_test_dft(${TARGET_ROUNDTRIPTEST2DSP}_5_15 $<TARGET_FILE:${TARGET_ROUNDTRIPTEST2DSP}> 5 15 2)
-endif(COMPILER_SUPPORTS_FFTW3)
+endif(LIBFFTW3)
