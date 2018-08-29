@@ -3370,6 +3370,8 @@ void do_test() {
   //
 
   if (enableDP) {
+    mpfr_set_default_prec(64);
+
     fprintf(stderr, "hypot_u35 : ");
     for(y = -10;y < 10 && success;y += 0.15) {
       for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_d_d(mpfr_hypot, child_hypot_u35, y, x, 3.5);
@@ -3625,7 +3627,7 @@ void do_test() {
     }
     showResult(success);
 
-    mpfr_set_default_prec(128);
+    mpfr_set_default_prec(64);
   
     //
 
@@ -3707,7 +3709,7 @@ void do_test() {
     }
     showResult(success);
 
-    mpfr_set_default_prec(128);
+    mpfr_set_default_prec(64);
   
     //
 
@@ -4116,6 +4118,8 @@ void do_test() {
   //
 
   if (enableSP) {
+    mpfr_set_default_prec(53);
+
     fprintf(stderr, "hypotf_u35 : ");
     for(y = -10;y < 10 && success;y += 0.15) {
       for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_f_f(mpfr_hypot, child_hypotf_u35, y, x, 3.5);
@@ -4311,7 +4315,7 @@ void do_test() {
 
     //
 
-    mpfr_set_default_prec(1280);
+    mpfr_set_default_prec(320);
 
     fprintf(stderr, "sin in sincospif_u35 : ");
     for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracyX_f(mpfr_sinpi, child_sincospif_u35, d, 3.5);
@@ -4371,7 +4375,7 @@ void do_test() {
     }
     showResult(success);
 
-    mpfr_set_default_prec(128);
+    mpfr_set_default_prec(53);
   
     //
 
@@ -4423,7 +4427,7 @@ void do_test() {
 
     //
 
-    mpfr_set_default_prec(1280);
+    mpfr_set_default_prec(320);
 
     fprintf(stderr, "cos in sincospif_u35 : ");
     for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracyY_f(mpfr_cospi, child_sincospif_u35, d, 3.5);
@@ -4453,7 +4457,7 @@ void do_test() {
     }
     showResult(success);
 
-    mpfr_set_default_prec(128);
+    mpfr_set_default_prec(53);
   
     //
 
@@ -4823,7 +4827,7 @@ int main(int argc, char **argv) {
   for(i=a2s;i<argc;i++) argv2[i-a2s] = argv[i];
   argv2[argc-a2s] = NULL;
   
-  mpfr_set_default_prec(128);
+  mpfr_set_default_prec(64);
 
   startChild(argv2[0], argv2);
   fflush(stdin);

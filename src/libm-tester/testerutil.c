@@ -124,7 +124,11 @@ int readln(int fd, char *buf, int cnt) {
 }
 
 int startsWith(char *str, char *prefix) {
-  return strncmp(str, prefix, strlen(prefix)) == 0;
+  while(*str != '\0' && *prefix != '\0') {
+    if (*str != *prefix) return 0;
+    str++; prefix++;
+  }
+  return *prefix == '\0';
 }
 
 //
