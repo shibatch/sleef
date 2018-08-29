@@ -42,12 +42,8 @@ int main(int argc, char **argv) {
   printf("3\n");
   fflush(stdout);
 
-  //fprintf(stderr, "IUT start\n");
-
   for(;;) {
-    if (readln(STDIN_FILENO, buf, BUFSIZE-1) < 1) break;
-
-    //fprintf(stderr, "iut: got %s\n", buf);
+    if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;
 
     if (startsWith(buf, "sin ")) {
       uint64_t u;

@@ -264,7 +264,7 @@ int check_featureSP() {
       u = d2u(s[idx]);						\
       printf("%" PRIx64 "\n", u);				\
       fflush(stdout);						\
-      if (readln(STDIN_FILENO, buf, BUFSIZE-1) < 1) break;	\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;		\
     }								\
   }
 
@@ -290,7 +290,7 @@ int check_featureSP() {
       d2.y = t[idx];							\
       printf("%" PRIx64 " %" PRIx64 "\n", d2u(d2.x), d2u(d2.y));	\
       fflush(stdout);							\
-      if (readln(STDIN_FILENO, buf, BUFSIZE-1) < 1) break;		\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
     }									\
   }
 
@@ -315,7 +315,7 @@ int check_featureSP() {
       u = d2u(s[idx]);						\
       printf("%" PRIx64 "\n", u);				\
       fflush(stdout);						\
-      if (readln(STDIN_FILENO, buf, BUFSIZE-1) < 1) break;	\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;		\
     }								\
   }
 
@@ -337,7 +337,7 @@ int check_featureSP() {
       u = d2u(s[idx]);							\
       printf("%" PRIx64 "\n", u);					\
       fflush(stdout);							\
-      if (readln(STDIN_FILENO, buf, BUFSIZE-1) < 1) break;		\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
     }									\
   }
 
@@ -359,7 +359,7 @@ int check_featureSP() {
       i = t[idx];						\
       printf("%d\n", i);					\
       fflush(stdout);						\
-      if (readln(STDIN_FILENO, buf, BUFSIZE-1) < 1) break;	\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;		\
     }								\
   }
 
@@ -382,7 +382,7 @@ int check_featureSP() {
       u = f2u(s[idx]);							\
       printf("%x\n", u);						\
       fflush(stdout);							\
-      if (readln(STDIN_FILENO, buf, BUFSIZE-1) < 1) break;		\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
     }									\
   }
 
@@ -408,7 +408,7 @@ int check_featureSP() {
       d2.y = t[idx];						\
       printf("%x %x\n", f2u(d2.x), f2u(d2.y));			\
       fflush(stdout);						\
-      if (readln(STDIN_FILENO, buf, BUFSIZE-1) < 1) break;	\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;		\
     }								\
   }
 
@@ -433,7 +433,7 @@ int check_featureSP() {
       u = f2u(s[idx]);							\
       printf("%x\n", u);						\
       fflush(stdout);							\
-      if (readln(STDIN_FILENO, buf, BUFSIZE-1) < 1) break;		\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
     }									\
   }
 
@@ -466,7 +466,7 @@ int do_test(int argc, char **argv) {
   fflush(stderr);
   
   char buf[BUFSIZE];
-  readln(STDIN_FILENO, buf, BUFSIZE-1);
+  fgets(buf, BUFSIZE-1, stdin);
 
   while(!feof(stdin)) {
 #ifdef ENABLE_DP

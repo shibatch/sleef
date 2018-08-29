@@ -47,6 +47,7 @@ void stop(char *mes) {
 
 int ptoc[2], ctop[2];
 int pid;
+FILE *fpctop;
 
 extern char **environ;
 
@@ -100,27 +101,27 @@ void startChild(const char *path, char *const argv[]) {
 
 //
 
-#define child_d_d(funcStr, arg) do {				\
-    char str[256];						\
-    uint64_t u;							\
-    sprintf(str, funcStr " %" PRIx64 "\n", d2u(arg));		\
-    write(ptoc[1], str, strlen(str));				\
-    if (readln(ctop[0], str, 255) < 1) stop("child " funcStr);	\
-    sscanf(str, "%" PRIx64, &u);				\
-    return u2d(u);						\
+#define child_d_d(funcStr, arg) do {					\
+    char str[256];							\
+    uint64_t u;								\
+    sprintf(str, funcStr " %" PRIx64 "\n", d2u(arg));			\
+    write(ptoc[1], str, strlen(str));					\
+    if (fgets(str, 255, fpctop) == NULL) stop("child " funcStr);	\
+    sscanf(str, "%" PRIx64, &u);					\
+    return u2d(u);							\
   } while(0)
 
-#define child_d2_d(funcStr, arg) do {				\
-    char str[256];						\
-    uint64_t u, v;						\
-    sprintf(str, funcStr " %" PRIx64 "\n", d2u(arg));		\
-    write(ptoc[1], str, strlen(str));				\
-    if (readln(ctop[0], str, 255) < 1) stop("child " funcStr);	\
-    sscanf(str, "%" PRIx64 " %" PRIx64, &u, &v);		\
-    Sleef_double2 ret;						\
-    ret.x = u2d(u);						\
-    ret.y = u2d(v);						\
-    return ret;							\
+#define child_d2_d(funcStr, arg) do {					\
+    char str[256];							\
+    uint64_t u, v;							\
+    sprintf(str, funcStr " %" PRIx64 "\n", d2u(arg));			\
+    write(ptoc[1], str, strlen(str));					\
+    if (fgets(str, 255, fpctop) == NULL) stop("child " funcStr);	\
+    sscanf(str, "%" PRIx64 " %" PRIx64, &u, &v);			\
+    Sleef_double2 ret;							\
+    ret.x = u2d(u);							\
+    ret.y = u2d(v);							\
+    return ret;								\
   } while(0)
 
 #define child_d_d_d(funcStr, arg1, arg2) do {				\
@@ -128,7 +129,7 @@ void startChild(const char *path, char *const argv[]) {
     uint64_t u;								\
     sprintf(str, funcStr " %" PRIx64 " %" PRIx64 "\n", d2u(arg1), d2u(arg2)); \
     write(ptoc[1], str, strlen(str));					\
-    if (readln(ctop[0], str, 255) < 1) stop("child " funcStr);		\
+    if (fgets(str, 255, fpctop) == NULL) stop("child " funcStr);	\
     sscanf(str, "%" PRIx64, &u);					\
     return u2d(u);							\
   } while(0)
@@ -213,7 +214,7 @@ double child_ldexp(double x, int q) {
 
   sprintf(str, "ldexp %" PRIx64 " %" PRIx64 "\n", d2u(x), d2u(q));
   write(ptoc[1], str, strlen(str));
-  if (readln(ctop[0], str, 255) < 1) stop("child_ldexp");
+  if (fgets(str, 255, fpctop) == NULL) stop("child_ldexp");
   sscanf(str, "%" PRIx64, &u);
   return u2d(u);
 }
@@ -224,44 +225,44 @@ int child_ilogb(double x) {
   
   sprintf(str, "ilogb %" PRIx64 "\n", d2u(x));
   write(ptoc[1], str, strlen(str));
-  if (readln(ctop[0], str, 255) < 1) stop("child_ilogb");
+  if (fgets(str, 255, fpctop) == NULL) stop("child_ilogb");
   sscanf(str, "%d", &i);
   return i;
 }
 
 //
 
-#define child_f_f(funcStr, arg) do {				\
-    char str[256];						\
-    uint32_t u;							\
-    sprintf(str, funcStr " %x\n", f2u(arg));			\
-    write(ptoc[1], str, strlen(str));				\
-    if (readln(ctop[0], str, 255) < 1) stop("child " funcStr);	\
-    sscanf(str, "%x", &u);					\
-    return u2f(u);						\
+#define child_f_f(funcStr, arg) do {					\
+    char str[256];							\
+    uint32_t u;								\
+    sprintf(str, funcStr " %x\n", f2u(arg));				\
+    write(ptoc[1], str, strlen(str));					\
+    if (fgets(str, 255, fpctop) == NULL) stop("child " funcStr);	\
+    sscanf(str, "%x", &u);						\
+    return u2f(u);							\
   } while(0)
 
-#define child_f2_f(funcStr, arg) do {				\
-    char str[256];						\
-    uint32_t u, v;						\
-    sprintf(str, funcStr " %x\n", f2u(arg));			\
-    write(ptoc[1], str, strlen(str));				\
-    if (readln(ctop[0], str, 255) < 1) stop("child " funcStr);	\
-    sscanf(str, "%x %x", &u, &v);				\
-    Sleef_float2 ret;						\
-    ret.x = u2f(u);						\
-    ret.y = u2f(v);						\
-    return ret;							\
+#define child_f2_f(funcStr, arg) do {					\
+    char str[256];							\
+    uint32_t u, v;							\
+    sprintf(str, funcStr " %x\n", f2u(arg));				\
+    write(ptoc[1], str, strlen(str));					\
+    if (fgets(str, 255, fpctop) == NULL) stop("child " funcStr);	\
+    sscanf(str, "%x %x", &u, &v);					\
+    Sleef_float2 ret;							\
+    ret.x = u2f(u);							\
+    ret.y = u2f(v);							\
+    return ret;								\
   } while(0)
 
-#define child_f_f_f(funcStr, arg1, arg2) do {			\
-    char str[256];						\
-    uint32_t u;							\
-    sprintf(str, funcStr " %x %x\n", f2u(arg1), f2u(arg2));	\
-    write(ptoc[1], str, strlen(str));				\
-    if (readln(ctop[0], str, 255) < 1) stop("child " funcStr);	\
-    sscanf(str, "%x", &u);					\
-    return u2f(u);						\
+#define child_f_f_f(funcStr, arg1, arg2) do {				\
+    char str[256];							\
+    uint32_t u;								\
+    sprintf(str, funcStr " %x %x\n", f2u(arg1), f2u(arg2));		\
+    write(ptoc[1], str, strlen(str));					\
+    if (fgets(str, 255, fpctop) == NULL) stop("child " funcStr);	\
+    sscanf(str, "%x", &u);						\
+    return u2f(u);							\
   } while(0)
 
 float child_sinf(float x) { child_f_f("sinf", x); }
@@ -342,7 +343,7 @@ float child_ldexpf(float x, int q) {
 
   sprintf(str, "ldexpf %x %x\n", f2u(x), f2u(q));
   write(ptoc[1], str, strlen(str));
-  if (readln(ctop[0], str, 255) < 1) stop("child_powf");
+  if (fgets(str, 255, fpctop) == NULL) stop("child_powf");
   sscanf(str, "%x", &u);
   return u2f(u);
 }
@@ -353,7 +354,7 @@ int child_ilogbf(float x) {
   
   sprintf(str, "ilogbf %x\n", f2u(x));
   write(ptoc[1], str, strlen(str));
-  if (readln(ctop[0], str, 255) < 1) stop("child_ilogbf");
+  if (fgets(str, 255, fpctop) == NULL) stop("child_ilogbf");
   sscanf(str, "%d", &i);
   return i;
 }
@@ -4874,6 +4875,8 @@ int main(int argc, char **argv) {
   }
 
   if (enableFlushToZero) fprintf(stderr, "\n\n*** Flush to zero enabled\n");
+
+  fpctop = fdopen(ctop[0], "r");
   
   do_test();
 
