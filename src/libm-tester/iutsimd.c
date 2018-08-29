@@ -457,6 +457,9 @@ int do_test(int argc, char **argv) {
 #elif defined(ENABLE_VECEXT)
     if (vcast_f_vf(xpowf(vcast_vf_f(0.5f), vcast_vf_f(140))) == 0) k += 4;
 #endif
+#if defined(DETERMINISTIC)
+    k += 8;
+#endif
 
     printf("%d\n", k);
     fflush(stdout);
@@ -480,9 +483,11 @@ int do_test(int argc, char **argv) {
     func_d_d("log", xlog);
     func_d_d("exp", xexp);
 
+#ifndef DETERMINISTIC
     func_d_d("sqrt", xsqrt);
     func_d_d("sqrt_u05", xsqrt_u05);
     func_d_d("sqrt_u35", xsqrt_u35);
+#endif
     func_d_d("cbrt", xcbrt);
     func_d_d("cbrt_u1", xcbrt_u1);
 
@@ -562,9 +567,11 @@ int do_test(int argc, char **argv) {
     func_f_f("logf", xlogf);
     func_f_f("expf", xexpf);
 
+#ifndef DETERMINISTIC
     func_f_f("sqrtf", xsqrtf);
     func_f_f("sqrtf_u05", xsqrtf_u05);
     func_f_f("sqrtf_u35", xsqrtf_u35);
+#endif
     func_f_f("cbrtf", xcbrtf);
     func_f_f("cbrtf_u1", xcbrtf_u1);
 
