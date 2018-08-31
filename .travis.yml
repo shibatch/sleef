@@ -45,11 +45,6 @@ matrix:
       env:
         - LABEL="armhf-gcc"
         - ENABLE_DOCKER="true"
-    - os: linux
-      services: docker
-      env:
-        - LABEL="ppc64el-clang"
-        - ENABLE_DOCKER="true"
 
 before_install:
      - export PATH=$PATH:/usr/bin
