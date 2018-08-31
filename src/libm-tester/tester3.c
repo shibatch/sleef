@@ -11,7 +11,7 @@
 #include <string.h>
 #include <time.h>
 
-#include "md5.h"
+#include <openssl/md5.h>
 
 #include "sleef.h"
 #include "misc.h"

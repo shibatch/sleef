@@ -23,4 +23,4 @@ deb-src http://ports.ubuntu.com/ubuntu-ports/ CODENAME-security multiverse
 EOF
 mv /tmp/sources.list /etc/apt/sources.list
 apt-get -qq update
-apt-get install -y git cmake gcc-arm-linux-gnueabihf libc6-armhf-cross libc6:armhf libmpfr-dev:armhf libgomp1:armhf libmpfr-dev binfmt-support qemu qemu-user-static
+apt-get install -y git cmake gcc-arm-linux-gnueabihf libc6-armhf-cross libc6:armhf libmpfr-dev:armhf libgomp1:armhf libmpfr-dev binfmt-support qemu qemu-user-static libssl-dev:armhf
