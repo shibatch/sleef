@@ -24,84 +24,57 @@ typedef vector float  vector_float;
 
 //
 
-static int32_t seed;
-
-// Fill memory with random bits
-static inline void memrand(void *p, int size) {
-  uint8_t *q = p;
-  for(int i=0;i<size;i++) {
-    q[i] = (seed >> 16) & 255;
-    seed = seed * 1103515245 + 12345; 
-  }
-}
-
-static int16_t myrand() {
-  int16_t ret = seed >> 16;
-  seed = seed * 1103515245 + 12345; 
-  return ret;
-}
-
-static inline void memranddp(double *p, int size) {
-  for(int i=0;i<size;i++) p[i] = (2.0 * rand() / RAND_MAX - 1) * 4 * M_PI;
-}
-
-static inline void memrandsp(float *p, int size) {
-  for(int i=0;i<size;i++) p[i] = (float)((2.0 * rand() / RAND_MAX - 1) * 4 * M_PI);
-}
-
-//
-
 #define XNAN  (((union { long long int u; double d; })  { .u = 0xffffffffffffffffLL }).d)
 #define XNANf (((union { long int u; float d; })  { .u = 0xffffffff }).d)
 
-double unifyValue(double x) { x = !(x == x) ? XNAN  : x; return x; }
-float unifyValuef(float  x) { x = !(x == x) ? XNANf : x; return x; }
+static INLINE double unifyValue(double x) { x = !(x == x) ? XNAN  : x; return x; }
+static INLINE float unifyValuef(float  x) { x = !(x == x) ? XNANf : x; return x; }
 
-double setdouble(double d, int r) { return d; }
-double getdouble(double v, int r) { return unifyValue(v); }
-float setfloat(float d, int r) { return d; }
-float getfloat(float v, int r) { return unifyValuef(v); }
+static INLINE double setdouble(double d, int r) { return d; }
+static INLINE double getdouble(double v, int r) { return unifyValue(v); }
+static INLINE float setfloat(float d, int r) { return d; }
+static INLINE float getfloat(float v, int r) { return unifyValuef(v); }
 
 #if defined(__i386__) || defined(__x86_64__) || defined(_MSC_VER)
-__m128d set__m128d(double d, int r) { static double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return _mm_loadu_pd(a); }
-double get__m128d(__m128d v, int r) { static double a[2]; _mm_storeu_pd(a, v); return unifyValue(a[r & 1]); }
-__m128 set__m128(float d, int r) { static float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return _mm_loadu_ps(a); }
-float get__m128(__m128 v, int r) { static float a[4]; _mm_storeu_ps(a, v); return unifyValuef(a[r & 3]); }
+static INLINE __m128d set__m128d(double d, int r) { static double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return _mm_loadu_pd(a); }
+static INLINE double get__m128d(__m128d v, int r) { static double a[2]; _mm_storeu_pd(a, v); return unifyValue(a[r & 1]); }
+static INLINE __m128 set__m128(float d, int r) { static float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return _mm_loadu_ps(a); }
+static INLINE float get__m128(__m128 v, int r) { static float a[4]; _mm_storeu_ps(a, v); return unifyValuef(a[r & 3]); }
 
 #if defined(__AVX__)
-__m256d set__m256d(double d, int r) { static double a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return _mm256_loadu_pd(a); }
-double get__m256d(__m256d v, int r) { static double a[4]; _mm256_storeu_pd(a, v); return unifyValue(a[r & 3]); }
-__m256 set__m256(float d, int r) { static float a[8]; memrand(a, sizeof(a)); a[r & 7] = d; return _mm256_loadu_ps(a); }
-float get__m256(__m256 v, int r) { static float a[8]; _mm256_storeu_ps(a, v); return unifyValuef(a[r & 7]); }
+static INLINE __m256d set__m256d(double d, int r) { static double a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return _mm256_loadu_pd(a); }
+static INLINE double get__m256d(__m256d v, int r) { static double a[4]; _mm256_storeu_pd(a, v); return unifyValue(a[r & 3]); }
+static INLINE __m256 set__m256(float d, int r) { static float a[8]; memrand(a, sizeof(a)); a[r & 7] = d; return _mm256_loadu_ps(a); }
+static INLINE float get__m256(__m256 v, int r) { static float a[8]; _mm256_storeu_ps(a, v); return unifyValuef(a[r & 7]); }
 #endif
 
 #if defined(__AVX512F__)
-__m512d set__m512d(double d, int r) { static double a[8]; memrand(a, sizeof(a)); a[r & 7] = d; return _mm512_loadu_pd(a); }
-double get__m512d(__m512d v, int r) { static double a[8]; _mm512_storeu_pd(a, v); return unifyValue(a[r & 7]); }
-__m512 set__m512(float d, int r) { static float a[16]; memrand(a, sizeof(a)); a[r & 15] = d; return _mm512_loadu_ps(a); }
-float get__m512(__m512 v, int r) { static float a[16]; _mm512_storeu_ps(a, v); return unifyValuef(a[r & 15]); }
+static INLINE __m512d set__m512d(double d, int r) { static double a[8]; memrand(a, sizeof(a)); a[r & 7] = d; return _mm512_loadu_pd(a); }
+static INLINE double get__m512d(__m512d v, int r) { static double a[8]; _mm512_storeu_pd(a, v); return unifyValue(a[r & 7]); }
+static INLINE __m512 set__m512(float d, int r) { static float a[16]; memrand(a, sizeof(a)); a[r & 15] = d; return _mm512_loadu_ps(a); }
+static INLINE float get__m512(__m512 v, int r) { static float a[16]; _mm512_storeu_ps(a, v); return unifyValuef(a[r & 15]); }
 #endif
 #endif // #if defined(__i386__) || defined(__x86_64__) || defined(_MSC_VER)
 
 #if defined(__aarch64__) && defined(__ARM_NEON)
-float64x2_t setfloat64x2_t(double d, int r) { double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return vld1q_f64(a); }
-double getfloat64x2_t(float64x2_t v, int r) { double a[2]; vst1q_f64(a, v); return unifyValue(a[r & 1]); }
-float32x4_t setfloat32x4_t(float d, int r) { float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return vld1q_f32(a); }
-float getfloat32x4_t(float32x4_t v, int r) { float a[4]; vst1q_f32(a, v); return unifyValuef(a[r & 3]); }
+static INLINE float64x2_t setfloat64x2_t(double d, int r) { double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return vld1q_f64(a); }
+static INLINE double getfloat64x2_t(float64x2_t v, int r) { double a[2]; vst1q_f64(a, v); return unifyValue(a[r & 1]); }
+static INLINE float32x4_t setfloat32x4_t(float d, int r) { float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return vld1q_f32(a); }
+static INLINE float getfloat32x4_t(float32x4_t v, int r) { float a[4]; vst1q_f32(a, v); return unifyValuef(a[r & 3]); }
 #endif
 
 #ifdef __ARM_FEATURE_SVE
-svfloat64_t setsvfloat64_t(double d, int r) { double a[svcntd()]; memrand(a, sizeof(a)); a[r & (svcntd()-1)] = d; return svld1_f64(svptrue_b8(), a); }
-double getsvfloat64_t(svfloat64_t v, int r) { double a[svcntd()]; svst1_f64(svptrue_b8(), a, v); return unifyValue(a[r & (svcntd()-1)]); }
-svfloat32_t setsvfloat32_t(float d, int r)  { float  a[svcntw()]; memrand(a, sizeof(a)); a[r & (svcntw()-1)] = d; return svld1_f32(svptrue_b8(), a); }
-float getsvfloat32_t(svfloat32_t v, int r)  { float  a[svcntw()]; svst1_f32(svptrue_b8(), a, v); return unifyValuef(a[r & (svcntw()-1)]); }
+static INLINE svfloat64_t setsvfloat64_t(double d, int r) { double a[svcntd()]; memrand(a, sizeof(a)); a[r & (svcntd()-1)] = d; return svld1_f64(svptrue_b8(), a); }
+static INLINE double getsvfloat64_t(svfloat64_t v, int r) { double a[svcntd()]; svst1_f64(svptrue_b8(), a, v); return unifyValue(a[r & (svcntd()-1)]); }
+static INLINE svfloat32_t setsvfloat32_t(float d, int r)  { float  a[svcntw()]; memrand(a, sizeof(a)); a[r & (svcntw()-1)] = d; return svld1_f32(svptrue_b8(), a); }
+static INLINE float getsvfloat32_t(svfloat32_t v, int r)  { float  a[svcntw()]; svst1_f32(svptrue_b8(), a, v); return unifyValuef(a[r & (svcntw()-1)]); }
 #endif
 
 #ifdef __VSX__
-vector_double setvector_double(double d, int r) { double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return (vector double) ( a[0], a[1] ); }
-double getvector_double(vector double v, int r) { double a[2]; return unifyValue(v[r & 1]); }
-vector_float setvector_float(float d, int r) { float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return (vector float) ( a[0], a[1], a[2], a[3] ); }
-float getvector_float(vector float v, int r) { float a[4]; return unifyValuef(v[r & 3]); }
+static INLINE vector_double setvector_double(double d, int r) { double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return (vector double) ( a[0], a[1] ); }
+static INLINE double getvector_double(vector double v, int r) { double a[2]; return unifyValue(v[r & 1]); }
+static INLINE vector_float setvector_float(float d, int r) { float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return (vector float) ( a[0], a[1], a[2], a[3] ); }
+static INLINE float getvector_float(vector float v, int r) { float a[4]; return unifyValuef(v[r & 3]); }
 #endif
 
 //
@@ -134,7 +107,7 @@ float getvector_float(vector float v, int r) { float a[4]; return unifyValuef(v[
 //  printf("%.10g %.10g\n", arg, GET(TYPE)(vx, r));
 
 #define exec_d_d(ATR, NAME, ULP, TYPE, TSX, EXT, arg) do {		\
-    int r = myrand();							\
+    int r = xrand() & 0xffff;						\
     DPTYPE vx = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (arg, r));	\
     double fx = GET(TYPE)(vx, r);					\
     MD5_Update(&ctx, &fx, sizeof(double));				\
@@ -163,7 +136,7 @@ float getvector_float(vector float v, int r) { float a[4]; return unifyValuef(v[
 //
 
 #define exec_d2_d(ATR, NAME, ULP, TYPE, TSX, EXT, arg) do {		\
-    int r = myrand();							\
+    int r = xrand() & 0xffff;						\
     TYPE2(TYPE) vx2 = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE)(arg, r)); \
     double fxx = GET(TYPE)(vx2.x, r), fxy = GET(TYPE)(vx2.y, r);	\
     MD5_Update(&ctx, &fxx, sizeof(double));				\
@@ -182,7 +155,7 @@ float getvector_float(vector float v, int r) { float a[4]; return unifyValuef(v[
 //
 
 #define exec_d_d_d(ATR, NAME, ULP, TYPE, TSX, EXT, argu, argv) do {	\
-    int r = myrand();							\
+    int r = xrand() & 0xffff;						\
     DPTYPE vx = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (argu, r), SET(TYPE) (argv, r)); \
     double fx = GET(TYPE)(vx, r);					\
     MD5_Update(&ctx, &fx, sizeof(double));				\
@@ -202,7 +175,7 @@ float getvector_float(vector float v, int r) { float a[4]; return unifyValuef(v[
 //
 
 #define exec_f_f(ATR, NAME, ULP, TYPE, TSX, EXT, arg) do {		\
-    int r = myrand();							\
+    int r = xrand() & 0xffff;						\
     SPTYPE vx = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (arg, r));	\
     float fx = GET(TYPE)(vx, r);					\
     MD5_Update(&ctx, &fx, sizeof(float));				\
@@ -229,7 +202,7 @@ float getvector_float(vector float v, int r) { float a[4]; return unifyValuef(v[
 //
 
 #define exec_f2_f(ATR, NAME, ULP, TYPE, TSX, EXT, arg) do {		\
-    int r = myrand();							\
+    int r = xrand() & 0xffff;						\
     TYPE2(TYPE) vx2 = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (arg, r)); \
     float fxx = GET(TYPE)(vx2.x, r), fxy = GET(TYPE)(vx2.y, r);		\
     MD5_Update(&ctx, &fxx, sizeof(float));				\
@@ -248,7 +221,7 @@ float getvector_float(vector float v, int r) { float a[4]; return unifyValuef(v[
 //
 
 #define exec_f_f_f(ATR, NAME, ULP, TYPE, TSX, EXT, argu, argv) do {	\
-    int r = myrand();							\
+    int r = xrand() & 0xffff;						\
     SPTYPE vx = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (argu, r), SET(TYPE) (argv, r)); \
     float fx = GET(TYPE)(vx, r);					\
     MD5_Update(&ctx, &fx, sizeof(float));				\
@@ -281,7 +254,7 @@ int do_test(int argc, char **argv)
     }
   }
 
-  seed = (int)time(NULL);
+  xsrand(time(NULL));
 
   //
 

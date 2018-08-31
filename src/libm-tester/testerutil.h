@@ -28,13 +28,58 @@ int isMinusZerof(float x);
 int xisnanf(float x);
 float signf(float d);
 
-double u2d(uint64_t u);
-uint64_t d2u(double d);
-float u2f(uint32_t u);
-uint32_t f2u(float d);
-
 int readln(int fd, char *buf, int cnt);
-int startsWith(char *str, char *prefix);
+
+#define XRAND_MAX (0x100000000LL * (double)0x100000000LL)
+
+void xsrand(uint64_t s);
+uint64_t xrand();
+void memrand(void *p, int size);
+
+// The following functions are meant to be inlined
+
+static double u2d(uint64_t u) {
+  union {
+    double f;
+    uint64_t i;
+  } tmp;
+  tmp.i = u;
+  return tmp.f;
+}
+
+static uint64_t d2u(double d) {
+  union {
+    double f;
+    uint64_t i;
+  } tmp;
+  tmp.f = d;
+  return tmp.i;
+}
+
+static float u2f(uint32_t u) {
+  union {
+    float f;
+    uint32_t i;
+  } tmp;
+  tmp.i = u;
+  return tmp.f;
+}
+
+static uint32_t f2u(float d) {
+  union {
+    float f;
+    uint32_t i;
+  } tmp;
+  tmp.f = d;
+  return tmp.i;
+}
+
+static int startsWith(char *str, char *prefix) {
+  while(*prefix != '\0') if (*str++ != *prefix++) return 0;
+  return *prefix == '\0';
+}
+
+//
 
 #ifdef USEMPFR
 int cmpDenormdp(double x, mpfr_t fry);
