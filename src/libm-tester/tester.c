@@ -3371,6 +3371,7 @@ void do_test() {
   //
 
   if (enableDP) {
+    // 64 > 53(=number of bits in DP mantissa)
     mpfr_set_default_prec(64);
 
     fprintf(stderr, "hypot_u35 : ");
@@ -3568,6 +3569,7 @@ void do_test() {
 
     //
 
+    // 1280 > 1024(=maximum DP exponent) + 53(=number of bits in DP mantissa)
     mpfr_set_default_prec(1280);
 
     fprintf(stderr, "sin in sincospi_u35 : ");
@@ -4119,6 +4121,7 @@ void do_test() {
   //
 
   if (enableSP) {
+    // 53 > 24(=number of bits in SP mantissa)
     mpfr_set_default_prec(53);
 
     fprintf(stderr, "hypotf_u35 : ");
@@ -4316,7 +4319,8 @@ void do_test() {
 
     //
 
-    mpfr_set_default_prec(320);
+    // 256 > 128(=maximum SP exponent) + 24(=number of bits in SP mantissa)
+    mpfr_set_default_prec(256);
 
     fprintf(stderr, "sin in sincospif_u35 : ");
     for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracyX_f(mpfr_sinpi, child_sincospif_u35, d, 3.5);
@@ -4428,7 +4432,7 @@ void do_test() {
 
     //
 
-    mpfr_set_default_prec(320);
+    mpfr_set_default_prec(256);
 
     fprintf(stderr, "cos in sincospif_u35 : ");
     for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracyY_f(mpfr_cospi, child_sincospif_u35, d, 3.5);

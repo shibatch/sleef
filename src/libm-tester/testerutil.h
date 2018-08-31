@@ -30,6 +30,12 @@ float signf(float d);
 
 int readln(int fd, char *buf, int cnt);
 
+#define XRAND_MAX (0x100000000 * (double)0x100000000)
+
+void xsrand(uint64_t s);
+uint64_t xrand();
+void memrand(void *p, int size);
+
 // The following functions are meant to be inlined
 
 static double u2d(uint64_t u) {
@@ -72,26 +78,6 @@ static int startsWith(char *str, char *prefix) {
   while(*prefix != '\0') if (*str++ != *prefix++) return 0;
   return *prefix == '\0';
 }
-
-static uint64_t xseed;
-
-static uint64_t xrand() {
-  xseed = xseed * 6364136223846793005ULL + 1;
-  return xseed;
-}
-
-// Fill memory with random bits
-static void memrand(void *p, int size) {
-  uint64_t *q = (uint64_t *)p;
-  int i;
-  for(i=0;i<size/8;i++) *q++ = xrand();
-  uint8_t *r = (uint8_t *)q;
-  for(i *= 8;i<size;i++) *r++ = xrand() & 0xff;
-}
-
-static void xsrand(uint64_t s) { xseed = s; }
-
-#define XRAND_MAX (0x100000000 * (double)0x100000000)
 
 //
 

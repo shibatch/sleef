@@ -85,6 +85,24 @@ int readln(int fd, char *buf, int cnt) {
   return rcnt;
 }
 
+static uint64_t xseed;
+
+uint64_t xrand() {
+  xseed = xseed * 6364136223846793005ULL + 1;
+  return xseed;
+}
+
+// Fill memory with random bits
+void memrand(void *p, int size) {
+  uint64_t *q = (uint64_t *)p;
+  int i;
+  for(i=0;i<size/8;i++) *q++ = xrand();
+  uint8_t *r = (uint8_t *)q;
+  for(i *= 8;i<size;i++) *r++ = xrand() & 0xff;
+}
+
+void xsrand(uint64_t s) { xseed = s; }
+
 //
 
 #ifdef USEMPFR
