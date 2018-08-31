@@ -223,8 +223,7 @@ int check_featureDP() {
   return 1;
 }
 #else
-int check_featureDP() {
-}
+int check_featureDP() { return 0; }
 #endif
 
 #ifdef ENABLE_SP
@@ -241,8 +240,7 @@ int check_featureSP() {
   return 1;
 }
 #else
-int check_featureSP() {
-}
+int check_featureSP() { return 0; }
 #endif
 
 //
@@ -252,11 +250,8 @@ int check_featureSP() {
       uint64_t u;						\
       sscanf(buf, funcStr " %" PRIx64, &u);			\
       double s[VECTLENDP];					\
-      int i;							\
-      for(i=0;i<VECTLENDP;i++) {				\
-	s[i] = rand()/(double)RAND_MAX*20000-10000;		\
-      }								\
-      int idx = rand() & (VECTLENDP-1);				\
+      memrand(s, sizeof(s));					\
+      int idx = xrand() & (VECTLENDP-1);			\
       s[idx] = u2d(u);						\
       vdouble a = vloadu_vd_p(s);				\
       a = funcName(a);						\
@@ -273,12 +268,9 @@ int check_featureSP() {
       uint64_t u;							\
       sscanf(buf, funcStr " %" PRIx64, &u);				\
       double s[VECTLENDP], t[VECTLENDP];				\
-      int i;								\
-      for(i=0;i<VECTLENDP;i++) {					\
-	s[i] = rand()/(double)RAND_MAX*20000-10000;			\
-	t[i] = rand()/(double)RAND_MAX*20000-10000;			\
-      }									\
-      int idx = rand() & (VECTLENDP-1);					\
+      memrand(s, sizeof(s));						\
+      memrand(t, sizeof(t));						\
+      int idx = xrand() & (VECTLENDP-1);				\
       s[idx] = u2d(u);							\
       vdouble2 v;							\
       vdouble a = vloadu_vd_p(s);					\
@@ -299,12 +291,9 @@ int check_featureSP() {
       uint64_t u, v;						\
       sscanf(buf, funcStr " %" PRIx64 " %" PRIx64, &u, &v);	\
       double s[VECTLENDP], t[VECTLENDP];			\
-      int i;							\
-      for(i=0;i<VECTLENDP;i++) {				\
-	s[i] = rand()/(double)RAND_MAX*20000-10000;		\
-	t[i] = rand()/(double)RAND_MAX*20000-10000;		\
-      }								\
-      int idx = rand() & (VECTLENDP-1);				\
+      memrand(s, sizeof(s));					\
+      memrand(t, sizeof(t));					\
+      int idx = xrand() & (VECTLENDP-1);			\
       s[idx] = u2d(u);						\
       t[idx] = u2d(v);						\
       vdouble a, b;						\
@@ -325,12 +314,9 @@ int check_featureSP() {
       sscanf(buf, funcStr " %" PRIx64 " %" PRIx64, &u, &v);		\
       double s[VECTLENDP];						\
       int t[VECTLENDP*2];						\
-      int i;								\
-      for(i=0;i<VECTLENDP;i++) {					\
-	s[i] = rand()/(double)RAND_MAX*20000-10000;			\
-	t[i] = (int)(rand()/(double)RAND_MAX*20000-10000);		\
-      }									\
-      int idx = rand() & (VECTLENDP-1);					\
+      memrand(s, sizeof(s));						\
+      memrand(t, sizeof(t));						\
+      int idx = xrand() & (VECTLENDP-1);				\
       s[idx] = u2d(u);							\
       t[idx] = (int)u2d(v);						\
       vstoreu_v_p_vd(s, funcName(vloadu_vd_p(s), vloadu_vi_p(t)));	\
@@ -348,10 +334,9 @@ int check_featureSP() {
       sscanf(buf, funcStr " %" PRIx64, &u);			\
       double s[VECTLENDP];					\
       int t[VECTLENDP*2];					\
-      for(i=0;i<VECTLENDP;i++) {				\
-	s[i] = rand()/(double)RAND_MAX*20000-10000;		\
-      }								\
-      int idx = rand() & (VECTLENDP-1);				\
+      memrand(s, sizeof(s));					\
+      memrand(t, sizeof(t));					\
+      int idx = xrand() & (VECTLENDP-1);			\
       s[idx] = u2d(u);						\
       vdouble a = vloadu_vd_p(s);				\
       vint vi = funcName(a);					\
@@ -365,25 +350,22 @@ int check_featureSP() {
 
 //
 
-#define func_f_f(funcStr, funcName) {					\
-    while (startsWith(buf, funcStr " ")) {				\
-      uint32_t u;							\
-      sscanf(buf, funcStr " %x", &u);					\
-      float s[VECTLENSP];						\
-      int i;								\
-      for(i=0;i<VECTLENSP;i++) {					\
-	s[i] = rand()/(float)RAND_MAX*20000-10000;			\
-      }									\
-      int idx = rand() & (VECTLENSP-1);					\
-      s[idx] = u2f(u);							\
-      vfloat a = vloadu_vf_p(s);					\
-      a = funcName(a);							\
-      vstoreu_v_p_vf(s, a);						\
-      u = f2u(s[idx]);							\
-      printf("%x\n", u);						\
-      fflush(stdout);							\
-      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
-    }									\
+#define func_f_f(funcStr, funcName) {			\
+    while (startsWith(buf, funcStr " ")) {		\
+      uint32_t u;					\
+      sscanf(buf, funcStr " %x", &u);			\
+      float s[VECTLENSP];				\
+      memrand(s, sizeof(s));				\
+      int idx = xrand() & (VECTLENSP-1);		\
+      s[idx] = u2f(u);					\
+      vfloat a = vloadu_vf_p(s);			\
+      a = funcName(a);					\
+      vstoreu_v_p_vf(s, a);				\
+      u = f2u(s[idx]);					\
+      printf("%x\n", u);				\
+      fflush(stdout);					\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;	\
+    }							\
   }
 
 #define func_f2_f(funcStr, funcName) {				\
@@ -391,12 +373,9 @@ int check_featureSP() {
       uint32_t u;						\
       sscanf(buf, funcStr " %x", &u);				\
       float s[VECTLENSP], t[VECTLENSP];				\
-      int i;							\
-      for(i=0;i<VECTLENSP;i++) {				\
-	s[i] = rand()/(float)RAND_MAX*20000-10000;		\
-	t[i] = rand()/(float)RAND_MAX*20000-10000;		\
-      }								\
-      int idx = rand() & (VECTLENSP-1);				\
+      memrand(s, sizeof(s));					\
+      memrand(t, sizeof(t));					\
+      int idx = xrand() & (VECTLENSP-1);			\
       s[idx] = u2f(u);						\
       vfloat2 v;						\
       vfloat a = vloadu_vf_p(s);				\
@@ -412,29 +391,26 @@ int check_featureSP() {
     }								\
   }
 
-#define func_f_f_f(funcStr, funcName) {					\
-    while (startsWith(buf, funcStr " ")) {				\
-      uint32_t u, v;							\
-      sscanf(buf, funcStr " %x %x", &u, &v);				\
-      float s[VECTLENSP], t[VECTLENSP];					\
-      int i;								\
-      for(i=0;i<VECTLENSP;i++) {					\
-	s[i] = rand()/(float)RAND_MAX*20000-10000;			\
-	t[i] = rand()/(float)RAND_MAX*20000-10000;			\
-      }									\
-      int idx = rand() & (VECTLENSP-1);					\
-      s[idx] = u2f(u);							\
-      t[idx] = u2f(v);							\
-      vfloat a, b;							\
-      a = vloadu_vf_p(s);						\
-      b = vloadu_vf_p(t);						\
-      a = funcName(a, b);						\
-      vstoreu_v_p_vf(s, a);						\
-      u = f2u(s[idx]);							\
-      printf("%x\n", u);						\
-      fflush(stdout);							\
-      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
-    }									\
+#define func_f_f_f(funcStr, funcName) {			\
+    while (startsWith(buf, funcStr " ")) {		\
+      uint32_t u, v;					\
+      sscanf(buf, funcStr " %x %x", &u, &v);		\
+      float s[VECTLENSP], t[VECTLENSP];			\
+      memrand(s, sizeof(s));				\
+      memrand(t, sizeof(t));				\
+      int idx = xrand() & (VECTLENSP-1);		\
+      s[idx] = u2f(u);					\
+      t[idx] = u2f(v);					\
+      vfloat a, b;					\
+      a = vloadu_vf_p(s);				\
+      b = vloadu_vf_p(t);				\
+      a = funcName(a, b);				\
+      vstoreu_v_p_vf(s, a);				\
+      u = f2u(s[idx]);					\
+      printf("%x\n", u);				\
+      fflush(stdout);					\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;	\
+    }							\
   }
 
 //
@@ -442,7 +418,7 @@ int check_featureSP() {
 #define BUFSIZE 1024
 
 int do_test(int argc, char **argv) {
-  srand(time(NULL));
+  xsrand(time(NULL));
 
   {
     int k = 0;

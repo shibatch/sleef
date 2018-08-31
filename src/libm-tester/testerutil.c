@@ -64,44 +64,6 @@ double flushToZero(double y) {
 
 //
 
-double u2d(uint64_t u) {
-  union {
-    double f;
-    uint64_t i;
-  } tmp;
-  tmp.i = u;
-  return tmp.f;
-}
-
-uint64_t d2u(double d) {
-  union {
-    double f;
-    uint64_t i;
-  } tmp;
-  tmp.f = d;
-  return tmp.i;
-}
-
-float u2f(uint32_t u) {
-  union {
-    float f;
-    uint32_t i;
-  } tmp;
-  tmp.i = u;
-  return tmp.f;
-}
-
-uint32_t f2u(float d) {
-  union {
-    float f;
-    uint32_t i;
-  } tmp;
-  tmp.f = d;
-  return tmp.i;
-}
-
-//
-
 int readln(int fd, char *buf, int cnt) {
   int i, rcnt = 0;
 
@@ -121,14 +83,6 @@ int readln(int fd, char *buf, int cnt) {
   *++buf = '\0';
   rcnt++;
   return rcnt;
-}
-
-int startsWith(char *str, char *prefix) {
-  while(*str != '\0' && *prefix != '\0') {
-    if (*str != *prefix) return 0;
-    str++; prefix++;
-  }
-  return *prefix == '\0';
 }
 
 //

@@ -28,13 +28,72 @@ int isMinusZerof(float x);
 int xisnanf(float x);
 float signf(float d);
 
-double u2d(uint64_t u);
-uint64_t d2u(double d);
-float u2f(uint32_t u);
-uint32_t f2u(float d);
-
 int readln(int fd, char *buf, int cnt);
-int startsWith(char *str, char *prefix);
+
+// The following functions are meant to be inlined
+
+static double u2d(uint64_t u) {
+  union {
+    double f;
+    uint64_t i;
+  } tmp;
+  tmp.i = u;
+  return tmp.f;
+}
+
+static uint64_t d2u(double d) {
+  union {
+    double f;
+    uint64_t i;
+  } tmp;
+  tmp.f = d;
+  return tmp.i;
+}
+
+static float u2f(uint32_t u) {
+  union {
+    float f;
+    uint32_t i;
+  } tmp;
+  tmp.i = u;
+  return tmp.f;
+}
+
+static uint32_t f2u(float d) {
+  union {
+    float f;
+    uint32_t i;
+  } tmp;
+  tmp.f = d;
+  return tmp.i;
+}
+
+static int startsWith(char *str, char *prefix) {
+  while(*prefix != '\0') if (*str++ != *prefix++) return 0;
+  return *prefix == '\0';
+}
+
+static uint64_t xseed;
+
+static uint64_t xrand() {
+  xseed = xseed * 6364136223846793005ULL + 1;
+  return xseed;
+}
+
+// Fill memory with random bits
+static void memrand(void *p, int size) {
+  uint64_t *q = (uint64_t *)p;
+  int i;
+  for(i=0;i<size/8;i++) *q++ = xrand();
+  uint8_t *r = (uint8_t *)q;
+  for(i *= 8;i<size;i++) *r++ = xrand() & 0xff;
+}
+
+static void xsrand(uint64_t s) { xseed = s; }
+
+#define XRAND_MAX (0x100000000 * (double)0x100000000)
+
+//
 
 #ifdef USEMPFR
 int cmpDenormdp(double x, mpfr_t fry);
