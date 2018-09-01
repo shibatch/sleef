@@ -22,6 +22,10 @@ else()
   endif()
 endif()
 
+if (ENFORCE_TESTER3 AND NOT OPENSSL_FOUND)
+  message(FATAL_ERROR "ENFORCE_TESTER3 is specified and OpenSSL not found")
+endif()
+
 find_path(MPFR_INCLUDE_DIR
   NAMES mpfr.h
   ONLY_CMAKE_FIND_ROOT_PATH)
