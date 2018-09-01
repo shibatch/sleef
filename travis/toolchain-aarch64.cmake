@@ -2,7 +2,7 @@ SET (CMAKE_CROSSCOMPILING   TRUE)
 SET (CMAKE_SYSTEM_NAME      "Linux")
 SET (CMAKE_SYSTEM_PROCESSOR "aarch64")
 
-SET(CMAKE_FIND_ROOT_PATH  /usr/aarch64-linux-gnu /usr/include/aarch64-linux-gnu /usr/lib/aarch64-linux-gnu)
+SET(CMAKE_FIND_ROOT_PATH  /usr/aarch64-linux-gnu /usr/include/aarch64-linux-gnu /usr/lib/aarch64-linux-gnu /lib/aarch64-linux-gnu)
 
 find_program(CMAKE_C_COMPILER aarch64-linux-gnu-gcc aarch64-linux-gnu-gcc-8 aarch64-linux-gnu-gcc-7 aarch64-linux-gnu-gcc-6 aarch64-linux-gnu-gcc-5)
 

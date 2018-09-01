@@ -9,7 +9,18 @@ find_library(LIBGMP gmp)
 find_library(LIBRT rt)
 find_library(LIBFFTW3 fftw3)
 
-find_package(OpenSSL)
+if (NOT CMAKE_CROSSCOMPILING AND NOT SLEEF_FORCE_FIND_PACKAGE_SSL)
+  find_package(OpenSSL)
+else()
+  # find_package cannot find OpenSSL when cross-compiling
+  find_library(LIBSSL ssl)
+  find_library(LIBCRYPTO crypto)
+  if (LIBSSL AND LIBCRYPTO)
+    set(OPENSSL_FOUND TRUE)
+    set(OPENSSL_LIBRARIES ${LIBSSL} ${LIBCRYPTO})
+    set(OPENSSL_VERSION ${LIBSSL})
+  endif()
+endif()
 
 find_path(MPFR_INCLUDE_DIR
   NAMES mpfr.h
