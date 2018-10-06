@@ -3223,7 +3223,7 @@ void do_test() {
 
       if (enableFlushToZero) {
 	float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
-	float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	float ya[] = { +0.0, -0.0, +1, -1, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
 	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
 	  for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
 	    if (fabs(xa[i] / ya[j]) > 1e+38) continue;
