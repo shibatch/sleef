@@ -2588,7 +2588,7 @@ void do_test() {
 
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
 	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
-	  cmpDenorm_d_d(mpfr_hypot, child_hypot_u35, xa[i], ya[i]);
+	  cmpDenorm_d_d(mpfr_hypot, child_hypot_u35, xa[i], ya[j]);
 	}
       }
 
@@ -2603,7 +2603,7 @@ void do_test() {
 
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
 	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
-	  cmpDenorm_d_d(mpfr_hypot, child_hypot_u05, xa[i], ya[i]);
+	  cmpDenorm_d_d(mpfr_hypot, child_hypot_u05, xa[i], ya[j]);
 	}
       }
 
@@ -2613,12 +2613,12 @@ void do_test() {
     {
       fprintf(stderr, "copysign denormal/nonnumber test : ");
 
-      double xa[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
-      double ya[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY };
+      double ya[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY };
 
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
 	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
-	  cmpDenorm_d_d(mpfr_copysign, child_copysign, xa[i], ya[i]);
+	  cmpDenorm_d_d(mpfr_copysign, child_copysign, xa[i], ya[j]);
 	}
       }
 
@@ -2628,12 +2628,12 @@ void do_test() {
     {
       fprintf(stderr, "fmax denormal/nonnumber test : ");
 
-      double xa[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, SLEEF_SNAN };
-      double ya[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, SLEEF_SNAN };
+      double xa[] = { +0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, SLEEF_SNAN };
+      double ya[] = { +0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, SLEEF_SNAN };
 
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
 	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
-	  cmpDenorm_d_d(mpfr_max, child_fmax, xa[i], ya[i]);
+	  cmpDenorm_d_d(mpfr_max, child_fmax, xa[i], ya[j]);
 	}
       }
 
@@ -2643,12 +2643,12 @@ void do_test() {
     {
       fprintf(stderr, "fmin denormal/nonnumber test : ");
 
-      double xa[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, SLEEF_SNAN };
-      double ya[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, SLEEF_SNAN };
+      double xa[] = { +0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, SLEEF_SNAN };
+      double ya[] = { +0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN, SLEEF_SNAN };
 
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
 	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
-	  cmpDenorm_d_d(mpfr_min, child_fmin, xa[i], ya[i]);
+	  cmpDenorm_d_d(mpfr_min, child_fmin, xa[i], ya[j]);
 	}
       }
 
@@ -2663,7 +2663,7 @@ void do_test() {
 
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
 	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
-	  cmpDenorm_d_d(mpfr_dim, child_fdim, xa[i], ya[i]);
+	  cmpDenorm_d_d(mpfr_dim, child_fdim, xa[i], ya[j]);
 	}
       }
 
@@ -2678,7 +2678,8 @@ void do_test() {
 
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
 	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
-	  cmpDenorm_d_d(mpfr_fmod, child_fmod, xa[i], ya[i]);
+	  if (fabs(xa[i] / ya[j]) > 1e+300) continue;
+	  cmpDenorm_d_d(mpfr_fmod, child_fmod, xa[i], ya[j]);
 	}
       }
 
@@ -3117,7 +3118,7 @@ void do_test() {
 	float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
 	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
 	  for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
-	    cmpDenorm_f_f(mpfr_hypot, child_hypotf_u35, xa[i], ya[i]);
+	    cmpDenorm_f_f(mpfr_hypot, child_hypotf_u35, xa[i], ya[j]);
 	  }
 	}
       } else {
@@ -3125,7 +3126,7 @@ void do_test() {
 	float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
 	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
 	  for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
-	    cmpDenorm_f_f(mpfr_hypot, child_hypotf_u35, xa[i], ya[i]);
+	    cmpDenorm_f_f(mpfr_hypot, child_hypotf_u35, xa[i], ya[j]);
 	  }
 	}
       }
@@ -3141,7 +3142,7 @@ void do_test() {
 	float ya[] = { +0.0, -0.0, +1, -1, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
 	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
 	  for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
-	    cmpDenorm_f_f(mpfr_hypot, child_hypotf_u05, xa[i], ya[i]);
+	    cmpDenorm_f_f(mpfr_hypot, child_hypotf_u05, xa[i], ya[j]);
 	  }
 	}
       } else {
@@ -3149,7 +3150,7 @@ void do_test() {
 	float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
 	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
 	  for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
-	    cmpDenorm_f_f(mpfr_hypot, child_hypotf_u05, xa[i], ya[i]);
+	    cmpDenorm_f_f(mpfr_hypot, child_hypotf_u05, xa[i], ya[j]);
 	  }
 	}
       }
@@ -3160,12 +3161,12 @@ void do_test() {
     {
       fprintf(stderr, "copysignf denormal/nonnumber test : ");
 
-      float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
-      float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf };
+      float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf };
 
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
 	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
-	  cmpDenorm_f_f(mpfr_copysign, child_copysignf, xa[i], ya[i]);
+	  cmpDenorm_f_f(mpfr_copysign, child_copysignf, xa[i], ya[j]);
 	}
       }
 
@@ -3175,12 +3176,12 @@ void do_test() {
     {
       fprintf(stderr, "fmaxf denormal/nonnumber test : ");
 
-      float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, SLEEF_SNANf };
-      float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, SLEEF_SNANf };
+      float xa[] = { +0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, SLEEF_SNANf };
+      float ya[] = { +0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, SLEEF_SNANf };
 
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
 	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
-	  cmpDenorm_f_f(mpfr_max, child_fmaxf, xa[i], ya[i]);
+	  cmpDenorm_f_f(mpfr_max, child_fmaxf, xa[i], ya[j]);
 	}
       }
 
@@ -3190,12 +3191,12 @@ void do_test() {
     {
       fprintf(stderr, "fminf denormal/nonnumber test : ");
 
-      float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, SLEEF_SNANf };
-      float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, SLEEF_SNANf };
+      float xa[] = { +0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, SLEEF_SNANf };
+      float ya[] = { +0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN, SLEEF_SNANf };
 
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
 	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
-	  cmpDenorm_f_f(mpfr_min, child_fminf, xa[i], ya[i]);
+	  cmpDenorm_f_f(mpfr_min, child_fminf, xa[i], ya[j]);
 	}
       }
 
@@ -3210,7 +3211,7 @@ void do_test() {
 
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
 	for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
-	  cmpDenorm_f_f(mpfr_dim, child_fdimf, xa[i], ya[i]);
+	  cmpDenorm_f_f(mpfr_dim, child_fdimf, xa[i], ya[j]);
 	}
       }
 
@@ -3225,7 +3226,8 @@ void do_test() {
 	float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
 	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
 	  for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
-	    cmpDenorm_f_f(mpfr_fmod, child_fmodf, xa[i], ya[i]);
+	    if (fabs(xa[i] / ya[j]) > 1e+38) continue;
+	    cmpDenorm_f_f(mpfr_fmod, child_fmodf, xa[i], ya[j]);
 	  }
 	}
       } else {
@@ -3233,7 +3235,8 @@ void do_test() {
 	float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
 	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
 	  for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
-	    cmpDenorm_f_f(mpfr_fmod, child_fmodf, xa[i], ya[i]);
+	    if (fabs(xa[i] / ya[j]) > 1e+38) continue;
+	    cmpDenorm_f_f(mpfr_fmod, child_fmodf, xa[i], ya[j]);
 	  }
 	}
       }
