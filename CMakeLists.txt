@@ -9,6 +9,8 @@ option(SLEEF_TEST_ALL_IUT "Perform tests on implementations with all vector exte
 option(SLEEF_SHOW_CONFIG "Show SLEEF configuration status messages." ON)
 option(SLEEF_SHOW_ERROR_LOG "Show cmake error log." OFF)
 
+option(ENFORCE_TESTER3 "Build fails if tester3 is not built" OFF)
+
 # See doc/build-with-cmake.md for instructions on how to build Sleef.
 cmake_minimum_required(VERSION 3.4.3)
 # Set to NEW when updating cmake_minimum_required to VERSION >= 3.7.2
@@ -126,6 +128,7 @@ ${PROJECT_NAME}-v${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}")
   message(STATUS "GMP : " ${LIBGMP})
   message(STATUS "RT : " ${LIBRT})
   message(STATUS "FFTW3 : " ${LIBFFTW3})
+  message(STATUS "OPENSSL : " ${OPENSSL_VERSION})
   message(STATUS "SDE : " ${SDE_COMMAND})
   message(STATUS "RUNNING_ON_TRAVIS : " ${RUNNING_ON_TRAVIS})
   message(STATUS "COMPILER_SUPPORTS_OPENMP : " ${COMPILER_SUPPORTS_OPENMP})
