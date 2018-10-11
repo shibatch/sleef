@@ -47,6 +47,7 @@ void stop(char *mes) {
 
 int ptoc[2], ctop[2];
 int pid;
+FILE *fpctop;
 
 extern char **environ;
 
@@ -100,27 +101,27 @@ void startChild(const char *path, char *const argv[]) {
 
 //
 
-#define child_d_d(funcStr, arg) do {				\
-    char str[256];						\
-    uint64_t u;							\
-    sprintf(str, funcStr " %" PRIx64 "\n", d2u(arg));		\
-    write(ptoc[1], str, strlen(str));				\
-    if (readln(ctop[0], str, 255) < 1) stop("child " funcStr);	\
-    sscanf(str, "%" PRIx64, &u);				\
-    return u2d(u);						\
+#define child_d_d(funcStr, arg) do {					\
+    char str[256];							\
+    uint64_t u;								\
+    sprintf(str, funcStr " %" PRIx64 "\n", d2u(arg));			\
+    write(ptoc[1], str, strlen(str));					\
+    if (fgets(str, 255, fpctop) == NULL) stop("child " funcStr);	\
+    sscanf(str, "%" PRIx64, &u);					\
+    return u2d(u);							\
   } while(0)
 
-#define child_d2_d(funcStr, arg) do {				\
-    char str[256];						\
-    uint64_t u, v;						\
-    sprintf(str, funcStr " %" PRIx64 "\n", d2u(arg));		\
-    write(ptoc[1], str, strlen(str));				\
-    if (readln(ctop[0], str, 255) < 1) stop("child " funcStr);	\
-    sscanf(str, "%" PRIx64 " %" PRIx64, &u, &v);		\
-    Sleef_double2 ret;						\
-    ret.x = u2d(u);						\
-    ret.y = u2d(v);						\
-    return ret;							\
+#define child_d2_d(funcStr, arg) do {					\
+    char str[256];							\
+    uint64_t u, v;							\
+    sprintf(str, funcStr " %" PRIx64 "\n", d2u(arg));			\
+    write(ptoc[1], str, strlen(str));					\
+    if (fgets(str, 255, fpctop) == NULL) stop("child " funcStr);	\
+    sscanf(str, "%" PRIx64 " %" PRIx64, &u, &v);			\
+    Sleef_double2 ret;							\
+    ret.x = u2d(u);							\
+    ret.y = u2d(v);							\
+    return ret;								\
   } while(0)
 
 #define child_d_d_d(funcStr, arg1, arg2) do {				\
@@ -128,7 +129,7 @@ void startChild(const char *path, char *const argv[]) {
     uint64_t u;								\
     sprintf(str, funcStr " %" PRIx64 " %" PRIx64 "\n", d2u(arg1), d2u(arg2)); \
     write(ptoc[1], str, strlen(str));					\
-    if (readln(ctop[0], str, 255) < 1) stop("child " funcStr);		\
+    if (fgets(str, 255, fpctop) == NULL) stop("child " funcStr);	\
     sscanf(str, "%" PRIx64, &u);					\
     return u2d(u);							\
   } while(0)
@@ -213,7 +214,7 @@ double child_ldexp(double x, int q) {
 
   sprintf(str, "ldexp %" PRIx64 " %" PRIx64 "\n", d2u(x), d2u(q));
   write(ptoc[1], str, strlen(str));
-  if (readln(ctop[0], str, 255) < 1) stop("child_ldexp");
+  if (fgets(str, 255, fpctop) == NULL) stop("child_ldexp");
   sscanf(str, "%" PRIx64, &u);
   return u2d(u);
 }
@@ -224,44 +225,44 @@ int child_ilogb(double x) {
   
   sprintf(str, "ilogb %" PRIx64 "\n", d2u(x));
   write(ptoc[1], str, strlen(str));
-  if (readln(ctop[0], str, 255) < 1) stop("child_ilogb");
+  if (fgets(str, 255, fpctop) == NULL) stop("child_ilogb");
   sscanf(str, "%d", &i);
   return i;
 }
 
 //
 
-#define child_f_f(funcStr, arg) do {				\
-    char str[256];						\
-    uint32_t u;							\
-    sprintf(str, funcStr " %x\n", f2u(arg));			\
-    write(ptoc[1], str, strlen(str));				\
-    if (readln(ctop[0], str, 255) < 1) stop("child " funcStr);	\
-    sscanf(str, "%x", &u);					\
-    return u2f(u);						\
+#define child_f_f(funcStr, arg) do {					\
+    char str[256];							\
+    uint32_t u;								\
+    sprintf(str, funcStr " %x\n", f2u(arg));				\
+    write(ptoc[1], str, strlen(str));					\
+    if (fgets(str, 255, fpctop) == NULL) stop("child " funcStr);	\
+    sscanf(str, "%x", &u);						\
+    return u2f(u);							\
   } while(0)
 
-#define child_f2_f(funcStr, arg) do {				\
-    char str[256];						\
-    uint32_t u, v;						\
-    sprintf(str, funcStr " %x\n", f2u(arg));			\
-    write(ptoc[1], str, strlen(str));				\
-    if (readln(ctop[0], str, 255) < 1) stop("child " funcStr);	\
-    sscanf(str, "%x %x", &u, &v);				\
-    Sleef_float2 ret;						\
-    ret.x = u2f(u);						\
-    ret.y = u2f(v);						\
-    return ret;							\
+#define child_f2_f(funcStr, arg) do {					\
+    char str[256];							\
+    uint32_t u, v;							\
+    sprintf(str, funcStr " %x\n", f2u(arg));				\
+    write(ptoc[1], str, strlen(str));					\
+    if (fgets(str, 255, fpctop) == NULL) stop("child " funcStr);	\
+    sscanf(str, "%x %x", &u, &v);					\
+    Sleef_float2 ret;							\
+    ret.x = u2f(u);							\
+    ret.y = u2f(v);							\
+    return ret;								\
   } while(0)
 
-#define child_f_f_f(funcStr, arg1, arg2) do {			\
-    char str[256];						\
-    uint32_t u;							\
-    sprintf(str, funcStr " %x %x\n", f2u(arg1), f2u(arg2));	\
-    write(ptoc[1], str, strlen(str));				\
-    if (readln(ctop[0], str, 255) < 1) stop("child " funcStr);	\
-    sscanf(str, "%x", &u);					\
-    return u2f(u);						\
+#define child_f_f_f(funcStr, arg1, arg2) do {				\
+    char str[256];							\
+    uint32_t u;								\
+    sprintf(str, funcStr " %x %x\n", f2u(arg1), f2u(arg2));		\
+    write(ptoc[1], str, strlen(str));					\
+    if (fgets(str, 255, fpctop) == NULL) stop("child " funcStr);	\
+    sscanf(str, "%x", &u);						\
+    return u2f(u);							\
   } while(0)
 
 float child_sinf(float x) { child_f_f("sinf", x); }
@@ -342,7 +343,7 @@ float child_ldexpf(float x, int q) {
 
   sprintf(str, "ldexpf %x %x\n", f2u(x), f2u(q));
   write(ptoc[1], str, strlen(str));
-  if (readln(ctop[0], str, 255) < 1) stop("child_powf");
+  if (fgets(str, 255, fpctop) == NULL) stop("child_powf");
   sscanf(str, "%x", &u);
   return u2f(u);
 }
@@ -353,7 +354,7 @@ int child_ilogbf(float x) {
   
   sprintf(str, "ilogbf %x\n", f2u(x));
   write(ptoc[1], str, strlen(str));
-  if (readln(ctop[0], str, 255) < 1) stop("child_ilogbf");
+  if (fgets(str, 255, fpctop) == NULL) stop("child_ilogbf");
   sscanf(str, "%d", &i);
   return i;
 }
@@ -3373,6 +3374,9 @@ void do_test() {
   //
 
   if (enableDP) {
+    // 64 > 53(=number of bits in DP mantissa)
+    mpfr_set_default_prec(64);
+
     fprintf(stderr, "hypot_u35 : ");
     for(y = -10;y < 10 && success;y += 0.15) {
       for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_d_d(mpfr_hypot, child_hypot_u35, y, x, 3.5);
@@ -3568,6 +3572,7 @@ void do_test() {
 
     //
 
+    // 1280 > 1024(=maximum DP exponent) + 53(=number of bits in DP mantissa)
     mpfr_set_default_prec(1280);
 
     fprintf(stderr, "sin in sincospi_u35 : ");
@@ -3628,7 +3633,7 @@ void do_test() {
     }
     showResult(success);
 
-    mpfr_set_default_prec(128);
+    mpfr_set_default_prec(64);
   
     //
 
@@ -3710,7 +3715,7 @@ void do_test() {
     }
     showResult(success);
 
-    mpfr_set_default_prec(128);
+    mpfr_set_default_prec(64);
   
     //
 
@@ -4121,6 +4126,9 @@ void do_test() {
   //
 
   if (enableSP) {
+    // 53 > 24(=number of bits in SP mantissa)
+    mpfr_set_default_prec(53);
+
     fprintf(stderr, "hypotf_u35 : ");
     for(y = -10;y < 10 && success;y += 0.15) {
       for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_f_f(mpfr_hypot, child_hypotf_u35, y, x, 3.5);
@@ -4316,7 +4324,8 @@ void do_test() {
 
     //
 
-    mpfr_set_default_prec(1280);
+    // 256 > 128(=maximum SP exponent) + 24(=number of bits in SP mantissa)
+    mpfr_set_default_prec(256);
 
     fprintf(stderr, "sin in sincospif_u35 : ");
     for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracyX_f(mpfr_sinpi, child_sincospif_u35, d, 3.5);
@@ -4376,7 +4385,7 @@ void do_test() {
     }
     showResult(success);
 
-    mpfr_set_default_prec(128);
+    mpfr_set_default_prec(53);
   
     //
 
@@ -4428,7 +4437,7 @@ void do_test() {
 
     //
 
-    mpfr_set_default_prec(1280);
+    mpfr_set_default_prec(256);
 
     fprintf(stderr, "cos in sincospif_u35 : ");
     for(d = -10.1;d < 10 && success;d += 0.0021) checkAccuracyY_f(mpfr_cospi, child_sincospif_u35, d, 3.5);
@@ -4458,7 +4467,7 @@ void do_test() {
     }
     showResult(success);
 
-    mpfr_set_default_prec(128);
+    mpfr_set_default_prec(53);
   
     //
 
@@ -4830,7 +4839,7 @@ int main(int argc, char **argv) {
   for(i=a2s;i<argc;i++) argv2[i-a2s] = argv[i];
   argv2[argc-a2s] = NULL;
   
-  mpfr_set_default_prec(128);
+  mpfr_set_default_prec(64);
 
   startChild(argv2[0], argv2);
   fflush(stdin);
@@ -4878,6 +4887,8 @@ int main(int argc, char **argv) {
   }
 
   if (enableFlushToZero) fprintf(stderr, "\n\n*** Flush to zero enabled\n");
+
+  fpctop = fdopen(ctop[0], "r");
   
   do_test();
 
