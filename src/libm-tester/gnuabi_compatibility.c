@@ -18,29 +18,38 @@
 #define ISA_TOKEN b
 #define VLEN_SP 4
 #define VLEN_DP 2
+#define VECTOR_CC
 #endif /* defined(ENABLE_SSE4) || defined(ENABLE_SSE2) */
 
 #ifdef ENABLE_AVX
 #define ISA_TOKEN c
 #define VLEN_SP 8
 #define VLEN_DP 4
+#define VECTOR_CC
 #endif /* ENABLE_AVX */
 
 #ifdef ENABLE_AVX2
 #define ISA_TOKEN d
 #define VLEN_SP 8
 #define VLEN_DP 4
+#define VECTOR_CC
 #endif /* ENABLE_AVX2 */
 
 #ifdef ENABLE_AVX512F
 #define ISA_TOKEN e
 #define VLEN_SP 16
 #define VLEN_DP 8
+#define VECTOR_CC
 #endif /* ENABLE_AVX512F */
 
 #ifdef ENABLE_ADVSIMD
 #define ISA_TOKEN n
 #define VLEN_SP 4
+#ifdef ENABLE_AAVPCS
+#define VECTOR_CC __attribute__((aarch64_vector_pcs))
+#else
+#define VECTOR_CC
+#endif
 #define VLEN_DP 2
 #endif /* ENABLE_ADVSIMDF */
 
@@ -50,6 +59,7 @@
 #define VLEN_SP (svcntw())
 #define VLEN_DP (svcntd())
 #define VLA_TOKEN x
+#define VECTOR_CC
 #endif /* ENABLE_SVE */
 
 // GNUABI name mangling macro.
@@ -63,7 +73,7 @@
 // sincos-like functions that are effectively loading data from
 // memory.
 #define __DECLARE(name, t, vl, p)                                              \
-  void __MAKE_FN_NAME(name, t, vl, p)(int *, int *, int *)
+  extern void VECTOR_CC __MAKE_FN_NAME(name, t, vl, p)(int *, int *, int *)
 #define __CALL(name, t, vl, p) __MAKE_FN_NAME(name, t, vl, p)(b0, b1, b2)
 
 // Make sure that the architectural macros are defined for each vector

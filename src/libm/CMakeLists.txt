@@ -31,8 +31,8 @@ endif()
 
 add_custom_command(OUTPUT ${SLEEF_INCLUDE_HEADER}
   ${SLEEF_HEADER_COMMANDS}
-  DEPENDS 
-    ${SLEEF_ORG_HEADER}  
+  DEPENDS
+    ${SLEEF_ORG_HEADER}
     ${SLEEF_ORG_FOOTER}
     ${TARGET_MKRENAME}
 )
@@ -43,6 +43,11 @@ add_custom_command(OUTPUT ${SLEEF_INCLUDE_HEADER}
 # --------------------------------------------------------------------
 # Helper executable: generates parts of the sleef header file
 add_host_executable(${TARGET_MKRENAME} mkrename.c)
+
+# Enable Vector PCS for Advanced SIMD (if supported)
+if(FORCE_AAVPCS)
+  host_target_AAVPCS_definitions(${TARGET_MKRENAME})
+endif()
 
 set(HEADER_FILES_GENERATED "")
 foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
@@ -77,12 +82,12 @@ if(ENABLE_GNUABI)
       string(TOLOWER ${SIMD} vecarch)
       set(OBJECT_${SIMD}_dp_GNUABI "sleefgnuabi${vecarch}dp")
       set(OBJECT_${SIMD}_sp_GNUABI "sleefgnuabi${vecarch}sp")
-      set(HEADER_${SIMD}_GNUABI ${CMAKE_CURRENT_BINARY_DIR}/include/rename${vecarch}_gnuabi.h)  
+      set(HEADER_${SIMD}_GNUABI ${CMAKE_CURRENT_BINARY_DIR}/include/rename${vecarch}_gnuabi.h)
       list(APPEND HEADER_GNUABI_FILES_GENERATED ${HEADER_${SIMD}_GNUABI})
 
       # Generate mkrename_gnuabi commands
       add_custom_command(OUTPUT ${HEADER_${SIMD}_GNUABI}
-        COMMAND echo Generating rename${vecarch}_gnuabi.h: ${TARGET_MKRENAME_GNUABI} ${RENAME_PARAMS_GNUABI_${SIMD}}  
+        COMMAND echo Generating rename${vecarch}_gnuabi.h: ${TARGET_MKRENAME_GNUABI} ${RENAME_PARAMS_GNUABI_${SIMD}}
         COMMAND $<TARGET_FILE:${TARGET_MKRENAME_GNUABI}> ${RENAME_PARAMS_GNUABI_${SIMD}} > ${HEADER_${SIMD}_GNUABI}
         DEPENDS ${TARGET_MKRENAME_GNUABI}
       )
@@ -122,7 +127,7 @@ endif()
 # TARGET_HEADERS
 # --------------------------------------------------------------------
 add_custom_target(${TARGET_HEADERS} ALL
-  DEPENDS 
+  DEPENDS
     ${SLEEF_INCLUDE_HEADER}            # Output only
     ${HEADER_FILES_GENERATED}          # Output only
     ${HEADER_GNUABI_FILES_GENERATED}   # Output only
@@ -132,6 +137,9 @@ add_custom_target(${TARGET_HEADERS} ALL
 # TARGET_MKALIAS
 # --------------------------------------------------------------------
 add_host_executable(${TARGET_MKALIAS} mkalias.c)
+if(FORCE_AAVPCS)
+  host_target_AAVPCS_definitions(${TARGET_MKALIAS})
+endif()
 
 # --------------------------------------------------------------------
 # TARGET_MKDISP
@@ -174,7 +182,7 @@ set_target_properties(${TARGET_LIBSLEEF} PROPERTIES
   ${COMMON_TARGET_PROPERTIES}
 )
 
-target_compile_definitions(${TARGET_LIBSLEEF} 
+target_compile_definitions(${TARGET_LIBSLEEF}
   PRIVATE DORENAME=1 ${COMMON_TARGET_DEFINITIONS}
 )
 
@@ -204,7 +212,7 @@ foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
     string(TOLOWER ${SIMD} SIMDLC)
 
     # Create a library
-    add_library(${OBJECT_${SIMD}} OBJECT ${SIMD_SOURCES} ${HEADER_${SIMD}})    
+    add_library(${OBJECT_${SIMD}} OBJECT ${SIMD_SOURCES} ${HEADER_${SIMD}})
 
     if (INDEX_ALIAS EQUAL -1)
       target_compile_definitions(${OBJECT_${SIMD}} PRIVATE
@@ -230,11 +238,18 @@ foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
 	)
     endif()
 
+    # Enable Vector PCS for Advanced SIMD (if supported)
+    if(FORCE_AAVPCS AND ${SIMD} STREQUAL "ADVSIMD")
+      target_compile_definitions(${OBJECT_${SIMD}} PRIVATE
+        ENABLE_AAVPCS=1
+      )
+    endif()
+
     add_dependencies(${OBJECT_${SIMD}} rename${SIMD}.h_generated)
 
     set_target_properties(${OBJECT_${SIMD}} PROPERTIES
       ${COMMON_TARGET_PROPERTIES}
-      )    
+      )
 
     target_compile_options(${OBJECT_${SIMD}} PRIVATE
       ${FLAGS_ENABLE_${SIMD}})
@@ -342,9 +357,15 @@ if(ENABLE_GNUABI)
           ENABLE_GNUABI=1
 	  )
 
+        if(FORCE_AAVPCS AND ${SIMD} STREQUAL "ADVSIMD")
+          target_compile_definitions(${OBJECT_${SIMD}_${T}_GNUABI} PRIVATE
+            ENABLE_AAVPCS=1
+          )
+        endif()
+
 	set_target_properties(${OBJECT_${SIMD}_${T}_GNUABI} PROPERTIES
           ${COMMON_TARGET_PROPERTIES}
-	  )    
+	  )
 
 	target_compile_options(${OBJECT_${SIMD}_${T}_GNUABI} PRIVATE ${FLAGS_ENABLE_${SIMD}})
 	if (COMPILER_SUPPORTS_WEAK_ALIASES)
@@ -371,7 +392,7 @@ if(ENABLE_GNUABI)
     POSITION_INDEPENDENT_CODE ON   # -fPIC
     C_STANDARD 99                  # -std=gnu99
     LINKER_LANGUAGE C
-  ) 
+  )
 
 # On some systems we need to explicitly link libsleefgnuabi against
 # libm to use some of the math functions used in the scalar code (for
@@ -386,7 +407,7 @@ endif(ENABLE_GNUABI)
 # Generate LLVM bitcode
 # --------------------------------------------------------------------
 if(CLANG_EXE_PATH AND SLEEF_ENABLE_LLVM_BITCODE)
-  set(SLEEP_LLVM_BITCODE_INCLUDES "") 
+  set(SLEEP_LLVM_BITCODE_INCLUDES "")
   get_property(SLEEP_LLVM_BITCODE_INCLUDES_LIST DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
   foreach(INCLUDE_DIRECTORY ${SLEEP_LLVM_BITCODE_INCLUDES_LIST})
     set(SLEEP_LLVM_BITCODE_INCLUDES "${SLEEP_LLVM_BITCODE_INCLUDES} -I ${INCLUDE_DIRECTORY}")
@@ -395,7 +416,7 @@ if(CLANG_EXE_PATH AND SLEEF_ENABLE_LLVM_BITCODE)
   separate_arguments(SLEEP_LLVM_BITCODE_INCLUDES_CLANG WINDOWS_COMMAND "${SLEEP_LLVM_BITCODE_INCLUDES}")
   set(SLEEF_CLANG_LLVM_BITCODE_OPTIONS -O3 -S -emit-llvm -D NDEBUG -D DORENAME=1)
   set(LLVM_BITCODE_OUTPUTS "")
-  
+
   # Generate LLVM bitcode for regular SLEEF
   foreach(STANDARD_SOURCE ${STANDARD_SOURCES})
     get_filename_component(SRC_WITHOUT_EXT ${STANDARD_SOURCE} NAME_WE)

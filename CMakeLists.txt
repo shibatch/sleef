@@ -105,6 +105,12 @@ function(add_host_executable TARGETNAME)
   endif()
 endfunction()
 
+function(host_target_AAVPCS_definitions TARGETNAME)
+  if (NOT CMAKE_CROSSCOMPILING)
+    target_compile_definitions(${TARGETNAME} PRIVATE ENABLE_AAVPCS=1)
+  endif()
+endfunction()
+
 # Generates object file (shared library) `libsleefdft`
 # Defined in src/dft/CMakeLists.txt via command add_library
 set(TARGET_LIBDFT "sleefdft")
@@ -146,6 +152,9 @@ if(SLEEF_SHOW_CONFIG)
       message(STATUS "Arm Instruction Emulator found at ${ARMIE_COMMAND}")
       message(STATUS "SVE testing is done with ${SVE_VECTOR_BITS}-bits vectors.")
     endif()
+  endif()
+  if(FORCE_AAVPCS)
+    message(STATUS "Building SLEEF with AArch64 Vector PCS support")
   endif()
 endif(SLEEF_SHOW_CONFIG)
 
