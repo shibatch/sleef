@@ -343,7 +343,7 @@ int main(int argc, char **argv) {
 	  break;
 	case 8:
 	  printf("IMPORT CONST void *Sleef_%sd%s%s%s(int)%s;\n",
-                 funcList[i].name, wsp, isaub, isaname, vectorcc);
+                 funcList[i].name, wdp, isaub, isaname, vectorcc);
 	  break;
 	}
       }
