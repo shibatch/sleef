@@ -182,7 +182,7 @@ int main(int argc, char **argv) {
 		   isaub, isaname,
 		   vdoublename,
                    vectorcc);
-	    printf("IMPORT CONST %s Sleef_%s%sd%s%s%s(%s);\n",
+	    printf("IMPORT CONST %s Sleef_%s%sd%s%s%s(%s)%s;\n",
 		   vdoublename,
 		   atrPrefix,
 		   funcList[i].name, wdp,
@@ -203,7 +203,7 @@ int main(int argc, char **argv) {
 		   vdoublename,
 		   atrPrefix, funcList[i].name, wdp,
 		   funcList[i].ulp, isaname,
-		   vdoublename, vdoublename);
+		   vdoublename, vdoublename,
                    vectorcc);
 	  } else {
 	    printf("IMPORT CONST %s Sleef_%sd%s%s%s(%s, %s)%s;\n",
@@ -300,7 +300,7 @@ int main(int argc, char **argv) {
 		   isaub, isaname,
 		   vdoublename,
                    vectorcc);
-	    printf("IMPORT CONST %s Sleef_%s%sd%s%s%s(%s);\n",
+	    printf("IMPORT CONST %s Sleef_%s%sd%s%s%s(%s)%s;\n",
 		   vintname,
 		   atrPrefix, funcList[i].name, wdp,
 		   isaub, isaname,
@@ -485,19 +485,21 @@ int main(int argc, char **argv) {
 		 vfloatname,
 		 funcList[i].name, wsp,
 		 isaub, isaname,
-		 vfloatname, vfloatname, vfloatname);
+		 vfloatname, vfloatname, vfloatname,
+                 vectorcc);
 	  printf("IMPORT CONST %s Sleef_%s%sf%s%s%s(%s, %s, %s)%s;\n",
 		 vfloatname,
 		 atrPrefix, funcList[i].name, wsp,
 		 isaub, isaname,
-		 vfloatname, vfloatname, vfloatname);
+		 vfloatname, vfloatname, vfloatname,
+                 vectorcc);
 	}
 	break;
       case 7:
 	printf("IMPORT CONST int Sleef_%sf%s%s%s(int)%s;\n",
 	       funcList[i].name, wsp, isaub, isaname,
                vectorcc);
-	printf("IMPORT CONST int Sleef_%s%sf%s%s%s(int);\n",
+	printf("IMPORT CONST int Sleef_%s%sf%s%s%s(int)%s;\n",
 	       atrPrefix, funcList[i].name, wsp, isaub, isaname,
                vectorcc);
 	break;
