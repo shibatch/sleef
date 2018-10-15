@@ -57,10 +57,10 @@ static INLINE float get__m512(__m512 v, int r) { static float a[16]; _mm512_stor
 #endif // #if defined(__i386__) || defined(__x86_64__) || defined(_MSC_VER)
 
 #if defined(__aarch64__) && defined(__ARM_NEON)
-static INLINE float64x2_t setfloat64x2_t(double d, int r) { double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return vld1q_f64(a); }
-static INLINE double getfloat64x2_t(float64x2_t v, int r) { double a[2]; vst1q_f64(a, v); return unifyValue(a[r & 1]); }
-static INLINE float32x4_t setfloat32x4_t(float d, int r) { float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return vld1q_f32(a); }
-static INLINE float getfloat32x4_t(float32x4_t v, int r) { float a[4]; vst1q_f32(a, v); return unifyValuef(a[r & 3]); }
+static INLINE VECTOR_CC float64x2_t setfloat64x2_t(double d, int r) { double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return vld1q_f64(a); }
+static INLINE VECTOR_CC double getfloat64x2_t(float64x2_t v, int r) { double a[2]; vst1q_f64(a, v); return unifyValue(a[r & 1]); }
+static INLINE VECTOR_CC float32x4_t setfloat32x4_t(float d, int r) { float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return vld1q_f32(a); }
+static INLINE VECTOR_CC float getfloat32x4_t(float32x4_t v, int r) { float a[4]; vst1q_f32(a, v); return unifyValuef(a[r & 3]); }
 #endif
 
 #ifdef __ARM_FEATURE_SVE

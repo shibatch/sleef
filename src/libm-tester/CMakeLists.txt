@@ -168,6 +168,12 @@ macro(test_extension SIMD)
       target_compile_options(${T} PRIVATE ${FLAGS_ENABLE_${SIMD}})
       target_compile_definitions(${T} PRIVATE ${COMMON_TARGET_DEFINITIONS} ${TESTER3_DEFINITIONS_${SIMD}})
       set_target_properties(${T} PROPERTIES C_STANDARD 99)
+
+      # Enable Vector PCS for Advanced SIMD (if supported)
+      if(FORCE_AAVPCS)
+        host_target_AAVPCS_definitions(${T})
+      endif()
+
       target_link_libraries(${T} ${TARGET_LIBSLEEF} ${LIBM} ${SLEEF_OPENSSL_LIBRARIES})
       target_include_directories(${T} PRIVATE ${SLEEF_OPENSSL_INCLUDE_DIR})
       add_dependencies(${T} ${TARGET_HEADERS})
