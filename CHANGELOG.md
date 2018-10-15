@@ -4,7 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## Next Release
+## 3.3.1 - 2018-08-20
+### Added
+- FreeBSD support is added
+### Changed
+- i386 build problem is fixed
+- Trigonometric functions now evaluate correctly with full FP
+  domain.
+  https://github.com/shibatch/sleef/pull/210">#210</a>)</li>
+## 3.3 - 2018-07-06
 ### Added
 - SVE target support is added to libsleef.
   https://github.com/shibatch/sleef/pull/180

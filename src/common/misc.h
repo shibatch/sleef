@@ -284,3 +284,9 @@ typedef struct {
 #endif
 
 #endif // #ifndef __MISC_H__
+
+#ifdef ENABLE_AAVPCS
+#define VECTOR_CC __attribute__((aarch64_vector_pcs))
+#else
+#define VECTOR_CC
+#endif

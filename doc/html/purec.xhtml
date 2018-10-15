@@ -119,12 +119,8 @@ extended-precision (80-bit) floating point values, which is defined in
 
 <p class="noindent">
   These functions evaluates the sine function of a value
-  in <i class="var">a</i>. The error bound of the returned value is 1.0 ULP
-  if <i class="var">a</i> is in [-1e+299, 1e+299]
-  for the double-precision function or [-1e+28, 1e+28]
-  for the single-precision function. If <i class="var">a</i> is a finite
-  value out of this range, an arbitrary value within [-1, 1] is
-  returned. These functions treat the non-number arguments and return
+  in <i class="var">a</i>. The error bound of the returned value is
+  1.0 ULP.  These functions treat the non-number arguments and return
   non-numbers as specified in the C99 specification. These functions
   do not set errno nor raise an exception.
 </p>
@@ -149,12 +145,8 @@ extended-precision (80-bit) floating point values, which is defined in
 
 <p class="noindent">
   These functions evaluates the sine function of a value
-  in <i class="var">a</i>. The error bound of the returned value is 3.5 ULP
-  if <i class="var">a</i> is in [-1e+299, 1e+299]
-  for the double-precision function or [-1e+28, 1e+28]
-  for the single-precision function. If <i class="var">a</i> is a finite
-  value out of this range, an arbitrary value within [-1, 1] is
-  returned. These functions treat the non-number arguments and return
+  in <i class="var">a</i>. The error bound of the returned value is
+  3.5 ULP. These functions treat the non-number arguments and return
   non-numbers as specified in the C99 specification. These functions
   do not set errno nor raise an exception.
 </p>
@@ -179,12 +171,8 @@ extended-precision (80-bit) floating point values, which is defined in
 
 <p class="noindent">
   These functions evaluates the cosine function of a value
-  in <i class="var">a</i>. The error bound of the returned value is 1.0 ULP
-  if <i class="var">a</i> is in [-1e+299, 1e+299]
-  for the double-precision function or [-1e+28, 1e+28]
-  for the single-precision function. If <i class="var">a</i> is a finite
-  value out of this range, an arbitrary value within [-1, 1] is
-  returned. These functions treat the non-number arguments and return
+  in <i class="var">a</i>. The error bound of the returned value is
+  1.0 ULP. These functions treat the non-number arguments and return
   non-numbers as specified in the C99 specification. These functions
   do not set errno nor raise an exception.
 </p>
@@ -209,12 +197,8 @@ extended-precision (80-bit) floating point values, which is defined in
 
 <p class="noindent">
   These functions evaluates the cosine function of a value
-  in <i class="var">a</i>. The error bound of the returned value is 3.5 ULP
-  if <i class="var">a</i> is in [-1e+299, 1e+299]
-  for the double-precision function or [-1e+28, 1e+28]
-  for the single-precision function. If <i class="var">a</i> is a finite
-  value out of this range, an arbitrary value within [-1, 1] is
-  returned. These functions treat the non-number arguments and return
+  in <i class="var">a</i>. The error bound of the returned value is
+  3.5 ULP. These functions treat the non-number arguments and return
   non-numbers as specified in the C99 specification. These functions
   do not set errno nor raise an exception.
 </p>
@@ -238,14 +222,12 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="header">Description</p>
 
 <p class="noindent">
-  Evaluates the sine and cosine functions of a value in <i class="var">a</i> at a
-  time, and store the two values in <i class="var">x</i> and <i class="var">y</i> elements in
-  the returned value, respectively. The error bound of the returned
-  values is 1.0 ULP if <i class="var">a</i> is in [-1e+299, 1e+299]
-  for the double-precision function or [-1e+28, 1e+28]
-  for the single-precision function. If <i class="var">a</i> is a finite
-  value out of this range, an arbitrary value within [-1, 1] is
-  returned. If <i class="var">a</i> is a NaN or infinity, a NaN is returned.
+  Evaluates the sine and cosine functions of a value
+  in <i class="var">a</i> at a time, and store the two values
+  in <i class="var">x</i> and <i class="var">y</i> elements in the
+  returned value, respectively. The error bound of the returned values
+  is 1.0 ULP. If <i class="var">a</i> is a NaN or infinity, a NaN is
+  returned.
 </p>
 
 <hr/>
@@ -267,14 +249,12 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="header">Description</p>
 
 <p class="noindent">
-  Evaluates the sine and cosine functions of a value in <i class="var">a</i> at a
-  time, and store the two values in <i class="var">x</i> and <i class="var">y</i> elements in
-  the returned value, respectively. The error bound of the returned
-  values is 3.5 ULP if <i class="var">a</i> is in [-1e+299, 1e+299]
-  for the double-precision function or [-1e+28, 1e+28]
-  for the single-precision function. If <i class="var">a</i> is a finite
-  value out of this range, an arbitrary value within [-1, 1] is
-  returned. If <i class="var">a</i> is a NaN or infinity, a NaN is returned.
+  Evaluates the sine and cosine functions of a value
+  in <i class="var">a</i> at a time, and store the two values
+  in <i class="var">x</i> and <i class="var">y</i> elements in the
+  returned value, respectively. The error bound of the returned values
+  is 3.5 ULP. If <i class="var">a</i> is a NaN or infinity, a NaN is
+  returned.
 </p>
 
 <hr/>
@@ -419,12 +399,8 @@ extended-precision (80-bit) floating point values, which is defined in
 
 <p class="noindent">
   These functions evaluates the tangent function of a value
-  in <i class="var">a</i>. The error bound of the returned value is 1.0 ULP
-  if <i class="var">a</i> is in [-1e+299, 1e+299]
-  for the double-precision function or [-1e+28, 1e+28]
-  for the single-precision function. If <i class="var">a</i> is a finite
-  value out of this range, an arbitrary value within [-1, 1] is
-  returned. These functions treat the non-number arguments and return
+  in <i class="var">a</i>. The error bound of the returned value is
+  1.0 ULP. These functions treat the non-number arguments and return
   non-numbers as specified in the C99 specification. These functions
   do not set errno nor raise an exception.
 </p>
@@ -449,12 +425,8 @@ extended-precision (80-bit) floating point values, which is defined in
 
 <p class="noindent">
   These functions evaluates the tangent function of a value
-  in <i class="var">a</i>. The error bound of the returned value is 3.5 ULP
-  if <i class="var">a</i> is in [-1e+299, 1e+299]
-  for the double-precision function or [-1e+28, 1e+28]
-  for the single-precision function. If <i class="var">a</i> is a finite
-  value out of this range, an arbitrary value within [-1, 1] is
-  returned. These functions treat the non-number arguments and return
+  in <i class="var">a</i>. The error bound of the returned value is
+  3.5 ULP. These functions treat the non-number arguments and return
   non-numbers as specified in the C99 specification. These functions
   do not set errno nor raise an exception.
 </p>
