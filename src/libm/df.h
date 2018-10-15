@@ -395,7 +395,7 @@ static INLINE CONST VECTOR_CC vfloat dfmul_vf_vf2_vf2(vfloat2 x, vfloat2 y) {
   return vadd_vf_6vf(vmul_vf_vf_vf(x.y, yh), vmul_vf_vf_vf(xh, y.y), vmul_vf_vf_vf(xl, yl), vmul_vf_vf_vf(xh, yl), vmul_vf_vf_vf(xl, yh), vmul_vf_vf_vf(xh, yh));
 }
 
-static INLINE CONST vfloat2 dfsqu_vf2_vf2(vfloat2 x) {
+static INLINE CONST VECTOR_CC vfloat2 dfsqu_vf2_vf2(vfloat2 x) {
   vfloat xh = vupper_vf_vf(x.x), xl = vsub_vf_vf_vf(x.x, xh);
   vfloat2 r;
 
