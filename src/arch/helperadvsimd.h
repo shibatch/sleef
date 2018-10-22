@@ -194,7 +194,7 @@ static INLINE VECTOR_CC vint2 vtruncate_vi2_vf(vfloat vf) { return vcvtq_s32_f32
 static INLINE VECTOR_CC vfloat vcast_vf_vi2(vint2 vi) { return vcvtq_f32_s32(vi); }
 static INLINE VECTOR_CC vint2 vcast_vi2_i(int i) { return vdupq_n_s32(i); }
 static INLINE VECTOR_CC vint2 vrint_vi2_vf(vfloat d) {
-  return vcvtq_s32_f32(vrndaq_f32(d));
+  return vcvtq_s32_f32(vrndnq_f32(d));
 }
 
 /***************************************/
