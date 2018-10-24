@@ -894,6 +894,57 @@ EXPORT CONST VECTOR_CC vfloat xcosf_u1(vfloat d) {
 #endif // #if !defined(DETERMINISTIC)
 }
 
+EXPORT CONST VECTOR_CC vfloat xfastsinf_u100000(vfloat d) {
+  vint2 q;
+  vfloat u, s, t = d;
+
+  d = vmul_vf_vf_vf(d, vcast_vf_f((float)M_1_PI));
+  u = vrint_vf_vf(d);
+  q = vrint_vi2_vf(d);
+  d = vsub_vf_vf_vf(d, u);
+
+  s = vmul_vf_vf_vf(d, d);
+
+  u = vcast_vf_f(+0.2324385881e+1);
+  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(-0.5145016193e+1f));
+  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(+0.3141218185e+1f));
+
+  d = vreinterpret_vf_vm(vxor_vm_vm_vm(vand_vm_vo32_vm(veq_vo_vi2_vi2(vand_vi2_vi2_vi2(q, vcast_vi2_i(1)), vcast_vi2_i(1)), vreinterpret_vm_vf(vcast_vf_f(-0.0f))), vreinterpret_vm_vf(d)));
+
+  u = vmul_vf_vf_vf(u, d);
+
+  return u;
+}
+
+EXPORT CONST VECTOR_CC vfloat xfastsinf_u35(vfloat d) {
+  return vcast_vf_f(0);
+}
+
+EXPORT CONST VECTOR_CC vfloat xfastcosf_u100000(vfloat d) {
+  vint2 q;
+  vfloat u, s, t = d, dq;
+
+  dq = vrint_vf_vf(vmla_vf_vf_vf_vf(d, vcast_vf_f((float)M_1_PI), vcast_vf_f(-0.5f)));
+  d = vmlapn_vf_vf_vf_vf(d, vcast_vf_f((float)M_1_PI), vadd_vf_vf_vf(dq, vcast_vf_f(0.5f)));
+  q = vrint_vi2_vf(vmla_vf_vf_vf_vf(vcast_vf_f(2.0f), dq, vcast_vf_f(1.0f)));
+
+  s = vmul_vf_vf_vf(d, d);
+
+  u = vcast_vf_f(+0.2324385881e+1);
+  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(-0.5145016193e+1f));
+  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(+0.3141218185e+1f));
+
+  d = vreinterpret_vf_vm(vxor_vm_vm_vm(vand_vm_vo32_vm(veq_vo_vi2_vi2(vand_vi2_vi2_vi2(q, vcast_vi2_i(2)), vcast_vi2_i(0)), vreinterpret_vm_vf(vcast_vf_f(-0.0f))), vreinterpret_vm_vf(d)));
+
+  u = vmul_vf_vf_vf(u, d);
+
+  return u;
+}
+
+EXPORT CONST VECTOR_CC vfloat xfastcosf_u35(vfloat d) {
+  return vcast_vf_f(0);
+}
+
 #ifdef ENABLE_GNUABI
 #define TYPE2_FUNCATR static INLINE CONST 
 #define TYPE6_FUNCATR static INLINE CONST 

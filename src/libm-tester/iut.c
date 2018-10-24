@@ -569,6 +569,16 @@ int main(int argc, char **argv) {
       sscanf(buf, "cospif_u05 %x", &u);
       u = f2u(xcospif_u05(u2f(u)));
       printf("%x\n", u);
+    } else if (startsWith(buf, "fastsinf_u100000 ")) {
+      uint32_t u;
+      sscanf(buf, "fastsinf_u100000 %x", &u);
+      u = f2u(xfastsinf_u100000(u2f(u)));
+      printf("%x\n", u);
+    } else if (startsWith(buf, "fastcosf_u100000 ")) {
+      uint32_t u;
+      sscanf(buf, "fastcosf_u100000 %x", &u);
+      u = f2u(xfastcosf_u100000(u2f(u)));
+      printf("%x\n", u);
     } else if (startsWith(buf, "tanf_u1 ")) {
       uint32_t u;
       sscanf(buf, "tanf_u1 %x", &u);

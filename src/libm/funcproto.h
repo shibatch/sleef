@@ -20,6 +20,7 @@ typedef struct {
   2 : "_u05"
   3 : "_u35"
   4 : "_u15"
+  5 : "_u100000"
 
   funcType:
   0 : vdouble func(vdouble);
@@ -34,6 +35,7 @@ typedef struct {
 
   flags:
   1 : No GNUABI
+  2 : No double func
  */
 
 funcSpec funcList[] = {
@@ -65,6 +67,11 @@ funcSpec funcList[] = {
   { "sinh", 35, 3, 0, 0 },
   { "cosh", 35, 3, 0, 0 },
   { "tanh", 35, 3, 0, 0 },
+
+  { "fastsin", 100000, 5, 0, 2 },
+  { "fastcos", 100000, 5, 0, 2 },
+  { "fastsin", 35, 3, 0, 2 },
+  { "fastcos", 35, 3, 0, 2 },
 
   { "asinh", 10, 0, 0, 0 },
   { "acosh", 10, 0, 0, 0 },

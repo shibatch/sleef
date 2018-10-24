@@ -104,6 +104,9 @@
 #define xlogf_u1 Sleef_logf_u10
 #define xcbrtf_u1 Sleef_cbrtf_u10
 
+#define xfastsinf_u100000 Sleef_fastsinf_u100000
+#define xfastcosf_u100000 Sleef_fastcosf_u100000
+
 #define xexpf Sleef_expf_u10
 #define xpowf Sleef_powf_u10
 #define xsinhf Sleef_sinhf_u10

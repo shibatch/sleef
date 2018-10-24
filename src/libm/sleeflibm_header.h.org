@@ -195,6 +195,8 @@ IMPORT CONST float Sleef_cbrtf_u35(float);
 IMPORT CONST float Sleef_sinf_u10(float);
 IMPORT CONST float Sleef_cosf_u10(float);
 IMPORT CONST Sleef_float2 Sleef_sincosf_u10(float);
+IMPORT CONST float Sleef_fastsinf_u100000(float);
+IMPORT CONST float Sleef_fastcosf_u100000(float);
 IMPORT CONST float Sleef_tanf_u10(float);
 IMPORT CONST float Sleef_asinf_u10(float);
 IMPORT CONST float Sleef_acosf_u10(float);

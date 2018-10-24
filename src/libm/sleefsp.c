@@ -620,6 +620,98 @@ EXPORT CONST float xcosf_u1(float d) {
   return u;
 }
 
+EXPORT CONST float xfastsinf_u100000(float d) {
+  int q;
+  float u, s, t = d;
+
+  d *= (float)M_1_PI;
+  q = (int)rintfk(d);
+  d -= q;
+
+  s = d * d;
+
+  if ((q & 1) != 0) d = -d;
+
+  u = +0.2324385881e+1;
+  u = mlaf(u, s, -0.5145016193e+1f);
+  u = mlaf(u, s, +0.3141218185e+1f);
+
+  u *= d;
+
+  return u;
+}
+
+EXPORT CONST float xfastsinf_u35(float d) {
+  int q;
+  float u, s, t = d;
+
+  d *= (float)M_1_PI;
+  q = (int)rintfk(d);
+  d -= q;
+
+  s = d * d;
+
+  if ((q & 1) != 0) d = -d;
+
+  u = +0.7737486064e-1;
+  u = mlaf(u, s, -0.5981476903e+0f);
+  u = mlaf(u, s, +0.2550054789e+1f);
+  u = mlaf(u, s, -0.5167709351e+1f);
+  u = mlaf(u, s, +0.3141592741e+1f);
+
+  u *= d;
+
+  if (UNLIKELY(fabsfk(t) > 9.0f)) u = xsinf(t);
+
+  return u;
+}
+
+EXPORT CONST float xfastcosf_u100000(float d) {
+  int q;
+  float u, s, t = d, dq;
+
+  dq = rintfk(mlaf(d, (float)M_1_PI, - 0.5f));
+  d = mlaf(d, (float)M_1_PI, -dq - 0.5f);
+  q = (int)mlaf(2, dq, 1);
+
+  s = d * d;
+
+  if ((q & 2) == 0) d = -d;
+
+  u = +0.2324385881e+1;
+  u = mlaf(u, s, -0.5145016193e+1f);
+  u = mlaf(u, s, +0.3141218185e+1f);
+
+  u *= d;
+
+  return u;
+}
+
+EXPORT CONST float xfastcosf_u35(float d) {
+  int q;
+  float u, s, t = d, dq;
+
+  dq = rintfk(mlaf(d, (float)M_1_PI, - 0.5f));
+  d = mlaf(d, (float)M_1_PI, -dq - 0.5f);
+  q = (int)mlaf(2, dq, 1);
+
+  s = d * d;
+
+  if ((q & 2) == 0) d = -d;
+
+  u = +0.7737486064e-1;
+  u = mlaf(u, s, -0.5981476903e+0f);
+  u = mlaf(u, s, +0.2550054789e+1f);
+  u = mlaf(u, s, -0.5167709351e+1f);
+  u = mlaf(u, s, +0.3141592741e+1f);
+
+  u *= d;
+
+  if (UNLIKELY(fabsfk(t) > 9.0f)) u = xcosf(t);
+
+  return u;
+}
+
 EXPORT CONST Sleef_float2 xsincosf(float d) {
   int q;
   float u, s, t;

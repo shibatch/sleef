@@ -289,6 +289,11 @@ float child_cbrtf_u1(float x) { child_f_f("cbrtf_u1", x); }
 float child_atan2f_u1(float y, float x) { child_f_f_f("atan2f_u1", y, x); }
 Sleef_float2 child_sincosf_u1(float x) { child_f2_f("sincosf_u1", x); }
 
+float child_fastsinf_u100000(float x) { child_f_f("fastsinf_u100000", x); }
+float child_fastcosf_u100000(float x) { child_f_f("fastcosf_u100000", x); }
+float child_fastsinf_u35(float x) { child_f_f("fastsinf_u35", x); }
+float child_fastcosf_u35(float x) { child_f_f("fastcosf_u35", x); }
+
 float child_powf(float x, float y) { child_f_f_f("powf", x, y); }
 float child_sqrtf(float x) { child_f_f("sqrtf", x); }
 float child_sqrtf_u05(float x) { child_f_f("sqrtf_u05", x); }
@@ -4122,6 +4127,19 @@ void do_test() {
       break;								\
     }									\
   } while(0)
+
+#define checkAccuracy2_f(mpfrFunc, childFunc, argx, bound, abound) do {	\
+    mpfr_set_d(frx, (float)flushToZero(argx), GMP_RNDN);		\
+    mpfrFunc(frc, frx, GMP_RNDN);					\
+    double t = childFunc((float)flushToZero(argx));			\
+    double ae = fabs(mpfr_get_d(frc, GMP_RNDN) - t);			\
+    if (countULPsp(t, frc) > bound && ae > abound) {			\
+      fprintf(stderr, "\narg = %.20g, test = %.20g, correct = %.20g, ULP = %lf, abserror = %g\n", \
+	      (float)flushToZero(argx), (double)childFunc((float)flushToZero(argx)), mpfr_get_d(frc, GMP_RNDN), countULPsp(childFunc((float)flushToZero(argx)), frc), ae); \
+      success = 0;							\
+      break;								\
+    }									\
+  } while(0)
   
   //
 
@@ -4469,6 +4487,16 @@ void do_test() {
 
     mpfr_set_default_prec(53);
   
+    //
+  
+    fprintf(stderr, "fastsinf_u100000 : ");
+    for(d = -9;d < 9 && success;d += 0.001) checkAccuracy2_f(mpfr_sin, child_fastsinf_u100000, d, 100000, 1e-6);
+    showResult(success);
+
+    fprintf(stderr, "fastcosf_u100000 : ");
+    for(d = -9;d < 9 && success;d += 0.001) checkAccuracy2_f(mpfr_cos, child_fastcosf_u100000, d, 100000, 1e-6);
+    showResult(success);
+
     //
 
     fprintf(stderr, "tanf : ");

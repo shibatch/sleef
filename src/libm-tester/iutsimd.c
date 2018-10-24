@@ -570,6 +570,11 @@ int do_test(int argc, char **argv) {
     func_f_f("atanf_u1", xatanf_u1);
     func_f_f("logf_u1", xlogf_u1);
 
+    func_f_f("fastsinf_u100000", xfastsinf_u100000);
+    func_f_f("fastcosf_u100000", xfastcosf_u100000);
+    func_f_f("fastsinf_u35", xfastsinf_u35);
+    func_f_f("fastcosf_u35", xfastcosf_u35);
+
     func_f_f("exp2f", xexp2f);
     func_f_f("exp10f", xexp10f);
     func_f_f("expm1f", xexpm1f);
