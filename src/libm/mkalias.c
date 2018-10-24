@@ -84,7 +84,7 @@ int main(int argc, char **argv) {
 
   if (argc == 6) {
     for(int i=0;funcList[i].name != NULL;i++) {
-      if ((funcList[i].flags & 2) != 0) continue;
+      if (fptype == 0 && (funcList[i].flags & 2) != 0) continue;
       if (funcList[i].ulp >= 0) {
 	printf("EXPORT CONST %s Sleef_%s%s%d_u%02d(%s) __attribute__((alias(\"Sleef_%s%s%d_u%02d%s\"))) %s;\n",
 	       returnType[funcList[i].funcType],
@@ -109,6 +109,7 @@ int main(int argc, char **argv) {
 
   if (argc == 6) {
     for(int i=0;funcList[i].name != NULL;i++) {
+      if (fptype == 0 && (funcList[i].flags & 2) != 0) continue;
       if (funcList[i].ulp >= 0) {
 	printf("EXPORT CONST %s %s Sleef_%s%s%d_u%02d(%s) { return Sleef_%s%s%d_u%02d%s(%s); }\n",
 	       returnType[funcList[i].funcType], vectorcc,
