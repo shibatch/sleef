@@ -39,9 +39,12 @@
 
 #define xexp2 Sleef_exp2_u10
 #define xexp10 Sleef_exp10_u10
+#define xexp2_u35 Sleef_exp2_u35
+#define xexp10_u35 Sleef_exp10_u35
 #define xexpm1 Sleef_expm1_u10
 #define xlog10 Sleef_log10_u10
 #define xlog2 Sleef_log2_u10
+#define xlog2_u35 Sleef_log2_u35
 #define xlog1p Sleef_log1p_u10
 
 #define xsincospi_u05 Sleef_sincospi_u05
@@ -104,9 +107,6 @@
 #define xlogf_u1 Sleef_logf_u10
 #define xcbrtf_u1 Sleef_cbrtf_u10
 
-#define xfastsinf_u100000 Sleef_fastsinf_u100000
-#define xfastcosf_u100000 Sleef_fastcosf_u100000
-
 #define xexpf Sleef_expf_u10
 #define xpowf Sleef_powf_u10
 #define xsinhf Sleef_sinhf_u10
@@ -121,9 +121,13 @@
 
 #define xexp2f Sleef_exp2f_u10
 #define xexp10f Sleef_exp10f_u10
+#define xexp2f_u35 Sleef_exp2f_u35
+#define xexp10f_u35 Sleef_exp10f_u35
 #define xexpm1f Sleef_expm1f_u10
 #define xlog10f Sleef_log10f_u10
 #define xlog2f Sleef_log2f_u10
+#define xlog10f_u35 Sleef_log10f_u35
+#define xlog2f_u35 Sleef_log2f_u35
 #define xlog1pf Sleef_log1pf_u10
 
 #define xsincospif_u05 Sleef_sincospif_u05
@@ -161,6 +165,10 @@
 #define xtgammaf_u1 Sleef_tgammaf_u10
 #define xerff_u1 Sleef_erff_u10
 #define xerfcf_u15 Sleef_erfcf_u15
+
+#define xfastsinf_u3500 Sleef_fastsinf_u3500
+#define xfastcosf_u3500 Sleef_fastcosf_u3500
+#define xfastpowf_u3500 Sleef_fastpowf_u3500
 
 //
 

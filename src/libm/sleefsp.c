@@ -620,94 +620,44 @@ EXPORT CONST float xcosf_u1(float d) {
   return u;
 }
 
-EXPORT CONST float xfastsinf_u100000(float d) {
+EXPORT CONST float xfastsinf_u3500(float d) {
   int q;
   float u, s, t = d;
 
-  d *= (float)M_1_PI;
-  q = (int)rintfk(d);
-  d -= q;
+  q = rintfk(d * (float)M_1_PI);
+  d = mlaf(q, -(float)M_PI, d);
 
   s = d * d;
 
-  if ((q & 1) != 0) d = -d;
+  u = -0.1881748176e-3;
+  u = mlaf(u, s, +0.8323502727e-2);
+  u = mlaf(u, s, -0.1666651368e+0);
+  u = mlaf(s * d, u, d);
 
-  u = +0.2324385881e+1;
-  u = mlaf(u, s, -0.5145016193e+1f);
-  u = mlaf(u, s, +0.3141218185e+1f);
+  if ((q & 1) != 0) u = -u;
 
-  u *= d;
+  if (UNLIKELY(fabsfk(t) > 30.0f)) return xsinf(t);
 
   return u;
 }
 
-EXPORT CONST float xfastsinf_u35(float d) {
+EXPORT CONST float xfastcosf_u3500(float d) {
   int q;
   float u, s, t = d;
 
-  d *= (float)M_1_PI;
-  q = (int)rintfk(d);
-  d -= q;
+  q = rintfk(mlaf(d, (float)M_1_PI, -0.5f));
+  d = mlaf(q, -(float)M_PI, d - (float)M_PI*0.5f);
 
   s = d * d;
 
-  if ((q & 1) != 0) d = -d;
+  u = -0.1881748176e-3;
+  u = mlaf(u, s, +0.8323502727e-2);
+  u = mlaf(u, s, -0.1666651368e+0);
+  u = mlaf(s * d, u, d);
 
-  u = +0.7737486064e-1;
-  u = mlaf(u, s, -0.5981476903e+0f);
-  u = mlaf(u, s, +0.2550054789e+1f);
-  u = mlaf(u, s, -0.5167709351e+1f);
-  u = mlaf(u, s, +0.3141592741e+1f);
+  if ((q & 1) == 0) u = -u;
 
-  u *= d;
-
-  if (UNLIKELY(fabsfk(t) > 9.0f)) u = xsinf(t);
-
-  return u;
-}
-
-EXPORT CONST float xfastcosf_u100000(float d) {
-  int q;
-  float u, s, t = d, dq;
-
-  dq = rintfk(mlaf(d, (float)M_1_PI, - 0.5f));
-  d = mlaf(d, (float)M_1_PI, -dq - 0.5f);
-  q = (int)mlaf(2, dq, 1);
-
-  s = d * d;
-
-  if ((q & 2) == 0) d = -d;
-
-  u = +0.2324385881e+1;
-  u = mlaf(u, s, -0.5145016193e+1f);
-  u = mlaf(u, s, +0.3141218185e+1f);
-
-  u *= d;
-
-  return u;
-}
-
-EXPORT CONST float xfastcosf_u35(float d) {
-  int q;
-  float u, s, t = d, dq;
-
-  dq = rintfk(mlaf(d, (float)M_1_PI, - 0.5f));
-  d = mlaf(d, (float)M_1_PI, -dq - 0.5f);
-  q = (int)mlaf(2, dq, 1);
-
-  s = d * d;
-
-  if ((q & 2) == 0) d = -d;
-
-  u = +0.7737486064e-1;
-  u = mlaf(u, s, -0.5981476903e+0f);
-  u = mlaf(u, s, +0.2550054789e+1f);
-  u = mlaf(u, s, -0.5167709351e+1f);
-  u = mlaf(u, s, +0.3141592741e+1f);
-
-  u *= d;
-
-  if (UNLIKELY(fabsfk(t) > 9.0f)) u = xcosf(t);
+  if (UNLIKELY(fabsfk(t) > 30.0f)) return xcosf(t);
 
   return u;
 }
@@ -1372,6 +1322,67 @@ EXPORT CONST float xpowf(float x, float y) {
   return result;
 }
 
+static INLINE CONST float logk3f(float d) {
+  float x, x2, t, m;
+  int e;
+
+  int o = d < FLT_MIN;
+  if (o) d *= (float)(1LL << 32) * (float)(1LL << 32);
+      
+  e = ilogb2kf(d * (1.0f/0.75f));
+  m = ldexp3kf(d, -e);
+
+  if (o) e -= 64;
+  
+  x = (m-1) / (m+1);
+  x2 = x * x;
+  
+  t = 0.2392828464508056640625f;
+  t = mlaf(t, x2, 0.28518211841583251953125f);
+  t = mlaf(t, x2, 0.400005877017974853515625f);
+  t = mlaf(t, x2, 0.666666686534881591796875f);
+  t = mlaf(t, x2, 2.0f);
+
+  x = mlaf(x, t, 0.693147180559945286226764f * e);
+
+  return x;
+}
+
+static INLINE CONST float expk3f(float d) {
+  int q = (int)rintfk(d * R_LN2f);
+  float s, u;
+
+  s = mlaf(q, -L2Uf, d);
+  s = mlaf(q, -L2Lf, s);
+
+  u = 0.000198527617612853646278381;
+  u = mlaf(u, s, 0.00139304355252534151077271);
+  u = mlaf(u, s, 0.00833336077630519866943359);
+  u = mlaf(u, s, 0.0416664853692054748535156);
+  u = mlaf(u, s, 0.166666671633720397949219);
+  u = mlaf(u, s, 0.5);
+
+  u = mlaf(s * s, u, s + 1.0f);
+  u = ldexpkf(u, q);
+
+  if (d < -104) u = 0;
+  
+  return u;
+}
+
+EXPORT CONST float xfastpowf_u3500(float x, float y) {
+  float result = expk3f(logk3f(fabsfk(x)) * y);
+
+  int yisint = (y == (int)y) || (fabsfk(y) >= (float)(1LL << 24));
+  int yisodd = (1 & (int)y) != 0 && yisint && fabsfk(y) < (float)(1LL << 24);
+
+  result *= (x < 0 && yisodd) ? -1 : 1;
+  if (x == 0) result = 0;
+  if (y == 0) result = 1;
+
+  return result;
+}
+
 EXPORT CONST float xsinhf(float x) {
   float y = fabsfk(x);
   Sleef_float2 d = expk2f(df(y, 0));
@@ -1537,6 +1548,28 @@ EXPORT CONST float xexp2f(float d) {
   return u;
 }
 
+EXPORT CONST float xexp2f_u35(float d) {
+  int q = (int)rintfk(d);
+  float s, u;
+
+  s = d - q;
+
+  u = +0.1535920892e-3;
+  u = mlaf(u, s, +0.1339262701e-2);
+  u = mlaf(u, s, +0.9618384764e-2);
+  u = mlaf(u, s, +0.5550347269e-1);
+  u = mlaf(u, s, +0.2402264476e+0);
+  u = mlaf(u, s, +0.6931471825e+0);
+  u = mlaf(u, s, +0.1000000000e+1);
+
+  u = ldexp2kf(u, q);
+
+  if (d >= 128) u = SLEEF_INFINITYf;
+  if (d < -150) u = 0;
+  
+  return u;
+}
+
 EXPORT CONST float xexp10f(float d) {
   int q = (int)rintfk(d * (float)LOG10_2);
   float s, u;
@@ -1551,6 +1584,29 @@ EXPORT CONST float xexp10f(float d) {
   u = mlaf(u, s, +0.2650948763e+1);
   u = mlaf(u, s, +0.2302585125e+1);
   u = dfnormalize_f2_f2(dfadd_f2_f_f2(1, dfmul_f2_f_f(u, s))).x;
+
+  u = ldexp2kf(u, q);
+
+  if (d > 38.5318394191036238941387f) u = SLEEF_INFINITYf; // log10(FLT_MAX)
+  if (d < -50) u = 0;
+  
+  return u;
+}
+
+EXPORT CONST float xexp10f_u35(float d) {
+  int q = (int)rintfk(d * (float)LOG10_2);
+  float s, u;
+  
+  s = mlaf(q, -L10Uf, d);
+  s = mlaf(q, -L10Lf, s);
+  
+  u = +0.2064004987e+0;
+  u = mlaf(u, s, +0.5417877436e+0);
+  u = mlaf(u, s, +0.1171286821e+1);
+  u = mlaf(u, s, +0.2034656048e+1);
+  u = mlaf(u, s, +0.2650948763e+1);
+  u = mlaf(u, s, +0.2302585125e+1);
+  u = mlaf(u, s, +0.1000000000e+1);
 
   u = ldexp2kf(u, q);
 
@@ -1626,6 +1682,34 @@ EXPORT CONST float xlog2f(float d) {
   s = dfadd2_f2_f2_f(s, x2 * x.x * t);
   
   float r = s.x + s.y;
+  
+  if (xisinff(d)) r = SLEEF_INFINITYf;
+  if (d < 0 || xisnanf(d)) r = SLEEF_NANf;
+  if (d == 0) r = -SLEEF_INFINITYf;
+
+  return r;
+}
+
+EXPORT CONST float xlog2f_u35(float d) {
+  float m, t, x, x2;
+  int e;
+
+  int o = d < FLT_MIN;
+  if (o) d *= (float)(1LL << 32) * (float)(1LL << 32);
+      
+  e = ilogb2kf(d * (1.0f/0.75f));
+  m = ldexp3kf(d, -e);
+
+  if (o) e -= 64;
+
+  x = (m - 1) / (m + 1);
+  x2 = x * x;
+
+  t = +0.4374088347e+0;
+  t = mlaf(t, x2, +0.5764843822e+0);
+  t = mlaf(t, x2, +0.9618024230e+0);
+
+  float r = mlaf(x2 * x, t, mlaf(x, +0.2885390043e+1, e));
   
   if (xisinff(d)) r = SLEEF_INFINITYf;
   if (d < 0 || xisnanf(d)) r = SLEEF_NANf;

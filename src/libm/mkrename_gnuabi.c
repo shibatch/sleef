@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
   if (strcmp(isaname, "sve") == 0)
     wdp = wsp = "x";
 
-  static char *ulpSuffixStr[] = { "", "_u1", "_u05", "_u35", "_u15", "_u100000" };
+  static char *ulpSuffixStr[] = { "", "_u1", "_u05", "_u35", "_u15", "_u3500" };
   static char *vparameterStrDP[] = { "v", "vv", "vl8l8", "vv", "v", "vvv", "vl8" };
   static char *vparameterStrSP[] = { "v", "vv", "vl4l4", "vv", "v", "vvv", "vl4" };
   

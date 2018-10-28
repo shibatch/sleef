@@ -271,11 +271,15 @@ int do_test(int argc, char **argv)
 
   testu_d_d(log, u10, 1e-300, 1e+14, 200001);
   testu_d_d(log, u35, 1e-300, 1e+14, 200001);
+  testu_d_d(log2, u10, 1e-300, 1e+14, 200001);
+  testu_d_d(log2, u35, 1e-300, 1e+14, 200001);
   testu_d_d(log10, u10, 1e-300, 1e+14, 200001);
   testu_d_d(log1p, u10, 1e-300, 1e+14, 200001);
   test_d_d(exp, u10, -1000, 1000, 200001);
   test_d_d(exp2, u10, -1000, 1000, 200001);
+  test_d_d(exp2, u35, -1000, 1000, 200001);
   test_d_d(exp10, u10, -1000, 1000, 200001);
+  test_d_d(exp10, u35, -1000, 1000, 200001);
   test_d_d(expm1, u10, -1000, 1000, 200001);
   test_d_d_d(pow, u10, -100, 100, 451, -100, 100, 451);
   
@@ -339,11 +343,15 @@ int do_test(int argc, char **argv)
 
   testu_f_f(log, u10, 1e-30, 1e+14, 200001);
   testu_f_f(log, u35, 1e-30, 1e+14, 200001);
+  testu_f_f(log2, u10, 1e-30, 1e+14, 200001);
+  testu_f_f(log2, u35, 1e-30, 1e+14, 200001);
   testu_f_f(log10, u10, 1e-30, 1e+14, 200001);
   testu_f_f(log1p, u10, 1e-30, 1e+14, 200001);
   test_f_f(exp, u10, -1000, 1000, 200001);
   test_f_f(exp2, u10, -1000, 1000, 200001);
+  test_f_f(exp2, u35, -1000, 1000, 200001);
   test_f_f(exp10, u10, -1000, 1000, 200001);
+  test_f_f(exp10, u35, -1000, 1000, 200001);
   test_f_f(expm1, u10, -1000, 1000, 200001);
   test_f_f_f(pow, u10, -100, 100, 451, -100, 100, 451);
   
@@ -391,6 +399,10 @@ int do_test(int argc, char **argv)
   test_f_f(ceil, , -100, 100, 800);
   test_f_f(round, , -100, 100, 800);
   test_f_f(rint, , -100, 100, 800);
+
+  test_f_f(fastsin, u3500, 1e-30, 100, 200001);
+  test_f_f(fastcos, u3500, 1e-30, 100, 200001);
+  test_f_f_f(fastpow, u3500, 0, 25, 451, -25, 25, 451);
 
   //
 

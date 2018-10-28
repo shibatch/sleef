@@ -36,7 +36,7 @@ int main(int argc, char **argv) {
   };
   static char *typeSpecS[] = { "", "f" };
   static char *typeSpec[] = { "d", "f" };
-  static char *ulpSuffixStr[] = { "", "_u1", "_u05", "_u35", "_u15", "_u100000" };
+  static char *ulpSuffixStr[] = { "", "_u1", "_u05", "_u35", "_u15", "_u3500" };
   static char *vparameterStr[7] = { "v", "vv", "", "vv", "v", "vvv", "" };
 
   static char returnType[9][1000];

@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
   static char *vintname[] = { "vint", "vint2" };
   static int sizeoffp[] = { 8, 4 };
   
-  static char *ulpSuffixStr[] = { "", "_u1", "_u05", "_u35", "_u15", "_u100000" };
+  static char *ulpSuffixStr[] = { "", "_u1", "_u05", "_u35", "_u15", "_u3500" };
   static char vparameterStr[7][LEN] = { "v", "vv", "vl8l8", "vv", "v", "vvv", "vl8" };
   static char *typeSpecS[] = { "", "f" };
   static char *typeSpec[] = { "d", "f" };

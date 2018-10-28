@@ -404,6 +404,14 @@ int main(int argc,char **argv)
 	printf(ISANAME " sincosf_u1 sin arg=%.20g ulp=%.20g\n", d, u3);
 	fflush(stdout); ecnt++;
       }
+
+      float u4 = countULPsp(t = vget(xfastsinf_u3500(vd), e), frx);
+      double ae4 = fabs(mpfr_get_d(frx, GMP_RNDN) - t);
+      
+      if (u4 > 350 && ae4 > 2e-6) {
+	printf(ISANAME " fastsinf_u3500 arg=%.20g ulp=%.20g\n", d, u4);
+	fflush(stdout); ecnt++;
+      }
     }
 
     {
@@ -435,6 +443,14 @@ int main(int argc,char **argv)
       
       if (u3 != 0 && (u3 > 1 || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincosf_u1 cos arg=%.20g ulp=%.20g\n", d, u3);
+	fflush(stdout); ecnt++;
+      }
+
+      float u4 = countULPsp(t = vget(xfastcosf_u3500(vd), e), frx);
+      double ae4 = fabs(mpfr_get_d(frx, GMP_RNDN) - t);
+      
+      if (u4 > 350 && ae4 > 2e-6) {
+	printf(ISANAME " fastcosf_u3500 arg=%.20g ulp=%.20g\n", d, u4);
 	fflush(stdout); ecnt++;
       }
     }
@@ -499,6 +515,13 @@ int main(int argc,char **argv)
 	printf(ISANAME " log2f arg=%.20g ulp=%.20g\n", d, u0);
 	fflush(stdout); ecnt++;
       }
+
+      double u1 = countULPsp(t = vget(xlog2f_u35(vad), e), frx);
+      
+      if (u1 > 3.5) {
+	printf(ISANAME " log2f_u35 arg=%.20g ulp=%.20g\n", d, u1);
+	fflush(stdout); ecnt++;
+      }
     }
     
     {
@@ -537,6 +560,13 @@ int main(int argc,char **argv)
 	printf(ISANAME " exp2f arg=%.20g ulp=%.20g\n", d, u0);
 	fflush(stdout); ecnt++;
       }
+
+      double u1 = countULPsp(t = vget(xexp2f_u35(vd), e), frx);
+      
+      if (u1 > 3.5) {
+	printf(ISANAME " exp2f_u35 arg=%.20g ulp=%.20g\n", d, u1);
+	fflush(stdout); ecnt++;
+      }
     }
     
     {
@@ -547,6 +577,13 @@ int main(int argc,char **argv)
       
       if (u0 > 1) {
 	printf(ISANAME " exp10f arg=%.20g ulp=%.20g\n", d, u0);
+	fflush(stdout); ecnt++;
+      }
+
+      double u1 = countULPsp(t = vget(xexp10f_u35(vd), e), frx);
+      
+      if (u1 > 3.5) {
+	printf(ISANAME " exp10f_u35 arg=%.20g ulp=%.20g\n", d, u1);
 	fflush(stdout); ecnt++;
       }
     }
@@ -574,6 +611,16 @@ int main(int argc,char **argv)
 	printf(ISANAME " powf arg=%.20g, %.20g ulp=%.20g\n", d2, d, u0);
 	printf("correct = %g, test = %g\n", mpfr_get_d(frx, GMP_RNDN), t);
 	fflush(stdout); ecnt++;
+      }
+
+      if (isnumber(d) && isnumber(d2)) {
+	double u1 = countULPsp(t = vget(xfastpowf_u3500(vd2, vd), e), frx);
+      
+	if (isnumber((float)mpfr_get_d(frx, GMP_RNDN)) && u1 > 350) {
+	  printf(ISANAME " fastpowf_u3500 arg=%.20g, %.20g ulp=%.20g\n", d2, d, u1);
+	  printf("correct = %g, test = %g\n", mpfr_get_d(frx, GMP_RNDN), t);
+	  fflush(stdout); ecnt++;
+	}
       }
     }
     

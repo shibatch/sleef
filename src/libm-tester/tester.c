@@ -175,9 +175,12 @@ double child_atanh(double x) { child_d_d("atanh", x); }
 
 double child_log10(double x) { child_d_d("log10", x); }
 double child_log2(double x) { child_d_d("log2", x); }
+double child_log2_u35(double x) { child_d_d("log2_u35", x); }
 double child_log1p(double x) { child_d_d("log1p", x); }
 double child_exp2(double x) { child_d_d("exp2", x); }
 double child_exp10(double x) { child_d_d("exp10", x); }
+double child_exp2_u35(double x) { child_d_d("exp2_u35", x); }
+double child_exp10_u35(double x) { child_d_d("exp10_u35", x); }
 double child_expm1(double x) { child_d_d("expm1", x); }
 
 Sleef_double2 child_sincospi_u05(double x) { child_d2_d("sincospi_u05", x); }
@@ -289,11 +292,6 @@ float child_cbrtf_u1(float x) { child_f_f("cbrtf_u1", x); }
 float child_atan2f_u1(float y, float x) { child_f_f_f("atan2f_u1", y, x); }
 Sleef_float2 child_sincosf_u1(float x) { child_f2_f("sincosf_u1", x); }
 
-float child_fastsinf_u100000(float x) { child_f_f("fastsinf_u100000", x); }
-float child_fastcosf_u100000(float x) { child_f_f("fastcosf_u100000", x); }
-float child_fastsinf_u35(float x) { child_f_f("fastsinf_u35", x); }
-float child_fastcosf_u35(float x) { child_f_f("fastcosf_u35", x); }
-
 float child_powf(float x, float y) { child_f_f_f("powf", x, y); }
 float child_sqrtf(float x) { child_f_f("sqrtf", x); }
 float child_sqrtf_u05(float x) { child_f_f("sqrtf_u05", x); }
@@ -311,9 +309,12 @@ float child_atanhf(float x) { child_f_f("atanhf", x); }
 
 float child_log10f(float x) { child_f_f("log10f", x); }
 float child_log2f(float x) { child_f_f("log2f", x); }
+float child_log2f_u35(float x) { child_f_f("log2f_u35", x); }
 float child_log1pf(float x) { child_f_f("log1pf", x); }
 float child_exp2f(float x) { child_f_f("exp2f", x); }
 float child_exp10f(float x) { child_f_f("exp10f", x); }
+float child_exp2f_u35(float x) { child_f_f("exp2f_u35", x); }
+float child_exp10f_u35(float x) { child_f_f("exp10f_u35", x); }
 float child_expm1f(float x) { child_f_f("expm1f", x); }
 
 Sleef_float2 child_sincospif_u05(float x) { child_f2_f("sincospif_u05", x); }
@@ -341,6 +342,10 @@ float child_tgammaf_u1(float x) { child_f_f("tgammaf_u1", x); }
 float child_lgammaf_u1(float x) { child_f_f("lgammaf_u1", x); }
 float child_erff_u1(float x) { child_f_f("erff_u1", x); }
 float child_erfcf_u15(float x) { child_f_f("erfcf_u15", x); }
+
+float child_fastsinf_u3500(float x) { child_f_f("fastsinf_u3500", x); }
+float child_fastcosf_u3500(float x) { child_f_f("fastcosf_u3500", x); }
+float child_fastpowf_u3500(float x, float y) { child_f_f_f("fastpowf_u3500", x, y); }
 
 float child_ldexpf(float x, int q) {
   char str[256];
@@ -2514,6 +2519,20 @@ void do_test() {
     }
 
     {
+      fprintf(stderr, "exp2_u35 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_exp2, child_exp2_u35, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "exp10_u35 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_exp10, child_exp10_u35, xa[i]);
+      showResult(success);
+    }
+
+    {
       fprintf(stderr, "expm1 denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_expm1, child_expm1, xa[i]);
@@ -2531,6 +2550,13 @@ void do_test() {
       fprintf(stderr, "log2 denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_log2, child_log2, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "log2_u35 denormal/nonnumber test : ");
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenorm_d(mpfr_log2, child_log2_u35, xa[i]);
       showResult(success);
     }
 
@@ -3084,6 +3110,20 @@ void do_test() {
     }
 
     {
+      fprintf(stderr, "exp2f_u35 denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_exp2, child_exp2f_u35, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "exp10f_u35 denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_exp10, child_exp10f_u35, xa[i]);
+      showResult(success);
+    }
+
+    {
       fprintf(stderr, "expm1f denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_expm1, child_expm1f, xa[i]);
@@ -3101,6 +3141,13 @@ void do_test() {
       fprintf(stderr, "log2f denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_log2, child_log2f, xa[i]);
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "log2f_u35 denormal/nonnumber test : ");
+      float xa[] = { +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenorm_f(mpfr_log2, child_log2f_u35, xa[i]);
       showResult(success);
     }
 
@@ -3964,6 +4011,20 @@ void do_test() {
 
     //
 
+    fprintf(stderr, "exp2_u35 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_exp2, child_exp2_u35, d, 3.5);
+    for(d = -1000;d < 1000 && success;d += 0.2) checkAccuracy_d(mpfr_exp2, child_exp2_u35, d, 3.5);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "exp10_u35 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_exp10, child_exp10_u35, d, 3.5);
+    for(d = -300;d < 300 && success;d += 0.1) checkAccuracy_d(mpfr_exp10, child_exp10_u35, d, 3.5);
+    showResult(success);
+
+    //
+
     fprintf(stderr, "expm1 : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_expm1, child_expm1, d, 1.0);
     for(d = -1000;d < 1000 && success;d += 0.21) checkAccuracy_d(mpfr_expm1, child_expm1, d, 1.0);
@@ -3985,6 +4046,14 @@ void do_test() {
     for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_d(mpfr_log2, child_log2, d, 1.0);
     for(d = 0.0001;d < 10000 && success;d += 1.1) checkAccuracy_d(mpfr_log2, child_log2, d, 1.0);
     for(i=0;i<10000 && success;i++) checkAccuracy_d(mpfr_log2, child_log2, (DBL_MIN * pow(0.996323, i)), 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "log2_u35 : ");
+    for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_d(mpfr_log2, child_log2_u35, d, 3.5);
+    for(d = 0.0001;d < 10000 && success;d += 1.1) checkAccuracy_d(mpfr_log2, child_log2_u35, d, 3.5);
+    for(i=0;i<10000 && success;i++) checkAccuracy_d(mpfr_log2, child_log2_u35, (DBL_MIN * pow(0.996323, i)), 3.5);
     showResult(success);
 
     //
@@ -4489,12 +4558,12 @@ void do_test() {
   
     //
   
-    fprintf(stderr, "fastsinf_u100000 : ");
-    for(d = -9;d < 9 && success;d += 0.001) checkAccuracy2_f(mpfr_sin, child_fastsinf_u100000, d, 100000, 1e-6);
+    fprintf(stderr, "fastsinf_u3500 : ");
+    for(d = -32;d < 32 && success;d += 0.001) checkAccuracy2_f(mpfr_sin, child_fastsinf_u3500, d, 350, 2e-6);
     showResult(success);
 
-    fprintf(stderr, "fastcosf_u100000 : ");
-    for(d = -9;d < 9 && success;d += 0.001) checkAccuracy2_f(mpfr_cos, child_fastcosf_u100000, d, 100000, 1e-6);
+    fprintf(stderr, "fastcosf_u3500 : ");
+    for(d = -32;d < 32 && success;d += 0.001) checkAccuracy2_f(mpfr_cos, child_fastcosf_u3500, d, 350, 2e-6);
     showResult(success);
 
     //
@@ -4573,6 +4642,16 @@ void do_test() {
 	for(x = -100;x < 10 && success;x += 0.06) {
 	  checkAccuracy_f_f(mpfr_pow, child_powf, x, y, 1.0);
 	}
+      }
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "fastpowf_u3500 : ");
+    for(y = -25;y < 25 && success;y += 0.121) {
+      for(x = 0.01;x < 25 && success;x += 0.251) {
+	checkAccuracy_f_f(mpfr_pow, child_fastpowf_u3500, x, y, 350);
       }
     }
     showResult(success);
@@ -4785,6 +4864,24 @@ void do_test() {
 
     //
 
+    fprintf(stderr, "exp2f_u35 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_exp2, child_exp2f_u35, d, 3.5);
+    if (!enableFlushToZero) {
+      for(d = -1000;d < 1000 && success;d += 0.2) checkAccuracy_f(mpfr_exp2, child_exp2f_u35, d, 3.5);
+    }
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "exp10f_u35 : ");
+    for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_exp10, child_exp10f_u35, d, 3.5);
+    if (!enableFlushToZero) {
+      for(d = -300;d < 300 && success;d += 0.1) checkAccuracy_f(mpfr_exp10, child_exp10f_u35, d, 3.5);
+    }
+    showResult(success);
+
+    //
+
     fprintf(stderr, "expm1f : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_expm1, child_expm1f, d, 1.0);
     if (!enableFlushToZero) {
@@ -4808,6 +4905,14 @@ void do_test() {
     for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_f(mpfr_log2, child_log2f, d, 1.0);
     for(d = 0.0001;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_log2, child_log2f, d, 1.0);
     for(i=0;i<10000 && success;i++) checkAccuracy_f(mpfr_log2, child_log2f, (FLT_MIN * pow(0.996323, i)), 1.0);
+    showResult(success);
+
+    //
+
+    fprintf(stderr, "log2f_u35 : ");
+    for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_f(mpfr_log2, child_log2f_u35, d, 3.5);
+    for(d = 0.0001;d < 10000 && success;d += 1.1) checkAccuracy_f(mpfr_log2, child_log2f_u35, d, 3.5);
+    for(i=0;i<10000 && success;i++) checkAccuracy_f(mpfr_log2, child_log2f_u35, (FLT_MIN * pow(0.996323, i)), 3.5);
     showResult(success);
 
     //
