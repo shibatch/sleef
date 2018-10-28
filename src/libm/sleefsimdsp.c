@@ -925,7 +925,7 @@ EXPORT CONST VECTOR_CC vfloat xfastcosf_u3500(vfloat d) {
   s = vmla_vf_vf_vf_vf(d, vcast_vf_f((float)M_1_PI), vcast_vf_f(-0.5f));
   u = vrint_vf_vf(s);
   q = vrint_vi2_vf(s);
-  d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-(float)M_PI), vsub_vf_vf_vf(d, vcast_vf_f((float)M_PI) * 0.5f));
+  d = vmla_vf_vf_vf_vf(u, vcast_vf_f(-(float)M_PI), vsub_vf_vf_vf(d, vcast_vf_f((float)M_PI * 0.5f)));
 
   s = vmul_vf_vf_vf(d, d);
 
