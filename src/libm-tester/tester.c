@@ -4650,7 +4650,7 @@ void do_test() {
 
     fprintf(stderr, "fastpowf_u3500 : ");
     for(y = -25;y < 25 && success;y += 0.121) {
-      for(x = 0.01;x < 25 && success;x += 0.251) {
+      for(x = 0.1;x < 25 && success;x += 0.251) {
 	checkAccuracy_f_f(mpfr_pow, child_fastpowf_u3500, x, y, 350);
       }
     }
