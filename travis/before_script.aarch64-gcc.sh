@@ -3,7 +3,7 @@ set -ev
 cd /build
 mkdir build-native
 cd build-native
-cmake ..
+cmake -DBUILD_QUAD=TRUE ..
 make -j 2 all
 cd /build
 mkdir build-cross
