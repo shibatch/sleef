@@ -221,12 +221,7 @@ typedef union {
 #define UNLIKELY(condition) __builtin_expect(!!(condition), 0)
 #define RESTRICT __restrict__
 
-#ifndef __ARM_FEATURE_SVE
 #define INLINE __attribute__((always_inline))
-#else
-// This is a workaround of a bug in armclang
-#define INLINE
-#endif
 
 #ifndef __arm__
 #define ALIGNED(x) __attribute__((aligned(x)))
