@@ -407,5 +407,3 @@ static INLINE vmask vneg64_vm_vm(vmask x) { return -(int64_t)x; }
 #define vsrl64_vm_vm_i(x, c) ((uint64_t)(x) >> (c))
 
 static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) { return (int64_t)x > (int64_t)y ? ~(uint32_t)0 : 0; }
-static INLINE vmask vsll64_vm_vm_vm(vmask x, vmask c) { return x << c; }
-static INLINE vmask vsrl64_vm_vm_vm(vmask x, vmask c) { return x >> c; }

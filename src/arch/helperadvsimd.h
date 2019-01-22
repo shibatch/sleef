@@ -703,11 +703,5 @@ static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) {
   return vreinterpretq_u32_u64(vcgtq_s64(vreinterpretq_s64_u32(x), vreinterpretq_s64_u32(y)));
 }
 
-static INLINE vmask vsll64_vm_vm_vm(vmask x, vmask c) {
-  return vreinterpretq_u32_u64(vshlq_u64(vreinterpretq_u64_u32(x), vreinterpretq_s64_u32(c)));
-}
-static INLINE vmask vsrl64_vm_vm_vm(vmask x, vmask c) {
-  return vreinterpretq_u32_u64(vshlq_u64(vreinterpretq_u64_u32(x), vnegq_s64(vreinterpretq_s64_u32(c))));
-}
 #define vsll64_vm_vm_i(x, c) vreinterpretq_u32_u64(vshlq_n_u64(vreinterpretq_u64_u32(x), c))
 #define vsrl64_vm_vm_i(x, c) vreinterpretq_u32_u64(vshrq_n_u64(vreinterpretq_u64_u32(x), c))

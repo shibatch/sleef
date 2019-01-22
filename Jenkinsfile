@@ -4,6 +4,7 @@ pipeline {
     stages {
         stage('Preamble') {
             parallel {
+/*
                 stage('AArch64 SVE') {
             	     agent { label 'aarch64' }
             	     steps {
@@ -45,7 +46,7 @@ pipeline {
 			 '''
             	     }
                 }
-
+*/		
                 stage('Intel Compiler') {
                     agent { label 'icc' }
                     steps {

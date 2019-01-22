@@ -512,17 +512,3 @@ static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) {
   _mm_storeu_si128((__m128i *)ay, y);
   return _mm_set_epi64x(ax[1] > ay[1] ? -1 : 0, ax[0] > ay[0] ? -1 : 0);
 }
-
-static INLINE vmask vsll64_vm_vm_vm(vmask x, vmask c) {
-  uint64_t ax[2], ac[2];
-  _mm_storeu_si128((__m128i *)ax, x);
-  _mm_storeu_si128((__m128i *)ac, c);
-  return _mm_set_epi64x(ac[1] > 63 ? 0 : (ax[1] << ac[1]), ac[0] > 63 ? 0 : (ax[0] << ac[0]));
-}
-
-static INLINE vmask vsrl64_vm_vm_vm(vmask x, vmask c) {
-  uint64_t ax[2], ac[2];
-  _mm_storeu_si128((__m128i *)ax, x);
-  _mm_storeu_si128((__m128i *)ac, c);
-  return _mm_set_epi64x(ac[1] > 63 ? 0 : (ax[1] >> ac[1]), ac[0] > 63 ? 0 : (ax[0] >> ac[0]));
-}

@@ -637,8 +637,6 @@ static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) {
   return _mm256_insertf128_si256(r, _mm_cmpgt_epi64(xh, yh), 1);
 }
 
-static INLINE vmask vsll64_vm_vm_vm(vmask x, vmask c) { return _mm256_sllv_epi64(x, c); }
-static INLINE vmask vsrl64_vm_vm_vm(vmask x, vmask c) { return _mm256_srlv_epi64(x, c); }
 #define vsll64_vm_vm_i(x, c) \
   _mm256_insertf128_si256(_mm256_castsi128_si256(_mm_slli_epi64(_mm256_extractf128_si256(x, 0), c)), \
 			  _mm_slli_epi64(_mm256_extractf128_si256(x, 1), c), 1)

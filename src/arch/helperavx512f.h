@@ -598,7 +598,5 @@ static INLINE vmask vsub64_vm_vm_vm(vmask x, vmask y) { return _mm512_sub_epi64(
 static INLINE vmask vneg64_vm_vm(vmask x) { return _mm512_sub_epi64(vcast_vm_i_i(0, 0), x); }
 static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) { return _mm512_cmp_epi64_mask(y, x, _MM_CMPINT_LT); } // signed compare
 
-static INLINE vmask vsll64_vm_vm_vm(vmask x, vmask c) { return _mm512_sllv_epi64(x, c); }
-static INLINE vmask vsrl64_vm_vm_vm(vmask x, vmask c) { return _mm512_srlv_epi64(x, c); }
 #define vsll64_vm_vm_i(x, c) _mm512_slli_epi64(x, c)
 #define vsrl64_vm_vm_i(x, c) _mm512_srli_epi64(x, c)

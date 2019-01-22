@@ -190,27 +190,6 @@ static INLINE CONST vmask2 imdvm2(vmask x, vmask y) { vmask2 r = { x, y }; retur
 #define vsrl128_vm2_vm2_i(m, imm)					\
   imdvm2(vor_vm_vm_vm(vsrl64_vm_vm_i(m.x, imm), vsll64_vm_vm_i(m.y, 64-imm)), vsrl64_vm_vm_i(m.y, imm))
 
-static INLINE CONST vmask2 vsrl128_vm2_vm2_vm(vmask2 m, vmask c) {
-  vmask2 r = { .y = vsrl64_vm_vm_vm(m.y, c), .x = vsrl64_vm_vm_vm(m.x, c) };
-  r.x = vor_vm_vm_vm(r.x, vsll64_vm_vm_vm(m.y, vsub64_vm_vm_vm(vcast_vm_i_i(0, 64), c)));
-  r.x = vor_vm_vm_vm(r.x, vsrl64_vm_vm_vm(m.y, vsub64_vm_vm_vm(c, vcast_vm_i_i(0, 64))));
-  return r;
-}
-
-static INLINE CONST vmask2 vsll128_vm2_vm_vm(vmask m, vmask c) {
-  vmask2 r = { .x = vsll64_vm_vm_vm(m, c) };
-  r.y = vsll64_vm_vm_vm(m, vsub64_vm_vm_vm(c, vcast_vm_i_i(0, 64)));
-  r.y = vor_vm_vm_vm(r.y, vsrl64_vm_vm_vm(m, vsub64_vm_vm_vm(vcast_vm_i_i(0, 64), c)));
-  return r;
-}
-
-static INLINE CONST vmask2 vsrlx128_vm2_vm_vm(vmask u, vmask n) {
-  return (vmask2) {
-    vsrl64_vm_vm_vm(u, vadd64_vm_vm_vm(vcast_vm_i_i(0, 64), n)), 
-    vor_vm_vm_vm(vsrl64_vm_vm_vm(u, n), vsll64_vm_vm_vm(u, vneg64_vm_vm(n)))
-  };
-}
-
 static INLINE CONST vopmask visnonnumberq_vo_vm2(vmask2 a) {
   return veq64_vo_vm_vm(vand_vm_vm_vm(a.y, vcast_vm_i_i(0x7fff0000, 0)), vcast_vm_i_i(0x7fff0000, 0));
 }

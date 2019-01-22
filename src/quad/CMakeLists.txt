@@ -79,6 +79,7 @@ add_custom_command(OUTPUT ${SLEEFQUAD_INCLUDE_HEADER}
 # --------------------------------------------------------------------
 # Helper executable: generates parts of the sleef header file
 add_host_executable(qmkrename qmkrename.c)
+set_target_properties(qmkrename PROPERTIES ${COMMON_TARGET_PROPERTIES})
 
 set(HEADER_FILES_GENERATED "")
 foreach(SIMD ${SLEEFQUAD_SUPPORTED_EXT})
