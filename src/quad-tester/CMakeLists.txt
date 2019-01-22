@@ -7,7 +7,7 @@ include_directories(${CMAKE_SOURCE_DIR}/src/quad)         # qrename.h
 include_directories(${CMAKE_BINARY_DIR}/src/quad/include) # rename headers
 
 if(NOT LIB_MPFR)
-  find_program(TESTER_COMMAND qtester)
+  find_program(QTESTER_COMMAND qtester)
 endif(NOT LIB_MPFR)
 
 find_library(LIBRT rt)
@@ -26,16 +26,16 @@ endif()
 
 function(add_test_iut IUT)
   if (LIB_MPFR)
-    set(TESTER qtester)
-  elseif(TESTER_COMMAND)
-    set(TESTER ${TESTER_COMMAND})
+    set(QTESTER qtester)
+  elseif(QTESTER_COMMAND)
+    set(QTESTER ${QTESTER_COMMAND})
   endif()
   # When we are crosscompiling using the mkrename* tools from a native
   # build, we use the tester executable from the native build.
   if (CMAKE_CROSSCOMPILING AND NATIVE_BUILD_DIR)
-    set(TESTER ${NATIVE_BUILD_DIR}/bin/qtester)
+    set(QTESTER ${NATIVE_BUILD_DIR}/bin/qtester)
   endif(CMAKE_CROSSCOMPILING AND NATIVE_BUILD_DIR)
-  if (TESTER)
+  if (QTESTER)
     if (NOT EMULATOR)
       if (SDE_COMMAND)
 	set(FLAGS_SDE "--sde" ${SDE_COMMAND})
@@ -48,11 +48,11 @@ function(add_test_iut IUT)
         set(FLAGS_ARMIE)
       endif()
       add_test(NAME ${IUT}
-	COMMAND ${TESTER} ${FLAGS_SDE} ${FLAGS_ARMIE} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${IUT}
+	COMMAND ${QTESTER} ${FLAGS_SDE} ${FLAGS_ARMIE} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${IUT}
 	WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     else()
       add_test(NAME ${IUT}
-	COMMAND ${TESTER} ${EMULATOR} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${IUT}
+	COMMAND ${QTESTER} ${EMULATOR} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${IUT}
 	WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     endif()
   endif()
