@@ -137,7 +137,7 @@ pipeline {
 			 set "ORG_PATH=%PATH%"
 			 PATH C:/Cygwin64/bin;C:/Cygwin64/usr/bin;%PROJECT_DIR%/build-cygwin/bin;%PATH%
 			 rmdir /S /Q build-cygwin
-			 C:/Cygwin64/bin/bash -c 'mkdir build-cygwin;cd build-cygwin;cmake -g"Unix Makefiles" ..;make -j 4'
+			 C:/Cygwin64/bin/bash -c 'mkdir build-cygwin;cd build-cygwin;cmake -g"Unix Makefiles" .. -DBUILD_QUAD=TRUE;make -j 4'
 			 del /Q /F %PROJECT_DIR%/build-cygwin/bin/iut*
 			 PATH %ORG_PATH%;C:/Cygwin64/bin;C:/Cygwin64/usr/bin;%PROJECT_DIR%/build-cygwin/bin;%PROJECT_DIR%/build/bin
 			 cd %PROJECT_DIR%
@@ -177,7 +177,7 @@ pipeline {
 			 rm -rf build-native
  			 mkdir build-native
 			 cd build-native
-			 cmake -DSLEEF_SHOW_CONFIG=1 ..
+			 cmake -DSLEEF_SHOW_CONFIG=1 .. -DBUILD_QUAD=TRUE
 			 make -j 4 all
 			 cd ..
 			 export PATH=$PATH:`pwd`/travis
