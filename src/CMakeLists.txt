@@ -1,11 +1,9 @@
 include_directories("common")
 include_directories("arch")
 
-if (BUILD_LIBM)
-  add_subdirectory("libm")
-  if (BUILD_TESTS)
-    add_subdirectory("libm-tester")
-  endif()
+add_subdirectory("libm")
+if (BUILD_TESTS)
+  add_subdirectory("libm-tester")
 endif()
 
 add_subdirectory("common")
