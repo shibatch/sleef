@@ -70,11 +70,12 @@ int startsWith(char *str, char *prefix) {
 
 //
 
-typedef struct {
-  uint64_t l, h;
-} xuint128;
+xuint128 xu(uint64_t h, uint64_t l) {
+  xuint128 r = { l, h };
+  return r;
+}
 
-static xuint128 sll128(uint64_t u, int c) {
+xuint128 sll128(uint64_t u, int c) {
   if (c < 64) {
     xuint128 r = { u << c, u >> (64 - c) };
     return r;
@@ -84,13 +85,13 @@ static xuint128 sll128(uint64_t u, int c) {
   return r;
 }
 
-static xuint128 add128(xuint128 x, xuint128 y) {
+xuint128 add128(xuint128 x, xuint128 y) {
   xuint128 r = { x.l + y.l, x.h + y.h };
   if (r.l < x.l) r.h++;
   return r;
 }
 
-static int lt128(xuint128 x, xuint128 y) {
+int lt128(xuint128 x, xuint128 y) {
   if (x.h < y.h) return 1;
   if (x.h == y.h && x.l < y.l) return 1;
   return 0;
@@ -262,7 +263,7 @@ char *sprintfr(mpfr_t fr) {
 
 //
 
-#if MPFR_VERSION_MAJOR >= 4 && defined(ENABLEFLOAT128)
+#if MPFR_VERSION_MAJOR >= 4 && defined(ENABLEFLOAT128) && !defined(__APPLE__)
 void mpfr_set_f128(mpfr_t frx, Sleef_quad q, mpfr_rnd_t rnd) {
   int mpfr_set_float128(mpfr_t rop, __float128 op, mpfr_rnd_t rnd);
   union {
@@ -511,7 +512,7 @@ Sleef_quad mpfr_get_f128(mpfr_t a, mpfr_rnd_t rnd) {
   c128.x = add128(c128.x, sll128(c64.u, SY));
 
   c128.h &= denorm ? 0xffffffffffffULL : 0x3ffffffffffffULL;
-  c128.h += ((f.e-1) & ~(-1UL << 15)) << 48;
+  c128.h += ((f.e-1) & ~((uint64_t)-1UL << 15)) << 48;
 
   if (isZero) { c128.l = c128.h = 0; }
   if (f.e >= 32767 || f.dd.x == INFINITY) {

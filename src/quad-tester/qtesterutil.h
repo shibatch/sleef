@@ -3,6 +3,15 @@
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
+typedef struct {
+  uint64_t l, h;
+} xuint128;
+
+xuint128 xu(uint64_t h, uint64_t l);
+xuint128 sll128(uint64_t u, int c);
+xuint128 add128(xuint128 x, xuint128 y);
+int lt128(xuint128 x, xuint128 y);
+
 void xsrand(uint64_t s);
 uint64_t xrand();
 void memrand(void *p, int size);

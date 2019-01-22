@@ -118,7 +118,7 @@
 
 typedef union {
   Sleef_quad q;
-  __uint128_t u;
+  xuint128 x;
   struct {
     uint64_t l, h;
   };
@@ -127,7 +127,7 @@ typedef union {
 Sleef_quad nexttoward0q(Sleef_quad x, int n) {
   cnv_t cx;
   cx.q = x;
-  cx.u -= n;
+  cx.x = add128(cx.x, xu(n < 0 ? 0 : -1, -(int64_t)n));
   return cx.q;
 }
 
@@ -183,8 +183,8 @@ int main(int argc,char **argv)
       q1 = rndf128x();
       break;
 #if defined(ENABLEFLOAT128)
-#define QUAD_MIN 3.36210314311209350626267781732175260e-4932Q
-#define QUAD_MAX 1.18973149535723176508575932662800702e+4932Q
+#define SLEEF_QUAD_MIN 3.36210314311209350626267781732175260e-4932Q
+#define SLEEF_QUAD_MAX 1.18973149535723176508575932662800702e+4932Q
     case 124:
       q0 = rndf128x();
       q1 = rndf128x();
@@ -209,34 +209,34 @@ int main(int argc,char **argv)
     case 120:
       q0 = rndf128x();
       q1 = rndf128x();
-      q1 += copysign(1, q1) * QUAD_MIN;
+      q1 += copysign(1, q1) * SLEEF_QUAD_MIN;
       break;
     case 119:
       q0 = rndf128x();
       q1 = rndf128x();
-      q1 = copysign(1, q1) * QUAD_MIN;
+      q1 = copysign(1, q1) * SLEEF_QUAD_MIN;
       break;
     case 118:
       q0 = rndf128x();
       q1 = rndf128x();
       q0 += copysign(1, q0);
-      q1  = copysign(1, q1) * QUAD_MIN;
+      q1  = copysign(1, q1) * SLEEF_QUAD_MIN;
       break;
     case 117:
       q0 = rndf128x();
       q1 = rndf128x();
-      q1 = copysign(1, q1) * QUAD_MIN;
+      q1 = copysign(1, q1) * SLEEF_QUAD_MIN;
       break;
     case 116:
       q0 = rndf128x();
       q1 = rndf128x();
       q0 += copysign(1, q0);
-      q1  = copysign(1, q1) * QUAD_MIN;
+      q1  = copysign(1, q1) * SLEEF_QUAD_MIN;
       break;
     case 115:
       q0 = rndf128x();
       q1 = rndf128x();
-      q1 += copysign(1, q1) * QUAD_MAX;
+      q1 += copysign(1, q1) * SLEEF_QUAD_MAX;
       break;
 #endif
     default:
