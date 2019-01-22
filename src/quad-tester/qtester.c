@@ -331,7 +331,7 @@ int main(int argc, char **argv) {
     }
   }
 
-  printf("\n\n*** Now testing %s\n", argv[a2s]);
+  fprintf(stderr, "\n\n*** qtester : now testing %s\n", argv[a2s]);
   
   for(i=a2s;i<argc;i++) argv2[i-a2s] = argv[i];
   argv2[argc-a2s] = NULL;
@@ -368,7 +368,7 @@ int main(int argc, char **argv) {
 	  return 0;
 	}
 
-	printf("*** Using SDE\n");
+	fprintf(stderr, "*** Using SDE\n");
       } else {
 	fprintf(stderr, "\n\nTester : *** CPU does not support the necessary feature\n");
 	return 0;

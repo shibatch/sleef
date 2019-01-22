@@ -172,7 +172,7 @@ typedef union {
   }
 
 int do_test(int argc, char **argv) {
-  xsrand(time(NULL));
+  xsrand(0);
 
   {
     int k = 0;
