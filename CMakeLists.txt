@@ -2,6 +2,7 @@
 
 option(BUILD_SHARED_LIBS "Build shared libs" ON)
 option(BUILD_DFT "libsleefdft will be built." ON)
+option(BUILD_QUAD "libsleefquad will be built." OFF)
 option(BUILD_GNUABI_LIBS "libsleefgnuabi will be built." ON)
 option(BUILD_TESTS "Tests will be built." ON)
 

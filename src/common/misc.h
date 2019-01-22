@@ -5,6 +5,8 @@
 
 //
 
+#include <stdint.h>
+
 #ifndef __MISC_H__
 #define __MISC_H__
 
@@ -165,12 +167,50 @@ typedef struct {
 } Sleef_longdouble2;
 #endif
 
-#if defined(ENABLEFLOAT128) && !defined(Sleef_quad2_DEFINED)
-#define Sleef_quad2_DEFINED
+#if !defined(Sleef_quad_DEFINED)
+#define Sleef_quad_DEFINED
+#if defined(ENABLEFLOAT128)
 typedef __float128 Sleef_quad;
-typedef struct {
-  __float128 x, y;
+#else
+typedef struct { uint64_t x, y; } Sleef_quad;
+#endif
+#endif
+
+#if !defined(Sleef_quad1_DEFINED)
+#define Sleef_quad1_DEFINED
+typedef union {
+  struct {
+    Sleef_quad x;
+  };
+  Sleef_quad s[1];
+} Sleef_quad1;
+#endif
+
+#if !defined(Sleef_quad2_DEFINED)
+#define Sleef_quad2_DEFINED
+typedef union {
+  struct {
+    Sleef_quad x, y;
+  };
+  Sleef_quad s[2];
 } Sleef_quad2;
+#endif
+
+#if !defined(Sleef_quad4_DEFINED)
+#define Sleef_quad4_DEFINED
+typedef union {
+  struct {
+    Sleef_quad x, y, z, w;
+  };
+  Sleef_quad s[4];
+} Sleef_quad4;
+#endif
+
+#if !defined(Sleef_quad8_DEFINED)
+#define Sleef_quad8_DEFINED
+typedef union {
+  Sleef_quad s[8];
+} Sleef_quad8;
 #endif
 
 //

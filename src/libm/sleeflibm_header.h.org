@@ -97,11 +97,22 @@ typedef struct {
 } Sleef_longdouble2;
 #endif
 
-#if defined(ENABLEFLOAT128) && !defined(Sleef_quad2_DEFINED)
-#define Sleef_quad2_DEFINED
+#if !defined(Sleef_quad_DEFINED)
+#define Sleef_quad_DEFINED
+#if defined(ENABLEFLOAT128)
 typedef __float128 Sleef_quad;
-typedef struct {
-  __float128 x, y;
+#else
+typedef struct { uint64_t x, y; } Sleef_quad;
+#endif
+#endif
+
+#if !defined(Sleef_quad2_DEFINED)
+#define Sleef_quad2_DEFINED
+typedef union {
+  struct {
+    Sleef_quad x, y;
+  };
+  Sleef_quad s[2];
 } Sleef_quad2;
 #endif
 
