@@ -5,13 +5,6 @@
 
 //
 
-#include <stdint.h>
-
-#ifdef __ARM_FEATURE_SVE
-#include <arm_sve.h> // Needed to use svcntd()
-#endif
-
-
 #ifndef __MISC_H__
 #define __MISC_H__
 
