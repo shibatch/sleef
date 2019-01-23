@@ -90,6 +90,11 @@ typedef svint32_t vint2;
 typedef svfloat64_t vdouble;
 typedef svint32_t vint;
 
+// vmask2 is used mainly used in quad-precision functions
+typedef __sizeless_struct {
+  vmask x, y;
+} vmask2;
+
 // masking predicates
 #define ALL_TRUE_MASK svdup_n_s32(0xffffffff)
 #define ALL_FALSE_MASK svdup_n_s32(0x0)
@@ -336,7 +341,7 @@ static INLINE vint2 vxor_vi2_vi2_vi2(vint2 x, vint2 y) {
 
 // Comparison returning integers
 static INLINE vint2 vgt_vi2_vi2_vi2(vint2 x, vint2 y) {
-  return svsel_s32(svcmpge_s32(ptrue, x, y), ALL_TRUE_MASK, ALL_FALSE_MASK);
+  return svsel_s32(svcmpgt_s32(ptrue, x, y), ALL_TRUE_MASK, ALL_FALSE_MASK);
 }
 
 // conditional select
@@ -766,3 +771,56 @@ static int vcast_i_vi2(vint2 v) {
   vstoreu_v_p_vi2(a, v);
   return a[0];
 }
+
+//
+
+typedef Sleef_quadx vargquad;
+
+static INLINE vmask2 vinterleave_vm2_vm2(vmask2 v) {
+  return (vmask2) {
+    svreinterpret_s32_u64(svtrn1_u64(svreinterpret_u64_s32(v.x), svreinterpret_u64_s32(v.y))),
+    svreinterpret_s32_u64(svtrn2_u64(svreinterpret_u64_s32(v.x), svreinterpret_u64_s32(v.y))) };
+}
+
+static INLINE vmask2 vuninterleave_vm2_vm2(vmask2 v) {
+  return (vmask2) {
+    svreinterpret_s32_u64(svtrn1_u64(svreinterpret_u64_s32(v.x), svreinterpret_u64_s32(v.y))),
+    svreinterpret_s32_u64(svtrn2_u64(svreinterpret_u64_s32(v.x), svreinterpret_u64_s32(v.y))) };
+}
+
+static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
+  return vinterleave_vm2_vm2((vmask2) { svld1_s32(ptrue, (int32_t *)&aq), svld1_s32(ptrue, (int32_t *)&(aq.s[svcntd()/2])) });
+}
+
+static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
+  vm2 = vuninterleave_vm2_vm2(vm2);
+  vargquad aq;
+  svst1_s32(ptrue, (int32_t *)&aq, vm2.x);
+  svst1_s32(ptrue, (int32_t *)&(aq.s[svcntd()/2]), vm2.y);
+  return aq;
+}
+
+static INLINE int vtestallzeros_i_vo64(vopmask g) {
+  return svcntp_b64(svptrue_b64(), g) == 0;
+}
+
+static INLINE vmask vsel_vm_vo64_vm_vm(vopmask o, vmask x, vmask y) {
+  return svreinterpret_s32_s64(svsel_s64(o, svreinterpret_s64_s32(x), svreinterpret_s64_s32(y)));
+}
+
+static INLINE vmask vsub64_vm_vm_vm(vmask x, vmask y) {
+  return svreinterpret_s32_s64(
+           svsub_s64_x(ptrue, svreinterpret_s64_s32(x),
+                              svreinterpret_s64_s32(y)));
+}
+
+static INLINE vmask vneg64_vm_vm(vmask x) {
+  return svreinterpret_s32_s64(svneg_s64_x(ptrue, svreinterpret_s64_s32(x)));
+}
+
+static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) {
+  return svcmpgt_s64(ptrue, svreinterpret_s64_s32(x), svreinterpret_s64_s32(y));
+}
+
+#define vsll64_vm_vm_i(x, c) svreinterpret_s32_u64(svlsl_n_u64_x(ptrue, svreinterpret_u64_s32(x), c))
+#define vsrl64_vm_vm_i(x, c) svreinterpret_s32_u64(svlsr_n_u64_x(ptrue, svreinterpret_u64_s32(x), c))

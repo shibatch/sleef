@@ -27,6 +27,7 @@ set(QUAD_HEADER_PARAMS_FMA4            4 Sleef_quad4 Sleef_quad8  __m128i   __AV
 set(QUAD_HEADER_PARAMS_AVX2            4 Sleef_quad4 Sleef_quad8  __m128i   __AVX__     avx2)
 set(QUAD_HEADER_PARAMS_AVX512F         8 Sleef_quad8 Sleef_quad16 __m256i   __AVX512F__ avx512f)
 set(QUAD_HEADER_PARAMS_ADVSIMD         2 Sleef_quad2 Sleef_quad4  int32x2_t __ARM_NEON  advsimd)
+set(QUAD_HEADER_PARAMS_SVE             x Sleef_quadx Sleef_quadx  svint32_t __ARM_FEATURE_SVE sve)
 
 set(QUAD_RENAME_PARAMS_PUREC_SCALAR    1 purec)
 set(QUAD_RENAME_PARAMS_PURECFMA_SCALAR 1 purecfma)
@@ -36,6 +37,7 @@ set(QUAD_RENAME_PARAMS_FMA4            4 fma4)
 set(QUAD_RENAME_PARAMS_AVX2            4 avx2)
 set(QUAD_RENAME_PARAMS_AVX512F         8 avx512f)
 set(QUAD_RENAME_PARAMS_ADVSIMD         2 advsimd)
+set(QUAD_RENAME_PARAMS_SVE             x sve)
 
 #
 

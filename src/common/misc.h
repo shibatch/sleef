@@ -7,6 +7,11 @@
 
 #include <stdint.h>
 
+#ifdef __ARM_FEATURE_SVE
+#include <arm_sve.h> // Needed to use svcntd()
+#endif
+
+
 #ifndef __MISC_H__
 #define __MISC_H__
 
@@ -211,6 +216,13 @@ typedef union {
 typedef union {
   Sleef_quad s[8];
 } Sleef_quad8;
+#endif
+
+#if defined(__ARM_FEATURE_SVE) && !defined(Sleef_quadx_DEFINED)
+#define Sleef_quadx_DEFINED
+typedef union {
+  Sleef_quad s[32];
+} Sleef_quadx;
 #endif
 
 //

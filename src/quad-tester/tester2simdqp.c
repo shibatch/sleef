@@ -169,6 +169,9 @@ int main(int argc,char **argv)
   for(cnt = 0;ecnt < 1000;cnt++) {
     int e = cnt % VECTLENDP;
 
+    // In the following switch-case statement, I am trying to test
+    // with numbers that tends to trigger bugs. Each case is executed
+    // once in 128 times of loop execution.
     switch(cnt & 127) {
     case 127:
       q0 = nexttoward0q(quadMin, (xrand() & 63) - 31);
@@ -240,6 +243,8 @@ int main(int argc,char **argv)
       break;
 #endif
     default:
+      // Each case in the following switch-case statement is executed
+      // once in 8 loops.
       switch(cnt & 7) {
       case 0:
 	q0 = rndf128(oneEMinus10Q, oneEPlus10Q);

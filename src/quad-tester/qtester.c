@@ -331,8 +331,6 @@ int main(int argc, char **argv) {
     }
   }
 
-  fprintf(stderr, "\n\n*** qtester : now testing %s\n", argv[a2s]);
-  
   for(i=a2s;i<argc;i++) argv2[i-a2s] = argv[i];
   argv2[argc-a2s] = NULL;
   
@@ -375,6 +373,8 @@ int main(int argc, char **argv) {
       }
     }
   }
+
+  fprintf(stderr, "\n\n*** qtester : now testing %s\n", argv2[0]);
 
   fpctop = fdopen(ctop[0], "r");
   

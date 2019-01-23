@@ -116,16 +116,21 @@ typedef __sizeless_struct vdouble3 {
   svfloat64_t y;
   svfloat64_t z;
 } vdouble3;
+
+typedef __sizeless_struct {
+  vmask e;
+  vdouble3 dd;
+} tdx;
 #else
 typedef struct {
   vdouble x, y, z;
 } vdouble3;
-#endif
 
 typedef struct {
   vmask e;
   vdouble3 dd;
 } tdx;
+#endif
 
 //
 

@@ -5,7 +5,6 @@ add_subdirectory("libm")
 if (BUILD_TESTS)
   add_subdirectory("libm-tester")
 endif()
-
 add_subdirectory("common")
 
 if (BUILD_DFT AND NOT MINGW)
