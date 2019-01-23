@@ -9,17 +9,16 @@ pipeline {
             	     steps {
 	    	     	 sh '''
                 	 echo "AArch64 SVE on" `hostname`
-			 export PATH=$PATH:/opt/arm/arm-instruction-emulator-1.2.1_Generic-AArch64_Ubuntu-14.04_aarch64-linux/bin
-			 export LD_LIBRARY_PATH=/opt/arm/arm-instruction-emulator-1.2.1_Generic-AArch64_Ubuntu-14.04_aarch64-linux/lib:/opt/arm/arm-hpc-compiler-18.1_Generic-AArch64_Ubuntu-16.04_aarch64-linux/lib
-			 export CC=/opt/arm/arm-hpc-compiler-18.4_Generic-AArch64_Ubuntu-16.04_aarch64-linux/bin/armclang
+			 export PATH=$PATH:/opt/bin
+			 export CC=armclang
 			 rm -rf build
  			 mkdir build
 			 cd build
 			 cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE ..
-			 make -j 4 all
+			 make -j 6 all
 			 export OMP_WAIT_POLICY=passive
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
-		         ctest -j 4
+		         ctest -j 6
 		         make install
 			 '''
             	     }
@@ -30,17 +29,16 @@ pipeline {
             	     steps {
 	    	     	 sh '''
                 	 echo "AArch64 SVE on" `hostname`
-			 export PATH=$PATH:/opt/arm/arm-instruction-emulator-1.2.1_Generic-AArch64_Ubuntu-14.04_aarch64-linux/bin
-			 export LD_LIBRARY_PATH=/opt/arm/arm-instruction-emulator-1.2.1_Generic-AArch64_Ubuntu-14.04_aarch64-linux/lib:/opt/arm/arm-hpc-compiler-18.1_Generic-AArch64_Ubuntu-16.04_aarch64-linux/lib
-			 export CC=/opt/arm/arm-hpc-compiler-18.4_Generic-AArch64_Ubuntu-16.04_aarch64-linux/bin/armclang
+			 export PATH=$PATH:/opt/bin
+			 export CC=armclang
 			 rm -rf build
  			 mkdir build
 			 cd build
 			 cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DFORCE_AAVPCS=On -DENABLE_GNUABI=On ..
-			 make -j 4 all
+			 make -j 6 all
 			 export OMP_WAIT_POLICY=passive
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
-		         ctest -j 4
+		         ctest -j 6
 		         make install
 			 '''
             	     }
@@ -114,6 +112,7 @@ pipeline {
 	    	     	 sh '''
                 	 echo "On" `hostname`
 			 export PATH=$PATH:/opt/local/bin:/opt/local/bin:/usr/local/bin:/usr/bin:/bin
+		         export CC=gcc-7
 			 rm -rf build
  			 mkdir build
 			 cd build

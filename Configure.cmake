@@ -278,8 +278,6 @@ set(CLANG_FLAGS_ENABLE_AVX512FNOFMA "-mavx512f")
 set(CLANG_FLAGS_ENABLE_NEON32 "--target=arm-linux-gnueabihf;-mcpu=cortex-a8")
 set(CLANG_FLAGS_ENABLE_NEON32VFPV4 "-march=armv7-a;-mfpu=neon-vfpv4")
 # Arm AArch64 vector extensions.
-set(CLANG_FLAGS_ENABLE_ADVSIMD "-march=armv8-a+simd")
-set(CLANG_FLAGS_ENABLE_ADVSIMDNOFMA "-march=armv8-a+simd")
 set(CLANG_FLAGS_ENABLE_SVE "-march=armv8-a+sve")
 set(CLANG_FLAGS_ENABLE_SVENOFMA "-march=armv8-a+sve")
 # PPC64
