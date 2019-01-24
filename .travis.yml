@@ -9,11 +9,6 @@ dist: trusty
 matrix:
   include:
     - os: osx
-      osx_image: xcode8
-      compiler: gcc
-      env:
-        - LABEL="osx-gcc"
-    - os: osx
       compiler: clang # use default apple clang
       env:
         - LABEL="osx-clang"
