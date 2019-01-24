@@ -48,6 +48,10 @@ typedef __m128i vint;
 typedef __m256 vfloat;
 typedef struct { __m128i x, y; } vint2;
 
+typedef struct {
+  vmask x, y;
+} vmask2;
+
 //
 
 #ifndef __SLEEF_H__
@@ -552,3 +556,90 @@ static INLINE void vscatter2_v_p_i_i_vf(float *ptr, int offset, int step, vfloat
 }
 
 static INLINE void vsscatter2_v_p_i_i_vf(float *ptr, int offset, int step, vfloat v) { vscatter2_v_p_i_i_vf(ptr, offset, step, v); }
+
+//
+
+typedef Sleef_quad4 vargquad;
+
+static INLINE vmask2 vinterleave_vm2_vm2(vmask2 v) {
+  return (vmask2) {
+    vreinterpret_vm_vd(_mm256_unpacklo_pd(vreinterpret_vd_vm(v.x), vreinterpret_vd_vm(v.y))),
+      vreinterpret_vm_vd(_mm256_unpackhi_pd(vreinterpret_vd_vm(v.x), vreinterpret_vd_vm(v.y))) };
+}
+
+static INLINE vmask2 vuninterleave_vm2_vm2(vmask2 v) {
+  return (vmask2) {
+    vreinterpret_vm_vd(_mm256_unpacklo_pd(vreinterpret_vd_vm(v.x), vreinterpret_vd_vm(v.y))),
+      vreinterpret_vm_vd(_mm256_unpackhi_pd(vreinterpret_vd_vm(v.x), vreinterpret_vd_vm(v.y))) };
+}
+
+static vmask2 vloadu_vm2_p(void *p) {
+  vmask2 vm2 = {
+    vcast_vm_vi2(vloadu_vi2_p((int32_t *)p)),
+    vcast_vm_vi2(vloadu_vi2_p((int32_t *)((uint8_t *)p + sizeof(vmask))))
+  };
+  return vm2;
+}
+
+static void vstoreu_v_p_vm2(void *p, vmask2 vm2) {
+  vstoreu_v_p_vi2((int32_t *)p, vcast_vi2_vm(vm2.x));
+  vstoreu_v_p_vi2((int32_t *)((uint8_t *)p + sizeof(vmask)), vcast_vi2_vm(vm2.y));
+}
+
+static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
+#if !defined(_MSC_VER)
+  union {
+    vargquad aq;
+    vmask2 vm2;
+  } c;
+  c.aq = aq;
+  return vinterleave_vm2_vm2(c.vm2);
+#else
+  return vinterleave_vm2_vm2(vloadu_vm2_p(&aq));
+#endif
+}
+
+static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
+#if !defined(_MSC_VER)
+  union {
+    vargquad aq;
+    vmask2 vm2;
+  } c;
+  c.vm2 = vuninterleave_vm2_vm2(vm2);
+  return c.aq;
+#else
+  vargquad a;
+  vstoreu_v_p_vm2(&a, vuninterleave_vm2_vm2(vm2));
+  return a;
+#endif
+}
+
+static INLINE int vtestallzeros_i_vo64(vopmask g) {
+  return _mm_movemask_epi8(_mm_or_si128(_mm256_extractf128_si256(g, 0), _mm256_extractf128_si256(g, 1))) == 0;
+}
+
+static INLINE vmask vsel_vm_vo64_vm_vm(vopmask o, vmask x, vmask y) {
+  return vreinterpret_vm_vd(_mm256_blendv_pd(vreinterpret_vd_vm(y), vreinterpret_vd_vm(x), vreinterpret_vd_vm(o)));
+}
+
+static INLINE vmask vsub64_vm_vm_vm(vmask x, vmask y) {
+  __m128i xh = _mm256_extractf128_si256(x, 1), xl = _mm256_extractf128_si256(x, 0);
+  __m128i yh = _mm256_extractf128_si256(y, 1), yl = _mm256_extractf128_si256(y, 0);
+  vmask r = _mm256_castsi128_si256(_mm_sub_epi64(xl, yl));
+  return _mm256_insertf128_si256(r, _mm_sub_epi64(xh, yh), 1);
+}
+
+static INLINE vmask vneg64_vm_vm(vmask x) { return vsub64_vm_vm_vm(vcast_vm_i_i(0, 0), x); }
+static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) {
+  __m128i xh = _mm256_extractf128_si256(x, 1), xl = _mm256_extractf128_si256(x, 0);
+  __m128i yh = _mm256_extractf128_si256(y, 1), yl = _mm256_extractf128_si256(y, 0);
+  vmask r = _mm256_castsi128_si256(_mm_cmpgt_epi64(xl, yl));
+  return _mm256_insertf128_si256(r, _mm_cmpgt_epi64(xh, yh), 1);
+}
+
+#define vsll64_vm_vm_i(x, c) \
+  _mm256_insertf128_si256(_mm256_castsi128_si256(_mm_slli_epi64(_mm256_extractf128_si256(x, 0), c)), \
+			  _mm_slli_epi64(_mm256_extractf128_si256(x, 1), c), 1)
+#define vsrl64_vm_vm_i(x, c) \
+  _mm256_insertf128_si256(_mm256_castsi128_si256(_mm_srli_epi64(_mm256_extractf128_si256(x, 0), c)), \
+			  _mm_srli_epi64(_mm256_extractf128_si256(x, 1), c), 1)

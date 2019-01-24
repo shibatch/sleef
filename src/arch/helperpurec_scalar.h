@@ -90,6 +90,10 @@ typedef int32_t vint;
 typedef float vfloat;
 typedef int64_t vint2;
 
+typedef struct {
+  vmask x, y;
+} vmask2;
+
 //
 
 static INLINE int vavailability_i(int name) { return -1; }
@@ -367,3 +371,39 @@ static INLINE vfloat vgather_vf_p_vi2(const float *ptr, vint2 vi) { return ptr[v
 static INLINE void vstore_v_p_vf(float *ptr, vfloat v) { *ptr = v; }
 static INLINE void vstoreu_v_p_vf(float *ptr, vfloat v) { *ptr = v; }
 static INLINE void vstream_v_p_vf(float *ptr, vfloat v) { *ptr = v; }
+
+//
+
+typedef Sleef_quad1 vargquad;
+
+static INLINE vmask2 vinterleave_vm2_vm2(vmask2 v) { return v; }
+static INLINE vmask2 vuninterleave_vm2_vm2(vmask2 v) { return v; }
+
+static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
+  union {
+    vargquad aq;
+    vmask2 vm2;
+  } c;
+  c.aq = aq;
+  return c.vm2;
+}
+
+static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
+  union {
+    vargquad aq;
+    vmask2 vm2;
+  } c;
+  c.vm2 = vm2;
+  return c.aq;
+}
+
+static INLINE int vtestallzeros_i_vo64(vopmask g) { return !g ? ~(uint32_t)0 : 0; }
+static INLINE vmask vsel_vm_vo64_vm_vm(vopmask o, vmask x, vmask y) { return o ? x : y; }
+
+static INLINE vmask vsub64_vm_vm_vm(vmask x, vmask y) { return (int64_t)x - (int64_t)y; }
+static INLINE vmask vneg64_vm_vm(vmask x) { return -(int64_t)x; }
+
+#define vsll64_vm_vm_i(x, c) ((uint64_t)(x) << (c))
+#define vsrl64_vm_vm_i(x, c) ((uint64_t)(x) >> (c))
+
+static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) { return (int64_t)x > (int64_t)y ? ~(uint32_t)0 : 0; }

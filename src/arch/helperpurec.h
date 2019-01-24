@@ -47,7 +47,7 @@ typedef union {
 typedef longdoubleVector vmaskl;
 typedef longdoubleVector vlongdouble;
 
-#ifdef Sleef_quad2_DEFINED
+#if defined(Sleef_quad2_DEFINED) && defined(ENABLEFLOAT128)
 typedef union {
   uint8_t u[sizeof(Sleef_quad)*VECTLENDP];
   Sleef_quad q[VECTLENDP];
@@ -501,7 +501,7 @@ static INLINE void vscatter2_v_p_i_i_vl(long double *ptr, int offset, int step, 
 
 static INLINE void vsscatter2_v_p_i_i_vl(long double *ptr, int offset, int step, vlongdouble v) { vscatter2_v_p_i_i_vl(ptr, offset, step, v); }
 
-#ifdef Sleef_quad2_DEFINED
+#if defined(Sleef_quad2_DEFINED) && defined(ENABLEFLOAT128)
 static INLINE vquad vcast_vq_q(Sleef_quad d) { vquad ret; for(int i=0;i<VECTLENDP;i++) ret.q[i] = d; return ret; }
 
 static INLINE vquad vrev21_vq_vq(vquad d0) {
