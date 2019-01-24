@@ -1,0 +1,6 @@
+#ifdef __cplusplus
+}
+#endif
+
+#undef IMPORT
+#endif // #ifndef __SLEEFQUAD_H__

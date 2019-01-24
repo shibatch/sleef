@@ -1,0 +1,85 @@
+//          Copyright Naoki Shibata 2010 - 2019.
+// Distributed under the Boost Software License, Version 1.0.
+//    (See accompanying file LICENSE.txt or copy at
+//          http://www.boost.org/LICENSE_1_0.txt)
+
+#ifndef __SLEEFQUAD_H__
+#define __SLEEFQUAD_H__
+
+#include "sleef.h"
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+#if (defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)) && !defined(SLEEF_STATIC_LIBS)
+#ifdef IMPORT_IS_EXPORT
+#define IMPORT __declspec(dllexport)
+#else // #ifdef IMPORT_IS_EXPORT
+#define IMPORT __declspec(dllimport)
+#if (defined(_MSC_VER))
+#pragma comment(lib,"sleefquad.lib")
+#endif // #if (defined(_MSC_VER))
+#endif // #ifdef IMPORT_IS_EXPORT
+#else // #if (defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)) && !defined(SLEEF_STATIC_LIBS)
+#define IMPORT
+#endif // #if (defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)) && !defined(SLEEF_STATIC_LIBS)
+
+//
+
+#if !defined(Sleef_quad_DEFINED)
+#define Sleef_quad_DEFINED
+#if defined(ENABLEFLOAT128)
+typedef __float128 Sleef_quad;
+#else
+typedef struct { uint64_t x, y; } Sleef_quad;
+#endif
+#endif
+
+#if !defined(Sleef_quad1_DEFINED)
+#define Sleef_quad1_DEFINED
+typedef union {
+  struct {
+    Sleef_quad x;
+  };
+  Sleef_quad s[1];
+} Sleef_quad1;
+#endif
+
+#if !defined(Sleef_quad2_DEFINED)
+#define Sleef_quad2_DEFINED
+typedef union {
+  struct {
+    Sleef_quad x, y;
+  };
+  Sleef_quad s[2];
+} Sleef_quad2;
+#endif
+
+#if !defined(Sleef_quad4_DEFINED)
+#define Sleef_quad4_DEFINED
+typedef union {
+  struct {
+    Sleef_quad x, y, z, w;
+  };
+  Sleef_quad s[4];
+} Sleef_quad4;
+#endif
+
+#if !defined(Sleef_quad8_DEFINED)
+#define Sleef_quad8_DEFINED
+typedef union {
+  Sleef_quad s[8];
+} Sleef_quad8;
+#endif
+
+#if defined(__ARM_FEATURE_SVE) && !defined(Sleef_quadx_DEFINED)
+#define Sleef_quadx_DEFINED
+typedef union {
+  Sleef_quad s[32];
+} Sleef_quadx;
+#endif
+
+//
+
