@@ -237,7 +237,7 @@ foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
 	)
     else()
       add_custom_command(
-	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/alias${SIMD}.h ${CMAKE_CURRENT_BINARY_DIR}/include/alias_${SIMDLC}.h
+	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/alias_${SIMDLC}.h
        	COMMENT "Generating alias_${SIMDLC}.h"
        	COMMAND $<TARGET_FILE:${TARGET_MKALIAS}> ${ALIAS_PARAMS_${SIMD}_SP} >  ${CMAKE_CURRENT_BINARY_DIR}/include/alias_${SIMDLC}.h
        	COMMAND $<TARGET_FILE:${TARGET_MKALIAS}> ${ALIAS_PARAMS_${SIMD}_DP} >> ${CMAKE_CURRENT_BINARY_DIR}/include/alias_${SIMDLC}.h
