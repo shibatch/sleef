@@ -547,7 +547,7 @@ static INLINE vdouble vmlapn_vd_vd_vd_vd(vdouble x, vdouble y,
                                          vdouble z) { // z = x * y - z
   return svnmsb_f64_x(ptrue, x, y, z);
 }
-static INLINE vfloat vmlanp_vd_vd_vd_vd(vfloat x, vfloat y, vfloat z) {
+static INLINE vdouble vmlanp_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) {
   return svnmsb_f64_x(ptrue, x, y, z);
 }
 #else
