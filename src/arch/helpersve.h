@@ -548,7 +548,7 @@ static INLINE vdouble vmlapn_vd_vd_vd_vd(vdouble x, vdouble y,
   return svnmsb_f64_x(ptrue, x, y, z);
 }
 static INLINE vdouble vmlanp_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) {
-  return svnmsb_f64_x(ptrue, x, y, z);
+  return svmsb_f64_x(ptrue, x, y, z);
 }
 #else
 static INLINE vdouble vmla_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return vadd_vd_vd_vd(vmul_vd_vd_vd(x, y), z); }
