@@ -205,6 +205,7 @@ static INLINE vdouble vmin_vd_vd_vd(vdouble x, vdouble y) { return x < y ? x : y
 #ifndef ENABLE_FMA_DP
 static INLINE vdouble vmla_vd_vd_vd_vd  (vdouble x, vdouble y, vdouble z) { return x * y + z; }
 static INLINE vdouble vmlapn_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return x * y - z; }
+static INLINE vdouble vmlanp_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return -x * y + z; }
 #else
 static INLINE vdouble vmla_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return FMA(x, y, z); }
 static INLINE vdouble vmlapn_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return FMA(x, y, -z); }

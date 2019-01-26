@@ -139,11 +139,34 @@ typedef union {
     return c0.q;							\
   } while(0)
 
+#define child_q_str(funcStr, arg) do {					\
+    char str[256];							\
+    sprintf(str, funcStr " %s\n", arg);					\
+    write(ptoc[1], str, strlen(str));					\
+    if (fgets(str, 255, fpctop) == NULL) stop("child " funcStr);	\
+    cnv128 c;								\
+    sscanf(str, "%" PRIx64 ":%" PRIx64, &c.h, &c.l);			\
+    return c.q;								\
+  } while(0)
+
+#define child_str_q(funcStr, ret, arg) do {				\
+    char str[256];							\
+    cnv128 c;								\
+    c.q = arg;								\
+    sprintf(str, funcStr " %" PRIx64 ":%" PRIx64 "\n", c.h, c.l);	\
+    write(ptoc[1], str, strlen(str));					\
+    if (fgets(str, 255, fpctop) == NULL) stop("child " funcStr);	\
+    sscanf(str, "%63s", ret);						\
+  } while(0)
+
 Sleef_quad child_addq_u05(Sleef_quad x, Sleef_quad y) { child_q_q_q("addq_u05", x, y); }
 Sleef_quad child_subq_u05(Sleef_quad x, Sleef_quad y) { child_q_q_q("subq_u05", x, y); }
 Sleef_quad child_mulq_u05(Sleef_quad x, Sleef_quad y) { child_q_q_q("mulq_u05", x, y); }
 Sleef_quad child_divq_u05(Sleef_quad x, Sleef_quad y) { child_q_q_q("divq_u05", x, y); }
 Sleef_quad child_sqrtq_u05(Sleef_quad x) { child_q_q("sqrtq_u05", x); }
+Sleef_quad child_negq(Sleef_quad x) { child_q_q("negq", x); }
+Sleef_quad child_strtoq(const char *s) { child_q_str("strtoq", s); }
+void child_qtostr(char *ret, Sleef_quad x) { child_str_q("qtostr", ret, x); }
 
 Sleef_quad child_copysignq(Sleef_quad x, Sleef_quad y) { child_q_q_q("copysignq", x, y); }
 Sleef_quad child_fabsq(Sleef_quad x) { child_q_q("fabsq", x); }
@@ -240,7 +263,7 @@ Sleef_quad child_fminq(Sleef_quad x, Sleef_quad y) { child_q_q_q("fminq", x, y);
   } while(0)
 
 #define checkAccuracyOuterLoop_q(mpfrFunc, childFunc, minStr, maxStr, nLoop, bound, seed) do { \
-    xsrand(seed);								\
+    xsrand(seed);							\
     Sleef_quad min = cast_q_str(minStr), max = cast_q_str(maxStr);	\
     for(int i=0;i<nLoop && success;i++) {				\
       Sleef_quad x = rndf128(min, max);					\
@@ -263,7 +286,7 @@ void checkResult(int success, double e) {
 #define STR_QUAD_MAX "1.18973149535723176508575932662800702e+4932"
 #define STR_QUAD_DENORM_MIN "6.475175119438025110924438958227646552e-4966"
 
-void do_test() {
+void do_test(int options) {
   mpfr_set_default_prec(256);
   mpfr_t frx, fry, frz;
   mpfr_inits(frx, fry, frz, NULL);
@@ -274,6 +297,7 @@ void do_test() {
     "0.0", "-0.0", "+0.5", "-0.5", "+1.0", "-1.0", "+1.5", "-1.5", "+2.0", "-2.0", "+2.5", "-2.5",
     "1.234", "-1.234", "+1.234e+100", "-1.234e+100", "+1.234e-100", "-1.234e-100",
     "+1.234e+3000", "-1.234e+3000", "+1.234e-3000", "-1.234e-3000",
+    "3.1415926535897932384626433832795028841971693993751058209749445923078164",
     "+" STR_QUAD_MIN, "-" STR_QUAD_MIN,
     "+" STR_QUAD_DENORM_MIN, "-" STR_QUAD_DENORM_MIN,
     "NaN", "Inf", "-Inf"
@@ -289,6 +313,13 @@ void do_test() {
   cmpDenormOuterLoop_q_q(mpfr_add, child_addq_u05, stdCheckVals);
   checkAccuracyOuterLoop_q_q(mpfr_add, child_addq_u05, "1e-100", "1e+100", 5 * NTEST, errorBound, 0);
   checkAccuracyOuterLoop_q_q(mpfr_add, child_addq_u05, "0", "Inf", 5 * NTEST, errorBound, 1);
+  checkResult(success, maxError);
+
+  fprintf(stderr, "subq_u05 : ");
+  maxError = 0;
+  cmpDenormOuterLoop_q_q(mpfr_sub, child_subq_u05, stdCheckVals);
+  checkAccuracyOuterLoop_q_q(mpfr_sub, child_subq_u05, "1e-100", "1e+100", 5 * NTEST, errorBound, 0);
+  checkAccuracyOuterLoop_q_q(mpfr_sub, child_subq_u05, "0", "Inf", 5 * NTEST, errorBound, 1);
   checkResult(success, maxError);
 
   fprintf(stderr, "mulq_u05 : ");
@@ -311,11 +342,50 @@ void do_test() {
   checkAccuracyOuterLoop_q(mpfr_sqrt, child_sqrtq_u05, "1e-100", "1e+100", 5 * NTEST, errorBound, 0);
   checkAccuracyOuterLoop_q(mpfr_sqrt, child_sqrtq_u05, "0", "Inf", 5 * NTEST, errorBound, 1);
   checkResult(success, maxError);
+
+  fprintf(stderr, "negq : ");
+  maxError = 0;
+  cmpDenormOuterLoop_q(mpfr_neg, child_negq, stdCheckVals);
+  checkAccuracyOuterLoop_q(mpfr_neg, child_negq, "1e-100", "1e+100", 5 * NTEST, errorBound, 0);
+  checkAccuracyOuterLoop_q(mpfr_neg, child_negq, "0", "Inf", 5 * NTEST, errorBound, 1);
+  checkResult(success, maxError);
+
+  if ((options & 2) != 0) {
+    fprintf(stderr, "strtoq : ");
+    for(int i=0;i<sizeof(stdCheckVals)/sizeof(char *);i++) {
+      Sleef_quad a0 = cast_q_str(stdCheckVals[i]);
+      Sleef_quad a1 = child_strtoq(stdCheckVals[i]);
+      if (memcmp(&a0, &a1, sizeof(Sleef_quad)) == 0) continue;
+      if (isnanf128(a0) && isnanf128(a1)) continue;
+
+      fprintf(stderr, "\narg     = %s\ntest    = %s\ncorrect = %s\n",
+	      stdCheckVals[i], sprintf128(a1), sprintf128(a0));
+      success = 0;
+      break;
+    }
+    checkResult(success, maxError);
+
+    fprintf(stderr, "qtostr : ");
+    for(int i=0;i<sizeof(stdCheckVals)/sizeof(char *);i++) {
+      Sleef_quad a0 = cast_q_str(stdCheckVals[i]);
+      char s[100];
+      child_qtostr(s, a0);
+      Sleef_quad a1 = cast_q_str(s);
+      if (memcmp(&a0, &a1, sizeof(Sleef_quad)) == 0) continue;
+      if (isnanf128(a0) && isnanf128(a1)) continue;
+
+      fprintf(stderr, "\narg     = %s\nteststr = %s\ntest    = %s\ncorrect = %s\n",
+	      stdCheckVals[i], s, sprintf128(a0), sprintf128(a1));
+      success = 0;
+      break;
+    }
+    checkResult(success, maxError);
+  }
 }
 
 int main(int argc, char **argv) {
   char *argv2[argc+2], *commandSde = NULL;
-  int i, a2s;
+  int i, a2s, options;
 
   // BUGFIX: this flush is to prevent incorrect syncing with the
   // `iut*` executable that causes failures in the CPU detection on
@@ -343,11 +413,10 @@ int main(int argc, char **argv) {
 
   {
     char str[256];
-    int u;
 
     if (readln(ctop[0], str, 255) < 1 ||
-	sscanf(str, "%d", &u) != 1 ||
-	(u & 1) == 0) {
+	sscanf(str, "%d", &options) != 1 ||
+	(options & 1) == 0) {
       if (commandSde != NULL) {
 	close(ctop[0]);
 	close(ptoc[1]);
@@ -360,8 +429,8 @@ int main(int argc, char **argv) {
 	startChild(argv2[0], argv2);
 
 	if (readln(ctop[0], str, 255) < 1) stop("Feature detection(sde, readln)");
-	if (sscanf(str, "%d", &u) != 1) stop("Feature detection(sde, sscanf)");
-	if ((u & 1) == 0) {
+	if (sscanf(str, "%d", &options) != 1) stop("Feature detection(sde, sscanf)");
+	if ((options & 1) == 0) {
 	  fprintf(stderr, "\n\nTester : *** CPU does not support the necessary feature(SDE)\n");
 	  return 0;
 	}
@@ -378,7 +447,7 @@ int main(int argc, char **argv) {
 
   fpctop = fdopen(ctop[0], "r");
   
-  do_test();
+  do_test(options);
 
   fprintf(stderr, "\n\n*** All tests passed\n");
 
