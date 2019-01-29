@@ -1609,14 +1609,12 @@ static INLINE CONST VECTOR_CC vfloat2 atan2kf_u1(vfloat2 y, vfloat2 x) {
   t = dfsqu_vf2_vf2(s);
   t = dfnormalize_vf2_vf2(t);
 
-  vfloat t2 = vmul_vf_vf_vf(t.x, t.x), t4 = vmul_vf_vf_vf(t2, t2);
-  u = POLY6(t.x, t2, t4,
-	    -0.00176397908944636583328247f,
-	    0.0107900900766253471374512f,
-	    -0.0309564601629972457885742f,
-	    0.0577365085482597351074219f,
-	    -0.0838950723409652709960938f,
-	    0.109463557600975036621094f);
+  u = vcast_vf_f(-0.00176397908944636583328247f);
+  u = vmla_vf_vf_vf_vf(u, t.x, vcast_vf_f(0.0107900900766253471374512f));
+  u = vmla_vf_vf_vf_vf(u, t.x, vcast_vf_f(-0.0309564601629972457885742f));
+  u = vmla_vf_vf_vf_vf(u, t.x, vcast_vf_f(0.0577365085482597351074219f));
+  u = vmla_vf_vf_vf_vf(u, t.x, vcast_vf_f(-0.0838950723409652709960938f));
+  u = vmla_vf_vf_vf_vf(u, t.x, vcast_vf_f(0.109463557600975036621094f));
   u = vmla_vf_vf_vf_vf(u, t.x, vcast_vf_f(-0.142626821994781494140625f));
   u = vmla_vf_vf_vf_vf(u, t.x, vcast_vf_f(0.199983194470405578613281f));
 
