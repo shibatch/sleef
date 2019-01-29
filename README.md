@@ -9,7 +9,7 @@ http://www.boost.org/LICENSE_1_0.txt.
 Contributions to this project are accepted under the same license.
 
 
-Copyright Naoki Shibata and contributors 2010 - 2017.
+Copyright Naoki Shibata and contributors 2010 - 2019.
 
 Main Page   : http://sleef.org/
 GitHub Repo : https://github.com/shibatch/sleef
