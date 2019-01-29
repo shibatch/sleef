@@ -171,12 +171,45 @@ typedef union {
     }									\
   }
 
+#define func_strtoq(funcStr) {						\
+    while (startsWith(buf, funcStr " ")) {				\
+      sentinel = 0;							\
+      char s[64];							\
+      sscanf(buf, funcStr " %63s", s);					\
+      Sleef_quad1 a0;							\
+      a0 = Sleef_strtoq(s, NULL, 10);					\
+      cnv128 c0;							\
+      c0.q = a0.s[0];							\
+      printf("%" PRIx64 ":%" PRIx64 "\n", c0.h, c0.l);			\
+      fflush(stdout);							\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
+    }									\
+  }
+
+#define func_qtostr(funcStr) {						\
+    while (startsWith(buf, funcStr " ")) {				\
+      sentinel = 0;							\
+      cnv128 c0;							\
+      sscanf(buf, funcStr " %" PRIx64 ":%" PRIx64, &c0.h, &c0.l);	\
+      Sleef_quad1 a0;							\
+      a0.s[0] = c0.q;							\
+      char s[64];							\
+      Sleef_qtostr(s, 63, a0, 10);					\
+      printf("%s\n", s);						\
+      fflush(stdout);							\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
+    }									\
+  }
+
 int do_test(int argc, char **argv) {
   xsrand(time(NULL));
 
   {
     int k = 0;
     k += 1;
+#ifdef ENABLE_PUREC_SCALAR
+    k += 2; // Enable string testing
+#endif
     printf("%d\n", k);
     fflush(stdout);
   }
@@ -187,9 +220,13 @@ int do_test(int argc, char **argv) {
 
   while(!feof(stdin) && sentinel < 2) {
     func_q_q_q("addq_u05", xaddq_u05);
+    func_q_q_q("subq_u05", xsubq_u05);
     func_q_q_q("mulq_u05", xmulq_u05);
     func_q_q_q("divq_u05", xdivq_u05);
     func_q_q("sqrtq_u05", xsqrtq_u05);
+    func_q_q("negq", xnegq);
+    func_strtoq("strtoq");
+    func_qtostr("qtostr");
     sentinel++;
   }
 

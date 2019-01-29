@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 #include <mpfr.h>
 #include <time.h>
 #include <float.h>
@@ -287,6 +288,21 @@ int main(int argc,char **argv)
     {
       mpfr_set_f128(frx, q0, GMP_RNDN);
       mpfr_set_f128(fry, q1, GMP_RNDN);
+      mpfr_sub(frz, frx, fry, GMP_RNDN);
+
+      double u0 = countULPf128(t = vget(xsubq_u05(a0, a1), e), frz, 0);
+      
+      if (u0 > 0.5000000001) {
+	printf(ISANAME " sub arg=%s %s ulp=%.20g\n", sprintf128(q0), sprintf128(q1), u0);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_set_f128(frx, q0, GMP_RNDN);
+      mpfr_set_f128(fry, q1, GMP_RNDN);
       mpfr_mul(frz, frx, fry, GMP_RNDN);
 
       double u0 = countULPf128(t = vget(xmulq_u05(a0, a1), e), frz, 0);
@@ -327,5 +343,17 @@ int main(int argc,char **argv)
 	fflush(stdout); ecnt++;
       }
     }
+
+#ifdef ENABLE_PUREC_SCALAR
+    if ((cnt & 15) == 1) {
+      char s[64];
+      Sleef_qtostr(s, 63, a0, 10);
+      Sleef_quad q1 = vget(Sleef_strtoq(s, NULL, 10), e);
+      if (memcmp(&q0, &q1, sizeof(Sleef_quad)) != 0 && !(isnanf128(q0) && isnanf128(q1))) {
+	printf("qtostr/strtoq arg=%s\n", sprintf128(q0));
+	fflush(stdout); ecnt++;
+      }
+    }
+#endif
   }
 }
