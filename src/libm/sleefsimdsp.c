@@ -648,6 +648,7 @@ EXPORT CONST VECTOR_CC vfloat xtanf(vfloat d) {
   o = veq_vo_vi2_vi2(vand_vi2_vi2_vi2(q, vcast_vi2_i(1)), vcast_vi2_i(1));
   x = vreinterpret_vf_vm(vxor_vm_vm_vm(vand_vm_vo32_vm(o, vreinterpret_vm_vf(vcast_vf_f(-0.0f))), vreinterpret_vm_vf(x)));
 
+#ifndef ENABLE_NEON32
   vfloat s2 = vmul_vf_vf_vf(s, s), s4 = vmul_vf_vf_vf(s2, s2);
   u = POLY6(s, s2, s4,
 	    0.00927245803177356719970703f,
@@ -656,6 +657,14 @@ EXPORT CONST VECTOR_CC vfloat xtanf(vfloat d) {
 	    0.0534495301544666290283203f,
 	    0.133383005857467651367188f,
 	    0.333331853151321411132812f);
+#else
+  u = vcast_vf_f(0.00927245803177356719970703f);
+  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(0.00331984995864331722259521f));
+  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(0.0242998078465461730957031f));
+  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(0.0534495301544666290283203f));
+  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(0.133383005857467651367188f));
+  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(0.333331853151321411132812f));
+#endif
 
   u = vmla_vf_vf_vf_vf(s, vmul_vf_vf_vf(u, x), x);
 
