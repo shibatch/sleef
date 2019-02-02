@@ -1682,7 +1682,6 @@ EXPORT CONST double xpow(double x, double y) {
   return result;
 }
 
-#if 1
 static INLINE CONST Sleef_double2 expk2(Sleef_double2 d) {
   int q = (int)rintk((d.x + d.y) * R_LN2);
   Sleef_double2 s, t;
@@ -1713,40 +1712,6 @@ static INLINE CONST Sleef_double2 expk2(Sleef_double2 d) {
 
   return d.x < -1000 ? dd(0, 0) : t;
 }
-#else
-static INLINE CONST Sleef_double2 expk2(Sleef_double2 d) {
-  int q = (int)rintk((d.x + d.y) * R_LN2);
-  Sleef_double2 s, t;
-  double u;
-
-  s = ddadd2_d2_d2_d(d, q * -L2U);
-  s = ddadd2_d2_d2_d(s, q * -L2L);
-
-  Sleef_double2 s2 = ddsqu_d2_d2(s), s4 = ddsqu_d2_d2(s2);
-  double s8 = s4.x * s4.x;
-  u = POLY10(s.x, s2.x, s4.x, s8,
-	     +0.1602472219709932072e-9,
-	     +0.2092255183563157007e-8,
-	     +0.2505230023782644465e-7,
-	     +0.2755724800902135303e-6,
-	     +0.2755731892386044373e-5,
-	     +0.2480158735605815065e-4,
-	     +0.1984126984148071858e-3,
-	     +0.1388888888886763255e-2,
-	     +0.8333333333333347095e-2,
-	     +0.4166666666666669905e-1);
-
-  t = ddadd_d2_d_d2(0.5, ddmul_d2_d2_d(s, +0.1666666666666666574e+0));
-  t = ddadd_d2_d_d2(1.0, ddmul_d2_d2_d2(t, s));
-  t = ddadd_d2_d_d2(1.0, ddmul_d2_d2_d2(t, s));
-  t = ddadd_d2_d2_d2(t, ddmul_d2_d2_d(s4, u));
-
-  t.x = ldexp2k(t.x, q);
-  t.y = ldexp2k(t.y, q);
-
-  return d.x < -1000 ? dd(0, 0) : t;
-}
-#endif
 
 EXPORT CONST double xsinh(double x) {
   double y = fabsk(x);
