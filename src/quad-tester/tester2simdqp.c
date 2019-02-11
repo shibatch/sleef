@@ -135,6 +135,19 @@ Sleef_quad nexttoward0q(Sleef_quad x, int n) {
 static vargquad vset(vargquad v, int idx, Sleef_quad d) { v.s[idx] = d; return v; }
 static Sleef_quad vget(vargquad v, int idx) { return v.s[idx]; }
 
+vdouble vsetd(vdouble v, int idx, double d) {
+  double a[VECTLENDP];
+  vstoreu_v_p_vd(a, v);
+  a[idx] = d;
+  return vloadu_vd_p(a);
+}
+
+double vgetd(vdouble v, int idx) {
+  double a[VECTLENDP];
+  vstoreu_v_p_vd(a, v);
+  return a[idx];
+}
+
 static int vgeti(vint v, int idx) {
   int a[VECTLENDP*2];
   vstoreu_v_p_vi(a, v);
@@ -158,11 +171,13 @@ int main(int argc,char **argv)
   const Sleef_quad quadMin = cast_q_str("3.36210314311209350626267781732175260e-4932");
   const Sleef_quad quadMax = cast_q_str("1.18973149535723176508575932662800702e+4932");
   const Sleef_quad quadDenormMin = cast_q_str("6.475175119438025110924438958227646552e-4966");
+  const Sleef_quad M_PI_2Q  = cast_q_str("1.5707963267948966192313216916397514");
 
   //
 
   int cnt, ecnt = 0;
   vargquad a0, a1, a2, a3;
+  vdouble vd0 = vcast_vd_d(0), vd1, vd2, vd3;
   Sleef_quad q0, q1, q2, q3, t;
   mpfr_t frw, frx, fry, frz;
   mpfr_inits(frw, frx, fry, frz, NULL);
@@ -269,10 +284,10 @@ int main(int argc,char **argv)
 
     a0 = vset(a0, e, q0);
     a1 = vset(a1, e, q1);
+    mpfr_set_f128(frx, q0, GMP_RNDN);
+    mpfr_set_f128(fry, q1, GMP_RNDN);
 
     {
-      mpfr_set_f128(frx, q0, GMP_RNDN);
-      mpfr_set_f128(fry, q1, GMP_RNDN);
       mpfr_add(frz, frx, fry, GMP_RNDN);
 
       double u0 = countULPf128(t = vget(xaddq_u05(a0, a1), e), frz, 0);
@@ -286,8 +301,6 @@ int main(int argc,char **argv)
     }
 
     {
-      mpfr_set_f128(frx, q0, GMP_RNDN);
-      mpfr_set_f128(fry, q1, GMP_RNDN);
       mpfr_sub(frz, frx, fry, GMP_RNDN);
 
       double u0 = countULPf128(t = vget(xsubq_u05(a0, a1), e), frz, 0);
@@ -301,8 +314,6 @@ int main(int argc,char **argv)
     }
 
     {
-      mpfr_set_f128(frx, q0, GMP_RNDN);
-      mpfr_set_f128(fry, q1, GMP_RNDN);
       mpfr_mul(frz, frx, fry, GMP_RNDN);
 
       double u0 = countULPf128(t = vget(xmulq_u05(a0, a1), e), frz, 0);
@@ -316,8 +327,6 @@ int main(int argc,char **argv)
     }
 
     {
-      mpfr_set_f128(frx, q0, GMP_RNDN);
-      mpfr_set_f128(fry, q1, GMP_RNDN);
       mpfr_div(frz, frx, fry, GMP_RNDN);
 
       double u0 = countULPf128(t = vget(xdivq_u05(a0, a1), e), frz, 0);
@@ -331,7 +340,6 @@ int main(int argc,char **argv)
     }
 
     {
-      mpfr_set_f128(frx, q0, GMP_RNDN);
       mpfr_sqrt(frz, frx, GMP_RNDN);
 
       double u0 = countULPf128(t = vget(xsqrtq_u05(a0), e), frz, 0);
@@ -340,6 +348,113 @@ int main(int argc,char **argv)
 	printf(ISANAME " sqrt arg=%s ulp=%.20g\n", sprintf128(q0), u0);
 	printf("test = %s\n", sprintf128(t));
 	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      double d = mpfr_get_d(frx, GMP_RNDN);
+      vd0 = vsetd(vd0, e, d);
+      t = vget(xcast_from_doubleq(vd0), e);
+      mpfr_set_d(frz, d, GMP_RNDN);
+      Sleef_quad q2 = mpfr_get_f128(frz, GMP_RNDN);
+
+      if (memcmp(&t, &q2, sizeof(Sleef_quad)) != 0 && !(isnanf128(t) && isnanf128(q2))) {
+	printf(ISANAME " cast_from_double arg=%.20g\n", d);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(q2));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      double td = vgetd(xcast_to_doubleq(a0), e);
+      double cd = mpfr_get_d(frx, GMP_RNDN);
+
+      if (fabs(cd) >= DBL_MIN && cd != td && !(isnan(td) && isnan(cd))) {
+	printf(ISANAME " cast_to_double arg=%s\n", sprintf128(q0));
+	printf("test = %.20g\n", td);
+	printf("corr = %.20g\n", cd);
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      int ci = mpfr_less_p(frx, fry);
+      int ti = vgeti(xcmpltq(a0, a1), e);
+
+      if (ci != ti) {
+	printf(ISANAME " cmpltq arg=%s, %s,  test = %d, corr = %d \n", sprintf128(q0), sprintf128(q1), ti, ci);
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      int ci = mpfr_greater_p(frx, fry);
+      int ti = vgeti(xcmpgtq(a0, a1), e);
+
+      if (ci != ti) {
+	printf(ISANAME " cmpgtq arg=%s, %s,  test = %d, corr = %d \n", sprintf128(q0), sprintf128(q1), ti, ci);
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      int ci = mpfr_lessequal_p(frx, fry);
+      int ti = vgeti(xcmpleq(a0, a1), e);
+
+      if (ci != ti) {
+	printf(ISANAME " cmpleq arg=%s, %s,  test = %d, corr = %d \n", sprintf128(q0), sprintf128(q1), ti, ci);
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      int ci = mpfr_greaterequal_p(frx, fry);
+      int ti = vgeti(xcmpgeq(a0, a1), e);
+
+      if (ci != ti) {
+	printf(ISANAME " cmpgeq arg=%s, %s,  test = %d, corr = %d \n", sprintf128(q0), sprintf128(q1), ti, ci);
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      int ci = mpfr_equal_p(frx, fry);
+      int ti = vgeti(xcmpeqq(a0, a1), e);
+
+      if (ci != ti) {
+	printf(ISANAME " cmpeq arg=%s, %s,  test = %d, corr = %d \n", sprintf128(q0), sprintf128(q1), ti, ci);
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      int ci = mpfr_lessgreater_p(frx, fry);
+      int ti = vgeti(xcmpneqq(a0, a1), e);
+
+      if (ci != ti) {
+	printf(ISANAME " cmpneq arg=%s, %s,  test = %d, corr = %d \n", sprintf128(q0), sprintf128(q1), ti, ci);
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      int ci = mpfr_unordered_p(frx, fry);
+      int ti = vgeti(xunordq(a0, a1), e);
+
+      if (ci != ti) {
+	printf(ISANAME " unord arg=%s, %s,  test = %d, corr = %d \n", sprintf128(q0), sprintf128(q1), ti, ci);
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      int ci = mpfr_unordered_p(frx, fry);
+      int ti = vgeti(xunordq(a0, a1), e);
+
+      if (ci != ti) {
+	printf(ISANAME " unord arg=%s, %s,  test = %d, corr = %d \n", sprintf128(q0), sprintf128(q1), ti, ci);
 	fflush(stdout); ecnt++;
       }
     }
@@ -355,5 +470,70 @@ int main(int argc,char **argv)
       }
     }
 #endif
+
+#if defined(ENABLEFLOAT128)
+    switch(cnt & 31) {
+    case 0: {
+      memrand(&q0, sizeof(__float128));
+      q0 = q0 * M_PI_2Q;
+    }
+      break;
+
+    case 1: {
+      int t;
+      memrand(&t, sizeof(int));
+      t &= ~((~0UL) << (xrand() & 31));
+      q0 = t * M_PI_2Q;
+    }
+      break;
+
+    case 2:
+      q0 = rndf128x();
+      break;
+
+    default:
+      q0 = rndf128(1e-20, 1e+20);
+      break;
+    }
+
+    a0 = vset(a0, e, q0);
+    mpfr_set_f128(frx, q0, GMP_RNDN);
+#endif
+
+    {
+      mpfr_sin(frz, frx, GMP_RNDN);
+      double u0 = countULPf128(t = vget(xsinq_u10(a0), e), frz, 0);
+
+      if (u0 > 1.0) {
+	printf(ISANAME " sin arg=%s ulp=%.20g\n", sprintf128(q0), u0);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_cos(frz, frx, GMP_RNDN);
+      double u0 = countULPf128(t = vget(xcosq_u10(a0), e), frz, 0);
+
+      if (u0 > 1.0) {
+	printf(ISANAME " cos arg=%s ulp=%.20g\n", sprintf128(q0), u0);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_tan(frz, frx, GMP_RNDN);
+      double u0 = countULPf128(t = vget(xtanq_u10(a0), e), frz, 0);
+
+      if (u0 > 1.0) {
+	printf(ISANAME " tan arg=%s ulp=%.20g\n", sprintf128(q0), u0);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
   }
 }

@@ -134,7 +134,63 @@ typedef struct {
 
 //
 
-static INLINE CONST vopmask visnonnumber(vdouble x) {
+#if defined(ENABLE_MAIN)
+#include <stdio.h>
+
+static void printvmask(char *mes, vmask g) {
+  uint64_t u[VECTLENDP];
+  vstoreu_v_p_vd((double *)u, vreinterpret_vd_vm(g));
+  printf("%s ", mes);
+  for(int i=0;i<VECTLENDP;i++) printf("%016lx : ", (unsigned long)u[i]);
+  printf("\n");
+}
+
+#if !defined(ENABLE_SVE)
+static void printvopmask(char *mes, vopmask g) {
+  union {
+    vopmask g;
+    uint8_t u[sizeof(vopmask)];
+  } cnv = { .g = g };
+  printf("%s ", mes);
+  for(int i=0;i<sizeof(vopmask);i++) printf("%02x", cnv.u[i]);
+  printf("\n");
+}
+#else
+static void printvopmask(char *mes, vopmask g) {
+  vmask m = vand_vm_vo64_vm(g, vcast_vm_i_i(-1, -1));
+  printvmask(mes, m);
+}
+#endif
+
+static void printvdouble(char *mes, vdouble vd) {
+  double u[VECTLENDP];
+  vstoreu_v_p_vd((double *)u, vd);
+  printf("%s ", mes);
+  for(int i=0;i<VECTLENDP;i++) printf("%.20g : ", u[i]);
+  printf("\n");
+}
+
+static void printvint(char *mes, vint vi) {
+  uint32_t u[VECTLENDP];
+  vstoreu_v_p_vi((int32_t *)u, vi);
+  printf("%s ", mes);
+  for(int i=0;i<VECTLENDP;i++) printf("%08x : ", (unsigned)u[i]);
+  printf("\n");
+}
+
+static void printvmask2(char *mes, vmask2 g) {
+  uint64_t u[VECTLENDP*2];
+  vstoreu_v_p_vd((double *)u, vreinterpret_vd_vm(g.x));
+  vstoreu_v_p_vd((double *)&u[VECTLENDP], vreinterpret_vd_vm(g.y));
+  printf("%s ", mes);
+  for(int i=0;i<VECTLENDP*2;i++) printf("%016lx : ", (unsigned long)(u[i]));
+  printf("\n");
+}
+#endif
+
+//
+
+static INLINE CONST vopmask visnonfinite(vdouble x) {
   return veq64_vo_vm_vm(vand_vm_vm_vm(vreinterpret_vm_vd(x), vcast_vm_i_i(0x7ff00000, 0)), vcast_vm_i_i(0x7ff00000, 0));
 }
 
@@ -142,9 +198,18 @@ static INLINE CONST vmask vsignbit_vm_vd(vdouble d) {
   return vand_vm_vm_vm(vreinterpret_vm_vd(d), vreinterpret_vm_vd(vcast_vd_d(-0.0)));
 }
 
+static INLINE CONST vdouble vclearlsb_vd_vd_i(vdouble d, int n) {
+  return vreinterpret_vd_vm(vand_vm_vm_vm(vreinterpret_vm_vd(d), vcast_vm_i_i(-1, ~0U << n)));
+}
+
+static INLINE CONST vdouble vcast_vd_vm(vmask m) { return vcast_vd_vi(vcast_vi_vm(m)); } // 32 bit only
+static INLINE CONST vmask vtruncate_vm_vd(vdouble d) { return vcast_vm_vi(vtruncate_vi_vd(d)); }
+
 static INLINE CONST vdouble vmulsign_vd_vd_vd(vdouble x, vdouble y) {
   return vreinterpret_vd_vm(vxor_vm_vm_vm(vreinterpret_vm_vd(x), vsignbit_vm_vd(y)));
 }
+
+static INLINE CONST vopmask vlt64_vo_vm_vm(vmask x, vmask y) { return vgt64_vo_vm_vm(y, x); }
 
 static INLINE CONST vopmask vnot_vo64_vo64(vopmask x) {
   return vxor_vo_vo_vo(x, veq64_vo_vm_vm(vcast_vm_i_i(0, 0), vcast_vm_i_i(0, 0)));
@@ -154,6 +219,16 @@ static INLINE CONST vopmask vugt64_vo_vm_vm(vmask x, vmask y) { // unsigned comp
   x = vxor_vm_vm_vm(vcast_vm_i_i(0x80000000, 0), x);
   y = vxor_vm_vm_vm(vcast_vm_i_i(0x80000000, 0), y);
   return vgt64_vo_vm_vm(x, y);
+}
+
+static INLINE CONST vmask vilogbk_vm_vd(vdouble d) {
+  vopmask o = vlt_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(4.9090934652977266E-91));
+  d = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(vcast_vd_d(2.037035976334486E90), d), d);
+  vmask q = vreinterpret_vm_vd(d);
+  q = vsrl64_vm_vm_i(q, 20 + 32);
+  q = vand_vm_vm_vm(q, vcast_vm_i_i(0, 0x7ff));
+  q = vsub64_vm_vm_vm(q, vsel_vm_vo64_vm_vm(o, vcast_vm_i_i(0, 300 + 0x3ff), vcast_vm_i_i(0, 0x3ff)));
+  return q;
 }
 
 static INLINE CONST vmask vilogb2k_vm_vd(vdouble d) {
@@ -169,6 +244,25 @@ static INLINE CONST vmask vilogb3k_vm_vd(vdouble d) {
   m = vsrl64_vm_vm_i(m, 20 + 32);
   m = vand_vm_vm_vm(m, vcast_vm_i_i(0, 0x7ff));
   return m;
+}
+
+static INLINE CONST VECTOR_CC vdouble vpow2i_vd_vm(vmask q) {
+  q = vadd64_vm_vm_vm(vcast_vm_i_i(0, 0x3ff), q);
+  return vreinterpret_vd_vm(vsll64_vm_vm_i(q, 52));
+}
+
+static INLINE CONST vdouble vldexp1_vd_vd_vm(vdouble d, vmask e) {
+  vmask m = vsrl64_vm_vm_i(e, 2);
+  e = vsub64_vm_vm_vm(vsub64_vm_vm_vm(vsub64_vm_vm_vm(e, m), m), m);
+  d = vmul_vd_vd_vd(d, vpow2i_vd_vm(m));
+  d = vmul_vd_vd_vd(d, vpow2i_vd_vm(m));
+  d = vmul_vd_vd_vd(d, vpow2i_vd_vm(m));
+  d = vmul_vd_vd_vd(d, vpow2i_vd_vm(e));
+  return d;
+}
+
+static INLINE CONST vdouble vldexp2_vd_vd_vm(vdouble d, vmask e) {
+  return vmul_vd_vd_vd(vmul_vd_vd_vd(d, vpow2i_vd_vm(vsrl64_vm_vm_i(e, 1))), vpow2i_vd_vm(vsub64_vm_vm_vm(e, vsrl64_vm_vm_i(e, 1))));
 }
 
 static INLINE CONST vdouble vldexp3_vd_vd_vm(vdouble d, vmask q) {
@@ -189,23 +283,31 @@ static INLINE CONST vmask2 vadd128_vm2_vm2_vm2(vmask2 x, vmask2 y) {
   return r;
 }
 
+static INLINE CONST vmask2 vneg128_vm2_vm2(vmask2 ax) {
+  vmask2 x = { .y = vxor_vm_vm_vm(ax.y, vcast_vm_i_i(0xffffffff, 0xffffffff)),
+	       .x = vxor_vm_vm_vm(ax.x, vcast_vm_i_i(0xffffffff, 0xffffffff)) }; 
+  vmask2 r = { .y = x.y, .x = vadd64_vm_vm_vm(x.x, vcast_vm_i_i(0, 1)) };
+  r.y = vadd64_vm_vm_vm(r.y, vand_vm_vo64_vm(veq64_vo_vm_vm(r.x, vcast_vm_i_i(0, 0)), vcast_vm_i_i(0, 1)));
+  return r;
+}
+
 static INLINE CONST vmask2 imdvm2(vmask x, vmask y) { vmask2 r = { x, y }; return r; }
 
 // imm must be smaller than 64
 #define vsrl128_vm2_vm2_i(m, imm)					\
   imdvm2(vor_vm_vm_vm(vsrl64_vm_vm_i(m.x, imm), vsll64_vm_vm_i(m.y, 64-imm)), vsrl64_vm_vm_i(m.y, imm))
 
-static INLINE CONST vopmask visnonnumberq_vo_vm2(vmask2 a) {
+static INLINE CONST vopmask visnonfiniteq_vo_vm2(vmask2 a) {
   return veq64_vo_vm_vm(vand_vm_vm_vm(a.y, vcast_vm_i_i(0x7fff0000, 0)), vcast_vm_i_i(0x7fff0000, 0));
 }
 
-static INLINE CONST vopmask visnonnumberq_vo_vm2_vm2(vmask2 a, vmask2 b) {
+static INLINE CONST vopmask visnonfiniteq_vo_vm2_vm2(vmask2 a, vmask2 b) {
   vmask ma = vxor_vm_vm_vm(vand_vm_vm_vm(a.y, vcast_vm_i_i(0x7fff0000, 0)), vcast_vm_i_i(0x7fff0000, 0));
   vmask mb = vxor_vm_vm_vm(vand_vm_vm_vm(b.y, vcast_vm_i_i(0x7fff0000, 0)), vcast_vm_i_i(0x7fff0000, 0));
   return veq64_vo_vm_vm(vand_vm_vm_vm(ma, mb), vcast_vm_i_i(0, 0));
 }
 
-static INLINE CONST vopmask visnonnumberq_vo_vm2_vm2_vm2(vmask2 a, vmask2 b, vmask2 c) {
+static INLINE CONST vopmask visnonfiniteq_vo_vm2_vm2_vm2(vmask2 a, vmask2 b, vmask2 c) {
   vmask ma = vxor_vm_vm_vm(vand_vm_vm_vm(a.y, vcast_vm_i_i(0x7fff0000, 0)), vcast_vm_i_i(0x7fff0000, 0));
   vmask mb = vxor_vm_vm_vm(vand_vm_vm_vm(b.y, vcast_vm_i_i(0x7fff0000, 0)), vcast_vm_i_i(0x7fff0000, 0));
   vmask mc = vxor_vm_vm_vm(vand_vm_vm_vm(c.y, vcast_vm_i_i(0x7fff0000, 0)), vcast_vm_i_i(0x7fff0000, 0));
@@ -222,16 +324,32 @@ static INLINE CONST vopmask vispinfq_vo_vm2(vmask2 a) {
 }
 
 static INLINE CONST vopmask visnanq_vo_vm2(vmask2 a) {
-  return vandnot_vo_vo_vo(visinfq_vo_vm2(a), visnonnumberq_vo_vm2(a));
+  return vandnot_vo_vo_vo(visinfq_vo_vm2(a), visnonfiniteq_vo_vm2(a));
 }
 
 static INLINE CONST vopmask viszeroq_vo_vm2(vmask2 a) {
   return veq64_vo_vm_vm(vor_vm_vm_vm(vand_vm_vm_vm(a.y, vcast_vm_i_i(~0x80000000, ~0)), a.x), vcast_vm_i_i(0, 0));
 }
 
-//
+static INLINE CONST vmask2 vcmpcnv_vm2_vm2(vmask2 x) {
+  vmask2 t = { .y = vor_vm_vm_vm(vcast_vm_i_i(0x80000000, 0), x.y), .x = x.x };
+  return vsel_vm2_vo_vm2_vm2(veq64_vo_vm_vm(vand_vm_vm_vm(x.y, vcast_vm_i_i(0x80000000, 0)), vcast_vm_i_i(0x80000000, 0)),
+			     vneg128_vm2_vm2(x), t);
+}
+
+// double3 functions ------------------------------------------------------------------------------------------------------------
 
 static INLINE CONST vdouble2 ddscale_vd2_vd2_d(vdouble2 d, double s) { return ddscale_vd2_vd2_vd(d, vcast_vd_d(s)); }
+
+static INLINE CONST vdouble3 vcast_vd3_vd_vd_vd(vdouble d0, vdouble d1, vdouble d2) {
+  vdouble3 ret = { d0, d1, d2 };
+  return ret;
+}
+
+static INLINE CONST vdouble3 vcast_vd3_d_d_d(double d0, double d1, double d2) {
+  vdouble3 ret = { vcast_vd_d(d0), vcast_vd_d(d1), vcast_vd_d(d2) };
+  return ret;
+}
 
 static INLINE CONST vdouble3 vsel_vd3_vo_vd3_vd3(vopmask m, vdouble3 x, vdouble3 y) {
   vdouble3 r;
@@ -383,6 +501,8 @@ static INLINE CONST vdouble3 tdmul_vd3_vd3_vd3(vdouble3 x, vdouble3 y) {
   return tdquickrenormalize_vd3_vd3((vdouble3){ d0.x, d5.x, t2 });
 }
 
+static INLINE CONST vdouble3 tdsqu_vd3_vd3(vdouble3 x) { return tdmul_vd3_vd3_vd3(x, x); }
+
 static INLINE CONST vdouble3 tdmul_vd3_vd2_vd3(vdouble2 x, vdouble3 y) {
   vdouble2 d0 = twoprod_vd2_vd_vd(x.x, y.x);
   vdouble2 d1 = twoprod_vd2_vd_vd(x.x, y.y);
@@ -393,6 +513,26 @@ static INLINE CONST vdouble3 tdmul_vd3_vd2_vd3(vdouble2 x, vdouble3 y) {
   vdouble t2 = vadd_vd_3vd(vmla_vd_vd_vd_vd(x.y, y.y, vmla_vd_vd_vd_vd(x.x, y.z, vadd_vd_vd_vd(d1.y, d2.y))), d4.y, d5.y);
 
   return (vdouble3){ d0.x, d5.x, t2 };
+}
+
+static INLINE CONST vdouble3 tdmul_vd3_vd3_vd2(vdouble3 x, vdouble2 y) {
+  vdouble2 d0 = twoprod_vd2_vd_vd(y.x, x.x);
+  vdouble2 d1 = twoprod_vd2_vd_vd(y.x, x.y);
+  vdouble2 d2 = twoprod_vd2_vd_vd(y.y, x.x);
+  vdouble2 d4 = twosum_vd2_vd_vd(d0.y, d1.x);
+  vdouble2 d5 = twosum_vd2_vd_vd(d4.x, d2.x);
+
+  vdouble t2 = vadd_vd_3vd(vmla_vd_vd_vd_vd(y.y, x.y, vmla_vd_vd_vd_vd(y.x, x.z, vadd_vd_vd_vd(d1.y, d2.y))), d4.y, d5.y);
+
+  return (vdouble3){ d0.x, d5.x, t2 };
+}
+
+static INLINE CONST vdouble3 tdmul_vd3_vd3_vd(vdouble3 x, vdouble y) {
+  vdouble2 d0 = twoprod_vd2_vd_vd(y, x.x);
+  vdouble2 d1 = twoprod_vd2_vd_vd(y, x.y);
+  vdouble2 d4 = twosum_vd2_vd_vd(d0.y, d1.x);
+
+  return (vdouble3){ d0.x, d4.x, vadd_vd_vd_vd(vmla_vd_vd_vd_vd(y, x.z, d1.y), d4.y) };
 }
 
 static INLINE CONST vdouble3 tdmul_vd3_vd2_vd2(vdouble2 x, vdouble2 y) {
@@ -444,34 +584,268 @@ static INLINE CONST vdouble3 tdneg_vd3_vd3(vdouble3 d) {
   return d;
 }
 
-// Cast between double and tdx
+//
 
-static INLINE CONST tdx vcast_tdx_vd(vdouble d) {
-  tdx r;
-  r.dd.x = d;
-  r.dd.y = vcast_vd_d(0);
-  r.dd.z = vcast_vd_d(0);
-  r.e = vilogb2k_vm_vd(r.dd.x);
-  vdouble t = vldexp3_vd_vd_vm(vcast_vd_d(1), vneg64_vm_vm(r.e));
-  r.dd.x = vmul_vd_vd_vd(r.dd.x, t);
-  r.e = vadd64_vm_vm_vm(r.e, vcast_vm_i_i(0, 16383));
-  return r;
+static INLINE CONST vdouble mla(vdouble x, vdouble y, vdouble z) { return vmla_vd_vd_vd_vd(x, y, z); }
+
+static INLINE CONST vdouble poly2d(vdouble x, double c1, double c0) { return mla(x, vcast_vd_d(c1), vcast_vd_d(c0)); }
+static INLINE CONST vdouble poly3d(vdouble x, double c2, double c1, double c0) { return mla(vmul_vd_vd_vd(x, x), vcast_vd_d(c2), poly2d(x, c1, c0)); }
+static INLINE CONST vdouble poly4d(vdouble x, double c3, double c2, double c1, double c0) {
+  return mla(vmul_vd_vd_vd(x, x), poly2d(x, c3, c2), poly2d(x, c1, c0));
+}
+static INLINE CONST vdouble poly5d(vdouble x, double c4, double c3, double c2, double c1, double c0) {
+  return mla(vmul_vd_vd_vd(vmul_vd_vd_vd(x, x),vmul_vd_vd_vd(x, x)), vcast_vd_d(c4), poly4d(x, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble poly6d(vdouble x, double c5, double c4, double c3, double c2, double c1, double c0) {
+  return mla(vmul_vd_vd_vd(vmul_vd_vd_vd(x, x),vmul_vd_vd_vd(x, x)), poly2d(x, c5, c4), poly4d(x, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble poly7d(vdouble x, double c6, double c5, double c4, double c3, double c2, double c1, double c0) {
+  return mla(vmul_vd_vd_vd(vmul_vd_vd_vd(x, x),vmul_vd_vd_vd(x, x)), poly3d(x, c6, c5, c4), poly4d(x, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble poly8d(vdouble x, double c7, double c6, double c5, double c4, double c3, double c2, double c1, double c0) {
+  return mla(vmul_vd_vd_vd(vmul_vd_vd_vd(x, x),vmul_vd_vd_vd(x, x)), poly4d(x, c7, c6, c5, c4), poly4d(x, c3, c2, c1, c0));
 }
 
-static INLINE CONST vdouble vcast_vd_tdx(tdx t) {
-  return vsel_vd_vo_vd_vd(veq_vo_vd_vd(t.dd.x, vcast_vd_d(0)), vcast_vd_d(0),
-			  vldexp3_vd_vd_vm(t.dd.x, vadd64_vm_vm_vm(t.e, vcast_vm_i_i(-1, -16383))));
+//
+
+typedef struct {
+  double x, y;
+} double2;
+
+static INLINE CONST double2 dd(double h, double l) {
+  double2 ret = { h, l };
+  return ret;
 }
 
-// Compare and select between two tdx values
+static INLINE CONST vdouble2 vcast_vd2_d2(double2 dd) {
+  vdouble2 ret = { vcast_vd_d(dd.x), vcast_vd_d(dd.y) };
+  return ret;
+}
+
+static INLINE CONST vdouble2 ddmla(vdouble2 x, vdouble2 y, vdouble2 z) {
+  return ddadd_vd2_vd2_vd2(z, ddmul_vd2_vd2_vd2(x, y));
+}
+
+static INLINE CONST vdouble2 poly2dd_b(vdouble2 x, double2 c1, double2 c0) { return ddmla(x, vcast_vd2_d2(c1), vcast_vd2_d2(c0)); }
+static INLINE CONST vdouble2 poly2dd(vdouble2 x, vdouble c1, double2 c0) { return ddmla(x, vcast_vd2_vd_vd(c1, vcast_vd_d(0)), vcast_vd2_d2(c0)); }
+static INLINE CONST vdouble2 poly3dd_b(vdouble2 x, double2 c2, double2 c1, double2 c0) { return ddmla(ddsqu_vd2_vd2(x), vcast_vd2_d2(c2), poly2dd_b(x, c1, c0)); }
+static INLINE CONST vdouble2 poly3dd(vdouble2 x, vdouble c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(x), vcast_vd2_vd_vd(c2, vcast_vd_d(0)), poly2dd_b(x, c1, c0));
+}
+static INLINE CONST vdouble2 poly4dd_b(vdouble2 x, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(x), poly2dd_b(x, c3, c2), poly2dd_b(x, c1, c0));
+}
+static INLINE CONST vdouble2 poly4dd(vdouble2 x, vdouble c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(x), poly2dd(x, c3, c2), poly2dd_b(x, c1, c0));
+}
+static INLINE CONST vdouble2 poly5dd_b(vdouble2 x, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x)), vcast_vd2_d2(c4), poly4dd_b(x, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly5dd(vdouble2 x, vdouble c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x)), vcast_vd2_vd_vd(c4, vcast_vd_d(0)), poly4dd_b(x, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly6dd_b(vdouble2 x, double2 c5, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x)), poly2dd_b(x, c5, c4), poly4dd_b(x, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly6dd(vdouble2 x, vdouble c5, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x)), poly2dd(x, c5, c4), poly4dd_b(x, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly7dd_b(vdouble2 x, double2 c6, double2 c5, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x)), poly3dd_b(x, c6, c5, c4), poly4dd_b(x, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly7dd(vdouble2 x, vdouble c6, double2 c5, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x)), poly3dd(x, c6, c5, c4), poly4dd_b(x, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly8dd_b(vdouble2 x, double2 c7, double2 c6, double2 c5, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x)), poly4dd_b(x, c7, c6, c5, c4), poly4dd_b(x, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly8dd(vdouble2 x, vdouble c7, double2 c6, double2 c5, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x)), poly4dd(x, c7, c6, c5, c4), poly4dd_b(x, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly9dd_b(vdouble2 x,
+				     double2 c8, double2 c7, double2 c6, double2 c5, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x))), vcast_vd2_d2(c8), poly8dd_b(x, c7, c6, c5, c4, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly9dd(vdouble2 x,
+				       vdouble c8, double2 c7, double2 c6, double2 c5, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x))), vcast_vd2_vd_vd(c8, vcast_vd_d(0)), poly8dd_b(x, c7, c6, c5, c4, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly10dd_b(vdouble2 x, double2 c9,
+				      double2 c8, double2 c7, double2 c6, double2 c5, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x))), poly2dd_b(x, c9, c8), poly8dd_b(x, c7, c6, c5, c4, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly10dd(vdouble2 x, vdouble c9,
+				      double2 c8, double2 c7, double2 c6, double2 c5, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x))), poly2dd(x, c9, c8), poly8dd_b(x, c7, c6, c5, c4, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly11dd_b(vdouble2 x, double2 c10, double2 c9,
+				      double2 c8, double2 c7, double2 c6, double2 c5, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x))), poly3dd_b(x, c10, c9, c8), poly8dd_b(x, c7, c6, c5, c4, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly11dd(vdouble2 x, vdouble c10, double2 c9,
+				      double2 c8, double2 c7, double2 c6, double2 c5, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x))), poly3dd(x, c10, c9, c8), poly8dd_b(x, c7, c6, c5, c4, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly12dd_b(vdouble2 x, double2 c11, double2 c10, double2 c9,
+				      double2 c8, double2 c7, double2 c6, double2 c5, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x))), poly4dd_b(x, c11, c10, c9, c8), poly8dd_b(x, c7, c6, c5, c4, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly12dd(vdouble2 x, vdouble c11, double2 c10, double2 c9,
+				      double2 c8, double2 c7, double2 c6, double2 c5, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x))), poly4dd(x, c11, c10, c9, c8), poly8dd_b(x, c7, c6, c5, c4, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly13dd_b(vdouble2 x, double2 c12, double2 c11, double2 c10, double2 c9,
+				      double2 c8, double2 c7, double2 c6, double2 c5, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x))), poly5dd_b(x, c12, c11, c10, c9, c8), poly8dd_b(x, c7, c6, c5, c4, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly13dd(vdouble2 x, vdouble c12, double2 c11, double2 c10, double2 c9,
+				      double2 c8, double2 c7, double2 c6, double2 c5, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x))), poly5dd(x, c12, c11, c10, c9, c8), poly8dd_b(x, c7, c6, c5, c4, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly14dd_b(vdouble2 x, double2 c13, double2 c12, double2 c11, double2 c10, double2 c9,
+				      double2 c8, double2 c7, double2 c6, double2 c5, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x))), poly6dd_b(x, c13, c12, c11, c10, c9, c8), poly8dd_b(x, c7, c6, c5, c4, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly14dd(vdouble2 x, vdouble c13, double2 c12, double2 c11, double2 c10, double2 c9,
+				      double2 c8, double2 c7, double2 c6, double2 c5, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x))), poly6dd(x, c13, c12, c11, c10, c9, c8), poly8dd_b(x, c7, c6, c5, c4, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly15dd_b(vdouble2 x, double2 c14, double2 c13, double2 c12, double2 c11, double2 c10, double2 c9,
+				      double2 c8, double2 c7, double2 c6, double2 c5, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x))), poly7dd_b(x, c14, c13, c12, c11, c10, c9, c8), poly8dd_b(x, c7, c6, c5, c4, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly15dd(vdouble2 x, vdouble c14, double2 c13, double2 c12, double2 c11, double2 c10, double2 c9,
+				      double2 c8, double2 c7, double2 c6, double2 c5, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x))), poly7dd(x, c14, c13, c12, c11, c10, c9, c8), poly8dd_b(x, c7, c6, c5, c4, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly16dd_b(vdouble2 x, double2 c15, double2 c14, double2 c13, double2 c12, double2 c11, double2 c10, double2 c9,
+				      double2 c8, double2 c7, double2 c6, double2 c5, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x))), poly8dd_b(x, c15, c14, c13, c12, c11, c10, c9, c8), poly8dd_b(x, c7, c6, c5, c4, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly16dd(vdouble2 x, vdouble c15, double2 c14, double2 c13, double2 c12, double2 c11, double2 c10, double2 c9,
+				      double2 c8, double2 c7, double2 c6, double2 c5, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x))), poly8dd(x, c15, c14, c13, c12, c11, c10, c9, c8), poly8dd_b(x, c7, c6, c5, c4, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly17dd_b(vdouble2 x, double2 c16,
+				      double2 c15, double2 c14, double2 c13, double2 c12, double2 c11, double2 c10, double2 c9,
+				      double2 c8, double2 c7, double2 c6, double2 c5, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x)))), vcast_vd2_d2(c16),
+	       poly16dd_b(x, c15, c14, c13, c12, c11, c10, c9, c8, c7, c6, c5, c4, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly17dd(vdouble2 x, vdouble c16,
+				      double2 c15, double2 c14, double2 c13, double2 c12, double2 c11, double2 c10, double2 c9,
+				      double2 c8, double2 c7, double2 c6, double2 c5, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x)))), vcast_vd2_vd_vd(c16, vcast_vd_d(0)),
+	       poly16dd_b(x, c15, c14, c13, c12, c11, c10, c9, c8, c7, c6, c5, c4, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly18dd_b(vdouble2 x, double2 c17, double2 c16,
+				      double2 c15, double2 c14, double2 c13, double2 c12, double2 c11, double2 c10, double2 c9,
+				      double2 c8, double2 c7, double2 c6, double2 c5, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x)))), poly2dd_b(x, c17, c16),
+	       poly16dd_b(x, c15, c14, c13, c12, c11, c10, c9, c8, c7, c6, c5, c4, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly18dd(vdouble2 x, vdouble c17, double2 c16,
+				      double2 c15, double2 c14, double2 c13, double2 c12, double2 c11, double2 c10, double2 c9,
+				      double2 c8, double2 c7, double2 c6, double2 c5, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x)))), poly2dd(x, c17, c16),
+	       poly16dd_b(x, c15, c14, c13, c12, c11, c10, c9, c8, c7, c6, c5, c4, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly19dd_b(vdouble2 x, double2 c18, double2 c17, double2 c16,
+				      double2 c15, double2 c14, double2 c13, double2 c12, double2 c11, double2 c10, double2 c9,
+				      double2 c8, double2 c7, double2 c6, double2 c5, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x)))), poly3dd_b(x, c18, c17, c16),
+	       poly16dd_b(x, c15, c14, c13, c12, c11, c10, c9, c8, c7, c6, c5, c4, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly19dd(vdouble2 x, vdouble c18, double2 c17, double2 c16,
+				      double2 c15, double2 c14, double2 c13, double2 c12, double2 c11, double2 c10, double2 c9,
+				      double2 c8, double2 c7, double2 c6, double2 c5, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x)))), poly3dd(x, c18, c17, c16),
+	       poly16dd_b(x, c15, c14, c13, c12, c11, c10, c9, c8, c7, c6, c5, c4, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly20dd_b(vdouble2 x, double2 c19, double2 c18, double2 c17, double2 c16,
+				      double2 c15, double2 c14, double2 c13, double2 c12, double2 c11, double2 c10, double2 c9,
+				      double2 c8, double2 c7, double2 c6, double2 c5, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x)))), poly4dd_b(x, c19, c18, c17, c16),
+	       poly16dd_b(x, c15, c14, c13, c12, c11, c10, c9, c8, c7, c6, c5, c4, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble2 poly20dd(vdouble2 x, vdouble c19, double2 c18, double2 c17, double2 c16,
+				      double2 c15, double2 c14, double2 c13, double2 c12, double2 c11, double2 c10, double2 c9,
+				      double2 c8, double2 c7, double2 c6, double2 c5, double2 c4, double2 c3, double2 c2, double2 c1, double2 c0) {
+  return ddmla(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(ddsqu_vd2_vd2(x)))), poly4dd(x, c19, c18, c17, c16),
+	       poly16dd_b(x, c15, c14, c13, c12, c11, c10, c9, c8, c7, c6, c5, c4, c3, c2, c1, c0));
+}
+
+//
+
+typedef struct {
+  double x, y, z;
+} double3;
+
+static INLINE CONST vdouble3 vcast_vd3_d3(double3 td) {
+  vdouble3 ret = { vcast_vd_d(td.x), vcast_vd_d(td.y), vcast_vd_d(td.z) };
+  return ret;
+}
+
+static INLINE double3 td(double x, double y, double z) {
+  double3 ret = { x, y, z };
+  return ret;
+}
+
+static INLINE CONST vdouble3 tdmla(vdouble3 x, vdouble3 y, vdouble3 z) { return tdadd2_vd3_vd3_vd3(z, tdmul_vd3_vd3_vd3(x, y)); }
+static INLINE CONST vdouble3 poly2td_b(vdouble3 x, double3 c1, double3 c0) {
+  if (c0.y == 0 && c0.z == 0) {
+    if (c1.x == 1 && c1.y == 0 && c1.z == 0) return tdadd2_vd3_vd_vd3(vcast_vd_d(c0.x), x);
+    return tdadd2_vd3_vd_vd3(vcast_vd_d(c0.x), tdmul_vd3_vd3_vd3(x, vcast_vd3_d3(c1)));
+  }
+  return tdmla(x, vcast_vd3_d3(c1), vcast_vd3_d3(c0));
+}
+static INLINE CONST vdouble3 poly2td(vdouble3 x, vdouble2 c1, double3 c0) {
+  return tdadd2_vd3_vd3_vd3(vcast_vd3_d3(c0), tdmul_vd3_vd3_vd2(x, c1));
+}
+static INLINE CONST vdouble3 poly3td_b(vdouble3 x, double3 c2, double3 c1, double3 c0) { return tdmla(tdsqu_vd3_vd3(x), vcast_vd3_d3(c2), poly2td_b(x, c1, c0)); }
+static INLINE CONST vdouble3 poly3td(vdouble3 x, vdouble2 c2, double3 c1, double3 c0) {
+  return tdadd2_vd3_vd3_vd3(vcast_vd3_d3(c0), tdmul_vd3_vd3_vd2(tdsqu_vd3_vd3(x), c2));
+}
+static INLINE CONST vdouble3 poly4td_b(vdouble3 x, double3 c3, double3 c2, double3 c1, double3 c0) {
+  return tdmla(tdsqu_vd3_vd3(x), poly2td_b(x, c3, c2), poly2td_b(x, c1, c0));
+}
+static INLINE CONST vdouble3 poly4td(vdouble3 x, vdouble2 c3, double3 c2, double3 c1, double3 c0) {
+  return tdmla(tdsqu_vd3_vd3(x), poly2td(x, c3, c2), poly2td_b(x, c1, c0));
+}
+static INLINE CONST vdouble3 poly5td_b(vdouble3 x, double3 c4, double3 c3, double3 c2, double3 c1, double3 c0) {
+  return tdmla(tdsqu_vd3_vd3(tdsqu_vd3_vd3(x)), vcast_vd3_d3(c4), poly4td_b(x, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble3 poly5td(vdouble3 x, vdouble2 c4, double3 c3, double3 c2, double3 c1, double3 c0) {
+  return tdadd2_vd3_vd3_vd3(poly4td_b(x, c3, c2, c1, c0), tdmul_vd3_vd3_vd2(tdsqu_vd3_vd3(tdsqu_vd3_vd3(x)), c4));
+}
+static INLINE CONST vdouble3 poly6td_b(vdouble3 x, double3 c5, double3 c4, double3 c3, double3 c2, double3 c1, double3 c0) {
+  return tdmla(tdsqu_vd3_vd3(tdsqu_vd3_vd3(x)), poly2td_b(x, c5, c4), poly4td_b(x, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble3 poly6td(vdouble3 x, vdouble2 c5, double3 c4, double3 c3, double3 c2, double3 c1, double3 c0) {
+  return tdmla(tdsqu_vd3_vd3(tdsqu_vd3_vd3(x)), poly2td(x, c5, c4), poly4td_b(x, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble3 poly7td_b(vdouble3 x, double3 c6, double3 c5, double3 c4, double3 c3, double3 c2, double3 c1, double3 c0) {
+  return tdmla(tdsqu_vd3_vd3(tdsqu_vd3_vd3(x)), poly3td_b(x, c6, c5, c4), poly4td_b(x, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble3 poly7td(vdouble3 x, vdouble2 c6, double3 c5, double3 c4, double3 c3, double3 c2, double3 c1, double3 c0) {
+  return tdmla(tdsqu_vd3_vd3(tdsqu_vd3_vd3(x)), poly3td(x, c6, c5, c4), poly4td_b(x, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble3 poly8td_b(vdouble3 x, double3 c7, double3 c6, double3 c5, double3 c4, double3 c3, double3 c2, double3 c1, double3 c0) {
+  return tdmla(tdsqu_vd3_vd3(tdsqu_vd3_vd3(x)), poly4td_b(x, c7, c6, c5, c4), poly4td_b(x, c3, c2, c1, c0));
+}
+static INLINE CONST vdouble3 poly8td(vdouble3 x, vdouble2 c7, double3 c6, double3 c5, double3 c4, double3 c3, double3 c2, double3 c1, double3 c0) {
+  return tdmla(tdsqu_vd3_vd3(tdsqu_vd3_vd3(x)), poly4td(x, c7, c6, c5, c4), poly4td_b(x, c3, c2, c1, c0));
+}
+
+// TDX functions ------------------------------------------------------------------------------------------------------------
+
+// TDX Compare and select functions
 
 static INLINE CONST tdx vsel_tdx_vo64_tdx_tdx(vopmask o, tdx x, tdx y) {
   tdx r = { .dd = vsel_vd3_vo_vd3_vd3(o, x.dd, y.dd) };
   r.e = vsel_vm_vo64_vm_vm(o, x.e, y.e);
   return r;
 }
-
-#include <stdio.h>
 
 static INLINE CONST vmask vcmp_vm_tdx_tdx(tdx t0, tdx t1) {
   vmask r = vcast_vm_i_i(0, 0);
@@ -500,11 +874,82 @@ static INLINE CONST vopmask vge_vo_tdx_tdx(tdx x, tdx y) {
   return vgt64_vo_vm_vm(vcmp_vm_tdx_tdx(x, y), vcast_vm_i_i(-1, -1));
 }
 
-//
+// TDX Cast operators
+
+static INLINE CONST tdx vcast_tdx_vd(vdouble d) {
+  tdx r;
+  r.dd.x = d;
+  r.dd.y = vcast_vd_d(0);
+  r.dd.z = vcast_vd_d(0);
+  r.e = vilogbk_vm_vd(r.dd.x);
+  r.dd.x = vsel_vd_vo_vd_vd(visnonfinite(r.dd.x), r.dd.x, vldexp2_vd_vd_vm(r.dd.x, vneg64_vm_vm(r.e)));
+  r.e = vadd64_vm_vm_vm(r.e, vcast_vm_i_i(0, 16383));
+  return r;
+}
+
+static INLINE CONST tdx vcast_tdx_vd3(vdouble3 d) {
+  tdx r;
+  r.e = vilogbk_vm_vd(d.x);
+  r.dd.x = vldexp2_vd_vd_vm(d.x, vneg64_vm_vm(r.e));
+  r.dd.y = vldexp2_vd_vd_vm(d.y, vneg64_vm_vm(r.e));
+  r.dd.z = vldexp2_vd_vd_vm(d.z, vneg64_vm_vm(r.e));
+  r.e = vadd64_vm_vm_vm(r.e, vcast_vm_i_i(0, 16383));
+  return r;
+}
+
+static INLINE CONST tdx vcast_tdx_vd3_fast(vdouble3 d) {
+  tdx r;
+  r.e = vadd64_vm_vm_vm(vilogb2k_vm_vd(d.x), vcast_vm_i_i(0, 16383));
+  vdouble t = vldexp3_vd_vd_vm(vcast_vd_d(0.5), vneg64_vm_vm(r.e));
+  r.dd.x = vmul_vd_vd_vd(d.x, t);
+  r.dd.y = vmul_vd_vd_vd(d.y, t);
+  r.dd.z = vmul_vd_vd_vd(d.z, t);
+  return r;
+}
+
+static INLINE CONST vdouble vcast_vd_tdx(tdx t) {
+  vdouble ret = vldexp2_vd_vd_vm(t.dd.x, vadd64_vm_vm_vm(t.e, vcast_vm_i_i(-1, -16383)));
+
+  vopmask o = vor_vo_vo_vo(veq_vo_vd_vd(t.dd.x, vcast_vd_d(0)),
+			   vlt64_vo_vm_vm(t.e, vcast_vm_i_i(0, 16383 - 0x500)));
+  ret = vsel_vd_vo_vd_vd(o, vmulsign_vd_vd_vd(vcast_vd_d(0), t.dd.x), ret);
+
+  o = vgt64_vo_vm_vm(t.e, vcast_vm_i_i(0, 16383 + 0x400));
+  ret = vsel_vd_vo_vd_vd(o, vmulsign_vd_vd_vd(vcast_vd_d(SLEEF_INFINITY), t.dd.x), ret);
+
+  return vsel_vd_vo_vd_vd(visnonfinite(t.dd.x), t.dd.x, ret);
+}
+
+static INLINE CONST vdouble3 vcast_vd3_tdx(tdx t) {
+  vmask e = vadd64_vm_vm_vm(t.e, vcast_vm_i_i(-1, -16383));
+  vdouble3 r = vcast_vd3_vd_vd_vd(vldexp2_vd_vd_vm(t.dd.x, e),
+				  vldexp2_vd_vd_vm(t.dd.y, e),
+				  vldexp2_vd_vd_vm(t.dd.z, e));
+
+  vopmask o = vor_vo_vo_vo(veq_vo_vd_vd(t.dd.x, vcast_vd_d(0)),
+			   vlt64_vo_vm_vm(t.e, vcast_vm_i_i(0, 16383 - 0x500)));
+  r = vsel_vd3_vo_vd3_vd3(o, vcast_vd3_vd_vd_vd(vmulsign_vd_vd_vd(vcast_vd_d(0), t.dd.x), vcast_vd_d(0), vcast_vd_d(0)), r);
+
+  o = vgt64_vo_vm_vm(t.e, vcast_vm_i_i(0, 16383 + 0x400));
+  r = vsel_vd3_vo_vd3_vd3(o, vcast_vd3_vd_vd_vd(vmulsign_vd_vd_vd(vcast_vd_d(SLEEF_INFINITY), t.dd.x), vcast_vd_d(0), vcast_vd_d(0)), r);
+
+  r = vsel_vd3_vo_vd3_vd3(visnonfinite(t.dd.x), t.dd, r);
+
+  return r;
+}
+
+// TDX Arithmetic functions
 
 static INLINE CONST tdx vneg_tdx_tdx(tdx x) {
   x.dd = tdneg_vd3_vd3(x.dd);
   return x;
+}
+
+static INLINE CONST vmask vilogb_vm_tdx(tdx t) {
+  vmask e = vadd64_vm_vm_vm(t.e, vcast_vm_i_i(-1, -16383));
+  e = vsel_vm_vo64_vm_vm(vor_vo_vo_vo(veq_vo_vd_vd(t.dd.x, vcast_vd_d(1.0)), vlt_vo_vd_vd(t.dd.y, vcast_vd_d(0))),
+			 vadd64_vm_vm_vm(e, vcast_vm_i_i(-1, -1)), e);
+  return e;
 }
 
 static INLINE CONST tdx add2_tdx_tdx_tdx(tdx dd0, tdx dd1) {
@@ -567,6 +1012,8 @@ static INLINE CONST tdx div2_tdx_tdx_tdx(tdx dd0, tdx dd1) {
   return r;
 }
 
+// TDX math functions
+
 static INLINE CONST tdx sqrt_tdx_tdx(tdx dd0) {
   vopmask o = veq64_vo_vm_vm(vand_vm_vm_vm(dd0.e, vcast_vm_i_i(0, 1)), vcast_vm_i_i(0, 1));
   dd0.dd = tdscale_vd3_vd3_vd(dd0.dd, vsel_vd_vo_vd_vd(o, vcast_vd_d(1), vcast_vd_d(2)));
@@ -581,7 +1028,269 @@ static INLINE CONST tdx sqrt_tdx_tdx(tdx dd0) {
   return r;
 }
 
-//
+#if defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA)
+typedef __sizeless_struct {
+  vdouble d;
+  vint i;
+} di_t;
+
+typedef __sizeless_struct {
+  vdouble3 td;
+  vint i;
+} tdi_t;
+#else
+typedef struct {
+  vdouble d;
+  vint i;
+} di_t;
+
+typedef struct {
+  vdouble3 td;
+  vint i;
+} tdi_t;
+#endif
+
+static INLINE CONST di_t rempisub(vdouble x) {
+#ifdef FULL_FP_ROUNDING
+  vdouble y = vrint_vd_vd(vmul_vd_vd_vd(x, vcast_vd_d(4)));
+  vint vi = vtruncate_vi_vd(vsub_vd_vd_vd(y, vmul_vd_vd_vd(vrint_vd_vd(x), vcast_vd_d(4))));
+  di_t ret = { vsub_vd_vd_vd(x, vmul_vd_vd_vd(y, vcast_vd_d(0.25))), vi };
+#else
+  vdouble fr = vsub_vd_vd_vd(x, vmul_vd_vd_vd(vcast_vd_d(1LL << 28), vtruncate_vd_vd(vmul_vd_vd_vd(x, vcast_vd_d(1.0 / (1LL << 28))))));
+  vint vi = vadd_vi_vi_vi(vsel_vi_vo_vi_vi(vcast_vo32_vo64(vgt_vo_vd_vd(x, vcast_vd_d(0))), vcast_vi_i(4), vcast_vi_i(3)), vtruncate_vi_vd(vmul_vd_vd_vd(fr, vcast_vd_d(8))));
+  vi = vsra_vi_vi_i(vsub_vi_vi_vi(vand_vi_vi_vi(vcast_vi_i(7), vi), vcast_vi_i(3)), 1);
+  fr = vsub_vd_vd_vd(fr, vmul_vd_vd_vd(vcast_vd_d(0.25), vtruncate_vd_vd(vmla_vd_vd_vd_vd(fr, vcast_vd_d(4), vmulsign_vd_vd_vd(vcast_vd_d(0.5), x)))));
+  fr = vsel_vd_vo_vd_vd(vgt_vo_vd_vd(vabs_vd_vd(fr), vcast_vd_d(0.25)), vsub_vd_vd_vd(fr, vmulsign_vd_vd_vd(vcast_vd_d(0.5), x)), fr);
+  fr = vsel_vd_vo_vd_vd(vgt_vo_vd_vd(vabs_vd_vd(fr), vcast_vd_d(1e+10)), vcast_vd_d(0), fr);
+  vopmask o = veq_vo_vd_vd(vabs_vd_vd(x), vcast_vd_d(0.12499999999999998612));
+  fr = vsel_vd_vo_vd_vd(o, x, fr);
+  vi = vsel_vi_vo_vi_vi(vcast_vo32_vo64(o), vcast_vi_i(0), vi);
+  di_t ret = { fr, vi };
+#endif
+  return ret;
+}
+
+static CONST tdi_t rempio2q(tdx a) {
+  const int N = 8, B = 8;
+  const int NCOL = 53-B, NROW = (16385+(53-B)*N-106)/NCOL+1;
+  extern const double Sleef_rempitabqp[];
+
+  vmask e = vilogb_vm_tdx(a);
+  e = vsel_vm_vo64_vm_vm(vgt64_vo_vm_vm(e, vcast_vm_i_i(0, 106)), e, vcast_vm_i_i(0, 106));
+  a.e = vadd64_vm_vm_vm(a.e, vsub64_vm_vm_vm(vcast_vm_i_i(0, 106), e));
+
+  vdouble row = vtruncate_vd_vd(vmul_vd_vd_vd(vcast_vd_vm(vsub64_vm_vm_vm(e, vcast_vm_i_i(0, 106))), vcast_vd_d(1.0 / NCOL))); // (e - 106) / NCOL;
+  vdouble col = vsub_vd_vd_vd(vcast_vd_vm(vsub64_vm_vm_vm(e, vcast_vm_i_i(0, 106))), vmul_vd_vd_vd(row, vcast_vd_d(NCOL)));    // (e - 106) % NCOL;
+  vint p = vtruncate_vi_vd(vmla_vd_vd_vd_vd(col, vcast_vd_d(NROW), row));
+
+  vint q = vcast_vi_i(0);
+  vdouble3 d = tdnormalize_vd3_vd3(vcast_vd3_tdx(a)), x = vcast_vd3_d_d_d(0, 0, 0);
+
+  for(int i=0;i<N;i++) {
+    vdouble t = vldexp3_vd_vd_vm(vgather_vd_p_vi(Sleef_rempitabqp+i, p), vcast_vm_i_i(i == 0 ? 0 : -1, -(53-B)*i));
+    x = tdadd2_vd3_vd3_vd3(x, tdnormalize_vd3_vd3(tdmul_vd3_vd3_vd(d, t)));
+    di_t di = rempisub(x.x);
+    q = vadd_vi_vi_vi(q, di.i);
+    x.x = di.d;
+    x = tdnormalize_vd3_vd3(x);
+  }
+
+  x = tdmul2_vd3_vd3_vd3(x, vcast_vd3_d_d_d(3.141592653589793116*2, 1.2246467991473532072e-16*2, -2.9947698097183396659e-33*2));
+  x = vsel_vd3_vo_vd3_vd3(vgt64_vo_vm_vm(vcast_vm_i_i(0, 16383), a.e), d, x);
+
+  tdi_t ret = { .i = q, .td = x };
+  return ret;
+}
+
+static INLINE CONST tdx sin_tdx_tdx(tdx a) {
+  const double3 npiu = { -3.141592653589793116, -1.2246467991473532072e-16, 0 };
+  const double3 npil = { +2.9947698097183396659e-33, -1.1124542208633652815e-49, -5.6722319796403157441e-66 };
+
+  vdouble3 d = vcast_vd3_tdx(a);
+  vdouble dq = vrint_vd_vd(vmul_vd_vd_vd(d.x, vcast_vd_d(1.0 / M_PI)));
+  vint q = vrint_vi_vd(dq);
+  d = tdadd2_vd3_vd3_vd3(d, tdmul_vd3_vd3_vd(vcast_vd3_d3(npiu), dq));
+  d = tdadd2_vd3_vd3_vd3(d, tdmul_vd3_vd3_vd(vcast_vd3_d3(npil), dq));
+
+  vopmask o = vgt64_vo_vm_vm(vcast_vm_i_i(0, 16383 + 28), a.e);
+  if (!LIKELY(vtestallones_i_vo64(o))) {
+    tdi_t tdi = rempio2q(a);
+    vint qw = vand_vi_vi_vi(tdi.i, vcast_vi_i(3));
+    qw = vadd_vi_vi_vi(vadd_vi_vi_vi(qw, qw), vsel_vi_vo_vi_vi(vcast_vo32_vo64(vgt_vo_vd_vd(tdi.td.x, vcast_vd_d(0))),
+							       vcast_vi_i(2), vcast_vi_i(1)));
+    qw = vsra_vi_vi_i(qw, 2);
+    vdouble3 dw = vcast_vd3_vd_vd_vd(vmulsign_vd_vd_vd(vcast_vd_d(3.141592653589793116      *-0.5), tdi.td.x),
+				     vmulsign_vd_vd_vd(vcast_vd_d(1.2246467991473532072e-16 *-0.5), tdi.td.x),
+				     vmulsign_vd_vd_vd(vcast_vd_d(-2.9947698097183396659e-33*-0.5), tdi.td.x));
+    dw = vsel_vd3_vo_vd3_vd3(vcast_vo64_vo32(veq_vo_vi_vi(vand_vi_vi_vi(tdi.i, vcast_vi_i(1)), vcast_vi_i(1))),
+			     tdadd2_vd3_vd3_vd3(tdi.td, dw), tdi.td);
+    d = vsel_vd3_vo_vd3_vd3(o, d, dw);
+    q = vsel_vi_vo_vi_vi(vcast_vo32_vo64(o), q, qw);
+  }
+
+  vdouble3 s = tdsqu_vd3_vd3(d);
+
+  vmask m = vand_vm_vo64_vm(vcast_vo64_vo32(veq_vo_vi_vi(vand_vi_vi_vi(q, vcast_vi_i(1)), vcast_vi_i(1))), vreinterpret_vm_vd(vcast_vd_d(-0.0)));
+  d.x = vreinterpret_vd_vm(vxor_vm_vm_vm(m, vreinterpret_vm_vd(d.x)));
+  d.y = vreinterpret_vd_vm(vxor_vm_vm_vm(m, vreinterpret_vm_vd(d.y)));
+  d.z = vreinterpret_vd_vm(vxor_vm_vm_vm(m, vreinterpret_vm_vd(d.z)));
+
+  vdouble u = poly4d(s.x,
+		     -1.1940250944959890417e-34,
+		     1.1308027528153266305e-31,
+		     -9.183679676378987613e-29,
+		     6.4469502484797539906e-26);
+
+  vdouble2 u2 = poly9dd(vcast_vd2_vd_vd(s.x, s.y),
+			u,
+			dd(-3.868170170541284842e-23, -5.0031797333103428885e-40),
+			dd(1.957294106338964361e-20, 1.7861752657707958995e-37),
+			dd(-8.2206352466243279548e-18, 3.9191951527123122798e-34),
+			dd(2.8114572543455205981e-15, 1.6297259344381721363e-31),
+			dd(-7.6471637318198164055e-13, -7.0372077527137340446e-30),
+			dd(1.6059043836821613341e-10, 1.2585293802741673201e-26),
+			dd(-2.5052108385441720224e-08, 1.4488140712190297804e-24),
+			dd(2.7557319223985892511e-06, -1.8583932740471482254e-22));
+
+  vdouble3 u3 = poly5td(s,
+			u2,
+			td(-0.00019841269841269841253, -1.7209558293419717872e-22, -2.7335161110921010284e-39),
+			td(0.0083333333333333332177, 1.1564823173178713802e-19, 8.4649335998891595007e-37),
+			td(-0.16666666666666665741, -9.2518585385429706566e-18, -5.1355955723371960468e-34),
+			td(1, 0, 0));
+
+  u3 = tdmul_vd3_vd3_vd3(u3, d);
+  return vsel_tdx_vo64_tdx_tdx(vgt64_vo_vm_vm(vcast_vm_i_i(0, 16383 - 0x300), a.e), a, vcast_tdx_vd3_fast(u3));
+}
+
+static INLINE CONST tdx cos_tdx_tdx(tdx a) {
+  const double3 npiu = { -3.141592653589793116*0.5, -1.2246467991473532072e-16*0.5, 0 };
+  const double3 npil = { +2.9947698097183396659e-33*0.5, -1.1124542208633652815e-49*0.5, -5.6722319796403157441e-66*0.5 };
+
+  vdouble3 d = vcast_vd3_tdx(a);
+  vdouble dq = vmla_vd_vd_vd_vd(vcast_vd_d(2),
+				vrint_vd_vd(vmla_vd_vd_vd_vd(d.x, vcast_vd_d(1.0 / M_PI), vcast_vd_d(-0.5))),
+				vcast_vd_d(1));
+  vint q = vrint_vi_vd(dq);
+  d = tdadd2_vd3_vd3_vd3(d, tdmul_vd3_vd3_vd(vcast_vd3_d3(npiu), dq));
+  d = tdadd2_vd3_vd3_vd3(d, tdmul_vd3_vd3_vd(vcast_vd3_d3(npil), dq));
+
+  vopmask o = vgt64_vo_vm_vm(vcast_vm_i_i(0, 16383 + 28), a.e);
+  if (!LIKELY(vtestallones_i_vo64(o))) {
+    tdi_t tdi = rempio2q(a);
+    vint qw = vand_vi_vi_vi(tdi.i, vcast_vi_i(3));
+    qw = vadd_vi_vi_vi(vadd_vi_vi_vi(qw, qw), vsel_vi_vo_vi_vi(vcast_vo32_vo64(vgt_vo_vd_vd(tdi.td.x, vcast_vd_d(0))), vcast_vi_i(8), vcast_vi_i(7)));
+    qw = vsra_vi_vi_i(qw, 1);
+    vdouble3 dw = vcast_vd3_vd_vd_vd(vmulsign_vd_vd_vd(vcast_vd_d(3.141592653589793116      *-0.5), tdi.td.x),
+				     vmulsign_vd_vd_vd(vcast_vd_d(1.2246467991473532072e-16 *-0.5), tdi.td.x),
+				     vmulsign_vd_vd_vd(vcast_vd_d(-2.9947698097183396659e-33*-0.5), tdi.td.x));
+    dw = vsel_vd3_vo_vd3_vd3(vcast_vo64_vo32(veq_vo_vi_vi(vand_vi_vi_vi(tdi.i, vcast_vi_i(1)), vcast_vi_i(0))),
+			     tdadd2_vd3_vd3_vd3(tdi.td, dw), tdi.td);
+    d = vsel_vd3_vo_vd3_vd3(o, d, dw);
+    q = vsel_vi_vo_vi_vi(vcast_vo32_vo64(o), q, qw);
+  }
+
+  vdouble3 s = tdsqu_vd3_vd3(d);
+
+  vdouble u = poly4d(s.x,
+		     -1.1940250944959890417e-34,
+		     1.1308027528153266305e-31,
+		     -9.183679676378987613e-29,
+		     6.4469502484797539906e-26);
+
+  vdouble2 u2 = poly9dd(vcast_vd2_vd_vd(s.x, s.y),
+			u,
+			dd(-3.868170170541284842e-23, -5.0031797333103428885e-40),
+			dd(1.957294106338964361e-20, 1.7861752657707958995e-37),
+			dd(-8.2206352466243279548e-18, 3.9191951527123122798e-34),
+			dd(2.8114572543455205981e-15, 1.6297259344381721363e-31),
+			dd(-7.6471637318198164055e-13, -7.0372077527137340446e-30),
+			dd(1.6059043836821613341e-10, 1.2585293802741673201e-26),
+			dd(-2.5052108385441720224e-08, 1.4488140712190297804e-24),
+			dd(2.7557319223985892511e-06, -1.8583932740471482254e-22));
+
+  vdouble3 u3 = poly5td(s,
+			u2,
+			td(-0.00019841269841269841253, -1.7209558293419717872e-22, -2.7335161110921010284e-39),
+			td(0.0083333333333333332177, 1.1564823173178713802e-19, 8.4649335998891595007e-37),
+			td(-0.16666666666666665741, -9.2518585385429706566e-18, -5.1355955723371960468e-34),
+			td(1, 0, 0));
+
+  u3 = tdmul_vd3_vd3_vd3(u3, d);
+
+  vmask m = vand_vm_vo64_vm(vcast_vo64_vo32(veq_vo_vi_vi(vand_vi_vi_vi(q, vcast_vi_i(2)), vcast_vi_i(0))), vreinterpret_vm_vd(vcast_vd_d(-0.0)));
+  u3.x = vreinterpret_vd_vm(vxor_vm_vm_vm(m, vreinterpret_vm_vd(u3.x)));
+  u3.y = vreinterpret_vd_vm(vxor_vm_vm_vm(m, vreinterpret_vm_vd(u3.y)));
+  u3.z = vreinterpret_vd_vm(vxor_vm_vm_vm(m, vreinterpret_vm_vd(u3.z)));
+
+  return vcast_tdx_vd3_fast(u3);
+}
+
+static INLINE CONST tdx tan_tdx_tdx(tdx a) {
+  const double3 npiu = { -3.141592653589793116*0.5, -1.2246467991473532072e-16*0.5, 0 };
+  const double3 npil = { +2.9947698097183396659e-33*0.5, -1.1124542208633652815e-49*0.5, -5.6722319796403157441e-66*0.5 };
+
+  vdouble3 x = vcast_vd3_tdx(a);
+  vdouble dq = vrint_vd_vd(vmul_vd_vd_vd(x.x, vcast_vd_d(2.0 / M_PI)));
+  vint q = vrint_vi_vd(dq);
+  x = tdadd2_vd3_vd3_vd3(x, tdmul_vd3_vd3_vd(vcast_vd3_d3(npiu), dq));
+  x = tdadd2_vd3_vd3_vd3(x, tdmul_vd3_vd3_vd(vcast_vd3_d3(npil), dq));
+
+  vopmask o = vgt64_vo_vm_vm(vcast_vm_i_i(0, 16383 + 28), a.e);
+  if (!LIKELY(vtestallones_i_vo64(o))) {
+    tdi_t tdi = rempio2q(a);
+    x = vsel_vd3_vo_vd3_vd3(o, x, tdi.td);
+    q = vsel_vi_vo_vi_vi(vcast_vo32_vo64(o), q, tdi.i);
+  }
+
+  x.x = vmul_vd_vd_vd(x.x, vcast_vd_d(0.5));
+  x.y = vmul_vd_vd_vd(x.y, vcast_vd_d(0.5));
+  x.z = vmul_vd_vd_vd(x.z, vcast_vd_d(0.5));
+
+  vdouble3 s = tdsqu_vd3_vd3(x);
+
+  vdouble u = poly5d(s.x,
+		     2.2015831737910052452e-08,
+		     2.0256594378812907225e-08,
+		     7.4429817298004292868e-08,
+		     1.728455913166476866e-07,
+		     4.2976852952607503818e-07);
+
+  vdouble2 u2 = poly14dd(vcast_vd2_vd_vd(s.x, s.y),
+			 u,
+			 dd(1.0596794286215624247e-06, -5.5786255180009979924e-23),
+			 dd(2.6147773828883112431e-06, -1.1480390409818038282e-22),
+			 dd(6.4516885768946985146e-06, 3.2627944831502214901e-22),
+			 dd(1.5918905120725069629e-05, -1.1535340858735760272e-21),
+			 dd(3.9278323880066157397e-05, -3.0151337837994129323e-21),
+			 dd(9.691537956945558128e-05, -6.7065314026885621303e-21),
+			 dd(0.00023912911424354627086, 8.2076644671207424279e-21),
+			 dd(0.00059002744094558616343, 1.1011612305688670223e-21),
+			 dd(0.0014558343870513183304, -6.6211292607098418407e-20),
+			 dd(0.0035921280365724811423, -1.2531638332150681915e-19),
+			 dd(0.0088632355299021973322, -7.6330133111459338275e-19),
+			 dd(0.021869488536155202996, -1.7377828965915248127e-19),
+			 dd(0.053968253968253970809, -2.5552752154325148981e-18));
+
+  vdouble3 u3 = poly4td(s,
+			u2,
+			td(0.13333333333333333148, 1.8503717077086519863e-18, 1.8676215451093490329e-34),
+			td(0.33333333333333331483, 1.8503717077085941313e-17, 9.8074108858570314539e-34),
+			td(1, 0, 0));
+
+  u3 = tdmul_vd3_vd3_vd3(u3, x);
+  vdouble3 y = tdadd2_vd3_vd_vd3(vcast_vd_d(-1), tdsqu_vd3_vd3(u3));
+  x.x = vmul_vd_vd_vd(u3.x, vcast_vd_d(-2));
+  x.y = vmul_vd_vd_vd(u3.y, vcast_vd_d(-2));
+  x.z = vmul_vd_vd_vd(u3.z, vcast_vd_d(-2));
+
+  o = vcast_vo64_vo32(veq_vo_vi_vi(vand_vi_vi_vi(q, vcast_vi_i(1)), vcast_vi_i(1)));
+  u3 = tddiv2_vd3_vd3_vd3(vsel_vd3_vo_vd3_vd3(o, tdneg_vd3_vd3(y), x), vsel_vd3_vo_vd3_vd3(o, x, y));
+
+  return vsel_tdx_vo64_tdx_tdx(vgt64_vo_vm_vm(vcast_vm_i_i(0, 16383 - 0x300), a.e), a, vcast_tdx_vd3_fast(u3));
+}
+
+// Float128 functions ------------------------------------------------------------------------------------------------------------
 
 static tdx vcast_tdx_vf128(vmask2 f) {
   tdx r = { .e = vand_vm_vm_vm(vsrl64_vm_vm_i(f.y, 48), vcast_vm_i_i(0, 0x7fff)) };
@@ -669,7 +1378,7 @@ static INLINE CONST tdx vcast_tdx_vf128_fast(vmask2 f) {
 #define SZ 36
 #define HBR (1.0 / (1ULL << 60))
 
-static vmask2 vcast_vf128_tdx_slowpath(tdx f) {
+static vmask2 vcast_vf128_tdx_slow(tdx f) {
   vmask signbit = vand_vm_vm_vm(vreinterpret_vm_vd(f.dd.x), vcast_vm_i_i(0x80000000, 0));
   vopmask iszero = veq_vo_vd_vd(f.dd.x, vcast_vd_d(0.0));
 
@@ -677,7 +1386,7 @@ static vmask2 vcast_vf128_tdx_slowpath(tdx f) {
   f.dd.y = vreinterpret_vd_vm(vxor_vm_vm_vm(vreinterpret_vm_vd(f.dd.y), signbit));
   f.dd.z = vreinterpret_vd_vm(vxor_vm_vm_vm(vreinterpret_vm_vd(f.dd.z), signbit));
 
-  vopmask denorm = vgt64_vo_vm_vm(vcast_vm_i_i(0, 1), f.e);
+  vopmask denorm = vgt64_vo_vm_vm(vcast_vm_i_i(0, 1), f.e), fisinf = visinf_vo_vd(f.dd.x);
   vdouble t = vldexp3_vd_vd_vm(vcast_vd_d(0.5), f.e);
   t = vreinterpret_vd_vm(vandnot_vm_vo64_vm(vgt64_vo_vm_vm(vcast_vm_i_i(-1, -120), f.e), vreinterpret_vm_vd(t)));
   t = vsel_vd_vo_vd_vd(denorm, t, vcast_vd_d(1));
@@ -741,11 +1450,11 @@ static vmask2 vcast_vf128_tdx_slowpath(tdx f) {
   r.y = vandnot_vm_vo64_vm(iszero, r.y);
   r.x = vandnot_vm_vo64_vm(iszero, r.x);
 
-  o = vor_vo_vo_vo(vgt64_vo_vm_vm(f.e, vcast_vm_i_i(0, 32765)), veq_vo_vd_vd(f.dd.x, vcast_vd_d(SLEEF_INFINITY)));
+  o = vor_vo_vo_vo(vgt64_vo_vm_vm(f.e, vcast_vm_i_i(0, 32765)), fisinf);
   r.y = vsel_vm_vo64_vm_vm(o, vcast_vm_i_i(0x7fff0000, 0), r.y);
   r.x = vandnot_vm_vo64_vm(o, r.x);
 
-  o = vandnot_vo_vo_vo(veq_vo_vd_vd(f.dd.x, vcast_vd_d(SLEEF_INFINITY)), visnonnumber(f.dd.x));
+  o = vandnot_vo_vo_vo(fisinf, visnonfinite(f.dd.x));
   r.y = vor_vm_vo64_vm(o, r.y);
   r.x = vor_vm_vo64_vm(o, r.x);
 
@@ -756,9 +1465,9 @@ static vmask2 vcast_vf128_tdx_slowpath(tdx f) {
 
 static vmask2 vcast_vf128_tdx(tdx f) {
   vopmask o = vor_vo_vo_vo(vgt64_vo_vm_vm(vcast_vm_i_i(0, 2), f.e), vgt64_vo_vm_vm(f.e, vcast_vm_i_i(0, 0x7ffd)));
-  o = vor_vo_vo_vo(o, visnonnumber(f.dd.x));
+  o = vor_vo_vo_vo(o, visnonfinite(f.dd.x));
   o = vandnot_vo_vo_vo(veq_vo_vd_vd(vcast_vd_d(0), f.dd.x), o);
-  if (UNLIKELY(!vtestallzeros_i_vo64(o))) return vcast_vf128_tdx_slowpath(f);
+  if (UNLIKELY(!vtestallzeros_i_vo64(o))) return vcast_vf128_tdx_slow(f);
 
   vmask signbit = vand_vm_vm_vm(vreinterpret_vm_vd(f.dd.x), vcast_vm_i_i(0x80000000, 0));
   vopmask iszero = veq_vo_vd_vd(f.dd.x, vcast_vd_d(0.0));
@@ -867,7 +1576,96 @@ static INLINE CONST vmask2 vcast_vf128_tdx_fast(tdx f) {
   return r;
 }
 
-//
+// Float128 conversion functions
+
+EXPORT CONST vargquad xcast_from_doubleq(vdouble d) {
+  return vcast_aq_vm2(vcast_vf128_tdx(vcast_tdx_vd(vinterleave_vd_vd(d))));
+}
+
+EXPORT CONST vdouble xcast_to_doubleq(vargquad q) {
+  tdx t = vcast_tdx_vf128(vcast_vm2_aq(q));
+  t.dd.x = vadd_vd_vd_vd(vadd_vd_vd_vd(t.dd.z, t.dd.y), t.dd.x);
+  t.dd.y = t.dd.z = vcast_vd_d(0);
+  return vuninterleave_vd_vd(vcast_vd_tdx(t));
+}
+
+// Float128 comparison functions
+
+EXPORT CONST vint xcmpltq(vargquad ax, vargquad ay) {
+  vmask2 x = vcast_vm2_aq(ax), cx = vcmpcnv_vm2_vm2(x);
+  vmask2 y = vcast_vm2_aq(ay), cy = vcmpcnv_vm2_vm2(y);
+  vopmask o = visnanq_vo_vm2(x);
+  o = vandnot_vo_vo_vo(o, vor_vo_vo_vo(vugt64_vo_vm_vm(cy.y, cx.y),
+				       vand_vo_vo_vo(veq64_vo_vm_vm(cy.y, cx.y), vugt64_vo_vm_vm(cy.x, cx.x))));
+  o = vcast_vo32_vo64(vandnot_vo_vo_vo(visnanq_vo_vm2(y), o));
+  vint vi = vsel_vi_vo_vi_vi(o, vcast_vi_i(1), vcast_vi_i(0));
+  return vuninterleave_vi_vi(vi);
+}
+
+EXPORT CONST vint xcmpgtq(vargquad ax, vargquad ay) {
+  vmask2 x = vcast_vm2_aq(ax), cx = vcmpcnv_vm2_vm2(x);
+  vmask2 y = vcast_vm2_aq(ay), cy = vcmpcnv_vm2_vm2(y);
+  vopmask o = visnanq_vo_vm2(x);
+  o = vandnot_vo_vo_vo(o, vor_vo_vo_vo(vugt64_vo_vm_vm(cx.y, cy.y),
+				       vand_vo_vo_vo(veq64_vo_vm_vm(cx.y, cy.y), vugt64_vo_vm_vm(cx.x, cy.x))));
+  o = vcast_vo32_vo64(vandnot_vo_vo_vo(visnanq_vo_vm2(y), o));
+  vint vi = vsel_vi_vo_vi_vi(o, vcast_vi_i(1), vcast_vi_i(0));
+  return vuninterleave_vi_vi(vi);
+}
+
+EXPORT CONST vint xcmpleq(vargquad ax, vargquad ay) {
+  vmask2 x = vcast_vm2_aq(ax), cx = vcmpcnv_vm2_vm2(x);
+  vmask2 y = vcast_vm2_aq(ay), cy = vcmpcnv_vm2_vm2(y);
+  vopmask o = visnanq_vo_vm2(x);
+  o = vandnot_vo_vo_vo(o, vor_vo_vo_vo(vugt64_vo_vm_vm(cy.y, cx.y),
+				       vand_vo_vo_vo(veq64_vo_vm_vm(cy.y, cx.y),
+						     vor_vo_vo_vo(vugt64_vo_vm_vm(cy.x, cx.x),
+								  veq64_vo_vm_vm(cy.x, cx.x)))));
+  o = vcast_vo32_vo64(vandnot_vo_vo_vo(visnanq_vo_vm2(y), o));
+  vint vi = vsel_vi_vo_vi_vi(o, vcast_vi_i(1), vcast_vi_i(0));
+  return vuninterleave_vi_vi(vi);
+}
+
+EXPORT CONST vint xcmpgeq(vargquad ax, vargquad ay) {
+  vmask2 x = vcast_vm2_aq(ax), cx = vcmpcnv_vm2_vm2(x);
+  vmask2 y = vcast_vm2_aq(ay), cy = vcmpcnv_vm2_vm2(y);
+  vopmask o = visnanq_vo_vm2(x);
+  o = vandnot_vo_vo_vo(o, vor_vo_vo_vo(vugt64_vo_vm_vm(cx.y, cy.y),
+				       vand_vo_vo_vo(veq64_vo_vm_vm(cx.y, cy.y),
+						     vor_vo_vo_vo(vugt64_vo_vm_vm(cx.x, cy.x),
+								  veq64_vo_vm_vm(cx.x, cy.x)))));
+  o = vcast_vo32_vo64(vandnot_vo_vo_vo(visnanq_vo_vm2(y), o));
+  vint vi = vsel_vi_vo_vi_vi(o, vcast_vi_i(1), vcast_vi_i(0));
+  return vuninterleave_vi_vi(vi);
+}
+
+EXPORT CONST vint xcmpeqq(vargquad ax, vargquad ay) {
+  vmask2 x = vcast_vm2_aq(ax), cx = vcmpcnv_vm2_vm2(x);
+  vmask2 y = vcast_vm2_aq(ay), cy = vcmpcnv_vm2_vm2(y);
+  vopmask o = visnanq_vo_vm2(x);
+  o = vandnot_vo_vo_vo(o, vand_vo_vo_vo(veq64_vo_vm_vm(cy.y, cx.y), veq64_vo_vm_vm(cx.x, cy.x)));
+  o = vcast_vo32_vo64(vandnot_vo_vo_vo(visnanq_vo_vm2(y), o));
+  vint vi = vsel_vi_vo_vi_vi(o, vcast_vi_i(1), vcast_vi_i(0));
+  return vuninterleave_vi_vi(vi);
+}
+
+EXPORT CONST vint xcmpneqq(vargquad ax, vargquad ay) {
+  vmask2 x = vcast_vm2_aq(ax), cx = vcmpcnv_vm2_vm2(x);
+  vmask2 y = vcast_vm2_aq(ay), cy = vcmpcnv_vm2_vm2(y);
+  vopmask o = visnanq_vo_vm2(x);
+  o = vandnot_vo_vo_vo(o, vnot_vo64_vo64(vand_vo_vo_vo(veq64_vo_vm_vm(cy.y, cx.y), veq64_vo_vm_vm(cx.x, cy.x))));
+  o = vcast_vo32_vo64(vandnot_vo_vo_vo(visnanq_vo_vm2(y), o));
+  vint vi = vsel_vi_vo_vi_vi(o, vcast_vi_i(1), vcast_vi_i(0));
+  return vuninterleave_vi_vi(vi);
+}
+
+EXPORT CONST vint xunordq(vargquad ax, vargquad ay) {
+  vopmask o = vor_vo_vo_vo(visnanq_vo_vm2(vcast_vm2_aq(ax)), visnanq_vo_vm2(vcast_vm2_aq(ay)));
+  vint vi = vsel_vi_vo_vi_vi(vcast_vo32_vo64(o), vcast_vi_i(1), vcast_vi_i(0));
+  return vuninterleave_vi_vi(vi);
+}
+
+// Float128 arithmetic functions
 
 EXPORT CONST vargquad xaddq_u05(vargquad aa, vargquad ab) {
   vmask2 a = vcast_vm2_aq(aa);
@@ -893,7 +1691,7 @@ EXPORT CONST vargquad xaddq_u05(vargquad aa, vargquad ab) {
 
   r.y = vor_vm_vm_vm(r.y, vand_vm_vm_vm(vand_vm_vm_vm(a.y, b.y), vcast_vm_i_i(0x80000000, 0)));
 
-  if (UNLIKELY(!vtestallzeros_i_vo64(visnonnumberq_vo_vm2_vm2(a, b)))) {
+  if (UNLIKELY(!vtestallzeros_i_vo64(visnonfiniteq_vo_vm2_vm2(a, b)))) {
     vopmask aisinf = visinfq_vo_vm2(a), bisinf = visinfq_vo_vm2(b);
     vopmask aisnan = visnanq_vo_vm2(a), bisnan = visnanq_vo_vm2(b);
     vopmask o = veq64_vo_vm_vm(a.y, vxor_vm_vm_vm(b.y, vcast_vm_i_i(0x80000000, 0)));
@@ -929,7 +1727,7 @@ EXPORT CONST vargquad xsubq_u05(vargquad aa, vargquad ab) {
 
   r.y = vor_vm_vm_vm(r.y, vand_vm_vm_vm(vandnot_vm_vm_vm(b.y, a.y), vcast_vm_i_i(0x80000000, 0)));
 
-  if (UNLIKELY(!vtestallzeros_i_vo64(visnonnumberq_vo_vm2_vm2(a, b)))) {
+  if (UNLIKELY(!vtestallzeros_i_vo64(visnonfiniteq_vo_vm2_vm2(a, b)))) {
     vopmask aisinf = visinfq_vo_vm2(a), bisinf = visinfq_vo_vm2(b);
     vopmask aisnan = visnanq_vo_vm2(a), bisnan = visnanq_vo_vm2(b);
     vopmask o = vand_vo_vo_vo(veq64_vo_vm_vm(a.x, b.x), veq64_vo_vm_vm(a.y, b.y));
@@ -953,7 +1751,7 @@ EXPORT CONST vargquad xmulq_u05(vargquad aa, vargquad ab) {
 			     vgt64_vo_vm_vm(vcast_vm_i_i(0, 0x7ffe), eb));
   vopmask oc = vand_vo_vo_vo(vgt64_vo_vm_vm(vadd64_vm_vm_vm(ea, eb), vcast_vm_i_i(0, 120+16383)),
 			     vgt64_vo_vm_vm(vcast_vm_i_i(0, 0x7ffe +16383), vadd64_vm_vm_vm(ea, eb)));
-  if (LIKELY(vtestallones_i_vo64(vandnot_vo_vo_vo(visnonnumberq_vo_vm2_vm2(a, b), 
+  if (LIKELY(vtestallones_i_vo64(vandnot_vo_vo_vo(visnonfiniteq_vo_vm2_vm2(a, b), 
 						  vor_vo_vo_vo(vor_vo_vo_vo(viszeroq_vo_vm2(a), viszeroq_vo_vm2(b)),
 							       vand_vo_vo_vo(vand_vo_vo_vo(oa, ob), oc)))))) {
     vmask2 r = vcast_vf128_tdx_fast(mul_tdx_tdx_tdx(vcast_tdx_vf128_fast(a), vcast_tdx_vf128_fast(b)));
@@ -965,7 +1763,7 @@ EXPORT CONST vargquad xmulq_u05(vargquad aa, vargquad ab) {
 
   r.y = vor_vm_vm_vm(r.y, vand_vm_vm_vm(vxor_vm_vm_vm(a.y, b.y), vcast_vm_i_i(0x80000000, 0)));
 
-  if (UNLIKELY(!vtestallzeros_i_vo64(visnonnumberq_vo_vm2_vm2(a, b)))) {
+  if (UNLIKELY(!vtestallzeros_i_vo64(visnonfiniteq_vo_vm2_vm2(a, b)))) {
     vopmask aisinf = visinfq_vo_vm2(a), bisinf = visinfq_vo_vm2(b);
     vopmask aisnan = visnanq_vo_vm2(a), bisnan = visnanq_vo_vm2(b);
     vopmask aiszero = viszeroq_vo_vm2(a), biszero = viszeroq_vo_vm2(b);
@@ -990,7 +1788,7 @@ EXPORT CONST vargquad xdivq_u05(vargquad aa, vargquad ab) {
 
   r.y = vor_vm_vm_vm(r.y, vand_vm_vm_vm(vxor_vm_vm_vm(a.y, b.y), vcast_vm_i_i(0x80000000, 0)));
 
-  if (UNLIKELY(!vtestallzeros_i_vo64(visnonnumberq_vo_vm2_vm2_vm2(a, b, r)))) {
+  if (UNLIKELY(!vtestallzeros_i_vo64(visnonfiniteq_vo_vm2_vm2_vm2(a, b, r)))) {
     vopmask aisinf = visinfq_vo_vm2(a), bisinf = visinfq_vo_vm2(b);
     vopmask aisnan = visnanq_vo_vm2(a), bisnan = visnanq_vo_vm2(b);
     vopmask aiszero = viszeroq_vo_vm2(a), biszero = viszeroq_vo_vm2(b);
@@ -1014,6 +1812,14 @@ EXPORT CONST vargquad xdivq_u05(vargquad aa, vargquad ab) {
   return vcast_aq_vm2(r);
 }
 
+EXPORT CONST vargquad xnegq(vargquad aa) {
+  vmask2 a = vcast_vm2_aq(aa);
+  a.y = vxor_vm_vm_vm(a.y, vcast_vm_i_i(0x80000000, 0));
+  return vcast_aq_vm2(a);
+}
+
+// Float128 math functions
+
 EXPORT CONST vargquad xsqrtq_u05(vargquad aa) {
   vmask2 a = vcast_vm2_aq(aa);
   vmask2 r = vcast_vf128_tdx(sqrt_tdx_tdx(vcast_tdx_vf128(a)));
@@ -1027,13 +1833,19 @@ EXPORT CONST vargquad xsqrtq_u05(vargquad aa) {
   return vcast_aq_vm2(r);
 }
 
-EXPORT CONST vargquad xnegq(vargquad aa) {
-  vmask2 a = vcast_vm2_aq(aa);
-  a.y = vxor_vm_vm_vm(a.y, vcast_vm_i_i(0x80000000, 0));
-  return vcast_aq_vm2(a);
+EXPORT CONST vargquad xsinq_u10(vargquad aa) {
+  return vcast_aq_vm2(vcast_vf128_tdx(sin_tdx_tdx(vcast_tdx_vf128(vcast_vm2_aq(aa)))));
 }
 
-//
+EXPORT CONST vargquad xcosq_u10(vargquad aa) {
+  return vcast_aq_vm2(vcast_vf128_tdx(cos_tdx_tdx(vcast_tdx_vf128(vcast_vm2_aq(aa)))));
+}
+
+EXPORT CONST vargquad xtanq_u10(vargquad aa) {
+  return vcast_aq_vm2(vcast_vf128_tdx(tan_tdx_tdx(vcast_tdx_vf128(vcast_vm2_aq(aa)))));
+}
+
+// Float128 string functions
 
 #ifdef ENABLE_PUREC_SCALAR
 #include <stdio.h>
@@ -1220,10 +2032,10 @@ EXPORT void Sleef_qtostr(char *s, int n, vargquad a, int base) {
 }
 #endif
 
-//
+// Functions for debugging ------------------------------------------------------------------------------------------------------------
 
 #ifdef ENABLE_MAIN
-// gcc -DENABLE_MAIN -Wno-attributes -I../libm -I../quad-tester -I../common -I../arch -DUSEMPFR -DENABLE_AVX2 -mavx2 -mfma sleefsimdqp.c ../common/common.c ../quad-tester/qtesterutil.c -lm -lmpfr
+// gcc -DENABLE_MAIN -DENABLEFLOAT128 -Wno-attributes -I../libm -I../quad-tester -I../common -I../arch -DUSEMPFR -DENABLE_AVX2 -mavx2 -mfma sleefsimdqp.c ../common/common.c ../quad-tester/qtesterutil.c -lm -lmpfr
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1239,7 +2051,8 @@ int main(int argc, char **argv) {
   printf("lane = %d\n", lane);
 
   char s[200];
-  mpfr_set_default_prec(1024);
+  double ad[32];
+  mpfr_set_default_prec(18000);
   mpfr_t fr0, fr1, fr2;
   mpfr_inits(fr0, fr1, fr2, NULL);
 
@@ -1249,8 +2062,17 @@ int main(int argc, char **argv) {
   mpfr_set_f128(fr0, q0, GMP_RNDN);
   if (argc >= 2) printf("arg0 : %s\n", sprintfr(fr0));
   vargquad a0;
+#if 1
   memrand(&a0, sizeof(vargquad));
+#else
+  memset(&a0, 0, sizeof(vargquad));
+#endif
   a0.s[lane] = q0;
+#if 0
+  memrand(ad, sizeof(ad));
+  ad[lane] = mpfr_get_d(fr0, GMP_RNDN);
+  a0 = xcast_from_doubleq(vloadu_vd_p(ad));
+#endif
 
   mpfr_set_d(fr1, 0, GMP_RNDN);
   if (argc >= 3) mpfr_set_str(fr1, argv[2], 10, GMP_RNDN);
@@ -1258,8 +2080,17 @@ int main(int argc, char **argv) {
   mpfr_set_f128(fr1, q1, GMP_RNDN);
   if (argc >= 3) printf("arg1 : %s\n", sprintfr(fr1));
   vargquad a1;
+#if 1
   memrand(&a1, sizeof(vargquad));
+#else
+  memset(&a1, 0, sizeof(vargquad));
+#endif
   a1.s[lane] = q1;
+#if 0
+  memrand(ad, sizeof(ad));
+  ad[lane] = mpfr_get_d(fr1, GMP_RNDN);
+  a1 = xcast_from_doubleq(vloadu_vd_p(ad));
+#endif
 
   //
 

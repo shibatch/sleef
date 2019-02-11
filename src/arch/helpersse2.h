@@ -454,6 +454,12 @@ static INLINE vmask2 vuninterleave_vm2_vm2(vmask2 v) {
   return (vmask2) { _mm_unpacklo_epi64(v.x, v.y), _mm_unpackhi_epi64(v.x, v.y) };
 }
 
+static INLINE vint vuninterleave_vi_vi(vint v) { return v; }
+static INLINE vdouble vinterleave_vd_vd(vdouble vd) { return vd; }
+static INLINE vdouble vuninterleave_vd_vd(vdouble vd) { return vd; }
+static INLINE vmask vinterleave_vm_vm(vmask vm) { return vm; }
+static INLINE vmask vuninterleave_vm_vm(vmask vm) { return vm; }
+
 static vmask2 vloadu_vm2_p(void *p) {
   vmask2 vm2 = {
     vloadu_vi2_p((int32_t *)p),
@@ -513,3 +519,8 @@ static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) {
   _mm_storeu_si128((__m128i *)ay, y);
   return _mm_set_epi64x(ax[1] > ay[1] ? -1 : 0, ax[0] > ay[0] ? -1 : 0);
 }
+
+static INLINE vmask vcast_vm_vi(vint vi) {
+  return _mm_and_si128(_mm_shuffle_epi32(vi, (0 << 6) | (1 << 4) | (0 << 2) | (0 << 0)), _mm_set_epi32(0, -1, 0, -1));
+}
+static INLINE vint vcast_vi_vm(vmask vm) { return _mm_shuffle_epi32(vm, 0x08); }
