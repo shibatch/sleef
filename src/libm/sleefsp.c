@@ -30,13 +30,9 @@ extern const float rempitabsp[];
 #pragma fp_contract (off)
 #endif
 
-#define POLY2(x, c1, c0) mlaf(x, c1, c0)
-#define POLY3(x, x2, c2, c1, c0) mlaf(x2, c2, mlaf(x, c1, c0))
-#define POLY4(x, x2, c3, c2, c1, c0) mlaf(x2, mlaf(x, c3, c2), mlaf(x, c1, c0))
-#define POLY5(x, x2, x4, c4, c3, c2, c1, c0) mlaf(x4, c4, POLY4(x, x2, c3, c2, c1, c0))
-#define POLY6(x, x2, x4, c5, c4, c3, c2, c1, c0) mlaf(x4, POLY2(x, c5, c4), POLY4(x, x2, c3, c2, c1, c0))
-#define POLY7(x, x2, x4, c6, c5, c4, c3, c2, c1, c0) mlaf(x4, POLY3(x, x2, c6, c5, c4), POLY4(x, x2, c3, c2, c1, c0))
-#define POLY8(x, x2, x4, c7, c6, c5, c4, c3, c2, c1, c0) mlaf(x4, POLY4(x, x2, c7, c6, c5, c4), POLY4(x, x2, c3, c2, c1, c0))
+#define MLA mlaf
+#define C2V(x) (x)
+#include "estrin.h"
 
 static INLINE CONST int32_t floatToRawIntBits(float d) {
   union {

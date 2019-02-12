@@ -214,13 +214,9 @@ extern const float rempitabsp[];
 
 //
 
-#define POLY2(x, c1, c0) vmla_vf_vf_vf_vf(x, vcast_vf_f(c1), vcast_vf_f(c0))
-#define POLY3(x, x2, c2, c1, c0) vmla_vf_vf_vf_vf(x2, vcast_vf_f(c2), POLY2(x, c1, c0))
-#define POLY4(x, x2, c3, c2, c1, c0) vmla_vf_vf_vf_vf(x2, POLY2(x, c3, c2), POLY2(x, c1, c0))
-#define POLY5(x, x2, x4, c4, c3, c2, c1, c0) vmla_vf_vf_vf_vf(x4, vcast_vf_f(c4), POLY4(x, x2, c3, c2, c1, c0))
-#define POLY6(x, x2, x4, c5, c4, c3, c2, c1, c0) vmla_vf_vf_vf_vf(x4, POLY2(x, c5, c4), POLY4(x, x2, c3, c2, c1, c0))
-#define POLY7(x, x2, x4, c6, c5, c4, c3, c2, c1, c0) vmla_vf_vf_vf_vf(x4, POLY3(x, x2, c6, c5, c4), POLY4(x, x2, c3, c2, c1, c0))
-#define POLY8(x, x2, x4, c7, c6, c5, c4, c3, c2, c1, c0) vmla_vf_vf_vf_vf(x4, POLY4(x, x2, c7, c6, c5, c4), POLY4(x, x2, c3, c2, c1, c0))
+#define MLA(x, y, z) vmla_vf_vf_vf_vf((x), (y), (z))
+#define C2V(c) vcast_vf_f(c)
+#include "estrin.h"
 
 //
 
