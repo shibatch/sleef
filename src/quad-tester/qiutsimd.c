@@ -282,6 +282,10 @@ int do_test(int argc, char **argv) {
     func_q_q("sinq_u10", xsinq_u10);
     func_q_q("cosq_u10", xcosq_u10);
     func_q_q("tanq_u10", xtanq_u10);
+    func_q_q("expq_u10", xexpq_u10);
+    func_q_q("exp2q_u10", xexp2q_u10);
+    func_q_q("exp10q_u10", xexp10q_u10);
+    func_q_q("expm1q_u10", xexpm1q_u10);
     func_q_q("negq", xnegq);
     func_q_d("cast_from_doubleq", xcast_from_doubleq);
     func_d_q("cast_to_doubleq", xcast_to_doubleq);

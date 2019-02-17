@@ -622,8 +622,8 @@ static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) { return _mm512_cmp_epi64
 #define vsrl64_vm_vm_i(x, c) _mm512_srli_epi64(x, c)
 
 static INLINE vmask vcast_vm_vi(vint vi) {
-  return _mm512_maskz_permutexvar_epi32(0x5555, _mm512_set_epi32(7, 7, 6, 6, 5, 5, 4, 4, 3, 3, 2, 2, 1, 1, 0, 0), _mm512_castsi256_si512(vi));
+  return _mm512_cvtepi32_epi64(vi);
 }
 static INLINE vint vcast_vi_vm(vmask vm) {
-  return _mm512_castsi512_si256(_mm512_maskz_permutexvar_epi32(0x00ff, _mm512_set_epi32(0, 0, 0, 0, 0, 0, 0, 0, 14, 12, 10, 8, 6, 4, 2, 0), vm));
+  return _mm512_cvtepi64_epi32(vm);
 }

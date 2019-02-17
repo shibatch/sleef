@@ -858,5 +858,5 @@ static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) {
 #define vsll64_vm_vm_i(x, c) svreinterpret_s32_u64(svlsl_n_u64_x(ptrue, svreinterpret_u64_s32(x), c))
 #define vsrl64_vm_vm_i(x, c) svreinterpret_s32_u64(svlsr_n_u64_x(ptrue, svreinterpret_u64_s32(x), c))
 
-static INLINE vmask vcast_vm_vi(vint vi) { return vand_vm_vm_vm(vi, vcast_vm_i_i(0, 0xffffffff)); }
+static INLINE vmask vcast_vm_vi(vint vi) { return svreinterpret_s32_s64(svextw_s64_z(ptrue, svreinterpret_s64_s32(vi))); }
 static INLINE vint vcast_vi_vm(vmask vm) { return vand_vm_vm_vm(vm, vcast_vm_i_i(0, 0xffffffff)); }

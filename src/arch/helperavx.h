@@ -681,7 +681,8 @@ static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) {
 static INLINE vmask vcast_vm_vi(vint vi) {
   vint vi0 = _mm_and_si128(_mm_shuffle_epi32(vi, (1 << 4) | (1 << 6)), _mm_set_epi32(0, -1, 0, -1));
   vint vi1 = _mm_and_si128(_mm_shuffle_epi32(vi, (2 << 0) | (2 << 2) | (3 << 4) | (3 << 6)), _mm_set_epi32(0, -1, 0, -1));
-  return _mm256_insertf128_si256(_mm256_castsi128_si256(vi0), vi1, 1);
+  vmask m = _mm256_insertf128_si256(_mm256_castsi128_si256(vi0), vi1, 1);
+  return vor_vm_vm_vm(vcast_vm_vi2(vcastu_vi2_vi(vand_vi_vo_vi(vgt_vo_vi_vi(vcast_vi_i(0), vi), vcast_vi_i(-1)))), m);
 }
 static INLINE vint vcast_vi_vm(vmask vm) {
   return _mm_or_si128(_mm_castps_si128(_mm_shuffle_ps(_mm_castsi128_ps(_mm256_castsi256_si128(vm)), _mm_set1_ps(0), 0x08)),

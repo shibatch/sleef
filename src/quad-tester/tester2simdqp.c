@@ -471,6 +471,54 @@ int main(int argc,char **argv)
     }
 #endif
 
+    {
+      mpfr_exp(frz, frx, GMP_RNDN);
+      double u0 = countULPf128(t = vget(xexpq_u10(a0), e), frz, 0);
+
+      if (u0 > 1.0) {
+	printf(ISANAME " exp arg=%s ulp=%.20g\n", sprintf128(q0), u0);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_exp2(frz, frx, GMP_RNDN);
+      double u0 = countULPf128(t = vget(xexp2q_u10(a0), e), frz, 0);
+
+      if (u0 > 1.0) {
+	printf(ISANAME " exp2 arg=%s ulp=%.20g\n", sprintf128(q0), u0);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_exp10(frz, frx, GMP_RNDN);
+      double u0 = countULPf128(t = vget(xexp10q_u10(a0), e), frz, 0);
+
+      if (u0 > 1.0) {
+	printf(ISANAME " exp10 arg=%s ulp=%.20g\n", sprintf128(q0), u0);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_expm1(frz, frx, GMP_RNDN);
+      double u0 = countULPf128(t = vget(xexpm1q_u10(a0), e), frz, 0);
+
+      if (u0 > 1.0) {
+	printf(ISANAME " expm1 arg=%s ulp=%.20g\n", sprintf128(q0), u0);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
 #if defined(ENABLEFLOAT128)
     switch(cnt & 31) {
     case 0: {
