@@ -219,10 +219,17 @@ Sleef_quad child_sqrtq_u05(Sleef_quad x) { child_q_q("sqrtq_u05", x); }
 Sleef_quad child_sinq_u10(Sleef_quad x) { child_q_q("sinq_u10", x); }
 Sleef_quad child_cosq_u10(Sleef_quad x) { child_q_q("cosq_u10", x); }
 Sleef_quad child_tanq_u10(Sleef_quad x) { child_q_q("tanq_u10", x); }
+Sleef_quad child_asinq_u10(Sleef_quad x) { child_q_q("asinq_u10", x); }
+Sleef_quad child_acosq_u10(Sleef_quad x) { child_q_q("acosq_u10", x); }
+Sleef_quad child_atanq_u10(Sleef_quad x) { child_q_q("atanq_u10", x); }
 Sleef_quad child_expq_u10(Sleef_quad x) { child_q_q("expq_u10", x); }
 Sleef_quad child_exp2q_u10(Sleef_quad x) { child_q_q("exp2q_u10", x); }
 Sleef_quad child_exp10q_u10(Sleef_quad x) { child_q_q("exp10q_u10", x); }
 Sleef_quad child_expm1q_u10(Sleef_quad x) { child_q_q("expm1q_u10", x); }
+Sleef_quad child_logq_u10(Sleef_quad x) { child_q_q("logq_u10", x); }
+Sleef_quad child_log2q_u10(Sleef_quad x) { child_q_q("log2q_u10", x); }
+Sleef_quad child_log10q_u10(Sleef_quad x) { child_q_q("log10q_u10", x); }
+Sleef_quad child_log1pq_u10(Sleef_quad x) { child_q_q("log1pq_u10", x); }
 
 Sleef_quad child_copysignq(Sleef_quad x, Sleef_quad y) { child_q_q_q("copysignq", x, y); }
 Sleef_quad child_fabsq(Sleef_quad x) { child_q_q("fabsq", x); }
@@ -394,35 +401,35 @@ void do_test(int options) {
   fprintf(stderr, "addq_u05 : ");
   maxError = 0;
   cmpDenormOuterLoop_q_q(mpfr_add, child_addq_u05, stdCheckVals);
-  checkAccuracyOuterLoop_q_q(mpfr_add, child_addq_u05, "1e-100", "1e+100", 5 * NTEST, errorBound, 0);
+  checkAccuracyOuterLoop_q_q(mpfr_add, child_addq_u05, "-1e-100", "-1e+100", 5 * NTEST, errorBound, 0);
   checkAccuracyOuterLoop_q_q(mpfr_add, child_addq_u05, "0", "Inf", 5 * NTEST, errorBound, 1);
   checkResult(success, maxError);
 
   fprintf(stderr, "subq_u05 : ");
   maxError = 0;
   cmpDenormOuterLoop_q_q(mpfr_sub, child_subq_u05, stdCheckVals);
-  checkAccuracyOuterLoop_q_q(mpfr_sub, child_subq_u05, "1e-100", "1e+100", 5 * NTEST, errorBound, 0);
+  checkAccuracyOuterLoop_q_q(mpfr_sub, child_subq_u05, "-1e-100", "-1e+100", 5 * NTEST, errorBound, 0);
   checkAccuracyOuterLoop_q_q(mpfr_sub, child_subq_u05, "0", "Inf", 5 * NTEST, errorBound, 1);
   checkResult(success, maxError);
 
   fprintf(stderr, "mulq_u05 : ");
   maxError = 0;
   cmpDenormOuterLoop_q_q(mpfr_mul, child_mulq_u05, stdCheckVals);
-  checkAccuracyOuterLoop_q_q(mpfr_mul, child_mulq_u05, "1e-100", "1e+100", 5 * NTEST, errorBound, 0);
+  checkAccuracyOuterLoop_q_q(mpfr_mul, child_mulq_u05, "-1e-100", "-1e+100", 5 * NTEST, errorBound, 0);
   checkAccuracyOuterLoop_q_q(mpfr_mul, child_mulq_u05, "0", "Inf", 5 * NTEST, errorBound, 1);
   checkResult(success, maxError);
 
   fprintf(stderr, "divq_u05 : ");
   maxError = 0;
   cmpDenormOuterLoop_q_q(mpfr_div, child_divq_u05, stdCheckVals);
-  checkAccuracyOuterLoop_q_q(mpfr_div, child_divq_u05, "1e-100", "1e+100", 5 * NTEST, errorBound, 0);
+  checkAccuracyOuterLoop_q_q(mpfr_div, child_divq_u05, "-1e-100", "-1e+100", 5 * NTEST, errorBound, 0);
   checkAccuracyOuterLoop_q_q(mpfr_div, child_divq_u05, "0", "Inf", 5 * NTEST, errorBound, 1);
   checkResult(success, maxError);
 
   fprintf(stderr, "negq : ");
   maxError = 0;
   cmpDenormOuterLoop_q(mpfr_neg, child_negq, stdCheckVals);
-  checkAccuracyOuterLoop_q(mpfr_neg, child_negq, "1e-100", "1e+100", 5 * NTEST, errorBound, 0);
+  checkAccuracyOuterLoop_q(mpfr_neg, child_negq, "-1e-100", "-1e+100", 5 * NTEST, errorBound, 0);
   checkAccuracyOuterLoop_q(mpfr_neg, child_negq, "0", "Inf", 5 * NTEST, errorBound, 1);
   checkResult(success, maxError);
 
@@ -520,50 +527,97 @@ void do_test(int options) {
   fprintf(stderr, "sinq_u10 : ");
   maxError = 0;
   cmpDenormOuterLoop_q(mpfr_sin, child_sinq_u10, stdCheckVals);
-  checkAccuracyOuterLoop_q(mpfr_sin, child_sinq_u10, "1e-100", "1e+100", 1 * NTEST, 1.0, 0);
-  checkAccuracyOuterLoop_q(mpfr_sin, child_sinq_u10, "0", "Inf", 1 * NTEST, 1.0, 1);
+  checkAccuracyOuterLoop_q(mpfr_sin, child_sinq_u10, "-1e-100", "-1e+100", 1 * NTEST, 1.0, 0);
+  checkAccuracyOuterLoop_q(mpfr_sin, child_sinq_u10, "-0", "-Inf", 1 * NTEST, 1.0, 1);
   checkResult(success, maxError);
 
   fprintf(stderr, "cosq_u10 : ");
   maxError = 0;
   cmpDenormOuterLoop_q(mpfr_cos, child_cosq_u10, stdCheckVals);
-  checkAccuracyOuterLoop_q(mpfr_cos, child_cosq_u10, "1e-100", "1e+100", 1 * NTEST, 1.0, 0);
-  checkAccuracyOuterLoop_q(mpfr_cos, child_cosq_u10, "0", "Inf", 1 * NTEST, 1.0, 1);
+  checkAccuracyOuterLoop_q(mpfr_cos, child_cosq_u10, "-1e-100", "-1e+100", 1 * NTEST, 1.0, 0);
+  checkAccuracyOuterLoop_q(mpfr_cos, child_cosq_u10, "-0", "-Inf", 1 * NTEST, 1.0, 1);
   checkResult(success, maxError);
 
   fprintf(stderr, "tanq_u10 : ");
   maxError = 0;
   cmpDenormOuterLoop_q(mpfr_tan, child_tanq_u10, stdCheckVals);
-  checkAccuracyOuterLoop_q(mpfr_tan, child_tanq_u10, "1e-100", "1e+100", 1 * NTEST, 1.0, 0);
-  checkAccuracyOuterLoop_q(mpfr_tan, child_tanq_u10, "0", "Inf", 1 * NTEST, 1.0, 1);
+  checkAccuracyOuterLoop_q(mpfr_tan, child_tanq_u10, "-1e-100", "-1e+100", 1 * NTEST, 1.0, 0);
+  checkAccuracyOuterLoop_q(mpfr_tan, child_tanq_u10, "-0", "-Inf", 1 * NTEST, 1.0, 1);
+  checkResult(success, maxError);
+
+  fprintf(stderr, "asinq_u10 : ");
+  maxError = 0;
+  cmpDenormOuterLoop_q(mpfr_asin, child_asinq_u10, stdCheckVals);
+  checkAccuracyOuterLoop_q(mpfr_asin, child_asinq_u10, "-1e-100", "-1", 5 * NTEST, 1.0, 0);
+  checkResult(success, maxError);
+
+  fprintf(stderr, "acosq_u10 : ");
+  maxError = 0;
+  cmpDenormOuterLoop_q(mpfr_acos, child_acosq_u10, stdCheckVals);
+  checkAccuracyOuterLoop_q(mpfr_acos, child_acosq_u10, "-1e-100", "-1", 5 * NTEST, 1.0, 0);
+  checkResult(success, maxError);
+
+  fprintf(stderr, "atanq_u10 : ");
+  maxError = 0;
+  cmpDenormOuterLoop_q(mpfr_atan, child_atanq_u10, stdCheckVals);
+  checkAccuracyOuterLoop_q(mpfr_atan, child_atanq_u10, "-1e-100", "-1e+100", 3 * NTEST, 1.0, 0);
+  checkAccuracyOuterLoop_q(mpfr_atan, child_atanq_u10, "-0", "-Inf", 3 * NTEST, 1.0, 1);
   checkResult(success, maxError);
 
   fprintf(stderr, "expq_u10 : ");
   maxError = 0;
   cmpDenormOuterLoop_q(mpfr_exp, child_expq_u10, stdCheckVals);
-  checkAccuracyOuterLoop_q(mpfr_exp, child_expq_u10, "1e-100", "1e+100", 1 * NTEST, 1.0, 0);
-  checkAccuracyOuterLoop_q(mpfr_exp, child_expq_u10, "0", "Inf", 1 * NTEST, 1.0, 1);
+  checkAccuracyOuterLoop_q(mpfr_exp, child_expq_u10, "-1e-100", "-1e+100", 3 * NTEST, 1.0, 0);
+  checkAccuracyOuterLoop_q(mpfr_exp, child_expq_u10, "-0", "-Inf", 3 * NTEST, 1.0, 1);
   checkResult(success, maxError);
 
   fprintf(stderr, "exp2q_u10 : ");
   maxError = 0;
   cmpDenormOuterLoop_q(mpfr_exp2, child_exp2q_u10, stdCheckVals);
-  checkAccuracyOuterLoop_q(mpfr_exp2, child_exp2q_u10, "1e-100", "1e+100", 1 * NTEST, 1.0, 0);
-  checkAccuracyOuterLoop_q(mpfr_exp2, child_exp2q_u10, "0", "Inf", 1 * NTEST, 1.0, 1);
+  checkAccuracyOuterLoop_q(mpfr_exp2, child_exp2q_u10, "-1e-100", "-1e+100", 3 * NTEST, 1.0, 0);
+  checkAccuracyOuterLoop_q(mpfr_exp2, child_exp2q_u10, "-0", "-Inf", 3 * NTEST, 1.0, 1);
   checkResult(success, maxError);
 
   fprintf(stderr, "exp10q_u10 : ");
   maxError = 0;
   cmpDenormOuterLoop_q(mpfr_exp10, child_exp10q_u10, stdCheckVals);
-  checkAccuracyOuterLoop_q(mpfr_exp10, child_exp10q_u10, "1e-100", "1e+100", 1 * NTEST, 1.0, 0);
-  checkAccuracyOuterLoop_q(mpfr_exp10, child_exp10q_u10, "0", "Inf", 1 * NTEST, 1.0, 1);
+  checkAccuracyOuterLoop_q(mpfr_exp10, child_exp10q_u10, "-1e-100", "-1e+100", 3 * NTEST, 1.0, 0);
+  checkAccuracyOuterLoop_q(mpfr_exp10, child_exp10q_u10, "-0", "-Inf", 3 * NTEST, 1.0, 1);
   checkResult(success, maxError);
 
   fprintf(stderr, "expm1q_u10 : ");
   maxError = 0;
   cmpDenormOuterLoop_q(mpfr_expm1, child_expm1q_u10, stdCheckVals);
-  checkAccuracyOuterLoop_q(mpfr_expm1, child_expm1q_u10, "1e-100", "1e+100", 1 * NTEST, 1.0, 0);
-  checkAccuracyOuterLoop_q(mpfr_expm1, child_expm1q_u10, "0", "Inf", 1 * NTEST, 1.0, 1);
+  checkAccuracyOuterLoop_q(mpfr_expm1, child_expm1q_u10, "-1e-100", "-1e+100", 3 * NTEST, 1.0, 0);
+  checkAccuracyOuterLoop_q(mpfr_expm1, child_expm1q_u10, "-0", "-Inf", 3 * NTEST, 1.0, 1);
+  checkResult(success, maxError);
+
+  fprintf(stderr, "logq_u10 : ");
+  maxError = 0;
+  cmpDenormOuterLoop_q(mpfr_log, child_logq_u10, stdCheckVals);
+  checkAccuracyOuterLoop_q(mpfr_log, child_logq_u10, "1e-100", "1e+100", 3 * NTEST, 1.0, 0);
+  checkAccuracyOuterLoop_q(mpfr_log, child_logq_u10, "0", "Inf", 3 * NTEST, 1.0, 1);
+  checkResult(success, maxError);
+
+  fprintf(stderr, "log2q_u10 : ");
+  maxError = 0;
+  cmpDenormOuterLoop_q(mpfr_log2, child_log2q_u10, stdCheckVals);
+  checkAccuracyOuterLoop_q(mpfr_log2, child_log2q_u10, "1e-100", "1e+100", 3 * NTEST, 1.0, 0);
+  checkAccuracyOuterLoop_q(mpfr_log2, child_log2q_u10, "0", "Inf", 3 * NTEST, 1.0, 1);
+  checkResult(success, maxError);
+
+  fprintf(stderr, "log10q_u10 : ");
+  maxError = 0;
+  cmpDenormOuterLoop_q(mpfr_log10, child_log10q_u10, stdCheckVals);
+  checkAccuracyOuterLoop_q(mpfr_log10, child_log10q_u10, "1e-100", "1e+100", 3 * NTEST, 1.0, 0);
+  checkAccuracyOuterLoop_q(mpfr_log10, child_log10q_u10, "0", "Inf", 3 * NTEST, 1.0, 1);
+  checkResult(success, maxError);
+
+  fprintf(stderr, "log1pq_u10 : ");
+  maxError = 0;
+  cmpDenormOuterLoop_q(mpfr_log1p, child_log1pq_u10, stdCheckVals);
+  checkAccuracyOuterLoop_q(mpfr_log1p, child_log1pq_u10, "1e-100", "1e+100", 3 * NTEST, 1.0, 0);
+  checkAccuracyOuterLoop_q(mpfr_log1p, child_log1pq_u10, "0", "Inf", 3 * NTEST, 1.0, 1);
   checkResult(success, maxError);
 
   if ((options & 2) != 0) {

@@ -1,4 +1,4 @@
-//          Copyright Naoki Shibata 2010 - 2018.
+//          Copyright Naoki Shibata 2010 - 2019.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -162,6 +162,8 @@ int main(int argc,char **argv)
 
   //
 
+  const Sleef_quad oneQ = cast_q_str("1");
+  const Sleef_quad oneEMinus300Q = cast_q_str("1e-300");
   const Sleef_quad oneEMinus10Q  = cast_q_str("1e-10");
   const Sleef_quad oneEPlus10Q   = cast_q_str("1e+10");
   const Sleef_quad oneEMinus100Q = cast_q_str("1e-100");
@@ -475,7 +477,7 @@ int main(int argc,char **argv)
       mpfr_exp(frz, frx, GMP_RNDN);
       double u0 = countULPf128(t = vget(xexpq_u10(a0), e), frz, 0);
 
-      if (u0 > 1.0) {
+      if (u0 > 0.8) {
 	printf(ISANAME " exp arg=%s ulp=%.20g\n", sprintf128(q0), u0);
 	printf("test = %s\n", sprintf128(t));
 	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
@@ -487,7 +489,7 @@ int main(int argc,char **argv)
       mpfr_exp2(frz, frx, GMP_RNDN);
       double u0 = countULPf128(t = vget(xexp2q_u10(a0), e), frz, 0);
 
-      if (u0 > 1.0) {
+      if (u0 > 0.8) {
 	printf(ISANAME " exp2 arg=%s ulp=%.20g\n", sprintf128(q0), u0);
 	printf("test = %s\n", sprintf128(t));
 	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
@@ -499,7 +501,7 @@ int main(int argc,char **argv)
       mpfr_exp10(frz, frx, GMP_RNDN);
       double u0 = countULPf128(t = vget(xexp10q_u10(a0), e), frz, 0);
 
-      if (u0 > 1.0) {
+      if (u0 > 0.8) {
 	printf(ISANAME " exp10 arg=%s ulp=%.20g\n", sprintf128(q0), u0);
 	printf("test = %s\n", sprintf128(t));
 	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
@@ -511,8 +513,96 @@ int main(int argc,char **argv)
       mpfr_expm1(frz, frx, GMP_RNDN);
       double u0 = countULPf128(t = vget(xexpm1q_u10(a0), e), frz, 0);
 
-      if (u0 > 1.0) {
+      if (u0 > 0.8) {
 	printf(ISANAME " expm1 arg=%s ulp=%.20g\n", sprintf128(q0), u0);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_log(frz, frx, GMP_RNDN);
+      double u0 = countULPf128(t = vget(xlogq_u10(a0), e), frz, 0);
+
+      if (u0 > 0.8) {
+	printf(ISANAME " log arg=%s ulp=%.20g\n", sprintf128(q0), u0);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_log2(frz, frx, GMP_RNDN);
+      double u0 = countULPf128(t = vget(xlog2q_u10(a0), e), frz, 0);
+
+      if (u0 > 0.8) {
+	printf(ISANAME " log2 arg=%s ulp=%.20g\n", sprintf128(q0), u0);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_log10(frz, frx, GMP_RNDN);
+      double u0 = countULPf128(t = vget(xlog10q_u10(a0), e), frz, 0);
+
+      if (u0 > 0.8) {
+	printf(ISANAME " log10 arg=%s ulp=%.20g\n", sprintf128(q0), u0);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_log1p(frz, frx, GMP_RNDN);
+      double u0 = countULPf128(t = vget(xlog1pq_u10(a0), e), frz, 0);
+
+      if (u0 > 0.8) {
+	printf(ISANAME " log1p arg=%s ulp=%.20g\n", sprintf128(q0), u0);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_atan(frz, frx, GMP_RNDN);
+      double u0 = countULPf128(t = vget(xatanq_u10(a0), e), frz, 0);
+
+      if (u0 > 0.8) {
+	printf(ISANAME " atan arg=%s ulp=%.20g\n", sprintf128(q0), u0);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    q0 = rndf128(oneEMinus300Q, oneQ);
+    a0 = vset(a0, e, q0);
+    mpfr_set_f128(frx, q0, GMP_RNDN);
+
+    {
+      mpfr_asin(frz, frx, GMP_RNDN);
+      double u0 = countULPf128(t = vget(xasinq_u10(a0), e), frz, 0);
+
+      if (u0 > 0.8) {
+	printf(ISANAME " asin arg=%s ulp=%.20g\n", sprintf128(q0), u0);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_acos(frz, frx, GMP_RNDN);
+      double u0 = countULPf128(t = vget(xacosq_u10(a0), e), frz, 0);
+
+      if (u0 > 0.8) {
+	printf(ISANAME " acos arg=%s ulp=%.20g\n", sprintf128(q0), u0);
 	printf("test = %s\n", sprintf128(t));
 	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
 	fflush(stdout); ecnt++;
@@ -552,7 +642,7 @@ int main(int argc,char **argv)
       mpfr_sin(frz, frx, GMP_RNDN);
       double u0 = countULPf128(t = vget(xsinq_u10(a0), e), frz, 0);
 
-      if (u0 > 1.0) {
+      if (u0 > 0.8) {
 	printf(ISANAME " sin arg=%s ulp=%.20g\n", sprintf128(q0), u0);
 	printf("test = %s\n", sprintf128(t));
 	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
@@ -564,7 +654,7 @@ int main(int argc,char **argv)
       mpfr_cos(frz, frx, GMP_RNDN);
       double u0 = countULPf128(t = vget(xcosq_u10(a0), e), frz, 0);
 
-      if (u0 > 1.0) {
+      if (u0 > 0.8) {
 	printf(ISANAME " cos arg=%s ulp=%.20g\n", sprintf128(q0), u0);
 	printf("test = %s\n", sprintf128(t));
 	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
@@ -576,7 +666,7 @@ int main(int argc,char **argv)
       mpfr_tan(frz, frx, GMP_RNDN);
       double u0 = countULPf128(t = vget(xtanq_u10(a0), e), frz, 0);
 
-      if (u0 > 1.0) {
+      if (u0 > 0.8) {
 	printf(ISANAME " tan arg=%s ulp=%.20g\n", sprintf128(q0), u0);
 	printf("test = %s\n", sprintf128(t));
 	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
