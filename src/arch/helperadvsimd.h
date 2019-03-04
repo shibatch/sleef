@@ -665,6 +665,20 @@ static INLINE vmask2 vuninterleave_vm2_vm2(vmask2 v) {
     vreinterpretq_u32_u64(vtrn2q_u64(vreinterpretq_u64_u32(v.x), vreinterpretq_u64_u32(v.y))) };
 }
 
+static INLINE vint vuninterleave_vi_vi(vint v) { return v; }
+static INLINE vdouble vinterleave_vd_vd(vdouble vd) { return vd; }
+static INLINE vdouble vuninterleave_vd_vd(vdouble vd) { return vd; }
+static INLINE vmask vinterleave_vm_vm(vmask vm) { return vm; }
+static INLINE vmask vuninterleave_vm_vm(vmask vm) { return vm; }
+
+static vmask2 vloadu_vm2_p(void *p) {
+  vmask2 vm2 = {
+    vld1q_u32((uint32_t *)p),
+    vld1q_u32((uint32_t *)((uint8_t *)p + sizeof(vmask)))
+  };
+  return vm2;
+}
+
 static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
   union {
     vargquad aq;
@@ -705,3 +719,9 @@ static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) {
 
 #define vsll64_vm_vm_i(x, c) vreinterpretq_u32_u64(vshlq_n_u64(vreinterpretq_u64_u32(x), c))
 #define vsrl64_vm_vm_i(x, c) vreinterpretq_u32_u64(vshrq_n_u64(vreinterpretq_u64_u32(x), c))
+
+static INLINE vmask vcast_vm_vi(vint vi) {
+  vmask m = vreinterpretq_u32_u64(vmovl_u32(vreinterpret_u32_s32(vi)));
+  return vor_vm_vm_vm(vcast_vm_vi2(vcastu_vi2_vi(vreinterpret_s32_u32(vget_low_u32(vgt_vo_vi_vi(vcast_vi_i(0), vi))))), m);
+}
+static INLINE vint vcast_vi_vm(vmask vm) { return vreinterpret_s32_u32(vmovn_u64(vreinterpretq_u64_u32(vm))); }

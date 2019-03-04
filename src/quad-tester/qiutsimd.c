@@ -171,6 +171,61 @@ typedef union {
     }									\
   }
 
+#define func_i_q_q(funcStr, funcName) {					\
+    while (startsWith(buf, funcStr " ")) {				\
+      sentinel = 0;							\
+      int lane = xrand() % VECTLENDP;					\
+      cnv128 c0, c1;							\
+      sscanf(buf, funcStr " %" PRIx64 ":%" PRIx64 " %" PRIx64 ":%" PRIx64, &c0.h, &c0.l, &c1.h, &c1.l); \
+      vargquad a0, a1;							\
+      memrand(&a0, sizeof(vargquad));					\
+      memrand(&a1, sizeof(vargquad));					\
+      a0.s[lane] = c0.q;						\
+      a1.s[lane] = c1.q;						\
+      vint vi = funcName(a0, a1);					\
+      int t[VECTLENDP];							\
+      vstoreu_v_p_vi(t, vi);						\
+      printf("%d\n", t[lane]);						\
+      fflush(stdout);							\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
+    }									\
+  }
+
+#define func_d_q(funcStr, funcName) {					\
+    while (startsWith(buf, funcStr " ")) {				\
+      sentinel = 0;							\
+      int lane = xrand() % VECTLENDP;					\
+      cnv128 c0;							\
+      sscanf(buf, funcStr " %" PRIx64 ":%" PRIx64, &c0.h, &c0.l);	\
+      vargquad a0;							\
+      memrand(&a0, sizeof(vargquad));					\
+      a0.s[lane] = c0.q;						\
+      double d[VECTLENDP];						\
+      vstoreu_v_p_vd(d, funcName(a0));					\
+      printf("%" PRIx64 "\n", d2u(d[lane]));				\
+      fflush(stdout);							\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
+    }									\
+  }
+
+#define func_q_d(funcStr, funcName) {					\
+    while (startsWith(buf, funcStr " ")) {				\
+      sentinel = 0;							\
+      int lane = xrand() % VECTLENDP;					\
+      uint64_t u;							\
+      sscanf(buf, funcStr " %" PRIx64, &u);				\
+      double s[VECTLENDP];						\
+      memrand(s, sizeof(s));						\
+      s[lane] = u2d(u);							\
+      vargquad a0 = funcName(vloadu_vd_p(s));				\
+      cnv128 c0;							\
+      c0.q = a0.s[lane];						\
+      printf("%" PRIx64 ":%" PRIx64 "\n", c0.h, c0.l);			\
+      fflush(stdout);							\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
+    }									\
+  }
+
 #define func_strtoq(funcStr) {						\
     while (startsWith(buf, funcStr " ")) {				\
       sentinel = 0;							\
@@ -224,7 +279,30 @@ int do_test(int argc, char **argv) {
     func_q_q_q("mulq_u05", xmulq_u05);
     func_q_q_q("divq_u05", xdivq_u05);
     func_q_q("sqrtq_u05", xsqrtq_u05);
+    func_q_q("sinq_u10", xsinq_u10);
+    func_q_q("cosq_u10", xcosq_u10);
+    func_q_q("tanq_u10", xtanq_u10);
+    func_q_q("asinq_u10", xasinq_u10);
+    func_q_q("acosq_u10", xacosq_u10);
+    func_q_q("atanq_u10", xatanq_u10);
+    func_q_q("expq_u10", xexpq_u10);
+    func_q_q("exp2q_u10", xexp2q_u10);
+    func_q_q("exp10q_u10", xexp10q_u10);
+    func_q_q("expm1q_u10", xexpm1q_u10);
+    func_q_q("logq_u10", xlogq_u10);
+    func_q_q("log2q_u10", xlog2q_u10);
+    func_q_q("log10q_u10", xlog10q_u10);
+    func_q_q("log1pq_u10", xlog1pq_u10);
     func_q_q("negq", xnegq);
+    func_q_d("cast_from_doubleq", xcast_from_doubleq);
+    func_d_q("cast_to_doubleq", xcast_to_doubleq);
+    func_i_q_q("cmpltq", xcmpltq);
+    func_i_q_q("cmpgtq", xcmpgtq);
+    func_i_q_q("cmpleq", xcmpleq);
+    func_i_q_q("cmpgeq", xcmpgeq);
+    func_i_q_q("cmpeqq", xcmpeqq);
+    func_i_q_q("cmpneqq", xcmpneqq);
+    func_i_q_q("unordq", xunordq);
     func_strtoq("strtoq");
     func_qtostr("qtostr");
     sentinel++;
