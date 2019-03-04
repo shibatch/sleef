@@ -2195,7 +2195,7 @@ EXPORT CONST VECTOR_CC vdouble xexp(vdouble d) {
   u = vfma_vd_vd_vd_vd(u, s, vcast_vd_d(+0.1000000000000000000e+1));
 #else // #ifdef ENABLE_FMA_DP
   vdouble s2 = vmul_vd_vd_vd(s, s), s4 = vmul_vd_vd_vd(s2, s2), s8 = vmul_vd_vd_vd(s4, s4);
-  u = POLY11(s, s2, s4, s8,
+  u = POLY10(s, s2, s4, s8,
 	     2.08860621107283687536341e-09,
 	     2.51112930892876518610661e-08,
 	     2.75573911234900471893338e-07,
@@ -2205,8 +2205,8 @@ EXPORT CONST VECTOR_CC vdouble xexp(vdouble d) {
 	     0.00138888888889774492207962,
 	     0.00833333333331652721664984,
 	     0.0416666666666665047591422,
-	     0.166666666666666851703837,
-	     0.5);
+	     0.166666666666666851703837);
+  u = vmla_vd_vd_vd_vd(u, s, vcast_vd_d(+0.5000000000000000000e+0));
 
   u = vadd_vd_vd_vd(vcast_vd_d(1), vmla_vd_vd_vd_vd(vmul_vd_vd_vd(s, s), u, s));
 #endif // #ifdef ENABLE_FMA_DP
