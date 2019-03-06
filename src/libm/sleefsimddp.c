@@ -955,7 +955,7 @@ EXPORT CONST VECTOR_CC vdouble xcos_u1(vdouble d) {
 #define XMODF xmodf
 #endif
 
-TYPE2_FUNCATR vdouble2 XSINCOS(vdouble d) {
+TYPE2_FUNCATR VECTOR_CC vdouble2 XSINCOS(vdouble d) {
 #if !defined(DETERMINISTIC)
   vopmask o;
   vdouble u, t, rx, ry, s;
@@ -1101,7 +1101,7 @@ TYPE2_FUNCATR vdouble2 XSINCOS(vdouble d) {
 #endif // #if !defined(DETERMINISTIC)
 }
 
-TYPE2_FUNCATR vdouble2 XSINCOS_U1(vdouble d) {
+TYPE2_FUNCATR VECTOR_CC vdouble2 XSINCOS_U1(vdouble d) {
 #if !defined(DETERMINISTIC)
   vopmask o;
   vdouble u, rx, ry;
@@ -1262,7 +1262,7 @@ TYPE2_FUNCATR vdouble2 XSINCOS_U1(vdouble d) {
 }
 
 #if !defined(DETERMINISTIC)
-TYPE2_FUNCATR vdouble2 XSINCOSPI_U05(vdouble d) {
+TYPE2_FUNCATR VECTOR_CC vdouble2 XSINCOSPI_U05(vdouble d) {
   vopmask o;
   vdouble u, s, t, rx, ry;
   vdouble2 r, x, s2;
