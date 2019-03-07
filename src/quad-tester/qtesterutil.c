@@ -160,10 +160,15 @@ void memrand(void *p, int size) {
 
 Sleef_quad rndf128(Sleef_quad min, Sleef_quad max) {
   cnv_t cmin = { .q = min }, cmax = { .q = max }, c;
+  uint64_t enablesign = cmin.h & cmax.h & 0x8000000000000000ULL, sign = 0;
+  cmin.h &= 0x7fffffffffffffffULL;
+  cmax.h &= 0x7fffffffffffffffULL;
   do {
     memrand(&c.q, sizeof(Sleef_quad));
+    sign = c.h;
     c.h &= 0x7fffffffffffffffULL;
   } while(isnonnumberf128(c.q) || lt128(c.x, cmin.x) || lt128(cmax.x, c.x));
+  c.h |= sign & enablesign;
   return c.q;
 }
 

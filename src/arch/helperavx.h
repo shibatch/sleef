@@ -215,9 +215,11 @@ static INLINE vdouble vmin_vd_vd_vd(vdouble x, vdouble y) { return _mm256_min_pd
 #if CONFIG == 1
 static INLINE vdouble vmla_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return vadd_vd_vd_vd(vmul_vd_vd_vd(x, y), z); }
 static INLINE vdouble vmlapn_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return vsub_vd_vd_vd(vmul_vd_vd_vd(x, y), z); }
+static INLINE vdouble vmlanp_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return vsub_vd_vd_vd(z, vmul_vd_vd_vd(x, y)); }
 #else
 static INLINE vdouble vmla_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return _mm256_macc_pd(x, y, z); }
 static INLINE vdouble vmlapn_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return _mm256_msub_pd(x, y, z); }
+static INLINE vdouble vmlanp_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return _mm256_nmacc_pd(x, y, z); }
 static INLINE vdouble vfma_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return _mm256_macc_pd(x, y, z); }
 static INLINE vdouble vfmapp_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return _mm256_macc_pd(x, y, z); }
 static INLINE vdouble vfmapn_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return _mm256_msub_pd(x, y, z); }
@@ -575,6 +577,38 @@ static INLINE vmask2 vuninterleave_vm2_vm2(vmask2 v) {
       vreinterpret_vm_vd(_mm256_unpackhi_pd(vreinterpret_vd_vm(v.x), vreinterpret_vd_vm(v.y))) };
 }
 
+static INLINE vint vuninterleave_vi_vi(vint v) {
+  return _mm_shuffle_epi32(v, (0 << 0) | (2 << 2) | (1 << 4) | (3 << 6));
+}
+
+static INLINE vdouble vinterleave_vd_vd(vdouble vd) {
+  double tmp[4];
+  vstoreu_v_p_vd(tmp, vd);
+  double t = tmp[1]; tmp[1] = tmp[2]; tmp[2] = t;
+  return vloadu_vd_p(tmp);
+}
+
+static INLINE vdouble vuninterleave_vd_vd(vdouble vd) {
+  double tmp[4];
+  vstoreu_v_p_vd(tmp, vd);
+  double t = tmp[1]; tmp[1] = tmp[2]; tmp[2] = t;
+  return vloadu_vd_p(tmp);
+}
+
+static INLINE vmask vinterleave_vm_vm(vmask vm) {
+  double tmp[4];
+  vstoreu_v_p_vd(tmp, vreinterpret_vd_vm(vm));
+  double t = tmp[1]; tmp[1] = tmp[2]; tmp[2] = t;
+  return vreinterpret_vm_vd(vloadu_vd_p(tmp));
+}
+
+static INLINE vmask vuninterleave_vm_vm(vmask vm) {
+  double tmp[4];
+  vstoreu_v_p_vd(tmp, vreinterpret_vd_vm(vm));
+  double t = tmp[1]; tmp[1] = tmp[2]; tmp[2] = t;
+  return vreinterpret_vm_vd(vloadu_vd_p(tmp));
+}
+
 static vmask2 vloadu_vm2_p(void *p) {
   vmask2 vm2 = {
     vcast_vm_vi2(vloadu_vi2_p((int32_t *)p)),
@@ -645,3 +679,14 @@ static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) {
 #define vsrl64_vm_vm_i(x, c) \
   _mm256_insertf128_si256(_mm256_castsi128_si256(_mm_srli_epi64(_mm256_extractf128_si256(x, 0), c)), \
 			  _mm_srli_epi64(_mm256_extractf128_si256(x, 1), c), 1)
+
+static INLINE vmask vcast_vm_vi(vint vi) {
+  vint vi0 = _mm_and_si128(_mm_shuffle_epi32(vi, (1 << 4) | (1 << 6)), _mm_set_epi32(0, -1, 0, -1));
+  vint vi1 = _mm_and_si128(_mm_shuffle_epi32(vi, (2 << 0) | (2 << 2) | (3 << 4) | (3 << 6)), _mm_set_epi32(0, -1, 0, -1));
+  vmask m = _mm256_insertf128_si256(_mm256_castsi128_si256(vi0), vi1, 1);
+  return vor_vm_vm_vm(vcast_vm_vi2(vcastu_vi2_vi(vand_vi_vo_vi(vgt_vo_vi_vi(vcast_vi_i(0), vi), vcast_vi_i(-1)))), m);
+}
+static INLINE vint vcast_vi_vm(vmask vm) {
+  return _mm_or_si128(_mm_castps_si128(_mm_shuffle_ps(_mm_castsi128_ps(_mm256_castsi256_si128(vm)), _mm_set1_ps(0), 0x08)),
+  		      _mm_castps_si128(_mm_shuffle_ps(_mm_set1_ps(0), _mm_castsi128_ps(_mm256_extractf128_si256(vm, 1)), 0x80)));
+}

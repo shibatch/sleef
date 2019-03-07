@@ -27,6 +27,24 @@ int isinff128(Sleef_quad a);
 int isnonnumberf128(Sleef_quad a);
 int isnanf128(Sleef_quad a);
 
+static double u2d(uint64_t u) {
+  union {
+    double f;
+    uint64_t i;
+  } tmp;
+  tmp.i = u;
+  return tmp.f;
+}
+
+static uint64_t d2u(double d) {
+  union {
+    double f;
+    uint64_t i;
+  } tmp;
+  tmp.f = d;
+  return tmp.i;
+}
+
 #ifdef USEMPFR
 void mpfr_set_f128(mpfr_t frx, Sleef_quad a, mpfr_rnd_t rnd);
 Sleef_quad mpfr_get_f128(mpfr_t m, mpfr_rnd_t rnd);

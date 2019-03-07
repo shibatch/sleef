@@ -205,6 +205,7 @@ static INLINE vdouble vmin_vd_vd_vd(vdouble x, vdouble y) { return x < y ? x : y
 #ifndef ENABLE_FMA_DP
 static INLINE vdouble vmla_vd_vd_vd_vd  (vdouble x, vdouble y, vdouble z) { return x * y + z; }
 static INLINE vdouble vmlapn_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return x * y - z; }
+static INLINE vdouble vmlanp_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return -x * y + z; }
 #else
 static INLINE vdouble vmla_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return FMA(x, y, z); }
 static INLINE vdouble vmlapn_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return FMA(x, y, -z); }
@@ -379,6 +380,11 @@ typedef Sleef_quad1 vargquad;
 
 static INLINE vmask2 vinterleave_vm2_vm2(vmask2 v) { return v; }
 static INLINE vmask2 vuninterleave_vm2_vm2(vmask2 v) { return v; }
+static INLINE vint vuninterleave_vi_vi(vint v) { return v; }
+static INLINE vdouble vinterleave_vd_vd(vdouble vd) { return vd; }
+static INLINE vdouble vuninterleave_vd_vd(vdouble vd) { return vd; }
+static INLINE vmask vinterleave_vm_vm(vmask vm) { return vm; }
+static INLINE vmask vuninterleave_vm_vm(vmask vm) { return vm; }
 
 static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
   union {
@@ -408,3 +414,6 @@ static INLINE vmask vneg64_vm_vm(vmask x) { return -(int64_t)x; }
 #define vsrl64_vm_vm_i(x, c) ((uint64_t)(x) >> (c))
 
 static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) { return (int64_t)x > (int64_t)y ? ~(uint32_t)0 : 0; }
+
+static INLINE vmask vcast_vm_vi(vint vi) { return vi; }
+static INLINE vint vcast_vi_vm(vmask vm) { return vm; }

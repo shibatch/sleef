@@ -546,6 +546,26 @@ static INLINE vmask2 vuninterleave_vm2_vm2(vmask2 v) {
   return (vmask2) { _mm512_unpacklo_epi64(v.x, v.y), _mm512_unpackhi_epi64(v.x, v.y) };
 }
 
+static INLINE vint vuninterleave_vi_vi(vint v) {
+  return _mm256_permutevar8x32_epi32(v, _mm256_set_epi32(7, 5, 3, 1, 6, 4, 2, 0));
+}
+
+static INLINE vdouble vinterleave_vd_vd(vdouble vd) {
+  return vreinterpret_vd_vm(_mm512_permutexvar_epi32(_mm512_set_epi32(15, 14, 7, 6, 13, 12, 5, 4, 11, 10, 3, 2, 9, 8, 1, 0), vreinterpret_vm_vd(vd)));
+}
+
+static INLINE vdouble vuninterleave_vd_vd(vdouble vd) {
+  return vreinterpret_vd_vm(_mm512_permutexvar_epi32(_mm512_set_epi32(15, 14, 11, 10, 7, 6, 3, 2, 13, 12, 9, 8, 5, 4, 1, 0), vreinterpret_vm_vd(vd)));
+}
+
+static INLINE vmask vinterleave_vm_vm(vmask vm) {
+  return _mm512_permutexvar_epi32(_mm512_set_epi32(15, 14, 7, 6, 13, 12, 5, 4, 11, 10, 3, 2, 9, 8, 1, 0), vm);
+}
+
+static INLINE vmask vuninterleave_vm_vm(vmask vm) {
+  return _mm512_permutexvar_epi32(_mm512_set_epi32(15, 14, 11, 10, 7, 6, 3, 2, 13, 12, 9, 8, 5, 4, 1, 0), vm);
+}
+
 static vmask2 vloadu_vm2_p(void *p) {
   vmask2 vm2 = {
     vloadu_vi2_p((int32_t *)p),
@@ -601,3 +621,10 @@ static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) { return _mm512_cmp_epi64
 
 #define vsll64_vm_vm_i(x, c) _mm512_slli_epi64(x, c)
 #define vsrl64_vm_vm_i(x, c) _mm512_srli_epi64(x, c)
+
+static INLINE vmask vcast_vm_vi(vint vi) {
+  return _mm512_cvtepi32_epi64(vi);
+}
+static INLINE vint vcast_vi_vm(vmask vm) {
+  return _mm512_cvtepi64_epi32(vm);
+}

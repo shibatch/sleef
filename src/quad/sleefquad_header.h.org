@@ -83,3 +83,7 @@ typedef union {
 
 //
 
+IMPORT Sleef_quad1 Sleef_strtoq(const char *str, char **endptr, int base);
+IMPORT void Sleef_qtostr(char *s, int n, Sleef_quad1 a, int base);
+
+//
