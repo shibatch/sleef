@@ -24,6 +24,18 @@ project(SLEEF
 	VERSION ${SLEEF_VERSION}
 	LANGUAGES C)
 
+###############
+### Install ###
+###############
+set(PN sleef)
+set(generated_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
+set(config_install_dir "lib/cmake/${PN}")
+set(include_install_dir "include")
+set(version_config "${generated_dir}/${PN}ConfigVersion.cmake")
+set(project_config "${generated_dir}/${PN}Config.cmake")
+set(targets_export_name "${PN}Targets")
+set(namespace "${PN}::")
+
 # Sanity check for in-source builds which we do not want to happen
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
   message(FATAL_ERROR "SLEEF does not allow in-source builds.
@@ -153,3 +165,28 @@ if (MSVC)
   message("")
   message("*** Note: Parallel build is not supported on Microsoft Visual Studio")
 endif()
+
+## install
+
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+  "${version_config}" COMPATIBILITY SameMajorVersion
+)
+
+# Note: use 'targets_export_name'
+configure_package_config_file(
+  "${PROJECT_SOURCE_DIR}/Config.cmake.in"
+  "${project_config}"
+  INSTALL_DESTINATION "${config_install_dir}"
+)
+
+install(
+  FILES "${project_config}" "${version_config}"
+  DESTINATION "${config_install_dir}"
+)
+
+install(
+  EXPORT "${targets_export_name}"
+  NAMESPACE "${namespace}"
+  DESTINATION "${config_install_dir}"
+)

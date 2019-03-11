@@ -352,4 +352,10 @@ set_target_properties(${TARGET_LIBDFT} PROPERTIES
 # Install
 
 install(FILES ${PROJECT_SOURCE_DIR}/include/sleefdft.h DESTINATION include)
-install(TARGETS ${TARGET_LIBDFT} DESTINATION lib)
+install(TARGETS ${TARGET_LIBDFT}
+        EXPORT "${targets_export_name}"
+        LIBRARY DESTINATION "lib"
+        ARCHIVE DESTINATION "lib"
+        RUNTIME DESTINATION "bin"
+        INCLUDES DESTINATION "${include_install_dir}"
+)

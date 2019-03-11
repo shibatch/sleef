@@ -441,8 +441,20 @@ endif()
 # --------------------------------------------------------------------
 # Install libsleef and sleef.h
 install(FILES ${SLEEF_INCLUDE_HEADER} DESTINATION include)
-install(TARGETS ${TARGET_LIBSLEEF} DESTINATION lib)
+install(TARGETS ${TARGET_LIBSLEEF}
+        EXPORT "${targets_export_name}"
+        LIBRARY DESTINATION "lib"
+        ARCHIVE DESTINATION "lib"
+        RUNTIME DESTINATION "bin"
+        INCLUDES DESTINATION "${include_install_dir}"
+)
 
 if(ENABLE_GNUABI)
-  install(TARGETS ${TARGET_LIBSLEEFGNUABI} DESTINATION lib)
+  install(TARGETS ${TARGET_LIBSLEEFGNUABI}
+        EXPORT "${targets_export_name}"
+        LIBRARY DESTINATION "lib"
+        ARCHIVE DESTINATION "lib"
+        RUNTIME DESTINATION "bin"
+        INCLUDES DESTINATION "${include_install_dir}"
+)
 endif()
