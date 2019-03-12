@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
   static char *vintname[] = { "vint", "vint2" };
   static int sizeoffp[] = { 8, 4 };
   
-  static char *ulpSuffixStr[] = { "", "_u1", "_u05", "_u35", "_u15" };
+  static char *ulpSuffixStr[] = { "", "_u1", "_u05", "_u35", "_u15", "_u3500" };
   static char vparameterStr[7][LEN] = { "v", "vv", "vl8l8", "vv", "v", "vvv", "vl8" };
   static char *typeSpecS[] = { "", "f" };
   static char *typeSpec[] = { "d", "f" };
@@ -57,6 +57,7 @@ int main(int argc, char **argv) {
   
   for(int i=0;funcList[i].name != NULL;i++) {
     if ((funcList[i].flags & 1) != 0) continue;
+    if (fptype == 0 && (funcList[i].flags & 2) != 0) continue;
     if (funcList[i].ulp < 20) {
       snprintf(funcname[0], LEN, "_ZGV%sN%s%s_%s%s",
 	       mangledisa, cvw, vparameterStr[funcList[i].funcType], funcList[i].name, typeSpecS[fptype]);

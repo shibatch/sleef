@@ -250,6 +250,14 @@ int main(int argc,char **argv)
 	printf("Pure C sincosf_u1 sin arg=%.20g ulp=%.20g\n", d, u3);
 	fflush(stdout); ecnt++;
       }
+
+      float u4 = countULPsp(t = xfastsinf_u3500(d), frx);
+      double ae4 = fabs(mpfr_get_d(frx, GMP_RNDN) - t);
+      
+      if (u4 > 350 && ae4 > 2e-6) {
+	printf("Pure C fastsinf_u3500 arg=%.20g ulp=%.20g\n", d, u4);
+	fflush(stdout); ecnt++;
+      }
     }
 
     {
@@ -281,6 +289,14 @@ int main(int argc,char **argv)
       
       if (u3 != 0 && (u3 > 1 || fabs(t) > 1 || !isnumber(t))) {
 	printf("Pure C sincosf_u1 cos arg=%.20g ulp=%.20g\n", d, u3);
+	fflush(stdout); ecnt++;
+      }
+
+      float u4 = countULPsp(t = xfastcosf_u3500(d), frx);
+      double ae4 = fabs(mpfr_get_d(frx, GMP_RNDN) - t);
+      
+      if (u4 > 350 && ae4 > 2e-6) {
+	printf("Pure C fastcosf_u3500 arg=%.20g ulp=%.20g\n", d, u4);
 	fflush(stdout); ecnt++;
       }
     }
@@ -345,6 +361,13 @@ int main(int argc,char **argv)
 	printf("Pure C log2f arg=%.20g ulp=%.20g\n", d, u0);
 	fflush(stdout); ecnt++;
       }
+
+      double u1 = countULPsp(t = xlog2f_u35(fabsf(d)), frx);
+      
+      if (u1 > 3.5) {
+	printf("Pure C log2f_u35 arg=%.20g ulp=%.20g\n", d, u1);
+	fflush(stdout); ecnt++;
+      }
     }
     
     {
@@ -384,6 +407,13 @@ int main(int argc,char **argv)
 	printf("Pure C exp2f arg=%.20g ulp=%.20g\n", d, u0);
 	fflush(stdout); ecnt++;
       }
+
+      double u1 = countULPsp(t = xexp2f_u35(d), frx);
+      
+      if (u1 > 3.5) {
+	printf("Pure C exp2f_u35 arg=%.20g ulp=%.20g\n", d, u1);
+	fflush(stdout); ecnt++;
+      }
     }
     
     {
@@ -394,6 +424,13 @@ int main(int argc,char **argv)
       
       if (u0 > 1) {
 	printf("Pure C exp10f arg=%.20g ulp=%.20g\n", d, u0);
+	fflush(stdout); ecnt++;
+      }
+
+      double u1 = countULPsp(t = xexp10f_u35(d), frx);
+      
+      if (u1 > 3.5) {
+	printf("Pure C exp10f_u35 arg=%.20g ulp=%.20g\n", d, u1);
 	fflush(stdout); ecnt++;
       }
     }
@@ -420,6 +457,15 @@ int main(int argc,char **argv)
       if (u0 > 1) {
 	printf("Pure C powf arg=%.20g, %.20g ulp=%.20g\n", d2, d, u0);
 	fflush(stdout); ecnt++;
+      }
+
+      if (isnumber(d) && isnumber(d2)) {
+	double u1 = countULPsp(t = xfastpowf_u3500(d2, d), frx);
+      
+	if (isnumber((float)mpfr_get_d(frx, GMP_RNDN)) && u1 > 350) {
+	  printf("Pure C fastpowf_u3500 arg=%.20g, %.20g ulp=%.20g\n", d2, d, u1);
+	  fflush(stdout); ecnt++;
+	}
       }
     }
     

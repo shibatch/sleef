@@ -30,13 +30,15 @@ int main(int argc, char **argv) {
 
     switch(funcList[i].funcType) {
     case 0:
-      printf("DISPATCH_vf_vf(%s, Sleef_%sd%d%s, pnt_%sd%d%s, disp_%sd%d%s",
-	     vdoublename,
-	     funcList[i].name, wdp, ulpSuffix0,
-	     funcList[i].name, wdp, ulpSuffix0,
-	     funcList[i].name, wdp, ulpSuffix0);
-      for(int j=0;j<nisa;j++) printf(", Sleef_%sd%d%s%s", funcList[i].name, wdp, ulpSuffix1, argv[isastart + j]);
-      printf(")\n");
+      if ((funcList[i].flags & 2) == 0) {
+	printf("DISPATCH_vf_vf(%s, Sleef_%sd%d%s, pnt_%sd%d%s, disp_%sd%d%s",
+	       vdoublename,
+	       funcList[i].name, wdp, ulpSuffix0,
+	       funcList[i].name, wdp, ulpSuffix0,
+	       funcList[i].name, wdp, ulpSuffix0);
+	for(int j=0;j<nisa;j++) printf(", Sleef_%sd%d%s%s", funcList[i].name, wdp, ulpSuffix1, argv[isastart + j]);
+	printf(")\n");
+      }
 
       printf("DISPATCH_vf_vf(%s, Sleef_%sf%d%s, pnt_%sf%d%s, disp_%sf%d%s",
 	     vfloatname,
@@ -48,13 +50,15 @@ int main(int argc, char **argv) {
 
       break;
     case 1:
-      printf("DISPATCH_vf_vf_vf(%s, Sleef_%sd%d%s, pnt_%sd%d%s, disp_%sd%d%s",
-	     vdoublename,
-	     funcList[i].name, wdp, ulpSuffix0,
-	     funcList[i].name, wdp, ulpSuffix0,
-	     funcList[i].name, wdp, ulpSuffix0);
-      for(int j=0;j<nisa;j++) printf(", Sleef_%sd%d%s%s", funcList[i].name, wdp, ulpSuffix1, argv[isastart + j]);
-      printf(")\n");
+      if ((funcList[i].flags & 2) == 0) {
+	printf("DISPATCH_vf_vf_vf(%s, Sleef_%sd%d%s, pnt_%sd%d%s, disp_%sd%d%s",
+	       vdoublename,
+	       funcList[i].name, wdp, ulpSuffix0,
+	       funcList[i].name, wdp, ulpSuffix0,
+	       funcList[i].name, wdp, ulpSuffix0);
+	for(int j=0;j<nisa;j++) printf(", Sleef_%sd%d%s%s", funcList[i].name, wdp, ulpSuffix1, argv[isastart + j]);
+	printf(")\n");
+      }
 
       printf("DISPATCH_vf_vf_vf(%s, Sleef_%sf%d%s, pnt_%sf%d%s, disp_%sf%d%s",
 	     vfloatname,
@@ -67,13 +71,15 @@ int main(int argc, char **argv) {
       break;
     case 2:
     case 6:
-      printf("DISPATCH_vf2_vf(%s, Sleef_%s_2, Sleef_%sd%d%s, pnt_%sd%d%s, disp_%sd%d%s",
-	     vdoublename, vdoublename,
-	     funcList[i].name, wdp, ulpSuffix0,
-	     funcList[i].name, wdp, ulpSuffix0,
-	     funcList[i].name, wdp, ulpSuffix0);
-      for(int j=0;j<nisa;j++) printf(", Sleef_%sd%d%s%s", funcList[i].name, wdp, ulpSuffix1, argv[isastart + j]);
-      printf(")\n");
+      if ((funcList[i].flags & 2) == 0) {
+	printf("DISPATCH_vf2_vf(%s, Sleef_%s_2, Sleef_%sd%d%s, pnt_%sd%d%s, disp_%sd%d%s",
+	       vdoublename, vdoublename,
+	       funcList[i].name, wdp, ulpSuffix0,
+	       funcList[i].name, wdp, ulpSuffix0,
+	       funcList[i].name, wdp, ulpSuffix0);
+	for(int j=0;j<nisa;j++) printf(", Sleef_%sd%d%s%s", funcList[i].name, wdp, ulpSuffix1, argv[isastart + j]);
+	printf(")\n");
+      }
 
       printf("DISPATCH_vf2_vf(%s, Sleef_%s_2, Sleef_%sf%d%s, pnt_%sf%d%s, disp_%sf%d%s",
 	     vfloatname, vfloatname, 
@@ -85,31 +91,37 @@ int main(int argc, char **argv) {
 
       break;
     case 3:
-      printf("DISPATCH_vf_vf_vi(%s, %s, Sleef_%sd%d%s, pnt_%sd%d%s, disp_%sd%d%s",
-	     vdoublename, vintname,
-	     funcList[i].name, wdp, ulpSuffix0,
-	     funcList[i].name, wdp, ulpSuffix0,
-	     funcList[i].name, wdp, ulpSuffix0);
-      for(int j=0;j<nisa;j++) printf(", Sleef_%sd%d%s%s", funcList[i].name, wdp, ulpSuffix1, argv[isastart + j]);
-      printf(")\n");
+      if ((funcList[i].flags & 2) == 0) {
+	printf("DISPATCH_vf_vf_vi(%s, %s, Sleef_%sd%d%s, pnt_%sd%d%s, disp_%sd%d%s",
+	       vdoublename, vintname,
+	       funcList[i].name, wdp, ulpSuffix0,
+	       funcList[i].name, wdp, ulpSuffix0,
+	       funcList[i].name, wdp, ulpSuffix0);
+	for(int j=0;j<nisa;j++) printf(", Sleef_%sd%d%s%s", funcList[i].name, wdp, ulpSuffix1, argv[isastart + j]);
+	printf(")\n");
+      }
       break;
     case 4:
-      printf("DISPATCH_vi_vf(%s, %s, Sleef_%sd%d%s, pnt_%sd%d%s, disp_%sd%d%s",
-	     vdoublename, vintname,
-	     funcList[i].name, wdp, ulpSuffix0,
-	     funcList[i].name, wdp, ulpSuffix0,
-	     funcList[i].name, wdp, ulpSuffix0);
-      for(int j=0;j<nisa;j++) printf(", Sleef_%sd%d%s%s", funcList[i].name, wdp, ulpSuffix1, argv[isastart + j]);
-      printf(")\n");
+      if ((funcList[i].flags & 2) == 0) {
+	printf("DISPATCH_vi_vf(%s, %s, Sleef_%sd%d%s, pnt_%sd%d%s, disp_%sd%d%s",
+	       vdoublename, vintname,
+	       funcList[i].name, wdp, ulpSuffix0,
+	       funcList[i].name, wdp, ulpSuffix0,
+	       funcList[i].name, wdp, ulpSuffix0);
+	for(int j=0;j<nisa;j++) printf(", Sleef_%sd%d%s%s", funcList[i].name, wdp, ulpSuffix1, argv[isastart + j]);
+	printf(")\n");
+      }
       break;
     case 5:
-      printf("DISPATCH_vf_vf_vf_vf(%s, Sleef_%sd%d%s, pnt_%sd%d%s, disp_%sd%d%s",
-	     vdoublename,
-	     funcList[i].name, wdp, ulpSuffix0,
-	     funcList[i].name, wdp, ulpSuffix0,
-	     funcList[i].name, wdp, ulpSuffix0);
-      for(int j=0;j<nisa;j++) printf(", Sleef_%sd%d%s%s", funcList[i].name, wdp, ulpSuffix1, argv[isastart + j]);
-      printf(")\n");
+      if ((funcList[i].flags & 2) == 0) {
+	printf("DISPATCH_vf_vf_vf_vf(%s, Sleef_%sd%d%s, pnt_%sd%d%s, disp_%sd%d%s",
+	       vdoublename,
+	       funcList[i].name, wdp, ulpSuffix0,
+	       funcList[i].name, wdp, ulpSuffix0,
+	       funcList[i].name, wdp, ulpSuffix0);
+	for(int j=0;j<nisa;j++) printf(", Sleef_%sd%d%s%s", funcList[i].name, wdp, ulpSuffix1, argv[isastart + j]);
+	printf(")\n");
+      }
 
       printf("DISPATCH_vf_vf_vf_vf(%s, Sleef_%sf%d%s, pnt_%sf%d%s, disp_%sf%d%s",
 	     vfloatname,
@@ -128,12 +140,14 @@ int main(int argc, char **argv) {
       for(int j=0;j<nisa;j++) printf(", Sleef_%sf%d_%s", funcList[i].name, wsp, argv[isastart + j]);
       printf(")\n");
 
-      printf("DISPATCH_i_i(Sleef_%sd%d, pnt_%sd%d, disp_%sd%d",
-	     funcList[i].name, wdp,
-	     funcList[i].name, wdp,
-	     funcList[i].name, wdp);
-      for(int j=0;j<nisa;j++) printf(", Sleef_%sd%d_%s", funcList[i].name, wdp, argv[isastart + j]);
-      printf(")\n");
+      if ((funcList[i].flags & 2) == 0) {
+	printf("DISPATCH_i_i(Sleef_%sd%d, pnt_%sd%d, disp_%sd%d",
+	       funcList[i].name, wdp,
+	       funcList[i].name, wdp,
+	       funcList[i].name, wdp);
+	for(int j=0;j<nisa;j++) printf(", Sleef_%sd%d_%s", funcList[i].name, wdp, argv[isastart + j]);
+	printf(")\n");
+      }
       break;
     case 8:
       printf("DISPATCH_p_i(Sleef_%sf%d, pnt_%sf%d, disp_%sf%d",
@@ -143,12 +157,14 @@ int main(int argc, char **argv) {
       for(int j=0;j<nisa;j++) printf(", Sleef_%sf%d_%s", funcList[i].name, wsp, argv[isastart + j]);
       printf(")\n");
 
-      printf("DISPATCH_p_i(Sleef_%sd%d, pnt_%sd%d, disp_%sd%d",
-	     funcList[i].name, wdp,
-	     funcList[i].name, wdp,
-	     funcList[i].name, wdp);
-      for(int j=0;j<nisa;j++) printf(", Sleef_%sd%d_%s", funcList[i].name, wdp, argv[isastart + j]);
-      printf(")\n");
+      if ((funcList[i].flags & 2) == 0) {
+	printf("DISPATCH_p_i(Sleef_%sd%d, pnt_%sd%d, disp_%sd%d",
+	       funcList[i].name, wdp,
+	       funcList[i].name, wdp,
+	       funcList[i].name, wdp);
+	for(int j=0;j<nisa;j++) printf(", Sleef_%sd%d_%s", funcList[i].name, wdp, argv[isastart + j]);
+	printf(")\n");
+      }
       break;
     }
   }

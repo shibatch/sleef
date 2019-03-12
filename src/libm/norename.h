@@ -46,9 +46,12 @@ vdouble xcbrt(vdouble d);
 
 vdouble xexp2(vdouble a);
 vdouble xexp10(vdouble a);
+vdouble xexp2_u35(vdouble a);
+vdouble xexp10_u35(vdouble a);
 vdouble xexpm1(vdouble a);
 vdouble xlog10(vdouble a);
 vdouble xlog2(vdouble a);
+vdouble xlog2_u35(vdouble a);
 vdouble xlog1p(vdouble a);
 
 vdouble xsin_u1(vdouble d);
@@ -141,9 +144,12 @@ vfloat xacoshf(vfloat x);
 vfloat xatanhf(vfloat x);
 vfloat xexp2f(vfloat a);
 vfloat xexp10f(vfloat a);
+vfloat xexp2f_u35(vfloat a);
+vfloat xexp10f_u35(vfloat a);
 vfloat xexpm1f(vfloat a);
 vfloat xlog10f(vfloat a);
 vfloat xlog2f(vfloat a);
+vfloat xlog2f_u35(vfloat a);
 vfloat xlog1pf(vfloat a);
 
 vfloat xsinf_u1(vfloat d);
@@ -194,4 +200,8 @@ vfloat xtgammaf_u1(vfloat);
 
 vfloat xerff_u1(vfloat);
 vfloat xerfcf_u15(vfloat);
+
+vfloat xfastsinf_u3500(vfloat d);
+vfloat xfastcosf_u3500(vfloat d);
+vfloat xfastpowf_u3500(vfloat x, vfloat y);
 #endif

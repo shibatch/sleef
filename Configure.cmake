@@ -150,8 +150,6 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
   command_arguments(ALIAS_PARAMS_ADVSIMD_DP  2 float64x2_t int32x2_t n advsimd)
   command_arguments(ALIAS_PARAMS_ADVSIMD_SP -4 float32x4_t int32x4_t n advsimd)
 
-  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-march=armv8-a+simd")
-
   set(TESTER3_DEFINITIONS_ADVSIMD       ATR=finz_ DPTYPE=float64x2_t SPTYPE=float32x4_t DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=advsimd)
   set(TESTER3_DEFINITIONS_ADVSIMDNOFMA  ATR=cinz_ DPTYPE=float64x2_t SPTYPE=float32x4_t DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=advsimdnofma)
   set(TESTER3_DEFINITIONS_SVE           ATR=finz_ DPTYPE=svfloat64_t SPTYPE=svfloat32_t DPTYPESPEC=dx SPTYPESPEC=fx EXTSPEC=sve)

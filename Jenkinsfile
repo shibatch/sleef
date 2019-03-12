@@ -112,7 +112,7 @@ pipeline {
 	    	     	 sh '''
                 	 echo "On" `hostname`
 			 export PATH=$PATH:/opt/local/bin:/opt/local/bin:/usr/local/bin:/usr/bin:/bin
-		         export CC=gcc-7
+			 export CC=gcc-7
 			 rm -rf build
  			 mkdir build
 			 cd build

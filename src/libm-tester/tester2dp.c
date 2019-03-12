@@ -333,8 +333,15 @@ int main(int argc,char **argv)
 	printf("Pure C log2 arg=%.20g ulp=%.20g\n", d, u0);
 	fflush(stdout); ecnt++;
       }
+
+      double u1 = countULPdp(t = xlog2_u35(fabs(d)), frx);
+      
+      if (u1 > 3.5) {
+	printf("Pure C log2_u35 arg=%.20g ulp=%.20g\n", d, u1);
+	fflush(stdout); ecnt++;
+      }
     }
-    
+
     {
       mpfr_set_d(frx, d, GMP_RNDN);
       mpfr_log1p(frx, frx, GMP_RNDN);
@@ -371,6 +378,13 @@ int main(int argc,char **argv)
 	printf("Pure C exp2 arg=%.20g ulp=%.20g\n", d, u0);
 	fflush(stdout); ecnt++;
       }
+
+      double u1 = countULPdp(t = xexp2_u35(d), frx);
+      
+      if (u1 > 3.5) {
+	printf("Pure C exp2_u35 arg=%.20g ulp=%.20g\n", d, u1);
+	fflush(stdout); ecnt++;
+      }
     }
     
     {
@@ -381,6 +395,13 @@ int main(int argc,char **argv)
       
       if (u0 > 1.09) {
 	printf("Pure C exp10 arg=%.20g ulp=%.20g\n", d, u0);
+	fflush(stdout); ecnt++;
+      }
+
+      double u1 = countULPdp(t = xexp10_u35(d), frx);
+      
+      if (u1 > 3.5) {
+	printf("Pure C exp10_u35 arg=%.20g ulp=%.20g\n", d, u1);
 	fflush(stdout); ecnt++;
       }
     }

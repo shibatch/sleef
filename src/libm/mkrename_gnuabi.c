@@ -25,12 +25,13 @@ int main(int argc, char **argv) {
   if (strcmp(isaname, "sve") == 0)
     wdp = wsp = "x";
 
-  static char *ulpSuffixStr[] = { "", "_u1", "_u05", "_u35", "_u15" };
+  static char *ulpSuffixStr[] = { "", "_u1", "_u05", "_u35", "_u15", "_u3500" };
   static char *vparameterStrDP[] = { "v", "vv", "vl8l8", "vv", "v", "vvv", "vl8" };
   static char *vparameterStrSP[] = { "v", "vv", "vl4l4", "vv", "v", "vvv", "vl4" };
   
   for(int i=0;funcList[i].name != NULL;i++) {
     if ((funcList[i].flags & 1) != 0) continue;
+    if ((funcList[i].flags & 2) != 0) continue;
     if (funcList[i].ulp < 0) {
       printf("#define x%s _ZGV%sN%s%s_%s\n", funcList[i].name,
 	     mangledisa, wdp, vparameterStrDP[funcList[i].funcType], funcList[i].name);

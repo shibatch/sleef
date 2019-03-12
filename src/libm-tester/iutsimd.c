@@ -488,9 +488,12 @@ int do_test(int argc, char **argv) {
 
     func_d_d("exp2", xexp2);
     func_d_d("exp10", xexp10);
+    func_d_d("exp2_u35", xexp2_u35);
+    func_d_d("exp10_u35", xexp10_u35);
     func_d_d("expm1", xexpm1);
     func_d_d("log10", xlog10);
     func_d_d("log2", xlog2);
+    func_d_d("log2_u35", xlog2_u35);
     func_d_d("log1p", xlog1p);
 
     func_d2_d("sincos", xsincos);
@@ -572,9 +575,12 @@ int do_test(int argc, char **argv) {
 
     func_f_f("exp2f", xexp2f);
     func_f_f("exp10f", xexp10f);
+    func_f_f("exp2f_u35", xexp2f_u35);
+    func_f_f("exp10f_u35", xexp10f_u35);
     func_f_f("expm1f", xexpm1f);
     func_f_f("log10f", xlog10f);
     func_f_f("log2f", xlog2f);
+    func_f_f("log2f_u35", xlog2f_u35);
     func_f_f("log1pf", xlog1pf);
 
     func_f2_f("sincosf", xsincosf);
@@ -609,6 +615,10 @@ int do_test(int argc, char **argv) {
     func_f_f("lgammaf_u1", xlgammaf_u1);
     func_f_f("erff_u1", xerff_u1);
     func_f_f("erfcf_u15", xerfcf_u15);
+
+    func_f_f("fastsinf_u3500", xfastsinf_u3500);
+    func_f_f("fastcosf_u3500", xfastcosf_u3500);
+    func_f_f_f("fastpowf_u3500", xfastpowf_u3500);
 #endif
   }
 

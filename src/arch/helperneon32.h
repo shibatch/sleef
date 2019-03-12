@@ -119,6 +119,7 @@ static INLINE vfloat vmlanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return v
 static INLINE vfloat vfma_vf_vf_vf_vf  (vfloat x, vfloat y, vfloat z) { return vfmaq_f32(z, x, y); }
 static INLINE vfloat vfmanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vfmsq_f32(z, x, y); }
 static INLINE vfloat vfmapn_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vneg_vf_vf(vfmanp_vf_vf_vf_vf(x, y, z)); }
+static INLINE vfloat vmlapn_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vneg_vf_vf(vfmanp_vf_vf_vf_vf(x, y, z)); }
 
 static INLINE vfloat vdiv_vf_vf_vf(vfloat x, vfloat y) {
   float32x4_t t = vrecpeq_f32(y), u;
@@ -152,6 +153,7 @@ static INLINE vfloat vrecsqrt_vf_vf(vfloat d) {
 #else // #if CONFIG == 4
 static INLINE vfloat vmla_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vmlaq_f32(z, x, y); }
 static INLINE vfloat vmlanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vmlsq_f32(z, x, y); }
+static INLINE vfloat vmlapn_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vneg_vf_vf(vmlsq_f32(z, x, y)); }
 
 static INLINE vfloat vdiv_vf_vf_vf(vfloat n, vfloat d) {
   float32x4_t x = vrecpeq_f32(d);

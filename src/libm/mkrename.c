@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
     exit(-1);
   }
 
-  static char *ulpSuffixStr[] = { "", "_u1", "_u05", "_u35", "_u15" };
+  static char *ulpSuffixStr[] = { "", "_u1", "_u05", "_u35", "_u15", "_u3500" };
   
   if (argc == 4 || argc == 5) {
     char *atrPrefix = strcmp(argv[1], "-") == 0 ? "" : argv[1];

@@ -308,6 +308,7 @@ static INLINE vfloat vmin_vf_vf_vf(vfloat x, vfloat y) { return x < y ? x : y; }
 #ifndef ENABLE_FMA_SP
 static INLINE vfloat vmla_vf_vf_vf_vf  (vfloat x, vfloat y, vfloat z) { return x * y + z; }
 static INLINE vfloat vmlanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return - x * y + z; }
+static INLINE vfloat vmlapn_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return x * y - z; }
 #else
 static INLINE vfloat vmla_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return FMAF(x, y, z); }
 static INLINE vfloat vmlapn_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return FMAF(x, y, -z); }

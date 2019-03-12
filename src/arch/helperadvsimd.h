@@ -152,23 +152,28 @@ static INLINE VECTOR_CC vfloat vdiv_vf_vf_vf(vfloat n, vfloat d) {
 }
 static INLINE VECTOR_CC vfloat vsqrt_vf_vf(vfloat d) { return vsqrtq_f32(d); }
 
+// |x|, -x
+static INLINE VECTOR_CC vfloat vabs_vf_vf(vfloat f) { return vabsq_f32(f); }
+static INLINE VECTOR_CC vfloat vneg_vf_vf(vfloat f) { return vnegq_f32(f); }
+
 #if CONFIG == 1
 // Multiply accumulate: z = z + x * y
 static INLINE VECTOR_CC vfloat vmla_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) {
   return vfmaq_f32(z, x, y);
 }
-// Multiply subtract: z = z = x * y
+// Multiply subtract: z = z - x * y
 static INLINE VECTOR_CC vfloat vmlanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) {
   return vfmsq_f32(z, x, y);
+}
+// Multiply subtract: z = x * y - z
+static INLINE VECTOR_CC vfloat vmlapn_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) {
+  return vneg_vf_vf(vfmsq_f32(z, x, y));
 }
 #else
 static INLINE VECTOR_CC vfloat vmla_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vadd_vf_vf_vf(vmul_vf_vf_vf(x, y), z); }
 static INLINE VECTOR_CC vfloat vmlanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vsub_vf_vf_vf(z, vmul_vf_vf_vf(x, y)); }
+static INLINE VECTOR_CC vfloat vmlapn_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vsub_vf_vf_vf(vmul_vf_vf_vf(x, y), z); }
 #endif
-
-// |x|, -x
-static INLINE VECTOR_CC vfloat vabs_vf_vf(vfloat f) { return vabsq_f32(f); }
-static INLINE VECTOR_CC vfloat vneg_vf_vf(vfloat f) { return vnegq_f32(f); }
 
 // max, min
 static INLINE VECTOR_CC vfloat vmax_vf_vf_vf(vfloat x, vfloat y) {
