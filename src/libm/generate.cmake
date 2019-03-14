@@ -78,11 +78,16 @@
   "getPtr\;-1\;0\;8\;1"
 )
 
-MACRO(SLEEF_MKALIAS FILENAME VEC_WIDTH_QUOTES VEC_FP_TYPE_QUOTES VEC_INT_TYPE_QUOTES MANGLED_ISA)
+MACRO(SLEEF_MKALIAS FILENAME FORCE_AAVPCS VEC_WIDTH_QUOTES VEC_FP_TYPE_QUOTES VEC_INT_TYPE_QUOTES MANGLED_ISA)
   # Names come in with extra quotes from list
   string(REPLACE "\"" "" VEC_WIDTH ${VEC_WIDTH_QUOTES})
   string(REPLACE "\"" "" VEC_FP_TYPE ${VEC_FP_TYPE_QUOTES})
   string(REPLACE "\"" "" VEC_INT_TYPE ${VEC_INT_TYPE_QUOTES})
+  # Get length of ARGN which always seems to exist
+  string(LENGTH "${ARGN}" ARGCOUNT)
+  if (ARGCOUNT)
+    string(REPLACE "\"" "" EXTENTION ${ARGN})
+  endif()
 
   # Determine type and write header
   if (${VEC_WIDTH} LESS 0)
@@ -98,6 +103,13 @@ MACRO(SLEEF_MKALIAS FILENAME VEC_WIDTH_QUOTES VEC_FP_TYPE_QUOTES VEC_INT_TYPE_QU
     set(STR "#ifdef __SLEEFSIMDDP_C__\n")
   endif()
 
+  # This is the current condition on which AAVPCS is set
+  if (FORCE_AAVPCS AND NOT CMAKE_CROSSCOMPILING)
+    if ("${EXTENTION}" STREQUAL "advsimd")
+      set(VECTORCC " __attribute__((aarch64_vector_pcs))")
+    endif()
+  endif()
+
   if(FPTYPE)
     set(RETURNTYPES ${VEC_FP_TYPE} ${VEC_FP_TYPE} "vfloat2" ${VEC_FP_TYPE} ${VEC_INT_TYPE} ${VEC_FP_TYPE} "vfloat2" "int" "void *")
   else()
@@ -111,11 +123,7 @@ MACRO(SLEEF_MKALIAS FILENAME VEC_WIDTH_QUOTES VEC_FP_TYPE_QUOTES VEC_INT_TYPE_QU
 
   string(APPEND STR "#ifdef ENABLE_ALIAS\n")
   
-  # Get length of ARGN which always seems to exist
-  string(LENGTH "${ARGN}" ARGCOUNT)
-  if (ARGCOUNT)
-    string(REPLACE "\"" "" EXTENTION ${ARGN})
-  endif()
+
   if (EXTENTION)
     foreach(funcresult ${FUNCLIST})
       list(GET funcresult 0 name)
@@ -134,7 +142,7 @@ MACRO(SLEEF_MKALIAS FILENAME VEC_WIDTH_QUOTES VEC_FP_TYPE_QUOTES VEC_INT_TYPE_QU
         set(ULPVAL "u${ulp}")
         set(ULPVALUNDER "_${ULPVAL}")
       endif()
-      string(APPEND STR "EXPORT CONST ${returnstring} Sleef_${name}${TYPESPEC}${width}${ULPVALUNDER}(${firstarg}) __attribute__((alias(\"Sleef_${name}${TYPESPEC}${width}_${ULPVAL}${EXTENTION}\")))\;\n")
+      string(APPEND STR "EXPORT CONST ${returnstring} Sleef_${name}${TYPESPEC}${width}${ULPVALUNDER}(${firstarg}) __attribute__((alias(\"Sleef_${name}${TYPESPEC}${width}_${ULPVAL}${EXTENTION}\"))) ${VECTORCC}\;\n")
     endforeach()
     string(APPEND STR "\n")
   endif()
@@ -159,7 +167,7 @@ MACRO(SLEEF_MKALIAS FILENAME VEC_WIDTH_QUOTES VEC_FP_TYPE_QUOTES VEC_INT_TYPE_QU
         set(ULPVAL "u${ulp}")
         set(ULPVALUNDER "_${ULPVAL}")
       endif()
-      string(APPEND STR "EXPORT CONST ${returnstring} Sleef_${name}${TYPESPEC}${width}${ULPVALUNDER}(${secondarg}) { return Sleef_${name}${TYPESPEC}${width}_${ULPVAL}${EXTENTION}(${thirdarg})\; }\n")
+      string(APPEND STR "EXPORT CONST ${returnstring} ${VECTORCC} Sleef_${name}${TYPESPEC}${width}${ULPVALUNDER}(${secondarg}) { return Sleef_${name}${TYPESPEC}${width}_${ULPVAL}${EXTENTION}(${thirdarg})\; }\n")
     endforeach()
     string(APPEND STR "\n")
   endif()
