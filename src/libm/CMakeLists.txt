@@ -137,10 +137,7 @@ add_custom_target(${TARGET_HEADERS} ALL
 # --------------------------------------------------------------------
 # TARGET_MKALIAS
 # --------------------------------------------------------------------
-add_host_executable(${TARGET_MKALIAS} mkalias.c)
-if(FORCE_AAVPCS)
-  host_target_AAVPCS_definitions(${TARGET_MKALIAS})
-endif()
+include("generate.cmake")
 
 # --------------------------------------------------------------------
 # TARGET_MKDISP
@@ -151,7 +148,7 @@ add_host_executable(${TARGET_MKDISP} mkdisp.c)
 # Set C standard requirement (-std=gnu99 for gcc)
 set_target_properties(
   ${TARGET_MKRENAME} ${TARGET_MKRENAME_GNUABI} ${TARGET_MKDISP}
-  ${TARGET_MKALIAS} ${TARGET_MKMASKED_GNUABI}
+  ${TARGET_MKMASKED_GNUABI}
   PROPERTIES C_STANDARD 99
 )
 
@@ -226,45 +223,42 @@ foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
 
     if (INDEX_ALIAS EQUAL -1)
       target_compile_definitions(${OBJECT_${SIMD}} PRIVATE
-	ENABLE_${SIMD}=1
-	DORENAME=1
-	${COMMON_TARGET_DEFINITIONS}
-	)
+      ENABLE_${SIMD}=1
+      DORENAME=1
+      ${COMMON_TARGET_DEFINITIONS}
+      )
       target_compile_definitions(${OBJECTDET_${SIMD}} PRIVATE
-	ENABLE_${SIMD}=1
-	DORENAME=1
-	${COMMON_TARGET_DEFINITIONS}
-	)
-    else()
-      add_custom_command(
-	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/alias_${SIMDLC}.h
-       	COMMENT "Generating alias_${SIMDLC}.h"
-       	COMMAND $<TARGET_FILE:${TARGET_MKALIAS}> ${ALIAS_PARAMS_${SIMD}_SP} >  ${CMAKE_CURRENT_BINARY_DIR}/include/alias_${SIMDLC}.h
-       	COMMAND $<TARGET_FILE:${TARGET_MKALIAS}> ${ALIAS_PARAMS_${SIMD}_DP} >> ${CMAKE_CURRENT_BINARY_DIR}/include/alias_${SIMDLC}.h
-       	DEPENDS ${TARGET_MKALIAS}
-       	)
+	    ENABLE_${SIMD}=1
+	    DORENAME=1
+	    ${COMMON_TARGET_DEFINITIONS}
+	    )
+   else()
+      file(REMOVE ${CMAKE_CURRENT_BINARY_DIR}/include/alias_${SIMDLC}.h)
+      SLEEF_MKALIAS(${CMAKE_CURRENT_BINARY_DIR}/include/alias_${SIMDLC}.h ${ALIAS_PARAMS_${SIMD}_SP})
+      SLEEF_MKALIAS(${CMAKE_CURRENT_BINARY_DIR}/include/alias_${SIMDLC}.h ${ALIAS_PARAMS_${SIMD}_DP})
+      # TODO: Dependency for generated?
       add_custom_target(alias_${SIMDLC}.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/include/alias_${SIMDLC}.h)
       add_dependencies(${OBJECT_${SIMD}} alias_${SIMDLC}.h_generated)
       add_dependencies(${OBJECTDET_${SIMD}} alias_${SIMDLC}.h_generated)
       target_compile_definitions(${OBJECT_${SIMD}} PRIVATE
-	ENABLE_${SIMD}=1
-	DORENAME=1
-	${COMMON_TARGET_DEFINITIONS}
-	ALIAS_NO_EXT_SUFFIX=\"alias_${SIMDLC}.h\"
-	)
+	    ENABLE_${SIMD}=1
+	    DORENAME=1
+	    ${COMMON_TARGET_DEFINITIONS}
+	    ALIAS_NO_EXT_SUFFIX=\"alias_${SIMDLC}.h\"
+	    )
       target_compile_definitions(${OBJECTDET_${SIMD}} PRIVATE
-	ENABLE_${SIMD}=1
-	DORENAME=1
-	${COMMON_TARGET_DEFINITIONS}
-	ALIAS_NO_EXT_SUFFIX=\"alias_${SIMDLC}.h\"
-	)
+	    ENABLE_${SIMD}=1
+	    DORENAME=1
+	    ${COMMON_TARGET_DEFINITIONS}
+	    ALIAS_NO_EXT_SUFFIX=\"alias_${SIMDLC}.h\"
+	    )
     endif()
 
     # Enable Vector PCS for Advanced SIMD (if supported)
     if(FORCE_AAVPCS AND ${SIMD} STREQUAL "ADVSIMD")
       target_compile_definitions(${OBJECT_${SIMD}} PRIVATE
         ENABLE_AAVPCS=1
-      )
+    )
     endif()
 
     add_dependencies(${OBJECT_${SIMD}} rename${SIMD}.h_generated)
