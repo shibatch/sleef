@@ -290,11 +290,11 @@ $ &block;</pre>
 <code></code>
 <code>ExternalProject_Add(libsleef</code>
 <code>  GIT_REPOSITORY https://github.com/shibatch/sleef</code>
-<code>  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/contrib</code>
+<code>  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${sleef_BINARY_DIR}/contrib</code>
 <code>)</code>
 <code></code>
-<code>include_directories(${CMAKE_BINARY_DIR}/contrib/include)</code>
-<code>link_directories(${CMAKE_BINARY_DIR}/contrib/lib)</code>
+<code>include_directories(${sleef_BINARY_DIR}/contrib/include)</code>
+<code>link_directories(${sleef_BINARY_DIR}/contrib/lib)</code>
 <code></code>
 <code>add_executable(hellox86 hellox86.c)</code>
 <code>add_dependencies(hellox86 libsleef)</code>

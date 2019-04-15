@@ -1,7 +1,7 @@
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/include/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${CMAKE_SOURCE_DIR}/src/libm)         # dd.h
+include_directories(${sleef_SOURCE_DIR}/src/libm)         # dd.h
 
 set(COMMON_TARGET_PROPERTIES C_STANDARD 99)
 
@@ -49,7 +49,7 @@ string(CONCAT CMAKE_C_FLAGS ${SLEEF_C_FLAGS})
 # --------------------------------------------------------------------
 set(SLEEFQUAD_ORG_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/sleefquad_header.h.org)
 set(SLEEFQUAD_ORG_FOOTER ${CMAKE_CURRENT_SOURCE_DIR}/sleefquad_footer.h.org)
-set(SLEEFQUAD_INCLUDE_HEADER ${CMAKE_BINARY_DIR}/include/sleefquad.h)
+set(SLEEFQUAD_INCLUDE_HEADER ${sleef_BINARY_DIR}/include/sleefquad.h)
 
 set(SLEEF_HEADER_COMMANDS "")
 list(APPEND SLEEF_HEADER_COMMANDS COMMAND ${CMAKE_COMMAND} -E copy ${SLEEFQUAD_ORG_HEADER} ${SLEEFQUAD_INCLUDE_HEADER})
