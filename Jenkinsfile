@@ -43,7 +43,7 @@ pipeline {
 			 '''
             	     }
                 }
-/*
+
                 stage('Intel Compiler') {
                     agent { label 'icc' }
                     steps {
@@ -64,7 +64,7 @@ pipeline {
 		        '''
                     }
                 }
-*/
+
                 stage('FMA4') {
             	     agent { label 'fma4' }
             	     steps {

@@ -37,6 +37,7 @@
       <li><a href="index.xhtml#license">License</a></li>
       <li><a href="index.xhtml#history">History of this software</a></li>
       <li><a href="index.xhtml#related">Related projects</a></li>
+      <li><a href="index.xhtml#publication">Publication</a></li>
     </ul>
   </li>
   <li>&nbsp;</li>
@@ -198,6 +199,14 @@
 	  <td class="lt-" align="center">N/A</td>
 	</tr>
 	<tr>
+	  <td class="lt-r" align="left">x86 (64bit), FreeBSD</td>
+	  <td></td>
+	  <td class="lt-lr" align="center"></td>
+	  <td class="lt-r" align="center">Supported</td>
+	  <td class="lt-r" align="center"></td>
+	  <td class="lt-" align="center">N/A</td>
+	</tr>
+	<tr>
 	  <td class="lt-r" align="left">x86 (64bit), OS X</td>
 	  <td></td>
 	  <td class="lt-lr" align="center">Supported</td>
@@ -291,6 +300,12 @@
   <li><a class="underlined" href="https://github.com/blu">Martin
   Krastev</a> at Chaos Group contributed faster implementation of fmin
   and fmax functions.</li>
+  <li><a class="underlined" href="https://github.com/cdluminate">Mo Zhou
+  </a> is managing packages for <a class="underlined"
+  href="https://tracker.debian.org/pkg/sleef">Debian</a>
+  and <a class="underlined"
+  href="https://launchpad.net/~lumin0/+archive/ubuntu/sleef">Ubuntu
+  PPA</a>.</li>
 </ul>
 
 <h2 id="partners">Partner institutes and corporations</h2>
@@ -360,13 +375,28 @@ information about Boost Software License.
 
 <h2 id="history">History</h2>
 
+<h4>3.4 (Not released yet)</h4>
+<ul class="disc">
+  <li>Functions that return consistent results across platforms are
+    added (PR <a class="underlined" href="https://github.com/shibatch/sleef/pull/216">#216</a>,
+    <a class="underlined" href="https://github.com/shibatch/sleef/pull/224">#224</a>)</li>
+  <li>Many functions are now faster (PR <a class="underlined"
+    href="https://github.com/shibatch/sleef/pull/239">#239</a>)</li>
+  <li>Quad precision math library(libsleefquad) is added
+    (PR <a class="underlined" href="https://github.com/shibatch/sleef/pull/235">#235</a>,
+    <a class="underlined" href="https://github.com/shibatch/sleef/pull/237">#237</a>,
+    <a class="underlined" href="https://github.com/shibatch/sleef/pull/240">#240</a>)</li>
+  <li>Testers are now faster (PR <a class="underlined"
+    href="https://github.com/shibatch/sleef/pull/223">#223</a>)</li>
+</ul>
+
 <h4>3.3.1 (Released on Aug 21, 2018)</h4>
 <ul class="disc">
   <li>i386 build problem is fixed</li>
   <li>FreeBSD support is added</li>
   <li>Trigonometric functions now evaluate correctly with full FP
   domain. (PR <a class="underlined"
-  href="https://github.com/shibatch/sleef/pull/197">#210</a>)</li>
+  href="https://github.com/shibatch/sleef/pull/210">#210</a>)</li>
 </ul>
 
 <h4>3.3 (Released on July 6, 2018)</h4>
@@ -456,9 +486,19 @@ information about Boost Software License.
 <h2 id="related">Related projects and links</h2>
 
 <ul class="disc">
+  <li>SLEEF is adopted in <a class="underlined"
+  href="https://youtu.be/QkM6zEGFhDY?t=2328">the Burst Comipler in
+  Unity</a>.</li>
   <li>SLEEF is now included in <a class="underlined"
   href="https://developer.arm.com/products/software-development-tools/hpc/documentation/vector-math-routines">
   Arm Compiler for HPC</a>.</li>
+  <li>Work for making SLEEF usable from the vectorizer
+  in <a class="underlined" href="http://llvm.org/">LLVM</a> is now
+  carried out(<a class="underlined"
+  href="https://reviews.llvm.org/D53927">D53927</a>, <a class="underlined"
+  href="https://reviews.llvm.org/D53928">D53928</a>,
+  <a class="underlined"
+  href="https://reviews.llvm.org/D54412">D54412</a>).</li>
   <li>Mustafa A. Mohamad is developing <a class="underlined"
   href="https://github.com/musm/SLEEF.jl">a pure Julia port of the
   SLEEF math library</a>.</li>
@@ -466,6 +506,10 @@ information about Boost Software License.
   href="https://github.com/hfinkel/sleef-bgq">adapted SLEEF to
   PowerPC/QPX</a>. SLEEF is running on Mira IBM BG/Q supercomputer at
   Argonne National Laboratory.</li>
+  <li><a class="underlined" href="http://gnzlbg.github.io/">Gonzalo
+  Brito Gadeschi</a> is developing <a class="underlined"
+  href="https://docs.rs/crate/sleef-sys/">a Rust FFI bindings to
+  SLEEF</a>.</li>
   <li>SLEEF is adopted in the following projects.
     <ul class="circle">
       <li><a href="http://www.menuetos.net/sc151.html">MenuetOS</a></li>
@@ -473,21 +517,19 @@ information about Boost Software License.
       <li><a href="http://buraphakit.sourceforge.net/BASIC.shtml">John's ECMA-55 Minimal BASIC Compiler</a></li>
       <li><a href="https://github.com/pocl/pocl/tree/master/lib/kernel/sleef">Portable Computing Language(pocl)</a></li>
       <li><a href="https://github.com/pytorch/pytorch/pull/6725">PyTorch</a></li>
+      <li><a href="https://github.com/cdl-saarland/rv">The Region Vectorizer(Compiler Design Lab at Saarland University)</a></li>
     </ul>
   </li>
+</ul>
 
-  <li style="margin-top: 1em;"><a class="underlined"
-  href="https://software.intel.com/en-us/node/524289">Intel Short
-  Vector Math Library (SVML)</a> is a commercial library of vectorized
-  math functions, which provides similar functionality to
-  SLEEF. Recently, some of the codes are published as free software,
-  and it is now <a class="underlined"
-  href="https://sourceware.org/git/?p=glibc.git;a=tree;f=sysdeps/x86_64/fpu/multiarch">
-  a part of glibc</a>.</li>
+<h2 id="publication">Publication</h2>
+
+<ul class="disc">
+  <li>Francesco Petrogalli and Paul Walker : <B>LLVM and the automatic vectorization of loops invoking math routines: -fsimdmath</B>, <I>2018 IEEE/ACM 5th Workshop on the LLVM Compiler Infrastructure in HPC (LLVM-HPC), pp. 30-38.,</I> <a class="underlined" href="https://doi.org/10.1109/LLVM-HPC.2018.8639354">DOI:10.1109/LLVM-HPC.2018.8639354</a> (Nov. 2018). [<a class="underlined" href="https://sc18.supercomputing.org/proceedings/workshops/workshop_files/ws_llvmf106s2-file1.pdf">PDF</a>]</li>
 </ul>
 
 <p class="footer">
-  Copyright &copy; 2018 SLEEF Project.<br/>
+  Copyright &copy; <!--YEAR--> SLEEF Project.<br/>
   SLEEF is open-source software and is distributed under the Boost Software License, Version 1.0.
 </p>
 
