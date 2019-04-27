@@ -183,7 +183,7 @@ typedef union {
       a0.s[lane] = c0.q;						\
       a1.s[lane] = c1.q;						\
       vint vi = funcName(a0, a1);					\
-      int t[VECTLENDP];							\
+      int t[VECTLENDP*2];						\
       vstoreu_v_p_vi(t, vi);						\
       printf("%d\n", t[lane]);						\
       fflush(stdout);							\

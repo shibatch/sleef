@@ -256,9 +256,21 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_sinf_u35"><b class
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-null<b class="type">float64x2_t</b> <b class="func">Sleef_cosd2_u10</b>(<b class="type">float64x2_t</b> <i class="var">a</i>);<br/>
+<b class="type">double</b> <b class="func">Sleef_cosd1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
+<b class="type">double</b> <b class="func">Sleef_cosd1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
+<b class="type">double</b> <b class="func">Sleef_cinz_cosd1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
+<b class="type">double</b> <b class="func">Sleef_finz_cosd1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
+<br/>
+<b class="type">float64x2_t</b> <b class="func">Sleef_cosd2_u10</b>(<b class="type">float64x2_t</b> <i class="var">a</i>);<br/>
 <b class="type">float64x2_t</b> <b class="func">Sleef_cosd2_u10advsimd</b>(<b class="type">float64x2_t</b> <i class="var">a</i>);<br/>
+<b class="type">float64x2_t</b> <b class="func">Sleef_cosd2_u10advsimdnofma</b>(<b class="type">float64x2_t</b> <i class="var">a</i>);<br/>
+<b class="type">float64x2_t</b> <b class="func">Sleef_cinz_cosd2_u10advsimdnofma</b>(<b class="type">float64x2_t</b> <i class="var">a</i>);<br/>
+<b class="type">float64x2_t</b> <b class="func">Sleef_finz_cosd2_u10advsimd</b>(<b class="type">float64x2_t</b> <i class="var">a</i>);<br/>
+<br/>
 <b class="type">svfloat64_t</b> <b class="func">Sleef_cosdx_u10sve</b>(<b class="type">svfloat64_t</b> <i class="var">a</i>);<br/>
+<b class="type">svfloat64_t</b> <b class="func">Sleef_cosdx_u10svenofma</b>(<b class="type">svfloat64_t</b> <i class="var">a</i>);<br/>
+<b class="type">svfloat64_t</b> <b class="func">Sleef_cinz_cosdx_u10svenofma</b>(<b class="type">svfloat64_t</b> <i class="var">a</i>);<br/>
+<b class="type">svfloat64_t</b> <b class="func">Sleef_finz_cosdx_u10sve</b>(<b class="type">svfloat64_t</b> <i class="var">a</i>);<br/>
 <br/>
 <span class="normal">Link with</span> -lsleef.
 </p>

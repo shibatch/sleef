@@ -55,7 +55,7 @@ pipeline {
 		        rm -rf build
  		        mkdir build
 		        cd build
-		        cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=FALSE ..
+		        cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE ..
 		        make -j 4 all
 			export OMP_WAIT_POLICY=passive
 		        export CTEST_OUTPUT_ON_FAILURE=TRUE
