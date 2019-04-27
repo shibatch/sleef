@@ -43,14 +43,14 @@ pipeline {
 			 '''
             	     }
                 }
-/*
+
                 stage('Intel Compiler') {
                     agent { label 'icc' }
                     steps {
     	    	        sh '''
                         echo "Intel Compiler on" `hostname`
-			export PATH=$PATH:/export/opt/sde-external-8.16.0-2018-01-30-lin:/export/opt/compilers_and_libraries_2018/linux/bin/intel64
-                        export LD_LIBRARY_PATH=/export/opt/compilers_and_libraries_2018.1.163/linux/compiler/lib/intel64_lin/
+			export PATH=$PATH:/export/opt/sde-external-8.16.0-2018-01-30-lin:/opt/intel/compilers_and_libraries/linux/bin/intel64
+                        export LD_LIBRARY_PATH=/opt/intel/compilers_and_libraries/linux/lib/intel64
 		        export CC=icc
 		        rm -rf build
  		        mkdir build
@@ -64,7 +64,7 @@ pipeline {
 		        '''
                     }
                 }
-*/
+
                 stage('FMA4') {
             	     agent { label 'fma4' }
             	     steps {

@@ -5,8 +5,22 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Next release
+## 3.4 - 2019-04-28
 ### Added
+- Faster and low precision functions are added.
+  https://github.com/shibatch/sleef/pull/229
+- Functions that return consistent results across platforms are
+  added
+  https://github.com/shibatch/sleef/pull/216
+  https://github.com/shibatch/sleef/pull/224
+- Quad precision math library(libsleefquad) is added
+  https://github.com/shibatch/sleef/pull/235
+  https://github.com/shibatch/sleef/pull/237
+  https://github.com/shibatch/sleef/pull/240
 - AArch64 Vector Procedure Call Standard (AAVPCS) support.
+### Changed
+- Many functions are now faster
+- Testers are now faster
 ## 3.3.1 - 2018-08-20
 ### Added
 - FreeBSD support is added
@@ -14,7 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - i386 build problem is fixed
 - Trigonometric functions now evaluate correctly with full FP
   domain.
-  https://github.com/shibatch/sleef/pull/210">#210</a>)</li>
+  https://github.com/shibatch/sleef/pull/210
 ## 3.3 - 2018-07-06
 ### Added
 - SVE target support is added to libsleef.
