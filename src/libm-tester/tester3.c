@@ -70,7 +70,7 @@ static INLINE svfloat32_t setsvfloat32_t(float d, int r)  { float  a[svcntw()]; 
 static INLINE float getsvfloat32_t(svfloat32_t v, int r)  { float  a[svcntw()]; svst1_f32(svptrue_b8(), a, v); return unifyValuef(a[r & (svcntw()-1)]); }
 #endif
 
-#ifdef __VSX__
+#if defined(__VSX__) && !(defined(__GNUC__) && !defined(__clang__))
 static INLINE vector_double setvector_double(double d, int r) { double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return (vector double) ( a[0], a[1] ); }
 static INLINE double getvector_double(vector double v, int r) { double a[2]; return unifyValue(v[r & 1]); }
 static INLINE vector_float setvector_float(float d, int r) { float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return (vector float) ( a[0], a[1], a[2], a[3] ); }

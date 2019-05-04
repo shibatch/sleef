@@ -192,8 +192,6 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
   set(ALIAS_PARAMS_VSX_DP  2 "vector double" "vector int" - vsx)
   set(ALIAS_PARAMS_VSX_SP -4 "vector float" "vector int" - vsx)
 
-  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mvsx")
-
   set(TESTER3_DEFINITIONS_VSX      ATR=finz_ DPTYPE=vector_double SPTYPE=vector_float DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vsx)
   set(TESTER3_DEFINITIONS_VSXNOFMA ATR=cinz_ DPTYPE=vector_double SPTYPE=vector_float DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vsxnofma)
 
