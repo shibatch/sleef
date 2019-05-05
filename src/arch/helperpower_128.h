@@ -97,18 +97,18 @@ static INLINE vdouble vcast_vd_d(double d) { return (vdouble) { d, d }; }
 static INLINE vdouble vcast_vd_vi(vint vi) { return vec_doubleh(vi); }
 static INLINE vfloat vcast_vf_vi2(vint2 vi) { return vec_float(vi); }
 static INLINE vint vrint_vi_vd(vdouble vd) {
-  vd = vec_signed(vec_round(vd));
+  vd = vec_signed(vec_rint(vd));
   return vec_perm(vd, vd, (vector unsigned char)(0, 1, 2, 3, 8, 9, 10, 11, 8, 9, 10, 11, 12, 13, 14, 15));
 }
-static INLINE vint2 vrint_vi2_vf(vfloat vf) { return vec_signed(vec_round(vf)); }
+static INLINE vint2 vrint_vi2_vf(vfloat vf) { return vec_signed(vec_rint(vf)); }
 static INLINE vint vtruncate_vi_vd(vdouble vd) {
   return vec_perm(vec_signed(vd), vec_signed(vd), (vector unsigned char)(0, 1, 2, 3, 8, 9, 10, 11, 8, 9, 10, 11, 12, 13, 14, 15));
 }
 static INLINE vint2 vtruncate_vi2_vf(vfloat vf) { return vec_signed(vf); }
 static INLINE vdouble vtruncate_vd_vd(vdouble vd) { return vec_trunc(vd); }
 static INLINE vfloat vtruncate_vf_vf(vfloat vf) { return vec_trunc(vf); }
-static INLINE vdouble vrint_vd_vd(vdouble vd) { return vec_round(vd); }
-static INLINE vfloat vrint_vf_vf(vfloat vf) { return vec_round(vf); }
+static INLINE vdouble vrint_vd_vd(vdouble vd) { return vec_rint(vd); }
+static INLINE vfloat vrint_vf_vf(vfloat vf) { return vec_rint(vf); }
 
 static INLINE vmask vreinterpret_vm_vd(vdouble vd) { return (vmask)vd; }
 static INLINE vdouble vreinterpret_vd_vm(vmask vm) { return (vdouble)vm; }
