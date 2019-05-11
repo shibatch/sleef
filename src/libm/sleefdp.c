@@ -1329,7 +1329,7 @@ EXPORT CONST double xtan(double d) {
     ql = rintk(d * (2 * M_1_PI));
     x = mla(ql, -PI_A2*0.5, d);
     x = mla(ql, -PI_B2*0.5, x);
-  } else if (fabsk(d) < 1e+7) {
+  } else if (fabsk(d) < 1e+6) {
     double dqh = trunck(d * ((2 * M_1_PI) / (1 << 24))) * (double)(1 << 24);
     ql = rintk(d * (2 * M_1_PI) - dqh);
 

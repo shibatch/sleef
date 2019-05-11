@@ -1548,7 +1548,7 @@ EXPORT CONST VECTOR_CC vdouble xtan(vdouble d) {
     ql = vrint_vi_vd(dql);
     x = vmla_vd_vd_vd_vd(dql, vcast_vd_d(-PI_A2 * 0.5), d);
     x = vmla_vd_vd_vd_vd(dql, vcast_vd_d(-PI_B2 * 0.5), x);
-  } else if (LIKELY(vtestallones_i_vo64(vlt_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(1e+7))))) {
+  } else if (LIKELY(vtestallones_i_vo64(vlt_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(1e+6))))) {
     vdouble dqh = vtruncate_vd_vd(vmul_vd_vd_vd(d, vcast_vd_d(2*M_1_PI / (1 << 24))));
     dqh = vmul_vd_vd_vd(dqh, vcast_vd_d(1 << 24));
     vdouble dql = vrint_vd_vd(vsub_vd_vd_vd(vmul_vd_vd_vd(d, vcast_vd_d(2*M_1_PI)), dqh));
