@@ -67,7 +67,7 @@ static int cpuSupportsAVX() {
 static int cpuSupportsFMA4() {
     int32_t reg[4];
     Sleef_x86CpuID(reg, 0x80000001, 0);
-    return (reg[3] & (1 << 16)) != 0;
+    return (reg[2] & (1 << 16)) != 0;
 }
 
 #if CONFIG == 4 && defined(__AVX__) && defined(__FMA4__)
