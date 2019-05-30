@@ -1877,7 +1877,7 @@ static INLINE CONST VECTOR_CC vdouble2 atan2k_u1(vdouble2 y, vdouble2 x) {
   t = ddnormalize_vd2_vd2(t);
 
   vdouble t2 = vmul_vd_vd_vd(t.x, t.x), t4 = vmul_vd_vd_vd(t2, t2), t8 = vmul_vd_vd_vd(t4, t4), t16 = vmul_vd_vd_vd(t8, t8);
-  u = POLY17(t.x, t2, t4, t8, t16,
+  u = POLY16(t.x, t2, t4, t8,
 	     1.06298484191448746607415e-05,
 	     -0.000125620649967286867384336,
 	     0.00070557664296393412389774,
@@ -1893,8 +1893,8 @@ static INLINE CONST VECTOR_CC vdouble2 atan2k_u1(vdouble2 y, vdouble2 x) {
 	     0.0587946590969581003860434,
 	     -0.0666620884778795497194182,
 	     0.0769225330296203768654095,
-	     -0.0909090442773387574781907,
-	     0.111111108376896236538123);
+	     -0.0909090442773387574781907);
+  u = vmla_vd_vd_vd_vd(u, t.x, vcast_vd_d(0.111111108376896236538123));
   u = vmla_vd_vd_vd_vd(u, t.x, vcast_vd_d(-0.142857142756268568062339));
   u = vmla_vd_vd_vd_vd(u, t.x, vcast_vd_d(0.199999999997977351284817));
   u = vmla_vd_vd_vd_vd(u, t.x, vcast_vd_d(-0.333333333333317605173818));
@@ -3633,9 +3633,10 @@ EXPORT CONST void *xgetPtr(int name) {
 #endif
 
 #ifdef ENABLE_MAIN
-// gcc -DENABLE_MAIN -Wno-attributes -I../common -I../arch -DENABLE_AVX2 -mavx2 -mfma sleefsimddp.c ../common/common.c -lm
+// gcc -DENABLE_MAIN -Wno-attributes -I../common -I../arch -DENABLE_AVX2 -mavx2 -mfma sleefsimddp.c rempitab.c ../common/common.c -lm
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 int main(int argc, char **argv) {
   vdouble d1 = vcast_vd_d(atof(argv[1]));
   vdouble d2 = vcast_vd_d(atof(argv[2]));

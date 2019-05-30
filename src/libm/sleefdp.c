@@ -624,7 +624,7 @@ static Sleef_double2 atan2k_u1(Sleef_double2 y, Sleef_double2 x) {
   t = ddnormalize_d2_d2(t);
 
   double t2 = t.x * t.x, t4 = t2 * t2, t8 = t4 * t4, t16 = t8 * t8;
-  u = POLY17(t.x, t2, t4, t8, t16,
+  u = POLY16(t.x, t2, t4, t8,
 	     1.06298484191448746607415e-05,
 	     -0.000125620649967286867384336,
 	     0.00070557664296393412389774,
@@ -640,8 +640,8 @@ static Sleef_double2 atan2k_u1(Sleef_double2 y, Sleef_double2 x) {
 	     0.0587946590969581003860434,
 	     -0.0666620884778795497194182,
 	     0.0769225330296203768654095,
-	     -0.0909090442773387574781907,
-	     0.111111108376896236538123);
+	     -0.0909090442773387574781907);
+  u = mla(u, t.x, 0.111111108376896236538123);
   u = mla(u, t.x, -0.142857142756268568062339);
   u = mla(u, t.x, 0.199999999997977351284817);
   u = mla(u, t.x, -0.333333333333317605173818);
@@ -2621,7 +2621,7 @@ EXPORT CONST double xerfc_u15(double a) {
 }
 
 #ifdef ENABLE_MAIN
-// gcc -w -DENABLE_MAIN -I../common sleefdp.c -lm
+// gcc -w -DENABLE_MAIN -I../common sleefdp.c rempitab.c -lm
 #include <stdlib.h>
 int main(int argc, char **argv) {
   double d1 = atof(argv[1]);
