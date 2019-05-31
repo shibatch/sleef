@@ -1590,13 +1590,14 @@ EXPORT CONST float xexp10f(float d) {
   s = mlaf(q, -L10Uf, d);
   s = mlaf(q, -L10Lf, s);
   
-  u = +0.2064004987e+0;
-  u = mlaf(u, s, +0.5417877436e+0);
-  u = mlaf(u, s, +0.1171286821e+1);
-  u = mlaf(u, s, +0.2034656048e+1);
-  u = mlaf(u, s, +0.2650948763e+1);
-  u = mlaf(u, s, +0.2302585125e+1);
-  u = dfnormalize_f2_f2(dfadd_f2_f_f2(1, dfmul_f2_f_f(u, s))).x;
+  u = +0.6802555919e-1;
+  u = mlaf(u, s, +0.2078080326e+0);
+  u = mlaf(u, s, +0.5393903852e+0);
+  u = mlaf(u, s, +0.1171245337e+1);
+  u = mlaf(u, s, +0.2034678698e+1);
+  u = mlaf(u, s, +0.2650949001e+1);
+  Sleef_float2 x = dfadd_f2_f2_f(df(2.3025851249694824219, -3.1705172516493593157e-08), u * s);
+  u = dfnormalize_f2_f2(dfadd_f2_f_f2(1, dfmul_f2_f2_f(x, s))).x;
 
   u = ldexp2kf(u, q);
 
@@ -2354,7 +2355,7 @@ EXPORT CONST float xerfcf_u15(float a) {
 //
 
 #ifdef ENABLE_MAIN
-// gcc -w -DENABLE_MAIN -I../common sleefsp.c -lm
+// gcc -w -DENABLE_MAIN -I../common sleefsp.c rempitab.c -lm
 #include <stdlib.h>
 int main(int argc, char **argv) {
   float d1 = atof(argv[1]);

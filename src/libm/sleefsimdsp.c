@@ -2420,18 +2420,14 @@ EXPORT CONST VECTOR_CC vfloat xexp10f(vfloat d) {
   s = vmla_vf_vf_vf_vf(u, vcast_vf_f(-L10Uf), d);
   s = vmla_vf_vf_vf_vf(u, vcast_vf_f(-L10Lf), s);
 
-  u = vcast_vf_f(+0.2064004987e+0);
-  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(+0.5417877436e+0));
-  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(+0.1171286821e+1));
-  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(+0.2034656048e+1));
-  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(+0.2650948763e+1));
-  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(+0.2302585125e+1));
-
-#ifdef ENABLE_FMA_SP
-  u = vfma_vf_vf_vf_vf(u, s, vcast_vf_f(1));
-#else
-  u = dfnormalize_vf2_vf2(dfadd_vf2_vf_vf2(vcast_vf_f(1), dfmul_vf2_vf_vf(u, s))).x;
-#endif
+  u = vcast_vf_f(+0.6802555919e-1);
+  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(+0.2078080326e+0));
+  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(+0.5393903852e+0));
+  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(+0.1171245337e+1));
+  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(+0.2034678698e+1));
+  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(+0.2650949001e+1));
+  vfloat2 x = dfadd_vf2_vf2_vf(vcast_vf2_f_f(2.3025851249694824219, -3.1705172516493593157e-08), vmul_vf_vf_vf(u, s));
+  u = dfnormalize_vf2_vf2(dfadd_vf2_vf_vf2(vcast_vf_f(1), dfmul_vf2_vf2_vf(x, s))).x;
   
   u = vldexp2_vf_vf_vi2(u, q);
 
@@ -2584,20 +2580,20 @@ EXPORT CONST VECTOR_CC vfloat xlog2f_u35(vfloat d) {
   x = vdiv_vf_vf_vf(vsub_vf_vf_vf(m, vcast_vf_f(1)), vadd_vf_vf_vf(m, vcast_vf_f(1)));
   x2 = vmul_vf_vf_vf(x, x);
 
-  t = vcast_vf_f(+0.4374550283e+0f);
-  t = vmla_vf_vf_vf_vf(t, x2, vcast_vf_f(+0.5764790177e+0f));
-  t = vmla_vf_vf_vf_vf(t, x2, vcast_vf_f(+0.9618012905120f));
+  t = vcast_vf_f(+0.4374088347e+0);
+  t = vmla_vf_vf_vf_vf(t, x2, vcast_vf_f(+0.5764843822e+0));
+  t = vmla_vf_vf_vf_vf(t, x2, vcast_vf_f(+0.9618024230e+0));
   
 #if !defined(ENABLE_AVX512F) && !defined(ENABLE_AVX512FNOFMA)
   vfloat r = vmla_vf_vf_vf_vf(vmul_vf_vf_vf(x2, x), t,
-			      vmla_vf_vf_vf_vf(x, vcast_vf_f(2.8853900432586669922), vcast_vf_vi2(e)));
+			      vmla_vf_vf_vf_vf(x, vcast_vf_f(+0.2885390043e+1), vcast_vf_vi2(e)));
 
   r = vsel_vf_vo_vf_vf(vispinf_vo_vf(d), vcast_vf_f(SLEEF_INFINITY), r);
   r = vsel_vf_vo_vf_vf(vor_vo_vo_vo(vlt_vo_vf_vf(d, vcast_vf_f(0)), visnan_vo_vf(d)), vcast_vf_f(SLEEF_NAN), r);
   r = vsel_vf_vo_vf_vf(veq_vo_vf_vf(d, vcast_vf_f(0)), vcast_vf_f(-SLEEF_INFINITY), r);
 #else
   vfloat r = vmla_vf_vf_vf_vf(vmul_vf_vf_vf(x2, x), t,
-			      vmla_vf_vf_vf_vf(x, vcast_vf_f(2.8853900432586669922), e));
+			      vmla_vf_vf_vf_vf(x, vcast_vf_f(+0.2885390043e+1), e));
 
   r = vfixup_vf_vf_vf_vi2_i(r, d, vcast_vi2_i((4 << (2*4)) | (3 << (4*4)) | (5 << (5*4)) | (2 << (6*4))), 0);
 #endif
@@ -3320,9 +3316,10 @@ EXPORT CONST VECTOR_CC vfloat __tgammaf_u1_finite(vfloat)         __attribute__(
 #endif /* #ifdef ENABLE_GNUABI */
 
 #ifdef ENABLE_MAIN
-// gcc -DENABLE_MAIN -Wno-attributes -I../common -I../arch -DENABLE_AVX2 -mavx2 -mfma sleefsimdsp.c ../common/common.c -lm
+// gcc -DENABLE_MAIN -Wno-attributes -I../common -I../arch -DENABLE_AVX2 -mavx2 -mfma sleefsimdsp.c rempitab.c ../common/common.c -lm
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 int main(int argc, char **argv) {
   vfloat vf1 = vcast_vf_f(atof(argv[1]));
   //vfloat vf2 = vcast_vf_f(atof(argv[2]));
