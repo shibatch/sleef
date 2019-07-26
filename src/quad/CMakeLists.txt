@@ -60,7 +60,7 @@ foreach(SIMD ${SLEEFQUAD_SUPPORTED_EXT})
   endif()
 endforeach()
 
-if(MSVC)
+if(WIN32)
   string(REPLACE "/" "\\" sleef_footer_input_file "${SLEEFQUAD_ORG_FOOTER}")
   list(APPEND SLEEF_HEADER_COMMANDS COMMAND type ${sleef_footer_input_file} >> ${SLEEFQUAD_INCLUDE_HEADER})
 else()

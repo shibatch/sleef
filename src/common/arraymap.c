@@ -28,6 +28,7 @@ static FILE *OPENTMPFILE() { return tmpfile(); }
 static void CLOSETMPFILE(FILE *fp) { fclose(fp); }
 #else
 #include <Windows.h>
+#include <io.h>
 
 static void FLOCK(FILE *fp) { }
 static void FUNLOCK(FILE *fp) { }
