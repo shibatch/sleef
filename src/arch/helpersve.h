@@ -471,8 +471,8 @@ static INLINE vint2 vcastu_vi2_vi(vint x) {
       svlsl_n_s64_x(ptrue, svreinterpret_s64_s32(x), 32));
 }
 static INLINE vint vcastu_vi_vi2(vint2 x) {
-  return svreinterpret_s32_s64(
-      svlsr_n_s64_x(ptrue, svreinterpret_s64_s32(x), 32));
+  return svreinterpret_s32_u64(
+      svlsr_n_u64_x(ptrue, svreinterpret_u64_s32(x), 32));
 }
 static INLINE vdouble vcast_vd_vi(vint vi) {
   return svcvt_f64_s32_x(ptrue, vi);
@@ -628,7 +628,9 @@ static INLINE vint vandnot_vi_vo_vi(vopmask x, vint y) {
 }
 #define vsra_vi_vi_i(x, c) svasr_n_s32_x(ptrue, x, c)
 #define vsll_vi_vi_i(x, c) svlsl_n_s32_x(ptrue, x, c)
-#define vsrl_vi_vi_i(x, c) svlsr_n_s32_x(ptrue, x, c)
+static INLINE vint vsrl_vi_vi_i(vint x, int c) {
+  return svreinterpret_s32_u32(svlsr_n_u32_x(ptrue, svreinterpret_u32_s32(x), c));
+}
 
 static INLINE vint vand_vi_vi_vi(vint x, vint y) {
   return svand_s32_x(ptrue, x, y);
