@@ -1623,7 +1623,7 @@ EXPORT CONST VECTOR_CC vdouble xtan(vdouble d) {
 
     ql = vsel_vi_vo_vi_vi(vcast_vo32_vo64(g), ql, vrint_vi_vd(dql));
     s = vsel_vd_vo_vd_vd(g, s, u);
-    g = vlt_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(1e+7));
+    g = vlt_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(1e+6));
 
     if (!LIKELY(vtestallones_i_vo64(g))) {
       ddi_t ddi = rempi(d);
