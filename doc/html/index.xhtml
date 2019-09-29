@@ -35,7 +35,7 @@
       <li><a href="index.xhtml#credit">Credit</a></li>
       <li><a href="index.xhtml#partners">Partners</a></li>
       <li><a href="index.xhtml#license">License</a></li>
-      <li><a href="index.xhtml#history">History of this software</a></li>
+      <li><a href="index.xhtml#history">History</a></li>
       <li><a href="index.xhtml#related">Related projects</a></li>
       <li><a href="index.xhtml#publication">Publication</a></li>
     </ul>
@@ -375,10 +375,24 @@ information about Boost Software License.
 
 <h2 id="history">History</h2>
 
+<h4>3.4.1 (Released on Sep 30, 2019)</h4>
+<ul class="disc">
+  <li>Fixed accuracy problem with tan_u35, atan_u10, log2f_u35 and exp10f_u10 (PR
+    <a class="underlined" href="https://github.com/shibatch/sleef/pull/260">#260</a>,
+    <a class="underlined" href="https://github.com/shibatch/sleef/pull/265">#265</a>,
+    <a class="underlined" href="https://github.com/shibatch/sleef/pull/267">#267</a>)</li>
+  <li>SVE intrinsics that are not supported in newer ACLE are replaced (PR
+    <a class="underlined" href="https://github.com/shibatch/sleef/pull/268">#268</a>)</li>
+  <li>FMA4 detection problem is fixed (PR
+    <a class="underlined" href="https://github.com/shibatch/sleef/pull/262">#262</a>)</li>
+  <li>Compilation problem under Windows with MinGW is fixed (PR
+    <a class="underlined" href="https://github.com/shibatch/sleef/pull/266">#266</a>)</li>
+</ul>
+
 <h4>3.4 (Released on Apr 28, 2019)</h4>
 <ul class="disc">
   <li>Faster and low precision functions are
-    added(PR <a class="underlined"
+    added (PR <a class="underlined"
 		href="https://github.com/shibatch/sleef/pull/229">#229</a>)</li>
   <li>Functions that return consistent results across platforms are
     added (PR <a class="underlined" href="https://github.com/shibatch/sleef/pull/216">#216</a>,
