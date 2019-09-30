@@ -2902,9 +2902,13 @@ EXPORT CONST VECTOR_CC vfloat xfmodf(vfloat x, vfloat y) {
   vfloat2 r = vcast_vf2_vf_vf(nu, vcast_vf_f(0));
 
   for(int i=0;i<8;i++) { // ceil(log2(FLT_MAX) / 22)+1
-    q = vsel_vf_vo_vf_vf(vand_vo_vo_vo(vgt_vo_vf_vf(vadd_vf_vf_vf(de, de), r.x),
+    q = vptruncf(vmul_vf_vf_vf(vtoward0f(r.x), rde));
+    q = vsel_vf_vo_vf_vf(vand_vo_vo_vo(vgt_vo_vf_vf(vmul_vf_vf_vf(vcast_vf_f(3), de), r.x),
 				       vge_vo_vf_vf(r.x, de)),
-			 vcast_vf_f(1), vmul_vf_vf_vf(vtoward0f(r.x), rde));
+			 vcast_vf_f(2), q);
+    q = vsel_vf_vo_vf_vf(vand_vo_vo_vo(vgt_vo_vf_vf(vmul_vf_vf_vf(vcast_vf_f(2), de), r.x),
+				       vge_vo_vf_vf(r.x, de)),
+			 vcast_vf_f(1), q);
     r = dfnormalize_vf2_vf2(dfadd2_vf2_vf2_vf2(r, dfmul_vf2_vf_vf(vptruncf(q), vneg_vf_vf(de))));
     if (vtestallones_i_vo32(vlt_vo_vf_vf(r.x, de))) break;
   }

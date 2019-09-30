@@ -2020,8 +2020,10 @@ EXPORT CONST float xfmodf(float x, float y) {
   float rde = toward0f(1.0f / de);
 
   for(int i=0;i<8;i++) { // ceil(log2(FLT_MAX) / 22)+1
-    q = (de+de > r.x && r.x >= de) ? 1.0f : (toward0f(r.x) * rde);
-    r = dfnormalize_f2_f2(dfadd2_f2_f2_f2(r, dfmul_f2_f_f(ptruncf(q), -de)));
+    q = ptruncf(toward0f(r.x) * rde);
+    q = (3*de > r.x && r.x >= de) ? 2 : q;
+    q = (2*de > r.x && r.x >= de) ? 1 : q;
+    r = dfnormalize_f2_f2(dfadd2_f2_f2_f2(r, dfmul_f2_f_f(q, -de)));
     if (r.x < de) break;
   }
   

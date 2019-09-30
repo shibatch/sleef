@@ -2408,22 +2408,25 @@ static INLINE CONST double ptrunc(double x) {
 }
 
 EXPORT CONST double xfmod(double x, double y) {
-  double nu = fabsk(x), de = fabsk(y), s = 1, q;
-  if (de < DBL_MIN) { nu *= 1ULL << 54; de *= 1ULL << 54; s = 1.0 / (1ULL << 54); }
-  Sleef_double2 r = dd(nu, 0);
-  double rde = toward0(1.0 / de);
+  double n = fabsk(x), d = fabsk(y), s = 1, q;
+  if (d < DBL_MIN) { n *= 1ULL << 54; d *= 1ULL << 54; s = 1.0 / (1ULL << 54); }
+  Sleef_double2 r = dd(n, 0);
+  double rd = toward0(1.0 / d);
   
-  for(int i=0;i < 21;i++) { // ceil(log2(DBL_MAX) / 51) + 1
-    q = (de+de > r.x && r.x >= de) ? 1 : (toward0(r.x) * rde);
-    r = ddnormalize_d2_d2(ddadd2_d2_d2_d2(r, ddmul_d2_d_d(removelsb(ptrunc(q)), -de)));
-    if (r.x < de) break;
+  for(int i=0;i < 21;i++) { // ceil(log2(DBL_MAX) / 52)
+    q = removelsb(ptrunc(toward0(r.x) * rd));
+    q = (3*d > r.x && r.x > d) ? 2 : q;
+    q = (2*d > r.x && r.x > d) ? 1 : q;
+    q = r.x == d ? (r.y >= 0 ? 1 : 0) : q;
+    r = ddnormalize_d2_d2(ddadd2_d2_d2_d2(r, ddmul_d2_d_d(q, -d)));
+    if (r.x < d) break;
   }
   
   double ret = r.x * s;
-  if (r.x + r.y == de) ret = 0;
+  if (r.x + r.y == d) ret = 0;
   ret = mulsign(ret, x);
-  if (nu < de) ret = x;
-  if (de == 0) ret = SLEEF_NAN;
+  if (n < d) ret = x;
+  if (d == 0) ret = SLEEF_NAN;
   
   return ret;
 }
