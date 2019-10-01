@@ -5,6 +5,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Next release
+## 3.4.1 - 2019-10-01
+### Changed
+- Fixed accuracy problem with tan_u35, atan_u10, log2f_u35 and exp10f_u10.
+  https://github.com/shibatch/sleef/pull/260
+  https://github.com/shibatch/sleef/pull/265
+  https://github.com/shibatch/sleef/pull/267
+- SVE intrinsics that are not supported in newer ACLE are replaced.
+  https://github.com/shibatch/sleef/pull/268
+- FMA4 detection problem is fixed.
+  https://github.com/shibatch/sleef/pull/262
+- Compilation problem under Windows with MinGW is fixed.
+  https://github.com/shibatch/sleef/pull/266
+
 ## 3.4 - 2019-04-28
 ### Added
 - Faster and low precision functions are added.
