@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Next release
-## 3.4.1 - 2019-09-30
+## 3.4.1 - 2019-10-01
 ### Changed
 - Fixed accuracy problem with tan_u35, atan_u10, log2f_u35 and exp10f_u10.
   https://github.com/shibatch/sleef/pull/260
