@@ -292,18 +292,27 @@ static INLINE CONST VECTOR_CC vint vilogb2k_vi_vd(vdouble d) {
 #endif
 
 static INLINE CONST VECTOR_CC vopmask visint_vo_vd(vdouble d) {
+#ifdef FULL_FP_ROUNDING
+  return veq_vo_vd_vd(vtruncate_vd_vd(d), d);
+#else
   vdouble x = vtruncate_vd_vd(vmul_vd_vd_vd(d, vcast_vd_d(1.0 / (1LL << 31))));
   x = vmla_vd_vd_vd_vd(vcast_vd_d(-(double)(1LL << 31)), x, d);
   return vor_vo_vo_vo(veq_vo_vd_vd(vtruncate_vd_vd(x), x),
 		      vgt_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(1LL << 53)));
+#endif
 }
 
 static INLINE CONST VECTOR_CC vopmask visodd_vo_vd(vdouble d) {
+#ifdef FULL_FP_ROUNDING
+  vdouble x = vmul_vd_vd_vd(d, vcast_vd_d(0.5));
+  return vneq_vo_vd_vd(vtruncate_vd_vd(x), x);
+#else
   vdouble x = vtruncate_vd_vd(vmul_vd_vd_vd(d, vcast_vd_d(1.0 / (1LL << 31))));
   x = vmla_vd_vd_vd_vd(vcast_vd_d(-(double)(1LL << 31)), x, d);
 
   return vand_vo_vo_vo(vcast_vo64_vo32(veq_vo_vi_vi(vand_vi_vi_vi(vtruncate_vi_vd(x), vcast_vi_i(1)), vcast_vi_i(1))),
 		       vlt_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(1LL << 53)));
+#endif
 }
 
 //
