@@ -2036,6 +2036,29 @@ EXPORT CONST float xfmodf(float x, float y) {
   return ret;
 }
 
+static INLINE CONST float rintfk2(float x) {
+  return fabsfk(x) >= (float)(1LL << 23) ? x : x < 0 ? (int)(x - 0.5f) : (int)(x + 0.5f);
+}
+
+EXPORT CONST float xremainderf(float x, float y) {
+  float nu = fabsfk(x), de = fabsfk(y), s = 1, q;
+  if (de < FLT_MIN) { nu *= 1ULL << 25; de *= 1ULL << 25; s = 1.0f / (1ULL << 25); }
+  float rde = 1.0f / de;
+  Sleef_float2 r = df(nu, 0);
+
+  for(int i=0;i<8;i++) { // ceil(log2(FLT_MAX) / 22)+1
+    r = dfnormalize_f2_f2(dfadd2_f2_f2_f2(r, dfmul_f2_f_f(rintfk2(r.x * rde), -de)));
+    if (fabsfk(r.x) < de * 0.5f) break;
+  }
+  
+  float ret = r.x * s;
+  ret = mulsignf(ret, x);
+  if (xisinff(y) && !xisinff(x)) ret = x;
+  if (de == 0) ret = SLEEF_NANf;
+
+  return ret;
+}
+
 EXPORT CONST float xsqrtf_u05(float d) {
   float q = 0.5f;
 

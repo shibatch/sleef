@@ -196,6 +196,7 @@ double child_fmin(double x, double y) { child_d_d_d("fmin", x, y); }
 double child_fdim(double x, double y) { child_d_d_d("fdim", x, y); }
 double child_nextafter(double x, double y) { child_d_d_d("nextafter", x, y); }
 double child_fmod(double x, double y) { child_d_d_d("fmod", x, y); }
+double child_remainder(double x, double y) { child_d_d_d("remainder", x, y); }
 double child_fabs(double x) { child_d_d("fabs", x); }
 double child_trunc(double x) { child_d_d("trunc", x); }
 double child_floor(double x) { child_d_d("floor", x); }
@@ -330,6 +331,7 @@ float child_fminf(float x, float y) { child_f_f_f("fminf", x, y); }
 float child_fdimf(float x, float y) { child_f_f_f("fdimf", x, y); }
 float child_nextafterf(float x, float y) { child_f_f_f("nextafterf", x, y); }
 float child_fmodf(float x, float y) { child_f_f_f("fmodf", x, y); }
+float child_remainderf(float x, float y) { child_f_f_f("remainderf", x, y); }
 float child_fabsf(float x) { child_f_f("fabsf", x); }
 float child_truncf(float x) { child_f_f("truncf", x); }
 float child_floorf(float x) { child_f_f("floorf", x); }
@@ -2719,6 +2721,22 @@ void do_test() {
     }
 
     {
+      fprintf(stderr, "remainder denormal/nonnumber test : ");
+
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      double ya[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
+	  if (fabs(xa[i] / ya[j]) > 1e+300) continue;
+	  cmpDenorm_d_d(mpfr_remainder, child_remainder, xa[i], ya[j]);
+	}
+      }
+
+      showResult(success);
+    }
+
+    {
       fprintf(stderr, "trunc denormal/nonnumber test : ");
       double xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) cmpDenormNR_d(mpfr_trunc, child_trunc, xa[i]);
@@ -3298,6 +3316,32 @@ void do_test() {
     }
 
     {
+      fprintf(stderr, "remainderf denormal/nonnumber test : ");
+
+      if (enableFlushToZero) {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	float ya[] = { +0.0, -0.0, +1, -1, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	  for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	    if (fabs(xa[i] / ya[j]) > 1e+38) continue;
+	    cmpDenorm_f_f(mpfr_remainder, child_remainderf, xa[i], ya[j]);
+	  }
+	}
+      } else {
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	  for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
+	    if (fabs(xa[i] / ya[j]) > 1e+38) continue;
+	    cmpDenorm_f_f(mpfr_remainder, child_remainderf, xa[i], ya[j]);
+	  }
+	}
+      }
+      
+      showResult(success);
+    }
+
+    {
       fprintf(stderr, "truncf denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, +1, -1, +1e+10, -1e+10, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenormNR_f(mpfr_trunc, child_truncf, xa[i]);
@@ -3501,6 +3545,17 @@ void do_test() {
     }
     for(y = -1e+10;y < 1e+10 && success;y += 1.51e+8) {
       for(x = -1e+10;x < 1e+10 && success;x += 1.51e+8) checkAccuracy_d_d(mpfr_fmod, child_fmod, y, x, 0.5);
+    }
+    showResult(success);
+  
+    //
+
+    fprintf(stderr, "remainder : ");
+    for(y = -10;y < 10 && success;y += 0.15) {
+      for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_d_d(mpfr_remainder, child_remainder, y, x, 0.5);
+    }
+    for(y = -1e+10;y < 1e+10 && success;y += 1.51e+8) {
+      for(x = -1e+10;x < 1e+10 && success;x += 1.51e+8) checkAccuracy_d_d(mpfr_remainder, child_remainder, y, x, 0.5);
     }
     showResult(success);
   
@@ -4288,6 +4343,17 @@ void do_test() {
     }
     for(y = -1e+7;y < 1e+7 && success;y += 1.51e+5) {
       for(x = -1e+7;x < 1e+7 && success;x += 1.51e+5) checkAccuracy_f_f(mpfr_fmod, child_fmodf, y, x, 0.5);
+    }
+    showResult(success);
+  
+    //
+
+    fprintf(stderr, "remainderf : ");
+    for(y = -10;y < 10 && success;y += 0.15) {
+      for(x = -10;x < 10 && success;x += 0.15) checkAccuracy_f_f(mpfr_remainder, child_remainderf, y, x, 0.5);
+    }
+    for(y = -1e+7;y < 1e+7 && success;y += 1.51e+5) {
+      for(x = -1e+7;x < 1e+7 && success;x += 1.51e+5) checkAccuracy_f_f(mpfr_remainder, child_remainderf, y, x, 0.5);
     }
     showResult(success);
   

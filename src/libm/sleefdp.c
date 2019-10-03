@@ -2431,6 +2431,34 @@ EXPORT CONST double xfmod(double x, double y) {
   return ret;
 }
 
+static INLINE CONST double rintk2(double d) {
+  double x = d + 0.5;
+  double fr = x - (double)(1LL << 31) * (int32_t)(x * (1.0 / (1LL << 31)));
+  int32_t isodd = (1 & (int32_t)fr) != 0;
+  fr = fr - (int32_t)fr;
+  fr = (fr < 0 || (fr == 0 && isodd)) ? fr+1.0 : fr;
+  x = d == 0.50000000000000011102 ? 0 : x;  // nextafter(0.5, 1)
+  return (fabsk(d) >= (double)(1LL << 52)) ? d : copysignk(x - fr, d);
+}
+
+EXPORT CONST double xremainder(double x, double y) {
+  double n = fabsk(x), d = fabsk(y), s = 1, q;
+  if (d < DBL_MIN) { n *= 1ULL << 54; d *= 1ULL << 54; s = 1.0 / (1ULL << 54); }
+  double rd = 1.0 / d;
+  Sleef_double2 r = dd(n, 0);
+  
+  for(int i=0;i < 21;i++) { // ceil(log2(DBL_MAX) / 52)
+    r = ddnormalize_d2_d2(ddadd2_d2_d2_d2(r, ddmul_d2_d_d(removelsb(rintk2(r.x * rd)), -d)));
+    if (fabsk(r.x) < d * 0.5) break;
+  }
+  
+  double ret = r.x * s;
+  ret = mulsign(ret, x);
+  if (xisinf(y) && !xisinf(x)) ret = x;
+
+  return ret;
+}
+
 EXPORT CONST Sleef_double2 xmodf(double x) {
   double fr = x - (double)(1LL << 31) * (int32_t)(x * (1.0 / (1LL << 31)));
   fr = fr - (int32_t)fr;

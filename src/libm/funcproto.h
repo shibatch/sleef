@@ -111,6 +111,7 @@ funcSpec funcList[] = {
   { "frfrexp", -1, 0, 0, 0 },
   { "expfrexp", -1, 0, 4, 0 },
   { "fmod", -1, 0, 1, 0 },
+  { "remainder", -1, 0, 1, 0 },
   { "modf", -1, 0, 6, 0 },
 
   { "lgamma", 10, 1, 0, 0 },

@@ -189,6 +189,7 @@ IMPORT CONST double Sleef_nextafter(double, double);
 IMPORT CONST double Sleef_frfrexp(double);
 IMPORT CONST int Sleef_expfrexp(double);
 IMPORT CONST double Sleef_fmod(double, double);
+IMPORT CONST double Sleef_remainder(double, double);
 IMPORT CONST Sleef_double2 Sleef_modf(double);
 
 IMPORT CONST double Sleef_lgamma_u10(double);
@@ -267,6 +268,7 @@ IMPORT CONST float Sleef_nextafterf(float, float);
 IMPORT CONST float Sleef_frfrexpf(float);
 IMPORT CONST int Sleef_expfrexpf(float);
 IMPORT CONST float Sleef_fmodf(float, float);
+IMPORT CONST float Sleef_remainderf(float, float);
 IMPORT CONST Sleef_float2 Sleef_modff(float);
 
 IMPORT CONST float Sleef_lgammaf_u10(float);

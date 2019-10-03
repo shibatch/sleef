@@ -319,6 +319,7 @@ int do_test(int argc, char **argv)
   test_d_d_d(fmin, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
   test_d_d_d(fdim, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
   test_d_d_d(fmod, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
+  test_d_d_d(remainder, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
   test_d2_d(modf, , -1e+14, 1e+14, 200001);
   test_d_d_d(nextafter, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
 
@@ -391,6 +392,7 @@ int do_test(int argc, char **argv)
   test_f_f_f(fmin, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
   test_f_f_f(fdim, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
   test_f_f_f(fmod, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
+  test_f_f_f(remainder, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
   test_f2_f(modf, , -1e+14, 1e+14, 200001);
   test_f_f_f(nextafter, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
 
