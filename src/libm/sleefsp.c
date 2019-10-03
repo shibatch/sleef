@@ -2036,8 +2036,13 @@ EXPORT CONST float xfmodf(float x, float y) {
   return ret;
 }
 
-static INLINE CONST float rintfk2(float x) {
-  return fabsfk(x) >= (float)(1LL << 23) ? x : x < 0 ? (int)(x - 0.5f) : (int)(x + 0.5f);
+static INLINE CONST float rintfk2(float d) {
+  float x = d + 0.5f;
+  int32_t isodd = (1 & (int32_t)x) != 0;
+  float fr = x - (int32_t)x;
+  fr = (fr < 0 || (fr == 0 && isodd)) ? fr+1.0f : fr;
+  x = d == 0.50000005960464477539f ? 0 : x;  // nextafterf(0.5, 1)
+  return (fabsfk(d) >= (float)(1LL << 23)) ? d : copysignfk(x - fr, d);
 }
 
 EXPORT CONST float xremainderf(float x, float y) {
