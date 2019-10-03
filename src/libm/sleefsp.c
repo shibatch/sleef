@@ -2045,23 +2045,25 @@ static INLINE CONST float rintfk2(float d) {
 }
 
 EXPORT CONST float xremainderf(float x, float y) {
-  float nu = fabsfk(x), de = fabsfk(y), s = 1, q;
-  if (de < FLT_MIN) { nu *= 1ULL << 25; de *= 1ULL << 25; s = 1.0f / (1ULL << 25); }
-  float rde = 1.0f / de;
-  Sleef_float2 r = df(nu, 0);
+  float n = fabsfk(x), d = fabsfk(y), s = 1, q;
+  if (d < FLT_MIN) { n *= 1ULL << 25; d *= 1ULL << 25; s = 1.0f / (1ULL << 25); }
+  float rd = 1.0f / d;
+  Sleef_float2 r = df(n, 0);
+  int qisodd = 0;
 
   for(int i=0;i<8;i++) { // ceil(log2(FLT_MAX) / 22)+1
-    q = rintfk2(r.x * rde);
-    if (fabsfk(r.x) <  1.5f * de) q = r.x < 0 ? -1 : 1;
-    if (fabsfk(r.x) <= 0.5f * de) q = 0;
-    r = dfnormalize_f2_f2(dfadd2_f2_f2_f2(r, dfmul_f2_f_f(q, -de)));
-    if (fabsfk(r.x) < 0.5f * de) break;
+    q = rintfk2(r.x * rd);
+    if (fabsfk(r.x) < 1.5f * d) q = r.x < 0 ? -1 : 1;
+    if (fabsfk(r.x) < 0.5f * d || (fabsfk(r.x) == 0.5f * d && !qisodd)) q = 0;
+    if (q == 0) break;
+    qisodd ^= (1 & (int)q) != 0 && fabsfk(q) < (float)(1LL << 24);
+    r = dfnormalize_f2_f2(dfadd2_f2_f2_f2(r, dfmul_f2_f_f(q, -d)));
   }
   
   float ret = r.x * s;
   ret = mulsignf(ret, x);
-  if (xisinff(y) && !xisinff(x)) ret = x;
-  if (de == 0) ret = SLEEF_NANf;
+  if (xisinff(y)) ret = xisinff(x) ? SLEEF_NANf : x;
+  if (d == 0) ret = SLEEF_NANf;
 
   return ret;
 }
