@@ -2041,7 +2041,6 @@ static INLINE CONST float rintfk2(float d) {
   int32_t isodd = (1 & (int32_t)x) != 0;
   float fr = x - (int32_t)x;
   fr = (fr < 0 || (fr == 0 && isodd)) ? fr+1.0f : fr;
-  x = d == 0.50000005960464477539f ? 0 : x;  // nextafterf(0.5, 1)
   return (fabsfk(d) >= (float)(1LL << 23)) ? d : copysignfk(x - fr, d);
 }
 
@@ -2052,8 +2051,11 @@ EXPORT CONST float xremainderf(float x, float y) {
   Sleef_float2 r = df(nu, 0);
 
   for(int i=0;i<8;i++) { // ceil(log2(FLT_MAX) / 22)+1
-    r = dfnormalize_f2_f2(dfadd2_f2_f2_f2(r, dfmul_f2_f_f(rintfk2(r.x * rde), -de)));
-    if (fabsfk(r.x) < de * 0.5f) break;
+    q = rintfk2(r.x * rde);
+    if (fabsfk(r.x) <  1.5f * de) q = r.x < 0 ? -1 : 1;
+    if (fabsfk(r.x) <= 0.5f * de) q = 0;
+    r = dfnormalize_f2_f2(dfadd2_f2_f2_f2(r, dfmul_f2_f_f(q, -de)));
+    if (fabsfk(r.x) < 0.5f * de) break;
   }
   
   float ret = r.x * s;

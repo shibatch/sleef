@@ -2929,7 +2929,6 @@ static INLINE CONST VECTOR_CC vfloat vrintfk2_vf_vf(vfloat d) {
   vopmask isodd = veq_vo_vi2_vi2(vand_vi2_vi2_vi2(vcast_vi2_i(1), vtruncate_vi2_vf(x)), vcast_vi2_i(1));
   vfloat fr = vsub_vf_vf_vf(x, vcast_vf_vi2(vtruncate_vi2_vf(x)));
   fr = vsel_vf_vo_vf_vf(vor_vo_vo_vo(vlt_vo_vf_vf(fr, vcast_vf_f(0)), vand_vo_vo_vo(veq_vo_vf_vf(fr, vcast_vf_f(0)), isodd)), vadd_vf_vf_vf(fr, vcast_vf_f(1.0f)), fr);
-  x = vsel_vf_vo_vf_vf(veq_vo_vf_vf(d, vcast_vf_f(0.50000005960464477539f)), vcast_vf_f(0), x);
   vfloat ret = vsel_vf_vo_vf_vf(vge_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(1LL << 23)), d, vcopysign_vf_vf_vf(vsub_vf_vf_vf(x, fr), d));
   return ret;
 }
@@ -2949,8 +2948,10 @@ EXPORT CONST VECTOR_CC vfloat xremainderf(vfloat x, vfloat y) {
 #else
     q = vrintfk2_vf_vf(vmul_vf_vf_vf(r.x, rde));
 #endif
+    q = vsel_vf_vo_vf_vf(vlt_vo_vf_vf(vabs_vf_vf(r.x), vmul_vf_vf_vf(de, vcast_vf_f(1.5f))), vcast_vf_f(1.0f), q);
+    q = vsel_vf_vo_vf_vf(vle_vo_vf_vf(vabs_vf_vf(r.x), vmul_vf_vf_vf(de, vcast_vf_f(0.5f))), vcast_vf_f(0.0f), q);
     r = dfnormalize_vf2_vf2(dfadd2_vf2_vf2_vf2(r, dfmul_vf2_vf_vf(q, vneg_vf_vf(de))));
-    if (vtestallones_i_vo64(vlt_vo_vf_vf(vabs_vf_vf(r.x), vmul_vf_vf_vf(de, vcast_vf_f(0.5f))))) break;
+    if (vtestallones_i_vo32(vlt_vo_vf_vf(vabs_vf_vf(r.x), vmul_vf_vf_vf(de, vcast_vf_f(0.5f))))) break;
   }
   
   vfloat ret = vmul_vf_vf_vf(vadd_vf_vf_vf(r.x, r.y), s);

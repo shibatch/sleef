@@ -2437,7 +2437,6 @@ static INLINE CONST double rintk2(double d) {
   int32_t isodd = (1 & (int32_t)fr) != 0;
   fr = fr - (int32_t)fr;
   fr = (fr < 0 || (fr == 0 && isodd)) ? fr+1.0 : fr;
-  x = d == 0.50000000000000011102 ? 0 : x;  // nextafter(0.5, 1)
   return (fabsk(d) >= (double)(1LL << 52)) ? d : copysignk(x - fr, d);
 }
 
@@ -2448,13 +2447,17 @@ EXPORT CONST double xremainder(double x, double y) {
   Sleef_double2 r = dd(n, 0);
   
   for(int i=0;i < 21;i++) { // ceil(log2(DBL_MAX) / 52)
-    r = ddnormalize_d2_d2(ddadd2_d2_d2_d2(r, ddmul_d2_d_d(removelsb(rintk2(r.x * rd)), -d)));
+    q = removelsb(rintk2(r.x * rd));
+    if (fabsk(r.x) <  1.5 * d) q = r.x < 0 ? -1 : 1;
+    if (fabsk(r.x) <= 0.5 * d) q = 0;
+    r = ddnormalize_d2_d2(ddadd2_d2_d2_d2(r, ddmul_d2_d_d(q, -d)));
     if (fabsk(r.x) < d * 0.5) break;
   }
   
   double ret = r.x * s;
   ret = mulsign(ret, x);
   if (xisinf(y) && !xisinf(x)) ret = x;
+  if (d == 0) ret = SLEEF_NAN;
 
   return ret;
 }
@@ -2669,10 +2672,10 @@ int main(int argc, char **argv) {
   //int exp = xexpfrexp(d1);
   //double r = xnextafter(d1, d2);
   //double r = xfma(d1, d2, d3);
-  printf("test = %.20g\n", xcos_u1(d1));
+  printf("test = %.20g\n", xremainder(d1, d2));
   //printf("test = %.20g\n", xlog(d1));
   //r = nextafter(d1, d2);
-  printf("corr = %.20g\n", cos(d1));
+  printf("corr = %.20g\n", remainder(d1, d2));
   //printf("%.20g %.20g\n", xround(d1), xrint(d1));
   //Sleef_double2 r = xsincospi_u35(d);
   //printf("%g, %g\n", (double)r.x, (double)r.y);
