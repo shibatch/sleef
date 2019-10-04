@@ -3356,7 +3356,7 @@ static INLINE VECTOR_CC vdouble vrintk2_vd_vd(vdouble d) {
 
 EXPORT CONST VECTOR_CC vdouble xremainder(vdouble x, vdouble y) {
   vdouble n = vabs_vd_vd(x), d = vabs_vd_vd(y), s = vcast_vd_d(1), q;
-  vopmask o = vlt_vo_vd_vd(d, vcast_vd_d(DBL_MIN));
+  vopmask o = vlt_vo_vd_vd(d, vcast_vd_d(DBL_MIN*2));
   n = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(n, vcast_vd_d(1ULL << 54)), n);
   d = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(d, vcast_vd_d(1ULL << 54)), d);
   s  = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(s , vcast_vd_d(1.0 / (1ULL << 54))), s);

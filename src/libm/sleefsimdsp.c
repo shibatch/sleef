@@ -2938,7 +2938,7 @@ static INLINE CONST VECTOR_CC vfloat vrintfk2_vf_vf(vfloat d) {
 
 EXPORT CONST VECTOR_CC vfloat xremainderf(vfloat x, vfloat y) {
   vfloat n = vabs_vf_vf(x), d = vabs_vf_vf(y), s = vcast_vf_f(1), q;
-  vopmask o = vlt_vo_vf_vf(d, vcast_vf_f(FLT_MIN));
+  vopmask o = vlt_vo_vf_vf(d, vcast_vf_f(FLT_MIN*2));
   n = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(n, vcast_vf_f(1ULL << 25)), n);
   d = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(d, vcast_vf_f(1ULL << 25)), d);
   s  = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(s , vcast_vf_f(1.0f / (1ULL << 25))), s);

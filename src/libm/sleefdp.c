@@ -2442,7 +2442,7 @@ static INLINE CONST double rintk2(double d) {
 
 EXPORT CONST double xremainder(double x, double y) {
   double n = fabsk(x), d = fabsk(y), s = 1, q;
-  if (d < DBL_MIN) { n *= 1ULL << 54; d *= 1ULL << 54; s = 1.0 / (1ULL << 54); }
+  if (d < DBL_MIN*2) { n *= 1ULL << 54; d *= 1ULL << 54; s = 1.0 / (1ULL << 54); }
   double rd = 1.0 / d;
   Sleef_double2 r = dd(n, 0);
   int qisodd = 0;

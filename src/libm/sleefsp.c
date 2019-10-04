@@ -2046,7 +2046,7 @@ static INLINE CONST float rintfk2(float d) {
 
 EXPORT CONST float xremainderf(float x, float y) {
   float n = fabsfk(x), d = fabsfk(y), s = 1, q;
-  if (d < FLT_MIN) { n *= 1ULL << 25; d *= 1ULL << 25; s = 1.0f / (1ULL << 25); }
+  if (d < FLT_MIN*2) { n *= 1ULL << 25; d *= 1ULL << 25; s = 1.0f / (1ULL << 25); }
   float rd = 1.0f / d;
   Sleef_float2 r = df(n, 0);
   int qisodd = 0;
