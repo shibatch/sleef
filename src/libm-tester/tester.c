@@ -2723,8 +2723,8 @@ void do_test() {
     {
       fprintf(stderr, "remainder denormal/nonnumber test : ");
 
-      double xa[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
-      double ya[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      double xa[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, 1.7e+308, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
+      double ya[] = { +0.0, -0.0, +1, -1, +1e+100, -1e+100, 1.0e+308, DBL_MAX, -DBL_MAX, DBL_MIN, -DBL_MIN, POSITIVE_INFINITY, NEGATIVE_INFINITY, NAN };
 
       for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
 	for(j=0;j<sizeof(ya)/sizeof(double) && success;j++) {
@@ -3319,7 +3319,7 @@ void do_test() {
       fprintf(stderr, "remainderf denormal/nonnumber test : ");
 
       if (enableFlushToZero) {
-	float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
 	float ya[] = { +0.0, -0.0, +1, -1, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
 	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
 	  for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
@@ -3328,8 +3328,8 @@ void do_test() {
 	  }
 	}
       } else {
-	float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
-	float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
+	float ya[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, FLT_MIN, -FLT_MIN, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
 	for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
 	  for(j=0;j<sizeof(ya)/sizeof(float) && success;j++) {
 	    if (fabs(xa[i] / ya[j]) > 1e+38) continue;
