@@ -3374,6 +3374,7 @@ EXPORT CONST VECTOR_CC vdouble xremainder(vdouble x, vdouble y) {
 				      vandnot_vo_vo_vo(qisodd, veq_vo_vd_vd(vabs_vd_vd(r.x), vmul_vd_vd_vd(d, vcast_vd_d(0.5))))),
 			 vcast_vd_d(0.0), q);
     if (vtestallones_i_vo64(veq_vo_vd_vd(q, vcast_vd_d(0)))) break;
+    q = vsel_vd_vo_vd_vd(visinf_vo_vd(vmul_vd_vd_vd(q, vneg_vd_vd(d))), vadd_vd_vd_vd(q, vmulsign_vd_vd_vd(vcast_vd_d(-1), r.x)), q);
     qisodd = vxor_vo_vo_vo(qisodd, visodd_vo_vd(q));
     r = ddnormalize_vd2_vd2(ddadd2_vd2_vd2_vd2(r, ddmul_vd2_vd_vd(q, vneg_vd_vd(d))));
   }

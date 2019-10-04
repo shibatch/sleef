@@ -2953,6 +2953,7 @@ EXPORT CONST VECTOR_CC vfloat xremainderf(vfloat x, vfloat y) {
 				      vandnot_vo_vo_vo(qisodd, veq_vo_vf_vf(vabs_vf_vf(r.x), vmul_vf_vf_vf(d, vcast_vf_f(0.5f))))),
 			 vcast_vf_f(0.0), q);
     if (vtestallones_i_vo32(veq_vo_vf_vf(q, vcast_vf_f(0)))) break;
+    q = vsel_vf_vo_vf_vf(visinf_vo_vf(vmul_vf_vf_vf(q, vneg_vf_vf(d))), vadd_vf_vf_vf(q, vmulsign_vf_vf_vf(vcast_vf_f(-1), r.x)), q);
     qisodd = vxor_vo_vo_vo(qisodd, vand_vo_vo_vo(veq_vo_vi2_vi2(vand_vi2_vi2_vi2(vtruncate_vi2_vf(q), vcast_vi2_i(1)), vcast_vi2_i(1)),
 						 vlt_vo_vf_vf(vabs_vf_vf(q), vcast_vf_f(1 << 24))));
     r = dfnormalize_vf2_vf2(dfadd2_vf2_vf2_vf2(r, dfmul_vf2_vf_vf(q, vneg_vf_vf(d))));

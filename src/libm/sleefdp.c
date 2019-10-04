@@ -2452,6 +2452,7 @@ EXPORT CONST double xremainder(double x, double y) {
     if (fabsk(r.x) < 1.5 * d) q = r.x < 0 ? -1 : 1;
     if (fabsk(r.x) < 0.5 * d || (fabsk(r.x) == 0.5 * d && !qisodd)) q = 0;
     if (q == 0) break;
+    if (xisinf(q * -d)) q = q + mulsign(-1, r.x);
     qisodd ^= xisodd(q);
     r = ddnormalize_d2_d2(ddadd2_d2_d2_d2(r, ddmul_d2_d_d(q, -d)));
   }

@@ -2056,6 +2056,7 @@ EXPORT CONST float xremainderf(float x, float y) {
     if (fabsfk(r.x) < 1.5f * d) q = r.x < 0 ? -1 : 1;
     if (fabsfk(r.x) < 0.5f * d || (fabsfk(r.x) == 0.5f * d && !qisodd)) q = 0;
     if (q == 0) break;
+    if (xisinff(q * -d)) q = q + mulsignf(-1, r.x);
     qisodd ^= (1 & (int)q) != 0 && fabsfk(q) < (float)(1LL << 24);
     r = dfnormalize_f2_f2(dfadd2_f2_f2_f2(r, dfmul_f2_f_f(q, -d)));
   }
