@@ -94,6 +94,7 @@ vdouble xnextafter(vdouble, vdouble);
 vdouble xfrfrexp(vdouble);
 vint xexpfrexp(vdouble);
 vdouble xfmod(vdouble, vdouble);
+vdouble xremainder(vdouble, vdouble);
 vdouble2 xmodf(vdouble);
 
 vdouble xlgamma_u1(vdouble);
@@ -193,6 +194,7 @@ vfloat xnextafterf(vfloat, vfloat);
 vfloat xfrfrexpf(vfloat);
 vint2 xexpfrexpf(vfloat);
 vfloat xfmodf(vfloat, vfloat);
+vfloat xremainderf(vfloat, vfloat);
 vfloat2 xmodff(vfloat);
 
 vfloat xlgammaf_u1(vfloat);

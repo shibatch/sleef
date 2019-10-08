@@ -76,6 +76,7 @@
 #define xfrfrexp Sleef_frfrexp
 #define xexpfrexp Sleef_expfrexp
 #define xfmod Sleef_fmod
+#define xremainder Sleef_remainder
 #define xmodf Sleef_modf
 
 #define xlgamma_u1 Sleef_lgamma_u10
@@ -159,6 +160,7 @@
 #define xfrfrexpf Sleef_frfrexpf
 #define xexpfrexpf Sleef_expfrexpf
 #define xfmodf Sleef_fmodf
+#define xremainderf Sleef_remainderf
 #define xmodff Sleef_modff
 
 #define xlgammaf_u1 Sleef_lgammaf_u10

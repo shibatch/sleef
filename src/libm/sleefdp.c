@@ -2431,6 +2431,40 @@ EXPORT CONST double xfmod(double x, double y) {
   return ret;
 }
 
+static INLINE CONST double rintk2(double d) {
+  double x = d + 0.5;
+  double fr = x - (double)(1LL << 31) * (int32_t)(x * (1.0 / (1LL << 31)));
+  int32_t isodd = (1 & (int32_t)fr) != 0;
+  fr = fr - (int32_t)fr;
+  fr = (fr < 0 || (fr == 0 && isodd)) ? fr+1.0 : fr;
+  return (fabsk(d) >= (double)(1LL << 52)) ? d : copysignk(x - fr, d);
+}
+
+EXPORT CONST double xremainder(double x, double y) {
+  double n = fabsk(x), d = fabsk(y), s = 1, q;
+  if (d < DBL_MIN*2) { n *= 1ULL << 54; d *= 1ULL << 54; s = 1.0 / (1ULL << 54); }
+  double rd = 1.0 / d;
+  Sleef_double2 r = dd(n, 0);
+  int qisodd = 0;
+  
+  for(int i=0;i < 21;i++) { // ceil(log2(DBL_MAX) / 52)
+    q = removelsb(rintk2(r.x * rd));
+    if (fabsk(r.x) < 1.5 * d) q = r.x < 0 ? -1 : 1;
+    if (fabsk(r.x) < 0.5 * d || (fabsk(r.x) == 0.5 * d && !qisodd)) q = 0;
+    if (q == 0) break;
+    if (xisinf(q * -d)) q = q + mulsign(-1, r.x);
+    qisodd ^= xisodd(q);
+    r = ddnormalize_d2_d2(ddadd2_d2_d2_d2(r, ddmul_d2_d_d(q, -d)));
+  }
+  
+  double ret = r.x * s;
+  ret = mulsign(ret, x);
+  if (xisinf(y)) ret = xisinf(x) ? SLEEF_NAN : x;
+  if (d == 0) ret = SLEEF_NAN;
+
+  return ret;
+}
+
 EXPORT CONST Sleef_double2 xmodf(double x) {
   double fr = x - (double)(1LL << 31) * (int32_t)(x * (1.0 / (1LL << 31)));
   fr = fr - (int32_t)fr;

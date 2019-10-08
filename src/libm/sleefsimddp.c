@@ -292,18 +292,27 @@ static INLINE CONST VECTOR_CC vint vilogb2k_vi_vd(vdouble d) {
 #endif
 
 static INLINE CONST VECTOR_CC vopmask visint_vo_vd(vdouble d) {
+#ifdef FULL_FP_ROUNDING
+  return veq_vo_vd_vd(vtruncate_vd_vd(d), d);
+#else
   vdouble x = vtruncate_vd_vd(vmul_vd_vd_vd(d, vcast_vd_d(1.0 / (1LL << 31))));
   x = vmla_vd_vd_vd_vd(vcast_vd_d(-(double)(1LL << 31)), x, d);
   return vor_vo_vo_vo(veq_vo_vd_vd(vtruncate_vd_vd(x), x),
 		      vgt_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(1LL << 53)));
+#endif
 }
 
 static INLINE CONST VECTOR_CC vopmask visodd_vo_vd(vdouble d) {
+#ifdef FULL_FP_ROUNDING
+  vdouble x = vmul_vd_vd_vd(d, vcast_vd_d(0.5));
+  return vneq_vo_vd_vd(vtruncate_vd_vd(x), x);
+#else
   vdouble x = vtruncate_vd_vd(vmul_vd_vd_vd(d, vcast_vd_d(1.0 / (1LL << 31))));
   x = vmla_vd_vd_vd_vd(vcast_vd_d(-(double)(1LL << 31)), x, d);
 
   return vand_vo_vo_vo(vcast_vo64_vo32(veq_vo_vi_vi(vand_vi_vi_vi(vtruncate_vi_vd(x), vcast_vi_i(1)), vcast_vi_i(1))),
 		       vlt_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(1LL << 53)));
+#endif
 }
 
 //
@@ -3332,6 +3341,51 @@ EXPORT CONST VECTOR_CC vdouble xfmod(vdouble x, vdouble y) {
   return ret;
 }
 
+static INLINE VECTOR_CC vdouble vrintk2_vd_vd(vdouble d) {
+#ifdef FULL_FP_ROUNDING
+  return vrint_vd_vd(d);
+#else
+  vdouble x = vadd_vd_vd_vd(d, vcast_vd_d(0.5));
+  vdouble fr = vsub_vd_vd_vd(x, vmul_vd_vd_vd(vcast_vd_d(1LL << 31), vcast_vd_vi(vtruncate_vi_vd(vmul_vd_vd_vd(x, vcast_vd_d(1.0 / (1LL << 31)))))));
+  vopmask isodd = vcast_vo64_vo32(veq_vo_vi_vi(vand_vi_vi_vi(vcast_vi_i(1), vtruncate_vi_vd(fr)), vcast_vi_i(1)));
+  fr = vsub_vd_vd_vd(fr, vcast_vd_vi(vtruncate_vi_vd(fr)));
+  fr = vsel_vd_vo_vd_vd(vor_vo_vo_vo(vlt_vo_vd_vd(fr, vcast_vd_d(0)), vand_vo_vo_vo(veq_vo_vd_vd(fr, vcast_vd_d(0)), isodd)), vadd_vd_vd_vd(fr, vcast_vd_d(1.0)), fr);
+  return vsel_vd_vo_vd_vd(vge_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(1LL << 52)), d, vcopysign_vd_vd_vd(vsub_vd_vd_vd(x, fr), d));
+#endif
+}
+
+EXPORT CONST VECTOR_CC vdouble xremainder(vdouble x, vdouble y) {
+  vdouble n = vabs_vd_vd(x), d = vabs_vd_vd(y), s = vcast_vd_d(1), q;
+  vopmask o = vlt_vo_vd_vd(d, vcast_vd_d(DBL_MIN*2));
+  n = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(n, vcast_vd_d(1ULL << 54)), n);
+  d = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(d, vcast_vd_d(1ULL << 54)), d);
+  s  = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(s , vcast_vd_d(1.0 / (1ULL << 54))), s);
+  vdouble rd = vrec_vd_vd(d);
+  vdouble2 r = vcast_vd2_vd_vd(n, vcast_vd_d(0));
+  vopmask qisodd = vneq_vo_vd_vd(vcast_vd_d(0), vcast_vd_d(0));
+
+  for(int i=0;i<21;i++) { // ceil(log2(DBL_MAX) / 52)
+    q = vrintk2_vd_vd(vmul_vd_vd_vd(r.x, rd));
+#ifndef ENABLE_FMA_DP
+    q = vreinterpret_vd_vm(vand_vm_vm_vm(vreinterpret_vm_vd(q), vcast_vm_i_i(0xffffffff, 0xfffffffe)));
+#endif
+    q = vsel_vd_vo_vd_vd(vlt_vo_vd_vd(vabs_vd_vd(r.x), vmul_vd_vd_vd(d, vcast_vd_d(1.5))), vcast_vd_d(1.0), q);
+    q = vsel_vd_vo_vd_vd(vor_vo_vo_vo(vlt_vo_vd_vd(vabs_vd_vd(r.x), vmul_vd_vd_vd(d, vcast_vd_d(0.5))),
+				      vandnot_vo_vo_vo(qisodd, veq_vo_vd_vd(vabs_vd_vd(r.x), vmul_vd_vd_vd(d, vcast_vd_d(0.5))))),
+			 vcast_vd_d(0.0), q);
+    if (vtestallones_i_vo64(veq_vo_vd_vd(q, vcast_vd_d(0)))) break;
+    q = vsel_vd_vo_vd_vd(visinf_vo_vd(vmul_vd_vd_vd(q, vneg_vd_vd(d))), vadd_vd_vd_vd(q, vmulsign_vd_vd_vd(vcast_vd_d(-1), r.x)), q);
+    qisodd = vxor_vo_vo_vo(qisodd, visodd_vo_vd(q));
+    r = ddnormalize_vd2_vd2(ddadd2_vd2_vd2_vd2(r, ddmul_vd2_vd_vd(q, vneg_vd_vd(d))));
+  }
+  
+  vdouble ret = vmul_vd_vd_vd(r.x, s);
+  ret = vmulsign_vd_vd_vd(ret, x);
+  ret = vsel_vd_vo_vd_vd(visinf_vo_vd(y), vsel_vd_vo_vd_vd(visinf_vo_vd(x), vcast_vd_d(SLEEF_NAN), x), ret);
+  ret = vsel_vd_vo_vd_vd(veq_vo_vd_vd(d, vcast_vd_d(0)), vcast_vd_d(SLEEF_NAN), ret);
+  return ret;
+}
+
 #if defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA)
   typedef __sizeless_struct {
     vdouble2 a, b;
@@ -3616,6 +3670,7 @@ DALIAS_vd_vd(sqrt_u35)
 DALIAS_vd_vd_vd(hypot_u05)
 DALIAS_vd_vd_vd(hypot_u35)
 DALIAS_vd_vd_vd(fmod)
+DALIAS_vd_vd_vd(remainder)
 DALIAS_vd_vd(tgamma_u1)
 DALIAS_vd_vd(lgamma_u1)
 DALIAS_vd_vd(erf_u1)
@@ -3679,6 +3734,7 @@ EXPORT CONST VECTOR_CC vdouble __exp10_finite    (vdouble)          __attribute_
 EXPORT CONST VECTOR_CC vdouble __exp2_finite     (vdouble)          __attribute__((weak, alias(str_xexp2     )));
 EXPORT CONST VECTOR_CC vdouble __exp_finite      (vdouble)          __attribute__((weak, alias(str_xexp      )));
 EXPORT CONST VECTOR_CC vdouble __fmod_finite     (vdouble, vdouble) __attribute__((weak, alias(str_xfmod     )));
+EXPORT CONST VECTOR_CC vdouble __remainder_finite(vdouble, vdouble) __attribute__((weak, alias(str_xremainder)));
 EXPORT CONST VECTOR_CC vdouble __modf_finite     (vdouble, vdouble *) __attribute__((weak, alias(str_xmodf   )));
 EXPORT CONST VECTOR_CC vdouble __hypot_u05_finite(vdouble, vdouble) __attribute__((weak, alias(str_xhypot_u05)));
 EXPORT CONST VECTOR_CC vdouble __lgamma_u1_finite(vdouble)          __attribute__((weak, alias(str_xlgamma_u1)));

@@ -526,6 +526,7 @@ int do_test(int argc, char **argv) {
     func_d_d_d("fdim", xfdim);
     func_d_d_d("nextafter", xnextafter);
     func_d_d_d("fmod", xfmod);
+    func_d_d_d("remainder", xremainder);
 
     func_d2_d("modf", xmodf);
 
@@ -608,6 +609,7 @@ int do_test(int argc, char **argv) {
     func_f_f_f("fdimf", xfdimf);
     func_f_f_f("nextafterf", xnextafterf);
     func_f_f_f("fmodf", xfmodf);
+    func_f_f_f("remainderf", xremainderf);
 
     func_f2_f("modff", xmodff);
 
