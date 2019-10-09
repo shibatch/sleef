@@ -9,10 +9,12 @@ dist: trusty
 matrix:
   include:
     - os: osx
+      arch: amd64
       compiler: clang # use default apple clang
       env:
         - LABEL="osx-clang"
     - os: linux
+      arch: amd64
       addons:
         apt:
           sources:
@@ -22,6 +24,7 @@ matrix:
       env:
         - LABEL="x86_64-gcc"
     - os: linux
+      arch: amd64
       addons:
         apt:
           sources:
@@ -31,10 +34,23 @@ matrix:
       env:
         - LABEL="x86_64-clang"
     - os: linux
-      services: docker
+      arch: arm64
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
       env:
-        - LABEL="aarch64-gcc"
-        - ENABLE_DOCKER="true"
+        - LABEL="arm64-gcc"
+    - os: linux
+      arch: arm64
+      addons:
+        apt:
+          packages:
+            - clang-8
+      env:
+        - LABEL="arm64-clang"
     - os: linux
       services: docker
       env:
