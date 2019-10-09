@@ -48,7 +48,7 @@ matrix:
       addons:
         apt:
           packages:
-            - clang
+            - clang-8
       env:
         - LABEL="arm64-clang"
     - os: linux
