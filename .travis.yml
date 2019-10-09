@@ -43,11 +43,14 @@ matrix:
             - g++-7
       env:
         - LABEL="arm64-gcc"
-    # - os: linux
-    #   services: docker
-    #   env:
-    #     - LABEL="aarch64-gcc"
-    #     - ENABLE_DOCKER="true"
+    - os: linux
+      arch: arm64
+      addons:
+        apt:
+          packages:
+            - clang
+      env:
+        - LABEL="arm64-clang"
     - os: linux
       services: docker
       env:
