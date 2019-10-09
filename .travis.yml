@@ -42,7 +42,7 @@ matrix:
           packages:
             - g++-7
       env:
-        - LABEL="aarch64-gcc"
+        - LABEL="arm64-gcc"
     # - os: linux
     #   services: docker
     #   env:
