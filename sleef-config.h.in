@@ -13,4 +13,6 @@
 
 #cmakedefine COMPILER_SUPPORTS_SSE2
 
+#cmakedefine SLEEF_STATIC_LIBS
+
 #endif // CONFIG_H
