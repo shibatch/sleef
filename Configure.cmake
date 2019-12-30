@@ -442,8 +442,8 @@ endif()
 
 # AVX
 
-option(DISABLE_SSE4 "Disable AVX" OFF)
-option(ENFORCE_SSE4 "Build fails if AVX is not supported by the compiler" OFF)
+option(ENFORCE_AVX "Disable AVX" OFF)
+option(ENFORCE_AVX "Build fails if AVX is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_X86 AND NOT DISABLE_AVX)
   set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX})
