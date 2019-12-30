@@ -358,13 +358,15 @@ if (SLEEF_ARCH_X86)
 
   # Target dispavx_obj
 
-  add_library(dispavx_obj OBJECT dispavx.c)
-  target_compile_options(dispavx_obj PRIVATE ${FLAGS_ENABLE_AVX})
-  set_target_properties(dispavx_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
-  target_compile_definitions(dispavx_obj PRIVATE ${COMMON_TARGET_DEFINITIONS} ${DISPATCHER_DEFINITIONS})
-  target_include_directories(dispavx_obj PRIVATE ${CMAKE_BINARY_DIR}/include)
-  add_dependencies(dispavx_obj dispavx.c_generated renamedsp256.h_generated ${TARGET_HEADERS})
-  target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:dispavx_obj>)
+  if(COMPILER_SUPPORTS_AVX)
+    add_library(dispavx_obj OBJECT dispavx.c)
+    target_compile_options(dispavx_obj PRIVATE ${FLAGS_ENABLE_AVX})
+    set_target_properties(dispavx_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
+    target_compile_definitions(dispavx_obj PRIVATE ${COMMON_TARGET_DEFINITIONS} ${DISPATCHER_DEFINITIONS})
+    target_include_directories(dispavx_obj PRIVATE ${CMAKE_BINARY_DIR}/include)
+    add_dependencies(dispavx_obj dispavx.c_generated renamedsp256.h_generated ${TARGET_HEADERS})
+    target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:dispavx_obj>)
+  endif()
 endif(SLEEF_ARCH_X86)
 
 # --------------------------------------------------------------------
