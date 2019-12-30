@@ -348,13 +348,15 @@ if (SLEEF_ARCH_X86)
     set(DISPATCHER_DEFINITIONS ${DISPATCHER_DEFINITIONS} ENABLE_AVX2=1)
   endif()
 
-  add_library(dispsse_obj OBJECT dispsse.c)
-  target_compile_options(dispsse_obj PRIVATE ${FLAGS_ENABLE_SSE2})
-  set_target_properties(dispsse_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
-  target_compile_definitions(dispsse_obj PRIVATE ${COMMON_TARGET_DEFINITIONS} ${DISPATCHER_DEFINITIONS})
-  target_include_directories(dispsse_obj PRIVATE ${CMAKE_BINARY_DIR}/include)
-  add_dependencies(dispsse_obj dispsse.c_generated renamedsp128.h_generated ${TARGET_HEADERS})
-  target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:dispsse_obj>)
+  if(COMPILER_SUPPORTS_SSE2)
+    add_library(dispsse_obj OBJECT dispsse.c)
+    target_compile_options(dispsse_obj PRIVATE ${FLAGS_ENABLE_SSE2})
+    set_target_properties(dispsse_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
+    target_compile_definitions(dispsse_obj PRIVATE ${COMMON_TARGET_DEFINITIONS} ${DISPATCHER_DEFINITIONS})
+    target_include_directories(dispsse_obj PRIVATE ${CMAKE_BINARY_DIR}/include)
+    add_dependencies(dispsse_obj dispsse.c_generated renamedsp128.h_generated ${TARGET_HEADERS})
+    target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:dispsse_obj>)
+  endif()
 
   # Target dispavx_obj
 
