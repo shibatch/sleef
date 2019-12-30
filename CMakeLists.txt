@@ -155,8 +155,3 @@ if(SLEEF_SHOW_CONFIG)
     message(STATUS "Building SLEEF with AArch64 Vector PCS support")
   endif()
 endif(SLEEF_SHOW_CONFIG)
-
-if (MSVC)
-  message("")
-  message("*** Note: Parallel build is not supported on Microsoft Visual Studio")
-endif()
