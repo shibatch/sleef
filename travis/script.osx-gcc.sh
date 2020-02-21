@@ -1,8 +1,8 @@
 #!/bin/bash
 set -ev
 cd sleef.build
-make -j 2 all
+make -j 1 all
 export OMP_WAIT_POLICY=passive
 export CTEST_OUTPUT_ON_FAILURE=TRUE
-ctest -j 2
+ctest -j `nproc`
 make install

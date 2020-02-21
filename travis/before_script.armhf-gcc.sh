@@ -4,7 +4,7 @@ cd /build
 mkdir build-native
 cd build-native
 cmake -DBUILD_QUAD=TRUE ..
-make -j 2 all
+make -j 1 all
 cd /build
 mkdir build-cross
 cd build-cross

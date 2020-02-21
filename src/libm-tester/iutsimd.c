@@ -39,6 +39,16 @@
 #include <float.h>
 #include <limits.h>
 
+#if defined(__AVX2__) || defined(__aarch64__) || defined(__arm__) || defined(__powerpc64__)
+#ifndef FP_FAST_FMA
+#define FP_FAST_FMA
+#endif
+#endif
+
+#if defined(_MSC_VER) && !defined(__STDC__)
+#define __STDC__ 1
+#endif
+
 #if (defined(__GNUC__) || defined(__CLANG__)) && (defined(__i386__) || defined(__x86_64__))
 #include <x86intrin.h>
 #endif

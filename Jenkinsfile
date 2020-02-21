@@ -15,10 +15,10 @@ pipeline {
  			 mkdir build
 			 cd build
 			 cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE ..
-			 make -j 6 all
+			 make -j 1 all
 			 export OMP_WAIT_POLICY=passive
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
-		         ctest -j 6
+		         ctest -j 3
 		         make install
 			 '''
             	     }
@@ -35,10 +35,10 @@ pipeline {
  			 mkdir build
 			 cd build
 			 cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DFORCE_AAVPCS=On -DENABLE_GNUABI=On -DBUILD_QUAD=TRUE ..
-			 make -j 6 all
+			 make -j 1 all
 			 export OMP_WAIT_POLICY=passive
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
-		         ctest -j 6
+		         ctest -j 3
 		         make install
 			 '''
             	     }
@@ -56,7 +56,7 @@ pipeline {
  		        mkdir build
 		        cd build
 		        cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE ..
-		        make -j 4 all
+		        make -j 1 all
 			export OMP_WAIT_POLICY=passive
 		        export CTEST_OUTPUT_ON_FAILURE=TRUE
 		        ctest -j 4
@@ -77,7 +77,7 @@ pipeline {
  			 mkdir build
 			 cd build
 			 cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE ..
-			 make -j 4 all
+			 make -j 1 all
 			 export OMP_WAIT_POLICY=passive
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
 		         ctest -j 4
@@ -97,7 +97,7 @@ pipeline {
  			 mkdir build
 			 cd build
 			 cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE ..
-			 make -j 4 all
+			 make -j 1 all
 			 export OMP_WAIT_POLICY=passive
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
 		         ctest -j 4
@@ -117,7 +117,7 @@ pipeline {
  			 mkdir build
 			 cd build
 			 cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DBUILD_SHARED_LIBS=FALSE -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE ..
-			 make -j 2 all
+			 make -j 1 all
 			 export OMP_WAIT_POLICY=passive
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
 		         ctest -j 2
@@ -134,7 +134,7 @@ pipeline {
 			 set "ORG_PATH=%PATH%"
 			 PATH C:/Cygwin64/bin;C:/Cygwin64/usr/bin;%PROJECT_DIR%/build-cygwin/bin;%PATH%
 			 rmdir /S /Q build-cygwin
-			 C:/Cygwin64/bin/bash -c 'mkdir build-cygwin;cd build-cygwin;cmake -g"Unix Makefiles" .. -DBUILD_QUAD=TRUE;make -j 4'
+			 C:/Cygwin64/bin/bash -c 'mkdir build-cygwin;cd build-cygwin;cmake -g"Unix Makefiles" .. -DBUILD_QUAD=TRUE;make -j 1'
 			 del /Q /F %PROJECT_DIR%/build-cygwin/bin/iut*
 			 PATH %ORG_PATH%;C:/Cygwin64/bin;C:/Cygwin64/usr/bin;%PROJECT_DIR%/build-cygwin/bin;%PROJECT_DIR%/build/bin
 			 cd %PROJECT_DIR%
@@ -157,7 +157,7 @@ pipeline {
  			 mkdir build
 			 cd build
 			 cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE ..
-			 make -j 4 all
+			 make -j 1 all
 			 export OMP_WAIT_POLICY=passive
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
 		         ctest -j 4
@@ -175,7 +175,7 @@ pipeline {
  			 mkdir build-native
 			 cd build-native
 			 cmake -DSLEEF_SHOW_CONFIG=1 .. -DBUILD_QUAD=TRUE
-			 make -j 4 all
+			 make -j 1 all
 			 cd ..
 			 export PATH=$PATH:`pwd`/travis
 			 export QEMU_CPU=POWER8
@@ -184,7 +184,7 @@ pipeline {
  			 mkdir build
 			 cd build
 			 cmake -DCMAKE_TOOLCHAIN_FILE=../travis/toolchain-ppc64el.cmake -DNATIVE_BUILD_DIR=`pwd`/../build-native -DEMULATOR=qemu-ppc64le-static -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE ..
-			 make -j 4 all
+			 make -j 1 all
 			 export OMP_WAIT_POLICY=passive
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
 		         ctest -j 4
@@ -202,7 +202,7 @@ pipeline {
  			 mkdir build
 			 cd build
 			 cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE ..
-			 make -j 4 all
+			 make -j 1 all
 			 export OMP_WAIT_POLICY=passive
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
 		         ctest -j 4
@@ -220,7 +220,7 @@ pipeline {
  			 mkdir build
 			 cd build
 			 cmake -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE ..
-			 make -j 3 all
+			 make -j 1 all
 			 export OMP_WAIT_POLICY=passive
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
 		         ctest -j 3
