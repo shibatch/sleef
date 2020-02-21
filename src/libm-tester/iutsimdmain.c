@@ -12,8 +12,8 @@
 static jmp_buf sigjmp;
 
 int do_test(int argc, char **argv);
-int check_featureDP();
-int check_featureSP();
+int check_featureDP(double d);
+int check_featureSP(float d);
 
 static void sighandler(int signum) {
   longjmp(sigjmp, 1);
@@ -23,7 +23,7 @@ int detectFeatureDP() {
   signal(SIGILL, sighandler);
 
   if (setjmp(sigjmp) == 0) {
-    int r = check_featureDP();
+    int r = check_featureDP(1.0);
     signal(SIGILL, SIG_DFL);
     return r;
   } else {
@@ -36,7 +36,7 @@ int detectFeatureSP() {
   signal(SIGILL, sighandler);
 
   if (setjmp(sigjmp) == 0) {
-    int r = check_featureSP();
+    int r = check_featureSP(1.0);
     signal(SIGILL, SIG_DFL);
     return r;
   } else {

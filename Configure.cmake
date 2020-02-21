@@ -306,6 +306,12 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
     string(CONCAT FLAGS_WALL ${FLAGS_WALL} " -Wno-psabi")
     set(FLAGS_ENABLE_NEON32 "-mfpu=neon")
   endif(CMAKE_C_COMPILER_ID MATCHES "GNU")
+
+  # Flags for generating inline headers
+  set(FLAG_PREPROCESS "-E")
+  set(FLAG_PRESERVE_COMMENTS "-C")
+  set(FLAG_INCLUDE "-I")
+  set(FLAG_DEFINE "-D")
 elseif(MSVC)
   # Intel vector extensions.
   if (CMAKE_CL_64)
@@ -324,6 +330,11 @@ elseif(MSVC)
   set(FLAGS_ENABLE_PURECFMA_SCALAR /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /arch:AVX2)
   set(FLAGS_WALL "/D_CRT_SECURE_NO_WARNINGS")
   set(FLAGS_NO_ERRNO "")
+
+  set(FLAG_PREPROCESS "/E")
+  set(FLAG_PRESERVE_COMMENTS "/C")
+  set(FLAG_INCLUDE "/I")
+  set(FLAG_DEFINE "/D")
 elseif(CMAKE_C_COMPILER_ID MATCHES "Intel")
   set(FLAGS_ENABLE_SSE2 "-msse2")
   set(FLAGS_ENABLE_SSE4 "-msse4.1")
@@ -337,6 +348,11 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "Intel")
   set(FLAGS_FASTMATH "-fp-model fast=2 -Qoption,cpp,--extended_float_type")
   set(FLAGS_WALL "-fmax-errors=3 -Wall -Wno-unused -Wno-attributes")
   set(FLAGS_NO_ERRNO "")
+
+  set(FLAG_PREPROCESS "-E")
+  set(FLAG_PRESERVE_COMMENTS "-C")
+  set(FLAG_INCLUDE "-I")
+  set(FLAG_DEFINE "-D")
 endif()
 
 set(SLEEF_C_FLAGS "${FLAGS_WALL} ${FLAGS_STRICTMATH} ${FLAGS_NO_ERRNO}")
@@ -691,6 +707,10 @@ find_program(ARMIE_COMMAND armie)
 if (NOT SVE_VECTOR_BITS)
   set(SVE_VECTOR_BITS 128)
 endif()
+
+#
+
+find_program(SED_COMMAND sed)
 
 ##
 

@@ -3,10 +3,15 @@
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
+#if !defined(SLEEF_GENHEADER)
 #include <stdint.h>
+#endif
 
 #ifndef ENABLE_BUILTIN_MATH
+
+#if !defined(SLEEF_GENHEADER)
 #include <math.h>
+#endif
 
 #define SQRT sqrt
 #define SQRTF sqrtf
@@ -30,29 +35,37 @@
 
 #endif
 
+#if !defined(SLEEF_GENHEADER)
 #include "misc.h"
+#endif
 
 #ifndef CONFIG
 #error CONFIG macro not defined
 #endif
 
 #define ENABLE_DP
+//@#define ENABLE_DP
 #define ENABLE_SP
+//@#define ENABLE_SP
 
 #if CONFIG == 2
 #define ENABLE_FMA_DP
+//@#define ENABLE_FMA_DP
 #define ENABLE_FMA_SP
+//@#define ENABLE_FMA_SP
 
 #if defined(__AVX2__) || defined(__aarch64__) || defined(__arm__) || defined(__powerpc64__)
 #ifndef FP_FAST_FMA
 #define FP_FAST_FMA
+//@#define FP_FAST_FMA
 #endif
 #ifndef FP_FAST_FMAF
 #define FP_FAST_FMAF
+//@#define FP_FAST_FMAF
 #endif
 #endif
 
-#if !defined(FP_FAST_FMA) || !defined(FP_FAST_FMAF)
+#if (!defined(FP_FAST_FMA) || !defined(FP_FAST_FMAF)) && !defined(SLEEF_GENHEADER)
 #error FP_FAST_FMA or FP_FAST_FMAF not defined
 #endif
 #define ISANAME "Pure C scalar with FMA"
@@ -62,14 +75,20 @@
 #endif // #if CONFIG == 2
 
 #define LOG2VECTLENDP 0
+//@#define LOG2VECTLENDP 0
 #define VECTLENDP (1 << LOG2VECTLENDP)
+//@#define VECTLENDP (1 << LOG2VECTLENDP)
 #define LOG2VECTLENSP 0
+//@#define LOG2VECTLENSP 0
 #define VECTLENSP (1 << LOG2VECTLENSP)
+//@#define VECTLENSP (1 << LOG2VECTLENSP)
 
 #define ACCURATE_SQRT
+//@#define ACCURATE_SQRT
 
 #if defined(__SSE4_1__) || defined(__aarch64__)
 #define FULL_FP_ROUNDING
+//@#define FULL_FP_ROUNDING
 #endif
 
 #define DFTPRIORITY LOG2VECTLENDP
@@ -376,8 +395,6 @@ static INLINE void vstream_v_p_vf(float *ptr, vfloat v) { *ptr = v; }
 
 //
 
-typedef Sleef_quad1 vargquad;
-
 static INLINE vmask2 vinterleave_vm2_vm2(vmask2 v) { return v; }
 static INLINE vmask2 vuninterleave_vm2_vm2(vmask2 v) { return v; }
 static INLINE vint vuninterleave_vi_vi(vint v) { return v; }
@@ -385,6 +402,9 @@ static INLINE vdouble vinterleave_vd_vd(vdouble vd) { return vd; }
 static INLINE vdouble vuninterleave_vd_vd(vdouble vd) { return vd; }
 static INLINE vmask vinterleave_vm_vm(vmask vm) { return vm; }
 static INLINE vmask vuninterleave_vm_vm(vmask vm) { return vm; }
+
+#if !defined(SLEEF_GENHEADER)
+typedef Sleef_quad1 vargquad;
 
 static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
   union {
@@ -403,6 +423,7 @@ static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
   c.vm2 = vm2;
   return c.aq;
 }
+#endif
 
 static INLINE int vtestallzeros_i_vo64(vopmask g) { return !g ? ~(uint32_t)0 : 0; }
 static INLINE vmask vsel_vm_vo64_vm_vm(vopmask o, vmask x, vmask y) { return o ? x : y; }
@@ -412,6 +433,8 @@ static INLINE vmask vneg64_vm_vm(vmask x) { return -(int64_t)x; }
 
 #define vsll64_vm_vm_i(x, c) ((uint64_t)(x) << (c))
 #define vsrl64_vm_vm_i(x, c) ((uint64_t)(x) >> (c))
+//@#define vsll64_vm_vm_i(x, c) ((uint64_t)(x) << (c))
+//@#define vsrl64_vm_vm_i(x, c) ((uint64_t)(x) >> (c))
 
 static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) { return (int64_t)x > (int64_t)y ? ~(uint32_t)0 : 0; }
 

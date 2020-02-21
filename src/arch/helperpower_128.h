@@ -14,26 +14,37 @@
 #endif
 
 #define ENABLE_DP
+//@#define ENABLE_DP
 #define LOG2VECTLENDP 1
+//@#define LOG2VECTLENDP 1
 #define VECTLENDP (1 << LOG2VECTLENDP)
+//@#define VECTLENDP (1 << LOG2VECTLENDP)
 
 #define ENABLE_SP
+//@#define ENABLE_SP
 #define LOG2VECTLENSP (LOG2VECTLENDP+1)
+//@#define LOG2VECTLENSP (LOG2VECTLENDP+1)
 #define VECTLENSP (1 << LOG2VECTLENSP)
+//@#define VECTLENSP (1 << LOG2VECTLENSP)
 
 #if CONFIG == 1
 #define ENABLE_FMA_DP
+//@#define ENABLE_FMA_DP
 #define ENABLE_FMA_SP
-//#define SPLIT_KERNEL // Benchmark comparison is needed to determine whether this option should be enabled.
+//@#define ENABLE_FMA_SP
 #endif
 
 #define ACCURATE_SQRT
+//@#define ACCURATE_SQRT
 #define FULL_FP_ROUNDING
+//@#define FULL_FP_ROUNDING
 
+#if !defined(SLEEF_GENHEADER)
 #include <altivec.h>
 
 #include <stdint.h>
 #include "misc.h"
+#endif // #if !defined(SLEEF_GENHEADER)
 
 typedef vector unsigned int vmask;
 typedef vector unsigned int vopmask;

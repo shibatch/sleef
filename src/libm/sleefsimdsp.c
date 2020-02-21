@@ -5,10 +5,12 @@
 
 // Always use -ffp-contract=off option to compile SLEEF.
 
+#if !defined(SLEEF_GENHEADER)
 #include <stdint.h>
 #include <assert.h>
 #include <limits.h>
 #include <float.h>
+#endif
 
 #include "misc.h"
 
@@ -22,7 +24,11 @@ extern const float rempitabsp[];
 
 #ifdef ENABLE_SSE2
 #define CONFIG 2
+#if !defined(SLEEF_GENHEADER)
 #include "helpersse2.h"
+#else
+#include "macroonlySSE2.h"
+#endif
 #ifdef DORENAME
 #ifdef ENABLE_GNUABI
 #include "renamesse2_gnuabi.h"
@@ -34,7 +40,11 @@ extern const float rempitabsp[];
 
 #ifdef ENABLE_SSE4
 #define CONFIG 4
+#if !defined(SLEEF_GENHEADER)
 #include "helpersse2.h"
+#else
+#include "macroonlySSE4.h"
+#endif
 #ifdef DORENAME
 #include "renamesse4.h"
 #endif
@@ -42,7 +52,11 @@ extern const float rempitabsp[];
 
 #ifdef ENABLE_AVX
 #define CONFIG 1
+#if !defined(SLEEF_GENHEADER)
 #include "helperavx.h"
+#else
+#include "macroonlyAVX.h"
+#endif
 #ifdef DORENAME
 #ifdef ENABLE_GNUABI
 #include "renameavx_gnuabi.h"
@@ -54,7 +68,11 @@ extern const float rempitabsp[];
 
 #ifdef ENABLE_FMA4
 #define CONFIG 4
+#if !defined(SLEEF_GENHEADER)
 #include "helperavx.h"
+#else
+#include "macroonlyFMA4.h"
+#endif
 #ifdef DORENAME
 #ifdef ENABLE_GNUABI
 #include "renamefma4_gnuabi.h"
@@ -66,7 +84,11 @@ extern const float rempitabsp[];
 
 #ifdef ENABLE_AVX2
 #define CONFIG 1
+#if !defined(SLEEF_GENHEADER)
 #include "helperavx2.h"
+#else
+#include "macroonlyAVX2.h"
+#endif
 #ifdef DORENAME
 #ifdef ENABLE_GNUABI
 #include "renameavx2_gnuabi.h"
@@ -78,7 +100,11 @@ extern const float rempitabsp[];
 
 #ifdef ENABLE_AVX2128
 #define CONFIG 1
+#if !defined(SLEEF_GENHEADER)
 #include "helperavx2_128.h"
+#else
+#include "macroonlyAVX2128.h"
+#endif
 #ifdef DORENAME
 #include "renameavx2128.h"
 #endif
@@ -86,7 +112,11 @@ extern const float rempitabsp[];
 
 #ifdef ENABLE_AVX512F
 #define CONFIG 1
+#if !defined(SLEEF_GENHEADER)
 #include "helperavx512f.h"
+#else
+#include "macroonlyAVX512F.h"
+#endif
 #ifdef DORENAME
 #ifdef ENABLE_GNUABI
 #include "renameavx512f_gnuabi.h"
@@ -98,7 +128,11 @@ extern const float rempitabsp[];
 
 #ifdef ENABLE_AVX512FNOFMA
 #define CONFIG 2
+#if !defined(SLEEF_GENHEADER)
 #include "helperavx512f.h"
+#else
+#include "macroonlyAVX512FNOFMA.h"
+#endif
 #ifdef DORENAME
 #include "renameavx512fnofma.h"
 #endif
@@ -106,7 +140,11 @@ extern const float rempitabsp[];
 
 #ifdef ENABLE_ADVSIMD
 #define CONFIG 1
+#if !defined(SLEEF_GENHEADER)
 #include "helperadvsimd.h"
+#else
+#include "macroonlyADVSIMD.h"
+#endif
 #ifdef DORENAME
 #ifdef ENABLE_GNUABI
 #include "renameadvsimd_gnuabi.h"
@@ -118,7 +156,11 @@ extern const float rempitabsp[];
 
 #ifdef ENABLE_ADVSIMDNOFMA
 #define CONFIG 2
+#if !defined(SLEEF_GENHEADER)
 #include "helperadvsimd.h"
+#else
+#include "macroonlyADVSIMDNOFMA.h"
+#endif
 #ifdef DORENAME
 #include "renameadvsimdnofma.h"
 #endif
@@ -126,7 +168,9 @@ extern const float rempitabsp[];
 
 #ifdef ENABLE_NEON32
 #define CONFIG 1
+#if !defined(SLEEF_GENHEADER)
 #include "helperneon32.h"
+#endif
 #ifdef DORENAME
 #include "renameneon32.h"
 #endif
@@ -134,7 +178,9 @@ extern const float rempitabsp[];
 
 #ifdef ENABLE_NEON32VFPV4
 #define CONFIG 4
+#if !defined(SLEEF_GENHEADER)
 #include "helperneon32.h"
+#endif
 #ifdef DORENAME
 #include "renameneon32vfpv4.h"
 #endif
@@ -142,7 +188,11 @@ extern const float rempitabsp[];
 
 #ifdef ENABLE_VSX
 #define CONFIG 1
+#if !defined(SLEEF_GENHEADER)
 #include "helperpower_128.h"
+#else
+#include "macroonlyVSX.h"
+#endif
 #ifdef DORENAME
 #include "renamevsx.h"
 #endif
@@ -150,7 +200,11 @@ extern const float rempitabsp[];
 
 #ifdef ENABLE_VSXNOFMA
 #define CONFIG 2
+#if !defined(SLEEF_GENHEADER)
 #include "helperpower_128.h"
+#else
+#include "macroonlyVSXNOFMA.h"
+#endif
 #ifdef DORENAME
 #include "renamevsxnofma.h"
 #endif
@@ -160,7 +214,9 @@ extern const float rempitabsp[];
 
 #ifdef ENABLE_VECEXT
 #define CONFIG 1
+#if !defined(SLEEF_GENHEADER)
 #include "helpervecext.h"
+#endif
 #ifdef DORENAME
 #include "renamevecext.h"
 #endif
@@ -168,7 +224,9 @@ extern const float rempitabsp[];
 
 #ifdef ENABLE_PUREC
 #define CONFIG 1
+#if !defined(SLEEF_GENHEADER)
 #include "helperpurec.h"
+#endif
 #ifdef DORENAME
 #include "renamepurec.h"
 #endif
@@ -176,7 +234,11 @@ extern const float rempitabsp[];
 
 #ifdef ENABLE_PUREC_SCALAR
 #define CONFIG 1
+#if !defined(SLEEF_GENHEADER)
 #include "helperpurec_scalar.h"
+#else
+#include "macroonlyPUREC_SCALAR.h"
+#endif
 #ifdef DORENAME
 #include "renamepurec_scalar.h"
 #endif
@@ -184,7 +246,11 @@ extern const float rempitabsp[];
 
 #ifdef ENABLE_PURECFMA_SCALAR
 #define CONFIG 2
+#if !defined(SLEEF_GENHEADER)
 #include "helperpurec_scalar.h"
+#else
+#include "macroonlyPURECFMA_SCALAR.h"
+#endif
 #ifdef DORENAME
 #include "renamepurecfma_scalar.h"
 #endif
@@ -194,7 +260,11 @@ extern const float rempitabsp[];
 
 #ifdef ENABLE_SVE
 #define CONFIG 1
+#if !defined(SLEEF_GENHEADER)
 #include "helpersve.h"
+#else
+#include "macroonlySVE.h"
+#endif
 #ifdef DORENAME
 #ifdef ENABLE_GNUABI
 #include "renamesve_gnuabi.h"
@@ -206,7 +276,11 @@ extern const float rempitabsp[];
 
 #ifdef ENABLE_SVENOFMA
 #define CONFIG 2
+#if !defined(SLEEF_GENHEADER)
 #include "helpersve.h"
+#else
+#include "macroonlySVENOFMA.h"
+#endif
 #ifdef DORENAME
 #include "renamesvenofma.h"
 #endif /* DORENAME */
@@ -2743,7 +2817,9 @@ EXPORT CONST VECTOR_CC vfloat xfmaf(vfloat x, vfloat y, vfloat z) {
 }
 #endif // #if !defined(DETERMINISTIC)
 
+#if !defined(SLEEF_GENHEADER)
 static INLINE CONST VECTOR_CC vint2 vcast_vi2_i_i(int i0, int i1) { return vcast_vi2_vm(vcast_vm_i_i(i0, i1)); }
+#endif
 
 SQRTFU05_FUNCATR VECTOR_CC vfloat xsqrtf_u05(vfloat d) {
   vfloat q;
@@ -3244,7 +3320,7 @@ EXPORT CONST VECTOR_CC vfloat xerfcf_u15(vfloat a) {
 }
 #endif // #if !defined(DETERMINISTIC)
 
-#if !defined(DETERMINISTIC) && !defined(ENABLE_GNUABI)
+#if !defined(DETERMINISTIC) && !defined(ENABLE_GNUABI) && !defined(SLEEF_GENHEADER)
 // See sleefsimddp.c for explanation of these macros
 
 #ifdef ENABLE_ALIAS
@@ -3318,9 +3394,9 @@ DALIAS_vf_vf(lgammaf_u1)
 DALIAS_vf_vf(erff_u1)
 DALIAS_vf_vf(erfcf_u15)
 DALIAS_vf_vf_vf(fastpowf_u3500)
-#endif // #if !defined(DETERMINISTIC) && !defined(ENABLE_GNUABI)
+#endif // #if !defined(DETERMINISTIC) && !defined(ENABLE_GNUABI) && !defined(SLEEF_GENHEADER)
 
-#ifndef ENABLE_GNUABI
+#if !defined(ENABLE_GNUABI) && !defined(SLEEF_GENHEADER)
 EXPORT CONST int xgetIntf(int name) {
   if (1 <= name && name <= 10) return vavailability_i(name);
   return 0;

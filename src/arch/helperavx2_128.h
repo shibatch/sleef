@@ -5,7 +5,7 @@
 
 #if CONFIG == 1
 
-#ifndef __AVX2__
+#if !defined(__AVX2__) && !defined(SLEEF_GENHEADER)
 #error Please specify -mavx2.
 #endif
 
@@ -14,19 +14,29 @@
 #endif
 
 #define ENABLE_DP
+//@#define ENABLE_DP
 #define LOG2VECTLENDP 1
+//@#define LOG2VECTLENDP 1
 #define VECTLENDP (1 << LOG2VECTLENDP)
+//@#define VECTLENDP (1 << LOG2VECTLENDP)
 #define ENABLE_FMA_DP
+//@#define ENABLE_FMA_DP
 
 #define ENABLE_SP
+//@#define ENABLE_SP
 #define LOG2VECTLENSP (LOG2VECTLENDP+1)
+//@#define LOG2VECTLENSP (LOG2VECTLENDP+1)
 #define VECTLENSP (1 << LOG2VECTLENSP)
+//@#define VECTLENSP (1 << LOG2VECTLENSP)
 #define ENABLE_FMA_SP
+//@#define ENABLE_FMA_SP
 
 #define FULL_FP_ROUNDING
-#define SPLIT_KERNEL
+//@#define FULL_FP_ROUNDING
 #define ACCURATE_SQRT
+//@#define ACCURATE_SQRT
 
+#if !defined(SLEEF_GENHEADER)
 #if defined(_MSC_VER)
 #include <intrin.h>
 #else
@@ -35,6 +45,7 @@
 
 #include <stdint.h>
 #include "misc.h"
+#endif // #if !defined(SLEEF_GENHEADER)
 
 typedef __m128i vmask;
 typedef __m128i vopmask;
@@ -50,6 +61,8 @@ typedef struct {
 } vmask2;
 
 //
+
+#if !defined(SLEEF_GENHEADER)
 
 #ifndef __SLEEF_H__
 void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
@@ -75,6 +88,8 @@ static INLINE int vavailability_i(int name) {
 #define ISANAME "AVX2"
 #define DFTPRIORITY 25
 #endif
+
+#endif // #if !defined(SLEEF_GENHEADER)
 
 static INLINE void vprefetch_v_p(const void *ptr) { _mm_prefetch(ptr, _MM_HINT_T0); }
 
@@ -392,8 +407,6 @@ static INLINE void vsscatter2_v_p_i_i_vf(float *ptr, int offset, int step, vfloa
 
 //
 
-typedef Sleef_quad2 vargquad;
-
 static INLINE vmask2 vinterleave_vm2_vm2(vmask2 v) {
   return (vmask2) { _mm_unpacklo_epi64(v.x, v.y), _mm_unpackhi_epi64(v.x, v.y) };
 }
@@ -414,6 +427,9 @@ static void vstoreu_v_p_vm2(void *p, vmask2 vm2) {
   vstoreu_v_p_vi2((int32_t *)p, vcast_vi2_vm(vm2.x));
   vstoreu_v_p_vi2((int32_t *)((uint8_t *)p + sizeof(vmask)), vcast_vi2_vm(vm2.y));
 }
+
+#if !defined(SLEEF_GENHEADER)
+typedef Sleef_quad2 vargquad;
 
 static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
 #if !defined(_MSC_VER)
@@ -442,6 +458,7 @@ static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
   return a;
 #endif
 }
+#endif
 
 static INLINE int vtestallzeros_i_vo64(vopmask g) { return _mm_movemask_epi8(g) == 0; }
 
@@ -453,3 +470,5 @@ static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) { return _mm_cmpgt_epi64(
 
 #define vsll64_vm_vm_i(x, c) _mm_slli_epi64(x, c)
 #define vsrl64_vm_vm_i(x, c) _mm_srli_epi64(x, c)
+//@#define vsll64_vm_vm_i(x, c) _mm_slli_epi64(x, c)
+//@#define vsrl64_vm_vm_i(x, c) _mm_srli_epi64(x, c)

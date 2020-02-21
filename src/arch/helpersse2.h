@@ -5,19 +5,19 @@
 
 #if CONFIG == 2
 
-#if !defined(__SSE2__)
+#if !defined(__SSE2__) && !defined(SLEEF_GENHEADER)
 #error Please specify -msse2.
 #endif
 
 #elif CONFIG == 3
 
-#if !defined(__SSE2__) || !defined(__SSE3__)
+#if (!defined(__SSE2__) || !defined(__SSE3__)) && !defined(SLEEF_GENHEADER)
 #error Please specify -msse2 and -msse3
 #endif
 
 #elif CONFIG == 4
 
-#if !defined(__SSE2__) || !defined(__SSE3__) || !defined(__SSE4_1__)
+#if (!defined(__SSE2__) || !defined(__SSE3__) || !defined(__SSE4_1__)) && !defined(SLEEF_GENHEADER)
 #error Please specify -msse2, -msse3 and -msse4.1
 #endif
 
@@ -26,15 +26,23 @@
 #endif
 
 #define ENABLE_DP
+//@#define ENABLE_DP
 #define LOG2VECTLENDP 1
+//@#define LOG2VECTLENDP 1
 #define VECTLENDP (1 << LOG2VECTLENDP)
+//@#define VECTLENDP (1 << LOG2VECTLENDP)
 
 #define ENABLE_SP
+//@#define ENABLE_SP
 #define LOG2VECTLENSP (LOG2VECTLENDP+1)
+//@#define LOG2VECTLENSP (LOG2VECTLENDP+1)
 #define VECTLENSP (1 << LOG2VECTLENSP)
+//@#define VECTLENSP (1 << LOG2VECTLENSP)
 
 #define ACCURATE_SQRT
+//@#define ACCURATE_SQRT
 
+#if !defined(SLEEF_GENHEADER)
 #if defined(_MSC_VER)
 #include <intrin.h>
 #else
@@ -43,6 +51,7 @@
 
 #include <stdint.h>
 #include "misc.h"
+#endif // #if !defined(SLEEF_GENHEADER)
 
 typedef __m128i vmask;
 typedef __m128i vopmask;
@@ -58,6 +67,8 @@ typedef struct {
 } vmask2;
 
 //
+
+#if !defined(SLEEF_GENHEADER)
 
 #ifndef __SLEEF_H__
 void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
@@ -106,6 +117,8 @@ static INLINE int vavailability_i(int name) {
 #define DFTPRIORITY 10
 #endif
 
+#endif // #if !defined(SLEEF_GENHEADER)
+
 static INLINE void vprefetch_v_p(const void *ptr) { _mm_prefetch(ptr, _MM_HINT_T0); }
 
 static INLINE int vtestallones_i_vo32(vopmask g) { return _mm_movemask_epi8(g) == 0xFFFF; }
@@ -153,13 +166,14 @@ static INLINE vint vcast_vi_i(int i) { return _mm_set_epi32(0, 0, i, i); }
 static INLINE vint2 vcastu_vi2_vi(vint vi) { return _mm_and_si128(_mm_shuffle_epi32(vi, 0x73), _mm_set_epi32(-1, 0, -1, 0)); }
 static INLINE vint vcastu_vi_vi2(vint2 vi) { return _mm_shuffle_epi32(vi, 0x0d); }
 
-#ifdef __SSE4_1__
+#if CONFIG == 4
 static INLINE vdouble vtruncate_vd_vd(vdouble vd) { return _mm_round_pd(vd, _MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC); }
 static INLINE vdouble vrint_vd_vd(vdouble vd) { return _mm_round_pd(vd, _MM_FROUND_TO_NEAREST_INT |_MM_FROUND_NO_EXC); }
 static INLINE vfloat vtruncate_vf_vf(vfloat vf) { return _mm_round_ps(vf, _MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC); }
 static INLINE vfloat vrint_vf_vf(vfloat vd) { return _mm_round_ps(vd, _MM_FROUND_TO_NEAREST_INT |_MM_FROUND_NO_EXC); }
 static INLINE vopmask veq64_vo_vm_vm(vmask x, vmask y) { return _mm_cmpeq_epi64(x, y); }
 #define FULL_FP_ROUNDING
+//@#define FULL_FP_ROUNDING
 #else
 static INLINE vdouble vtruncate_vd_vd(vdouble vd) { return vcast_vd_vi(vtruncate_vi_vd(vd)); }
 static INLINE vdouble vrint_vd_vd(vdouble vd) { return vcast_vd_vi(vrint_vi_vd(vd)); }
@@ -224,7 +238,7 @@ static INLINE vint vgt_vi_vi_vi(vint x, vint y) { return _mm_cmpgt_epi32(x, y); 
 static INLINE vopmask veq_vo_vi_vi(vint x, vint y) { return _mm_cmpeq_epi32(x, y); }
 static INLINE vopmask vgt_vo_vi_vi(vint x, vint y) { return _mm_cmpgt_epi32(x, y); }
 
-#ifdef __SSE4_1__
+#if CONFIG == 4
 static INLINE vint vsel_vi_vo_vi_vi(vopmask m, vint x, vint y) { return _mm_blendv_epi8(y, x, m); }
 
 static INLINE vdouble vsel_vd_vo_vd_vd(vopmask m, vdouble x, vdouble y) { return _mm_blendv_pd(y, x, _mm_castsi128_pd(m)); }
@@ -299,7 +313,7 @@ static INLINE vfloat vreinterpret_vf_vm(vmask vm) { return _mm_castsi128_ps(vm);
 static INLINE vfloat vreinterpret_vf_vi2(vint2 vm) { return _mm_castsi128_ps(vm); }
 static INLINE vint2 vreinterpret_vi2_vf(vfloat vf) { return _mm_castps_si128(vf); }
 
-#ifndef __SSE4_1__
+#if CONFIG != 4
 static INLINE vfloat vtruncate_vf_vf(vfloat vd) { return vcast_vf_vi2(vtruncate_vi2_vf(vd)); }
 static INLINE vfloat vrint_vf_vf(vfloat vf) { return vcast_vf_vi2(vrint_vi2_vf(vf)); }
 #endif
@@ -346,7 +360,7 @@ static INLINE vopmask vgt_vo_vi2_vi2(vint2 x, vint2 y) { return _mm_cmpgt_epi32(
 static INLINE vint2 veq_vi2_vi2_vi2(vint2 x, vint2 y) { return _mm_cmpeq_epi32(x, y); }
 static INLINE vint2 vgt_vi2_vi2_vi2(vint2 x, vint2 y) { return _mm_cmpgt_epi32(x, y); }
 
-#ifdef __SSE4_1__
+#if CONFIG == 4
 static INLINE vint2 vsel_vi2_vo_vi2_vi2(vopmask m, vint2 x, vint2 y) { return _mm_blendv_epi8(y, x, m); }
 
 static INLINE vfloat vsel_vf_vo_vf_vf(vopmask m, vfloat x, vfloat y) { return _mm_blendv_ps(y, x, _mm_castsi128_ps(m)); }
@@ -408,7 +422,7 @@ static INLINE vdouble vnegpos_vd_vd(vdouble d) { return vreinterpret_vd_vm(vxor_
 static INLINE vfloat vposneg_vf_vf(vfloat d) { return vreinterpret_vf_vm(vxor_vm_vm_vm(vreinterpret_vm_vf(d), vreinterpret_vm_vf(PNMASKf))); }
 static INLINE vfloat vnegpos_vf_vf(vfloat d) { return vreinterpret_vf_vm(vxor_vm_vm_vm(vreinterpret_vm_vf(d), vreinterpret_vm_vf(NPMASKf))); }
 
-#ifdef __SSE3__
+#if CONFIG >= 3
 static INLINE vdouble vsubadd_vd_vd_vd(vdouble x, vdouble y) { return _mm_addsub_pd(x, y); }
 static INLINE vfloat vsubadd_vf_vf_vf(vfloat x, vfloat y) { return _mm_addsub_ps(x, y); }
 #else
@@ -445,8 +459,6 @@ static INLINE void vsscatter2_v_p_i_i_vf(float *ptr, int offset, int step, vfloa
 
 //
 
-typedef Sleef_quad2 vargquad;
-
 static INLINE vmask2 vinterleave_vm2_vm2(vmask2 v) {
   return (vmask2) { _mm_unpacklo_epi64(v.x, v.y), _mm_unpackhi_epi64(v.x, v.y) };
 }
@@ -473,6 +485,9 @@ static void vstoreu_v_p_vm2(void *p, vmask2 vm2) {
   vstoreu_v_p_vi2((int32_t *)p, vcast_vi2_vm(vm2.x));
   vstoreu_v_p_vi2((int32_t *)((uint8_t *)p + sizeof(vmask)), vcast_vi2_vm(vm2.y));
 }
+
+#if !defined(SLEEF_GENHEADER)
+typedef Sleef_quad2 vargquad;
 
 static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
 #if !defined(_MSC_VER)
@@ -501,6 +516,7 @@ static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
   return a;
 #endif
 }
+#endif
 
 static INLINE int vtestallzeros_i_vo64(vopmask g) { return _mm_movemask_epi8(g) == 0; }
 
@@ -513,6 +529,8 @@ static INLINE vmask vneg64_vm_vm(vmask x) { return _mm_sub_epi64(vcast_vm_i_i(0,
 
 #define vsll64_vm_vm_i(x, c) _mm_slli_epi64(x, c)
 #define vsrl64_vm_vm_i(x, c) _mm_srli_epi64(x, c)
+//@#define vsll64_vm_vm_i(x, c) _mm_slli_epi64(x, c)
+//@#define vsrl64_vm_vm_i(x, c) _mm_srli_epi64(x, c)
 
 static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) {
   int64_t ax[2], ay[2];

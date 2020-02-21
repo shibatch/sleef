@@ -5,14 +5,16 @@
 /*          http://www.boost.org/LICENSE_1_0.txt)                    */
 /*********************************************************************/
 
-#ifndef __ARM_FEATURE_SVE
+#if !defined(__ARM_FEATURE_SVE) && !defined(SLEEF_GENHEADER)
 #error Please specify SVE flags.
 #endif
 
+#if !defined(SLEEF_GENHEADER)
 #include <arm_sve.h>
 #include <stdint.h>
 
 #include "misc.h"
+#endif // #if !defined(SLEEF_GENHEADER)
 
 #if defined(VECTLENDP) || defined(VECTLENSP)
 #error VECTLENDP or VECTLENSP already defined
@@ -21,9 +23,12 @@
 #if CONFIG == 1 || CONFIG == 2
 // Vector length agnostic
 #define VECTLENSP (svcntw())
+//@#define VECTLENSP (svcntw())
 #define VECTLENDP (svcntd())
+//@#define VECTLENDP (svcntd())
 #define ISANAME "AArch64 SVE"
 #define ptrue svptrue_b8()
+//@#define ptrue svptrue_b8()
 #elif CONFIG == 8
 // 256-bit vector length
 #define ISANAME "AArch64 SVE 256-bit"
@@ -67,16 +72,22 @@ static INLINE int vavailability_i(int name) { return 3; }
 #endif
 
 #define ENABLE_SP
+//@#define ENABLE_SP
 #define ENABLE_DP
+//@#define ENABLE_DP
 
 #if CONFIG != 2
 #define ENABLE_FMA_SP
+//@#define ENABLE_FMA_SP
 #define ENABLE_FMA_DP
+//@#define ENABLE_FMA_DP
 //#define SPLIT_KERNEL // Benchmark comparison is needed to determine whether this option should be enabled.
 #endif
 
 #define FULL_FP_ROUNDING
+//@#define FULL_FP_ROUNDING
 #define ACCURATE_SQRT
+//@#define ACCURATE_SQRT
 
 // Mask definition
 typedef svint32_t vmask;
@@ -98,6 +109,8 @@ typedef __sizeless_struct {
 // masking predicates
 #define ALL_TRUE_MASK svdup_n_s32(0xffffffff)
 #define ALL_FALSE_MASK svdup_n_s32(0x0)
+//@#define ALL_TRUE_MASK svdup_n_s32(0xffffffff)
+//@#define ALL_FALSE_MASK svdup_n_s32(0x0)
 
 static INLINE void vprefetch_v_p(const void *ptr) {}
 
@@ -338,10 +351,12 @@ static INLINE vint2 vxor_vi2_vi2_vi2(vint2 x, vint2 y) {
 
 // Shifts
 #define vsll_vi2_vi2_i(x, c) svlsl_n_s32_x(ptrue, x, c)
+//@#define vsll_vi2_vi2_i(x, c) svlsl_n_s32_x(ptrue, x, c)
 #define vsrl_vi2_vi2_i(x, c)                                                   \
   svreinterpret_s32_u32(svlsr_n_u32_x(ptrue, svreinterpret_u32_s32(x), c))
-
+//@#define vsrl_vi2_vi2_i(x, c) svreinterpret_s32_u32(svlsr_n_u32_x(ptrue, svreinterpret_u32_s32(x), c))
 #define vsra_vi2_vi2_i(x, c) svasr_n_s32_x(ptrue, x, c)
+//@#define vsra_vi2_vi2_i(x, c) svasr_n_s32_x(ptrue, x, c)
 
 // Comparison returning integers
 static INLINE vint2 vgt_vi2_vi2_vi2(vint2 x, vint2 y) {
@@ -627,7 +642,10 @@ static INLINE vint vandnot_vi_vo_vi(vopmask x, vint y) {
   return svsel_s32(x, ALL_FALSE_MASK, y);
 }
 #define vsra_vi_vi_i(x, c) svasr_n_s32_x(ptrue, x, c)
+//@#define vsra_vi_vi_i(x, c) svasr_n_s32_x(ptrue, x, c)
 #define vsll_vi_vi_i(x, c) svlsl_n_s32_x(ptrue, x, c)
+//@#define vsll_vi_vi_i(x, c) svlsl_n_s32_x(ptrue, x, c)
+
 static INLINE vint vsrl_vi_vi_i(vint x, int c) {
   return svreinterpret_s32_u32(svlsr_n_u32_x(ptrue, svreinterpret_u32_s32(x), c));
 }
@@ -783,8 +801,6 @@ static int vcast_i_vi2(vint2 v) {
 
 //
 
-typedef Sleef_quadx vargquad;
-
 static INLINE vmask2 vinterleave_vm2_vm2(vmask2 v) {
   return (vmask2) {
     svreinterpret_s32_u64(svtrn1_u64(svreinterpret_u64_s32(v.x), svreinterpret_u64_s32(v.y))),
@@ -827,6 +843,9 @@ static vmask2 vloadu_vm2_p(void *p) {
   return vm2;
 }
 
+#if !defined(SLEEF_GENHEADER)
+typedef Sleef_quadx vargquad;
+
 static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
   return vinterleave_vm2_vm2((vmask2) { svld1_s32(ptrue, (int32_t *)&aq), svld1_s32(ptrue, (int32_t *)&(aq.s[svcntd()/2])) });
 }
@@ -838,6 +857,7 @@ static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
   svst1_s32(ptrue, (int32_t *)&(aq.s[svcntd()/2]), vm2.y);
   return aq;
 }
+#endif
 
 static INLINE int vtestallzeros_i_vo64(vopmask g) {
   return svcntp_b64(svptrue_b64(), g) == 0;
@@ -862,7 +882,9 @@ static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) {
 }
 
 #define vsll64_vm_vm_i(x, c) svreinterpret_s32_u64(svlsl_n_u64_x(ptrue, svreinterpret_u64_s32(x), c))
+//@#define vsll64_vm_vm_i(x, c) svreinterpret_s32_u64(svlsl_n_u64_x(ptrue, svreinterpret_u64_s32(x), c))
 #define vsrl64_vm_vm_i(x, c) svreinterpret_s32_u64(svlsr_n_u64_x(ptrue, svreinterpret_u64_s32(x), c))
+//@#define vsrl64_vm_vm_i(x, c) svreinterpret_s32_u64(svlsr_n_u64_x(ptrue, svreinterpret_u64_s32(x), c))
 
 static INLINE vmask vcast_vm_vi(vint vi) { return svreinterpret_s32_s64(svextw_s64_z(ptrue, svreinterpret_s64_s32(vi))); }
 static INLINE vint vcast_vi_vm(vmask vm) { return vand_vm_vm_vm(vm, vcast_vm_i_i(0, 0xffffffff)); }
