@@ -136,17 +136,11 @@ static INLINE vdouble vcast_vd_vi(vint vi) { return _mm512_cvtepi32_pd(vi); }
 static INLINE vint vcast_vi_i(int i) { return _mm256_set1_epi32(i); }
 
 static INLINE vdouble vtruncate_vd_vd(vdouble vd) {
-  __m256d hi = _mm512_extractf64x4_pd(vd, 1), lo = _mm512_extractf64x4_pd(vd, 0);
-  hi = _mm256_round_pd(hi, _MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC);
-  lo = _mm256_round_pd(lo, _MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC);
-  return _mm512_insertf64x4(_mm512_castpd256_pd512(lo), hi, 1);
+  return _mm512_roundscale_pd(vd, _MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC);
 }
 
 static INLINE vdouble vrint_vd_vd(vdouble vd) {
-  __m256d hi = _mm512_extractf64x4_pd(vd, 1), lo = _mm512_extractf64x4_pd(vd, 0);
-  hi = _mm256_round_pd(hi, _MM_FROUND_TO_NEAREST_INT |_MM_FROUND_NO_EXC);
-  lo = _mm256_round_pd(lo, _MM_FROUND_TO_NEAREST_INT |_MM_FROUND_NO_EXC);
-  return _mm512_insertf64x4(_mm512_castpd256_pd512(lo), hi, 1);
+  return _mm512_roundscale_pd(vd, _MM_FROUND_TO_NEAREST_INT |_MM_FROUND_NO_EXC);
 }
 
 static INLINE vint2 vcastu_vi2_vi(vint vi) {
@@ -340,19 +334,11 @@ static INLINE vint2 vrint_vi2_vf(vfloat vf) { return vcast_vi2_vm(_mm512_cvtps_e
 static INLINE vint2 vtruncate_vi2_vf(vfloat vf) { return vcast_vi2_vm(_mm512_cvttps_epi32(vf)); }
 
 static INLINE vfloat vtruncate_vf_vf(vfloat vd) {
-  __m256 hi = _mm256_castpd_ps(_mm512_extractf64x4_pd(vreinterpret_vd_vf(vd), 1));
-  __m256 lo = _mm256_castpd_ps(_mm512_extractf64x4_pd(vreinterpret_vd_vf(vd), 0));
-  hi = _mm256_round_ps(hi, _MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC);
-  lo = _mm256_round_ps(lo, _MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC);
-  return vreinterpret_vf_vd(_mm512_insertf64x4(_mm512_castpd256_pd512(_mm256_castps_pd(lo)), _mm256_castps_pd(hi), 1));
+  return _mm512_roundscale_ps(vd, _MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC);
 }
  
 static INLINE vfloat vrint_vf_vf(vfloat vd) {
-  __m256 hi = _mm256_castpd_ps(_mm512_extractf64x4_pd(vreinterpret_vd_vf(vd), 1));
-  __m256 lo = _mm256_castpd_ps(_mm512_extractf64x4_pd(vreinterpret_vd_vf(vd), 0));
-  hi = _mm256_round_ps(hi, _MM_FROUND_TO_NEAREST_INT |_MM_FROUND_NO_EXC);
-  lo = _mm256_round_ps(lo, _MM_FROUND_TO_NEAREST_INT |_MM_FROUND_NO_EXC);
-  return vreinterpret_vf_vd(_mm512_insertf64x4(_mm512_castpd256_pd512(_mm256_castps_pd(lo)), _mm256_castps_pd(hi), 1));
+  return _mm512_roundscale_ps(vd, _MM_FROUND_TO_NEAREST_INT |_MM_FROUND_NO_EXC);
 }
 
 static INLINE vfloat vadd_vf_vf_vf(vfloat x, vfloat y) { return _mm512_add_ps(x, y); }
