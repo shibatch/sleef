@@ -857,7 +857,7 @@ static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
   svst1_s32(ptrue, (int32_t *)&(aq.s[svcntd()/2]), vm2.y);
   return aq;
 }
-#endif
+#endif // #if !defined(SLEEF_GENHEADER)
 
 static INLINE int vtestallzeros_i_vo64(vopmask g) {
   return svcntp_b64(svptrue_b64(), g) == 0;

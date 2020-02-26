@@ -630,7 +630,7 @@ static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
   return a;
 #endif
 }
-#endif
+#endif // #if !defined(SLEEF_GENHEADER)
 
 #ifdef __INTEL_COMPILER
 static INLINE int vtestallzeros_i_vo64(vopmask g) { return _mm512_mask2int(g) == 0; }

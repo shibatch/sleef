@@ -516,7 +516,7 @@ static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
   return a;
 #endif
 }
-#endif
+#endif // #if !defined(SLEEF_GENHEADER)
 
 static INLINE int vtestallzeros_i_vo64(vopmask g) { return _mm_movemask_epi8(g) == 0; }
 

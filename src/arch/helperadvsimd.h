@@ -719,7 +719,7 @@ static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
   c.vm2 = vuninterleave_vm2_vm2(vm2);
   return c.aq;
 }
-#endif
+#endif // #if !defined(SLEEF_GENHEADER)
 
 static INLINE int vtestallzeros_i_vo64(vopmask g) {
   uint32x2_t x0 = vorr_u32(vget_low_u32(g), vget_high_u32(g));

@@ -423,7 +423,7 @@ static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
   c.vm2 = vm2;
   return c.aq;
 }
-#endif
+#endif // #if !defined(SLEEF_GENHEADER)
 
 static INLINE int vtestallzeros_i_vo64(vopmask g) { return !g ? ~(uint32_t)0 : 0; }
 static INLINE vmask vsel_vm_vo64_vm_vm(vopmask o, vmask x, vmask y) { return o ? x : y; }
