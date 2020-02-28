@@ -26,6 +26,28 @@ static double removelsb(double d) {
   return longBitsToDouble(doubleToRawLongBits(d) & 0xfffffffffffffffeLL);
 }
 
+static int32_t floatToRawIntBits(float d) {
+  union {
+    float f;
+    int32_t i;
+  } tmp;
+  tmp.f = d;
+  return tmp.i;
+}
+
+static float intBitsToFloat(int32_t i) {
+  union {
+    float f;
+    int32_t i;
+  } tmp;
+  tmp.i = i;
+  return tmp.f;
+}
+
+static float removelsbf(float x) {
+  return intBitsToFloat(0xfffffffc & floatToRawIntBits(x));
+}
+
 int main(int argc, char **argv) {
   mpfr_set_default_prec(2048);
   mpfr_t pi, rpi, xrpi, x, y, z, r;
@@ -79,19 +101,19 @@ int main(int argc, char **argv) {
 
     mpfr_set(x, xrpi, GMP_RNDN);
 
-    float rpi20 = (mpfr_get_d(x, GMP_RNDN));
+    float rpi20 = removelsbf(mpfr_get_d(x, GMP_RNDN));
     mpfr_set_d(y, rpi20, GMP_RNDN);
     mpfr_sub(x, x, y, GMP_RNDN);
 
-    float rpi21 = (mpfr_get_d(x, GMP_RNDN));
+    float rpi21 = removelsbf(mpfr_get_d(x, GMP_RNDN));
     mpfr_set_d(y, rpi21, GMP_RNDN);
     mpfr_sub(x, x, y, GMP_RNDN);
 
-    float rpi22 = (mpfr_get_d(x, GMP_RNDN));
+    float rpi22 = removelsbf(mpfr_get_d(x, GMP_RNDN));
     mpfr_set_d(y, rpi22, GMP_RNDN);
     mpfr_sub(x, x, y, GMP_RNDN);
 
-    float rpi23 = removelsb(mpfr_get_d(x, GMP_RNDN));
+    float rpi23 = mpfr_get_d(x, GMP_RNDN);
 
     printf("  %.10g, %.10g, %.10g, %.10g,\n", rpi20, rpi21, rpi22, rpi23);
   }
