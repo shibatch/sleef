@@ -52,8 +52,8 @@ endif()
 set(SLEEF_SUPPORTED_EXTENSIONS
   AVX512F AVX512FNOFMA AVX2 AVX2128 FMA4 AVX SSE4 SSE2  # x86
   ADVSIMD ADVSIMDNOFMA SVE SVENOFMA                     # Aarch64
-  NEON32 NEON32VFPV4			                # Aarch32
-  VSX VSXNOFMA				                # PPC64
+  NEON32 NEON32VFPV4                                    # Aarch32
+  VSX VSXNOFMA                                          # PPC64
   PUREC_SCALAR PURECFMA_SCALAR                          # Generic type
   CACHE STRING "List of SIMD architectures supported by libsleef."
   )
@@ -186,16 +186,16 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
     PURECFMA_SCALAR
   )
 
-  set(HEADER_PARAMS_VSX       finz_ 2 4 "vector double" "vector float" "vector int" "vector int" __VSX__ vsx)
-  set(HEADER_PARAMS_VSX_      finz_ 2 4 "vector double" "vector float" "vector int" "vector int" __VSX__ vsx)
-  set(HEADER_PARAMS_VSXNOFMA  cinz_ 2 4 "vector double" "vector float" "vector int" "vector int" __VSX__ vsxnofma)
-  set(ALIAS_PARAMS_VSX_DP  2 "vector double" "vector int" - vsx)
-  set(ALIAS_PARAMS_VSX_SP -4 "vector float" "vector int" - vsx)
+  set(HEADER_PARAMS_VSX       finz_ 2 4 "__vector double" "__vector float" "__vector int" "__vector int" __VSX__ vsx)
+  set(HEADER_PARAMS_VSX_      finz_ 2 4 "__vector double" "__vector float" "__vector int" "__vector int" __VSX__ vsx)
+  set(HEADER_PARAMS_VSXNOFMA  cinz_ 2 4 "__vector double" "__vector float" "__vector int" "__vector int" __VSX__ vsxnofma)
+  set(ALIAS_PARAMS_VSX_DP  2 "__vector double" "__vector int" - vsx)
+  set(ALIAS_PARAMS_VSX_SP -4 "__vector float" "__vector int" - vsx)
 
   set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mvsx")
 
-  set(TESTER3_DEFINITIONS_VSX      ATR=finz_ DPTYPE=vector_double SPTYPE=vector_float DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vsx)
-  set(TESTER3_DEFINITIONS_VSXNOFMA ATR=cinz_ DPTYPE=vector_double SPTYPE=vector_float DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vsxnofma)
+  set(TESTER3_DEFINITIONS_VSX      ATR=finz_ DPTYPE=__vector_double SPTYPE=__vector_float DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vsx)
+  set(TESTER3_DEFINITIONS_VSXNOFMA ATR=cinz_ DPTYPE=__vector_double SPTYPE=__vector_float DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vsxnofma)
 
 endif()
 
@@ -280,8 +280,8 @@ set(CLANG_FLAGS_ENABLE_NEON32VFPV4 "-march=armv7-a;-mfpu=neon-vfpv4")
 set(CLANG_FLAGS_ENABLE_SVE "-march=armv8-a+sve")
 set(CLANG_FLAGS_ENABLE_SVENOFMA "-march=armv8-a+sve")
 # PPC64
-set(CLANG_FLAGS_ENABLE_VSX "-mvsx")
-set(CLANG_FLAGS_ENABLE_VSXNOFMA "-mvsx")
+set(CLANG_FLAGS_ENABLE_VSX "-mcpu=power8")
+set(CLANG_FLAGS_ENABLE_VSXNOFMA "-mcpu=power8")
 
 # All variables storing compiler flags should be prefixed with FLAGS_
 if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
@@ -579,9 +579,15 @@ if(SLEEF_ARCH_PPC64 AND NOT DISABLE_VSX)
   set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_VSX})
   CHECK_C_SOURCE_COMPILES("
   #include <altivec.h>
+  #ifndef __LITTLE_ENDIAN__
+    #error \"Only VSX(ISA2.07) little-endian mode is supported \"
+  #endif
   int main() {
     vector double d;
-    d = vec_perm(d, d, (vector unsigned char)(4, 5, 6, 7, 0, 1, 2, 3, 12, 13, 14, 15, 8, 9, 10, 11));
+    vector unsigned char p = {
+      4, 5, 6, 7, 0, 1, 2, 3, 12, 13, 14, 15, 8, 9, 10, 11
+    };
+    d = vec_perm(d, d, p);
   }"
     COMPILER_SUPPORTS_VSX)
 
