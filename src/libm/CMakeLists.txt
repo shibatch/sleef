@@ -224,6 +224,16 @@ foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
       target_compile_definitions(${OBJECTDET_${SIMD}} PRIVATE ENABLE_BUILTIN_MATH=1)
     endif()
 
+    if(ENABLE_ALTDIV)
+      target_compile_definitions(${OBJECT_${SIMD}} PRIVATE ENABLE_ALTDIV=1)
+      target_compile_definitions(${OBJECTDET_${SIMD}} PRIVATE ENABLE_ALTDIV=1)
+    endif()
+
+    if(ENABLE_ALTSQRT)
+      target_compile_definitions(${OBJECT_${SIMD}} PRIVATE ENABLE_ALTSQRT=1)
+      target_compile_definitions(${OBJECTDET_${SIMD}} PRIVATE ENABLE_ALTSQRT=1)
+    endif()
+
     if (INDEX_ALIAS EQUAL -1)
       target_compile_definitions(${OBJECT_${SIMD}} PRIVATE
 	ENABLE_${SIMD}=1
@@ -396,6 +406,14 @@ if(ENABLE_GNUABI)
             ENABLE_AAVPCS=1
           )
         endif()
+
+	if(ENABLE_ALTDIV)
+	  target_compile_definitions(${OBJECT_${SIMD}_${T}_GNUABI} PRIVATE ENABLE_ALTDIV=1)
+	endif()
+
+	if(ENABLE_ALTSQRT)
+	  target_compile_definitions(${OBJECT_${SIMD}_${T}_GNUABI} PRIVATE ENABLE_ALTSQRT=1)
+	endif()
 
 	set_target_properties(${OBJECT_${SIMD}_${T}_GNUABI} PROPERTIES
           ${COMMON_TARGET_PROPERTIES}
