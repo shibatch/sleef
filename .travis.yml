@@ -56,6 +56,17 @@ matrix:
       env:
         - LABEL="armhf-gcc"
         - ENABLE_DOCKER="true"
+    - arch: ppc64le
+      dist: bionic
+      env:
+        - LABEL=common
+        - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
+    - arch: ppc64le
+      compiler: clang
+      dist: bionic
+      env:
+        - LABEL=common
+        - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
 
 before_install:
      - export PATH=$PATH:/usr/bin

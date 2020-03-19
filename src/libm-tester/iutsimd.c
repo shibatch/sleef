@@ -252,8 +252,9 @@ typedef Sleef___m256_2 vfloat2;
 #if !defined(USE_INLINE_HEADER)
 #define CONFIG 1
 #include "helperpower_128.h"
-typedef Sleef_vector_double_2 vdouble2;
-typedef Sleef_vector_float_2 vfloat2;
+#include "renamevsx.h"
+typedef Sleef___vector_double_2 vdouble2;
+typedef Sleef___vector_float_2 vfloat2;
 #endif
 #endif
 
@@ -262,8 +263,9 @@ typedef Sleef_vector_float_2 vfloat2;
 #if !defined(USE_INLINE_HEADER)
 #define CONFIG 2
 #include "helperpower_128.h"
-typedef Sleef_vector_double_2 vdouble2;
-typedef Sleef_vector_float_2 vfloat2;
+#include "renamevsxnofma.h"
+typedef Sleef___vector_double_2 vdouble2;
+typedef Sleef___vector_float_2 vfloat2;
 #endif
 #endif
 
