@@ -18,8 +18,11 @@
 #include "testerutil.h"
 
 #ifdef __VSX__
-typedef vector double vector_double;
-typedef vector float  vector_float;
+#include <altivec.h>
+#undef vector
+#undef bool
+typedef __vector double __vector_double;
+typedef __vector float  __vector_float;
 #endif
 
 //
@@ -71,10 +74,10 @@ static INLINE float getsvfloat32_t(svfloat32_t v, int r)  { float  a[svcntw()]; 
 #endif
 
 #ifdef __VSX__
-static INLINE vector_double setvector_double(double d, int r) { double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return (vector double) ( a[0], a[1] ); }
-static INLINE double getvector_double(vector double v, int r) { double a[2]; return unifyValue(v[r & 1]); }
-static INLINE vector_float setvector_float(float d, int r) { float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return (vector float) ( a[0], a[1], a[2], a[3] ); }
-static INLINE float getvector_float(vector float v, int r) { float a[4]; return unifyValuef(v[r & 3]); }
+static INLINE __vector double set__vector_double(double d, int r) { double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return vec_vsx_ld(0, a); }
+static INLINE double get__vector_double(__vector double v, int r) { double a[2]; vec_vsx_st(v, 0, a); return unifyValue(a[r & 1]); }
+static INLINE __vector float set__vector_float(float d, int r) { float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return vec_vsx_ld(0, a); }
+static INLINE float get__vector_float(__vector float v, int r) { float a[4]; vec_vsx_st(v, 0, a); return unifyValuef(a[r & 3]); }
 #endif
 
 //
@@ -282,7 +285,7 @@ int do_test(int argc, char **argv)
   test_d_d(exp10, u35, -1000, 1000, 200001);
   test_d_d(expm1, u10, -1000, 1000, 200001);
   test_d_d_d(pow, u10, -100, 100, 451, -100, 100, 451);
-  
+
   testu_d_d(cbrt, u10, 1e-14, 1e+14, 100001);
   testu_d_d(cbrt, u10, -1e-14, -1e+14, 100001);
   testu_d_d(cbrt, u35, 1e-14, 1e+14, 100001);
@@ -307,7 +310,7 @@ int do_test(int argc, char **argv)
   test_d_d(asinh, u10, -700, 700, 200001);
   test_d_d(acosh, u10, 1, 700, 200001);
   test_d_d(atanh, u10, -700, 700, 200001);
-  
+
   test_d_d(lgamma, u10, -5000, 5000, 200001);
   test_d_d(tgamma, u10, -10, 10, 200001);
   test_d_d(erf, u10, -100, 100, 200001);
@@ -355,7 +358,7 @@ int do_test(int argc, char **argv)
   test_f_f(exp10, u35, -1000, 1000, 200001);
   test_f_f(expm1, u10, -1000, 1000, 200001);
   test_f_f_f(pow, u10, -100, 100, 451, -100, 100, 451);
-  
+
   testu_f_f(cbrt, u10, 1e-14, 1e+14, 100001);
   testu_f_f(cbrt, u10, -1e-14, -1e+14, 100001);
   testu_f_f(cbrt, u35, 1e-14, 1e+14, 100001);
@@ -380,7 +383,7 @@ int do_test(int argc, char **argv)
   test_f_f(asinh, u10, -88, 88, 200001);
   test_f_f(acosh, u10, 1, 88, 200001);
   test_f_f(atanh, u10, -88, 88, 200001);
-  
+
   test_f_f(lgamma, u10, -5000, 5000, 200001);
   test_f_f(tgamma, u10, -10, 10, 200001);
   test_f_f(erf, u10, -100, 100, 200001);
