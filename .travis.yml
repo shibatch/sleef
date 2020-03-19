@@ -8,83 +8,17 @@ dist: trusty
 # Include osx jobs
 matrix:
   include:
-    - os: osx
-      arch: amd64
-      compiler: clang # use default apple clang
-      env:
-        - LABEL="osx-clang"
-    - os: linux
-      arch: amd64
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-7
-      env:
-        - LABEL="x86_64-gcc"
-    - os: linux
-      arch: amd64
-      addons:
-        apt:
-          sources:
-            - llvm-toolchain-trusty-5.0
-          packages:
-            - clang-5.0
-      env:
-        - LABEL="x86_64-clang"
     - os: linux
       arch: arm64
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-7
-      env:
-        - LABEL="arm64-gcc"
-    - os: linux
-      arch: arm64
-      addons:
-        apt:
-          packages:
-            - clang-8
-      env:
-        - LABEL="arm64-clang"
-    - os: linux
-      arch: arm64
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-7
+      dist: bionic
       env:
         - LABEL="arm64-gcc-lto"
     - os: linux
       arch: arm64
+      dist: bionic
       addons:
-        apt:
-          packages:
-            - clang-8
       env:
         - LABEL="arm64-clang-lto"
-    - os: linux
-      services: docker
-      env:
-        - LABEL="armhf-gcc"
-        - ENABLE_DOCKER="true"
-    - arch: ppc64le
-      dist: bionic
-      env:
-        - LABEL=common
-        - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
-    - arch: ppc64le
-      compiler: clang
-      dist: bionic
-      env:
-        - LABEL=common
-        - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
 
 before_install:
      - export PATH=$PATH:/usr/bin
