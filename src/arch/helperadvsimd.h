@@ -145,7 +145,7 @@ static INLINE VECTOR_CC vint2 vreinterpret_vi2_vd(vdouble vd) {
 // Broadcast
 static INLINE VECTOR_CC vfloat vcast_vf_f(float f) { return vdupq_n_f32(f); }
 
-// Add, Sub, Mul, Reciprocal 1/x, Division, Square root
+// Add, Sub, Mul
 static INLINE VECTOR_CC vfloat vadd_vf_vf_vf(vfloat x, vfloat y) {
   return vaddq_f32(x, y);
 }
@@ -155,13 +155,6 @@ static INLINE VECTOR_CC vfloat vsub_vf_vf_vf(vfloat x, vfloat y) {
 static INLINE VECTOR_CC vfloat vmul_vf_vf_vf(vfloat x, vfloat y) {
   return vmulq_f32(x, y);
 }
-static INLINE VECTOR_CC vfloat vrec_vf_vf(vfloat d) {
-  return vdivq_f32(vcast_vf_f(1.0f), d);
-}
-static INLINE VECTOR_CC vfloat vdiv_vf_vf_vf(vfloat n, vfloat d) {
-  return vdivq_f32(n, d);
-}
-static INLINE VECTOR_CC vfloat vsqrt_vf_vf(vfloat d) { return vsqrtq_f32(d); }
 
 // |x|, -x
 static INLINE VECTOR_CC vfloat vabs_vf_vf(vfloat f) { return vabsq_f32(f); }
@@ -185,6 +178,74 @@ static INLINE VECTOR_CC vfloat vmla_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { 
 static INLINE VECTOR_CC vfloat vmlanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vsub_vf_vf_vf(z, vmul_vf_vf_vf(x, y)); }
 static INLINE VECTOR_CC vfloat vmlapn_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vsub_vf_vf_vf(vmul_vf_vf_vf(x, y), z); }
 #endif
+
+static INLINE VECTOR_CC vfloat vfma_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { // z + x * y
+  return vfmaq_f32(z, x, y);
+}
+
+static INLINE VECTOR_CC vfloat vfmanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { // z - x * y
+  return vfmsq_f32(z, x, y);
+}
+
+static INLINE VECTOR_CC vfloat vfmapn_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { // x * y - z
+  return vneg_vf_vf(vfmanp_vf_vf_vf_vf(x, y, z));
+}
+
+// Reciprocal 1/x, Division, Square root
+static INLINE VECTOR_CC vfloat vdiv_vf_vf_vf(vfloat n, vfloat d) {
+#ifndef ENABLE_ALTDIV
+  return vdivq_f32(n, d);
+#else
+  // Finite numbers (including denormal) only, gives correctly rounded result
+  float32x4_t t, u, x, y;
+  uint32x4_t i0, i1;
+  i0 = vandq_u32(vreinterpretq_u32_f32(n), vdupq_n_u32(0x7c000000));
+  i1 = vandq_u32(vreinterpretq_u32_f32(d), vdupq_n_u32(0x7c000000));
+  i0 = vsubq_u32(vdupq_n_u32(0x7d000000), vshrq_n_u32(vaddq_u32(i0, i1), 1));
+  t = vreinterpretq_f32_u32(i0);
+  y = vmulq_f32(d, t);
+  x = vmulq_f32(n, t);
+  t = vrecpeq_f32(y);
+  t = vmulq_f32(t, vrecpsq_f32(y, t));
+  t = vmulq_f32(t, vrecpsq_f32(y, t));
+  u = vmulq_f32(x, t);
+  u = vfmaq_f32(u, vfmsq_f32(x, y, u), t);
+  return u;
+#endif
+}
+static INLINE VECTOR_CC vfloat vrec_vf_vf(vfloat d) {
+#ifndef ENABLE_ALTDIV
+  return vdiv_vf_vf_vf(vcast_vf_f(1.0f), d);
+#else
+  return vbslq_f32(vceqq_f32(vabs_vf_vf(d), vcast_vf_f(SLEEF_INFINITYf)),
+		   vcast_vf_f(0), vdiv_vf_vf_vf(vcast_vf_f(1.0f), d));
+#endif
+}
+
+static INLINE VECTOR_CC vfloat vsqrt_vf_vf(vfloat d) {
+#ifndef ENABLE_ALTSQRT
+  return vsqrtq_f32(d);
+#else
+  // Gives correctly rounded result for all input range
+  vfloat w, x, y, z;
+
+  y = vrsqrteq_f32(d);
+  x = vmul_vf_vf_vf(d, y);         w = vmul_vf_vf_vf(vcast_vf_f(0.5), y);
+  y = vfmanp_vf_vf_vf_vf(x, w, vcast_vf_f(0.5));
+  x = vfma_vf_vf_vf_vf(x, y, x);   w = vfma_vf_vf_vf_vf(w, y, w);
+
+  y = vfmanp_vf_vf_vf_vf(x, w, vcast_vf_f(1.5));  w = vadd_vf_vf_vf(w, w);
+  w = vmul_vf_vf_vf(w, y);
+  x = vmul_vf_vf_vf(w, d);
+  y = vfmapn_vf_vf_vf_vf(w, d, x); z = vfmanp_vf_vf_vf_vf(w, x, vcast_vf_f(1));
+  z = vfmanp_vf_vf_vf_vf(w, y, z); w = vmul_vf_vf_vf(vcast_vf_f(0.5), x);
+  w = vfma_vf_vf_vf_vf(w, z, y);
+  w = vadd_vf_vf_vf(w, x);
+
+  return vbslq_f32(vorrq_u32(vceqq_f32(d, vcast_vf_f(0)),
+			     vceqq_f32(d, vcast_vf_f(SLEEF_INFINITYf))), d, w);
+#endif
+}
 
 // max, min
 static INLINE VECTOR_CC vfloat vmax_vf_vf_vf(vfloat x, vfloat y) {
@@ -288,7 +349,7 @@ static INLINE VECTOR_CC vint2 vsel_vi2_vm_vi2_vi2(vmask m, vint2 x, vint2 y) {
 // Broadcast
 static INLINE VECTOR_CC vdouble vcast_vd_d(double f) { return vdupq_n_f64(f); }
 
-// Add, Sub, Mul, Reciprocal 1/x, Division, Square root
+// Add, Sub, Mul
 static INLINE VECTOR_CC vdouble vadd_vd_vd_vd(vdouble x, vdouble y) {
   return vaddq_f64(x, y);
 }
@@ -298,13 +359,6 @@ static INLINE VECTOR_CC vdouble vsub_vd_vd_vd(vdouble x, vdouble y) {
 static INLINE VECTOR_CC vdouble vmul_vd_vd_vd(vdouble x, vdouble y) {
   return vmulq_f64(x, y);
 }
-static INLINE VECTOR_CC vdouble vrec_vd_vd(vdouble d) {
-  return vdivq_f64(vcast_vd_d(1.0f), d);
-}
-static INLINE VECTOR_CC vdouble vdiv_vd_vd_vd(vdouble n, vdouble d) {
-  return vdivq_f64(n, d);
-}
-static INLINE VECTOR_CC vdouble vsqrt_vd_vd(vdouble d) { return vsqrtq_f64(d); }
 
 // |x|, -x
 static INLINE VECTOR_CC vdouble vabs_vd_vd(vdouble f) { return vabsq_f64(f); }
@@ -349,16 +403,63 @@ static INLINE VECTOR_CC vdouble vfmapn_vd_vd_vd_vd(vdouble x, vdouble y, vdouble
   return vneg_vd_vd(vfmanp_vd_vd_vd_vd(x, y, z));
 }
 
-static INLINE VECTOR_CC vfloat vfma_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { // z + x * y
-  return vfmaq_f32(z, x, y);
+// Reciprocal 1/x, Division, Square root
+static INLINE VECTOR_CC vdouble vdiv_vd_vd_vd(vdouble n, vdouble d) {
+#ifndef ENABLE_ALTDIV
+  return vdivq_f64(n, d);
+#else
+  // Finite numbers (including denormal) only, gives correctly rounded result
+  float64x2_t t, u, x, y;
+  uint64x2_t i0, i1;
+  i0 = vandq_u64(vreinterpretq_u64_f64(n), vdupq_n_u64(0x7fc0000000000000L));
+  i1 = vandq_u64(vreinterpretq_u64_f64(d), vdupq_n_u64(0x7fc0000000000000L));
+  i0 = vsubq_u64(vdupq_n_u64(0x7fd0000000000000L), vshrq_n_u64(vaddq_u64(i0, i1), 1));
+  t = vreinterpretq_f64_u64(i0);
+  y = vmulq_f64(d, t);
+  x = vmulq_f64(n, t);
+  t = vrecpeq_f64(y);
+  t = vmulq_f64(t, vrecpsq_f64(y, t));
+  t = vmulq_f64(t, vrecpsq_f64(y, t));
+  t = vmulq_f64(t, vrecpsq_f64(y, t));
+  u = vmulq_f64(x, t);
+  u = vfmaq_f64(u, vfmsq_f64(x, y, u), t);
+  return u;
+#endif
+}
+static INLINE VECTOR_CC vdouble vrec_vd_vd(vdouble d) {
+#ifndef ENABLE_ALTDIV
+  return vdiv_vd_vd_vd(vcast_vd_d(1.0f), d);
+#else
+  return vbslq_f64(vceqq_f64(vabs_vd_vd(d), vcast_vd_d(SLEEF_INFINITY)),
+		   vcast_vd_d(0), vdiv_vd_vd_vd(vcast_vd_d(1.0f), d));
+#endif
 }
 
-static INLINE VECTOR_CC vfloat vfmanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { // z - x * y
-  return vfmsq_f32(z, x, y);
-}
+static INLINE VECTOR_CC vdouble vsqrt_vd_vd(vdouble d) {
+#ifndef ENABLE_ALTSQRT
+  return vsqrtq_f64(d);
+#else
+  // Gives correctly rounded result for all input range
+  vdouble w, x, y, z;
 
-static INLINE VECTOR_CC vfloat vfmapn_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { // x * y - z
-  return vneg_vf_vf(vfmanp_vf_vf_vf_vf(x, y, z));
+  y = vrsqrteq_f64(d);
+  x = vmul_vd_vd_vd(d, y);         w = vmul_vd_vd_vd(vcast_vd_d(0.5), y);
+  y = vfmanp_vd_vd_vd_vd(x, w, vcast_vd_d(0.5));
+  x = vfma_vd_vd_vd_vd(x, y, x);   w = vfma_vd_vd_vd_vd(w, y, w);
+  y = vfmanp_vd_vd_vd_vd(x, w, vcast_vd_d(0.5));
+  x = vfma_vd_vd_vd_vd(x, y, x);   w = vfma_vd_vd_vd_vd(w, y, w);
+
+  y = vfmanp_vd_vd_vd_vd(x, w, vcast_vd_d(1.5));  w = vadd_vd_vd_vd(w, w);
+  w = vmul_vd_vd_vd(w, y);
+  x = vmul_vd_vd_vd(w, d);
+  y = vfmapn_vd_vd_vd_vd(w, d, x); z = vfmanp_vd_vd_vd_vd(w, x, vcast_vd_d(1));
+  z = vfmanp_vd_vd_vd_vd(w, y, z); w = vmul_vd_vd_vd(vcast_vd_d(0.5), x);
+  w = vfma_vd_vd_vd_vd(w, z, y);
+  w = vadd_vd_vd_vd(w, x);
+
+  return vbslq_f64(vorrq_u64(vceqq_f64(d, vcast_vd_d(0)),
+			     vceqq_f64(d, vcast_vd_d(SLEEF_INFINITY))), d, w);
+#endif
 }
 
 /* Comparisons */

@@ -14,6 +14,9 @@ option(SLEEF_SHOW_ERROR_LOG "Show cmake error log." OFF)
 
 option(ENFORCE_TESTER3 "Build fails if tester3 is not built" OFF)
 
+option(ENABLE_ALTDIV  "Enable alternative division method (aarch64 only)" OFF)
+option(ENABLE_ALTSQRT "Enable alternative sqrt method (aarch64 only)" OFF)
+
 # See doc/build-with-cmake.md for instructions on how to build Sleef.
 cmake_minimum_required(VERSION 3.4.3)
 # Set to NEW when updating cmake_minimum_required to VERSION >= 3.7.2
@@ -24,8 +27,8 @@ endif()
 enable_testing()
 
 set(SLEEF_VERSION_MAJOR 3)
-set(SLEEF_VERSION_MINOR 4)
-set(SLEEF_VERSION_PATCHLEVEL 1)
+set(SLEEF_VERSION_MINOR 5)
+set(SLEEF_VERSION_PATCHLEVEL 0)
 set(SLEEF_VERSION ${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}.${SLEEF_VERSION_PATCHLEVEL})
 set(SLEEF_SOVERSION ${SLEEF_VERSION_MAJOR})
 
