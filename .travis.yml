@@ -83,7 +83,7 @@ matrix:
       addons:
         apt:
           packages:
-            - g++-7 libmpfr-dev libssl-dev libfftw3-dev
+            - clang-9 libmpfr-dev libssl-dev libfftw3-dev
       env:
         - LABEL="s390x-clang"
 
