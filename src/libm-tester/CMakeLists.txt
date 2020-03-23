@@ -279,6 +279,17 @@ if (SLEEF_ARCH_X86)
   list(APPEND IUT_LIST iutdsp256)
 endif(SLEEF_ARCH_X86)
 
+if (SLEEF_ARCH_S390X)
+  # iutdsp128
+  add_executable(iutdsp128 ${IUT_SRC})
+  target_compile_definitions(iutdsp128 PRIVATE ENABLE_DSPS390X_128=1 ${COMMON_TARGET_DEFINITIONS})
+  target_compile_options(iutdsp128 PRIVATE ${FLAGS_ENABLE_Z13})
+  target_link_libraries(iutdsp128 ${TARGET_LIBSLEEF} ${LIBM} ${LIBRT})
+  add_dependencies(iutdsp128 ${TARGET_HEADERS} ${TARGET_LIBSLEEF})
+  add_test_iut(iutdsp128)
+  list(APPEND IUT_LIST iutdsp128)
+endif(SLEEF_ARCH_S390X)
+
 if(LIB_MPFR AND NOT MINGW)
   # Build tester2 scalar
   foreach(P dp sp)

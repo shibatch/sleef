@@ -1,0 +1,171 @@
+//          Copyright Naoki Shibata 2010 - 2019.
+// Distributed under the Boost Software License, Version 1.0.
+//    (See accompanying file LICENSE.txt or copy at
+//          http://www.boost.org/LICENSE_1_0.txt)
+
+#include <stdint.h>
+#include <assert.h>
+
+#include <signal.h>
+#include <setjmp.h>
+#include <vecintrin.h>
+
+#include "misc.h"
+
+#define CONST const
+
+#define IMPORT_IS_EXPORT
+#include "sleef.h"
+
+NOEXPORT double sleef_cpuidtmp0, sleef_cpuidtmp1;
+static jmp_buf sigjmp;
+
+#if defined(__GNUC__) && defined(__clang__)
+#pragma clang optimize off
+#endif
+
+#if defined(__GNUC__) && !defined(__clang__)
+#pragma GCC optimize("O0")
+#endif
+
+#define VECTOR __attribute__((vector_size(16)))
+
+typedef VECTOR double vector_double;
+typedef VECTOR float  vector_float;
+
+static void tryZ14() {
+  VECTOR double vx, vy;
+  vx[0] = sleef_cpuidtmp0;
+  vy[0] = sleef_cpuidtmp1;
+  sleef_cpuidtmp0 = vec_max(vx, vy)[0];
+}
+
+static void sighandler(int signum) {
+  longjmp(sigjmp, 1);
+}
+
+static int cpuSupportsZ14() {
+  static int cache = -1;
+  if (cache != -1) return cache;
+
+  void (*org);
+  org = signal(SIGILL, sighandler);
+
+  if (setjmp(sigjmp) == 0) {
+    tryZ14();
+    cache = 1;
+  } else {
+    cache = 0;
+  }
+
+  signal(SIGILL, org);
+  return cache;
+}
+
+#define SUBST_IF_Z14(funcz14) if (cpuSupportsZ14()) p = funcz14;
+
+/*
+ * DISPATCH_R_X, DISPATCH_R_X_Y and DISPATCH_R_X_Y_Z are the macro for
+ * defining dispatchers. R, X, Y and Z represent the data types of
+ * return value, first argument, second argument and third argument,
+ * respectively. vf, vi, i and p correspond to vector FP, vector
+ * integer, scalar integer and scalar pointer types, respectively.
+ *
+ * The arguments for the macros are as follows:
+ *   fptype   : FP type name
+ *   funcname : Fundamental function name
+ *   pfn      : Name of pointer of the function to the dispatcher
+ *   dfn      : Name of the dispatcher function
+ *   funcz13  : Name of the Z13 function
+ *   funcz14  : Name of the Z14 function
+ */
+
+#define DISPATCH_vf_vf(fptype, funcName, pfn, dfn, funcz13, funcz14) \
+  static CONST VECTOR_CC fptype (*pfn)(fptype arg0);			\
+  static CONST VECTOR_CC fptype dfn(fptype arg0) {			\
+    fptype CONST VECTOR_CC (*p)(fptype arg0) = funcz13;			\
+    SUBST_IF_Z14(funcz14);						\
+    pfn = p;								\
+    return (*pfn)(arg0);						\
+  }									\
+  static CONST VECTOR_CC fptype (*pfn)(fptype arg0) = dfn;		\
+  EXPORT CONST VECTOR_CC fptype funcName(fptype arg0) { return (*pfn)(arg0); }
+
+#define DISPATCH_vf_vf_vf(fptype, funcName, pfn, dfn, funcz13, funcz14) \
+  static CONST VECTOR_CC fptype (*pfn)(fptype arg0, fptype arg1);	\
+  static CONST VECTOR_CC fptype dfn(fptype arg0, fptype arg1) {		\
+    fptype CONST VECTOR_CC (*p)(fptype arg0, fptype arg1) = funcz13;	\
+    SUBST_IF_Z14(funcz14);						\
+    pfn = p;								\
+    return (*pfn)(arg0, arg1);						\
+  }									\
+  static CONST VECTOR_CC fptype (*pfn)(fptype arg0, fptype arg1) = dfn; \
+  EXPORT CONST VECTOR_CC fptype funcName(fptype arg0, fptype arg1) { return (*pfn)(arg0, arg1); }
+
+#define DISPATCH_vf2_vf(fptype, fptype2, funcName, pfn, dfn, funcz13, funcz14) \
+  static CONST VECTOR_CC fptype2 (*pfn)(fptype arg0);			\
+  static CONST VECTOR_CC fptype2 dfn(fptype arg0) {			\
+    fptype2 CONST VECTOR_CC (*p)(fptype arg0) = funcz13;		\
+    SUBST_IF_Z14(funcz14);						\
+    pfn = p;								\
+    return (*pfn)(arg0);						\
+  }									\
+  static CONST VECTOR_CC fptype2 (*pfn)(fptype arg0) = dfn;		\
+  EXPORT CONST VECTOR_CC fptype2 funcName(fptype arg0) { return (*pfn)(arg0); }
+
+#define DISPATCH_vf_vf_vi(fptype, itype, funcName, pfn, dfn, funcz13, funcz14) \
+  static CONST VECTOR_CC fptype (*pfn)(fptype arg0, itype arg1);	\
+  static CONST VECTOR_CC fptype dfn(fptype arg0, itype arg1) {		\
+    fptype CONST VECTOR_CC (*p)(fptype arg0, itype arg1) = funcz13;	\
+    SUBST_IF_Z14(funcz14);						\
+    pfn = p;								\
+    return (*pfn)(arg0, arg1);						\
+  }									\
+  static CONST VECTOR_CC fptype (*pfn)(fptype arg0, itype arg1) = dfn;	\
+  EXPORT CONST VECTOR_CC fptype funcName(fptype arg0, itype arg1) { return (*pfn)(arg0, arg1); }
+
+#define DISPATCH_vi_vf(fptype, itype, funcName, pfn, dfn, funcz13, funcz14) \
+  static CONST VECTOR_CC itype (*pfn)(fptype arg0);			\
+  static CONST VECTOR_CC itype dfn(fptype arg0) {			\
+    itype CONST VECTOR_CC (*p)(fptype arg0) = funcz13;			\
+    SUBST_IF_Z14(funcz14);						\
+    pfn = p;								\
+    return (*pfn)(arg0);						\
+  }									\
+  static CONST VECTOR_CC itype (*pfn)(fptype arg0) = dfn;		\
+  EXPORT CONST VECTOR_CC itype funcName(fptype arg0) { return (*pfn)(arg0); }
+
+#define DISPATCH_vf_vf_vf_vf(fptype, funcName, pfn, dfn, funcz13, funcz14) \
+  static CONST VECTOR_CC fptype (*pfn)(fptype arg0, fptype arg1, fptype arg2); \
+  static CONST VECTOR_CC fptype dfn(fptype arg0, fptype arg1, fptype arg2) { \
+    fptype CONST VECTOR_CC (*p)(fptype arg0, fptype arg1, fptype arg2) = funcz13; \
+    SUBST_IF_Z14(funcz14);						\
+    pfn = p;								\
+    return (*pfn)(arg0, arg1, arg2);					\
+  }									\
+  static CONST VECTOR_CC fptype (*pfn)(fptype arg0, fptype arg1, fptype arg2) = dfn; \
+  EXPORT CONST VECTOR_CC fptype funcName(fptype arg0, fptype arg1, fptype arg2) { return (*pfn)(arg0, arg1, arg2); }
+
+#define DISPATCH_i_i(funcName, pfn, dfn, funcz13, funcz14)	\
+  static CONST int (*pfn)(int arg0);					\
+  static CONST int dfn(int arg0) {					\
+    int CONST (*p)(int) = funcz13;					\
+    SUBST_IF_Z14(funcz14);						\
+    pfn = p;								\
+    return (*pfn)(arg0);						\
+  }									\
+  static CONST int (*pfn)(int arg0) = dfn;				\
+  EXPORT CONST int funcName(int arg0) { return (*pfn)(arg0); }
+
+#define DISPATCH_p_i(funcName, pfn, dfn, funcz13, funcz14)	\
+  static CONST void *(*pfn)(int arg0);					\
+  static CONST void *dfn(int arg0) {					\
+    CONST void *(*p)(int) = funcz13;					\
+    SUBST_IF_Z14(funcz14);						\
+    pfn = p;								\
+    return (*pfn)(arg0);						\
+  }									\
+  static CONST void *(*pfn)(int arg0) = dfn;				\
+  EXPORT CONST void *funcName(int arg0) { return (*pfn)(arg0); }
+
+//

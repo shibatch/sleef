@@ -54,6 +54,7 @@ set(SLEEF_SUPPORTED_EXTENSIONS
   ADVSIMD ADVSIMDNOFMA SVE SVENOFMA                     # Aarch64
   NEON32 NEON32VFPV4                                    # Aarch32
   VSX VSXNOFMA                                          # PPC64
+  Z13 Z13NOFMA Z14 Z14NOFMA		                # IBM Z
   PUREC_SCALAR PURECFMA_SCALAR                          # Generic type
   CACHE STRING "List of SIMD architectures supported by libsleef."
   )
@@ -197,6 +198,32 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
   set(TESTER3_DEFINITIONS_VSX      ATR=finz_ DPTYPE=__vector_double SPTYPE=__vector_float DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vsx)
   set(TESTER3_DEFINITIONS_VSXNOFMA ATR=cinz_ DPTYPE=__vector_double SPTYPE=__vector_float DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vsxnofma)
 
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "s390x")
+  set(SLEEF_ARCH_S390X ON CACHE INTERNAL "True for IBM Z architecture.")
+
+  set(SLEEF_HEADER_LIST
+    Z13_
+    Z13
+    Z13NOFMA
+    Z14
+    Z14NOFMA
+    PUREC_SCALAR
+    PURECFMA_SCALAR
+  )
+
+  set(HEADER_PARAMS_Z13_     finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VX__)
+  set(HEADER_PARAMS_Z13      finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VX__ z13)
+  set(HEADER_PARAMS_Z13NOFMA cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VX__ z13nofma)
+  set(HEADER_PARAMS_Z14      finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VX__ z14)
+  set(HEADER_PARAMS_Z14NOFMA cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VX__ z14nofma)
+
+  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-march=z13")
+
+  set(TESTER3_DEFINITIONS_Z13      ATR=finz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=z13)
+  set(TESTER3_DEFINITIONS_Z13NOFMA ATR=cinz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=z13nofma)
+  set(TESTER3_DEFINITIONS_Z14      ATR=finz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=z14)
+  set(TESTER3_DEFINITIONS_Z14NOFMA ATR=cinz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=z14nofma)
+
 endif()
 
 command_arguments(HEADER_PARAMS_PUREC_SCALAR    cinz_ 1 1 double float int32_t int32_t __STDC__ purec)
@@ -226,6 +253,10 @@ command_arguments(RENAME_PARAMS_NEON32          cinz_ 2 4 neon)
 command_arguments(RENAME_PARAMS_NEON32VFPV4     finz_ 2 4 neonvfpv4)
 command_arguments(RENAME_PARAMS_VSX             finz_ 2 4 vsx)
 command_arguments(RENAME_PARAMS_VSXNOFMA        cinz_ 2 4 vsxnofma)
+command_arguments(RENAME_PARAMS_Z13             finz_ 2 4 z13)
+command_arguments(RENAME_PARAMS_Z13NOFMA        cinz_ 2 4 z13nofma)
+command_arguments(RENAME_PARAMS_Z14             finz_ 2 4 z14)
+command_arguments(RENAME_PARAMS_Z14NOFMA        cinz_ 2 4 z14nofma)
 command_arguments(RENAME_PARAMS_PUREC_SCALAR    cinz_ 1 1 purec)
 command_arguments(RENAME_PARAMS_PURECFMA_SCALAR finz_ 1 1 purecfma)
 # The vector length parameters in SVE, for SP and DP, are chosen for
@@ -282,6 +313,11 @@ set(CLANG_FLAGS_ENABLE_SVENOFMA "-march=armv8-a+sve")
 # PPC64
 set(CLANG_FLAGS_ENABLE_VSX "-mcpu=power8")
 set(CLANG_FLAGS_ENABLE_VSXNOFMA "-mcpu=power8")
+# IBM z
+set(CLANG_FLAGS_ENABLE_Z13 "-march=z13")
+set(CLANG_FLAGS_ENABLE_Z13NOFMA "-march=z13")
+set(CLANG_FLAGS_ENABLE_Z14 "-march=z14")
+set(CLANG_FLAGS_ENABLE_Z14NOFMA "-march=z14")
 
 # All variables storing compiler flags should be prefixed with FLAGS_
 if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
@@ -598,6 +634,46 @@ endif()
 
 if (ENFORCE_VSX AND NOT COMPILER_SUPPORTS_VSX)
   message(FATAL_ERROR "ENFORCE_VSX is specified and that feature is disabled or not supported by the compiler")
+endif()
+
+# IBM Z
+
+option(DISABLE_Z13 "Disable Z13" OFF)
+option(ENFORCE_Z13 "Build fails if Z13 is not supported by the compiler" OFF)
+
+if(SLEEF_ARCH_S390X AND NOT DISABLE_Z13)
+  set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_Z13})
+  CHECK_C_SOURCE_COMPILES("
+  #include <vecintrin.h>
+  #define VECTOR __attribute__((vector_size(16)))
+  int main() {
+    VECTOR double d;
+    d = __builtin_s390_vfidb(d, 4, 4);
+  }"
+    COMPILER_SUPPORTS_Z13)
+endif()
+
+if (ENFORCE_Z13 AND NOT COMPILER_SUPPORTS_Z13)
+  message(FATAL_ERROR "ENFORCE_Z13 is specified and that feature is disabled or not supported by the compiler")
+endif()
+
+option(DISABLE_Z14 "Disable Z14" OFF)
+option(ENFORCE_Z14 "Build fails if Z14 is not supported by the compiler" OFF)
+
+if(SLEEF_ARCH_S390X AND NOT DISABLE_Z14)
+  set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_Z14})
+  CHECK_C_SOURCE_COMPILES("
+  #include <vecintrin.h>
+  #define VECTOR __attribute__((vector_size(16)))
+  int main() {
+    VECTOR double d;
+    d = __builtin_s390_vec_sqrt(d);
+  }"
+    COMPILER_SUPPORTS_Z14)
+endif()
+
+if (ENFORCE_Z14 AND NOT COMPILER_SUPPORTS_Z14)
+  message(FATAL_ERROR "ENFORCE_Z14 is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # OpenMP

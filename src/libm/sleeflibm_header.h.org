@@ -15,9 +15,12 @@
 #define CONST
 #endif
 
-#if defined(__AVX2__) || defined(__aarch64__) || defined(__arm__) || defined(__powerpc64__)
+#if defined(__AVX2__) || defined(__aarch64__) || defined(__arm__) || defined(__powerpc64__) || defined(__zarch__)
 #ifndef FP_FAST_FMA
 #define FP_FAST_FMA
+#endif
+#ifndef FP_FAST_FMAF
+#define FP_FAST_FMAF
 #endif
 #endif
 
@@ -52,6 +55,13 @@
 
 #if defined(__ARM_FEATURE_SVE)
 #include <arm_sve.h>
+#endif
+
+#if defined(__VX__)
+#include <vecintrin.h>
+typedef __attribute__((vector_size(16))) double  SLEEF_VECTOR_DOUBLE;
+typedef __attribute__((vector_size(16))) float   SLEEF_VECTOR_FLOAT;
+typedef __attribute__((vector_size(16))) int32_t SLEEF_VECTOR_INT;
 #endif
 
 //
