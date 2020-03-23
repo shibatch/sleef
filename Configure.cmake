@@ -314,10 +314,10 @@ set(CLANG_FLAGS_ENABLE_SVENOFMA "-march=armv8-a+sve")
 set(CLANG_FLAGS_ENABLE_VSX "-mcpu=power8")
 set(CLANG_FLAGS_ENABLE_VSXNOFMA "-mcpu=power8")
 # IBM z
-set(CLANG_FLAGS_ENABLE_Z13 "-march=z13;-mzvector")
-set(CLANG_FLAGS_ENABLE_Z13NOFMA "-march=z13;-mzvector")
-set(CLANG_FLAGS_ENABLE_Z14 "-march=z14;-mzvector")
-set(CLANG_FLAGS_ENABLE_Z14NOFMA "-march=z14;-mzvector")
+set(CLANG_FLAGS_ENABLE_Z13 "-march=z13")
+set(CLANG_FLAGS_ENABLE_Z13NOFMA "-march=z13")
+set(CLANG_FLAGS_ENABLE_Z14 "-march=z14")
+set(CLANG_FLAGS_ENABLE_Z14NOFMA "-march=z14")
 
 # All variables storing compiler flags should be prefixed with FLAGS_
 if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
