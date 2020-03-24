@@ -1,4 +1,4 @@
-//          Copyright Naoki Shibata 2010 - 2019.
+//   Copyright Naoki Shibata and contributors 2010 - 2020.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -16,14 +16,7 @@
 #include <limits.h>
 #include <errno.h>
 #include <inttypes.h>
-
-#if defined(POWER64_UNDEF_USE_EXTERN_INLINES)
-// This is a workaround required to cross compile for PPC64 binaries
-#include <features.h>
-#ifdef __USE_EXTERN_INLINES
-#undef __USE_EXTERN_INLINES
-#endif
-#endif
+#include <sys/wait.h>
 
 #include <math.h>
 #include <mpfr.h>
@@ -707,6 +700,13 @@ int main(int argc, char **argv) {
 
 	fprintf(stderr, "*** Using SDE\n");
       } else {
+	int status;
+	waitpid(pid, &status, 0);
+	if (WIFSIGNALED(status)) {
+	  fprintf(stderr, "\n\nTester : *** Child process has crashed\n");
+	  return -1;
+	}
+
 	fprintf(stderr, "\n\nTester : *** CPU does not support the necessary feature\n");
 	return 0;
       }
