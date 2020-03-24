@@ -50,7 +50,7 @@ matrix:
       addons:
         apt:
           packages:
-            - lsb-core
+            - lsb-release
       env:
         - LABEL="armhf-gcc"
         - ENABLE_DOCKER="true"
