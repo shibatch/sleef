@@ -15,19 +15,19 @@ install:
   - if "%DO_TEST%" == "TRUE" set ORGPATH="%PATH%"
   - if "%DO_TEST%" == "TRUE" "C:\\Cygwin64\\setup-x86_64.exe" -q -g -P libmpfr-devel,libgmp-devel,cmake,ninja
   - if "%DO_TEST%" == "TRUE" PATH c:\Cygwin64\bin;c:\Cygwin64\usr\bin;c:\projects\sleef\build-cygwin\bin;"%PATH%"
-  - if "%DO_TEST%" == "TRUE" "C:\\Cygwin64\\bin\\bash" -c 'mkdir build-mingw;cd build-mingw;CC=x86_64-w64-mingw32-gcc cmake -g\"Ninja\" .. -DBUILD_SHARED_LIBS=FALSE -DBUILD_QUAD=TRUE;dir;ninja'
-  - if "%DO_TEST%" == "TRUE" cd "c:\\projects\\sleef"
+  - if "%DO_TEST%" == "TRUE" "C:\\Cygwin64\\bin\\bash" -c 'mkdir build-mingw;cd build-mingw;CC=x86_64-w64-mingw32-gcc cmake -g\"Unix Makefiles\" .. -DBUILD_SHARED_LIBS=FALSE -DBUILD_QUAD=TRUE;make -j 2'
+  - if "%DO_TEST%" == "TRUE" cd ..
   - if "%DO_TEST%" == "TRUE" "C:\\Cygwin64\\bin\\bash" -c 'mkdir build-cygwin;cd build-cygwin;cmake -g\"Unix Makefiles\" -DBUILD_QUAD=TRUE ..;make -j 2'
   - if "%DO_TEST%" == "TRUE" del /Q /F c:\projects\sleef\build-cygwin\bin\iut*
   - if "%DO_TEST%" == "TRUE" PATH "%ORGPATH%";c:\Cygwin64\bin;c:\Cygwin64\usr\bin;c:\projects\sleef\build-cygwin\bin;c:\projects\sleef\build\bin
-  - if "%DO_TEST%" == "TRUE" cd "c:\\projects\\sleef"
+  - if "%DO_TEST%" == "TRUE" cd ..
   - mkdir build
   - cd build
   - cmake -G"Visual Studio 16 2019" .. -DCMAKE_INSTALL_PREFIX=install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_SHOW_ERROR_LOG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE %ENV_BUILD_STATIC%
 build_script:
   - cmake --build . --target install --config Release
 test_script:
-  - if "%DO_TEST%" == "TRUE" (ctest --output-on-failure -j 2 -C Release)
+  - if "%DO_TEST%" == "TRUE" (ctest --output-on-failure -j 4 -C Release)
 artifacts:
 - path: build\install\**\*
   name: SLEEFWindowsx64
