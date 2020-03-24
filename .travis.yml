@@ -3,7 +3,7 @@ language: c
 # Default linux jobs
 os: linux
 sudo: required
-dist: bionic
+dist: trusty
 
 # Include osx jobs
 matrix:
@@ -15,82 +15,60 @@ matrix:
         - LABEL="osx-clang"
     - os: linux
       arch: amd64
-      # addons:
-      #   apt:
-      #     packages:
-      #       - gcc-7
-      #       - cmake
-      #       - libmpfr-dev
-      #       - libfftw3-dev
-      #       - libssl-dev
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
       env:
         - LABEL="x86_64-gcc"
     - os: linux
       arch: amd64
-      # addons:
-      #   apt:
-      #     packages:
-      #       - clang-7
-      #       - cmake
-      #       - libmpfr-dev
-      #       - libfftw3-dev
-      #       - libssl-dev
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-5.0
+          packages:
+            - clang-5.0
       env:
         - LABEL="x86_64-clang"
     - os: linux
       arch: arm64
-      # addons:
-      #   apt:
-      #     packages:
-      #       - gcc-8
-      #       - cmake
-      #       - libmpfr-dev
-      #       - libfftw3-dev
-      #       - libssl-dev
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
       env:
         - LABEL="arm64-gcc"
     - os: linux
       arch: arm64
-      # addons:
-      #   apt:
-      #     packages:
-      #       - clang-8
-      #       - cmake
-      #       - libmpfr-dev
-      #       - libfftw3-dev
-      #       - libssl-dev
+      addons:
+        apt:
+          packages:
+            - clang-8
       env:
         - LABEL="arm64-clang"
     - os: linux
       services: docker
-        apt:
-          packages:
-            - lsb-core
       env:
         - LABEL="armhf-gcc"
         - ENABLE_DOCKER="true"
-    - arch: ppc64le
-      env:
-        - LABEL=common
-        - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
-    - arch: ppc64le
-      compiler: clang
-      env:
-        - LABEL=common
-        - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
 
 before_install:
      - export PATH=$PATH:/usr/bin
      - cd ${TRAVIS_BUILD_DIR}
      - chmod +x ${TRAVIS_BUILD_DIR}/travis/*.sh
      - if [[ "${ENABLE_DOCKER}" == "true" ]]; then ${TRAVIS_BUILD_DIR}/travis/setupdocker.sh; fi
-     - if [[ "${ENABLE_DOCKER}" == "true" ]]; then docker exec bionic /build/travis/before_install.${LABEL}.sh; fi
+     - if [[ "${ENABLE_DOCKER}" == "true" ]]; then docker exec xenial /build/travis/before_install.${LABEL}.sh; fi
      - if [[ "${ENABLE_DOCKER}" != "true" ]]; then ${TRAVIS_BUILD_DIR}/travis/before_install.${LABEL}.sh; fi
 
 before_script:
-     - if [[ "${ENABLE_DOCKER}" == "true" ]]; then docker exec bionic /build/travis/before_script.${LABEL}.sh; fi
+     - if [[ "${ENABLE_DOCKER}" == "true" ]]; then docker exec xenial /build/travis/before_script.${LABEL}.sh; fi
      - if [[ "${ENABLE_DOCKER}" != "true" ]]; then ${TRAVIS_BUILD_DIR}/travis/before_script.${LABEL}.sh; fi
 
 script:
-     - if [[ "${ENABLE_DOCKER}" == "true" ]]; then docker exec bionic /build/travis/script.${LABEL}.sh; fi
+     - if [[ "${ENABLE_DOCKER}" == "true" ]]; then docker exec xenial /build/travis/script.${LABEL}.sh; fi
      - if [[ "${ENABLE_DOCKER}" != "true" ]]; then ${TRAVIS_BUILD_DIR}/travis/script.${LABEL}.sh; fi
