@@ -1,5 +1,5 @@
 version: 1.0.{build}
-max_jobs: 4
+max_jobs: 2
 build_cloud: lithium
 image: Visual Studio 2019
 configuration: Release
@@ -15,11 +15,13 @@ install:
   - if "%DO_TEST%" == "TRUE" set ORGPATH="%PATH%"
   - if "%DO_TEST%" == "TRUE" "C:\\Cygwin64\\setup-x86_64.exe" -q -g -P libmpfr-devel,libgmp-devel,cmake
   - if "%DO_TEST%" == "TRUE" PATH c:\Cygwin64\bin;c:\Cygwin64\usr\bin;"%BUILDFOLDER%"\build-cygwin\bin;"%PATH%"
+  - set PATH
   - if "%DO_TEST%" == "TRUE" "C:\\Cygwin64\\bin\\bash" -c 'mkdir build-mingw;cd build-mingw;CC=x86_64-w64-mingw32-gcc cmake -g\"Unix Makefiles\" .. -DBUILD_SHARED_LIBS=FALSE -DBUILD_QUAD=TRUE;make -j 2'
   - if "%DO_TEST%" == "TRUE" cd "%BUILDFOLDER%"
   - if "%DO_TEST%" == "TRUE" "C:\\Cygwin64\\bin\\bash" -c 'mkdir build-cygwin;cd build-cygwin;cmake -g\"Unix Makefiles\" -DBUILD_QUAD=TRUE ..;make -j 2'
   - if "%DO_TEST%" == "TRUE" del /Q /F "%BUILDFOLDER%"\build-cygwin\bin\iut*
   - if "%DO_TEST%" == "TRUE" PATH "%ORGPATH%";c:\Cygwin64\bin;c:\Cygwin64\usr\bin;"%BUILDFOLDER%"\build-cygwin\bin;"%BUILDFOLDER%"\build\bin
+  - set PATH
   - if "%DO_TEST%" == "TRUE" cd "%BUILDFOLDER%"
   - mkdir build
   - cd build
@@ -27,7 +29,7 @@ install:
 build_script:
   - cmake --build . --target install --config Release
 test_script:
-  - if "%DO_TEST%" == "TRUE" (ctest --output-on-failure -j 4 -C Release)
+  - if "%DO_TEST%" == "TRUE" (ctest --output-on-failure -j 8 -C Release)
 artifacts:
 - path: build\install\**\*
   name: SLEEFWindowsx64
