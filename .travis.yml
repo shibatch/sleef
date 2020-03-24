@@ -15,50 +15,50 @@ matrix:
         - LABEL="osx-clang"
     - os: linux
       arch: amd64
-      addons:
-        apt:
-          packages:
-            - gcc-7
-            - cmake
-            - libmpfr-dev
-            - libfftw3-dev
-            - libssl-dev
+      # addons:
+      #   apt:
+      #     packages:
+      #       - gcc-7
+      #       - cmake
+      #       - libmpfr-dev
+      #       - libfftw3-dev
+      #       - libssl-dev
       env:
         - LABEL="x86_64-gcc"
     - os: linux
       arch: amd64
-      addons:
-        apt:
-          packages:
-            - clang-7
-            - cmake
-            - libmpfr-dev
-            - libfftw3-dev
-            - libssl-dev
+      # addons:
+      #   apt:
+      #     packages:
+      #       - clang-7
+      #       - cmake
+      #       - libmpfr-dev
+      #       - libfftw3-dev
+      #       - libssl-dev
       env:
         - LABEL="x86_64-clang"
     - os: linux
       arch: arm64
-      addons:
-        apt:
-          packages:
-            - gcc-8
-            - cmake
-            - libmpfr-dev
-            - libfftw3-dev
-            - libssl-dev
+      # addons:
+      #   apt:
+      #     packages:
+      #       - gcc-8
+      #       - cmake
+      #       - libmpfr-dev
+      #       - libfftw3-dev
+      #       - libssl-dev
       env:
         - LABEL="arm64-gcc"
     - os: linux
       arch: arm64
-      addons:
-        apt:
-          packages:
-            - clang-8
-            - cmake
-            - libmpfr-dev
-            - libfftw3-dev
-            - libssl-dev
+      # addons:
+      #   apt:
+      #     packages:
+      #       - clang-8
+      #       - cmake
+      #       - libmpfr-dev
+      #       - libfftw3-dev
+      #       - libssl-dev
       env:
         - LABEL="arm64-clang"
     - os: linux
