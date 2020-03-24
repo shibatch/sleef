@@ -11,8 +11,8 @@ environment:
     DO_TEST: FALSE
 install:
   - hostname
-  - set BUILDFOLDER="%CD%"
-  - if "%DO_TEST%" == "TRUE" set ORGPATH="%PATH%"
+  - set BUILDFOLDER=%CD%
+  - if "%DO_TEST%" == "TRUE" set ORGPATH=%PATH%
   - if "%DO_TEST%" == "TRUE" "C:\\Cygwin64\\setup-x86_64.exe" -q -g -P libmpfr-devel,libgmp-devel,cmake
   - if "%DO_TEST%" == "TRUE" PATH c:\Cygwin64\bin;c:\Cygwin64\usr\bin;%BUILDFOLDER%\build-cygwin\bin;%PATH%
   - set PATH
