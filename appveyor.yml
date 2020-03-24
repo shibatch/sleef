@@ -1,5 +1,5 @@
 version: 1.0.{build}
-max_jobs: 2
+max_jobs: 4
 build_cloud: lithium
 image: Visual Studio 2019
 configuration: Release
@@ -10,6 +10,7 @@ environment:
   - ENV_BUILD_STATIC: -DBUILD_SHARED_LIBS=FALSE
     DO_TEST: FALSE
 install:
+  - hostname
   - if "%DO_TEST%" == "TRUE" set ORGPATH="%PATH%"
   - if "%DO_TEST%" == "TRUE" "C:\\Cygwin64\\setup-x86_64.exe" -q -g -P libmpfr-devel,libgmp-devel,cmake
   - if "%DO_TEST%" == "TRUE" PATH c:\Cygwin64\bin;c:\Cygwin64\usr\bin;c:\projects\sleef\build-cygwin\bin;"%PATH%"
