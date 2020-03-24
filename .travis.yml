@@ -26,7 +26,7 @@ matrix:
       addons:
         apt:
           packages:
-            - clang-5
+            - clang-7
       env:
         - LABEL="x86_64-clang"
     - os: linux
@@ -34,7 +34,7 @@ matrix:
       addons:
         apt:
           packages:
-            - g++-7
+            - g++-8
       env:
         - LABEL="arm64-gcc"
     - os: linux
@@ -47,6 +47,10 @@ matrix:
         - LABEL="arm64-clang"
     - os: linux
       services: docker
+      addons:
+        apt:
+          packages:
+            - lsb-core
       env:
         - LABEL="armhf-gcc"
         - ENABLE_DOCKER="true"
