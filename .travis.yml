@@ -19,9 +19,6 @@ matrix:
         apt:
           packages:
             - g++-7
-            - libmpfr-dev
-            - libfftw3-dev
-            - libssl-dev
       env:
         - LABEL="x86_64-gcc"
     - os: linux
@@ -30,9 +27,6 @@ matrix:
         apt:
           packages:
             - clang-7
-            - libmpfr-dev
-            - libfftw3-dev
-            - libssl-dev
       env:
         - LABEL="x86_64-clang"
     - os: linux
@@ -41,9 +35,6 @@ matrix:
         apt:
           packages:
             - g++-8
-            - libmpfr-dev
-            - libfftw3-dev
-            - libssl-dev
       env:
         - LABEL="arm64-gcc"
     - os: linux
@@ -52,9 +43,6 @@ matrix:
         apt:
           packages:
             - clang-8
-            - libmpfr-dev
-            - libfftw3-dev
-            - libssl-dev
       env:
         - LABEL="arm64-clang"
     - os: linux
@@ -71,22 +59,12 @@ matrix:
       env:
         - LABEL=common
         - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
-        apt:
-          packages:
-            - libmpfr-dev
-            - libfftw3-dev
-            - libssl-dev
     - arch: ppc64le
       compiler: clang
       dist: bionic
       env:
         - LABEL=common
         - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
-        apt:
-          packages:
-            - libmpfr-dev
-            - libfftw3-dev
-            - libssl-dev
 
 before_install:
      - export PATH=$PATH:/usr/bin
