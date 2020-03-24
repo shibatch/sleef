@@ -3,7 +3,8 @@ set -ev
 export PATH=$PATH:/usr/bin
 dpkg --add-architecture arm64
 cat /etc/apt/sources.list | sed -e 's/^deb /deb \[arch=amd64\] /g' -e 's/\[arch=amd64\] \[arch=amd64\]/\[arch=amd64\]/g' > /tmp/sources.list
-cat <<EOF | sed -e s/CODENAME/`lsb_release -cs`/g >> /tmp/sources.list
+. /etc/os-release
+cat <<EOF | sed -e s/CODENAME/"$UBUNTU_CODENAME"/g >> /tmp/sources.list
 deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ CODENAME main restricted
 deb-src http://ports.ubuntu.com/ubuntu-ports/ CODENAME main restricted
 deb [arch=arm64] http://ports.ubuntu.com/ubuntu-ports/ CODENAME-updates main restricted
