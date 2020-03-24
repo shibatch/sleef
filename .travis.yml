@@ -18,7 +18,11 @@ matrix:
       addons:
         apt:
           packages:
-            - gcc-7 cmake libmpfr-dev libfftw3-dev libssl-dev
+            - gcc-7
+            - cmake
+            - libmpfr-dev
+            - libfftw3-dev
+            - libssl-dev
       env:
         - LABEL="x86_64-gcc"
     - os: linux
@@ -26,7 +30,11 @@ matrix:
       addons:
         apt:
           packages:
-            - clang-7 cmake libmpfr-dev libfftw3-dev libssl-dev
+            - clang-7
+            - cmake
+            - libmpfr-dev
+            - libfftw3-dev
+            - libssl-dev
       env:
         - LABEL="x86_64-clang"
     - os: linux
@@ -34,7 +42,11 @@ matrix:
       addons:
         apt:
           packages:
-            - gcc-8 cmake libmpfr-dev libfftw3-dev libssl-dev
+            - gcc-8
+            - cmake
+            - libmpfr-dev
+            - libfftw3-dev
+            - libssl-dev
       env:
         - LABEL="arm64-gcc"
     - os: linux
@@ -42,7 +54,11 @@ matrix:
       addons:
         apt:
           packages:
-            - clang-8 cmake libmpfr-dev libfftw3-dev libssl-dev
+            - clang-8
+            - cmake
+            - libmpfr-dev
+            - libfftw3-dev
+            - libssl-dev
       env:
         - LABEL="arm64-clang"
     - os: linux
