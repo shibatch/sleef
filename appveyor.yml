@@ -1,6 +1,6 @@
 version: 1.0.{build}
 build_cloud: lithium
-max_jobs: 2
+max_jobs: 4
 image: Visual Studio 2019
 configuration: Release
 environment:
@@ -29,7 +29,7 @@ install:
 build_script:
   - cmake --build . --target install --config Release
 test_script:
-  - if "%DO_TEST%" == "TRUE" (ctest --output-on-failure -j 2 -C Release)
+  - if "%DO_TEST%" == "TRUE" (ctest --output-on-failure -j 4 -C Release)
 artifacts:
 - path: build\install\**\*
   name: SLEEFWindowsx64
