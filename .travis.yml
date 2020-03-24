@@ -3,7 +3,7 @@ language: c
 # Default linux jobs
 os: linux
 sudo: required
-dist: trusty
+dist: bionic
 
 # Include osx jobs
 matrix:
@@ -17,8 +17,6 @@ matrix:
       arch: amd64
       addons:
         apt:
-          sources:
-            - ubuntu-toolchain-r-test
           packages:
             - g++-7
       env:
@@ -27,18 +25,14 @@ matrix:
       arch: amd64
       addons:
         apt:
-          sources:
-            - llvm-toolchain-trusty-5.0
           packages:
-            - clang-5.0
+            - clang-5
       env:
         - LABEL="x86_64-clang"
     - os: linux
       arch: arm64
       addons:
         apt:
-          sources:
-            - ubuntu-toolchain-r-test
           packages:
             - g++-7
       env:
@@ -56,6 +50,17 @@ matrix:
       env:
         - LABEL="armhf-gcc"
         - ENABLE_DOCKER="true"
+    - arch: ppc64le
+      dist: bionic
+      env:
+        - LABEL=common
+        - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
+    - arch: ppc64le
+      compiler: clang
+      dist: bionic
+      env:
+        - LABEL=common
+        - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
 
 before_install:
      - export PATH=$PATH:/usr/bin
