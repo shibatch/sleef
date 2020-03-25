@@ -232,7 +232,7 @@ static INLINE vdouble vsel_vd_vo_vd_vd(vopmask m, vdouble x, vdouble y) { return
 static INLINE vint vsel_vi_vo_vi_vi(vopmask m, vint x, vint y) { return vor_vm_vm_vm(vand_vm_vm_vm(m, x), vandnot_vm_vm_vm(m, y)); }
 
 static INLINE vdouble vsel_vd_vo_vd_vd(vopmask opmask, vdouble x, vdouble y) {
-  return vreinterpret_vd_vm(vor_vm_vm_vm(vand_vm_vm_vm(opmask, vreinterpret_vm_vd(x)), vandnot_vm_vm_vm(opmask, vreinterpret_vm_vd(y))));
+  return _mm_or_pd(_mm_and_pd(_mm_castsi128_pd(opmask), x), _mm_andnot_pd(_mm_castsi128_pd(opmask), y));
 }
 #endif
 
@@ -355,8 +355,8 @@ static INLINE vint2 vsel_vi2_vo_vi2_vi2(vopmask m, vint2 x, vint2 y) {
   return vor_vi2_vi2_vi2(vand_vi2_vi2_vi2(m, x), vandnot_vi2_vi2_vi2(m, y));
 }
 
-static INLINE vfloat vsel_vf_vo_vf_vf(vopmask mask, vfloat x, vfloat y) {
-  return vreinterpret_vf_vm(vor_vm_vm_vm(vand_vm_vm_vm(mask, vreinterpret_vm_vf(x)), vandnot_vm_vm_vm(mask, vreinterpret_vm_vf(y))));
+static INLINE vfloat vsel_vf_vo_vf_vf(vopmask opmask, vfloat x, vfloat y) {
+  return _mm_or_ps(_mm_and_ps(_mm_castsi128_ps(opmask), x), _mm_andnot_ps(_mm_castsi128_ps(opmask), y));
 }
 #endif
 
