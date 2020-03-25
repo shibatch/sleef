@@ -16,6 +16,7 @@
 #include <limits.h>
 #include <errno.h>
 #include <inttypes.h>
+#include <sys/wait.h>
 
 #if defined(POWER64_UNDEF_USE_EXTERN_INLINES)
 // This is a workaround required to cross compile for PPC64 binaries
@@ -5074,6 +5075,13 @@ int main(int argc, char **argv) {
 
 	printf("*** Using SDE\n");
       } else {
+	int status;
+	waitpid(pid, &status, 0);
+	if (WIFSIGNALED(status)) {
+	  fprintf(stderr, "\n\nTester : *** Child process has crashed\n");
+	  return -1;
+	}
+
 	fprintf(stderr, "\n\nTester : *** CPU does not support the necessary feature\n");
 	return 0;
       }
