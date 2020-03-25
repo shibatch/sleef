@@ -14,6 +14,11 @@ matrix:
       env:
         - LABEL="osx-clang"
     - os: linux
+      services: docker
+      env:
+        - LABEL="armhf-gcc"
+        - ENABLE_DOCKER="true"
+    - os: linux
       arch: amd64
       addons:
         apt:
@@ -45,11 +50,6 @@ matrix:
             - clang-8
       env:
         - LABEL="arm64-clang"
-    - os: linux
-      services: docker
-      env:
-        - LABEL="armhf-gcc"
-        - ENABLE_DOCKER="true"
     - arch: ppc64le
       dist: bionic
       env:
