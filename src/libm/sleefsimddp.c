@@ -359,11 +359,11 @@ static INLINE CONST di_t rempisub(vdouble x) {
   vint vi = vtruncate_vi_vd(vsub_vd_vd_vd(y, vmul_vd_vd_vd(vrint_vd_vd(x), vcast_vd_d(4))));
   di_t ret = { vsub_vd_vd_vd(x, vmul_vd_vd_vd(y, vcast_vd_d(0.25))), vi };
 #else
-  vdouble c = vmulsign_vd_vd_vd(vcast_vd_d(1L << 52), x);
-  vdouble rint4x = vsel_vd_vo_vd_vd(vgt_vo_vd_vd(vabs_vd_vd(vmul_vd_vd_vd(vcast_vd_d(4), x)), vcast_vd_d(1L << 52)),
+  vdouble c = vmulsign_vd_vd_vd(vcast_vd_d(1LL << 52), x);
+  vdouble rint4x = vsel_vd_vo_vd_vd(vgt_vo_vd_vd(vabs_vd_vd(vmul_vd_vd_vd(vcast_vd_d(4), x)), vcast_vd_d(1LL << 52)),
 				    vmul_vd_vd_vd(vcast_vd_d(4), x),
 				    vorsign_vd_vd_vd(vsub_vd_vd_vd(vmla_vd_vd_vd_vd(vcast_vd_d(4), x, c), c), x));
-  vdouble rintx  = vsel_vd_vo_vd_vd(vgt_vo_vd_vd(vabs_vd_vd(x), vcast_vd_d(1L << 52)),
+  vdouble rintx  = vsel_vd_vo_vd_vd(vgt_vo_vd_vd(vabs_vd_vd(x), vcast_vd_d(1LL << 52)),
 				    x, vorsign_vd_vd_vd(vsub_vd_vd_vd(vadd_vd_vd_vd(x, c), c), x));
   di_t ret = {
     vmla_vd_vd_vd_vd(vcast_vd_d(-0.25), rint4x, x),
@@ -3124,8 +3124,8 @@ EXPORT CONST VECTOR_CC vdouble xrint(vdouble d) {
 #ifdef FULL_FP_ROUNDING
   return vrint_vd_vd(d);
 #else
-  vdouble c = vmulsign_vd_vd_vd(vcast_vd_d(1L << 52), d);
-  return vsel_vd_vo_vd_vd(vgt_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(1L << 52)),
+  vdouble c = vmulsign_vd_vd_vd(vcast_vd_d(1LL << 52), d);
+  return vsel_vd_vo_vd_vd(vgt_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(1LL << 52)),
 			  d, vorsign_vd_vd_vd(vsub_vd_vd_vd(vadd_vd_vd_vd(d, c), c), d));
 #endif
 }
@@ -3395,8 +3395,8 @@ static INLINE VECTOR_CC vdouble vrintk2_vd_vd(vdouble d) {
 #ifdef FULL_FP_ROUNDING
   return vrint_vd_vd(d);
 #else
-  vdouble c = vmulsign_vd_vd_vd(vcast_vd_d(1L << 52), d);
-  return vsel_vd_vo_vd_vd(vgt_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(1L << 52)),
+  vdouble c = vmulsign_vd_vd_vd(vcast_vd_d(1LL << 52), d);
+  return vsel_vd_vo_vd_vd(vgt_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(1LL << 52)),
 			  d, vorsign_vd_vd_vd(vsub_vd_vd_vd(vadd_vd_vd_vd(d, c), c), d));
 #endif
 }

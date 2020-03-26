@@ -754,9 +754,9 @@ static CONST di_t rempisub(double x) {
   // This function is equivalent to :
   // di_t ret = { x - rint(4 * x) * 0.25, (int32_t)(rint(4 * x) - rint(x) * 4) };
   di_t ret;
-  double c = mulsign(1L << 52, x);
-  double rint4x = fabsk(4*x) > 1L << 52 ? (4*x) : orsign(mla(4, x, c) - c, x);
-  double rintx  = fabsk(  x) > 1L << 52 ?   x   : orsign(x + c - c       , x);
+  double c = mulsign(1LL << 52, x);
+  double rint4x = fabsk(4*x) > 1LL << 52 ? (4*x) : orsign(mla(4, x, c) - c, x);
+  double rintx  = fabsk(  x) > 1LL << 52 ?   x   : orsign(x + c - c       , x);
   ret.d = mla(-0.25, rint4x,      x);
   ret.i = mla(-4   , rintx , rint4x);
   return ret;
@@ -2298,8 +2298,8 @@ EXPORT CONST double xround(double d) {
 }
 
 EXPORT CONST double xrint(double d) {
-  double c = mulsign(1L << 52, d);
-  return fabsk(d) > 1L << 52 ? d : orsign(d + c - c, d);
+  double c = mulsign(1LL << 52, d);
+  return fabsk(d) > 1LL << 52 ? d : orsign(d + c - c, d);
 }
 
 EXPORT CONST double xhypot_u05(double x, double y) {
@@ -2429,8 +2429,8 @@ EXPORT CONST double xfmod(double x, double y) {
 }
 
 static INLINE CONST double rintk2(double d) {
-  double c = mulsign(1L << 52, d);
-  return fabsk(d) > 1L << 52 ? d : orsign(d + c - c, d);
+  double c = mulsign(1LL << 52, d);
+  return fabsk(d) > 1LL << 52 ? d : orsign(d + c - c, d);
 }
 
 EXPORT CONST double xremainder(double x, double y) {
