@@ -387,7 +387,7 @@ if (SLEEF_ARCH_S390X)
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/disps390x_128.c
     COMMENT "Generating disps390x_128.c"
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/disps390x_128.c.org ${CMAKE_CURRENT_BINARY_DIR}/disps390x_128.c
-    COMMAND $<TARGET_FILE:${TARGET_MKDISP}> 2 4 SLEEF_VECTOR_DOUBLE SLEEF_VECTOR_FLOAT SLEEF_VECTOR_INT z13 z14 >> ${CMAKE_CURRENT_BINARY_DIR}/disps390x_128.c
+    COMMAND $<TARGET_FILE:${TARGET_MKDISP}> 2 4 SLEEF_VECTOR_DOUBLE SLEEF_VECTOR_FLOAT SLEEF_VECTOR_INT zvector zvector2 >> ${CMAKE_CURRENT_BINARY_DIR}/disps390x_128.c
     DEPENDS ${TARGET_MKDISP}
     )
   add_custom_target(disps390x_128.c_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/disps390x_128.c)
@@ -404,7 +404,7 @@ if (SLEEF_ARCH_S390X)
   # Target disps390x_128_obj
 
   add_library(disps390x_128_obj OBJECT disps390x_128.c)
-  target_compile_options(disps390x_128_obj PRIVATE ${FLAGS_ENABLE_Z14})
+  target_compile_options(disps390x_128_obj PRIVATE ${FLAGS_ENABLE_ZVECTOR2})
   set_target_properties(disps390x_128_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
   target_compile_definitions(disps390x_128_obj PRIVATE ${COMMON_TARGET_DEFINITIONS})
   target_include_directories(disps390x_128_obj PRIVATE ${CMAKE_BINARY_DIR}/include)

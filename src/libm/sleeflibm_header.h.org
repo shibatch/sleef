@@ -57,8 +57,11 @@
 #include <arm_sve.h>
 #endif
 
-#if defined(__VX__)
+#if defined(__VX__) && defined(__VEC__)
+#ifndef SLEEF_VECINTRIN_H_INCLUDED
 #include <vecintrin.h>
+#define SLEEF_VECINTRIN_H_INCLUDED
+#endif
 typedef __attribute__((vector_size(16))) double  SLEEF_VECTOR_DOUBLE;
 typedef __attribute__((vector_size(16))) float   SLEEF_VECTOR_FLOAT;
 typedef __attribute__((vector_size(16))) int32_t SLEEF_VECTOR_INT;

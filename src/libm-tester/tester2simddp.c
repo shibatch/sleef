@@ -154,34 +154,34 @@ typedef Sleef___vector_double_2 vdouble2;
 typedef Sleef___vector_float_2 vfloat2;
 #endif
 
-#ifdef ENABLE_Z13
+#ifdef ENABLE_ZVECTOR
 #define CONFIG 130
 #include "helpers390x_128.h"
-#include "renamez13.h"
+#include "renamezvector.h"
 typedef Sleef_SLEEF_VECTOR_DOUBLE_2 vdouble2;
 typedef Sleef_SLEEF_VECTOR_FLOAT_2 vfloat2;
 #endif
 
-#ifdef ENABLE_Z13NOFMA
+#ifdef ENABLE_ZVECTORNOFMA
 #define CONFIG 131
 #include "helpers390x_128.h"
-#include "renamez13nofma.h"
+#include "renamezvectornofma.h"
 typedef Sleef_SLEEF_VECTOR_DOUBLE_2 vdouble2;
 typedef Sleef_SLEEF_VECTOR_FLOAT_2 vfloat2;
 #endif
 
-#ifdef ENABLE_Z14
+#ifdef ENABLE_ZVECTOR2
 #define CONFIG 140
 #include "helpers390x_128.h"
-#include "renamez14.h"
+#include "renamezvector2.h"
 typedef Sleef_SLEEF_VECTOR_DOUBLE_2 vdouble2;
 typedef Sleef_SLEEF_VECTOR_FLOAT_2 vfloat2;
 #endif
 
-#ifdef ENABLE_Z14NOFMA
+#ifdef ENABLE_ZVECTOR2NOFMA
 #define CONFIG 141
 #include "helpers390x_128.h"
-#include "renamez14nofma.h"
+#include "renamezvector2nofma.h"
 typedef Sleef_SLEEF_VECTOR_DOUBLE_2 vdouble2;
 typedef Sleef_SLEEF_VECTOR_FLOAT_2 vfloat2;
 #endif

@@ -182,35 +182,35 @@ extern const float rempitabsp[];
 #endif
 #endif
 
-#ifdef ENABLE_Z13
+#ifdef ENABLE_ZVECTOR
 #define CONFIG 130
 #include "helpers390x_128.h"
 #ifdef DORENAME
-#include "renamez13.h"
+#include "renamezvector.h"
 #endif
 #endif
 
-#ifdef ENABLE_Z13NOFMA
+#ifdef ENABLE_ZVECTORNOFMA
 #define CONFIG 131
 #include "helpers390x_128.h"
 #ifdef DORENAME
-#include "renamez13nofma.h"
+#include "renamezvectornofma.h"
 #endif
 #endif
 
-#ifdef ENABLE_Z14
+#ifdef ENABLE_ZVECTOR2
 #define CONFIG 140
 #include "helpers390x_128.h"
 #ifdef DORENAME
-#include "renamez14.h"
+#include "renamezvector2.h"
 #endif
 #endif
 
-#ifdef ENABLE_Z14NOFMA
+#ifdef ENABLE_ZVECTOR2NOFMA
 #define CONFIG 141
 #include "helpers390x_128.h"
 #ifdef DORENAME
-#include "renamez14nofma.h"
+#include "renamezvector2nofma.h"
 #endif
 #endif
 

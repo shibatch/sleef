@@ -54,7 +54,7 @@ set(SLEEF_SUPPORTED_EXTENSIONS
   ADVSIMD ADVSIMDNOFMA SVE SVENOFMA                     # Aarch64
   NEON32 NEON32VFPV4                                    # Aarch32
   VSX VSXNOFMA                                          # PPC64
-  Z13 Z13NOFMA Z14 Z14NOFMA		                # IBM Z
+  ZVECTOR ZVECTORNOFMA ZVECTOR2 ZVECTOR2NOFMA		                # IBM Z
   PUREC_SCALAR PURECFMA_SCALAR                          # Generic type
   CACHE STRING "List of SIMD architectures supported by libsleef."
   )
@@ -202,28 +202,27 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "s390x")
   set(SLEEF_ARCH_S390X ON CACHE INTERNAL "True for IBM Z architecture.")
 
   set(SLEEF_HEADER_LIST
-    Z13_
-    Z13
-    Z13NOFMA
-    Z14
-    Z14NOFMA
+    ZVECTOR_
+    ZVECTOR
+    ZVECTORNOFMA
+    ZVECTOR2
+    ZVECTOR2NOFMA
     PUREC_SCALAR
     PURECFMA_SCALAR
   )
 
-  set(HEADER_PARAMS_Z13_     finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VX__)
-  set(HEADER_PARAMS_Z13      finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VX__ z13)
-  set(HEADER_PARAMS_Z13NOFMA cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VX__ z13nofma)
-  set(HEADER_PARAMS_Z14      finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VX__ z14)
-  set(HEADER_PARAMS_Z14NOFMA cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VX__ z14nofma)
+  set(HEADER_PARAMS_ZVECTOR_      finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__)
+  set(HEADER_PARAMS_ZVECTOR       finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ zvector)
+  set(HEADER_PARAMS_ZVECTORNOFMA  cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ zvectornofma)
+  set(HEADER_PARAMS_ZVECTOR2      finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ zvector2)
+  set(HEADER_PARAMS_ZVECTOR2NOFMA cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ zvector2nofma)
 
   set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-march=z13")
 
-  set(TESTER3_DEFINITIONS_Z13      ATR=finz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=z13)
-  set(TESTER3_DEFINITIONS_Z13NOFMA ATR=cinz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=z13nofma)
-  set(TESTER3_DEFINITIONS_Z14      ATR=finz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=z14)
-  set(TESTER3_DEFINITIONS_Z14NOFMA ATR=cinz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=z14nofma)
-
+  set(TESTER3_DEFINITIONS_ZVECTOR      ATR=finz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=zvector)
+  set(TESTER3_DEFINITIONS_ZVECTORNOFMA ATR=cinz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=zvectornofma)
+  set(TESTER3_DEFINITIONS_ZVECTOR2      ATR=finz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=zvector2)
+  set(TESTER3_DEFINITIONS_ZVECTOR2NOFMA ATR=cinz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=zvector2nofma)
 endif()
 
 command_arguments(HEADER_PARAMS_PUREC_SCALAR    cinz_ 1 1 double float int32_t int32_t __STDC__ purec)
@@ -253,10 +252,10 @@ command_arguments(RENAME_PARAMS_NEON32          cinz_ 2 4 neon)
 command_arguments(RENAME_PARAMS_NEON32VFPV4     finz_ 2 4 neonvfpv4)
 command_arguments(RENAME_PARAMS_VSX             finz_ 2 4 vsx)
 command_arguments(RENAME_PARAMS_VSXNOFMA        cinz_ 2 4 vsxnofma)
-command_arguments(RENAME_PARAMS_Z13             finz_ 2 4 z13)
-command_arguments(RENAME_PARAMS_Z13NOFMA        cinz_ 2 4 z13nofma)
-command_arguments(RENAME_PARAMS_Z14             finz_ 2 4 z14)
-command_arguments(RENAME_PARAMS_Z14NOFMA        cinz_ 2 4 z14nofma)
+command_arguments(RENAME_PARAMS_ZVECTOR             finz_ 2 4 zvector)
+command_arguments(RENAME_PARAMS_ZVECTORNOFMA        cinz_ 2 4 zvectornofma)
+command_arguments(RENAME_PARAMS_ZVECTOR2             finz_ 2 4 zvector2)
+command_arguments(RENAME_PARAMS_ZVECTOR2NOFMA        cinz_ 2 4 zvector2nofma)
 command_arguments(RENAME_PARAMS_PUREC_SCALAR    cinz_ 1 1 purec)
 command_arguments(RENAME_PARAMS_PURECFMA_SCALAR finz_ 1 1 purecfma)
 # The vector length parameters in SVE, for SP and DP, are chosen for
@@ -314,10 +313,10 @@ set(CLANG_FLAGS_ENABLE_SVENOFMA "-march=armv8-a+sve")
 set(CLANG_FLAGS_ENABLE_VSX "-mcpu=power8")
 set(CLANG_FLAGS_ENABLE_VSXNOFMA "-mcpu=power8")
 # IBM z
-set(CLANG_FLAGS_ENABLE_Z13 "-march=z13")
-set(CLANG_FLAGS_ENABLE_Z13NOFMA "-march=z13")
-set(CLANG_FLAGS_ENABLE_Z14 "-march=z14")
-set(CLANG_FLAGS_ENABLE_Z14NOFMA "-march=z14")
+set(CLANG_FLAGS_ENABLE_ZVECTOR "-march=z13;-mzvector")
+set(CLANG_FLAGS_ENABLE_ZVECTORNOFMA "-march=z13;-mzvector")
+set(CLANG_FLAGS_ENABLE_ZVECTOR2 "-march=z14;-mzvector")
+set(CLANG_FLAGS_ENABLE_ZVECTOR2NOFMA "-march=z14;-mzvector")
 
 # All variables storing compiler flags should be prefixed with FLAGS_
 if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
@@ -443,7 +442,7 @@ option(DISABLE_SSE2 "Disable SSE2" OFF)
 option(ENFORCE_SSE2 "Build fails if SSE2 is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_X86 AND NOT DISABLE_SSE2)
-  set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_SSE2})
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_SSE2})
   CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
   #include <intrin.h>
@@ -465,7 +464,7 @@ option(DISABLE_SSE4 "Disable SSE4" OFF)
 option(ENFORCE_SSE4 "Build fails if SSE4 is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_X86 AND NOT DISABLE_SSE4)
-  set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_SSE4})
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_SSE4})
   CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
   #include <intrin.h>
@@ -487,7 +486,7 @@ option(ENFORCE_AVX "Disable AVX" OFF)
 option(ENFORCE_AVX "Build fails if AVX is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_X86 AND NOT DISABLE_AVX)
-  set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX})
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX})
   CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
   #include <intrin.h>
@@ -509,7 +508,7 @@ option(DISABLE_FMA4 "Disable FMA4" OFF)
 option(ENFORCE_FMA4 "Build fails if FMA4 is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_X86 AND NOT DISABLE_FMA4)
-  set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_FMA4})
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_FMA4})
   CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
   #include <intrin.h>
@@ -531,7 +530,7 @@ option(DISABLE_AVX2 "Disable AVX2" OFF)
 option(ENFORCE_AVX2 "Build fails if AVX2 is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_X86 AND NOT DISABLE_AVX2)
-  set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX2})
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX2})
   CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
   #include <intrin.h>
@@ -558,7 +557,7 @@ option(DISABLE_AVX512F "Disable AVX512F" OFF)
 option(ENFORCE_AVX512F "Build fails if AVX512F is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_X86 AND NOT DISABLE_AVX512F)
-  set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX512F})
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX512F})
   CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
   #include <intrin.h>
@@ -590,7 +589,7 @@ option(DISABLE_SVE "Disable SVE" OFF)
 option(ENFORCE_SVE "Build fails if SVE is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_AARCH64 AND NOT DISABLE_SVE)
-  set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_SVE})
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_SVE})
   CHECK_C_SOURCE_COMPILES("
   #include <arm_sve.h>
   int main() {
@@ -612,7 +611,7 @@ option(DISABLE_VSX "Disable VSX" OFF)
 option(ENFORCE_VSX "Build fails if VSX is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_PPC64 AND NOT DISABLE_VSX)
-  set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_VSX})
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_VSX})
   CHECK_C_SOURCE_COMPILES("
   #include <altivec.h>
   #ifndef __LITTLE_ENDIAN__
@@ -638,42 +637,40 @@ endif()
 
 # IBM Z
 
-option(DISABLE_Z13 "Disable Z13" OFF)
-option(ENFORCE_Z13 "Build fails if Z13 is not supported by the compiler" OFF)
+option(DISABLE_ZVECTOR "Disable ZVECTOR" OFF)
+option(ENFORCE_ZVECTOR "Build fails if ZVECTOR is not supported by the compiler" OFF)
 
-if(SLEEF_ARCH_S390X AND NOT DISABLE_Z13)
-  set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_Z13})
+if(SLEEF_ARCH_S390X AND NOT DISABLE_ZVECTOR)
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_ZVECTOR}")
   CHECK_C_SOURCE_COMPILES("
   #include <vecintrin.h>
-  #define VECTOR __attribute__((vector_size(16)))
   int main() {
-    VECTOR double d;
+    __vector double d;
     d = __builtin_s390_vfidb(d, 4, 4);
   }"
-    COMPILER_SUPPORTS_Z13)
+    COMPILER_SUPPORTS_ZVECTOR)
 endif()
 
-if (ENFORCE_Z13 AND NOT COMPILER_SUPPORTS_Z13)
-  message(FATAL_ERROR "ENFORCE_Z13 is specified and that feature is disabled or not supported by the compiler")
+if (ENFORCE_ZVECTOR AND NOT COMPILER_SUPPORTS_ZVECTOR)
+  message(FATAL_ERROR "ENFORCE_ZVECTOR is specified and that feature is disabled or not supported by the compiler")
 endif()
 
-option(DISABLE_Z14 "Disable Z14" OFF)
-option(ENFORCE_Z14 "Build fails if Z14 is not supported by the compiler" OFF)
+option(DISABLE_ZVECTOR2 "Disable ZVECTOR2" OFF)
+option(ENFORCE_ZVECTOR2 "Build fails if ZVECTOR2 is not supported by the compiler" OFF)
 
-if(SLEEF_ARCH_S390X AND NOT DISABLE_Z14)
-  set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_Z14})
+if(SLEEF_ARCH_S390X AND NOT DISABLE_ZVECTOR2)
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_ZVECTOR2}")
   CHECK_C_SOURCE_COMPILES("
   #include <vecintrin.h>
-  #define VECTOR __attribute__((vector_size(16)))
   int main() {
-    VECTOR double d;
-    d = __builtin_s390_vec_sqrt(d);
+    __vector float d;
+    d = vec_sqrt(d);
   }"
-    COMPILER_SUPPORTS_Z14)
+    COMPILER_SUPPORTS_ZVECTOR2)
 endif()
 
-if (ENFORCE_Z14 AND NOT COMPILER_SUPPORTS_Z14)
-  message(FATAL_ERROR "ENFORCE_Z14 is specified and that feature is disabled or not supported by the compiler")
+if (ENFORCE_ZVECTOR2 AND NOT COMPILER_SUPPORTS_ZVECTOR2)
+  message(FATAL_ERROR "ENFORCE_ZVECTOR2 is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # OpenMP

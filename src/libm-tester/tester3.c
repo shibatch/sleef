@@ -25,7 +25,7 @@ typedef __vector double __vector_double;
 typedef __vector float  __vector_float;
 #endif
 
-#ifdef __VX__
+#if defined(__VX__) && defined(__VEC__)
 typedef __attribute__((vector_size(16))) double vector_double;
 typedef __attribute__((vector_size(16))) float  vector_float;
 #endif
