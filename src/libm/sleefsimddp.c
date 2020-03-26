@@ -349,22 +349,26 @@ typedef struct {
 } ddi_t;
 #endif
 
+static INLINE CONST VECTOR_CC vdouble vorsign_vd_vd_vd(vdouble x, vdouble y) {
+  return vreinterpret_vd_vm(vor_vm_vm_vm(vreinterpret_vm_vd(x), vsignbit_vm_vd(y)));
+}
+
 static INLINE CONST di_t rempisub(vdouble x) {
 #ifdef FULL_FP_ROUNDING
   vdouble y = vrint_vd_vd(vmul_vd_vd_vd(x, vcast_vd_d(4)));
   vint vi = vtruncate_vi_vd(vsub_vd_vd_vd(y, vmul_vd_vd_vd(vrint_vd_vd(x), vcast_vd_d(4))));
   di_t ret = { vsub_vd_vd_vd(x, vmul_vd_vd_vd(y, vcast_vd_d(0.25))), vi };
 #else
-  vdouble fr = vsub_vd_vd_vd(x, vmul_vd_vd_vd(vcast_vd_d(1LL << 28), vtruncate_vd_vd(vmul_vd_vd_vd(x, vcast_vd_d(1.0 / (1LL << 28))))));
-  vint vi = vadd_vi_vi_vi(vsel_vi_vo_vi_vi(vcast_vo32_vo64(vgt_vo_vd_vd(x, vcast_vd_d(0))), vcast_vi_i(4), vcast_vi_i(3)), vtruncate_vi_vd(vmul_vd_vd_vd(fr, vcast_vd_d(8))));
-  vi = vsra_vi_vi_i(vsub_vi_vi_vi(vand_vi_vi_vi(vcast_vi_i(7), vi), vcast_vi_i(3)), 1);
-  fr = vsub_vd_vd_vd(fr, vmul_vd_vd_vd(vcast_vd_d(0.25), vtruncate_vd_vd(vmla_vd_vd_vd_vd(fr, vcast_vd_d(4), vmulsign_vd_vd_vd(vcast_vd_d(0.5), x)))));
-  fr = vsel_vd_vo_vd_vd(vgt_vo_vd_vd(vabs_vd_vd(fr), vcast_vd_d(0.25)), vsub_vd_vd_vd(fr, vmulsign_vd_vd_vd(vcast_vd_d(0.5), x)), fr);
-  fr = vsel_vd_vo_vd_vd(vgt_vo_vd_vd(vabs_vd_vd(fr), vcast_vd_d(1e+10)), vcast_vd_d(0), fr);
-  vopmask o = veq_vo_vd_vd(vabs_vd_vd(x), vcast_vd_d(0.12499999999999998612));
-  fr = vsel_vd_vo_vd_vd(o, x, fr);
-  vi = vsel_vi_vo_vi_vi(vcast_vo32_vo64(o), vcast_vi_i(0), vi);
-  di_t ret = { fr, vi };
+  vdouble c = vmulsign_vd_vd_vd(vcast_vd_d(1L << 52), x);
+  vdouble rint4x = vsel_vd_vo_vd_vd(vgt_vo_vd_vd(vabs_vd_vd(vmul_vd_vd_vd(vcast_vd_d(4), x)), vcast_vd_d(1L << 52)),
+				    vmul_vd_vd_vd(vcast_vd_d(4), x),
+				    vorsign_vd_vd_vd(vsub_vd_vd_vd(vmla_vd_vd_vd_vd(vcast_vd_d(4), x, c), c), x));
+  vdouble rintx  = vsel_vd_vo_vd_vd(vgt_vo_vd_vd(vabs_vd_vd(x), vcast_vd_d(1L << 52)),
+				    x, vorsign_vd_vd_vd(vsub_vd_vd_vd(vadd_vd_vd_vd(x, c), c), x));
+  di_t ret = {
+    vmla_vd_vd_vd_vd(vcast_vd_d(-0.25), rint4x, x),
+    vtruncate_vi_vd(vmla_vd_vd_vd_vd(vcast_vd_d(-4), rintx, rint4x))
+  };
 #endif
   return ret;
 }
@@ -3083,9 +3087,13 @@ EXPORT CONST VECTOR_CC vdouble xfdim(vdouble x, vdouble y) {
 }
 
 EXPORT CONST VECTOR_CC vdouble xtrunc(vdouble x) {
+#ifdef FULL_FP_ROUNDING
+  return vtruncate_vd_vd(x);
+#else
   vdouble fr = vsub_vd_vd_vd(x, vmul_vd_vd_vd(vcast_vd_d(1LL << 31), vcast_vd_vi(vtruncate_vi_vd(vmul_vd_vd_vd(x, vcast_vd_d(1.0 / (1LL << 31)))))));
   fr = vsub_vd_vd_vd(fr, vcast_vd_vi(vtruncate_vi_vd(fr)));
   return vsel_vd_vo_vd_vd(vor_vo_vo_vo(visinf_vo_vd(x), vge_vo_vd_vd(vabs_vd_vd(x), vcast_vd_d(1LL << 52))), x, vcopysign_vd_vd_vd(vsub_vd_vd_vd(x, fr), x));
+#endif
 }
 
 EXPORT CONST VECTOR_CC vdouble xfloor(vdouble x) {
@@ -3113,14 +3121,13 @@ EXPORT CONST VECTOR_CC vdouble xround(vdouble d) {
 }
 
 EXPORT CONST VECTOR_CC vdouble xrint(vdouble d) {
-  vdouble x = vadd_vd_vd_vd(d, vcast_vd_d(0.5));
-  vdouble fr = vsub_vd_vd_vd(x, vmul_vd_vd_vd(vcast_vd_d(1LL << 31), vcast_vd_vi(vtruncate_vi_vd(vmul_vd_vd_vd(x, vcast_vd_d(1.0 / (1LL << 31)))))));
-  vopmask isodd = vcast_vo64_vo32(veq_vo_vi_vi(vand_vi_vi_vi(vcast_vi_i(1), vtruncate_vi_vd(fr)), vcast_vi_i(1)));
-  fr = vsub_vd_vd_vd(fr, vcast_vd_vi(vtruncate_vi_vd(fr)));
-  fr = vsel_vd_vo_vd_vd(vor_vo_vo_vo(vlt_vo_vd_vd(fr, vcast_vd_d(0)), vand_vo_vo_vo(veq_vo_vd_vd(fr, vcast_vd_d(0)), isodd)), vadd_vd_vd_vd(fr, vcast_vd_d(1.0)), fr);
-  x = vsel_vd_vo_vd_vd(veq_vo_vd_vd(d, vcast_vd_d(0.50000000000000011102)), vcast_vd_d(0), x);
-  vdouble ret = vsel_vd_vo_vd_vd(vor_vo_vo_vo(visinf_vo_vd(d), vge_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(1LL << 52))), d, vcopysign_vd_vd_vd(vsub_vd_vd_vd(x, fr), d));
-  return ret;
+#ifdef FULL_FP_ROUNDING
+  return vrint_vd_vd(d);
+#else
+  vdouble c = vmulsign_vd_vd_vd(vcast_vd_d(1L << 52), d);
+  return vsel_vd_vo_vd_vd(vgt_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(1L << 52)),
+			  d, vorsign_vd_vd_vd(vsub_vd_vd_vd(vadd_vd_vd_vd(d, c), c), d));
+#endif
 }
 
 EXPORT CONST VECTOR_CC vdouble xnextafter(vdouble x, vdouble y) {
@@ -3181,6 +3188,9 @@ EXPORT CONST VECTOR_CC vint xexpfrexp(vdouble x) {
 }
 
 EXPORT CONST VECTOR_CC vdouble xfma(vdouble x, vdouble y, vdouble z) {
+#ifdef ENABLE_FMA_DP
+  return vfma_vd_vd_vd_vd(x, y, z);
+#else
   vdouble h2 = vadd_vd_vd_vd(vmul_vd_vd_vd(x, y), z), q = vcast_vd_d(1);
   vopmask o = vlt_vo_vd_vd(vabs_vd_vd(h2), vcast_vd_d(1e-300));
   {
@@ -3211,9 +3221,47 @@ EXPORT CONST VECTOR_CC vdouble xfma(vdouble x, vdouble y, vdouble z) {
   o = vor_vo_vo_vo(visinf_vo_vd(h2), visnan_vo_vd(h2));
   
   return vsel_vd_vo_vd_vd(o, h2, vmul_vd_vd_vd(ret, q));
+#endif
 }
 
 SQRTU05_FUNCATR VECTOR_CC vdouble xsqrt_u05(vdouble d) {
+#if defined(ENABLE_FMA_DP)
+  vdouble q, w, x, y, z;
+  
+  d = vsel_vd_vo_vd_vd(vlt_vo_vd_vd(d, vcast_vd_d(0)), vcast_vd_d(SLEEF_NAN), d);
+
+  vopmask o = vlt_vo_vd_vd(d, vcast_vd_d(8.636168555094445E-78));
+  d = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(d, vcast_vd_d(1.157920892373162E77)), d);
+  q = vsel_vd_vo_vd_vd(o, vcast_vd_d(2.9387358770557188E-39), vcast_vd_d(1));
+
+  y = vreinterpret_vd_vi2(vsub_vi2_vi2_vi2(vcast_vi2_i_i(0x5fe6ec85, 0xe7de30da), vsrl_vi2_vi2_i(vreinterpret_vi2_vd(d), 1)));
+
+  x = vmul_vd_vd_vd(d, y);         w = vmul_vd_vd_vd(vcast_vd_d(0.5), y);
+  y = vfmanp_vd_vd_vd_vd(x, w, vcast_vd_d(0.5));
+  x = vfma_vd_vd_vd_vd(x, y, x);   w = vfma_vd_vd_vd_vd(w, y, w);
+  y = vfmanp_vd_vd_vd_vd(x, w, vcast_vd_d(0.5));
+  x = vfma_vd_vd_vd_vd(x, y, x);   w = vfma_vd_vd_vd_vd(w, y, w);
+  y = vfmanp_vd_vd_vd_vd(x, w, vcast_vd_d(0.5));
+  x = vfma_vd_vd_vd_vd(x, y, x);   w = vfma_vd_vd_vd_vd(w, y, w);
+
+  y = vfmanp_vd_vd_vd_vd(x, w, vcast_vd_d(1.5));  w = vadd_vd_vd_vd(w, w);
+  w = vmul_vd_vd_vd(w, y);
+  x = vmul_vd_vd_vd(w, d);
+  y = vfmapn_vd_vd_vd_vd(w, d, x); z = vfmanp_vd_vd_vd_vd(w, x, vcast_vd_d(1));
+
+  z = vfmanp_vd_vd_vd_vd(w, y, z); w = vmul_vd_vd_vd(vcast_vd_d(0.5), x);
+  w = vfma_vd_vd_vd_vd(w, z, y);
+  w = vadd_vd_vd_vd(w, x);
+
+  w = vmul_vd_vd_vd(w, q);
+
+  w = vsel_vd_vo_vd_vd(vor_vo_vo_vo(veq_vo_vd_vd(d, vcast_vd_d(0)),
+				    veq_vo_vd_vd(d, vcast_vd_d(SLEEF_INFINITY))), d, w);
+
+  w = vsel_vd_vo_vd_vd(vlt_vo_vd_vd(d, vcast_vd_d(0)), vcast_vd_d(SLEEF_NAN), w);
+
+  return w;
+#else
   vdouble q;
   vopmask o;
   
@@ -3242,14 +3290,16 @@ SQRTU05_FUNCATR VECTOR_CC vdouble xsqrt_u05(vdouble d) {
   x = vsel_vd_vo_vd_vd(veq_vo_vd_vd(d, vcast_vd_d(0)), d, x);
   
   return x;
+#endif
 }
 
 EXPORT CONST VECTOR_CC vdouble xsqrt(vdouble d) {
-#ifdef ACCURATE_SQRT
+#if defined(ACCURATE_SQRT)
   return vsqrt_vd_vd(d);
-#endif
+#else
   // fall back to approximation if ACCURATE_SQRT is undefined
   return xsqrt_u05(d);
+#endif
 }
 
 EXPORT CONST VECTOR_CC vdouble xsqrt_u35(vdouble d) { return xsqrt_u05(d); }
@@ -3345,12 +3395,9 @@ static INLINE VECTOR_CC vdouble vrintk2_vd_vd(vdouble d) {
 #ifdef FULL_FP_ROUNDING
   return vrint_vd_vd(d);
 #else
-  vdouble x = vadd_vd_vd_vd(d, vcast_vd_d(0.5));
-  vdouble fr = vsub_vd_vd_vd(x, vmul_vd_vd_vd(vcast_vd_d(1LL << 31), vcast_vd_vi(vtruncate_vi_vd(vmul_vd_vd_vd(x, vcast_vd_d(1.0 / (1LL << 31)))))));
-  vopmask isodd = vcast_vo64_vo32(veq_vo_vi_vi(vand_vi_vi_vi(vcast_vi_i(1), vtruncate_vi_vd(fr)), vcast_vi_i(1)));
-  fr = vsub_vd_vd_vd(fr, vcast_vd_vi(vtruncate_vi_vd(fr)));
-  fr = vsel_vd_vo_vd_vd(vor_vo_vo_vo(vlt_vo_vd_vd(fr, vcast_vd_d(0)), vand_vo_vo_vo(veq_vo_vd_vd(fr, vcast_vd_d(0)), isodd)), vadd_vd_vd_vd(fr, vcast_vd_d(1.0)), fr);
-  return vsel_vd_vo_vd_vd(vge_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(1LL << 52)), d, vcopysign_vd_vd_vd(vsub_vd_vd_vd(x, fr), d));
+  vdouble c = vmulsign_vd_vd_vd(vcast_vd_d(1L << 52), d);
+  return vsel_vd_vo_vd_vd(vgt_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(1L << 52)),
+			  d, vorsign_vd_vd_vd(vsub_vd_vd_vd(vadd_vd_vd_vd(d, c), c), d));
 #endif
 }
 
