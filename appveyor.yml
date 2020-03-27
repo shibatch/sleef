@@ -36,7 +36,7 @@ install:
   - cd "%BUILDFOLDER%"
   - mkdir build-clang
   - cd build-clang
-  - cmake -G Ninja .. -DCMAKE_C_COMPILER:PATH="C:\Program Files\LLVM\bin\clang.exe" -DCMAKE_C_COMPILER_ID="Clang" -DCMAKE_INSTALL_PREFIX=install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_SHOW_ERROR_LOG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE %ENV_BUILD_STATIC%
+  - cmake -G Ninja .. -DCMAKE_C_COMPILER:PATH="C:\Program Files\LLVM\bin\clang.exe" -DCMAKE_INSTALL_PREFIX=install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_SHOW_ERROR_LOG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE %ENV_BUILD_STATIC%
   - ninja
   - if "%DO_TEST%" == "TRUE" (ctest --output-on-failure -j 4 -C Release)
 artifacts:
