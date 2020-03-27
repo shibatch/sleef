@@ -1,4 +1,4 @@
-//   Copyright Naoki Shibata and contributors 2010 - 2020.
+//          Copyright Naoki Shibata 2010 - 2019.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -14,9 +14,7 @@
 
 #define __SLEEFSIMDQP_C__
 
-#if (defined(_MSC_VER))
-#pragma fp_contract (off)
-#endif
+#pragma STDC FP_CONTRACT OFF
 
 #ifdef ENABLE_PUREC_SCALAR
 #define CONFIG 1
