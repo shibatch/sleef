@@ -14,7 +14,9 @@
 
 #define __SLEEFSIMDQP_C__
 
-#pragma STDC FP_CONTRACT OFF
+#if (defined(_MSC_VER))
+#pragma fp_contract (off)
+#endif
 
 #ifdef ENABLE_PUREC_SCALAR
 #define CONFIG 1

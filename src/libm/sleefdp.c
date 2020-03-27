@@ -26,7 +26,9 @@ extern const double rempitabdp[];
 #include "rename.h"
 #endif
 
-#pragma STDC FP_CONTRACT OFF
+#if (defined(_MSC_VER))
+#pragma fp_contract (off)
+#endif
 
 #define MLA mla
 #define C2V(x) (x)
