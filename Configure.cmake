@@ -2,13 +2,6 @@ include(CheckCCompilerFlag)
 include(CheckCSourceCompiles)
 include(CheckTypeSize)
 
-# Some toolchains require explicit linking of the libraries following.
-find_library(LIB_MPFR mpfr)
-find_library(LIBM m)
-find_library(LIBGMP gmp)
-find_library(LIBRT rt)
-find_library(LIBFFTW3 fftw3)
-
 if (NOT CMAKE_CROSSCOMPILING AND NOT SLEEF_FORCE_FIND_PACKAGE_SSL)
   find_package(OpenSSL)
   if (OPENSSL_FOUND)
@@ -32,25 +25,34 @@ if (ENFORCE_TESTER3 AND NOT SLEEF_OPENSSL_FOUND)
   message(FATAL_ERROR "ENFORCE_TESTER3 is specified and OpenSSL not found")
 endif()
 
-if (LIB_MPFR)
-  find_path(MPFR_INCLUDE_DIR
-    NAMES mpfr.h
-    ONLY_CMAKE_FIND_ROOT_PATH)
-endif(LIB_MPFR)
+if (NOT SLEEF_CLANG_ON_WINDOWS)
+  # Some toolchains require explicit linking of the libraries following.
+  find_library(LIB_MPFR mpfr)
+  find_library(LIBM m)
+  find_library(LIBGMP gmp)
+  find_library(LIBRT rt)
+  find_library(LIBFFTW3 fftw3)
 
-if (LIBFFTW3)
-  find_path(FFTW3_INCLUDE_DIR
-    NAMES fftw3.h
-    ONLY_CMAKE_FIND_ROOT_PATH)
-endif(LIBFFTW3)
+  if (LIB_MPFR)
+    find_path(MPFR_INCLUDE_DIR
+      NAMES mpfr.h
+      ONLY_CMAKE_FIND_ROOT_PATH)
+  endif(LIB_MPFR)
 
-if (NOT LIBM)
-  set(LIBM "")
-endif()
+  if (LIBFFTW3)
+    find_path(FFTW3_INCLUDE_DIR
+      NAMES fftw3.h
+      ONLY_CMAKE_FIND_ROOT_PATH)
+  endif(LIBFFTW3)
 
-if (NOT LIBRT)
-  set(LIBRT "")
-endif()
+  if (NOT LIBM)
+    set(LIBM "")
+  endif()
+
+  if (NOT LIBRT)
+    set(LIBRT "")
+  endif()
+endif(NOT SLEEF_CLANG_ON_WINDOWS)
 
 # The library currently supports the following SIMD architectures
 set(SLEEF_SUPPORTED_EXTENSIONS
