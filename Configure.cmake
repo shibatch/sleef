@@ -307,7 +307,7 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
     set(FLAGS_ENABLE_NEON32 "-mfpu=neon")
   endif(CMAKE_C_COMPILER_ID MATCHES "GNU")
 
-  if (CMAKE_C_COMPILER_ID MATCHES "Clang" AND "x${CMAKE_C_SIMULATE_ID}" STREQUAL "xMSVC")
+  if (SLEEF_CLANG_FOR_WINDOWS)
     string(CONCAT FLAGS_WALL ${FLAGS_WALL} " -D_CRT_SECURE_NO_WARNINGS -Wno-deprecated-declarations")
   endif()
 elseif(MSVC)
