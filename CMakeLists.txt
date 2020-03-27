@@ -65,7 +65,7 @@ message(STATUS "CMAKE_C_SIMULATE_ID ${CMAKE_C_SIMULATE_ID}")
 
 if (CMAKE_C_COMPILER_ID MATCHES "Clang" AND "x${CMAKE_C_SIMULATE_ID}" STREQUAL "xMSVC")
   message(STATUS "Building with Clang on Windows")
-  set(SLEEF_CLANG_FOR_WINDOWS TRUE)
+  set(SLEEF_CLANG_ON_WINDOWS TRUE)
 endif()
 
 # sleef-config.h.in passes cmake settings to the source code
