@@ -26,9 +26,7 @@ extern const float rempitabsp[];
 #include "rename.h"
 #endif
 
-#if (defined(_MSC_VER))
-#pragma fp_contract (off)
-#endif
+#pragma STDC FP_CONTRACT OFF
 
 #define MLA mlaf
 #define C2V(x) (x)

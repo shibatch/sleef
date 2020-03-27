@@ -16,9 +16,7 @@ extern const double rempitabdp[];
 
 #define __SLEEFSIMDDP_C__
 
-#if (defined(_MSC_VER))
-#pragma fp_contract (off)
-#endif
+#pragma STDC FP_CONTRACT OFF
 
 #ifdef ENABLE_SSE2
 #define CONFIG 2
