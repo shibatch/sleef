@@ -60,9 +60,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
 set(SLEEF_SCRIPT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Scripts CACHE PATH
   "Path for finding sleef specific cmake scripts")
 
-message(STATUS "CMAKE_C_COMPILER_ID ${CMAKE_C_COMPILER_ID}")
-message(STATUS "CMAKE_C_SIMULATE_ID ${CMAKE_C_SIMULATE_ID}")
-
 if (CMAKE_C_COMPILER_ID MATCHES "Clang" AND "x${CMAKE_C_SIMULATE_ID}" STREQUAL "xMSVC")
   message(STATUS "Building with Clang on Windows")
   set(SLEEF_CLANG_ON_WINDOWS TRUE)
