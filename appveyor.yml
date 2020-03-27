@@ -11,6 +11,7 @@ environment:
     DO_TEST: FALSE
 install:
   - hostname
+  - call "D:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
   - set BUILDFOLDER=%CD%
   - set ORGPATH=%PATH%
 #  - if "%DO_TEST%" == "TRUE" "C:\\Cygwin64\\setup-x86_64.exe" -q -g -P libmpfr-devel,libgmp-devel,cmake
