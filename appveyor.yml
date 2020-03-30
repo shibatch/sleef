@@ -28,7 +28,7 @@ install:
   - if "%DO_TEST%" == "TRUE" call p.bat
   - mkdir build
   - cd build
-  - cmake -G"Visual Studio 16 2019" .. -DCMAKE_INSTALL_PREFIX=install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_SHOW_ERROR_LOG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE %ENV_BUILD_STATIC%
+  - cmake -G Ninja .. -DCMAKE_INSTALL_PREFIX=install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_SHOW_ERROR_LOG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE %ENV_BUILD_STATIC%
 build_script:
   - cmake --build . --target install --config Release
 test_script:
