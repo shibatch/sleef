@@ -342,22 +342,26 @@ typedef struct {
 } dfi_t;
 #endif
 
+static INLINE CONST VECTOR_CC vfloat vorsign_vf_vf_vf(vfloat x, vfloat y) {
+  return vreinterpret_vf_vm(vor_vm_vm_vm(vreinterpret_vm_vf(x), vsignbit_vm_vf(y)));
+}
+
 static INLINE CONST fi_t rempisubf(vfloat x) {
 #ifdef FULL_FP_ROUNDING
   vfloat y = vrint_vf_vf(vmul_vf_vf_vf(x, vcast_vf_f(4)));
   vint2 vi = vtruncate_vi2_vf(vsub_vf_vf_vf(y, vmul_vf_vf_vf(vrint_vf_vf(x), vcast_vf_f(4))));
   fi_t ret = { vsub_vf_vf_vf(x, vmul_vf_vf_vf(y, vcast_vf_f(0.25))), vi };
 #else
-  vfloat fr = vsub_vf_vf_vf(x, vmul_vf_vf_vf(vcast_vf_f(1LL << 10), vtruncate_vf_vf(vmul_vf_vf_vf(x, vcast_vf_f(1.0 / (1LL << 10))))));
-  vint2 vi = vadd_vi2_vi2_vi2(vsel_vi2_vo_vi2_vi2(vgt_vo_vf_vf(x, vcast_vf_f(0)), vcast_vi2_i(4), vcast_vi2_i(3)), vtruncate_vi2_vf(vmul_vf_vf_vf(fr, vcast_vf_f(8))));
-  vi = vsra_vi2_vi2_i(vsub_vi2_vi2_vi2(vand_vi2_vi2_vi2(vcast_vi2_i(7), vi), vcast_vi2_i(3)), 1);
-  fr = vsub_vf_vf_vf(fr, vmul_vf_vf_vf(vcast_vf_f(0.25), vtruncate_vf_vf(vmla_vf_vf_vf_vf(fr, vcast_vf_f(4), vmulsign_vf_vf_vf(vcast_vf_f(0.5), x)))));
-  fr = vsel_vf_vo_vf_vf(vgt_vo_vf_vf(vabs_vf_vf(fr), vcast_vf_f(0.25)), vsub_vf_vf_vf(fr, vmulsign_vf_vf_vf(vcast_vf_f(0.5), x)), fr);
-  fr = vsel_vf_vo_vf_vf(vgt_vo_vf_vf(vabs_vf_vf(fr), vcast_vf_f(1e+10)), vcast_vf_f(0), fr);
-  vopmask o = veq_vo_vf_vf(vabs_vf_vf(x), vcast_vf_f(0.12499999254941940308f));
-  fr = vsel_vf_vo_vf_vf(o, x, fr);
-  vi = vsel_vi2_vo_vi2_vi2(o, vcast_vi2_i(0), vi);
-  fi_t ret = { fr, vi };
+  vfloat c = vmulsign_vf_vf_vf(vcast_vf_f(1 << 23), x);
+  vfloat rint4x = vsel_vf_vo_vf_vf(vgt_vo_vf_vf(vabs_vf_vf(vmul_vf_vf_vf(vcast_vf_f(4), x)), vcast_vf_f(1 << 23)),
+				   vmul_vf_vf_vf(vcast_vf_f(4), x),
+				   vorsign_vf_vf_vf(vsub_vf_vf_vf(vmla_vf_vf_vf_vf(vcast_vf_f(4), x, c), c), x));
+  vfloat rintx  = vsel_vf_vo_vf_vf(vgt_vo_vf_vf(vabs_vf_vf(x), vcast_vf_f(1 << 23)),
+				   x, vorsign_vf_vf_vf(vsub_vf_vf_vf(vadd_vf_vf_vf(x, c), c), x));
+  fi_t ret = {
+    vmla_vf_vf_vf_vf(vcast_vf_f(-0.25), rint4x, x),
+    vtruncate_vi2_vf(vmla_vf_vf_vf_vf(vcast_vf_f(-4), rintx, rint4x))
+  };
 #endif
   return ret;
 }
@@ -2674,8 +2678,12 @@ EXPORT CONST VECTOR_CC vfloat xfdimf(vfloat x, vfloat y) {
 }
 
 EXPORT CONST VECTOR_CC vfloat xtruncf(vfloat x) {
+#ifdef FULL_FP_ROUNDING
+  return vtruncate_vf_vf(x);
+#else
   vfloat fr = vsub_vf_vf_vf(x, vcast_vf_vi2(vtruncate_vi2_vf(x)));
   return vsel_vf_vo_vf_vf(vor_vo_vo_vo(visinf_vo_vf(x), vge_vo_vf_vf(vabs_vf_vf(x), vcast_vf_f(1LL << 23))), x, vcopysign_vf_vf_vf(vsub_vf_vf_vf(x, fr), x));
+#endif
 }
 
 EXPORT CONST VECTOR_CC vfloat xfloorf(vfloat x) {
@@ -2700,16 +2708,19 @@ EXPORT CONST VECTOR_CC vfloat xroundf(vfloat d) {
 }
 
 EXPORT CONST VECTOR_CC vfloat xrintf(vfloat d) {
-  vfloat x = vadd_vf_vf_vf(d, vcast_vf_f(0.5f));
-  vopmask isodd = veq_vo_vi2_vi2(vand_vi2_vi2_vi2(vcast_vi2_i(1), vtruncate_vi2_vf(x)), vcast_vi2_i(1));
-  vfloat fr = vsub_vf_vf_vf(x, vcast_vf_vi2(vtruncate_vi2_vf(x)));
-  fr = vsel_vf_vo_vf_vf(vor_vo_vo_vo(vlt_vo_vf_vf(fr, vcast_vf_f(0)), vand_vo_vo_vo(veq_vo_vf_vf(fr, vcast_vf_f(0)), isodd)), vadd_vf_vf_vf(fr, vcast_vf_f(1.0f)), fr);
-  x = vsel_vf_vo_vf_vf(veq_vo_vf_vf(d, vcast_vf_f(0.50000005960464477539f)), vcast_vf_f(0), x);
-  vfloat ret = vsel_vf_vo_vf_vf(vor_vo_vo_vo(visinf_vo_vf(d), vge_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(1LL << 23))), d, vcopysign_vf_vf_vf(vsub_vf_vf_vf(x, fr), d));
-  return ret;
+#ifdef FULL_FP_ROUNDING
+  return vrint_vf_vf(d);
+#else
+  vfloat c = vmulsign_vf_vf_vf(vcast_vf_f(1 << 23), d);
+  return vsel_vf_vo_vf_vf(vgt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(1 << 23)),
+			  d, vorsign_vf_vf_vf(vsub_vf_vf_vf(vadd_vf_vf_vf(d, c), c), d));
+#endif
 }
 
 EXPORT CONST VECTOR_CC vfloat xfmaf(vfloat x, vfloat y, vfloat z) {
+#ifdef ENABLE_FMA_SP
+  return vfma_vf_vf_vf_vf(x, y, z);
+#else
   vfloat h2 = vadd_vf_vf_vf(vmul_vf_vf_vf(x, y), z), q = vcast_vf_f(1);
   vopmask o = vlt_vo_vf_vf(vabs_vf_vf(h2), vcast_vf_f(1e-38f));
   {
@@ -2740,12 +2751,48 @@ EXPORT CONST VECTOR_CC vfloat xfmaf(vfloat x, vfloat y, vfloat z) {
   o = vor_vo_vo_vo(visinf_vo_vf(h2), visnan_vo_vf(h2));
   
   return vsel_vf_vo_vf_vf(o, h2, vmul_vf_vf_vf(ret, q));
+#endif
 }
 #endif // #if !defined(DETERMINISTIC)
 
 static INLINE CONST VECTOR_CC vint2 vcast_vi2_i_i(int i0, int i1) { return vcast_vi2_vm(vcast_vm_i_i(i0, i1)); }
 
 SQRTFU05_FUNCATR VECTOR_CC vfloat xsqrtf_u05(vfloat d) {
+#if defined(ENABLE_FMA_SP)
+  vfloat q, w, x, y, z;
+
+  d = vsel_vf_vo_vf_vf(vlt_vo_vf_vf(d, vcast_vf_f(0)), vcast_vf_f(SLEEF_NANf), d);
+
+  vopmask o = vlt_vo_vf_vf(d, vcast_vf_f(5.2939559203393770e-23f));
+  d = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(d, vcast_vf_f(1.8889465931478580e+22f)), d);
+  q = vsel_vf_vo_vf_vf(o, vcast_vf_f(7.2759576141834260e-12f), vcast_vf_f(1.0f));
+
+  y = vreinterpret_vf_vi2(vsub_vi2_vi2_vi2(vcast_vi2_i(0x5f3759df), vsrl_vi2_vi2_i(vreinterpret_vi2_vf(d), 1)));
+
+  x = vmul_vf_vf_vf(d, y);         w = vmul_vf_vf_vf(vcast_vf_f(0.5), y);
+  y = vfmanp_vf_vf_vf_vf(x, w, vcast_vf_f(0.5));
+  x = vfma_vf_vf_vf_vf(x, y, x);   w = vfma_vf_vf_vf_vf(w, y, w);
+  y = vfmanp_vf_vf_vf_vf(x, w, vcast_vf_f(0.5));
+  x = vfma_vf_vf_vf_vf(x, y, x);   w = vfma_vf_vf_vf_vf(w, y, w);
+
+  y = vfmanp_vf_vf_vf_vf(x, w, vcast_vf_f(1.5));  w = vadd_vf_vf_vf(w, w);
+  w = vmul_vf_vf_vf(w, y);
+  x = vmul_vf_vf_vf(w, d);
+  y = vfmapn_vf_vf_vf_vf(w, d, x); z = vfmanp_vf_vf_vf_vf(w, x, vcast_vf_f(1));
+
+  z = vfmanp_vf_vf_vf_vf(w, y, z); w = vmul_vf_vf_vf(vcast_vf_f(0.5), x);
+  w = vfma_vf_vf_vf_vf(w, z, y);
+  w = vadd_vf_vf_vf(w, x);
+
+  w = vmul_vf_vf_vf(w, q);
+
+  w = vsel_vf_vo_vf_vf(vor_vo_vo_vo(veq_vo_vf_vf(d, vcast_vf_f(0)),
+				    veq_vo_vf_vf(d, vcast_vf_f(SLEEF_INFINITYf))), d, w);
+
+  w = vsel_vf_vo_vf_vf(vlt_vo_vf_vf(d, vcast_vf_f(0)), vcast_vf_f(SLEEF_NANf), w);
+
+  return w;
+#else
   vfloat q;
   vopmask o;
   
@@ -2774,14 +2821,16 @@ SQRTFU05_FUNCATR VECTOR_CC vfloat xsqrtf_u05(vfloat d) {
   x = vsel_vf_vo_vf_vf(veq_vo_vf_vf(d, vcast_vf_f(0)), d, x);
   
   return x;
+#endif
 }
 
 EXPORT CONST VECTOR_CC vfloat xsqrtf(vfloat d) {
 #ifdef ACCURATE_SQRT
   return vsqrt_vf_vf(d);
-#endif
+#else
   // fall back to approximation if ACCURATE_SQRT is undefined
   return xsqrtf_u05(d);
+#endif
 }
 
 #if !defined(DETERMINISTIC)
@@ -2928,11 +2977,9 @@ static INLINE CONST VECTOR_CC vfloat vrintfk2_vf_vf(vfloat d) {
 #ifdef FULL_FP_ROUNDING
   return vrint_vf_vf(d);
 #else
-  vfloat x = vadd_vf_vf_vf(d, vcast_vf_f(0.5f));
-  vopmask isodd = veq_vo_vi2_vi2(vand_vi2_vi2_vi2(vcast_vi2_i(1), vtruncate_vi2_vf(x)), vcast_vi2_i(1));
-  vfloat fr = vsub_vf_vf_vf(x, vcast_vf_vi2(vtruncate_vi2_vf(x)));
-  fr = vsel_vf_vo_vf_vf(vor_vo_vo_vo(vlt_vo_vf_vf(fr, vcast_vf_f(0)), vand_vo_vo_vo(veq_vo_vf_vf(fr, vcast_vf_f(0)), isodd)), vadd_vf_vf_vf(fr, vcast_vf_f(1.0f)), fr);
-  return vsel_vf_vo_vf_vf(vge_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(1LL << 23)), d, vcopysign_vf_vf_vf(vsub_vf_vf_vf(x, fr), d));
+  vfloat c = vmulsign_vf_vf_vf(vcast_vf_f(1 << 23), d);
+  return vsel_vf_vo_vf_vf(vgt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(1 << 23)),
+			  d, vorsign_vf_vf_vf(vsub_vf_vf_vf(vadd_vf_vf_vf(d, c), c), d));
 #endif
 }
 

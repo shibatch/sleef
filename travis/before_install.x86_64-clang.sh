@@ -1,5 +1,4 @@
 #!/bin/bash
 set -ev
-sudo add-apt-repository -y ppa:adrozdoff/cmake
 sudo apt-get -qq update
-sudo apt-get install -y cmake libmpfr-dev libfftw3-dev libssl-dev
+sudo apt-get install -y libmpfr-dev libfftw3-dev libssl-dev ninja-build

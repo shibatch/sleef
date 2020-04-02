@@ -11,6 +11,7 @@ option(SLEEF_TEST_ALL_IUT "Perform tests on implementations with all vector exte
 option(SLEEF_SHOW_CONFIG "Show SLEEF configuration status messages." ON)
 option(SLEEF_SHOW_ERROR_LOG "Show cmake error log." OFF)
 
+option(ENFORCE_TESTER "Build fails if tester is not available" OFF)
 option(ENFORCE_TESTER3 "Build fails if tester3 is not built" OFF)
 
 option(ENABLE_ALTDIV  "Enable alternative division method (aarch64 only)" OFF)
