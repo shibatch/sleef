@@ -1,30 +1,38 @@
 version: 1.0.{build}
-max_jobs: 1
-image: Visual Studio 2017
+build_cloud: lithium
+max_jobs: 4
+image: Visual Studio 2019
 configuration: Release
 environment:
   matrix:
-  - ENV_BUILD_STATIC: -DBUILD_SHARED_LIBS=TRUE
+  - ENV_BUILD_STATIC: -DBUILD_SHARED_LIBS=TRUE -DENFORCE_TESTER=TRUE
     DO_TEST: TRUE
   - ENV_BUILD_STATIC: -DBUILD_SHARED_LIBS=FALSE
     DO_TEST: FALSE
 install:
-  - if "%DO_TEST%" == "TRUE" set ORGPATH="%PATH%"
-  - if "%DO_TEST%" == "TRUE" "C:\\Cygwin64\\setup-x86_64.exe" -q -g -P libmpfr-devel,libgmp-devel,cmake
-  - if "%DO_TEST%" == "TRUE" PATH c:\Cygwin64\bin;c:\Cygwin64\usr\bin;c:\projects\sleef\build-cygwin\bin;"%PATH%"
-  - if "%DO_TEST%" == "TRUE" "C:\\Cygwin64\\bin\\bash" -c 'mkdir build-mingw;cd build-mingw;CC=x86_64-w64-mingw32-gcc cmake -g\"Unix Makefiles\" .. -DBUILD_SHARED_LIBS=FALSE -DBUILD_QUAD=TRUE;make -j 2'
-  - if "%DO_TEST%" == "TRUE" cd "c:\\projects\\sleef"
-  - if "%DO_TEST%" == "TRUE" "C:\\Cygwin64\\bin\\bash" -c 'mkdir build-cygwin;cd build-cygwin;cmake -g\"Unix Makefiles\" -DBUILD_QUAD=TRUE ..;make -j 2'
-  - if "%DO_TEST%" == "TRUE" del /Q /F c:\projects\sleef\build-cygwin\bin\iut*
-  - if "%DO_TEST%" == "TRUE" PATH "%ORGPATH%";c:\Cygwin64\bin;c:\Cygwin64\usr\bin;c:\projects\sleef\build-cygwin\bin;c:\projects\sleef\build\bin
-  - if "%DO_TEST%" == "TRUE" cd "c:\\projects\\sleef"
+  - hostname
+  - call "D:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+  - set BUILDFOLDER=%CD%
+  - set ORGPATH=%PATH%
+#  - if "%DO_TEST%" == "TRUE" "C:\\Cygwin64\\setup-x86_64.exe" -q -g -P libmpfr-devel,libgmp-devel,cmake
+  - if "%DO_TEST%" == "TRUE" echo PATH c:\Cygwin64\bin;c:\Cygwin64\usr\bin;%CD%\build-cygwin\bin;%PATH% > q.bat
+  - if "%DO_TEST%" == "TRUE" powershell -Command "(gc q.bat) -replace ' ;', ';' | Out-File -encoding ASCII p.bat"
+  - if "%DO_TEST%" == "TRUE" call p.bat
+  - if "%DO_TEST%" == "TRUE" "C:\\Cygwin64\\bin\\bash" -c 'mkdir build-mingw;cd build-mingw;CC=x86_64-w64-mingw32-gcc cmake -G Ninja .. -DBUILD_SHARED_LIBS=FALSE -DBUILD_QUAD=TRUE;ninja'
+  - if "%DO_TEST%" == "TRUE" cd "%BUILDFOLDER%"
+  - if "%DO_TEST%" == "TRUE" "C:\\Cygwin64\\bin\\bash" -c 'mkdir build-cygwin;cd build-cygwin;cmake -G Ninja -DBUILD_QUAD=TRUE ..;ninja'
+  - if "%DO_TEST%" == "TRUE" cd "%BUILDFOLDER%"
+  - if "%DO_TEST%" == "TRUE" del /Q /F build-cygwin\bin\iut*
+  - if "%DO_TEST%" == "TRUE" echo PATH %ORGPATH%;c:\Cygwin64\bin;c:\Cygwin64\usr\bin;%CD%\build-cygwin\bin;%CD%\build\bin > q.bat
+  - if "%DO_TEST%" == "TRUE" powershell -Command "(gc q.bat) -replace ' ;', ';' | Out-File -encoding ASCII p.bat"
+  - if "%DO_TEST%" == "TRUE" call p.bat
   - mkdir build
   - cd build
-  - cmake -G"Visual Studio 15 2017 Win64" .. -DCMAKE_INSTALL_PREFIX=install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_SHOW_ERROR_LOG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE %ENV_BUILD_STATIC%
+  - cmake -G"Visual Studio 16 2019" .. -DCMAKE_INSTALL_PREFIX=install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_SHOW_ERROR_LOG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE %ENV_BUILD_STATIC%
 build_script:
   - cmake --build . --target install --config Release
 test_script:
-  - if "%DO_TEST%" == "TRUE" (ctest --output-on-failure -j 2 -C Release)
+  - if "%DO_TEST%" == "TRUE" (ctest --output-on-failure -j 4 -C Release)
 artifacts:
 - path: build\install\**\*
   name: SLEEFWindowsx64
