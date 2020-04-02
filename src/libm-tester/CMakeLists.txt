@@ -10,6 +10,10 @@ if(NOT LIB_MPFR)
   find_program(TESTER_COMMAND tester)
 endif(NOT LIB_MPFR)
 
+if (ENFORCE_TESTER AND NOT LIB_MPFR AND NOT TESTER_COMMAND)
+  message(FATAL_ERROR "ENFORCE_TESTER is specified and tester is not available")
+endif(ENFORCE_TESTER AND NOT LIB_MPFR AND NOT TESTER_COMMAND)
+
 find_library(LIBRT rt)
 if (NOT LIBRT)
   set(LIBRT "")
