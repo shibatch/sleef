@@ -17,7 +17,6 @@ install:
 build_script:
   - set BUILDFOLDER=%CD%
   - set ORGPATH=%PATH%
-#  - if "%DO_TEST%" == "TRUE" "C:\\Cygwin64\\setup-x86_64.exe" -q -g -P libmpfr-devel,libgmp-devel,cmake
   - if "%DO_TEST%" == "TRUE" echo PATH c:\Cygwin64\bin;c:\Cygwin64\usr\bin;%CD%\build-cygwin\bin;%PATH% > q.bat
   - if "%DO_TEST%" == "TRUE" powershell -Command "(gc q.bat) -replace ' ;', ';' | Out-File -encoding ASCII p.bat"
   - if "%DO_TEST%" == "TRUE" call p.bat
@@ -32,7 +31,6 @@ build_script:
   - mkdir build
   - cd build
   - cmake -G"Visual Studio 16 2019" .. -DCMAKE_INSTALL_PREFIX=install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_SHOW_ERROR_LOG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE %ENV_BUILD_STATIC%
-build_script:
   - cmake --build . --target install --config Release
   - if "%DO_TEST%" == "TRUE" (ctest --output-on-failure -j 4 -C Release)
   - cd "%BUILDFOLDER%"
