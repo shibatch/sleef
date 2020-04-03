@@ -49,6 +49,12 @@ if(ENABLE_LTO AND BUILD_SHARED_LIBS)
   message(FATAL_ERROR "ENABLE_LTO and BUILD_SHARED_LIBS cannot be specified at the same time")
 endif(ENABLE_LTO AND BUILD_SHARED_LIBS)
 
+if(ENABLE_LTO)
+  cmake_policy(SET CMP0069 NEW)
+  include(CheckIPOSupported)
+  check_ipo_supported(RESULT supported OUTPUT error)
+endif()
+
 # Set output directories for the library files
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
