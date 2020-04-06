@@ -75,6 +75,8 @@ matrix:
 
 before_install:
      - export PATH=$PATH:/usr/bin
+     - LD_SHOW_AUXV=1 /bin/true
+     - sed '/^ *$/q' /proc/cpuinfo || true
      - cd ${TRAVIS_BUILD_DIR}
      - chmod +x ${TRAVIS_BUILD_DIR}/travis/*.sh
      - if [[ "${ENABLE_DOCKER}" == "true" ]]; then ${TRAVIS_BUILD_DIR}/travis/setupdocker.sh; fi
