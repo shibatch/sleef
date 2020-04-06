@@ -67,15 +67,17 @@ matrix:
       env:
         - LABEL=common
         - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
-    - os: linux
+    - arch: s390x
       dist: bionic
-      arch: s390x
-      addons:
-        apt:
-          packages:
-            - g++-8 libmpfr-dev libssl-dev libfftw3-dev
       env:
-        - LABEL="s390x-gcc"
+        - LABEL=common
+        - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
+    - arch: s390x
+      compiler: clang
+      dist: bionic
+      env:
+        - LABEL=common
+        - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
 
 before_install:
      - export PATH=$PATH:/usr/bin
