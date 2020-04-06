@@ -5,7 +5,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 set(CMAKE_C_FLAGS ORG_CMAKE_C_FLAGS)
 string(CONCAT CMAKE_C_FLAGS ${SLEEF_C_FLAGS})
 
-set(EXT_ENABLE_ALIAS AVX512F ADVSIMD NEON32 VSX)
+set(EXT_ENABLE_ALIAS AVX512F ADVSIMD NEON32 VSX ZVECTOR2)
 
 # --------------------------------------------------------------------
 # sleef.h
@@ -380,37 +380,6 @@ if (SLEEF_ARCH_X86)
     target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:dispavx_obj>)
   endif()
 endif(SLEEF_ARCH_X86)
-
-if (SLEEF_ARCH_S390X)
-  # Target disps390x_128.c
-
-  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/disps390x_128.c
-    COMMENT "Generating disps390x_128.c"
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/disps390x_128.c.org ${CMAKE_CURRENT_BINARY_DIR}/disps390x_128.c
-    COMMAND $<TARGET_FILE:${TARGET_MKDISP}> 2 4 SLEEF_VECTOR_DOUBLE SLEEF_VECTOR_FLOAT SLEEF_VECTOR_INT zvector zvector2 >> ${CMAKE_CURRENT_BINARY_DIR}/disps390x_128.c
-    DEPENDS ${TARGET_MKDISP}
-    )
-  add_custom_target(disps390x_128.c_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/disps390x_128.c)
-
-  # Target renamedsp128.h
-
-  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h
-    COMMENT "Generating renamedsp128.h"
-    COMMAND $<TARGET_FILE:${TARGET_MKRENAME}> - 2 4 > ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h
-    DEPENDS ${TARGET_MKRENAME}
-    )
-  add_custom_target(renamedsp128.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h)
-
-  # Target disps390x_128_obj
-
-  add_library(disps390x_128_obj OBJECT disps390x_128.c)
-  target_compile_options(disps390x_128_obj PRIVATE ${FLAGS_ENABLE_ZVECTOR2})
-  set_target_properties(disps390x_128_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
-  target_compile_definitions(disps390x_128_obj PRIVATE ${COMMON_TARGET_DEFINITIONS})
-  target_include_directories(disps390x_128_obj PRIVATE ${CMAKE_BINARY_DIR}/include)
-  add_dependencies(disps390x_128_obj disps390x_128.c_generated renamedsp128.h_generated ${TARGET_HEADERS})
-  target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:disps390x_128_obj>)
-endif(SLEEF_ARCH_S390X)
 
 # --------------------------------------------------------------------
 # TARGET_LIBSLEEFGNUABI

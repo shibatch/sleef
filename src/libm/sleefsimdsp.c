@@ -182,22 +182,6 @@ extern const float rempitabsp[];
 #endif
 #endif
 
-#ifdef ENABLE_ZVECTOR
-#define CONFIG 130
-#include "helpers390x_128.h"
-#ifdef DORENAME
-#include "renamezvector.h"
-#endif
-#endif
-
-#ifdef ENABLE_ZVECTORNOFMA
-#define CONFIG 131
-#include "helpers390x_128.h"
-#ifdef DORENAME
-#include "renamezvectornofma.h"
-#endif
-#endif
-
 #ifdef ENABLE_ZVECTOR2
 #define CONFIG 140
 #include "helpers390x_128.h"

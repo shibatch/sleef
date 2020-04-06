@@ -54,7 +54,7 @@ set(SLEEF_SUPPORTED_EXTENSIONS
   ADVSIMD ADVSIMDNOFMA SVE SVENOFMA                     # Aarch64
   NEON32 NEON32VFPV4                                    # Aarch32
   VSX VSXNOFMA                                          # PPC64
-  ZVECTOR ZVECTORNOFMA ZVECTOR2 ZVECTOR2NOFMA		                # IBM Z
+  ZVECTOR2 ZVECTOR2NOFMA		                # IBM Z
   PUREC_SCALAR PURECFMA_SCALAR                          # Generic type
   CACHE STRING "List of SIMD architectures supported by libsleef."
   )
@@ -203,8 +203,6 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "s390x")
 
   set(SLEEF_HEADER_LIST
     ZVECTOR_
-    ZVECTOR
-    ZVECTORNOFMA
     ZVECTOR2
     ZVECTOR2NOFMA
     PUREC_SCALAR
@@ -212,15 +210,13 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "s390x")
   )
 
   set(HEADER_PARAMS_ZVECTOR_      finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__)
-  set(HEADER_PARAMS_ZVECTOR       finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ zvector)
-  set(HEADER_PARAMS_ZVECTORNOFMA  cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ zvectornofma)
   set(HEADER_PARAMS_ZVECTOR2      finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ zvector2)
   set(HEADER_PARAMS_ZVECTOR2NOFMA cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ zvector2nofma)
+  set(ALIAS_PARAMS_ZVECTOR2_DP  2 "__vector double" "__vector int" - zvector2)
+  set(ALIAS_PARAMS_ZVECTOR2_SP -4 "__vector float"  "__vector int" - zvector2)
 
-  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-march=z13")
+  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-march=z14")
 
-  set(TESTER3_DEFINITIONS_ZVECTOR      ATR=finz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=zvector)
-  set(TESTER3_DEFINITIONS_ZVECTORNOFMA ATR=cinz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=zvectornofma)
   set(TESTER3_DEFINITIONS_ZVECTOR2      ATR=finz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=zvector2)
   set(TESTER3_DEFINITIONS_ZVECTOR2NOFMA ATR=cinz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=zvector2nofma)
 endif()
@@ -252,8 +248,6 @@ command_arguments(RENAME_PARAMS_NEON32          cinz_ 2 4 neon)
 command_arguments(RENAME_PARAMS_NEON32VFPV4     finz_ 2 4 neonvfpv4)
 command_arguments(RENAME_PARAMS_VSX             finz_ 2 4 vsx)
 command_arguments(RENAME_PARAMS_VSXNOFMA        cinz_ 2 4 vsxnofma)
-command_arguments(RENAME_PARAMS_ZVECTOR             finz_ 2 4 zvector)
-command_arguments(RENAME_PARAMS_ZVECTORNOFMA        cinz_ 2 4 zvectornofma)
 command_arguments(RENAME_PARAMS_ZVECTOR2             finz_ 2 4 zvector2)
 command_arguments(RENAME_PARAMS_ZVECTOR2NOFMA        cinz_ 2 4 zvector2nofma)
 command_arguments(RENAME_PARAMS_PUREC_SCALAR    cinz_ 1 1 purec)
@@ -313,8 +307,6 @@ set(CLANG_FLAGS_ENABLE_SVENOFMA "-march=armv8-a+sve")
 set(CLANG_FLAGS_ENABLE_VSX "-mcpu=power8")
 set(CLANG_FLAGS_ENABLE_VSXNOFMA "-mcpu=power8")
 # IBM z
-set(CLANG_FLAGS_ENABLE_ZVECTOR "-march=z13;-mzvector")
-set(CLANG_FLAGS_ENABLE_ZVECTORNOFMA "-march=z13;-mzvector")
 set(CLANG_FLAGS_ENABLE_ZVECTOR2 "-march=z14;-mzvector")
 set(CLANG_FLAGS_ENABLE_ZVECTOR2NOFMA "-march=z14;-mzvector")
 
@@ -636,24 +628,6 @@ if (ENFORCE_VSX AND NOT COMPILER_SUPPORTS_VSX)
 endif()
 
 # IBM Z
-
-option(DISABLE_ZVECTOR "Disable ZVECTOR" OFF)
-option(ENFORCE_ZVECTOR "Build fails if ZVECTOR is not supported by the compiler" OFF)
-
-if(SLEEF_ARCH_S390X AND NOT DISABLE_ZVECTOR)
-  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_ZVECTOR}")
-  CHECK_C_SOURCE_COMPILES("
-  #include <vecintrin.h>
-  int main() {
-    __vector double d;
-    d = __builtin_s390_vfidb(d, 4, 4);
-  }"
-    COMPILER_SUPPORTS_ZVECTOR)
-endif()
-
-if (ENFORCE_ZVECTOR AND NOT COMPILER_SUPPORTS_ZVECTOR)
-  message(FATAL_ERROR "ENFORCE_ZVECTOR is specified and that feature is disabled or not supported by the compiler")
-endif()
 
 option(DISABLE_ZVECTOR2 "Disable ZVECTOR2" OFF)
 option(ENFORCE_ZVECTOR2 "Build fails if ZVECTOR2 is not supported by the compiler" OFF)
