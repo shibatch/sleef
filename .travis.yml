@@ -3,7 +3,7 @@ language: c
 # Default linux jobs
 os: linux
 sudo: required
-dist: trusty
+dist: bionic
 
 # Include osx jobs
 matrix:
@@ -14,11 +14,14 @@ matrix:
       env:
         - LABEL="osx-clang"
     - os: linux
+      services: docker
+      env:
+        - LABEL="armhf-gcc"
+        - ENABLE_DOCKER="true"
+    - os: linux
       arch: amd64
       addons:
         apt:
-          sources:
-            - ubuntu-toolchain-r-test
           packages:
             - g++-7
       env:
@@ -27,20 +30,16 @@ matrix:
       arch: amd64
       addons:
         apt:
-          sources:
-            - llvm-toolchain-trusty-5.0
           packages:
-            - clang-5.0
+            - clang-7
       env:
         - LABEL="x86_64-clang"
     - os: linux
       arch: arm64
       addons:
         apt:
-          sources:
-            - ubuntu-toolchain-r-test
           packages:
-            - g++-7
+            - g++-8
       env:
         - LABEL="arm64-gcc"
     - os: linux
@@ -51,11 +50,6 @@ matrix:
             - clang-8
       env:
         - LABEL="arm64-clang"
-    - os: linux
-      services: docker
-      env:
-        - LABEL="armhf-gcc"
-        - ENABLE_DOCKER="true"
     - arch: ppc64le
       dist: bionic
       env:
@@ -84,13 +78,13 @@ before_install:
      - cd ${TRAVIS_BUILD_DIR}
      - chmod +x ${TRAVIS_BUILD_DIR}/travis/*.sh
      - if [[ "${ENABLE_DOCKER}" == "true" ]]; then ${TRAVIS_BUILD_DIR}/travis/setupdocker.sh; fi
-     - if [[ "${ENABLE_DOCKER}" == "true" ]]; then docker exec xenial /build/travis/before_install.${LABEL}.sh; fi
+     - if [[ "${ENABLE_DOCKER}" == "true" ]]; then docker exec bionic /build/travis/before_install.${LABEL}.sh; fi
      - if [[ "${ENABLE_DOCKER}" != "true" ]]; then ${TRAVIS_BUILD_DIR}/travis/before_install.${LABEL}.sh; fi
 
 before_script:
-     - if [[ "${ENABLE_DOCKER}" == "true" ]]; then docker exec xenial /build/travis/before_script.${LABEL}.sh; fi
+     - if [[ "${ENABLE_DOCKER}" == "true" ]]; then docker exec bionic /build/travis/before_script.${LABEL}.sh; fi
      - if [[ "${ENABLE_DOCKER}" != "true" ]]; then ${TRAVIS_BUILD_DIR}/travis/before_script.${LABEL}.sh; fi
 
 script:
-     - if [[ "${ENABLE_DOCKER}" == "true" ]]; then docker exec xenial /build/travis/script.${LABEL}.sh; fi
+     - if [[ "${ENABLE_DOCKER}" == "true" ]]; then docker exec bionic /build/travis/script.${LABEL}.sh; fi
      - if [[ "${ENABLE_DOCKER}" != "true" ]]; then ${TRAVIS_BUILD_DIR}/travis/script.${LABEL}.sh; fi
