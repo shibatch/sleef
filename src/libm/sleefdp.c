@@ -1,4 +1,4 @@
-//          Copyright Naoki Shibata 2010 - 2019.
+//   Copyright Naoki Shibata and contributors 2010 - 2020.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -746,17 +746,19 @@ typedef struct {
   int32_t i;
 } ddi_t;
 
+static INLINE CONST double orsign(double x, double y) {
+  return longBitsToDouble(doubleToRawLongBits(x) | (doubleToRawLongBits(y) & (1LL << 63)));
+}
+
 static CONST di_t rempisub(double x) {
   // This function is equivalent to :
-  // di_t ret = { x - round(4 * x) * 0.25, (int32_t)(round(4 * x) - round(x) * 4) };
+  // di_t ret = { x - rint(4 * x) * 0.25, (int32_t)(rint(4 * x) - rint(x) * 4) };
   di_t ret;
-  double fr = x - (double)(1LL << 28) * (int32_t)(x * (1.0 / (1LL << 28)));
-  ret.i = ((7 & ((x > 0 ? 4 : 3) + (int32_t)(fr * 8))) - 3) >> 1;
-  fr = fr - 0.25 * (int32_t)(fr * 4 + mulsign(0.5, x));
-  fr = fabsk(fr) > 0.25 ? (fr - mulsign(0.5, x)) : fr;
-  fr = fabsk(fr) > 1e+10 ? 0 : fr;
-  if (fabsk(x) == 0.12499999999999998612) { fr = x; ret.i = 0; }
-  ret.d = fr;
+  double c = mulsign(1LL << 52, x);
+  double rint4x = fabsk(4*x) > 1LL << 52 ? (4*x) : orsign(mla(4, x, c) - c, x);
+  double rintx  = fabsk(  x) > 1LL << 52 ?   x   : orsign(x + c - c       , x);
+  ret.d = mla(-0.25, rint4x,      x);
+  ret.i = mla(-4   , rintx , rint4x);
   return ret;
 }
 
@@ -2296,13 +2298,8 @@ EXPORT CONST double xround(double d) {
 }
 
 EXPORT CONST double xrint(double d) {
-  double x = d + 0.5;
-  double fr = x - (double)(1LL << 31) * (int32_t)(x * (1.0 / (1LL << 31)));
-  int32_t isodd = (1 & (int32_t)fr) != 0;
-  fr = fr - (int32_t)fr;
-  fr = (fr < 0 || (fr == 0 && isodd)) ? fr+1.0 : fr;
-  x = d == 0.50000000000000011102 ? 0 : x;  // nextafter(0.5, 1)
-  return (xisinf(d) || fabsk(d) >= (double)(1LL << 52)) ? d : copysignk(x - fr, d);
+  double c = mulsign(1LL << 52, d);
+  return fabsk(d) > 1LL << 52 ? d : orsign(d + c - c, d);
 }
 
 EXPORT CONST double xhypot_u05(double x, double y) {
@@ -2432,12 +2429,8 @@ EXPORT CONST double xfmod(double x, double y) {
 }
 
 static INLINE CONST double rintk2(double d) {
-  double x = d + 0.5;
-  double fr = x - (double)(1LL << 31) * (int32_t)(x * (1.0 / (1LL << 31)));
-  int32_t isodd = (1 & (int32_t)fr) != 0;
-  fr = fr - (int32_t)fr;
-  fr = (fr < 0 || (fr == 0 && isodd)) ? fr+1.0 : fr;
-  return (fabsk(d) >= (double)(1LL << 52)) ? d : copysignk(x - fr, d);
+  double c = mulsign(1LL << 52, d);
+  return fabsk(d) > 1LL << 52 ? d : orsign(d + c - c, d);
 }
 
 EXPORT CONST double xremainder(double x, double y) {
