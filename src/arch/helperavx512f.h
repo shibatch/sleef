@@ -58,7 +58,7 @@ typedef struct {
 void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
 #endif
 
-static int cpuSupportsAVX512F() {
+static INLINE int cpuSupportsAVX512F() {
     int32_t reg[4];
     Sleef_x86CpuID(reg, 7, 0);
     return (reg[1] & (1 << 16)) != 0;

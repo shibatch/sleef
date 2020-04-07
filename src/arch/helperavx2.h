@@ -55,13 +55,13 @@ typedef struct {
 void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
 #endif
 
-static int cpuSupportsAVX2() {
+static INLINE int cpuSupportsAVX2() {
     int32_t reg[4];
     Sleef_x86CpuID(reg, 7, 0);
     return (reg[1] & (1 << 5)) != 0;
 }
 
-static int cpuSupportsFMA() {
+static INLINE int cpuSupportsFMA() {
     int32_t reg[4];
     Sleef_x86CpuID(reg, 1, 0);
     return (reg[2] & (1 << 12)) != 0;
