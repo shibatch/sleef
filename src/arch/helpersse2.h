@@ -63,19 +63,19 @@ typedef struct {
 void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
 #endif
 
-static int cpuSupportsSSE2() {
+static INLINE int cpuSupportsSSE2() {
     int32_t reg[4];
     Sleef_x86CpuID(reg, 1, 0);
     return (reg[3] & (1 << 26)) != 0;
 }
 
-static int cpuSupportsSSE3() {
+static INLINE int cpuSupportsSSE3() {
     int32_t reg[4];
     Sleef_x86CpuID(reg, 1, 0);
     return (reg[2] & (1 << 0)) != 0;
 }
 
-static int cpuSupportsSSE4_1() {
+static INLINE int cpuSupportsSSE4_1() {
     int32_t reg[4];
     Sleef_x86CpuID(reg, 1, 0);
     return (reg[2] & (1 << 19)) != 0;
