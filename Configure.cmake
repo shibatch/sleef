@@ -2,6 +2,10 @@ include(CheckCCompilerFlag)
 include(CheckCSourceCompiles)
 include(CheckTypeSize)
 
+# Detect if cmake is running on CI environments
+string(COMPARE NOTEQUAL "" "$ENV{TRAVIS}" RUNNING_ON_TRAVIS)
+string(COMPARE NOTEQUAL "" "$ENV{APPVEYOR}" RUNNING_ON_APPVEYOR)
+
 if (NOT CMAKE_CROSSCOMPILING AND NOT SLEEF_FORCE_FIND_PACKAGE_SSL)
   find_package(OpenSSL)
   if (OPENSSL_FOUND)
@@ -25,7 +29,11 @@ if (ENFORCE_TESTER3 AND NOT SLEEF_OPENSSL_FOUND)
   message(FATAL_ERROR "ENFORCE_TESTER3 is specified and OpenSSL not found")
 endif()
 
-if (NOT SLEEF_CLANG_ON_WINDOWS)
+if (NOT (RUNNING_ON_APPVEYOR AND SLEEF_CLANG_ON_WINDOWS))
+  # We rely on Cygwin tools in order to test the builds on
+  # appveyor. However, if we try to link these libraries, cmake finds
+  # the Cygwin version of libraries, which causes errors.
+  
   # Some toolchains require explicit linking of the libraries following.
   find_library(LIB_MPFR mpfr)
   find_library(LIBM m)
@@ -314,6 +322,11 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
   endif(CMAKE_C_COMPILER_ID MATCHES "GNU")
 
   if (SLEEF_CLANG_ON_WINDOWS)
+    # The following line is required to prevent clang from displaying
+    # many warnings. Clang on Windows references MSVC header files,
+    # which have deprecation and security attributes for many
+    # functions.
+
     string(CONCAT FLAGS_WALL ${FLAGS_WALL} " -D_CRT_SECURE_NO_WARNINGS -Wno-deprecated-declarations")
   endif()
 elseif(MSVC)
@@ -717,9 +730,6 @@ if(SLEEF_SHOW_ERROR_LOG)
     message("${FILE_CONTENT}")
   endif()
 endif(SLEEF_SHOW_ERROR_LOG)
-
-# Detect if cmake is running on Travis
-string(COMPARE NOTEQUAL "" "$ENV{TRAVIS}" RUNNING_ON_TRAVIS)
 
 if (${RUNNING_ON_TRAVIS} AND CMAKE_C_COMPILER_ID MATCHES "Clang")
   message(STATUS "Travis bug workaround turned on")
