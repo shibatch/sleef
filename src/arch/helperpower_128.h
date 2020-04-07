@@ -62,6 +62,7 @@ static INLINE void vprefetch_v_p(const void *ptr) { }
 typedef __vector unsigned int vmask;
 // using __bool with typedef may cause ambiguous errors
 #define vopmask __vector __bool int
+//@#define vopmask __vector __bool int
 typedef __vector signed int vint;
 typedef __vector signed int vint2;
 typedef __vector float  vfloat;
