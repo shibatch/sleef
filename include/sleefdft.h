@@ -1,6 +1,11 @@
 #ifndef __SLEEFDFT_H__
 #define __SLEEFDFT_H__
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include <stdlib.h>
 #include <stdint.h>
 
@@ -76,5 +81,9 @@ IMPORT void SleefDFT_setPlanFilePath(const char *path, const char *arch, uint64_
 #define SLEEF_PLAN_REFERTOENVVAR (1 << 30)
 
 #undef IMPORT
+
+#ifdef __cplusplus
+}
 #endif
 
+#endif // #ifndef __SLEEFDFT_H__
