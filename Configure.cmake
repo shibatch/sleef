@@ -561,6 +561,9 @@ if(SLEEF_ARCH_AARCH64 AND NOT DISABLE_SVE)
   set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_SVE})
   CHECK_C_SOURCE_COMPILES("
   #include <arm_sve.h>
+  typedef __sizeless_struct vdouble2 {
+    svfloat64_t x, y;
+  } vdouble2;
   int main() {
     svint32_t r = svdup_n_s32(1); }"
     COMPILER_SUPPORTS_SVE)
@@ -722,6 +725,10 @@ endif()
 
 if (MSVC)
   set(COMPILER_SUPPORTS_OPENMP FALSE)   # At this time, OpenMP is not supported on MSVC
+endif()
+
+if (CMAKE_C_COMPILER MATCHES "clang" AND CMAKE_C_COMPILER_VERSION VERSION_EQUAL 9 AND BUILD_QUAD)
+  message(FATAL_ERROR "Quad library cannot be built with clang-9.")
 endif()
 
 ##
