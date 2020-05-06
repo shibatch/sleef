@@ -317,5 +317,17 @@ if(LIB_MPFR AND NOT MINGW)
   endif()
 endif(LIB_MPFR AND NOT MINGW)
 
+if(NOT MSVC AND COMPILER_SUPPORTS_OMP_SIMD)
+  # Build tester for vectorabi
+  set(TARGET_TESTERVECABI "testervecabi")
+  add_executable(${TARGET_TESTERVECABI} testervecabi.c)
+  target_compile_options(${TARGET_TESTERVECABI} PRIVATE ${OpenMP_C_FLAGS})
+  target_link_libraries(${TARGET_TESTERVECABI} ${TARGET_LIBSLEEF} ${OpenMP_C_FLAGS})
+  set_target_properties(${TARGET_TESTERVECABI} PROPERTIES C_STANDARD 99)
+  add_test(NAME "testervecabi"
+    COMMAND ${TARGET_TESTERVECABI}
+    WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+endif()
+
 # Tests depends on the library
 add_dependencies(${TARGET_IUT} ${TARGET_HEADERS})

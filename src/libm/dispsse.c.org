@@ -78,7 +78,14 @@ static int cpuSupportsFMA() {
  *   funcavx2 : Name of the AVX2 function
  */
 
-#define DISPATCH_vf_vf(fptype, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
+#ifdef ENABLE_ALIAS
+#define VECALIAS_vf_vf(fptype, funcNameS, funcName, veclen) \
+  fptype _ZGVbN ## veclen ## v_ ## funcNameS(fptype) __attribute__((alias(stringify(funcName))));
+#else
+#define VECALIAS_vf_vf(fptype, funcNameS, funcName, veclen)
+#endif
+
+#define DISPATCH_vf_vf(fptype, fptype2, itype, veclen, funcNameS, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
   static CONST VECTOR_CC fptype (*pfn)(fptype arg0);			\
   static CONST VECTOR_CC fptype dfn(fptype arg0) {			\
     fptype CONST VECTOR_CC (*p)(fptype arg0) = funcsse2;		\
@@ -88,11 +95,19 @@ static int cpuSupportsFMA() {
     return (*pfn)(arg0);						\
   }									\
   static CONST VECTOR_CC fptype (*pfn)(fptype arg0) = dfn;		\
-  EXPORT CONST VECTOR_CC fptype funcName(fptype arg0) { return (*pfn)(arg0); }
+  EXPORT CONST VECTOR_CC fptype funcName(fptype arg0) { return (*pfn)(arg0); } \
+  VECALIAS_vf_vf(fptype, funcNameS, funcName, veclen)
 
-#define DISPATCH_vf_vf_vf(fptype, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
+#ifdef ENABLE_ALIAS
+#define VECALIAS_vf_vf_vf(fptype, funcNameS, funcName, veclen) \
+  fptype _ZGVbN ## veclen ## vv_ ## funcNameS(fptype, fptype) __attribute__((alias(stringify(funcName))));
+#else
+#define VECALIAS_vf_vf_vf(fptype, funcNameS, funcName, veclen)
+#endif
+
+#define DISPATCH_vf_vf_vf(fptype, fptype2, itype, veclen, funcNameS, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
   static CONST VECTOR_CC fptype (*pfn)(fptype arg0, fptype arg1);	\
-  static CONST VECTOR_CC fptype dfn(fptype arg0, fptype arg1) {	\
+  static CONST VECTOR_CC fptype dfn(fptype arg0, fptype arg1) {		\
     fptype CONST VECTOR_CC (*p)(fptype arg0, fptype arg1) = funcsse2;	\
     SUBST_IF_SSE4(funcsse4);						\
     SUBST_IF_AVX2(funcavx2);						\
@@ -100,9 +115,10 @@ static int cpuSupportsFMA() {
     return (*pfn)(arg0, arg1);						\
   }									\
   static CONST VECTOR_CC fptype (*pfn)(fptype arg0, fptype arg1) = dfn; \
-  EXPORT CONST VECTOR_CC fptype funcName(fptype arg0, fptype arg1) { return (*pfn)(arg0, arg1); }
+  EXPORT CONST VECTOR_CC fptype funcName(fptype arg0, fptype arg1) { return (*pfn)(arg0, arg1); } \
+  VECALIAS_vf_vf_vf(fptype, funcNameS, funcName, veclen)
 
-#define DISPATCH_vf2_vf(fptype, fptype2, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
+#define DISPATCH_vf2_vf(fptype, fptype2, itype, veclen, funcNameS, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
   static CONST VECTOR_CC fptype2 (*pfn)(fptype arg0);			\
   static CONST VECTOR_CC fptype2 dfn(fptype arg0) {			\
     fptype2 CONST VECTOR_CC (*p)(fptype arg0) = funcsse2;		\
@@ -114,7 +130,14 @@ static int cpuSupportsFMA() {
   static CONST VECTOR_CC fptype2 (*pfn)(fptype arg0) = dfn;		\
   EXPORT CONST VECTOR_CC fptype2 funcName(fptype arg0) { return (*pfn)(arg0); }
 
-#define DISPATCH_vf_vf_vi(fptype, itype, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
+#ifdef ENABLE_ALIAS
+#define VECALIAS_vf_vf_vi(fptype, itype, funcNameS, funcName, veclen) \
+  fptype _ZGVbN ## veclen ## vv_ ## funcNameS(fptype, itype) __attribute__((alias(stringify(funcName))));
+#else
+#define VECALIAS_vf_vf_vi(fptype, itype, funcNameS, funcName, veclen)
+#endif
+
+#define DISPATCH_vf_vf_vi(fptype, fptype2, itype, veclen, funcNameS, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
   static CONST VECTOR_CC fptype (*pfn)(fptype arg0, itype arg1);	\
   static CONST VECTOR_CC fptype dfn(fptype arg0, itype arg1) {		\
     fptype CONST VECTOR_CC (*p)(fptype arg0, itype arg1) = funcsse2;	\
@@ -124,21 +147,37 @@ static int cpuSupportsFMA() {
     return (*pfn)(arg0, arg1);						\
   }									\
   static CONST VECTOR_CC fptype (*pfn)(fptype arg0, itype arg1) = dfn;	\
-  EXPORT CONST VECTOR_CC fptype funcName(fptype arg0, itype arg1) { return (*pfn)(arg0, arg1); }
+  EXPORT CONST VECTOR_CC fptype funcName(fptype arg0, itype arg1) { return (*pfn)(arg0, arg1); } \
+  VECALIAS_vf_vf_vi(fptype, itype, funcNameS, funcName, veclen)
 
-#define DISPATCH_vi_vf(fptype, itype, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
+#ifdef ENABLE_ALIAS
+#define VECALIAS_vi_vf(fptype, itype, funcNameS, funcName, veclen) \
+  itype _ZGVbN ## veclen ## v_ ## funcNameS(fptype) __attribute__((alias(stringify(funcName))));
+#else
+#define VECALIAS_vi_vf(fptype, itype, funcNameS, funcName, veclen)
+#endif
+
+#define DISPATCH_vi_vf(fptype, fptype2, itype, veclen, funcNameS, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
   static CONST VECTOR_CC itype (*pfn)(fptype arg0);			\
   static CONST VECTOR_CC itype dfn(fptype arg0) {			\
-    itype CONST VECTOR_CC (*p)(fptype arg0) = funcsse2;		\
+    itype CONST VECTOR_CC (*p)(fptype arg0) = funcsse2;			\
     SUBST_IF_SSE4(funcsse4);						\
     SUBST_IF_AVX2(funcavx2);						\
     pfn = p;								\
     return (*pfn)(arg0);						\
   }									\
   static CONST VECTOR_CC itype (*pfn)(fptype arg0) = dfn;		\
-  EXPORT CONST VECTOR_CC itype funcName(fptype arg0) { return (*pfn)(arg0); }
+  EXPORT CONST VECTOR_CC itype funcName(fptype arg0) { return (*pfn)(arg0); } \
+  VECALIAS_vi_vf(fptype, itype, funcNameS, funcName, veclen)
 
-#define DISPATCH_vf_vf_vf_vf(fptype, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
+#ifdef ENABLE_ALIAS
+#define VECALIAS_vf_vf_vf_vf(fptype, funcNameS, funcName, veclen) \
+  fptype _ZGVbN ## veclen ## vvv_ ## funcNameS(fptype, fptype, fptype) __attribute__((alias(stringify(funcName))));
+#else
+#define VECALIAS_vf_vf_vf_vf(fptype, funcNameS, funcName, veclen)
+#endif
+
+#define DISPATCH_vf_vf_vf_vf(fptype, fptype2, itype, veclen, funcNameS, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
   static CONST VECTOR_CC fptype (*pfn)(fptype arg0, fptype arg1, fptype arg2); \
   static CONST VECTOR_CC fptype dfn(fptype arg0, fptype arg1, fptype arg2) { \
     fptype CONST VECTOR_CC (*p)(fptype arg0, fptype arg1, fptype arg2) = funcsse2; \
@@ -148,9 +187,10 @@ static int cpuSupportsFMA() {
     return (*pfn)(arg0, arg1, arg2);					\
   }									\
   static CONST VECTOR_CC fptype (*pfn)(fptype arg0, fptype arg1, fptype arg2) = dfn; \
-  EXPORT CONST VECTOR_CC fptype funcName(fptype arg0, fptype arg1, fptype arg2) { return (*pfn)(arg0, arg1, arg2); }
+  EXPORT CONST VECTOR_CC fptype funcName(fptype arg0, fptype arg1, fptype arg2) { return (*pfn)(arg0, arg1, arg2); } \
+  VECALIAS_vf_vf_vf_vf(fptype, funcNameS, funcName, veclen)
 
-#define DISPATCH_i_i(funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
+#define DISPATCH_i_i(fptype, fptype2, itype, veclen, funcNameS, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
   static CONST int (*pfn)(int arg0);					\
   static CONST int dfn(int arg0) {					\
     int CONST (*p)(int) = funcsse2;					\
@@ -162,7 +202,7 @@ static int cpuSupportsFMA() {
   static CONST int (*pfn)(int arg0) = dfn;				\
   EXPORT CONST int funcName(int arg0) { return (*pfn)(arg0); }
 
-#define DISPATCH_p_i(funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
+#define DISPATCH_p_i(fptype, fptype2, itype, veclen, funcNameS, funcName, pfn, dfn, funcsse2, funcsse4, funcavx2) \
   static CONST void *(*pfn)(int arg0);					\
   static CONST void *dfn(int arg0) {					\
     CONST void *(*p)(int) = funcsse2;					\
