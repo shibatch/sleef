@@ -23,7 +23,7 @@ matrix:
       addons:
         apt:
           packages:
-            - g++-7
+            - g++-8
       env:
         - LABEL="x86_64-gcc"
     - os: linux

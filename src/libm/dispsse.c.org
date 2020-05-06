@@ -80,7 +80,7 @@ static int cpuSupportsFMA() {
 
 #ifdef ENABLE_ALIAS
 #define VECALIAS_vf_vf(fptype, funcNameS, funcName, veclen) \
-  fptype _ZGVbN ## veclen ## v_ ## funcNameS(fptype) __attribute__((alias(stringify(funcName))));
+  EXPORT CONST VECTOR_CC fptype _ZGVbN ## veclen ## v_ ## funcNameS(fptype) __attribute__((alias(stringify(funcName))));
 #else
 #define VECALIAS_vf_vf(fptype, funcNameS, funcName, veclen)
 #endif
@@ -100,7 +100,7 @@ static int cpuSupportsFMA() {
 
 #ifdef ENABLE_ALIAS
 #define VECALIAS_vf_vf_vf(fptype, funcNameS, funcName, veclen) \
-  fptype _ZGVbN ## veclen ## vv_ ## funcNameS(fptype, fptype) __attribute__((alias(stringify(funcName))));
+  EXPORT CONST VECTOR_CC fptype _ZGVbN ## veclen ## vv_ ## funcNameS(fptype, fptype) __attribute__((alias(stringify(funcName))));
 #else
 #define VECALIAS_vf_vf_vf(fptype, funcNameS, funcName, veclen)
 #endif
@@ -132,7 +132,7 @@ static int cpuSupportsFMA() {
 
 #ifdef ENABLE_ALIAS
 #define VECALIAS_vf_vf_vi(fptype, itype, funcNameS, funcName, veclen) \
-  fptype _ZGVbN ## veclen ## vv_ ## funcNameS(fptype, itype) __attribute__((alias(stringify(funcName))));
+  EXPORT CONST VECTOR_CC fptype _ZGVbN ## veclen ## vv_ ## funcNameS(fptype, itype) __attribute__((alias(stringify(funcName))));
 #else
 #define VECALIAS_vf_vf_vi(fptype, itype, funcNameS, funcName, veclen)
 #endif
@@ -152,7 +152,7 @@ static int cpuSupportsFMA() {
 
 #ifdef ENABLE_ALIAS
 #define VECALIAS_vi_vf(fptype, itype, funcNameS, funcName, veclen) \
-  itype _ZGVbN ## veclen ## v_ ## funcNameS(fptype) __attribute__((alias(stringify(funcName))));
+  EXPORT CONST VECTOR_CC itype _ZGVbN ## veclen ## v_ ## funcNameS(fptype) __attribute__((alias(stringify(funcName))));
 #else
 #define VECALIAS_vi_vf(fptype, itype, funcNameS, funcName, veclen)
 #endif
@@ -172,7 +172,7 @@ static int cpuSupportsFMA() {
 
 #ifdef ENABLE_ALIAS
 #define VECALIAS_vf_vf_vf_vf(fptype, funcNameS, funcName, veclen) \
-  fptype _ZGVbN ## veclen ## vvv_ ## funcNameS(fptype, fptype, fptype) __attribute__((alias(stringify(funcName))));
+  EXPORT CONST VECTOR_CC fptype _ZGVbN ## veclen ## vvv_ ## funcNameS(fptype, fptype, fptype) __attribute__((alias(stringify(funcName))));
 #else
 #define VECALIAS_vf_vf_vf_vf(fptype, funcNameS, funcName, veclen)
 #endif

@@ -31,9 +31,9 @@ int main() {
   int i;
 
   for (i = 0; i < N; i++) {
-    a[i] = 1.5 * random() / (double)RAND_MAX + 1e-100;
-    b[i] = 1.5 * random() / (double)RAND_MAX + 1e-100;
-    c[i] = 1.5 * random() / (double)RAND_MAX + 1e-100;
+    a[i] = 1.5 * rand() / (double)RAND_MAX + 1e-100;
+    b[i] = 1.5 * rand() / (double)RAND_MAX + 1e-100;
+    c[i] = 1.5 * rand() / (double)RAND_MAX + 1e-100;
   }
 
 #pragma omp parallel for simd
