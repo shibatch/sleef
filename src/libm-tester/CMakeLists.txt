@@ -317,7 +317,7 @@ if(LIB_MPFR AND NOT MINGW)
   endif()
 endif(LIB_MPFR AND NOT MINGW)
 
-if(NOT MSVC AND COMPILER_SUPPORTS_OMP_SIMD)
+if(NOT MSVC AND COMPILER_SUPPORTS_OMP_SIMD AND COMPILER_SUPPORTS_WEAK_ALIASES)
   # Build tester for vectorabi
   set(TARGET_TESTERVECABI "testervecabi")
   add_executable(${TARGET_TESTERVECABI} testervecabi.c)
@@ -325,9 +325,7 @@ if(NOT MSVC AND COMPILER_SUPPORTS_OMP_SIMD)
   target_compile_options(${TARGET_TESTERVECABI} PRIVATE ${OpenMP_C_FLAGS})
   target_link_libraries(${TARGET_TESTERVECABI} ${TARGET_LIBSLEEF} ${OpenMP_C_FLAGS})
   set_target_properties(${TARGET_TESTERVECABI} PROPERTIES C_STANDARD 99)
-  add_test(NAME "testervecabi"
-    COMMAND ${TARGET_TESTERVECABI}
-    WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+  add_test_with_emu("testervecabi" ${TARGET_TESTERVECABI})
 endif()
 
 # Tests depends on the library

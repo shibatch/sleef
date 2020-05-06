@@ -112,6 +112,19 @@ function(host_target_AAVPCS_definitions TARGETNAME)
   endif()
 endfunction()
 
+# Function used to add a test that will be executed with an emulator
+function(add_test_with_emu TESTNAME)
+  if (ARMIE_COMMAND)
+    add_test(NAME ${TESTNAME} COMMAND ${ARMIE_COMMAND} -msve-vector-bits=${SVE_VECTOR_BITS} ${ARGN})
+  elseif (NOT EMULATOR AND NOT SDE_COMMAND)
+    add_test(NAME ${TESTNAME} COMMAND ${ARGN})
+  elseif(NOT EMULATOR)
+    add_test(NAME ${TESTNAME} COMMAND ${SDE_COMMAND} "--" ${ARGN})
+  else()
+    add_test(NAME ${TESTNAME} COMMAND ${EMULATOR} ${ARGN})
+  endif()
+endfunction()
+
 # Generates object file (shared library) `libsleefdft`
 # Defined in src/dft/CMakeLists.txt via command add_library
 set(TARGET_LIBDFT "sleefdft")
