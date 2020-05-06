@@ -321,6 +321,7 @@ if(NOT MSVC AND COMPILER_SUPPORTS_OMP_SIMD)
   # Build tester for vectorabi
   set(TARGET_TESTERVECABI "testervecabi")
   add_executable(${TARGET_TESTERVECABI} testervecabi.c)
+  target_compile_definitions(${TARGET_TESTERVECABI} PRIVATE ${COMMON_TARGET_DEFINITIONS})
   target_compile_options(${TARGET_TESTERVECABI} PRIVATE ${OpenMP_C_FLAGS})
   target_link_libraries(${TARGET_TESTERVECABI} ${TARGET_LIBSLEEF} ${OpenMP_C_FLAGS})
   set_target_properties(${TARGET_TESTERVECABI} PROPERTIES C_STANDARD 99)
