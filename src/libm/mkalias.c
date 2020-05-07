@@ -18,9 +18,13 @@ int main(int argc, char **argv) {
     exit(-1);
   }
 
-  int vw = atoi(argv[1]);
-  int fptype = vw >= 0 ? 0 : 1;
-  vw = vw < 0 ? -vw : vw;
+  char *vwstr = argv[1];
+  int fptype = 0;
+  if (*vwstr == '-') {
+    fptype = 1;
+    vwstr++;
+  }
+
   char *isaname = argv[4];
   char *mangledisa = argc >= 6 ? argv[5] : NULL;
   int genAliasVectorABI = argc >= 6;
@@ -30,9 +34,6 @@ int main(int argc, char **argv) {
   if (strcmp(isaname, "advsimd") == 0)
     vectorcc =" __attribute__((aarch64_vector_pcs))";
 #endif
-
-  char vwstr[20];
-  sprintf(vwstr, "%d", vw);
 
   static char *argType2[] = {
     "a0", "a0, a1", "a0", "a0, a1",
@@ -89,33 +90,33 @@ int main(int argc, char **argv) {
   for(int i=0;funcList[i].name != NULL;i++) {
     if (fptype == 0 && (funcList[i].flags & 2) != 0) continue;
     if (funcList[i].ulp >= 0) {
-      printf("EXPORT CONST VECTOR_CC %s Sleef_%s%s%d_u%02d(%s) __attribute__((alias(\"Sleef_%s%s%d_u%02d%s\")))%s;\n",
+      printf("EXPORT CONST VECTOR_CC %s Sleef_%s%s%s_u%02d(%s) __attribute__((alias(\"Sleef_%s%s%s_u%02d%s\")))%s;\n",
 	     returnType[funcList[i].funcType],
-	     funcList[i].name, typeSpec[fptype], vw, funcList[i].ulp,
+	     funcList[i].name, typeSpec[fptype], vwstr, funcList[i].ulp,
 	     argType0[funcList[i].funcType],
-	     funcList[i].name, typeSpec[fptype], vw, funcList[i].ulp, isaname, vectorcc
+	     funcList[i].name, typeSpec[fptype], vwstr, funcList[i].ulp, isaname, vectorcc
 	     );
       if (genAliasVectorABI && vparameterStr[funcList[i].funcType] != NULL) {
-	printf("EXPORT CONST VECTOR_CC %s _ZGV%sN%s%s_Sleef_%s%s_u%02d(%s) __attribute__((alias(\"Sleef_%s%s%d_u%02d%s\")))%s;\n",
+	printf("EXPORT CONST VECTOR_CC %s _ZGV%sN%s%s_Sleef_%s%s_u%02d(%s) __attribute__((alias(\"Sleef_%s%s%s_u%02d%s\")))%s;\n",
 	       returnType[funcList[i].funcType],
 	       mangledisa, vwstr, vparameterStr[funcList[i].funcType], funcList[i].name, typeSpecS[fptype], funcList[i].ulp,
 	       argType0[funcList[i].funcType],
-	       funcList[i].name, typeSpec[fptype], vw, funcList[i].ulp, isaname, vectorcc
+	       funcList[i].name, typeSpec[fptype], vwstr, funcList[i].ulp, isaname, vectorcc
 	       );
       }
     } else {
-      printf("EXPORT CONST VECTOR_CC %s Sleef_%s%s%d(%s) __attribute__((alias(\"Sleef_%s%s%d_%s\")))%s;\n",
+      printf("EXPORT CONST VECTOR_CC %s Sleef_%s%s%s(%s) __attribute__((alias(\"Sleef_%s%s%s_%s\")))%s;\n",
 	     returnType[funcList[i].funcType],
-	     funcList[i].name, typeSpec[fptype], vw,
+	     funcList[i].name, typeSpec[fptype], vwstr,
 	     argType0[funcList[i].funcType],
-	     funcList[i].name, typeSpec[fptype], vw, isaname, vectorcc
+	     funcList[i].name, typeSpec[fptype], vwstr, isaname, vectorcc
 	     );
       if (genAliasVectorABI && vparameterStr[funcList[i].funcType] != NULL) {
-	printf("EXPORT CONST VECTOR_CC %s _ZGV%sN%s%s_Sleef_%s%s(%s) __attribute__((alias(\"Sleef_%s%s%d_%s\")))%s;\n",
+	printf("EXPORT CONST VECTOR_CC %s _ZGV%sN%s%s_Sleef_%s%s(%s) __attribute__((alias(\"Sleef_%s%s%s_%s\")))%s;\n",
 	       returnType[funcList[i].funcType],
 	       mangledisa, vwstr, vparameterStr[funcList[i].funcType], funcList[i].name, typeSpecS[fptype],
 	       argType0[funcList[i].funcType],
-	       funcList[i].name, typeSpec[fptype], vw, isaname, vectorcc
+	       funcList[i].name, typeSpec[fptype], vwstr, isaname, vectorcc
 	       );
       }
     }
@@ -128,19 +129,19 @@ int main(int argc, char **argv) {
   for(int i=0;funcList[i].name != NULL;i++) {
     if (fptype == 0 && (funcList[i].flags & 2) != 0) continue;
     if (funcList[i].ulp >= 0) {
-      printf("EXPORT CONST VECTOR_CC %s %s Sleef_%s%s%d_u%02d(%s) { return Sleef_%s%s%d_u%02d%s(%s); }\n",
+      printf("EXPORT CONST VECTOR_CC %s %s Sleef_%s%s%s_u%02d(%s) { return Sleef_%s%s%s_u%02d%s(%s); }\n",
 	     returnType[funcList[i].funcType], vectorcc,
-	     funcList[i].name, typeSpec[fptype], vw, funcList[i].ulp,
+	     funcList[i].name, typeSpec[fptype], vwstr, funcList[i].ulp,
 	     argType1[funcList[i].funcType],
-	     funcList[i].name, typeSpec[fptype], vw, funcList[i].ulp, isaname,
+	     funcList[i].name, typeSpec[fptype], vwstr, funcList[i].ulp, isaname,
 	     argType2[funcList[i].funcType]
 	     );
     } else {
-      printf("EXPORT CONST VECTOR_CC %s %s Sleef_%s%s%d(%s) { return Sleef_%s%s%d_%s(%s); }\n",
+      printf("EXPORT CONST VECTOR_CC %s %s Sleef_%s%s%s(%s) { return Sleef_%s%s%s_%s(%s); }\n",
 	     returnType[funcList[i].funcType], vectorcc,
-	     funcList[i].name, typeSpec[fptype], vw,
+	     funcList[i].name, typeSpec[fptype], vwstr,
 	     argType1[funcList[i].funcType],
-	     funcList[i].name, typeSpec[fptype], vw, isaname,
+	     funcList[i].name, typeSpec[fptype], vwstr, isaname,
 	     argType2[funcList[i].funcType]
 	     );
     }

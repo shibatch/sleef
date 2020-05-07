@@ -325,7 +325,7 @@ if(ENABLE_GNUABI AND COMPILER_SUPPORTS_OMP_SIMD)
   target_compile_options(${TARGET_TESTERVECABI} PRIVATE ${OpenMP_C_FLAGS})
   target_link_libraries(${TARGET_TESTERVECABI} ${TARGET_LIBSLEEF} ${OpenMP_C_FLAGS})
   set_target_properties(${TARGET_TESTERVECABI} PROPERTIES C_STANDARD 99)
-  add_test_with_emu("testervecabi" ${TARGET_TESTERVECABI})
+  add_test_with_emu("testervecabi" $<TARGET_FILE:${TARGET_TESTERVECABI}>)
 endif()
 
 # Tests depends on the library

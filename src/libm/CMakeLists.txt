@@ -5,13 +5,18 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 set(CMAKE_C_FLAGS ${ORG_CMAKE_C_FLAGS})
 string(CONCAT CMAKE_C_FLAGS ${SLEEF_C_FLAGS})
 
-set(EXT_ENABLE_ALIAS AVX512F ADVSIMD NEON32 VSX)
+set(EXT_ENABLE_ALIAS AVX512F SVE ADVSIMD NEON32 VSX)
 
 # --------------------------------------------------------------------
 # sleef.h
 # --------------------------------------------------------------------
 # File generated for the headers
-set(SLEEF_ORG_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/sleeflibm_header.h.org)
+
+if(ENABLE_GNUABI)
+  set(SLEEF_ORG_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/sleeflibm_header.h.org)
+else()
+  set(SLEEF_ORG_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/sleeflibm_header.h.novecabi.org)
+endif()
 set(SLEEF_ORG_FOOTER ${CMAKE_CURRENT_SOURCE_DIR}/sleeflibm_footer.h.org)
 set(SLEEF_INCLUDE_HEADER ${CMAKE_BINARY_DIR}/include/sleef.h)
 

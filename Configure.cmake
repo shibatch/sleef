@@ -153,6 +153,8 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
 
   command_arguments(ALIAS_PARAMS_ADVSIMD_DP  2 float64x2_t int32x2_t advsimd n)
   command_arguments(ALIAS_PARAMS_ADVSIMD_SP -4 float32x4_t int32x4_t advsimd n)
+  command_arguments(ALIAS_PARAMS_SVE_DP  x svfloat64_t svint32_t sve s)
+  command_arguments(ALIAS_PARAMS_SVE_SP -x svfloat32_t svint32_t sve s)
 
   set(TESTER3_DEFINITIONS_ADVSIMD       ATR=finz_ DPTYPE=float64x2_t SPTYPE=float32x4_t DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=advsimd)
   set(TESTER3_DEFINITIONS_ADVSIMDNOFMA  ATR=cinz_ DPTYPE=float64x2_t SPTYPE=float32x4_t DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=advsimdnofma)
@@ -160,7 +162,7 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
   set(TESTER3_DEFINITIONS_SVENOFMA      ATR=cinz_ DPTYPE=svfloat64_t SPTYPE=svfloat32_t DPTYPESPEC=dx SPTYPESPEC=fx EXTSPEC=svenofma)
 
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
-  set(SLEEF_ARCH_AARCH32 ON CACHE INTERNAL "True for Aarch32 architecture.")
+  set(SLEEF_ARCH_AARCH32 ON CACHE INTERNAL "True for AArch32 architecture.")
   set(COMPILER_SUPPORTS_NEON32 1)
   set(COMPILER_SUPPORTS_NEON32VFPV4 1)
 
@@ -193,8 +195,8 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
   set(HEADER_PARAMS_VSX       finz_ 2 4 "__vector double" "__vector float" "__vector int" "__vector int" __VSX__ vsx)
   set(HEADER_PARAMS_VSX_      finz_ 2 4 "__vector double" "__vector float" "__vector int" "__vector int" __VSX__ vsx)
   set(HEADER_PARAMS_VSXNOFMA  cinz_ 2 4 "__vector double" "__vector float" "__vector int" "__vector int" __VSX__ vsxnofma)
-  set(ALIAS_PARAMS_VSX_DP  2 "__vector double" "__vector int" vsx b)
-  set(ALIAS_PARAMS_VSX_SP -4 "__vector float" "__vector int" vsx b)
+  set(ALIAS_PARAMS_VSX_DP  2 "__vector double" "__vector int" vsx)
+  set(ALIAS_PARAMS_VSX_SP -4 "__vector float" "__vector int" vsx)
 
   set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mvsx")
 
