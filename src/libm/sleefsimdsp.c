@@ -766,7 +766,11 @@ EXPORT CONST VECTOR_CC vfloat xsinf_u1(vfloat d) {
     dfi = dfisetdf_dfi_dfi_vf2(dfi, vsel_vf2_vo_vf2_vf2(o, x, dfigetdf_vf2_dfi(dfi)));
     s = dfnormalize_vf2_vf2(dfigetdf_vf2_dfi(dfi));
 
+#if !defined(_MSC_VER)
     s = vf2setx_vf2_vf2_vf(s, vreinterpret_vf_vm(vor_vm_vo32_vm(vor_vo_vo_vo(visinf_vo_vf(d), visnan_vo_vf(d)), vreinterpret_vm_vf(vf2getx_vf_vf2(s)))));
+#else
+    s.x = vreinterpret_vf_vm(vor_vm_vo32_vm(vor_vo_vo_vo(visinf_vo_vf(d), visnan_vo_vf(d)), vreinterpret_vm_vf(s.x)));
+#endif
   }
 
   t = s;
@@ -862,7 +866,11 @@ EXPORT CONST VECTOR_CC vfloat xcosf_u1(vfloat d) {
     dfi = dfisetdf_dfi_dfi_vf2(dfi, vsel_vf2_vo_vf2_vf2(o, x, dfigetdf_vf2_dfi(dfi)));
     s = dfnormalize_vf2_vf2(dfigetdf_vf2_dfi(dfi));
 
+#if !defined(_MSC_VER)
     s = vf2setx_vf2_vf2_vf(s, vreinterpret_vf_vm(vor_vm_vo32_vm(vor_vo_vo_vo(visinf_vo_vf(d), visnan_vo_vf(d)), vreinterpret_vm_vf(vf2getx_vf_vf2(s)))));
+#else
+    s.x = vreinterpret_vf_vm(vor_vm_vo32_vm(vor_vo_vo_vo(visinf_vo_vf(d), visnan_vo_vf(d)), vreinterpret_vm_vf(s.x)));
+#endif
   }
 
   t = s;
@@ -1424,8 +1432,13 @@ EXPORT CONST VECTOR_CC vfloat xtanf_u1(vfloat d) {
 
   o = veq_vo_vi2_vi2(vand_vi2_vi2_vi2(q, vcast_vi2_i(1)), vcast_vi2_i(1));
   vmask n = vand_vm_vo32_vm(o, vreinterpret_vm_vf(vcast_vf_f(-0.0)));
+#if !defined(_MSC_VER)
   s = vf2setx_vf2_vf2_vf(s, vreinterpret_vf_vm(vxor_vm_vm_vm(vreinterpret_vm_vf(vf2getx_vf_vf2(s)), n)));
   s = vf2sety_vf2_vf2_vf(s, vreinterpret_vf_vm(vxor_vm_vm_vm(vreinterpret_vm_vf(vf2gety_vf_vf2(s)), n)));
+#else
+  s.x = vreinterpret_vf_vm(vxor_vm_vm_vm(vreinterpret_vm_vf(s.x), n));
+  s.y = vreinterpret_vf_vm(vxor_vm_vm_vm(vreinterpret_vm_vf(s.y), n));
+#endif
 
   t = s;
   s = dfsqu_vf2_vf2(s);
