@@ -41,7 +41,7 @@ matrix:
           sources:
             - ubuntu-toolchain-r-test
           packages:
-            - gcc-10
+            - gcc-9
       env:
         - LABEL="arm64-gcc"
     - os: linux
