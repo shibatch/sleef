@@ -206,8 +206,8 @@ static void printvint(char *mes, vint vi) {
 
 static void printvmask2(char *mes, vmask2 g) {
   uint64_t u[VECTLENDP*2];
-  vstoreu_v_p_vd((double *)u, vreinterpret_vd_vm(g.x));
-  vstoreu_v_p_vd((double *)&u[VECTLENDP], vreinterpret_vd_vm(g.y));
+  vstoreu_v_p_vd((double *)u, vreinterpret_vd_vm(vm2getx_vm_vm2(g)));
+  vstoreu_v_p_vd((double *)&u[VECTLENDP], vreinterpret_vd_vm(vm2gety_vm_vm2(g)));
   printf("%s ", mes);
   for(int i=0;i<VECTLENDP*2;i++) printf("%016lx : ", (unsigned long)(u[i]));
   printf("\n");
