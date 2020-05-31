@@ -7,5 +7,5 @@ export OMP_WAIT_POLICY=passive
 export CTEST_OUTPUT_ON_FAILURE=TRUE
 cd sleef.build
 ninja all
-travis_wait 30 ctest -j `nproc`
+ctest -V -j `nproc`
 ninja install
