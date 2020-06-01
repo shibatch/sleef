@@ -75,7 +75,7 @@ pipeline {
 			 ninja
 			 export OMP_WAIT_POLICY=passive
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
-		         ctest -j `sysctl -n hw.physicalcpu`
+		         ctest -j `sysctl -n hw.logicalcpu`
 		         ninja install
 			 '''
             	     }
