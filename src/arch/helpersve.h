@@ -1083,20 +1083,19 @@ static INLINE vmask vuninterleave_vm_vm(vmask vm) {
 }
 
 static vmask2 vloadu_vm2_p(void *p) {
-  return svcreate2_s32(svld1_s32(ptrue, (int32_t *)p),
-		       svld1_s32(ptrue, (int32_t *)((uint8_t *)p + 8 * svcntd())));
+  vmask2 vm2;
+  memcpy(&vm2, p, VECTLENDP * 16);
+  return vm2;
 }
 
 static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
-  return vinterleave_vm2_vm2(svcreate2_s32(svld1_s32(ptrue, (int32_t *)&aq),
-					   svld1_s32(ptrue, (int32_t *)&(aq.s[svcntd()/2]))));
+  return vinterleave_vm2_vm2(vloadu_vm2_p(&aq));
 }
 
 static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
   vm2 = vuninterleave_vm2_vm2(vm2);
   vargquad aq;
-  svst1_s32(ptrue, (int32_t *)&aq, vm2getx_vm_vm2(vm2));
-  svst1_s32(ptrue, (int32_t *)&(aq.s[svcntd()/2]), vm2gety_vm_vm2(vm2));
+  memcpy(&aq, &vm2, VECTLENDP * 16);
   return aq;
 }
 
