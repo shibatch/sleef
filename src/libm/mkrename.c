@@ -144,16 +144,16 @@ int main(int argc, char **argv) {
 
     printf("#ifdef %s\n", architecture);
 
-    if (strcmp(architecture, "__ARM_FEATURE_SVE") == 0)
-      printf("#define STRUCT_KEYWORD_%s __sizeless_struct\n", architecture);
-    else printf("#define STRUCT_KEYWORD_%s struct\n", architecture);
-
     if (strcmp(vdoublename, "-") != 0) {
       printf("\n");
       printf("#ifndef Sleef_%s_2_DEFINED\n", vdoublename_escspace);
-      printf("typedef STRUCT_KEYWORD_%s {\n", architecture);
-      printf("  %s x, y;\n", vdoublename);
-      printf("} Sleef_%s_2;\n", vdoublename_escspace);
+      if (strcmp(architecture, "__ARM_FEATURE_SVE") == 0) {
+	printf("typedef svfloat64x2_t Sleef_%s_2;\n", vdoublename_escspace);
+      } else {
+	printf("typedef struct {\n");
+	printf("  %s x, y;\n", vdoublename);
+	printf("} Sleef_%s_2;\n", vdoublename_escspace);
+      }
       printf("#define Sleef_%s_2_DEFINED\n", vdoublename_escspace);
       printf("#endif\n");
       printf("\n");
@@ -355,9 +355,13 @@ int main(int argc, char **argv) {
 
     printf("\n");
     printf("#ifndef Sleef_%s_2_DEFINED\n", vfloatname_escspace);
-    printf("typedef STRUCT_KEYWORD_%s {\n", architecture);
-    printf("  %s x, y;\n", vfloatname);
-    printf("} Sleef_%s_2;\n", vfloatname_escspace);
+    if (strcmp(architecture, "__ARM_FEATURE_SVE") == 0) {
+	printf("typedef svfloat32x2_t Sleef_%s_2;\n", vfloatname_escspace);
+    } else {
+      printf("typedef struct {\n");
+      printf("  %s x, y;\n", vfloatname);
+      printf("} Sleef_%s_2;\n", vfloatname_escspace);
+    }
     printf("#define Sleef_%s_2_DEFINED\n", vfloatname_escspace);
     printf("#endif\n");
     printf("\n");

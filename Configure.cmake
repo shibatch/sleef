@@ -363,6 +363,11 @@ if(CYGWIN OR MINGW)
   set(DFT_C_FLAGS "${DFT_C_FLAGS} -fno-asynchronous-unwind-tables")
 endif()
 
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64" AND CMAKE_C_COMPILER_ID MATCHES "GNU" AND CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL 10.0 AND CMAKE_C_COMPILER_VERSION VERSION_LESS_EQUAL 10.1)
+  set(SLEEF_C_FLAGS "${SLEEF_C_FLAGS} -fno-shrink-wrap -fno-tree-vrp")
+  set(DFT_C_FLAGS "${DFT_C_FLAGS} -fno-shrink-wrap -fno-tree-vrp")
+endif()
+
 # FEATURE DETECTION
 
 # Long double

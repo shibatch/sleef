@@ -462,44 +462,20 @@ static INLINE vmask vinterleave_vm_vm(vmask vm) { return vm; }
 static INLINE vmask vuninterleave_vm_vm(vmask vm) { return vm; }
 
 static vmask2 vloadu_vm2_p(void *p) {
-  vmask2 vm2 = {
-    vloadu_vi2_p((int32_t *)p),
-    vloadu_vi2_p((int32_t *)((uint8_t *)p + sizeof(vmask)))
-  };
+  vmask2 vm2;
+  memcpy(&vm2, p, VECTLENDP * 16);
   return vm2;
 }
 
-static void vstoreu_v_p_vm2(void *p, vmask2 vm2) {
-  vstoreu_v_p_vi2((int32_t *)p, vcast_vi2_vm(vm2.x));
-  vstoreu_v_p_vi2((int32_t *)((uint8_t *)p + sizeof(vmask)), vcast_vi2_vm(vm2.y));
-}
-
 static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
-#if !defined(_MSC_VER)
-  union {
-    vargquad aq;
-    vmask2 vm2;
-  } c;
-  c.aq = aq;
-  return vinterleave_vm2_vm2(c.vm2);
-#else
   return vinterleave_vm2_vm2(vloadu_vm2_p(&aq));
-#endif
 }
 
 static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
-#if !defined(_MSC_VER)
-  union {
-    vargquad aq;
-    vmask2 vm2;
-  } c;
-  c.vm2 = vuninterleave_vm2_vm2(vm2);
-  return c.aq;
-#else
-  vargquad a;
-  vstoreu_v_p_vm2(&a, vuninterleave_vm2_vm2(vm2));
-  return a;
-#endif
+  vm2 = vuninterleave_vm2_vm2(vm2);
+  vargquad aq;
+  memcpy(&aq, &vm2, VECTLENDP * 16);
+  return aq;
 }
 
 static INLINE int vtestallzeros_i_vo64(vopmask g) { return _mm_movemask_epi8(g) == 0; }
