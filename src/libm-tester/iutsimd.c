@@ -11,14 +11,6 @@
 #include <inttypes.h>
 #include <assert.h>
 
-#if defined(POWER64_UNDEF_USE_EXTERN_INLINES)
-// This is a workaround required to cross compile for PPC64 binaries
-#include <features.h>
-#ifdef __USE_EXTERN_INLINES
-#undef __USE_EXTERN_INLINES
-#endif
-#endif
-
 #include <math.h>
 
 #if defined(_MSC_VER)
@@ -303,9 +295,14 @@ int check_featureDP(double d) {
   vstoreu_v_p_vd(s, a);
   return s[0] == s[0];
 }
-#else
-int check_featureDP() { return 0; }
+
+#if !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA))
+static vdouble vd2getx_vd_vd2(vdouble2 v) { return v.x; }
+static vdouble vd2gety_vd_vd2(vdouble2 v) { return v.y; }
 #endif
+#else // #ifdef ENABLE_DP
+int check_featureDP() { return 0; }
+#endif // #ifdef ENABLE_DP
 
 #ifdef ENABLE_SP
 int check_featureSP(float d) {
@@ -319,7 +316,12 @@ int check_featureSP(float d) {
   vstoreu_v_p_vf(s, a);
   return s[0] == s[0];
 }
-#else
+
+#if !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA))
+static vfloat vf2getx_vf_vf2(vfloat2 v) { return v.x; }
+static vfloat vf2gety_vf_vf2(vfloat2 v) { return v.y; }
+#endif
+#else // #ifdef ENABLE_DP
 int check_featureSP() { return 0; }
 #endif
 
@@ -355,8 +357,8 @@ int check_featureSP() { return 0; }
       vdouble2 v;							\
       vdouble a = vloadu_vd_p(s);					\
       v = funcName(a);							\
-      vstoreu_v_p_vd(s, v.x);						\
-      vstoreu_v_p_vd(t, v.y);						\
+      vstoreu_v_p_vd(s, vd2getx_vd_vd2(v));				\
+      vstoreu_v_p_vd(t, vd2gety_vd_vd2(v));				\
       Sleef_double2 d2;							\
       d2.x = s[idx];							\
       d2.y = t[idx];							\
@@ -448,27 +450,27 @@ int check_featureSP() { return 0; }
     }							\
   }
 
-#define func_f2_f(funcStr, funcName) {				\
-    while (startsWith(buf, funcStr " ")) {			\
-      uint32_t u;						\
-      sscanf(buf, funcStr " %x", &u);				\
-      float s[VECTLENSP], t[VECTLENSP];				\
-      memrand(s, sizeof(s));					\
-      memrand(t, sizeof(t));					\
-      int idx = xrand() & (VECTLENSP-1);			\
-      s[idx] = u2f(u);						\
-      vfloat2 v;						\
-      vfloat a = vloadu_vf_p(s);				\
-      v = funcName(a);						\
-      vstoreu_v_p_vf(s, v.x);					\
-      vstoreu_v_p_vf(t, v.y);					\
-      Sleef_float2 d2;						\
-      d2.x = s[idx];						\
-      d2.y = t[idx];						\
-      printf("%x %x\n", f2u(d2.x), f2u(d2.y));			\
-      fflush(stdout);						\
-      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;		\
-    }								\
+#define func_f2_f(funcStr, funcName) {			\
+    while (startsWith(buf, funcStr " ")) {		\
+      uint32_t u;					\
+      sscanf(buf, funcStr " %x", &u);			\
+      float s[VECTLENSP], t[VECTLENSP];			\
+      memrand(s, sizeof(s));				\
+      memrand(t, sizeof(t));				\
+      int idx = xrand() & (VECTLENSP-1);		\
+      s[idx] = u2f(u);					\
+      vfloat2 v;					\
+      vfloat a = vloadu_vf_p(s);			\
+      v = funcName(a);					\
+      vstoreu_v_p_vf(s, vf2getx_vf_vf2(v));		\
+      vstoreu_v_p_vf(t, vf2gety_vf_vf2(v));		\
+      Sleef_float2 d2;					\
+      d2.x = s[idx];					\
+      d2.y = t[idx];					\
+      printf("%x %x\n", f2u(d2.x), f2u(d2.y));		\
+      fflush(stdout);					\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;	\
+    }							\
   }
 
 #define func_f_f_f(funcStr, funcName) {			\

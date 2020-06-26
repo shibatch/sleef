@@ -793,10 +793,8 @@ static INLINE vmask vinterleave_vm_vm(vmask vm) { return vm; }
 static INLINE vmask vuninterleave_vm_vm(vmask vm) { return vm; }
 
 static vmask2 vloadu_vm2_p(void *p) {
-  vmask2 vm2 = {
-    vld1q_u32((uint32_t *)p),
-    vld1q_u32((uint32_t *)((uint8_t *)p + sizeof(vmask)))
-  };
+  vmask2 vm2;
+  memcpy(&vm2, p, VECTLENDP * 16);
   return vm2;
 }
 
@@ -804,21 +802,14 @@ static vmask2 vloadu_vm2_p(void *p) {
 typedef Sleef_quad2 vargquad;
 
 static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
-  union {
-    vargquad aq;
-    vmask2 vm2;
-  } c;
-  c.aq = aq;
-  return vinterleave_vm2_vm2(c.vm2);
+  return vinterleave_vm2_vm2(vloadu_vm2_p(&aq));
 }
 
 static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
-  union {
-    vargquad aq;
-    vmask2 vm2;
-  } c;
-  c.vm2 = vuninterleave_vm2_vm2(vm2);
-  return c.aq;
+  vm2 = vuninterleave_vm2_vm2(vm2);
+  vargquad aq;
+  memcpy(&aq, &vm2, VECTLENDP * 16);
+  return aq;
 }
 #endif // #if !defined(SLEEF_GENHEADER)
 

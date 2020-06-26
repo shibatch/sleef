@@ -10,6 +10,7 @@
 
 #if !defined(SLEEF_GENHEADER)
 #include <stdint.h>
+#include <string.h>
 #endif
 
 #ifndef M_PI

@@ -68,13 +68,13 @@ typedef struct {
 void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
 #endif
 
-static int cpuSupportsAVX2() {
+static INLINE int cpuSupportsAVX2() {
     int32_t reg[4];
     Sleef_x86CpuID(reg, 7, 0);
     return (reg[1] & (1 << 5)) != 0;
 }
 
-static int cpuSupportsFMA() {
+static INLINE int cpuSupportsFMA() {
     int32_t reg[4];
     Sleef_x86CpuID(reg, 1, 0);
     return (reg[2] & (1 << 12)) != 0;
@@ -462,47 +462,20 @@ static INLINE vmask vuninterleave_vm_vm(vmask vm) {
 }
 
 static vmask2 vloadu_vm2_p(void *p) {
-  vmask2 vm2 = {
-    vloadu_vi2_p((int32_t *)p),
-    vloadu_vi2_p((int32_t *)((uint8_t *)p + sizeof(vmask)))
-  };
+  vmask2 vm2;
+  memcpy(&vm2, p, VECTLENDP * 16);
   return vm2;
 }
 
-static void vstoreu_v_p_vm2(void *p, vmask2 vm2) {
-  vstoreu_v_p_vi2((int32_t *)p, vcast_vi2_vm(vm2.x));
-  vstoreu_v_p_vi2((int32_t *)((uint8_t *)p + sizeof(vmask)), vcast_vi2_vm(vm2.y));
-}
-
-#if !defined(SLEEF_GENHEADER)
-typedef Sleef_quad4 vargquad;
-
 static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
-#if !defined(_MSC_VER)
-  union {
-    vargquad aq;
-    vmask2 vm2;
-  } c;
-  c.aq = aq;
-  return vinterleave_vm2_vm2(c.vm2);
-#else
   return vinterleave_vm2_vm2(vloadu_vm2_p(&aq));
-#endif
 }
 
 static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
-#if !defined(_MSC_VER)
-  union {
-    vargquad aq;
-    vmask2 vm2;
-  } c;
-  c.vm2 = vuninterleave_vm2_vm2(vm2);
-  return c.aq;
-#else
-  vargquad a;
-  vstoreu_v_p_vm2(&a, vuninterleave_vm2_vm2(vm2));
-  return a;
-#endif
+  vm2 = vuninterleave_vm2_vm2(vm2);
+  vargquad aq;
+  memcpy(&aq, &vm2, VECTLENDP * 16);
+  return aq;
 }
 #endif // #if !defined(SLEEF_GENHEADER)
 
