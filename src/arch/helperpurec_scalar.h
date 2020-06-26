@@ -391,22 +391,21 @@ static INLINE vdouble vuninterleave_vd_vd(vdouble vd) { return vd; }
 static INLINE vmask vinterleave_vm_vm(vmask vm) { return vm; }
 static INLINE vmask vuninterleave_vm_vm(vmask vm) { return vm; }
 
+static vmask2 vloadu_vm2_p(void *p) {
+  vmask2 vm2;
+  memcpy(&vm2, p, VECTLENDP * 16);
+  return vm2;
+}
+
 static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
-  union {
-    vargquad aq;
-    vmask2 vm2;
-  } c;
-  c.aq = aq;
-  return c.vm2;
+  return vinterleave_vm2_vm2(vloadu_vm2_p(&aq));
 }
 
 static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
-  union {
-    vargquad aq;
-    vmask2 vm2;
-  } c;
-  c.vm2 = vm2;
-  return c.aq;
+  vm2 = vuninterleave_vm2_vm2(vm2);
+  vargquad aq;
+  memcpy(&aq, &vm2, VECTLENDP * 16);
+  return aq;
 }
 
 static INLINE int vtestallzeros_i_vo64(vopmask g) { return !g ? ~(uint32_t)0 : 0; }

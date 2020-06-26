@@ -7,10 +7,7 @@
 
 #ifdef ENABLE_DP
 #ifdef ENABLE_SVE
-typedef __sizeless_struct vdouble2 {
-  svfloat64_t x;
-  svfloat64_t y;
-} vdouble2;
+typedef svfloat64x2_t vdouble2;
 #else
 typedef struct {
   vdouble x, y;
@@ -108,10 +105,7 @@ vdouble xerfc_u15(vdouble);
 
 #ifdef ENABLE_SP
 #ifdef ENABLE_SVE
-typedef __sizeless_struct vfloat2 {
-  svfloat32_t x;
-  svfloat32_t y;
-} vfloat2;
+typedef svfloat32x2_t vfloat2;
 #else
 typedef struct {
   vfloat x, y;

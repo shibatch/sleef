@@ -11,14 +11,6 @@
 #include <float.h>
 #include <limits.h>
 
-#if defined(POWER64_UNDEF_USE_EXTERN_INLINES)
-// This is a workaround required to cross compile for PPC64 binaries
-#include <features.h>
-#ifdef __USE_EXTERN_INLINES
-#undef __USE_EXTERN_INLINES
-#endif
-#endif
-
 #include <math.h>
 
 #ifdef ENABLE_SYS_getrandom
@@ -126,16 +118,12 @@ typedef Sleef_float32x4_t_2 vfloat2;
 #define CONFIG 1
 #include "helpersve.h"
 #include "renamesve.h"
-typedef Sleef_svfloat64_t_2 vdouble2;
-typedef Sleef_svfloat32_t_2 vfloat2;
 #endif /* ENABLE_SVE */
 
 #ifdef ENABLE_SVENOFMA
 #define CONFIG 2
 #include "helpersve.h"
 #include "renamesvenofma.h"
-typedef Sleef_svfloat64_t_2 vdouble2;
-typedef Sleef_svfloat32_t_2 vfloat2;
 #endif
 
 #ifdef ENABLE_VSX
@@ -184,6 +172,13 @@ typedef Sleef_float_2 vfloat2;
 #include "renamepurecfma_scalar.h"
 typedef Sleef_double_2 vdouble2;
 typedef Sleef_float_2 vfloat2;
+#endif
+
+//
+
+#if !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA))
+static vdouble vd2getx_vd_vd2(vdouble2 v) { return v.x; }
+static vdouble vd2gety_vd_vd2(vdouble2 v) { return v.y; }
 #endif
 
 //
@@ -365,14 +360,14 @@ int main(int argc,char **argv)
       
       sinpifr(frx, d);
 
-      double u0 = countULP2dp(t = vget(sc.x, e), frx);
+      double u0 = countULP2dp(t = vget(vd2getx_vd_vd2(sc), e), frx);
 
       if (u0 != 0 && ((fabs(d) <= rangemax2 && u0 > 0.506) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincospi_u05 sin arg=%.20g ulp=%.20g\n", d, u0);
 	fflush(stdout); ecnt++;
       }
 
-      double u1 = countULP2dp(t = vget(sc2.x, e), frx);
+      double u1 = countULP2dp(t = vget(vd2getx_vd_vd2(sc2), e), frx);
 
       if (u1 != 0 && ((fabs(d) <= rangemax2 && u1 > 1.5) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincospi_u35 sin arg=%.20g ulp=%.20g\n", d, u1);
@@ -392,14 +387,14 @@ int main(int argc,char **argv)
       
       cospifr(frx, d);
 
-      double u0 = countULP2dp(t = vget(sc.y, e), frx);
+      double u0 = countULP2dp(t = vget(vd2gety_vd_vd2(sc), e), frx);
 
       if (u0 != 0 && ((fabs(d) <= rangemax2 && u0 > 0.506) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincospi_u05 cos arg=%.20g ulp=%.20g\n", d, u0);
 	fflush(stdout); ecnt++;
       }
 
-      double u1 = countULP2dp(t = vget(sc.y, e), frx);
+      double u1 = countULP2dp(t = vget(vd2gety_vd_vd2(sc), e), frx);
 
       if (u1 != 0 && ((fabs(d) <= rangemax2 && u1 > 1.5) || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincospi_u35 cos arg=%.20g ulp=%.20g\n", d, u1);
@@ -428,7 +423,7 @@ int main(int argc,char **argv)
 	fflush(stdout); ecnt++;
       }
 
-      double u1 = countULPdp(t = vget(sc.x, e), frx);
+      double u1 = countULPdp(t = vget(vd2getx_vd_vd2(sc), e), frx);
       
       if (u1 != 0 && (u1 > 3.5 || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincos sin arg=%.20g ulp=%.20g\n", d, u1);
@@ -442,7 +437,7 @@ int main(int argc,char **argv)
 	fflush(stdout); ecnt++;
       }
 
-      double u3 = countULPdp(t = vget(sc2.x, e), frx);
+      double u3 = countULPdp(t = vget(vd2getx_vd_vd2(sc2), e), frx);
       
       if (u3 != 0 && (u3 > 1 || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincos_u1 sin arg=%.20g ulp=%.20g\n", d, u3);
@@ -461,7 +456,7 @@ int main(int argc,char **argv)
 	fflush(stdout); ecnt++;
       }
 
-      double u1 = countULPdp(t = vget(sc.y, e), frx);
+      double u1 = countULPdp(t = vget(vd2gety_vd_vd2(sc), e), frx);
       
       if (u1 != 0 && (u1 > 3.5 || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincos cos arg=%.20g ulp=%.20g\n", d, u1);
@@ -475,7 +470,7 @@ int main(int argc,char **argv)
 	fflush(stdout); ecnt++;
       }
 
-      double u3 = countULPdp(t = vget(sc2.y, e), frx);
+      double u3 = countULPdp(t = vget(vd2gety_vd_vd2(sc2), e), frx);
       
       if (u3 != 0 && (u3 > 1 || fabs(t) > 1 || !isnumber(t))) {
 	printf(ISANAME " sincos_u1 cos arg=%.20g ulp=%.20g\n", d, u3);
@@ -1169,13 +1164,13 @@ int main(int argc,char **argv)
       mpfr_modf(fry, frz, frx, GMP_RNDN);
 
       vdouble2 t2 = xmodf(vd);
-      double u0 = countULPdp(vget(t2.x, e), frz);
-      double u1 = countULPdp(vget(t2.y, e), fry);
+      double u0 = countULPdp(vget(vd2getx_vd_vd2(t2), e), frz);
+      double u1 = countULPdp(vget(vd2gety_vd_vd2(t2), e), fry);
 
       if (u0 != 0 || u1 != 0) {
 	printf(ISANAME " modf arg=%.20g ulp=%.20g %.20g\n", d, u0, u1);
 	printf("correct = %.20g, %.20g\n", mpfr_get_d(frz, GMP_RNDN), mpfr_get_d(fry, GMP_RNDN));
-	printf("test    = %.20g, %.20g\n", vget(t2.x, e), vget(t2.y, e));
+	printf("test    = %.20g, %.20g\n", vget(vd2getx_vd_vd2(t2), e), vget(vd2gety_vd_vd2(t2), e));
 	fflush(stdout); ecnt++;
       }
     }
