@@ -38,8 +38,18 @@ matrix:
       arch: arm64
       addons:
         apt:
+          sources:
+            - ubuntu-toolchain-r-test
           packages:
-            - g++-8
+            - gcc-10
+      env:
+        - LABEL="arm64-gcc-sve"
+    - os: linux
+      arch: arm64
+      addons:
+        apt:
+          packages:
+            - gcc-8
       env:
         - LABEL="arm64-gcc"
     - os: linux
