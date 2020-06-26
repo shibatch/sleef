@@ -627,6 +627,9 @@ static vmask2 vloadu_vm2_p(void *p) {
   return vm2;
 }
 
+#if !defined(SLEEF_GENHEADER)
+typedef Sleef_quad4 vargquad;
+
 static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
   return vinterleave_vm2_vm2(vloadu_vm2_p(&aq));
 }
