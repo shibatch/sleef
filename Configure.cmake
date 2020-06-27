@@ -364,6 +364,7 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "Intel")
   set(FLAGS_ENABLE_AVX512F "-xCOMMON-AVX512")
   set(FLAGS_ENABLE_AVX512FNOFMA "-xCOMMON-AVX512")
   set(FLAGS_ENABLE_PURECFMA_SCALAR "-march=core-avx2")
+  set(FLAGS_ENABLE_FMA4 "-msse2")  # This is a dummy flag
   set(FLAGS_STRICTMATH "-fp-model strict -Qoption,cpp,--extended_float_type")
   set(FLAGS_FASTMATH "-fp-model fast=2 -Qoption,cpp,--extended_float_type")
   set(FLAGS_WALL "-fmax-errors=3 -Wall -Wno-unused -Wno-attributes")
