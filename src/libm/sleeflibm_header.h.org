@@ -59,11 +59,14 @@
 #if defined(_OPENMP) && _OPENMP >= 201307 && (defined(__GNUC__) || defined(__CLANG__))
 
 #if defined(__aarch64__)
-#define SLEEF_PRAGMA_OMP_SIMD_DP _Pragma ("omp declare simd notinbranch")
+#define SLEEF_PRAGMA_OMP_SIMD_DP _Pragma ("omp declare simd simdlen(2) notinbranch")
 #define SLEEF_PRAGMA_OMP_SIMD_SP _Pragma ("omp declare simd simdlen(4) notinbranch")
-#else
-#define SLEEF_PRAGMA_OMP_SIMD_DP _Pragma ("omp declare simd notinbranch")
-#define SLEEF_PRAGMA_OMP_SIMD_SP _Pragma ("omp declare simd notinbranch")
+#elif defined(__x86_64__) && defined(__AVX__)
+#define SLEEF_PRAGMA_OMP_SIMD_DP _Pragma ("omp declare simd simdlen(4) notinbranch")
+#define SLEEF_PRAGMA_OMP_SIMD_SP _Pragma ("omp declare simd simdlen(8) notinbranch")
+#elif defined(__x86_64__) && defined(__SSE2__)
+#define SLEEF_PRAGMA_OMP_SIMD_DP _Pragma ("omp declare simd simdlen(2) notinbranch")
+#define SLEEF_PRAGMA_OMP_SIMD_SP _Pragma ("omp declare simd simdlen(4) notinbranch")
 #endif
 
 #else
