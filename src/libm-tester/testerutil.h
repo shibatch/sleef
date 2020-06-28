@@ -13,7 +13,7 @@
 
 #define M_PIf ((float)M_PI)
 
-int enableFlushToZero;
+extern int enableFlushToZero;
 double flushToZero(double y);
 
 int isnumber(double x);

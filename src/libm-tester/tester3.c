@@ -71,6 +71,11 @@ static INLINE svfloat64_t setsvfloat64_t(double d, int r) { double a[svcntd()]; 
 static INLINE double getsvfloat64_t(svfloat64_t v, int r) { double a[svcntd()]; svst1_f64(svptrue_b8(), a, v); return unifyValue(a[r & (svcntd()-1)]); }
 static INLINE svfloat32_t setsvfloat32_t(float d, int r)  { float  a[svcntw()]; memrand(a, sizeof(a)); a[r & (svcntw()-1)] = d; return svld1_f32(svptrue_b8(), a); }
 static INLINE float getsvfloat32_t(svfloat32_t v, int r)  { float  a[svcntw()]; svst1_f32(svptrue_b8(), a, v); return unifyValuef(a[r & (svcntw()-1)]); }
+
+static svfloat64_t vd2getx_vd_vd2(svfloat64x2_t v) { return svget2_f64(v, 0); }
+static svfloat64_t vd2gety_vd_vd2(svfloat64x2_t v) { return svget2_f64(v, 1); }
+static svfloat32_t vf2getx_vf_vf2(svfloat32x2_t v) { return svget2_f32(v, 0); }
+static svfloat32_t vf2gety_vf_vf2(svfloat32x2_t v) { return svget2_f32(v, 1); }
 #endif
 
 #ifdef __VSX__
@@ -84,9 +89,17 @@ static INLINE float get__vector_float(__vector float v, int r) { float a[4]; vec
 
 // ATR = cinz_, NAME = sin, TYPE = d2, ULP = u35, EXT = sse2
 #define FUNC(ATR, NAME, TYPE, ULP, EXT) Sleef_ ## ATR ## NAME ## TYPE ## _ ## ULP ## EXT
-#define TYPE2(TYPE) Sleef_ ## TYPE ## _2
+#define _TYPE2(TYPE) Sleef_ ## TYPE ## _2
+#define TYPE2(TYPE) _TYPE2(TYPE)
 #define SET(TYPE) set ## TYPE
 #define GET(TYPE) get ## TYPE
+
+#ifndef __ARM_FEATURE_SVE
+static DPTYPE vd2getx_vd_vd2(TYPE2(DPTYPE) v) { return v.x; }
+static DPTYPE vd2gety_vd_vd2(TYPE2(DPTYPE) v) { return v.y; }
+static SPTYPE vf2getx_vf_vf2(TYPE2(SPTYPE) v) { return v.x; }
+static SPTYPE vf2gety_vf_vf2(TYPE2(SPTYPE) v) { return v.y; }
+#endif
 
 //
 
@@ -105,9 +118,6 @@ static INLINE float get__vector_float(__vector float v, int r) { float a[4]; vec
       }									\
     } else puts((char *)mes);						\
   } while(0)
-
-//
-//  printf("%.10g %.10g\n", arg, GET(TYPE)(vx, r));
 
 #define exec_d_d(ATR, NAME, ULP, TYPE, TSX, EXT, arg) do {		\
     int r = xrand() & 0xffff;						\
@@ -141,7 +151,7 @@ static INLINE float get__vector_float(__vector float v, int r) { float a[4]; vec
 #define exec_d2_d(ATR, NAME, ULP, TYPE, TSX, EXT, arg) do {		\
     int r = xrand() & 0xffff;						\
     TYPE2(TYPE) vx2 = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE)(arg, r)); \
-    double fxx = GET(TYPE)(vx2.x, r), fxy = GET(TYPE)(vx2.y, r);	\
+    double fxx = GET(TYPE)(vd2getx_vd_vd2(vx2), r), fxy = GET(TYPE)(vd2gety_vd_vd2(vx2), r); \
     MD5_Update(&ctx, &fxx, sizeof(double));				\
     MD5_Update(&ctx, &fxy, sizeof(double));				\
   } while(0)
@@ -207,7 +217,7 @@ static INLINE float get__vector_float(__vector float v, int r) { float a[4]; vec
 #define exec_f2_f(ATR, NAME, ULP, TYPE, TSX, EXT, arg) do {		\
     int r = xrand() & 0xffff;						\
     TYPE2(TYPE) vx2 = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (arg, r)); \
-    float fxx = GET(TYPE)(vx2.x, r), fxy = GET(TYPE)(vx2.y, r);		\
+    float fxx = GET(TYPE)(vf2getx_vf_vf2(vx2), r), fxy = GET(TYPE)(vf2gety_vf_vf2(vx2), r); \
     MD5_Update(&ctx, &fxx, sizeof(float));				\
     MD5_Update(&ctx, &fxy, sizeof(float));				\
   } while(0)
