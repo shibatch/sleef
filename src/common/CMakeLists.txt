@@ -9,7 +9,7 @@ if (BUILD_SHARED_LIBS)
 endif()
 
 # This is a workaround of appveyor bug
-string(CONCAT CMAKE_C_FLAGS ${SLEEF_C_FLAGS})
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${SLEEF_C_FLAGS}")
 
 # Target TARGET_LIBCOMMON_OBJ
 
