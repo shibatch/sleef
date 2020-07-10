@@ -41,8 +41,7 @@ set(QUAD_RENAME_PARAMS_SVE             x sve)
 
 #
 
-set(CMAKE_C_FLAGS ${ORG_CMAKE_C_FLAGS})
-string(CONCAT CMAKE_C_FLAGS ${SLEEF_C_FLAGS})
+set(CMAKE_C_FLAGS "${ORG_CMAKE_C_FLAGS} ${SLEEF_C_FLAGS}")
 
 # --------------------------------------------------------------------
 # sleefquad.h
