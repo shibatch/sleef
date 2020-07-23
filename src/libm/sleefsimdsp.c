@@ -3082,7 +3082,7 @@ EXPORT CONST VECTOR_CC vfloat xremainderf(vfloat x, vfloat y) {
 
   for(int i=0;i<8;i++) { // ceil(log2(FLT_MAX) / 22)+1
     q = vrintfk2_vf_vf(vmul_vf_vf_vf(vf2getx_vf_vf2(r), rd));
-    q = vsel_vf_vo_vf_vf(vlt_vo_vf_vf(vabs_vf_vf(vf2getx_vf_vf2(r)), vmul_vf_vf_vf(d, vcast_vf_f(1.5f))), vcast_vf_f(1.0f), q);
+    q = vsel_vf_vo_vf_vf(vlt_vo_vf_vf(vabs_vf_vf(vf2getx_vf_vf2(r)), vmul_vf_vf_vf(d, vcast_vf_f(1.5f))), vmulsign_vf_vf_vf(vcast_vf_f(1.0f), vf2getx_vf_vf2(r)), q);
     q = vsel_vf_vo_vf_vf(vor_vo_vo_vo(vlt_vo_vf_vf(vabs_vf_vf(vf2getx_vf_vf2(r)), vmul_vf_vf_vf(d, vcast_vf_f(0.5f))),
 				      vandnot_vo_vo_vo(qisodd, veq_vo_vf_vf(vabs_vf_vf(vf2getx_vf_vf2(r)), vmul_vf_vf_vf(d, vcast_vf_f(0.5f))))),
 			 vcast_vf_f(0.0), q);

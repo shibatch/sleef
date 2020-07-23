@@ -2,13 +2,6 @@ include(CheckCCompilerFlag)
 include(CheckCSourceCompiles)
 include(CheckTypeSize)
 
-# Some toolchains require explicit linking of the libraries following.
-find_library(LIB_MPFR mpfr)
-find_library(LIBM m)
-find_library(LIBGMP gmp)
-find_library(LIBRT rt)
-find_library(LIBFFTW3 fftw3)
-
 if (NOT CMAKE_CROSSCOMPILING AND NOT SLEEF_FORCE_FIND_PACKAGE_SSL)
   find_package(OpenSSL)
   if (OPENSSL_FOUND)
@@ -32,25 +25,38 @@ if (ENFORCE_TESTER3 AND NOT SLEEF_OPENSSL_FOUND)
   message(FATAL_ERROR "ENFORCE_TESTER3 is specified and OpenSSL not found")
 endif()
 
-if (LIB_MPFR)
-  find_path(MPFR_INCLUDE_DIR
-    NAMES mpfr.h
-    ONLY_CMAKE_FIND_ROOT_PATH)
-endif(LIB_MPFR)
+if (NOT (RUNNING_ON_APPVEYOR AND SLEEF_CLANG_ON_WINDOWS))
+  # We rely on Cygwin tools in order to test the builds on
+  # appveyor. However, if we try to link these libraries, cmake finds
+  # the Cygwin version of libraries, which causes errors.
+  
+  # Some toolchains require explicit linking of the libraries following.
+  find_library(LIB_MPFR mpfr)
+  find_library(LIBM m)
+  find_library(LIBGMP gmp)
+  find_library(LIBRT rt)
+  find_library(LIBFFTW3 fftw3)
 
-if (LIBFFTW3)
-  find_path(FFTW3_INCLUDE_DIR
-    NAMES fftw3.h
-    ONLY_CMAKE_FIND_ROOT_PATH)
-endif(LIBFFTW3)
+  if (LIB_MPFR)
+    find_path(MPFR_INCLUDE_DIR
+      NAMES mpfr.h
+      ONLY_CMAKE_FIND_ROOT_PATH)
+  endif(LIB_MPFR)
 
-if (NOT LIBM)
-  set(LIBM "")
-endif()
+  if (LIBFFTW3)
+    find_path(FFTW3_INCLUDE_DIR
+      NAMES fftw3.h
+      ONLY_CMAKE_FIND_ROOT_PATH)
+  endif(LIBFFTW3)
 
-if (NOT LIBRT)
-  set(LIBRT "")
-endif()
+  if (NOT LIBM)
+    set(LIBM "")
+  endif()
+
+  if (NOT LIBRT)
+    set(LIBRT "")
+  endif()
+endif(NOT SLEEF_CLANG_ON_WINDOWS)
 
 # The library currently supports the following SIMD architectures
 set(SLEEF_SUPPORTED_EXTENSIONS
@@ -316,6 +322,15 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
   set(FLAG_PRESERVE_COMMENTS "-C")
   set(FLAG_INCLUDE "-I")
   set(FLAG_DEFINE "-D")
+
+  if (SLEEF_CLANG_ON_WINDOWS)
+    # The following line is required to prevent clang from displaying
+    # many warnings. Clang on Windows references MSVC header files,
+    # which have deprecation and security attributes for many
+    # functions.
+
+    string(CONCAT FLAGS_WALL ${FLAGS_WALL} " -D_CRT_SECURE_NO_WARNINGS -Wno-deprecated-declarations")
+  endif()
 elseif(MSVC)
   # Intel vector extensions.
   if (CMAKE_CL_64)
@@ -672,6 +687,7 @@ CHECK_C_SOURCE_COMPILES("
 if (COMPILER_SUPPORTS_WEAK_ALIASES AND
     NOT CMAKE_SYSTEM_PROCESSOR MATCHES "arm" AND
     NOT CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64" AND
+    NOT SLEEF_CLANG_ON_WINDOWS AND
     NOT MINGW AND BUILD_GNUABI_LIBS)
   set(ENABLE_GNUABI ${COMPILER_SUPPORTS_WEAK_ALIASES})
 endif()
@@ -736,16 +752,13 @@ if(SLEEF_SHOW_ERROR_LOG)
   endif()
 endif(SLEEF_SHOW_ERROR_LOG)
 
-# Detect if cmake is running on Travis
-string(COMPARE NOTEQUAL "" "$ENV{TRAVIS}" RUNNING_ON_TRAVIS)
-
-if (${RUNNING_ON_TRAVIS} AND CMAKE_C_COMPILER_ID MATCHES "Clang")
+if (RUNNING_ON_TRAVIS AND CMAKE_C_COMPILER_ID MATCHES "Clang")
   message(STATUS "Travis bug workaround turned on")
   set(COMPILER_SUPPORTS_OPENMP FALSE)   # Workaround for https://github.com/travis-ci/travis-ci/issues/8613
   set(COMPILER_SUPPORTS_FLOAT128 FALSE) # Compilation on unroll_0_vecextqp.c does not finish on Travis
 endif()
 
-if (MSVC)
+if (MSVC OR SLEEF_CLANG_ON_WINDOWS)
   set(COMPILER_SUPPORTS_OPENMP FALSE)   # At this time, OpenMP is not supported on MSVC
 endif()
 

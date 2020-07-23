@@ -3415,7 +3415,7 @@ EXPORT CONST VECTOR_CC vdouble xremainder(vdouble x, vdouble y) {
 #ifndef ENABLE_FMA_DP
     q = vreinterpret_vd_vm(vand_vm_vm_vm(vreinterpret_vm_vd(q), vcast_vm_i_i(0xffffffff, 0xfffffffe)));
 #endif
-    q = vsel_vd_vo_vd_vd(vlt_vo_vd_vd(vabs_vd_vd(vd2getx_vd_vd2(r)), vmul_vd_vd_vd(d, vcast_vd_d(1.5))), vcast_vd_d(1.0), q);
+    q = vsel_vd_vo_vd_vd(vlt_vo_vd_vd(vabs_vd_vd(vd2getx_vd_vd2(r)), vmul_vd_vd_vd(d, vcast_vd_d(1.5))), vmulsign_vd_vd_vd(vcast_vd_d(1.0), vd2getx_vd_vd2(r)), q);
     q = vsel_vd_vo_vd_vd(vor_vo_vo_vo(vlt_vo_vd_vd(vabs_vd_vd(vd2getx_vd_vd2(r)), vmul_vd_vd_vd(d, vcast_vd_d(0.5))),
 				      vandnot_vo_vo_vo(qisodd, veq_vo_vd_vd(vabs_vd_vd(vd2getx_vd_vd2(r)), vmul_vd_vd_vd(d, vcast_vd_d(0.5))))),
 			 vcast_vd_d(0.0), q);
