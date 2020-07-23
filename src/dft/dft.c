@@ -243,7 +243,7 @@ static int omp_thread_count() {
 static void startAllThreads(const int nth) {
 #ifdef _OPENMP
   volatile int8_t *state = calloc(nth, 1);
-  int th;
+  int th=0;
 #pragma omp parallel for
   for(th=0;th<nth;th++) {
     state[th] = 1;
@@ -376,7 +376,7 @@ static void transposeMT(real *RESTRICT ALIGNED(256) d, real *RESTRICT ALIGNED(25
     typedef struct { real r[BS*2]; } row_t;
     typedef struct { real r0, r1; } element_t;
 #endif
-    int y;
+    int y=0;
 #pragma omp parallel for
     for(y=0;y<(1 << log2n);y+=BS) {
       for(int x=0;x<(1 << log2m);x+=BS) {
@@ -919,7 +919,7 @@ static void measureBut(SleefDFT *p) {
 	    if (p->tbl[N] == NULL || p->tbl[N][level] == NULL) continue;
 	    if (p->vecwidth > (1 << N)) continue;
 	    if ((config & CONFIG_MT) != 0) {
-	      int i1;
+	      int i1=0;
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
@@ -945,7 +945,7 @@ static void measureBut(SleefDFT *p) {
 	    if (p->vecwidth > 2 && p->log2len <= N+2) continue;
 	    if ((int)p->log2len - (int)level < p->log2vecwidth) continue;
 	    if ((config & CONFIG_MT) != 0) {
-	      int i1;
+	      int i1=0;
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
@@ -1380,7 +1380,7 @@ EXPORT void EXECUTE(SleefDFT *p, const real *s0, real *d0) {
 	(((p->mode & SLEEF_MODE_DEBUG) == 0 && p->tmMT < p->tmNoMT) ||
 	 ((p->mode & SLEEF_MODE_DEBUG) != 0 && (rand() & 1))))
       {
-	int y;
+	int y=0;
 #pragma omp parallel for
 	for(y=0;y<p->vlen;y++) {
 	  EXECUTE(p->instH, &s[p->hlen*2*y], &tBuf[p->hlen*2*y]);
