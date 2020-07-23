@@ -5,10 +5,12 @@
 
 // Always use -ffp-contract=off option to compile SLEEF.
 
+#if !defined(SLEEF_GENHEADER)
 #include <stdint.h>
 #include <assert.h>
 #include <limits.h>
 #include <float.h>
+#endif
 
 #include "misc.h"
 
@@ -3653,7 +3655,7 @@ EXPORT CONST VECTOR_CC vdouble xerfc_u15(vdouble a) {
 }
 #endif // #if !defined(DETERMINISTIC)
 
-#if !defined(DETERMINISTIC) && !defined(ENABLE_GNUABI)
+#if !defined(DETERMINISTIC) && !defined(ENABLE_GNUABI) && !defined(SLEEF_GENHEADER)
 // The normal and deterministic versions of implementations are common
 // for the functions like sincospi_u05. Aliases are defined by
 // DALIAS_* macros for such functions. The defined aliases
@@ -3720,9 +3722,9 @@ DALIAS_vd_vd(tgamma_u1)
 DALIAS_vd_vd(lgamma_u1)
 DALIAS_vd_vd(erf_u1)
 DALIAS_vd_vd(erfc_u15)
-#endif // #if !defined(DETERMINISTIC) && !defined(ENABLE_GNUABI)
+#endif // #if !defined(DETERMINISTIC) && !defined(ENABLE_GNUABI) && !defined(SLEEF_GENHEADER)
 
-#ifndef ENABLE_GNUABI
+#if !defined(ENABLE_GNUABI) && !defined(SLEEF_GENHEADER)
 EXPORT CONST int xgetInt(int name) {
   if (1 <= name && name <= 10) return vavailability_i(name);
   return 0;

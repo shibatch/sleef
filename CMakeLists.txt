@@ -7,6 +7,7 @@ option(BUILD_DFT "libsleefdft will be built." ON)
 option(BUILD_QUAD "libsleefquad will be built." OFF)
 option(BUILD_GNUABI_LIBS "libsleefgnuabi will be built." ON)
 option(BUILD_TESTS "Tests will be built." ON)
+option(BUILD_INLINE_HEADERS "Build header for inlining whole SLEEF functions" OFF)
 
 option(SLEEF_TEST_ALL_IUT "Perform tests on implementations with all vector extensions" OFF)
 option(SLEEF_SHOW_CONFIG "Show SLEEF configuration status messages." ON)
@@ -94,6 +95,8 @@ set(TARGET_LIBSLEEFGNUABI "sleefgnuabi")
 # Generates the sleef.h headers and all the rename headers
 # Defined in src/libm/CMakeLists.txt via custom commands and a custom target
 set(TARGET_HEADERS "headers")
+set(TARGET_INLINE_HEADERS "inline_headers")
+set(TARGET_LIBINLINE "sleefinline")
 # Generates executable files for running the test suite
 # Defined in src/libm-tester/CMakeLists.txt via command add_executable
 set(TARGET_TESTER "tester")
@@ -159,6 +162,9 @@ if(SLEEF_SHOW_CONFIG)
   message(STATUS "FFTW3 : " ${LIBFFTW3})
   message(STATUS "OPENSSL : " ${OPENSSL_VERSION})
   message(STATUS "SDE : " ${SDE_COMMAND})
+  if (BUILD_INLINE_HEADERS)
+    message(STATUS "SED : " ${SED_COMMAND})
+  endif()
   message(STATUS "RUNNING_ON_TRAVIS : " ${RUNNING_ON_TRAVIS})
   message(STATUS "COMPILER_SUPPORTS_OPENMP : " ${COMPILER_SUPPORTS_OPENMP})
   if(ENABLE_GNUABI)

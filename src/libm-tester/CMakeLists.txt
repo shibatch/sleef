@@ -90,7 +90,7 @@ set_target_properties(${TARGET_IUT} PROPERTIES ${COMMON_TARGET_PROPERTIES})
 add_test_iut(${TARGET_IUT})
 set(IUT_LIST ${TARGET_IUT})
 
-set(IUT_SRC iutsimd.c iutsimdmain.c testerutil)
+set(IUT_SRC iutsimd.c iutsimdmain.c testerutil.c)
 
 # Add vector extension `iut`s
 macro(test_extension SIMD)
@@ -115,11 +115,11 @@ macro(test_extension SIMD)
     add_test_iut(${TARGET_IUT${SIMD}})
     list(APPEND IUT_LIST ${TARGET_IUT${SIMD}})
 
-# The iut programs whose name begins with "iuty" are the iut for the
-# deterministic version of functions. By checking the result of
-# testing with iutysse2, for example, it can be checked that the
-# corresponding deterministic functions passes the accuracy and
-# nonnumber tests.
+    # The iut programs whose names begin with "iuty" are the iut for the
+    # deterministic version of functions. By checking the result of
+    # testing with iutysse2, for example, it can be checked that the
+    # corresponding deterministic functions passes the accuracy and
+    # nonnumber tests.
 
     string(CONCAT IUTYNAME "iuty" ${LCSIMD})
     add_executable(${IUTYNAME} ${IUT_SRC})
@@ -134,6 +134,26 @@ macro(test_extension SIMD)
     set_target_properties(${IUTYNAME} PROPERTIES ${COMMON_TARGET_PROPERTIES})
     add_test_iut(${IUTYNAME})
     list(APPEND IUT_LIST ${IUTYNAME})
+
+    # The iut programs whose names begin with "iuti" are the iut for the
+    # inline version of functions.
+
+    if (BUILD_INLINE_HEADERS AND SED_COMMAND)
+      string(CONCAT IUTINAME "iuti" ${LCSIMD})
+      add_executable(${IUTINAME} ${IUT_SRC})
+      target_compile_options(${IUTINAME} PRIVATE ${FLAGS_ENABLE_${SIMD}})
+      target_compile_definitions(${IUTINAME}
+	PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS}
+	USE_INLINE_HEADER="sleefinline_${LCSIMD}.h"
+	MACRO_ONLY_HEADER="macroonly${SIMD}.h"
+	)
+      target_include_directories(${IUTINAME} PRIVATE ${PROJECT_BINARY_DIR}/inline)
+      target_link_libraries(${IUTINAME} ${LIBM} ${LIBRT} ${TARGET_LIBINLINE})
+      add_dependencies(${IUTINAME} ${TARGET_INLINE_HEADERS})
+      set_target_properties(${IUTINAME} PROPERTIES C_STANDARD 99)
+      add_test_iut(${IUTINAME})
+      list(APPEND IUT_LIST ${IUTINAME})
+    endif(BUILD_INLINE_HEADERS AND SED_COMMAND)
 
     if(LIB_MPFR AND NOT ${SIMD} STREQUAL NEON32 AND NOT ${SIMD} STREQUAL NEON32VFPV4 AND NOT MINGW)
       # Build tester2 SIMD

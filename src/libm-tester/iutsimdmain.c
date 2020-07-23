@@ -12,18 +12,26 @@
 static jmp_buf sigjmp;
 
 int do_test(int argc, char **argv);
-int check_featureDP();
-int check_featureSP();
+int check_featureDP(double d);
+int check_featureSP(float d);
+
+#if defined(_MSC_VER) || defined(__MINGW32__) || defined(__MINGW64__)
+#define SETJMP(x) setjmp(x)
+#define LONGJMP longjmp
+#else
+#define SETJMP(x) sigsetjmp(x, 1)
+#define LONGJMP siglongjmp
+#endif
 
 static void sighandler(int signum) {
-  longjmp(sigjmp, 1);
+  LONGJMP(sigjmp, 1);
 }
 
 int detectFeatureDP() {
   signal(SIGILL, sighandler);
 
-  if (setjmp(sigjmp) == 0) {
-    int r = check_featureDP();
+  if (SETJMP(sigjmp) == 0) {
+    int r = check_featureDP(1.0);
     signal(SIGILL, SIG_DFL);
     return r;
   } else {
@@ -35,8 +43,8 @@ int detectFeatureDP() {
 int detectFeatureSP() {
   signal(SIGILL, sighandler);
 
-  if (setjmp(sigjmp) == 0) {
-    int r = check_featureSP();
+  if (SETJMP(sigjmp) == 0) {
+    int r = check_featureSP(1.0);
     signal(SIGILL, SIG_DFL);
     return r;
   } else {
