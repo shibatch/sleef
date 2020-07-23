@@ -6,6 +6,8 @@ SET(CMAKE_FIND_ROOT_PATH  /usr/powerpc64le-linux-gnu /usr/include/powerpc64le-li
 
 find_program(CMAKE_C_COMPILER ppc64el-cc)
 
+SET(CMAKE_AR /usr/powerpc64le-linux-gnu/bin/ar)
+
 SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY BOTH)
 SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)

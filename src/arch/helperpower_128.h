@@ -14,22 +14,32 @@
 #endif
 
 #define ENABLE_DP
+//@#define ENABLE_DP
 #define LOG2VECTLENDP 1
-#define VECTLENDP 2
+//@#define LOG2VECTLENDP 1
+#define VECTLENDP (1 << LOG2VECTLENDP)
+//@#define VECTLENDP (1 << LOG2VECTLENDP)
 
 #define ENABLE_SP
-#define LOG2VECTLENSP 2
-#define VECTLENSP 4
+//@#define ENABLE_SP
+#define LOG2VECTLENSP (LOG2VECTLENDP+1)
+//@#define LOG2VECTLENSP (LOG2VECTLENDP+1)
+#define VECTLENSP (1 << LOG2VECTLENSP)
+//@#define VECTLENSP (1 << LOG2VECTLENSP)
 
 #if CONFIG == 1
 #define ENABLE_FMA_DP
+//@#define ENABLE_FMA_DP
 #define ENABLE_FMA_SP
-//#define SPLIT_KERNEL // Benchmark comparison is needed to determine whether this option should be enabled.
+//@#define ENABLE_FMA_SP
 #endif
 
 #define ACCURATE_SQRT
+//@#define ACCURATE_SQRT
 #define FULL_FP_ROUNDING
+//@#define FULL_FP_ROUNDING
 
+#if !defined(SLEEF_GENHEADER)
 #include <altivec.h>
 // undef altivec types since CPP and C99 use them as compiler tokens
 // use __vector and __bool instead
@@ -38,6 +48,7 @@
 
 #include <stdint.h>
 #include "misc.h"
+#endif // #if !defined(SLEEF_GENHEADER)
 
 #define ISANAME "VSX"
 #define DFTPRIORITY 25
@@ -51,6 +62,7 @@ static INLINE void vprefetch_v_p(const void *ptr) { }
 typedef __vector unsigned int vmask;
 // using __bool with typedef may cause ambiguous errors
 #define vopmask __vector __bool int
+//@#define vopmask __vector __bool int
 typedef __vector signed int vint;
 typedef __vector signed int vint2;
 typedef __vector float  vfloat;

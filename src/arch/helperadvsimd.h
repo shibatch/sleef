@@ -9,27 +9,38 @@
 #error Please specify advsimd flags.
 #endif
 
+#if !defined(SLEEF_GENHEADER)
 #include <arm_neon.h>
 #include <stdint.h>
 
 #include "misc.h"
+#endif // #if !defined(SLEEF_GENHEADER)
 
 #define ENABLE_DP
+//@#define ENABLE_DP
 #define LOG2VECTLENDP 1
+//@#define LOG2VECTLENDP 1
 #define VECTLENDP (1 << LOG2VECTLENDP)
+//@#define VECTLENDP (1 << LOG2VECTLENDP)
 
 #define ENABLE_SP
+//@#define ENABLE_SP
 #define LOG2VECTLENSP 2
+//@#define LOG2VECTLENSP 2
 #define VECTLENSP (1 << LOG2VECTLENSP)
+//@#define VECTLENSP (1 << LOG2VECTLENSP)
 
 #if CONFIG == 1
 #define ENABLE_FMA_DP
+//@#define ENABLE_FMA_DP
 #define ENABLE_FMA_SP
-//#define SPLIT_KERNEL // Benchmark comparison is needed to determine whether this option should be enabled.
+//@#define ENABLE_FMA_SP
 #endif
 
 #define FULL_FP_ROUNDING
+//@#define FULL_FP_ROUNDING
 #define ACCURATE_SQRT
+//@#define ACCURATE_SQRT
 
 #define ISANAME "AArch64 AdvSIMD"
 
@@ -296,14 +307,20 @@ static INLINE VECTOR_CC vint2 vxor_vi2_vi2_vi2(vint2 x, vint2 y) {
 
 // Shifts
 #define vsll_vi2_vi2_i(x, c) vshlq_n_s32(x, c)
+//@#define vsll_vi2_vi2_i(x, c) vshlq_n_s32(x, c)
 #define vsrl_vi2_vi2_i(x, c)                                                   \
   vreinterpretq_s32_u32(vshrq_n_u32(vreinterpretq_u32_s32(x), c))
+//@#define vsrl_vi2_vi2_i(x, c) vreinterpretq_s32_u32(vshrq_n_u32(vreinterpretq_u32_s32(x), c))
 
 #define vsra_vi2_vi2_i(x, c) vshrq_n_s32(x, c)
+//@#define vsra_vi2_vi2_i(x, c) vshrq_n_s32(x, c)
 #define vsra_vi_vi_i(x, c) vshr_n_s32(x, c)
+//@#define vsra_vi_vi_i(x, c) vshr_n_s32(x, c)
 #define vsll_vi_vi_i(x, c) vshl_n_s32(x, c)
+//@#define vsll_vi_vi_i(x, c) vshl_n_s32(x, c)
 #define vsrl_vi_vi_i(x, c)                                                     \
   vreinterpret_s32_u32(vshr_n_u32(vreinterpret_u32_s32(x), c))
+//@#define vsrl_vi_vi_i(x, c) vreinterpret_s32_u32(vshr_n_u32(vreinterpret_u32_s32(x), c))
 
 // Comparison returning masks
 static INLINE VECTOR_CC vmask veq_vm_vi2_vi2(vint2 x, vint2 y) { return vceqq_s32(x, y); }
@@ -757,8 +774,6 @@ static INLINE VECTOR_CC void vsscatter2_v_p_i_i_vf(float *ptr, int offset, int s
 
 //
 
-typedef Sleef_quad2 vargquad;
-
 static INLINE vmask2 vinterleave_vm2_vm2(vmask2 v) {
   return (vmask2) {
     vreinterpretq_u32_u64(vtrn1q_u64(vreinterpretq_u64_u32(v.x), vreinterpretq_u64_u32(v.y))),
@@ -783,6 +798,9 @@ static vmask2 vloadu_vm2_p(void *p) {
   return vm2;
 }
 
+#if !defined(SLEEF_GENHEADER)
+typedef Sleef_quad2 vargquad;
+
 static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
   return vinterleave_vm2_vm2(vloadu_vm2_p(&aq));
 }
@@ -793,6 +811,7 @@ static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
   memcpy(&aq, &vm2, VECTLENDP * 16);
   return aq;
 }
+#endif // #if !defined(SLEEF_GENHEADER)
 
 static INLINE int vtestallzeros_i_vo64(vopmask g) {
   uint32x2_t x0 = vorr_u32(vget_low_u32(g), vget_high_u32(g));
@@ -815,7 +834,9 @@ static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) {
 }
 
 #define vsll64_vm_vm_i(x, c) vreinterpretq_u32_u64(vshlq_n_u64(vreinterpretq_u64_u32(x), c))
+//@#define vsll64_vm_vm_i(x, c) vreinterpretq_u32_u64(vshlq_n_u64(vreinterpretq_u64_u32(x), c))
 #define vsrl64_vm_vm_i(x, c) vreinterpretq_u32_u64(vshrq_n_u64(vreinterpretq_u64_u32(x), c))
+//@#define vsrl64_vm_vm_i(x, c) vreinterpretq_u32_u64(vshrq_n_u64(vreinterpretq_u64_u32(x), c))
 
 static INLINE vmask vcast_vm_vi(vint vi) {
   vmask m = vreinterpretq_u32_u64(vmovl_u32(vreinterpret_u32_s32(vi)));
