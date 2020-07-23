@@ -293,6 +293,8 @@ set(CLANG_FLAGS_ENABLE_SVENOFMA "-march=armv8-a+sve")
 set(CLANG_FLAGS_ENABLE_VSX "-mcpu=power8")
 set(CLANG_FLAGS_ENABLE_VSXNOFMA "-mcpu=power8")
 
+set(FLAGS_OTHERS "")
+
 # All variables storing compiler flags should be prefixed with FLAGS_
 if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
   # Always compile sleef with -ffp-contract.
@@ -300,7 +302,7 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
   set(FLAGS_FASTMATH "-ffast-math")
 
   # Without the options below, gcc generates calls to libm
-  set(FLAGS_NO_ERRNO "-fno-math-errno -fno-trapping-math")
+  string(CONCAT FLAGS_OTHERS "-fno-math-errno -fno-trapping-math")
   
   # Intel vector extensions.
   foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
@@ -316,6 +318,18 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
     string(CONCAT FLAGS_WALL ${FLAGS_WALL} " -Wno-psabi")
     set(FLAGS_ENABLE_NEON32 "-mfpu=neon")
   endif(CMAKE_C_COMPILER_ID MATCHES "GNU")
+
+  if(CMAKE_C_COMPILER_ID MATCHES "Clang" AND ENABLE_LTO)
+    if (NOT LLVM_AR_COMMAND)
+      find_program(LLVM_AR_COMMAND "llvm-ar")
+    endif()
+    if (LLVM_AR_COMMAND)
+      SET(CMAKE_AR ${LLVM_AR_COMMAND})
+      SET(CMAKE_C_ARCHIVE_CREATE "<CMAKE_AR> rcs <TARGET> <LINK_FLAGS> <OBJECTS>")
+      SET(CMAKE_C_ARCHIVE_FINISH "true")
+    endif(LLVM_AR_COMMAND)
+    string(CONCAT FLAGS_OTHERS "-flto=thin")
+  endif(CMAKE_C_COMPILER_ID MATCHES "Clang" AND ENABLE_LTO)
 
   # Flags for generating inline headers
   set(FLAG_PREPROCESS "-E")
@@ -348,6 +362,7 @@ elseif(MSVC)
   set(FLAGS_ENABLE_AVX512FNOFMA /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /D__AVX512F__ /arch:AVX2)
   set(FLAGS_ENABLE_PURECFMA_SCALAR /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /arch:AVX2)
   set(FLAGS_WALL "/D_CRT_SECURE_NO_WARNINGS")
+
   set(FLAGS_NO_ERRNO "")
 
   set(FLAG_PREPROCESS "/E")
@@ -366,6 +381,7 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "Intel")
   set(FLAGS_STRICTMATH "-fp-model strict -Qoption,cpp,--extended_float_type")
   set(FLAGS_FASTMATH "-fp-model fast=2 -Qoption,cpp,--extended_float_type")
   set(FLAGS_WALL "-fmax-errors=3 -Wall -Wno-unused -Wno-attributes")
+
   set(FLAGS_NO_ERRNO "")
 
   set(FLAG_PREPROCESS "-E")
@@ -374,11 +390,11 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "Intel")
   set(FLAG_DEFINE "-D")
 endif()
 
-set(SLEEF_C_FLAGS "${FLAGS_WALL} ${FLAGS_STRICTMATH} ${FLAGS_NO_ERRNO}")
+set(SLEEF_C_FLAGS "${FLAGS_WALL} ${FLAGS_STRICTMATH} ${FLAGS_OTHERS}")
 if(CMAKE_C_COMPILER_ID MATCHES "GNU" AND CMAKE_C_COMPILER_VERSION VERSION_GREATER 6.99)
-  set(DFT_C_FLAGS "${FLAGS_WALL}")
+  set(DFT_C_FLAGS "${FLAGS_WALL} ${FLAGS_OTHERS}")
 else()
-  set(DFT_C_FLAGS "${FLAGS_WALL} ${FLAGS_FASTMATH}")
+  set(DFT_C_FLAGS "${FLAGS_WALL} ${FLAGS_FASTMATH} ${FLAGS_OTHERS}")
 endif()
 
 if (CMAKE_SYSTEM_PROCESSOR MATCHES "^i.86$" AND CMAKE_C_COMPILER_ID MATCHES "GNU")

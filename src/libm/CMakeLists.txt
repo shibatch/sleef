@@ -168,6 +168,10 @@ if (BUILD_SHARED_LIBS)
   list(APPEND COMMON_TARGET_PROPERTIES POSITION_INDEPENDENT_CODE ON)   # -fPIC
 endif()
 
+if (ENABLE_LTO)
+  list(APPEND COMMON_TARGET_PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)  # -flto
+endif()
+
 # Original sleef sources
 set(STANDARD_SOURCES sleefdp.c sleefsp.c rempitab.c)
 
