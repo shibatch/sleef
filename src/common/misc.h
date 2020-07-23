@@ -223,7 +223,7 @@ typedef union {
 
 //
 
-#if defined (__GNUC__) || defined (__clang__) || defined(__INTEL_COMPILER)
+#if (defined (__GNUC__) || defined (__clang__) || defined(__INTEL_COMPILER)) && !defined(_MSC_VER)
 
 #define LIKELY(condition) __builtin_expect(!!(condition), 1)
 #define UNLIKELY(condition) __builtin_expect(!!(condition), 0)
@@ -271,7 +271,7 @@ typedef union {
 #define SLEEF_NANq (SLEEF_INFINITYq - SLEEF_INFINITYq)
 #endif
 
-#elif defined(_MSC_VER)
+#elif defined(_MSC_VER) // #if (defined (__GNUC__) || defined (__clang__) || defined(__INTEL_COMPILER)) && !defined(_MSC_VER)
 
 #define INLINE __forceinline
 #define CONST
@@ -317,7 +317,7 @@ typedef union {
 #endif
 #endif
 
-#endif // defined(_MSC_VER)
+#endif // #elif defined(_MSC_VER) // #if (defined (__GNUC__) || defined (__clang__) || defined(__INTEL_COMPILER)) && !defined(_MSC_VER)
 
 #if !defined(__linux__)
 #define isinff(x) ((x) == SLEEF_INFINITYf || (x) == -SLEEF_INFINITYf)

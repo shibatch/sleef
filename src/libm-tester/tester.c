@@ -4348,6 +4348,7 @@ void do_test() {
     for(y = -1e+7;y < 1e+7 && success;y += 1.51e+5) {
       for(x = -1e+7;x < 1e+7 && success;x += 1.51e+5) checkAccuracy_f_f(mpfr_remainder, child_remainderf, y, x, 0.5);
     }
+    checkAccuracy_f_f(mpfr_remainder, child_remainderf, 11114942644092928.0, 224544296009728.0, 0.5);
     showResult(success);
   
     //

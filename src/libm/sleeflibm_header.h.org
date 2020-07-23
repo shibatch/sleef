@@ -6,6 +6,10 @@
 #ifndef __SLEEF_H__
 #define __SLEEF_H__
 
+#define SLEEF_VERSION_MAJOR @SLEEF_VERSION_MAJOR@
+#define SLEEF_VERSION_MINOR @SLEEF_VERSION_MINOR@
+#define SLEEF_VERSION_PATCHLEVEL @SLEEF_VERSION_PATCHLEVEL@
+
 #include <stddef.h>
 #include <stdint.h>
 

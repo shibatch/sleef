@@ -30,6 +30,10 @@
 #include <unistd.h>
 #endif
 
+#if defined(_MSC_VER)
+#include <io.h>
+#endif
+
 #include "misc.h"
 #include "qtesterutil.h"
 
