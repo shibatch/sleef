@@ -2,13 +2,6 @@ include(CheckCCompilerFlag)
 include(CheckCSourceCompiles)
 include(CheckTypeSize)
 
-# Some toolchains require explicit linking of the libraries following.
-find_library(LIB_MPFR mpfr)
-find_library(LIBM m)
-find_library(LIBGMP gmp)
-find_library(LIBRT rt)
-find_library(LIBFFTW3 fftw3)
-
 if (NOT CMAKE_CROSSCOMPILING AND NOT SLEEF_FORCE_FIND_PACKAGE_SSL)
   find_package(OpenSSL)
   if (OPENSSL_FOUND)
@@ -32,25 +25,38 @@ if (ENFORCE_TESTER3 AND NOT SLEEF_OPENSSL_FOUND)
   message(FATAL_ERROR "ENFORCE_TESTER3 is specified and OpenSSL not found")
 endif()
 
-if (LIB_MPFR)
-  find_path(MPFR_INCLUDE_DIR
-    NAMES mpfr.h
-    ONLY_CMAKE_FIND_ROOT_PATH)
-endif(LIB_MPFR)
+if (NOT (RUNNING_ON_APPVEYOR AND SLEEF_CLANG_ON_WINDOWS))
+  # We rely on Cygwin tools in order to test the builds on
+  # appveyor. However, if we try to link these libraries, cmake finds
+  # the Cygwin version of libraries, which causes errors.
+  
+  # Some toolchains require explicit linking of the libraries following.
+  find_library(LIB_MPFR mpfr)
+  find_library(LIBM m)
+  find_library(LIBGMP gmp)
+  find_library(LIBRT rt)
+  find_library(LIBFFTW3 fftw3)
 
-if (LIBFFTW3)
-  find_path(FFTW3_INCLUDE_DIR
-    NAMES fftw3.h
-    ONLY_CMAKE_FIND_ROOT_PATH)
-endif(LIBFFTW3)
+  if (LIB_MPFR)
+    find_path(MPFR_INCLUDE_DIR
+      NAMES mpfr.h
+      ONLY_CMAKE_FIND_ROOT_PATH)
+  endif(LIB_MPFR)
 
-if (NOT LIBM)
-  set(LIBM "")
-endif()
+  if (LIBFFTW3)
+    find_path(FFTW3_INCLUDE_DIR
+      NAMES fftw3.h
+      ONLY_CMAKE_FIND_ROOT_PATH)
+  endif(LIBFFTW3)
 
-if (NOT LIBRT)
-  set(LIBRT "")
-endif()
+  if (NOT LIBM)
+    set(LIBM "")
+  endif()
+
+  if (NOT LIBRT)
+    set(LIBRT "")
+  endif()
+endif(NOT SLEEF_CLANG_ON_WINDOWS)
 
 # The library currently supports the following SIMD architectures
 set(SLEEF_SUPPORTED_EXTENSIONS
@@ -314,6 +320,8 @@ set(CLANG_FLAGS_ENABLE_VSXNOFMA "-mcpu=power8")
 set(CLANG_FLAGS_ENABLE_ZVECTOR2 "-march=z14;-mzvector")
 set(CLANG_FLAGS_ENABLE_ZVECTOR2NOFMA "-march=z14;-mzvector")
 
+set(FLAGS_OTHERS "")
+
 # All variables storing compiler flags should be prefixed with FLAGS_
 if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
   # Always compile sleef with -ffp-contract.
@@ -321,7 +329,7 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
   set(FLAGS_FASTMATH "-ffast-math")
 
   # Without the options below, gcc generates calls to libm
-  set(FLAGS_NO_ERRNO "-fno-math-errno -fno-trapping-math")
+  string(CONCAT FLAGS_OTHERS "-fno-math-errno -fno-trapping-math")
   
   # Intel vector extensions.
   foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
@@ -337,6 +345,33 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
     string(CONCAT FLAGS_WALL ${FLAGS_WALL} " -Wno-psabi")
     set(FLAGS_ENABLE_NEON32 "-mfpu=neon")
   endif(CMAKE_C_COMPILER_ID MATCHES "GNU")
+
+  if(CMAKE_C_COMPILER_ID MATCHES "Clang" AND ENABLE_LTO)
+    if (NOT LLVM_AR_COMMAND)
+      find_program(LLVM_AR_COMMAND "llvm-ar")
+    endif()
+    if (LLVM_AR_COMMAND)
+      SET(CMAKE_AR ${LLVM_AR_COMMAND})
+      SET(CMAKE_C_ARCHIVE_CREATE "<CMAKE_AR> rcs <TARGET> <LINK_FLAGS> <OBJECTS>")
+      SET(CMAKE_C_ARCHIVE_FINISH "true")
+    endif(LLVM_AR_COMMAND)
+    string(CONCAT FLAGS_OTHERS "-flto=thin")
+  endif(CMAKE_C_COMPILER_ID MATCHES "Clang" AND ENABLE_LTO)
+
+  # Flags for generating inline headers
+  set(FLAG_PREPROCESS "-E")
+  set(FLAG_PRESERVE_COMMENTS "-C")
+  set(FLAG_INCLUDE "-I")
+  set(FLAG_DEFINE "-D")
+
+  if (SLEEF_CLANG_ON_WINDOWS)
+    # The following line is required to prevent clang from displaying
+    # many warnings. Clang on Windows references MSVC header files,
+    # which have deprecation and security attributes for many
+    # functions.
+
+    string(CONCAT FLAGS_WALL ${FLAGS_WALL} " -D_CRT_SECURE_NO_WARNINGS -Wno-deprecated-declarations")
+  endif()
 elseif(MSVC)
   # Intel vector extensions.
   if (CMAKE_CL_64)
@@ -354,7 +389,13 @@ elseif(MSVC)
   set(FLAGS_ENABLE_AVX512FNOFMA /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /D__AVX512F__ /arch:AVX2)
   set(FLAGS_ENABLE_PURECFMA_SCALAR /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /arch:AVX2)
   set(FLAGS_WALL "/D_CRT_SECURE_NO_WARNINGS")
+
   set(FLAGS_NO_ERRNO "")
+
+  set(FLAG_PREPROCESS "/E")
+  set(FLAG_PRESERVE_COMMENTS "/C")
+  set(FLAG_INCLUDE "/I")
+  set(FLAG_DEFINE "/D")
 elseif(CMAKE_C_COMPILER_ID MATCHES "Intel")
   set(FLAGS_ENABLE_SSE2 "-msse2")
   set(FLAGS_ENABLE_SSE4 "-msse4.1")
@@ -368,14 +409,20 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "Intel")
   set(FLAGS_STRICTMATH "-fp-model strict -Qoption,cpp,--extended_float_type")
   set(FLAGS_FASTMATH "-fp-model fast=2 -Qoption,cpp,--extended_float_type")
   set(FLAGS_WALL "-fmax-errors=3 -Wall -Wno-unused -Wno-attributes")
+
   set(FLAGS_NO_ERRNO "")
+
+  set(FLAG_PREPROCESS "-E")
+  set(FLAG_PRESERVE_COMMENTS "-C")
+  set(FLAG_INCLUDE "-I")
+  set(FLAG_DEFINE "-D")
 endif()
 
-set(SLEEF_C_FLAGS "${FLAGS_WALL} ${FLAGS_STRICTMATH} ${FLAGS_NO_ERRNO}")
+set(SLEEF_C_FLAGS "${FLAGS_WALL} ${FLAGS_STRICTMATH} ${FLAGS_OTHERS}")
 if(CMAKE_C_COMPILER_ID MATCHES "GNU" AND CMAKE_C_COMPILER_VERSION VERSION_GREATER 6.99)
-  set(DFT_C_FLAGS "${FLAGS_WALL}")
+  set(DFT_C_FLAGS "${FLAGS_WALL} ${FLAGS_OTHERS}")
 else()
-  set(DFT_C_FLAGS "${FLAGS_WALL} ${FLAGS_FASTMATH}")
+  set(DFT_C_FLAGS "${FLAGS_WALL} ${FLAGS_FASTMATH} ${FLAGS_OTHERS}")
 endif()
 
 if (CMAKE_SYSTEM_PROCESSOR MATCHES "^i.86$" AND CMAKE_C_COMPILER_ID MATCHES "GNU")
@@ -708,6 +755,7 @@ CHECK_C_SOURCE_COMPILES("
 if (COMPILER_SUPPORTS_WEAK_ALIASES AND
     NOT CMAKE_SYSTEM_PROCESSOR MATCHES "arm" AND
     NOT CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64" AND
+    NOT SLEEF_CLANG_ON_WINDOWS AND
     NOT MINGW AND BUILD_GNUABI_LIBS)
   set(ENABLE_GNUABI ${COMPILER_SUPPORTS_WEAK_ALIASES})
 endif()
@@ -759,6 +807,10 @@ if (NOT SVE_VECTOR_BITS)
   set(SVE_VECTOR_BITS 128)
 endif()
 
+#
+
+find_program(SED_COMMAND sed)
+
 ##
 
 if(SLEEF_SHOW_ERROR_LOG)
@@ -768,16 +820,13 @@ if(SLEEF_SHOW_ERROR_LOG)
   endif()
 endif(SLEEF_SHOW_ERROR_LOG)
 
-# Detect if cmake is running on Travis
-string(COMPARE NOTEQUAL "" "$ENV{TRAVIS}" RUNNING_ON_TRAVIS)
-
-if (${RUNNING_ON_TRAVIS} AND CMAKE_C_COMPILER_ID MATCHES "Clang")
+if (RUNNING_ON_TRAVIS AND CMAKE_C_COMPILER_ID MATCHES "Clang")
   message(STATUS "Travis bug workaround turned on")
   set(COMPILER_SUPPORTS_OPENMP FALSE)   # Workaround for https://github.com/travis-ci/travis-ci/issues/8613
   set(COMPILER_SUPPORTS_FLOAT128 FALSE) # Compilation on unroll_0_vecextqp.c does not finish on Travis
 endif()
 
-if (MSVC)
+if (MSVC OR SLEEF_CLANG_ON_WINDOWS)
   set(COMPILER_SUPPORTS_OPENMP FALSE)   # At this time, OpenMP is not supported on MSVC
 endif()
 

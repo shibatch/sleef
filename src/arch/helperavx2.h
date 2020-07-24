@@ -5,7 +5,7 @@
 
 #if CONFIG == 1
 
-#ifndef __AVX2__
+#if !defined(__AVX2__) && !defined(SLEEF_GENHEADER)
 #error Please specify -mavx2.
 #endif
 
@@ -14,19 +14,29 @@
 #endif
 
 #define ENABLE_DP
+//@#define ENABLE_DP
 #define LOG2VECTLENDP 2
+//@#define LOG2VECTLENDP 2
 #define VECTLENDP (1 << LOG2VECTLENDP)
+//@#define VECTLENDP (1 << LOG2VECTLENDP)
 #define ENABLE_FMA_DP
+//@#define ENABLE_FMA_DP
 
 #define ENABLE_SP
+//@#define ENABLE_SP
 #define LOG2VECTLENSP (LOG2VECTLENDP+1)
+//@#define LOG2VECTLENSP (LOG2VECTLENDP+1)
 #define VECTLENSP (1 << LOG2VECTLENSP)
+//@#define VECTLENSP (1 << LOG2VECTLENSP)
 #define ENABLE_FMA_SP
+//@#define ENABLE_FMA_SP
 
 #define FULL_FP_ROUNDING
-#define SPLIT_KERNEL
+//@#define FULL_FP_ROUNDING
 #define ACCURATE_SQRT
+//@#define ACCURATE_SQRT
 
+#if !defined(SLEEF_GENHEADER)
 #if defined(_MSC_VER)
 #include <intrin.h>
 #else
@@ -35,6 +45,7 @@
 
 #include <stdint.h>
 #include "misc.h"
+#endif // #if !defined(SLEEF_GENHEADER)
 
 typedef __m256i vmask;
 typedef __m256i vopmask;
@@ -50,6 +61,8 @@ typedef struct {
 } vmask2;
 
 //
+
+#if !defined(SLEEF_GENHEADER)
 
 #ifndef __SLEEF_H__
 void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
@@ -75,6 +88,8 @@ static INLINE int vavailability_i(int name) {
 #define ISANAME "AVX2"
 #define DFTPRIORITY 25
 #endif
+
+#endif // #if !defined(SLEEF_GENHEADER)
 
 static INLINE void vprefetch_v_p(const void *ptr) { _mm_prefetch(ptr, _MM_HINT_T0); }
 
@@ -418,8 +433,6 @@ static INLINE void vsscatter2_v_p_i_i_vf(float *ptr, int offset, int step, vfloa
 
 //
 
-typedef Sleef_quad4 vargquad;
-
 static INLINE vmask2 vinterleave_vm2_vm2(vmask2 v) {
   return (vmask2) { _mm256_unpacklo_epi64(v.x, v.y), _mm256_unpackhi_epi64(v.x, v.y) };
 }
@@ -454,6 +467,9 @@ static vmask2 vloadu_vm2_p(void *p) {
   return vm2;
 }
 
+#if !defined(SLEEF_GENHEADER)
+typedef Sleef_quad4 vargquad;
+
 static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
   return vinterleave_vm2_vm2(vloadu_vm2_p(&aq));
 }
@@ -464,6 +480,7 @@ static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
   memcpy(&aq, &vm2, VECTLENDP * 16);
   return aq;
 }
+#endif // #if !defined(SLEEF_GENHEADER)
 
 static INLINE int vtestallzeros_i_vo64(vopmask g) {
   return _mm_movemask_epi8(_mm_or_si128(_mm256_extractf128_si256(g, 0), _mm256_extractf128_si256(g, 1))) == 0;
@@ -477,6 +494,8 @@ static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) { return _mm256_cmpgt_epi
 
 #define vsll64_vm_vm_i(x, c) _mm256_slli_epi64(x, c)
 #define vsrl64_vm_vm_i(x, c) _mm256_srli_epi64(x, c)
+//@#define vsll64_vm_vm_i(x, c) _mm256_slli_epi64(x, c)
+//@#define vsrl64_vm_vm_i(x, c) _mm256_srli_epi64(x, c)
 
 static INLINE vmask vcast_vm_vi(vint vi) { return _mm256_cvtepi32_epi64(vi); }
 static INLINE vint vcast_vi_vm(vmask vm) {

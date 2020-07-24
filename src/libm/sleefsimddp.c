@@ -5,10 +5,12 @@
 
 // Always use -ffp-contract=off option to compile SLEEF.
 
+#if !defined(SLEEF_GENHEADER)
 #include <stdint.h>
 #include <assert.h>
 #include <limits.h>
 #include <float.h>
+#endif
 
 #include "misc.h"
 
@@ -3435,7 +3437,7 @@ EXPORT CONST VECTOR_CC vdouble xremainder(vdouble x, vdouble y) {
 #ifndef ENABLE_FMA_DP
     q = vreinterpret_vd_vm(vand_vm_vm_vm(vreinterpret_vm_vd(q), vcast_vm_i_i(0xffffffff, 0xfffffffe)));
 #endif
-    q = vsel_vd_vo_vd_vd(vlt_vo_vd_vd(vabs_vd_vd(vd2getx_vd_vd2(r)), vmul_vd_vd_vd(d, vcast_vd_d(1.5))), vcast_vd_d(1.0), q);
+    q = vsel_vd_vo_vd_vd(vlt_vo_vd_vd(vabs_vd_vd(vd2getx_vd_vd2(r)), vmul_vd_vd_vd(d, vcast_vd_d(1.5))), vmulsign_vd_vd_vd(vcast_vd_d(1.0), vd2getx_vd_vd2(r)), q);
     q = vsel_vd_vo_vd_vd(vor_vo_vo_vo(vlt_vo_vd_vd(vabs_vd_vd(vd2getx_vd_vd2(r)), vmul_vd_vd_vd(d, vcast_vd_d(0.5))),
 				      vandnot_vo_vo_vo(qisodd, veq_vo_vd_vd(vabs_vd_vd(vd2getx_vd_vd2(r)), vmul_vd_vd_vd(d, vcast_vd_d(0.5))))),
 			 vcast_vd_d(0.0), q);
@@ -3675,7 +3677,7 @@ EXPORT CONST VECTOR_CC vdouble xerfc_u15(vdouble a) {
 }
 #endif // #if !defined(DETERMINISTIC)
 
-#if !defined(DETERMINISTIC) && !defined(ENABLE_GNUABI)
+#if !defined(DETERMINISTIC) && !defined(ENABLE_GNUABI) && !defined(SLEEF_GENHEADER)
 // The normal and deterministic versions of implementations are common
 // for the functions like sincospi_u05. Aliases are defined by
 // DALIAS_* macros for such functions. The defined aliases
@@ -3742,9 +3744,9 @@ DALIAS_vd_vd(tgamma_u1)
 DALIAS_vd_vd(lgamma_u1)
 DALIAS_vd_vd(erf_u1)
 DALIAS_vd_vd(erfc_u15)
-#endif // #if !defined(DETERMINISTIC) && !defined(ENABLE_GNUABI)
+#endif // #if !defined(DETERMINISTIC) && !defined(ENABLE_GNUABI) && !defined(SLEEF_GENHEADER)
 
-#ifndef ENABLE_GNUABI
+#if !defined(ENABLE_GNUABI) && !defined(SLEEF_GENHEADER)
 EXPORT CONST int xgetInt(int name) {
   if (1 <= name && name <= 10) return vavailability_i(name);
   return 0;

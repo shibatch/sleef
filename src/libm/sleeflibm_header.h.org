@@ -6,6 +6,10 @@
 #ifndef __SLEEF_H__
 #define __SLEEF_H__
 
+#define SLEEF_VERSION_MAJOR @SLEEF_VERSION_MAJOR@
+#define SLEEF_VERSION_MINOR @SLEEF_VERSION_MINOR@
+#define SLEEF_VERSION_PATCHLEVEL @SLEEF_VERSION_PATCHLEVEL@
+
 #include <stddef.h>
 #include <stdint.h>
 
@@ -62,10 +66,14 @@
 #include <vecintrin.h>
 #define SLEEF_VECINTRIN_H_INCLUDED
 #endif
+
+#if defined(__VSX__)
+#include <altivec.h>
+#endif
+
 typedef __vector double SLEEF_VECTOR_DOUBLE;
 typedef __vector float  SLEEF_VECTOR_FLOAT;
 typedef __vector int    SLEEF_VECTOR_INT;
-#endif
 
 //
 
