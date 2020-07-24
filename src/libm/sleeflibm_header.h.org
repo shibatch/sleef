@@ -61,19 +61,19 @@
 #include <arm_sve.h>
 #endif
 
+#if defined(__VSX__)
+#include <altivec.h>
+#endif
+
 #if defined(__VX__) && defined(__VEC__)
 #ifndef SLEEF_VECINTRIN_H_INCLUDED
 #include <vecintrin.h>
 #define SLEEF_VECINTRIN_H_INCLUDED
 #endif
-
-#if defined(__VSX__)
-#include <altivec.h>
-#endif
-
 typedef __vector double SLEEF_VECTOR_DOUBLE;
 typedef __vector float  SLEEF_VECTOR_FLOAT;
 typedef __vector int    SLEEF_VECTOR_INT;
+#endif
 
 //
 
