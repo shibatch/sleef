@@ -5,11 +5,11 @@
 
 #if CONFIG == 140 || CONFIG == 141
 
-#if !defined(__VX__)
+#if !defined(__VX__) && !defined(SLEEF_GENHEADER)
 #error This helper is for IBM s390x.
 #endif
 
-#if __ARCH__ < 12
+#if __ARCH__ < 12 && !defined(SLEEF_GENHEADER)
 #error Please specify -march=z14.
 #endif
 
