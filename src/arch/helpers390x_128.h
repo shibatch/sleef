@@ -43,6 +43,7 @@
 #define FULL_FP_ROUNDING
 //@#define FULL_FP_ROUNDING
 
+#if !defined(SLEEF_GENHEADER)
 #ifndef SLEEF_VECINTRIN_H_INCLUDED
 #include <vecintrin.h>
 #define SLEEF_VECINTRIN_H_INCLUDED
@@ -51,6 +52,7 @@
 #include <stdint.h>
 #include <math.h>
 #include "misc.h"
+#endif // #if !defined(SLEEF_GENHEADER)
 
 typedef __vector unsigned long long vmask;
 typedef __vector unsigned long long vopmask;
