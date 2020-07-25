@@ -61,6 +61,10 @@
 #include <altivec.h>
 #endif
 
+#if defined(__VX__)
+#include <vecintrin.h>
+#endif
+
 #define SLEEF_ALWAYS_INLINE inline
 #define SLEEF_INLINE
 #define SLEEF_CONST
