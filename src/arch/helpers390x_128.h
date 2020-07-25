@@ -18,20 +18,30 @@
 #endif
 
 #define ENABLE_DP
+//@#define ENABLE_DP
 #define LOG2VECTLENDP 1
+//@#define LOG2VECTLENDP 1
 #define VECTLENDP (1 << LOG2VECTLENDP)
+//@#define VECTLENDP (1 << LOG2VECTLENDP)
 
 #define ENABLE_SP
+//@#define ENABLE_SP
 #define LOG2VECTLENSP (LOG2VECTLENDP+1)
+//@#define LOG2VECTLENSP (LOG2VECTLENDP+1)
 #define VECTLENSP (1 << LOG2VECTLENSP)
+//@#define VECTLENSP (1 << LOG2VECTLENSP)
 
 #if CONFIG == 140
 #define ENABLE_FMA_DP
+//@#define ENABLE_FMA_DP
 #define ENABLE_FMA_SP
+//@#define ENABLE_FMA_SP
 #endif
 
 #define ACCURATE_SQRT
+//@#define ACCURATE_SQRT
 #define FULL_FP_ROUNDING
+//@#define FULL_FP_ROUNDING
 
 #ifndef SLEEF_VECINTRIN_H_INCLUDED
 #include <vecintrin.h>
@@ -42,15 +52,13 @@
 #include <math.h>
 #include "misc.h"
 
-#define VECTOR __vector
-
 typedef __vector unsigned long long vmask;
 typedef __vector unsigned long long vopmask;
 
 typedef __vector double vdouble;
 typedef __vector int vint;
 
-typedef VECTOR float vfloat;
+typedef __vector float vfloat;
 typedef __vector int vint2;
 
 //
