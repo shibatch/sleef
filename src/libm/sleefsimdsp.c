@@ -246,7 +246,11 @@ extern const float rempitabsp[];
 
 #ifdef ENABLE_ZVECTOR2
 #define CONFIG 140
+#if !defined(SLEEF_GENHEADER)
 #include "helpers390x_128.h"
+#else
+#include "macroonlyZVECTOR2.h"
+#endif
 #ifdef DORENAME
 #include "renamezvector2.h"
 #endif
@@ -254,7 +258,11 @@ extern const float rempitabsp[];
 
 #ifdef ENABLE_ZVECTOR2NOFMA
 #define CONFIG 141
+#if !defined(SLEEF_GENHEADER)
 #include "helpers390x_128.h"
+#else
+#include "macroonlyZVECTOR2NOFMA.h"
+#endif
 #ifdef DORENAME
 #include "renamezvector2nofma.h"
 #endif

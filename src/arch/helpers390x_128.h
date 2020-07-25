@@ -65,6 +65,8 @@ typedef __vector int vint2;
 
 //
 
+#if !defined(SLEEF_GENHEADER)
+
 static INLINE int vavailability_i(int n) {
   if (n == 1 || n == 2) {
     return vec_max((vdouble) {n, n}, (vdouble) {n, n})[0] != 0;
@@ -74,6 +76,8 @@ static INLINE int vavailability_i(int n) {
 
 #define ISANAME "ZVECTOR2"
 #define DFTPRIORITY 14
+
+#endif // #if !defined(SLEEF_GENHEADER)
 
 static INLINE void vprefetch_v_p(const void *ptr) { }
 
