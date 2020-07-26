@@ -29,6 +29,7 @@ typedef __vector float  __vector_float;
 #ifndef SLEEF_VECINTRIN_H_INCLUDED
 #include <vecintrin.h>
 #define SLEEF_VECINTRIN_H_INCLUDED
+#endif
 typedef __attribute__((vector_size(16))) double vector_double;
 typedef __attribute__((vector_size(16))) float  vector_float;
 #endif
