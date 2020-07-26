@@ -10,14 +10,10 @@ matrix:
   include:
     - os: linux
       arch: s390x
-      addons:
-        apt:
-          packages:
-            - clang-8
+      compiler: clang-8
       env:
         - LABEL="common"
         - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
-	- CC=clang-8
 
 before_install:
      - export PATH=$PATH:/usr/bin
