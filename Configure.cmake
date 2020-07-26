@@ -56,7 +56,7 @@ if (NOT (RUNNING_ON_APPVEYOR AND SLEEF_CLANG_ON_WINDOWS))
   if (NOT LIBRT)
     set(LIBRT "")
   endif()
-endif(NOT SLEEF_CLANG_ON_WINDOWS)
+endif(NOT (RUNNING_ON_APPVEYOR AND SLEEF_CLANG_ON_WINDOWS))
 
 # The library currently supports the following SIMD architectures
 set(SLEEF_SUPPORTED_EXTENSIONS
