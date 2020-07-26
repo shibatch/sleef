@@ -11,6 +11,10 @@ matrix:
     - os: linux
       arch: s390x
       compiler: clang-8
+      addons:
+        apt:
+          packages:
+            - clang-8
       env:
         - LABEL="common"
         - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
