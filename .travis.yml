@@ -91,8 +91,8 @@ matrix:
       env:
         - LABEL=common
         - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
-    - arch: s390x
-      compiler: clang
+    - os: linux
+      arch: s390x
       addons:
         apt:
           packages:
