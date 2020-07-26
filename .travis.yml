@@ -88,19 +88,20 @@ matrix:
         - LABEL=common
         - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
     - arch: s390x
+      dist: bionic
       env:
         - LABEL=common
         - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
-    - os: linux
-      arch: s390x
+    - arch: s390x
+      dist: bionic
       addons:
         apt:
           packages:
             - clang-8
       env:
         - LABEL=common
-	- CC=clang-8
         - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
+	- CC=clang-8
 
 before_install:
      - export PATH=$PATH:/usr/bin
