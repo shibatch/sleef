@@ -38,6 +38,9 @@ project(SLEEF
 	VERSION ${SLEEF_VERSION}
 	LANGUAGES C)
 
+# For specifying installation directories
+include(GNUInstallDirs)
+
 # Sanity check for in-source builds which we do not want to happen
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
   message(FATAL_ERROR "SLEEF does not allow in-source builds.
