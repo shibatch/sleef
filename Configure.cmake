@@ -2,6 +2,12 @@ include(CheckCCompilerFlag)
 include(CheckCSourceCompiles)
 include(CheckTypeSize)
 
+if (BUILD_STATIC_TEST_BINS)
+  set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+  set(BUILD_SHARED_LIBS OFF)
+  set(CMAKE_EXE_LINKER_FLAGS "-static")
+endif()
+
 if (NOT CMAKE_CROSSCOMPILING AND NOT SLEEF_FORCE_FIND_PACKAGE_SSL)
   find_package(OpenSSL)
   if (OPENSSL_FOUND)
