@@ -1,6 +1,7 @@
 # Options
 
 option(BUILD_SHARED_LIBS "Build shared libs" ON)
+option(BUILD_STATIC_TEST_BINS "Build statically linked test executables" OFF)
 option(ENABLE_LTO "Enable LTO on GCC or ThinLTO on clang" OFF)
 option(BUILD_LIBM "libsleef will be built." ON)
 option(BUILD_DFT "libsleefdft will be built." ON)
@@ -153,6 +154,7 @@ if(SLEEF_SHOW_CONFIG)
   endif(CMAKE_CROSSCOMPILING)
   message(STATUS "Using option `${SLEEF_C_FLAGS}` to compile libsleef")
   message(STATUS "Building shared libs : " ${BUILD_SHARED_LIBS})
+  message(STATUS "Building static test bins: " ${BUILD_STATIC_TEST_BINS})
   message(STATUS "MPFR : " ${LIB_MPFR})
   if (MPFR_INCLUDE_DIR)
     message(STATUS "MPFR header file in " ${MPFR_INCLUDE_DIR})
