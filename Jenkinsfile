@@ -100,10 +100,10 @@ pipeline {
                 }
 
                 stage('LTO with gcc') {
-            	     agent { label 'x86' 'gcc-10' }
+            	     agent { label 'x86 && gcc-10' }
             	     steps {
 	    	     	 sh '''
-                	 echo "LTO with gcc on " `hostname`
+                	 echo "LTO with gcc on" `hostname`
 		         export CC=gcc-10
 			 rm -rf build
  			 mkdir build
@@ -119,10 +119,10 @@ pipeline {
                 }
 
                 stage('LTO with clang') {
-            	     agent { label 'x86' 'clang-10' }
+            	     agent { label 'x86 && clang-10' }
             	     steps {
 	    	     	 sh '''
-                	 echo "LTO with clang on " `hostname`
+                	 echo "LTO with clang on" `hostname`
 		         export CC=clang-10
 			 rm -rf build
  			 mkdir build
