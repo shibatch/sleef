@@ -61,17 +61,6 @@ matrix:
       env:
         - LABEL="arm64-clang"
     - os: linux
-      arch: arm64
-      dist: bionic
-      env:
-        - LABEL="arm64-gcc-lto"
-    - os: linux
-      arch: arm64
-      dist: bionic
-      addons:
-      env:
-        - LABEL="arm64-clang-lto"
-    - os: linux
       services: docker
       env:
         - LABEL="armhf-gcc"
