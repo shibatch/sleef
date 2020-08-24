@@ -104,6 +104,7 @@ pipeline {
             	     steps {
 	    	     	 sh '''
                 	 echo "LTO with gcc on" `hostname`
+			 export PATH=$PATH:/opt/sde-external-8.56.0-2020-07-05-lin
 		         export CC=gcc-10
 			 rm -rf build
  			 mkdir build
@@ -123,6 +124,7 @@ pipeline {
             	     steps {
 	    	     	 sh '''
                 	 echo "LTO with clang on" `hostname`
+			 export PATH=$PATH:/opt/sde-external-8.56.0-2020-07-05-lin
 		         export CC=clang-10
 			 rm -rf build
  			 mkdir build
