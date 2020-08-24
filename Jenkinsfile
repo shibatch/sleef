@@ -100,7 +100,7 @@ pipeline {
                 }
 
                 stage('LTO with gcc') {
-            	     agent { label 'x86 && gcc-10' }
+            	     agent { label 'gcc-10' }
             	     steps {
 	    	     	 sh '''
                 	 echo "LTO with gcc on" `hostname`
@@ -108,7 +108,7 @@ pipeline {
 			 rm -rf build
  			 mkdir build
 			 cd build
-			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE -DBUILD_SHARED_LIBS=FALSE -DENABLE_LTO=TRUE ..
+			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE -DBUILD_INLINE_HEADERS=TRUE -DBUILD_SHARED_LIBS=FALSE -DENABLE_LTO=TRUE ..
 			 ninja
 			 export OMP_WAIT_POLICY=passive
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
@@ -119,7 +119,7 @@ pipeline {
                 }
 
                 stage('LTO with clang') {
-            	     agent { label 'x86 && clang-10' }
+            	     agent { label 'clang-10' }
             	     steps {
 	    	     	 sh '''
                 	 echo "LTO with clang on" `hostname`
@@ -127,7 +127,7 @@ pipeline {
 			 rm -rf build
  			 mkdir build
 			 cd build
-			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE -DBUILD_SHARED_LIBS=FALSE -DENABLE_LTO=TRUE ..
+			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE -DBUILD_INLINE_HEADERS=TRUE -DBUILD_SHARED_LIBS=FALSE -DENABLE_LTO=TRUE ..
 			 ninja
 			 export OMP_WAIT_POLICY=passive
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
