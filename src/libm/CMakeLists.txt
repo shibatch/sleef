@@ -357,13 +357,17 @@ if(BUILD_INLINE_HEADERS)
 	  COMMAND ${SED_COMMAND} -e                                                                        # sed -e
 	    "s/%VERSION%/${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}.${SLEEF_VERSION_PATCHLEVEL}/g"      # "s/%VERSION%/3.5.0/g"
 	    ${CMAKE_CURRENT_SOURCE_DIR}/sleefinline_header.h.org                                           # /sleef/libm/sleefinline_header.h.org
-	    > ${PROJECT_BINARY_DIR}/include/sleefinline_${SIMDLC}.h                                        # > /build/include/sleefinline_sse2.h
+	    > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp4                                              # > /build/src/libm/sleefSSE2.h.tmp4
 
-	  # Remove lines beginning with "#", and replace multiple empty lines with a single empty line
+	  # Remove lines beginning with "#"
 	  COMMAND ${SED_COMMAND} -e "s/^#.*//g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp3            # sed -e "s/^#.*//g" /build/src/libm/sleefSSE2.h.tmp3
-            | ${SED_COMMAND} -e "s/^ *$//g"                                                                # | sed -e "s/^ *$//g"
-            | ${SED_COMMAND} "N;/^\\n$/D;P;D;"                                                             # | sed "N;/^\n$/D;P;D;"
-	    >> ${PROJECT_BINARY_DIR}/include/sleefinline_${SIMDLC}.h                                       # >> /build/include/sleefinline_sse2.h
+	    >> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp4                                             # >> /build/src/libm/sleefSSE2.h.tmp4
+
+	  # Replace multiple empty lines with a single empty line
+	  COMMAND ${SED_COMMAND} -e "s/^[[:space:]]*$//g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp4  # sed -e "s/^[[:space:]]*$//g" /build/src/libm/sleefSSE2.h.tmp4
+	    > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp5                                              # > /build/src/libm/sleefSSE2.h.tmp5
+	  COMMAND ${SED_COMMAND} "N;/^\\n$/D;P;D;" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp5         # sed -e "N;/^\\n$/D;P;D;" /build/src/libm/sleefSSE2.h.tmp5
+	    > ${PROJECT_BINARY_DIR}/include/sleefinline_${SIMDLC}.h                                        # > /build/include/sleefinline_sse2.h
 
 	  MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimddp.c ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdsp.c ${HEADER_${SIMD}}
 	  DEPENDS ${HEADER_${SIMD}}
