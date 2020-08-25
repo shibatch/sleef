@@ -359,8 +359,10 @@ if(BUILD_INLINE_HEADERS)
 	    ${CMAKE_CURRENT_SOURCE_DIR}/sleefinline_header.h.org                                           # /sleef/libm/sleefinline_header.h.org
 	    > ${PROJECT_BINARY_DIR}/include/sleefinline_${SIMDLC}.h                                        # > /build/include/sleefinline_sse2.h
 
-	  # Remove lines beginning with "#"
+	  # Remove lines beginning with "#", and replace multiple empty lines with a single empty line
 	  COMMAND ${SED_COMMAND} -e "s/^#.*//g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp3            # sed -e "s/^#.*//g" /build/src/libm/sleefSSE2.h.tmp3
+            | ${SED_COMMAND} -e "s/^ *$//g"                                                                # | sed -e "s/^ *$//g"
+            | ${SED_COMMAND} "N;/^\\n$/D;P;D;"                                                             # | sed "N;/^\n$/D;P;D;"
 	    >> ${PROJECT_BINARY_DIR}/include/sleefinline_${SIMDLC}.h                                       # >> /build/include/sleefinline_sse2.h
 
 	  MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimddp.c ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdsp.c ${HEADER_${SIMD}}
