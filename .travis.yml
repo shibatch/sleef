@@ -49,28 +49,9 @@ matrix:
       addons:
         apt:
           packages:
-            - gcc-8
-      env:
-        - LABEL="arm64-gcc"
-    - os: linux
-      arch: arm64
-      addons:
-        apt:
-          packages:
             - clang-8
       env:
         - LABEL="arm64-clang"
-    - os: linux
-      arch: arm64
-      dist: bionic
-      env:
-        - LABEL="arm64-gcc-lto"
-    - os: linux
-      arch: arm64
-      dist: bionic
-      addons:
-      env:
-        - LABEL="arm64-clang-lto"
     - os: linux
       services: docker
       env:
