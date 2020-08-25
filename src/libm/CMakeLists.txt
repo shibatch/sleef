@@ -305,6 +305,9 @@ endforeach()
 #
 
 if(BUILD_INLINE_HEADERS)
+  if(CMAKE_C_COMPILER_ID MATCHES "Intel")
+    message(FATAL_ERROR "BUILD_INLINE_HEADERS is not supported with Intel Compiler")
+  endif()
   file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/include/)
   set(INLINE_HEADER_FILES_GENERATED "")
 
