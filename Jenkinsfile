@@ -144,7 +144,7 @@ pipeline {
             	     steps {
 	    	     	 sh '''
                 	 echo "gcc-4.8 and cmake-3.5.1 on" `hostname`
-		         export CC=gcc-4
+		         export CC=gcc-4.8.5
 			 rm -rf build
  			 mkdir build
 			 cd build
