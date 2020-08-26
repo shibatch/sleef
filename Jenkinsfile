@@ -148,11 +148,11 @@ pipeline {
 			 rm -rf build
  			 mkdir build
 			 cd build
-			 cmake-3.5 -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE ..
+			 /usr/local/bin/cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE ..
 			 ninja
 			 export OMP_WAIT_POLICY=passive
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
-		         ctest -j `nproc`
+		         /usr/local/bin/ctest -j `nproc`
 		         ninja install
 			 '''
             	     }
