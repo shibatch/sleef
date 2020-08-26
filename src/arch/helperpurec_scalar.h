@@ -54,7 +54,7 @@
 #define ENABLE_FMA_SP
 //@#define ENABLE_FMA_SP
 
-#if defined(__AVX2__) || defined(__aarch64__) || defined(__arm__) || defined(__powerpc64__)
+#if defined(__AVX2__) || defined(__aarch64__) || defined(__arm__) || defined(__powerpc64__) || defined(__zarch__)
 #ifndef FP_FAST_FMA
 #define FP_FAST_FMA
 //@#define FP_FAST_FMA
@@ -309,8 +309,13 @@ static INLINE vfloat vtruncate_vf_vf(vfloat vd) { return vcast_vf_vi2(vtruncate_
 static INLINE vfloat vcast_vf_f(float f) { return f; }
 static INLINE vmask vreinterpret_vm_vf(vfloat vf) { union { vfloat vf; vmask vm; } cnv; cnv.vf = vf; return cnv.vm; }
 static INLINE vfloat vreinterpret_vf_vm(vmask vm) { union { vfloat vf; vmask vm; } cnv; cnv.vm = vm; return cnv.vf; }
+#if defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+static INLINE vfloat vreinterpret_vf_vi2(vint2 vi) { union { vfloat vf[2]; vint2 vi2; } cnv; cnv.vi2 = vi; return cnv.vf[1]; }
+static INLINE vint2 vreinterpret_vi2_vf(vfloat vf) { union { vfloat vf[2]; vint2 vi2; } cnv; cnv.vi2 = 0; cnv.vf[1] = vf; return cnv.vi2; }
+#else
 static INLINE vfloat vreinterpret_vf_vi2(vint2 vi) { union { vfloat vf; vint2 vi2; } cnv; cnv.vi2 = vi; return cnv.vf; }
 static INLINE vint2 vreinterpret_vi2_vf(vfloat vf) { union { vfloat vf; vint2 vi2; } cnv; cnv.vi2 = 0; cnv.vf = vf; return cnv.vi2; }
+#endif
 
 static INLINE vfloat vadd_vf_vf_vf(vfloat x, vfloat y) { return x + y; }
 static INLINE vfloat vsub_vf_vf_vf(vfloat x, vfloat y) { return x - y; }
@@ -318,7 +323,7 @@ static INLINE vfloat vmul_vf_vf_vf(vfloat x, vfloat y) { return x * y; }
 static INLINE vfloat vdiv_vf_vf_vf(vfloat x, vfloat y) { return x / y; }
 static INLINE vfloat vrec_vf_vf   (vfloat x)           { return 1 / x; }
 
-static INLINE vfloat vabs_vf_vf(vfloat x) { versatileVector v = { .f = x }; v.x &= 0x7fffffff; return v.f; }
+static INLINE vfloat vabs_vf_vf(vfloat x) { versatileVector v = { .f = x }; v.i[0] &= 0x7fffffff; return v.f; }
 static INLINE vfloat vneg_vf_vf(vfloat x) { return -x; }
 
 static INLINE vfloat vmax_vf_vf_vf(vfloat x, vfloat y) { return x > y ? x : y; }
@@ -348,7 +353,7 @@ static INLINE vopmask vge_vo_vf_vf(vfloat x, vfloat y)  { return x >= y ? ~(uint
 
 static INLINE vint2 vadd_vi2_vi2_vi2(vint2 x, vint2 y) { versatileVector v = { .i2 = x }, w = { .i2 = y }; v.i[0] += w.i[0]; v.i[1] += w.i[1]; return v.i2; }
 static INLINE vint2 vsub_vi2_vi2_vi2(vint2 x, vint2 y) { versatileVector v = { .i2 = x }, w = { .i2 = y }; v.i[0] -= w.i[0]; v.i[1] -= w.i[1]; return v.i2; }
-static INLINE vint2 vneg_vi2_vi2(vint2 x)              { versatileVector v = { .i2 = x }; v.i[0] = -v.i[0]; return v.i2; }
+static INLINE vint2 vneg_vi2_vi2(vint2 x)              { versatileVector v = { .i2 = x }; v.i[0] = -v.i[0]; v.i[1] = -v.i[1]; return v.i2; }
 
 static INLINE vint2 vand_vi2_vi2_vi2(vint2 x, vint2 y)    { return x & y; }
 static INLINE vint2 vandnot_vi2_vi2_vi2(vint2 x, vint2 y) { return y & ~x; }

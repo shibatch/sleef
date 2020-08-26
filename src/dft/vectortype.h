@@ -41,6 +41,14 @@
 #include "helperpower_128.h"
 #endif
 
+#ifdef ENABLE_ZVECTOR
+#include "helpers390x_128.h"
+#endif
+
+#ifdef ENABLE_ZVECTOR2
+#include "helpers390x_128.h"
+#endif
+
 #ifdef ENABLE_VECEXT
 #include "helpervecext.h"
 #endif

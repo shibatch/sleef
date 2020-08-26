@@ -22,6 +22,8 @@ extern const float rempitabsp[];
 #pragma fp_contract (off)
 #endif
 
+// Intel
+
 #ifdef ENABLE_SSE2
 #define CONFIG 2
 #if !defined(SLEEF_GENHEADER)
@@ -138,6 +140,8 @@ extern const float rempitabsp[];
 #endif
 #endif
 
+// Arm
+
 #ifdef ENABLE_ADVSIMD
 #define CONFIG 1
 #if !defined(SLEEF_GENHEADER)
@@ -186,6 +190,36 @@ extern const float rempitabsp[];
 #endif
 #endif
 
+#ifdef ENABLE_SVE
+#define CONFIG 1
+#if !defined(SLEEF_GENHEADER)
+#include "helpersve.h"
+#else
+#include "macroonlySVE.h"
+#endif
+#ifdef DORENAME
+#ifdef ENABLE_GNUABI
+#include "renamesve_gnuabi.h"
+#else
+#include "renamesve.h"
+#endif /* ENABLE_GNUABI */
+#endif /* DORENAME */
+#endif /* ENABLE_SVE */
+
+#ifdef ENABLE_SVENOFMA
+#define CONFIG 2
+#if !defined(SLEEF_GENHEADER)
+#include "helpersve.h"
+#else
+#include "macroonlySVENOFMA.h"
+#endif
+#ifdef DORENAME
+#include "renamesvenofma.h"
+#endif /* DORENAME */
+#endif /* ENABLE_SVE */
+
+// IBM
+
 #ifdef ENABLE_VSX
 #define CONFIG 1
 #if !defined(SLEEF_GENHEADER)
@@ -210,7 +244,31 @@ extern const float rempitabsp[];
 #endif
 #endif
 
-//
+#ifdef ENABLE_ZVECTOR2
+#define CONFIG 140
+#if !defined(SLEEF_GENHEADER)
+#include "helpers390x_128.h"
+#else
+#include "macroonlyZVECTOR2.h"
+#endif
+#ifdef DORENAME
+#include "renamezvector2.h"
+#endif
+#endif
+
+#ifdef ENABLE_ZVECTOR2NOFMA
+#define CONFIG 141
+#if !defined(SLEEF_GENHEADER)
+#include "helpers390x_128.h"
+#else
+#include "macroonlyZVECTOR2NOFMA.h"
+#endif
+#ifdef DORENAME
+#include "renamezvector2nofma.h"
+#endif
+#endif
+
+// Generic
 
 #ifdef ENABLE_VECEXT
 #define CONFIG 1
@@ -255,36 +313,6 @@ extern const float rempitabsp[];
 #include "renamepurecfma_scalar.h"
 #endif
 #endif
-
-//
-
-#ifdef ENABLE_SVE
-#define CONFIG 1
-#if !defined(SLEEF_GENHEADER)
-#include "helpersve.h"
-#else
-#include "macroonlySVE.h"
-#endif
-#ifdef DORENAME
-#ifdef ENABLE_GNUABI
-#include "renamesve_gnuabi.h"
-#else
-#include "renamesve.h"
-#endif /* ENABLE_GNUABI */
-#endif /* DORENAME */
-#endif /* ENABLE_SVE */
-
-#ifdef ENABLE_SVENOFMA
-#define CONFIG 2
-#if !defined(SLEEF_GENHEADER)
-#include "helpersve.h"
-#else
-#include "macroonlySVENOFMA.h"
-#endif
-#ifdef DORENAME
-#include "renamesvenofma.h"
-#endif /* DORENAME */
-#endif /* ENABLE_SVE */
 
 //
 
@@ -341,7 +369,7 @@ static INLINE CONST VECTOR_CC vopmask visnumber_vo_vf(vfloat x) { return vnot_vo
 static INLINE CONST VECTOR_CC vint2 vilogbk_vi2_vf(vfloat d) {
   vopmask o = vlt_vo_vf_vf(d, vcast_vf_f(5.421010862427522E-20f));
   d = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(vcast_vf_f(1.8446744073709552E19f), d), d);
-  vint2 q = vand_vi2_vi2_vi2(vsrl_vi2_vi2_i(vcast_vi2_vm(vreinterpret_vm_vf(d)), 23), vcast_vi2_i(0xff));
+  vint2 q = vand_vi2_vi2_vi2(vsrl_vi2_vi2_i(vreinterpret_vi2_vf(d), 23), vcast_vi2_i(0xff));
   q = vsub_vi2_vi2_vi2(q, vsel_vi2_vo_vi2_vi2(o, vcast_vi2_i(64 + 0x7f), vcast_vi2_i(0x7f)));
   return q;
 }
@@ -366,7 +394,7 @@ EXPORT CONST VECTOR_CC vint2 xilogbf(vfloat d) {
 }
 
 static INLINE CONST VECTOR_CC vfloat vpow2i_vf_vi2(vint2 q) {
-  return vreinterpret_vf_vm(vcast_vm_vi2(vsll_vi2_vi2_i(vadd_vi2_vi2_vi2(q, vcast_vi2_i(0x7f)), 23)));
+  return vreinterpret_vf_vi2(vsll_vi2_vi2_i(vadd_vi2_vi2_vi2(q, vcast_vi2_i(0x7f)), 23));
 }
 
 static INLINE CONST VECTOR_CC vfloat vldexp_vf_vf_vi2(vfloat x, vint2 q) {
@@ -378,9 +406,9 @@ static INLINE CONST VECTOR_CC vfloat vldexp_vf_vf_vi2(vfloat x, vint2 q) {
   m = vand_vi2_vi2_vi2(vgt_vi2_vi2_vi2(m, vcast_vi2_i(0)), m);
   vint2 n = vgt_vi2_vi2_vi2(m, vcast_vi2_i(0xff));
   m = vor_vi2_vi2_vi2(vandnot_vi2_vi2_vi2(n, m), vand_vi2_vi2_vi2(n, vcast_vi2_i(0xff)));
-  u = vreinterpret_vf_vm(vcast_vm_vi2(vsll_vi2_vi2_i(m, 23)));
+  u = vreinterpret_vf_vi2(vsll_vi2_vi2_i(m, 23));
   x = vmul_vf_vf_vf(vmul_vf_vf_vf(vmul_vf_vf_vf(vmul_vf_vf_vf(x, u), u), u), u);
-  u = vreinterpret_vf_vm(vcast_vm_vi2(vsll_vi2_vi2_i(vadd_vi2_vi2_vi2(q, vcast_vi2_i(0x7f)), 23)));
+  u = vreinterpret_vf_vi2(vsll_vi2_vi2_i(vadd_vi2_vi2_vi2(q, vcast_vi2_i(0x7f)), 23));
   return vmul_vf_vf_vf(x, u);
 }
 

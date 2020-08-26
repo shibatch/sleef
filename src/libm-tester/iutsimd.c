@@ -61,6 +61,10 @@
 #include <altivec.h>
 #endif
 
+#if defined(__VX__)
+#include <vecintrin.h>
+#endif
+
 #define SLEEF_ALWAYS_INLINE inline
 #define SLEEF_INLINE
 #define SLEEF_CONST
@@ -258,6 +262,26 @@ typedef Sleef___vector_float_2 vfloat2;
 #include "renamevsxnofma.h"
 typedef Sleef___vector_double_2 vdouble2;
 typedef Sleef___vector_float_2 vfloat2;
+#endif
+#endif
+
+#ifdef ENABLE_ZVECTOR2
+#include "renamezvector2.h"
+#if !defined(USE_INLINE_HEADER)
+#define CONFIG 140
+#include "helpers390x_128.h"
+typedef Sleef_SLEEF_VECTOR_DOUBLE_2 vdouble2;
+typedef Sleef_SLEEF_VECTOR_FLOAT_2 vfloat2;
+#endif
+#endif
+
+#ifdef ENABLE_ZVECTOR2NOFMA
+#include "renamezvector2nofma.h"
+#if !defined(USE_INLINE_HEADER)
+#define CONFIG 141
+#include "helpers390x_128.h"
+typedef Sleef_SLEEF_VECTOR_DOUBLE_2 vdouble2;
+typedef Sleef_SLEEF_VECTOR_FLOAT_2 vfloat2;
 #endif
 #endif
 

@@ -43,6 +43,9 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
   set(TEST3_CINZ purec_scalar vsxnofma)
   set(TEST3_FINZ purecfma_scalar vsx)
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "s390x")
+  set(TEST3_CINZ purec_scalar zvector2nofma)
+  set(TEST3_FINZ purecfma_scalar zvector2)
 endif()
 
 #
@@ -174,8 +177,8 @@ macro(test_extension SIMD)
 		target_include_directories(${T} PRIVATE ${MPFR_INCLUDE_DIR})
 	      endif()
 
-# The tester2 programs whose name begins with "tester2y" are the
-# testing program for the deterministic version of functions.
+	      # The tester2 programs whose name begins with "tester2y" are the
+	      # testing program for the deterministic version of functions.
 
 	      set(T "tester2y${SCSIMD}${P}")
 	      add_executable(${T} tester2simd${P}.c testerutil.c)
