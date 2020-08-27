@@ -3502,7 +3502,7 @@ EXPORT CONST void *xgetPtrf(int name) {
 #ifdef ENABLE_GNUABI
 EXPORT CONST VECTOR_CC vfloat __acosf_finite     (vfloat)         __attribute__((weak, alias(str_xacosf_u1  )));
 EXPORT CONST VECTOR_CC vfloat __acoshf_finite    (vfloat)         __attribute__((weak, alias(str_xacoshf    )));
-EXPORT CONST VECTOR_CC vfloat __asinf_finite     (double)         __attribute__((weak, alias(str_xasinf_u1  )));
+EXPORT CONST VECTOR_CC vfloat __asinf_finite     (vfloat)         __attribute__((weak, alias(str_xasinf_u1  )));
 EXPORT CONST VECTOR_CC vfloat __atan2f_finite    (vfloat, vfloat) __attribute__((weak, alias(str_xatan2f_u1 )));
 EXPORT CONST VECTOR_CC vfloat __atanhf_finite    (vfloat)         __attribute__((weak, alias(str_xatanhf    )));
 EXPORT CONST VECTOR_CC vfloat __coshf_finite     (vfloat)         __attribute__((weak, alias(str_xcoshf     )));
