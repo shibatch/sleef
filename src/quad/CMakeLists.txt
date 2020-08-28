@@ -136,6 +136,7 @@ add_library(sleefquad rempitabqp.c ${SLEEFQUAD_OBJECTS})
 set_target_properties(sleefquad PROPERTIES
   VERSION ${SLEEF_VERSION}
   SOVERSION ${SLEEF_SOVERSION}
+  PUBLIC_HEADER ${SLEEFQUAD_INCLUDE_HEADER}
   ${COMMON_TARGET_PROPERTIES}
 )
 
@@ -149,5 +150,7 @@ endif()
 # Install
 # --------------------------------------------------------------------
 # Install libsleef and sleef.h
-install(FILES ${SLEEFQUAD_INCLUDE_HEADER} DESTINATION include)
-install(TARGETS sleefquad DESTINATION lib)
+install(TARGETS sleefquad
+        PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
