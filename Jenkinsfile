@@ -17,7 +17,7 @@ pipeline {
 			 mv $BUILD_DIR.tmp $BUILD_DIR/sleef
 			 cd $BUILD_DIR
 			 cp sleef/CMakeLists.txt.nested ./CMakeLists.txt
-			 cp sleef/doc/*.c .
+			 cp sleef/doc/html/hellox86.c sleef/doc/html/tutorial.c .
 			 rm -rf build
  			 mkdir build
 			 cd build
