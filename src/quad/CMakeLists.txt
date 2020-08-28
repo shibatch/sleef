@@ -1,7 +1,7 @@
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/include/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${sleef_SOURCE_DIR}/src/libm)         # dd.h
+include_directories(${SLEEF_SOURCE_DIR}/src/libm)         # dd.h
 
 set(COMMON_TARGET_PROPERTIES C_STANDARD 99)
 
