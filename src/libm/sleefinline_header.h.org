@@ -7,3 +7,15 @@
 #if (defined(_MSC_VER))
 #pragma fp_contract (off)
 #endif
+
+#ifndef SLEEF_ALWAYS_INLINE
+#define SLEEF_ALWAYS_INLINE inline
+#endif
+
+#ifndef SLEEF_INLINE
+#define SLEEF_INLINE static inline
+#endif
+
+#ifndef SLEEF_CONST
+#define SLEEF_CONST const
+#endif

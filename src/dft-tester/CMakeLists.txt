@@ -23,14 +23,14 @@ endfunction()
 # Include directories
 
 include_directories(${PROJECT_SOURCE_DIR}/include)        # sleefdft.h
-include_directories(${sleef_BINARY_DIR}/include)          # sleef.h
+include_directories(${SLEEF_BINARY_DIR}/include)          # sleef.h
 if (FFTW3_INCLUDE_DIR)
   include_directories(${FFTW3_INCLUDE_DIR})               # fftw3.h
 endif()
 
 # Link directories
 
-link_directories(${sleef_BINARY_DIR}/lib)                 # libsleef, libsleefdft
+link_directories(${SLEEF_BINARY_DIR}/lib)                 # libsleef, libsleefdft
 
 # Link libraries
 

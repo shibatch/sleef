@@ -1,8 +1,8 @@
-link_directories(${sleef_BINARY_DIR}/lib)                 # libsleefquad
-link_directories(${sleef_BINARY_DIR}/src/common)          # common.a
-include_directories(${sleef_BINARY_DIR}/include)          # sleef.h, sleefquad.h
+link_directories(${SLEEF_BINARY_DIR}/lib)                 # libsleefquad
+link_directories(${SLEEF_BINARY_DIR}/src/common)          # common.a
+include_directories(${SLEEF_BINARY_DIR}/include)          # sleef.h, sleefquad.h
 include_directories(${sleef_SOURCE_DIR}/src/quad)         # qrename.h
-include_directories(${sleef_BINARY_DIR}/src/quad/include) # rename headers
+include_directories(${SLEEF_BINARY_DIR}/src/quad/include) # rename headers
 
 if(NOT LIB_MPFR)
   find_program(QTESTER_COMMAND qtester)
