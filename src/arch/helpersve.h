@@ -441,7 +441,7 @@ static INLINE vfloat vdiv_vf_vf_vf(vfloat n, vfloat d) {
 #ifndef ENABLE_ALTDIV
   return svdiv_f32_x(ptrue, n, d);
 #else
-  // Finite numbers (including denormal) only, gives correctly rounded result
+  // Finite numbers (including denormal) only, gives mostly correctly rounded result
   vfloat t, u, x, y;
   svuint32_t i0, i1;
   i0 = svand_u32_x(ptrue, svreinterpret_u32_f32(n), svdup_n_u32(0x7c000000));
@@ -799,7 +799,7 @@ static INLINE vdouble vdiv_vd_vd_vd(vdouble n, vdouble d) {
 #ifndef ENABLE_ALTDIV
   return svdiv_f64_x(ptrue, n, d);
 #else
-  // Finite numbers (including denormal) only, gives correctly rounded result
+  // Finite numbers (including denormal) only, gives mostly correctly rounded result
   vdouble t, u, x, y;
   svuint64_t i0, i1;
   i0 = svand_u64_x(ptrue, svreinterpret_u64_f64(n), svdup_n_u64(0x7fc0000000000000L));

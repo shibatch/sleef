@@ -22,6 +22,8 @@ extern const double rempitabdp[];
 #pragma fp_contract (off)
 #endif
 
+// Intel
+
 #ifdef ENABLE_SSE2
 #define CONFIG 2
 #include "helpersse2.h"
@@ -106,6 +108,8 @@ extern const double rempitabdp[];
 #endif
 #endif
 
+// Arm
+
 #ifdef ENABLE_ADVSIMD
 #define CONFIG 1
 #include "helperadvsimd.h"
@@ -126,6 +130,28 @@ extern const double rempitabdp[];
 #endif
 #endif
 
+#ifdef ENABLE_SVE
+#define CONFIG 1
+#include "helpersve.h"
+#ifdef DORENAME
+#ifdef ENABLE_GNUABI
+#include "renamesve_gnuabi.h"
+#else
+#include "renamesve.h"
+#endif /* ENABLE_GNUABI */
+#endif /* DORENAME */
+#endif /* ENABLE_SVE */
+
+#ifdef ENABLE_SVENOFMA
+#define CONFIG 2
+#include "helpersve.h"
+#ifdef DORENAME
+#include "renamesvenofma.h"
+#endif /* DORENAME */
+#endif /* ENABLE_SVE */
+
+// IBM
+
 #ifdef ENABLE_VSX
 #define CONFIG 1
 #include "helperpower_128.h"
@@ -142,7 +168,23 @@ extern const double rempitabdp[];
 #endif
 #endif
 
-//
+#ifdef ENABLE_ZVECTOR2
+#define CONFIG 140
+#include "helpers390x_128.h"
+#ifdef DORENAME
+#include "renamezvector2.h"
+#endif
+#endif
+
+#ifdef ENABLE_ZVECTOR2NOFMA
+#define CONFIG 141
+#include "helpers390x_128.h"
+#ifdef DORENAME
+#include "renamezvector2nofma.h"
+#endif
+#endif
+
+// Generic
 
 #ifdef ENABLE_VECEXT
 #define CONFIG 1
@@ -175,26 +217,6 @@ extern const double rempitabdp[];
 #include "renamepurecfma_scalar.h"
 #endif
 #endif
-
-#ifdef ENABLE_SVE
-#define CONFIG 1
-#include "helpersve.h"
-#ifdef DORENAME
-#ifdef ENABLE_GNUABI
-#include "renamesve_gnuabi.h"
-#else
-#include "renamesve.h"
-#endif /* ENABLE_GNUABI */
-#endif /* DORENAME */
-#endif /* ENABLE_SVE */
-
-#ifdef ENABLE_SVENOFMA
-#define CONFIG 2
-#include "helpersve.h"
-#ifdef DORENAME
-#include "renamesvenofma.h"
-#endif /* DORENAME */
-#endif /* ENABLE_SVE */
 
 //
 
@@ -3773,7 +3795,7 @@ int main(int argc, char **argv) {
 /* "finite" aliases for compatibility with GLIBC */
 EXPORT CONST VECTOR_CC vdouble __acos_finite     (vdouble)          __attribute__((weak, alias(str_xacos     )));
 EXPORT CONST VECTOR_CC vdouble __acosh_finite    (vdouble)          __attribute__((weak, alias(str_xacosh    )));
-EXPORT CONST VECTOR_CC vdouble __asin_finite     (double)           __attribute__((weak, alias(str_xasin_u1  )));
+EXPORT CONST VECTOR_CC vdouble __asin_finite     (vdouble)          __attribute__((weak, alias(str_xasin_u1  )));
 EXPORT CONST VECTOR_CC vdouble __atan2_finite    (vdouble, vdouble) __attribute__((weak, alias(str_xatan2_u1 )));
 EXPORT CONST VECTOR_CC vdouble __atanh_finite    (vdouble)          __attribute__((weak, alias(str_xatanh    )));
 EXPORT CONST VECTOR_CC vdouble __cosh_finite     (vdouble)          __attribute__((weak, alias(str_xcosh     )));

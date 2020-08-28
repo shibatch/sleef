@@ -25,10 +25,19 @@ typedef __vector double __vector_double;
 typedef __vector float  __vector_float;
 #endif
 
+#if defined(__VX__) && defined(__VEC__)
+#ifndef SLEEF_VECINTRIN_H_INCLUDED
+#include <vecintrin.h>
+#define SLEEF_VECINTRIN_H_INCLUDED
+#endif
+typedef __attribute__((vector_size(16))) double vector_double;
+typedef __attribute__((vector_size(16))) float  vector_float;
+#endif
+
 //
 
-#define XNAN  (((union { long long int u; double d; })  { .u = 0xffffffffffffffffLL }).d)
-#define XNANf (((union { long int u; float d; })  { .u = 0xffffffff }).d)
+#define XNAN  (((union { int64_t u; double d; })  { .u = 0xffffffffffffffffLL }).d)
+#define XNANf (((union { int32_t u; float d; })  { .u = 0xffffffff }).d)
 
 static INLINE double unifyValue(double x) { x = !(x == x) ? XNAN  : x; return x; }
 static INLINE float unifyValuef(float  x) { x = !(x == x) ? XNANf : x; return x; }
@@ -85,6 +94,13 @@ static INLINE __vector float set__vector_float(float d, int r) { float a[4]; mem
 static INLINE float get__vector_float(__vector float v, int r) { float a[4]; vec_vsx_st(v, 0, a); return unifyValuef(a[r & 3]); }
 #endif
 
+#ifdef __VX__
+static INLINE __attribute__((vector_size(16))) double setSLEEF_VECTOR_DOUBLE(double d, int r) { double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return (__attribute__((vector_size(16))) double) { a[0], a[1] }; }
+static INLINE double getSLEEF_VECTOR_DOUBLE(__attribute__((vector_size(16))) double v, int r) { return unifyValue(v[r & 1]); }
+static INLINE __attribute__((vector_size(16))) float setSLEEF_VECTOR_FLOAT(float d, int r) { float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return (__attribute__((vector_size(16))) float) { a[0], a[1], a[2], a[3] }; }
+static INLINE float getSLEEF_VECTOR_FLOAT(__attribute__((vector_size(16))) float v, int r) { return unifyValuef(v[r & 3]); }
+#endif
+
 //
 
 // ATR = cinz_, NAME = sin, TYPE = d2, ULP = u35, EXT = sse2
@@ -119,10 +135,23 @@ static SPTYPE vf2gety_vf_vf2(TYPE2(SPTYPE) v) { return v.y; }
     } else puts((char *)mes);						\
   } while(0)
 
+#if defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+#define convertEndianness(ptr, len) do {				\
+  for(int k=0;k<len/2;k++) {						\
+    unsigned char t = ((unsigned char *)ptr)[k];			\
+    ((unsigned char *)ptr)[k] = ((unsigned char *)ptr)[len-1-k];	\
+    ((unsigned char *)ptr)[len-1-k] = t;				\
+  }									\
+  } while(0)
+#else
+#define convertEndianness(ptr, len)
+#endif
+
 #define exec_d_d(ATR, NAME, ULP, TYPE, TSX, EXT, arg) do {		\
     int r = xrand() & 0xffff;						\
     DPTYPE vx = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (arg, r));	\
     double fx = GET(TYPE)(vx, r);					\
+    convertEndianness(&fx, sizeof(double));				\
     MD5_Update(&ctx, &fx, sizeof(double));				\
   } while(0)
 
@@ -152,7 +181,9 @@ static SPTYPE vf2gety_vf_vf2(TYPE2(SPTYPE) v) { return v.y; }
     int r = xrand() & 0xffff;						\
     TYPE2(TYPE) vx2 = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE)(arg, r)); \
     double fxx = GET(TYPE)(vd2getx_vd_vd2(vx2), r), fxy = GET(TYPE)(vd2gety_vd_vd2(vx2), r); \
+    convertEndianness(&fxx, sizeof(double));				\
     MD5_Update(&ctx, &fxx, sizeof(double));				\
+    convertEndianness(&fxy, sizeof(double));				\
     MD5_Update(&ctx, &fxy, sizeof(double));				\
   } while(0)
 
@@ -171,6 +202,7 @@ static SPTYPE vf2gety_vf_vf2(TYPE2(SPTYPE) v) { return v.y; }
     int r = xrand() & 0xffff;						\
     DPTYPE vx = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (argu, r), SET(TYPE) (argv, r)); \
     double fx = GET(TYPE)(vx, r);					\
+    convertEndianness(&fx, sizeof(double));				\
     MD5_Update(&ctx, &fx, sizeof(double));				\
   } while(0)
 
@@ -191,6 +223,7 @@ static SPTYPE vf2gety_vf_vf2(TYPE2(SPTYPE) v) { return v.y; }
     int r = xrand() & 0xffff;						\
     SPTYPE vx = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (arg, r));	\
     float fx = GET(TYPE)(vx, r);					\
+    convertEndianness(&fx, sizeof(float));				\
     MD5_Update(&ctx, &fx, sizeof(float));				\
   } while(0)
 
@@ -218,7 +251,9 @@ static SPTYPE vf2gety_vf_vf2(TYPE2(SPTYPE) v) { return v.y; }
     int r = xrand() & 0xffff;						\
     TYPE2(TYPE) vx2 = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (arg, r)); \
     float fxx = GET(TYPE)(vf2getx_vf_vf2(vx2), r), fxy = GET(TYPE)(vf2gety_vf_vf2(vx2), r); \
+    convertEndianness(&fxx, sizeof(float));				\
     MD5_Update(&ctx, &fxx, sizeof(float));				\
+    convertEndianness(&fxy, sizeof(float));				\
     MD5_Update(&ctx, &fxy, sizeof(float));				\
   } while(0)
 
@@ -233,10 +268,12 @@ static SPTYPE vf2gety_vf_vf2(TYPE2(SPTYPE) v) { return v.y; }
 
 //
 
+
 #define exec_f_f_f(ATR, NAME, ULP, TYPE, TSX, EXT, argu, argv) do {	\
     int r = xrand() & 0xffff;						\
     SPTYPE vx = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (argu, r), SET(TYPE) (argv, r)); \
     float fx = GET(TYPE)(vx, r);					\
+    convertEndianness(&fx, sizeof(float));				\
     MD5_Update(&ctx, &fx, sizeof(float));				\
   } while(0)
 

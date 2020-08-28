@@ -118,6 +118,10 @@ set(MACRODEF_vsxdp BASETYPEID=1 ENABLE_VSX CONFIG=1)
 set(CFLAGS_vsxdp ${FLAGS_ENABLE_VSX})
 set(MACRODEF_vsxsp BASETYPEID=2 ENABLE_VSX CONFIG=1)
 set(CFLAGS_vsxsp ${FLAGS_ENABLE_VSX})
+set(MACRODEF_zvector2dp BASETYPEID=1 ENABLE_ZVECTOR2 CONFIG=140)
+set(CFLAGS_zvector2dp ${FLAGS_ENABLE_ZVECTOR2})
+set(MACRODEF_zvector2sp BASETYPEID=2 ENABLE_ZVECTOR2 CONFIG=140)
+set(CFLAGS_zvector2sp ${FLAGS_ENABLE_ZVECTOR2})
 
 # List all available scalar data types
 
@@ -187,6 +191,11 @@ if (COMPILER_SUPPORTS_VSX)
   set(ISALIST_DP ${ISALIST_DP} vsxdp)
 endif(COMPILER_SUPPORTS_VSX)
 
+if (COMPILER_SUPPORTS_ZVECTOR2)
+  set(ISALIST_SP ${ISALIST_SP} zvector2sp)
+  set(ISALIST_DP ${ISALIST_DP} zvector2dp)
+endif(COMPILER_SUPPORTS_ZVECTOR2)
+
 if(SLEEFDFT_ENABLE_STREAM)
   set(NLIST 0 1 2 3)
 else()
@@ -242,9 +251,9 @@ endforeach()
 
 # Target dftcommon.o
 
-add_library(dftcommon_obj OBJECT dftcommon.c dftcommon.h ${CMAKE_CURRENT_BINARY_DIR}/dispatchparam.h ${CMAKE_BINARY_DIR}/include/sleef.h)
+add_library(dftcommon_obj OBJECT dftcommon.c dftcommon.h ${CMAKE_CURRENT_BINARY_DIR}/dispatchparam.h ${sleef_BINARY_DIR}/include/sleef.h)
 add_dependencies(dftcommon_obj ${TARGET_HEADERS} dispatchparam.h_generated)
-set_source_files_properties(${CMAKE_BINARY_DIR}/include/sleef.h PROPERTIES GENERATED TRUE)
+set_source_files_properties(${sleef_BINARY_DIR}/include/sleef.h PROPERTIES GENERATED TRUE)
 set_target_properties(dftcommon_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
 target_compile_definitions(dftcommon_obj PRIVATE ${COMMON_TARGET_DEFINITIONS})
 

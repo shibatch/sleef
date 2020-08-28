@@ -1,10 +1,8 @@
-# Note: We are assuming SLEEF is the CMake root project.
-# TODO: Remove constraint: do not use CMAKE_BINARY_DIR and CMAKE_SOURCE_DIR
-link_directories(${CMAKE_BINARY_DIR}/lib)                 # libsleef
-link_directories(${CMAKE_BINARY_DIR}/src/common)          # common.a
-include_directories(${CMAKE_BINARY_DIR}/include)          # sleef.h
-include_directories(${CMAKE_SOURCE_DIR}/src/libm)         # rename.h
-include_directories(${CMAKE_BINARY_DIR}/src/libm/include) # rename headers
+link_directories(${sleef_BINARY_DIR}/lib)                 # libsleef
+link_directories(${sleef_BINARY_DIR}/src/common)          # common.a
+include_directories(${sleef_BINARY_DIR}/include)          # sleef.h
+include_directories(${sleef_SOURCE_DIR}/src/libm)         # rename.h
+include_directories(${sleef_BINARY_DIR}/src/libm/include) # rename headers
 
 if(NOT LIB_MPFR)
   find_program(TESTER_COMMAND tester)
@@ -43,6 +41,9 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
   set(TEST3_CINZ purec_scalar vsxnofma)
   set(TEST3_FINZ purecfma_scalar vsx)
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "s390x")
+  set(TEST3_CINZ purec_scalar zvector2nofma)
+  set(TEST3_FINZ purecfma_scalar zvector2)
 endif()
 
 #
@@ -174,8 +175,8 @@ macro(test_extension SIMD)
 		target_include_directories(${T} PRIVATE ${MPFR_INCLUDE_DIR})
 	      endif()
 
-# The tester2 programs whose name begins with "tester2y" are the
-# testing program for the deterministic version of functions.
+	      # The tester2 programs whose name begins with "tester2y" are the
+	      # testing program for the deterministic version of functions.
 
 	      set(T "tester2y${SCSIMD}${P}")
 	      add_executable(${T} tester2simd${P}.c testerutil.c)
@@ -214,22 +215,22 @@ macro(test_extension SIMD)
       list(FIND TEST3_CINZ ${SCSIMD} INDEX_TEST3_CINZ)
       if (NOT INDEX_TEST3_CINZ EQUAL -1)
 	if (SDE_COMMAND)
-	  add_test(NAME tester3${SCSIMD} COMMAND ${SDE_COMMAND} "--" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tester3${SCSIMD} ${CMAKE_SOURCE_DIR}/src/libm-tester/hash_cinz.txt)
+	  add_test(NAME tester3${SCSIMD} COMMAND ${SDE_COMMAND} "--" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tester3${SCSIMD} ${sleef_SOURCE_DIR}/src/libm-tester/hash_cinz.txt)
 	elseif(EMULATOR)
-	  add_test(NAME tester3${SCSIMD} COMMAND ${EMULATOR} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tester3${SCSIMD} ${CMAKE_SOURCE_DIR}/src/libm-tester/hash_cinz.txt)
+	  add_test(NAME tester3${SCSIMD} COMMAND ${EMULATOR} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tester3${SCSIMD} ${sleef_SOURCE_DIR}/src/libm-tester/hash_cinz.txt)
 	else()
-	  add_test(NAME tester3${SCSIMD} COMMAND tester3${SCSIMD} ${CMAKE_SOURCE_DIR}/src/libm-tester/hash_cinz.txt)
+	  add_test(NAME tester3${SCSIMD} COMMAND tester3${SCSIMD} ${sleef_SOURCE_DIR}/src/libm-tester/hash_cinz.txt)
 	endif()
       endif()
 
       list(FIND TEST3_FINZ ${SCSIMD} INDEX_TEST3_FINZ)
       if (NOT INDEX_TEST3_FINZ EQUAL -1)
 	if (SDE_COMMAND)
-	  add_test(NAME tester3${SCSIMD} COMMAND ${SDE_COMMAND} "--" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tester3${SCSIMD} ${CMAKE_SOURCE_DIR}/src/libm-tester/hash_finz.txt)
+	  add_test(NAME tester3${SCSIMD} COMMAND ${SDE_COMMAND} "--" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tester3${SCSIMD} ${sleef_SOURCE_DIR}/src/libm-tester/hash_finz.txt)
 	elseif(EMULATOR)
-	  add_test(NAME tester3${SCSIMD} COMMAND ${EMULATOR} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tester3${SCSIMD} ${CMAKE_SOURCE_DIR}/src/libm-tester/hash_finz.txt)
+	  add_test(NAME tester3${SCSIMD} COMMAND ${EMULATOR} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tester3${SCSIMD} ${sleef_SOURCE_DIR}/src/libm-tester/hash_finz.txt)
 	else()
-	  add_test(NAME tester3${SCSIMD} COMMAND tester3${SCSIMD} ${CMAKE_SOURCE_DIR}/src/libm-tester/hash_finz.txt)
+	  add_test(NAME tester3${SCSIMD} COMMAND tester3${SCSIMD} ${sleef_SOURCE_DIR}/src/libm-tester/hash_finz.txt)
 	endif()
       endif()
     endif()

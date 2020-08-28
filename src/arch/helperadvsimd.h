@@ -196,7 +196,7 @@ static INLINE VECTOR_CC vfloat vdiv_vf_vf_vf(vfloat n, vfloat d) {
 #ifndef ENABLE_ALTDIV
   return vdivq_f32(n, d);
 #else
-  // Finite numbers (including denormal) only, gives correctly rounded result
+  // Finite numbers (including denormal) only, gives mostly correctly rounded result
   float32x4_t t, u, x, y;
   uint32x4_t i0, i1;
   i0 = vandq_u32(vreinterpretq_u32_f32(n), vdupq_n_u32(0x7c000000));
@@ -408,7 +408,7 @@ static INLINE VECTOR_CC vdouble vdiv_vd_vd_vd(vdouble n, vdouble d) {
 #ifndef ENABLE_ALTDIV
   return vdivq_f64(n, d);
 #else
-  // Finite numbers (including denormal) only, gives correctly rounded result
+  // Finite numbers (including denormal) only, gives mostly correctly rounded result
   float64x2_t t, u, x, y;
   uint64x2_t i0, i1;
   i0 = vandq_u64(vreinterpretq_u64_f64(n), vdupq_n_u64(0x7fc0000000000000L));
