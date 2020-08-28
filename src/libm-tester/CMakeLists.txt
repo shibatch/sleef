@@ -8,13 +8,24 @@ if(NOT LIB_MPFR)
   find_program(TESTER_COMMAND tester)
 endif(NOT LIB_MPFR)
 
+if (ENFORCE_TESTER AND NOT LIB_MPFR AND NOT TESTER_COMMAND)
+  message(FATAL_ERROR "ENFORCE_TESTER is specified and tester is not available")
+endif(ENFORCE_TESTER AND NOT LIB_MPFR AND NOT TESTER_COMMAND)
+
 find_library(LIBRT rt)
 if (NOT LIBRT)
   set(LIBRT "")
 endif()
 
-set(CMAKE_C_FLAGS ORG_CMAKE_C_FLAGS)
-string(CONCAT CMAKE_C_FLAGS ${SLEEF_C_FLAGS})
+set(CMAKE_C_FLAGS "${ORG_CMAKE_C_FLAGS} ${SLEEF_C_FLAGS}")
+
+set(COMMON_TARGET_PROPERTIES 
+  C_STANDARD 99                  # -std=gnu99
+  )
+
+if (ENABLE_LTO)
+  list(APPEND COMMON_TARGET_PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)  # -flto
+endif()
 
 #
 
@@ -30,6 +41,9 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
   set(TEST3_CINZ purec_scalar vsxnofma)
   set(TEST3_FINZ purecfma_scalar vsx)
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "s390x")
+  set(TEST3_CINZ purec_scalar zvector2nofma)
+  set(TEST3_FINZ purecfma_scalar zvector2)
 endif()
 
 #
@@ -73,11 +87,11 @@ add_executable(${TARGET_IUT} iut.c testerutil.c)
 target_compile_definitions(${TARGET_IUT} PRIVATE ${COMMON_TARGET_DEFINITIONS})
 target_link_libraries(${TARGET_IUT} ${TARGET_LIBSLEEF}
   ${LIBM} ${LIBRT})
-set_target_properties(${TARGET_IUT} PROPERTIES C_STANDARD 99)
+set_target_properties(${TARGET_IUT} PROPERTIES ${COMMON_TARGET_PROPERTIES})
 add_test_iut(${TARGET_IUT})
 set(IUT_LIST ${TARGET_IUT})
 
-set(IUT_SRC iutsimd.c iutsimdmain.c testerutil)
+set(IUT_SRC iutsimd.c iutsimdmain.c testerutil.c)
 
 # Add vector extension `iut`s
 macro(test_extension SIMD)
@@ -98,15 +112,15 @@ macro(test_extension SIMD)
 
     add_dependencies(${TARGET_IUT${SIMD}} ${TARGET_HEADERS})
     add_dependencies(${TARGET_IUT${SIMD}} ${TARGET_LIBSLEEF})
-    set_target_properties(${TARGET_IUT${SIMD}} PROPERTIES C_STANDARD 99)
+    set_target_properties(${TARGET_IUT${SIMD}} PROPERTIES ${COMMON_TARGET_PROPERTIES})
     add_test_iut(${TARGET_IUT${SIMD}})
     list(APPEND IUT_LIST ${TARGET_IUT${SIMD}})
 
-# The iut programs whose name begins with "iuty" are the iut for the
-# deterministic version of functions. By checking the result of
-# testing with iutysse2, for example, it can be checked that the
-# corresponding deterministic functions passes the accuracy and
-# nonnumber tests.
+    # The iut programs whose names begin with "iuty" are the iut for the
+    # deterministic version of functions. By checking the result of
+    # testing with iutysse2, for example, it can be checked that the
+    # corresponding deterministic functions passes the accuracy and
+    # nonnumber tests.
 
     string(CONCAT IUTYNAME "iuty" ${LCSIMD})
     add_executable(${IUTYNAME} ${IUT_SRC})
@@ -118,9 +132,29 @@ macro(test_extension SIMD)
       ${LIBM} ${LIBRT})
     add_dependencies(${IUTYNAME} ${TARGET_HEADERS})
     add_dependencies(${IUTYNAME} ${TARGET_LIBSLEEF})
-    set_target_properties(${IUTYNAME} PROPERTIES C_STANDARD 99)
+    set_target_properties(${IUTYNAME} PROPERTIES ${COMMON_TARGET_PROPERTIES})
     add_test_iut(${IUTYNAME})
     list(APPEND IUT_LIST ${IUTYNAME})
+
+    # The iut programs whose names begin with "iuti" are the iut for the
+    # inline version of functions.
+
+    if (BUILD_INLINE_HEADERS AND SED_COMMAND)
+      string(CONCAT IUTINAME "iuti" ${LCSIMD})
+      add_executable(${IUTINAME} ${IUT_SRC})
+      target_compile_options(${IUTINAME} PRIVATE ${FLAGS_ENABLE_${SIMD}})
+      target_compile_definitions(${IUTINAME}
+	PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS}
+	USE_INLINE_HEADER="sleefinline_${LCSIMD}.h"
+	MACRO_ONLY_HEADER="macroonly${SIMD}.h"
+	)
+      target_include_directories(${IUTINAME} PRIVATE ${PROJECT_BINARY_DIR}/inline)
+      target_link_libraries(${IUTINAME} ${LIBM} ${LIBRT} ${TARGET_LIBINLINE})
+      add_dependencies(${IUTINAME} ${TARGET_INLINE_HEADERS})
+      set_target_properties(${IUTINAME} PROPERTIES C_STANDARD 99)
+      add_test_iut(${IUTINAME})
+      list(APPEND IUT_LIST ${IUTINAME})
+    endif(BUILD_INLINE_HEADERS AND SED_COMMAND)
 
     if(LIB_MPFR AND NOT ${SIMD} STREQUAL NEON32 AND NOT ${SIMD} STREQUAL NEON32VFPV4 AND NOT MINGW)
       # Build tester2 SIMD
@@ -133,7 +167,7 @@ macro(test_extension SIMD)
               endif(FORCE_AAVPCS)
 	      target_compile_options(${T} PRIVATE ${FLAGS_ENABLE_${SIMD}})
 	      target_compile_definitions(${T} PRIVATE ENABLE_${SIMD}=1 USEMPFR=1 ${COMMON_TARGET_DEFINITIONS})
-	      set_target_properties(${T} PROPERTIES C_STANDARD 99)
+	      set_target_properties(${T} PROPERTIES ${COMMON_TARGET_PROPERTIES})
 	      target_link_libraries(${T} ${TARGET_LIBSLEEF} ${LIB_MPFR} ${LIBM} ${LIBGMP})
 	      add_dependencies(${T} ${TARGET_HEADERS})
 	      add_dependencies(${T} ${TARGET_LIBSLEEF})
@@ -141,14 +175,14 @@ macro(test_extension SIMD)
 		target_include_directories(${T} PRIVATE ${MPFR_INCLUDE_DIR})
 	      endif()
 
-# The tester2 programs whose name begins with "tester2y" are the
-# testing program for the deterministic version of functions.
+	      # The tester2 programs whose name begins with "tester2y" are the
+	      # testing program for the deterministic version of functions.
 
 	      set(T "tester2y${SCSIMD}${P}")
 	      add_executable(${T} tester2simd${P}.c testerutil.c)
 	      target_compile_options(${T} PRIVATE ${FLAGS_ENABLE_${SIMD}})
 	      target_compile_definitions(${T} PRIVATE ENABLE_${SIMD}=1 USEMPFR=1 ${COMMON_TARGET_DEFINITIONS} DETERMINISTIC=1)
-	      set_target_properties(${T} PROPERTIES C_STANDARD 99)
+	      set_target_properties(${T} PROPERTIES ${COMMON_TARGET_PROPERTIES})
 	      target_link_libraries(${T} ${TARGET_LIBSLEEF} ${LIB_MPFR} ${LIBM} ${LIBGMP})
 	      add_dependencies(${T} ${TARGET_HEADERS})
 	      add_dependencies(${T} ${TARGET_LIBSLEEF})
@@ -165,7 +199,7 @@ macro(test_extension SIMD)
       add_executable(${T} tester3.c tester3main.c testerutil.c)
       target_compile_options(${T} PRIVATE ${FLAGS_ENABLE_${SIMD}})
       target_compile_definitions(${T} PRIVATE ${COMMON_TARGET_DEFINITIONS} ${TESTER3_DEFINITIONS_${SIMD}})
-      set_target_properties(${T} PROPERTIES C_STANDARD 99)
+      set_target_properties(${T} PROPERTIES ${COMMON_TARGET_PROPERTIES})
 
       # Enable Vector PCS for Advanced SIMD (if supported)
       if(FORCE_AAVPCS)
@@ -214,7 +248,7 @@ function(add_gnuabi_compatibility_test SIMD MASKED)
     set(GNUABI_COMPATIBILITY_TEST gnuabi_compatibility_${SIMD})
   endif(MASKED)
   add_executable(${GNUABI_COMPATIBILITY_TEST} gnuabi_compatibility.c)
-  set_target_properties(${GNUABI_COMPATIBILITY_TEST} PROPERTIES C_STANDARD 99)
+  set_target_properties(${GNUABI_COMPATIBILITY_TEST} PROPERTIES ${COMMON_TARGET_PROPERTIES})
   target_compile_options(${GNUABI_COMPATIBILITY_TEST}
     PRIVATE ${FLAGS_ENABLE_${SIMD}})
   if (MASKED)
@@ -283,6 +317,7 @@ if(LIB_MPFR AND NOT MINGW)
     set(T "tester2${P}")
     add_executable(${T} tester2${P}.c testerutil.c)
     target_compile_definitions(${T} PRIVATE USEMPFR=1 ${COMMON_TARGET_DEFINITIONS})
+    set_target_properties(${T} PROPERTIES ${COMMON_TARGET_PROPERTIES})
     if (FORCE_AAVPCS)
       target_compile_definitions(${T} PRIVATE ENABLE_AAVPCS=1)
     endif(FORCE_AAVPCS)
@@ -304,7 +339,7 @@ if(LIB_MPFR AND NOT MINGW)
     target_compile_definitions(${TARGET_TESTER}
       PRIVATE USEMPFR=1 ${COMMON_TARGET_DEFINITIONS})
     target_compile_options(${TARGET_TESTER} PRIVATE -Wno-unused-result)
-    set_target_properties(${TARGET_TESTER} PROPERTIES C_STANDARD 99)
+    set_target_properties(${TARGET_TESTER} PROPERTIES ${COMMON_TARGET_PROPERTIES})
     if (MPFR_INCLUDE_DIR)
       target_include_directories(${TARGET_TESTER} PRIVATE ${MPFR_INCLUDE_DIR})
     endif()

@@ -41,8 +41,7 @@ set(QUAD_RENAME_PARAMS_SVE             x sve)
 
 #
 
-set(CMAKE_C_FLAGS ORG_CMAKE_C_FLAGS)
-string(CONCAT CMAKE_C_FLAGS ${SLEEF_C_FLAGS})
+set(CMAKE_C_FLAGS "${ORG_CMAKE_C_FLAGS} ${SLEEF_C_FLAGS}")
 
 # --------------------------------------------------------------------
 # sleefquad.h
@@ -60,7 +59,7 @@ foreach(SIMD ${SLEEFQUAD_SUPPORTED_EXT})
   endif()
 endforeach()
 
-if(MSVC)
+if((MSVC OR MINGW AND WIN32) OR SLEEF_CLANG_ON_WINDOWS)
   string(REPLACE "/" "\\" sleef_footer_input_file "${SLEEFQUAD_ORG_FOOTER}")
   list(APPEND SLEEF_HEADER_COMMANDS COMMAND type ${sleef_footer_input_file} >> ${SLEEFQUAD_INCLUDE_HEADER})
 else()

@@ -1,4 +1,4 @@
-//          Copyright Naoki Shibata 2010 - 2019.
+//   Copyright Naoki Shibata and contributors 2010 - 2020.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -28,6 +28,7 @@ static FILE *OPENTMPFILE() { return tmpfile(); }
 static void CLOSETMPFILE(FILE *fp) { fclose(fp); }
 #else
 #include <Windows.h>
+#include <io.h>
 
 static void FLOCK(FILE *fp) { }
 static void FUNLOCK(FILE *fp) { }

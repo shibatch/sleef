@@ -1,4 +1,4 @@
-//          Copyright Naoki Shibata 2010 - 2019.
+//   Copyright Naoki Shibata and contributors 2010 - 2020.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -8,7 +8,10 @@
 #ifndef __MISC_H__
 #define __MISC_H__
 
+#if !defined(SLEEF_GENHEADER)
 #include <stdint.h>
+#include <string.h>
+#endif
 
 #ifndef M_PI
 #define M_PI 3.141592653589793238462643383279502884
@@ -144,30 +147,32 @@
 #define stringify(s) stringify_(s)
 #define stringify_(s) #s
 
+#if !defined(SLEEF_GENHEADER)
 typedef long double longdouble;
+#endif
 
-#ifndef Sleef_double2_DEFINED
+#if !defined(Sleef_double2_DEFINED) && !defined(SLEEF_GENHEADER)
 #define Sleef_double2_DEFINED
 typedef struct {
   double x, y;
 } Sleef_double2;
 #endif
 
-#ifndef Sleef_float2_DEFINED
+#if !defined(Sleef_float2_DEFINED) && !defined(SLEEF_GENHEADER)
 #define Sleef_float2_DEFINED
 typedef struct {
   float x, y;
 } Sleef_float2;
 #endif
 
-#ifndef Sleef_longdouble2_DEFINED
+#if !defined(Sleef_longdouble2_DEFINED) && !defined(SLEEF_GENHEADER)
 #define Sleef_longdouble2_DEFINED
 typedef struct {
   long double x, y;
 } Sleef_longdouble2;
 #endif
 
-#if !defined(Sleef_quad_DEFINED)
+#if !defined(Sleef_quad_DEFINED) && !defined(SLEEF_GENHEADER)
 #define Sleef_quad_DEFINED
 #if defined(ENABLEFLOAT128)
 typedef __float128 Sleef_quad;
@@ -176,7 +181,7 @@ typedef struct { double x, y; } Sleef_quad;
 #endif
 #endif
 
-#if !defined(Sleef_quad1_DEFINED)
+#if !defined(Sleef_quad1_DEFINED) && !defined(SLEEF_GENHEADER)
 #define Sleef_quad1_DEFINED
 typedef union {
   struct {
@@ -186,7 +191,7 @@ typedef union {
 } Sleef_quad1;
 #endif
 
-#if !defined(Sleef_quad2_DEFINED)
+#if !defined(Sleef_quad2_DEFINED) && !defined(SLEEF_GENHEADER)
 #define Sleef_quad2_DEFINED
 typedef union {
   struct {
@@ -196,7 +201,7 @@ typedef union {
 } Sleef_quad2;
 #endif
 
-#if !defined(Sleef_quad4_DEFINED)
+#if !defined(Sleef_quad4_DEFINED) && !defined(SLEEF_GENHEADER)
 #define Sleef_quad4_DEFINED
 typedef union {
   struct {
@@ -206,14 +211,14 @@ typedef union {
 } Sleef_quad4;
 #endif
 
-#if !defined(Sleef_quad8_DEFINED)
+#if !defined(Sleef_quad8_DEFINED) && !defined(SLEEF_GENHEADER)
 #define Sleef_quad8_DEFINED
 typedef union {
   Sleef_quad s[8];
 } Sleef_quad8;
 #endif
 
-#if defined(__ARM_FEATURE_SVE) && !defined(Sleef_quadx_DEFINED)
+#if defined(__ARM_FEATURE_SVE) && !defined(Sleef_quadx_DEFINED) && !defined(SLEEF_GENHEADER)
 #define Sleef_quadx_DEFINED
 typedef union {
   Sleef_quad s[32];
@@ -222,13 +227,11 @@ typedef union {
 
 //
 
-#if defined (__GNUC__) || defined (__clang__) || defined(__INTEL_COMPILER)
+#if (defined (__GNUC__) || defined (__clang__) || defined(__INTEL_COMPILER)) && !defined(_MSC_VER)
 
 #define LIKELY(condition) __builtin_expect(!!(condition), 1)
 #define UNLIKELY(condition) __builtin_expect(!!(condition), 0)
 #define RESTRICT __restrict__
-
-#define INLINE __attribute__((always_inline))
 
 #ifndef __arm__
 #define ALIGNED(x) __attribute__((aligned(x)))
@@ -236,11 +239,21 @@ typedef union {
 #define ALIGNED(x)
 #endif
 
+#if defined(SLEEF_GENHEADER)
+
+#define INLINE SLEEF_ALWAYS_INLINE
+#define EXPORT SLEEF_INLINE
+#define CONST SLEEF_CONST
+#define NOEXPORT
+
+#else // #if defined(SLEEF_GENHEADER)
+
 #ifndef __INTEL_COMPILER
 #define CONST const
 #else
 #define CONST
 #endif
+#define INLINE __attribute__((always_inline))
 
 #if defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__)
 #ifndef SLEEF_STATIC_LIBS
@@ -254,6 +267,8 @@ typedef union {
 #define EXPORT __attribute__((visibility("default")))
 #define NOEXPORT __attribute__ ((visibility ("hidden")))
 #endif // #if defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__)
+
+#endif // #if defined(SLEEF_GENHEADER)
 
 #define SLEEF_NAN __builtin_nan("")
 #define SLEEF_NANf __builtin_nanf("")
@@ -270,7 +285,7 @@ typedef union {
 #define SLEEF_NANq (SLEEF_INFINITYq - SLEEF_INFINITYq)
 #endif
 
-#elif defined(_MSC_VER)
+#elif defined(_MSC_VER) // #if (defined (__GNUC__) || defined (__clang__) || defined(__INTEL_COMPILER)) && !defined(_MSC_VER)
 
 #define INLINE __forceinline
 #define CONST
@@ -287,7 +302,7 @@ typedef union {
 #define NOEXPORT
 #endif
 
-#if (defined(__GNUC__) || defined(__CLANG__)) && (defined(__i386__) || defined(__x86_64__))
+#if (defined(__GNUC__) || defined(__CLANG__)) && (defined(__i386__) || defined(__x86_64__)) && !defined(SLEEF_GENHEADER)
 #include <x86intrin.h>
 #endif
 
@@ -316,7 +331,7 @@ typedef union {
 #endif
 #endif
 
-#endif // defined(_MSC_VER)
+#endif // #elif defined(_MSC_VER) // #if (defined (__GNUC__) || defined (__clang__) || defined(__INTEL_COMPILER)) && !defined(_MSC_VER)
 
 #if !defined(__linux__)
 #define isinff(x) ((x) == SLEEF_INFINITYf || (x) == -SLEEF_INFINITYf)

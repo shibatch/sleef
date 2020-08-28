@@ -1,10 +1,14 @@
-//          Copyright Naoki Shibata 2010 - 2019.
+//   Copyright Naoki Shibata and contributors 2010 - 2020.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef __SLEEF_H__
 #define __SLEEF_H__
+
+#define SLEEF_VERSION_MAJOR @SLEEF_VERSION_MAJOR@
+#define SLEEF_VERSION_MINOR @SLEEF_VERSION_MINOR@
+#define SLEEF_VERSION_PATCHLEVEL @SLEEF_VERSION_PATCHLEVEL@
 
 #include <stddef.h>
 #include <stdint.h>
@@ -15,9 +19,12 @@
 #define CONST
 #endif
 
-#if defined(__AVX2__) || defined(__aarch64__) || defined(__arm__) || defined(__powerpc64__)
+#if defined(__AVX2__) || defined(__aarch64__) || defined(__arm__) || defined(__powerpc64__) || defined(__zarch__)
 #ifndef FP_FAST_FMA
 #define FP_FAST_FMA
+#endif
+#ifndef FP_FAST_FMAF
+#define FP_FAST_FMAF
 #endif
 #endif
 
@@ -52,6 +59,20 @@
 
 #if defined(__ARM_FEATURE_SVE)
 #include <arm_sve.h>
+#endif
+
+#if defined(__VSX__)
+#include <altivec.h>
+#endif
+
+#if defined(__VX__) && defined(__VEC__)
+#ifndef SLEEF_VECINTRIN_H_INCLUDED
+#include <vecintrin.h>
+#define SLEEF_VECINTRIN_H_INCLUDED
+#endif
+typedef __vector double SLEEF_VECTOR_DOUBLE;
+typedef __vector float  SLEEF_VECTOR_FLOAT;
+typedef __vector int    SLEEF_VECTOR_INT;
 #endif
 
 //
@@ -189,6 +210,7 @@ IMPORT CONST double Sleef_nextafter(double, double);
 IMPORT CONST double Sleef_frfrexp(double);
 IMPORT CONST int Sleef_expfrexp(double);
 IMPORT CONST double Sleef_fmod(double, double);
+IMPORT CONST double Sleef_remainder(double, double);
 IMPORT CONST Sleef_double2 Sleef_modf(double);
 
 IMPORT CONST double Sleef_lgamma_u10(double);
@@ -267,6 +289,7 @@ IMPORT CONST float Sleef_nextafterf(float, float);
 IMPORT CONST float Sleef_frfrexpf(float);
 IMPORT CONST int Sleef_expfrexpf(float);
 IMPORT CONST float Sleef_fmodf(float, float);
+IMPORT CONST float Sleef_remainderf(float, float);
 IMPORT CONST Sleef_float2 Sleef_modff(float);
 
 IMPORT CONST float Sleef_lgammaf_u10(float);

@@ -1,4 +1,4 @@
-//          Copyright Naoki Shibata 2010 - 2019.
+//   Copyright Naoki Shibata and contributors 2010 - 2020.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -35,7 +35,7 @@ EXPORT uint64_t Sleef_currentTimeMicros() {
 #else // #if defined(__MINGW32__) || defined(__MINGW64__) || defined(_MSC_VER)
 #include <time.h>
 #include <unistd.h>
-#ifdef __FreeBSD__
+#if defined(__FreeBSD__) || defined(__OpenBSD__)
 #include <stdlib.h>
 #else
 #include <malloc.h>

@@ -1,11 +1,11 @@
-//          Copyright Naoki Shibata 2010 - 2019.
+//   Copyright Naoki Shibata and contributors 2010 - 2020.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
 #if CONFIG == 1 || CONFIG == 2
 
-#ifndef __AVX512F__
+#if !defined(__AVX512F__) && !defined(SLEEF_GENHEADER)
 #error Please specify -mavx512f.
 #endif
 
@@ -14,22 +14,32 @@
 #endif
 
 #define ENABLE_DP
+//@#define ENABLE_DP
 #define LOG2VECTLENDP 3
+//@#define LOG2VECTLENDP 3
 #define VECTLENDP (1 << LOG2VECTLENDP)
+//@#define VECTLENDP (1 << LOG2VECTLENDP)
 
 #define ENABLE_SP
+//@#define ENABLE_SP
 #define LOG2VECTLENSP (LOG2VECTLENDP+1)
+//@#define LOG2VECTLENSP (LOG2VECTLENDP+1)
 #define VECTLENSP (1 << LOG2VECTLENSP)
+//@#define VECTLENSP (1 << LOG2VECTLENSP)
 
 #if CONFIG == 1
 #define ENABLE_FMA_DP
+//@#define ENABLE_FMA_DP
 #define ENABLE_FMA_SP
-#define SPLIT_KERNEL
+//@#define ENABLE_FMA_SP
 #endif
 
 #define FULL_FP_ROUNDING
+//@#define FULL_FP_ROUNDING
 #define ACCURATE_SQRT
+//@#define ACCURATE_SQRT
 
+#if !defined(SLEEF_GENHEADER)
 #if defined(_MSC_VER)
 #include <intrin.h>
 #else
@@ -38,6 +48,7 @@
 
 #include <stdint.h>
 #include "misc.h"
+#endif // #if !defined(SLEEF_GENHEADER)
 
 typedef __m512i vmask;
 typedef __mmask16 vopmask;
@@ -54,11 +65,13 @@ typedef struct {
 
 //
 
+#if !defined(SLEEF_GENHEADER)
+
 #ifndef __SLEEF_H__
 void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
 #endif
 
-static int cpuSupportsAVX512F() {
+static INLINE int cpuSupportsAVX512F() {
     int32_t reg[4];
     Sleef_x86CpuID(reg, 7, 0);
     return (reg[1] & (1 << 16)) != 0;
@@ -81,6 +94,8 @@ static INLINE int vavailability_i(int name) {
 #define ISANAME "AVX512FNOFMA"
 #define DFTPRIORITY 0
 #endif
+
+#endif // #if !defined(SLEEF_GENHEADER)
 
 static INLINE void vprefetch_v_p(const void *ptr) { _mm_prefetch(ptr, _MM_HINT_T0); }
 
@@ -136,17 +151,11 @@ static INLINE vdouble vcast_vd_vi(vint vi) { return _mm512_cvtepi32_pd(vi); }
 static INLINE vint vcast_vi_i(int i) { return _mm256_set1_epi32(i); }
 
 static INLINE vdouble vtruncate_vd_vd(vdouble vd) {
-  __m256d hi = _mm512_extractf64x4_pd(vd, 1), lo = _mm512_extractf64x4_pd(vd, 0);
-  hi = _mm256_round_pd(hi, _MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC);
-  lo = _mm256_round_pd(lo, _MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC);
-  return _mm512_insertf64x4(_mm512_castpd256_pd512(lo), hi, 1);
+  return _mm512_roundscale_pd(vd, _MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC);
 }
 
 static INLINE vdouble vrint_vd_vd(vdouble vd) {
-  __m256d hi = _mm512_extractf64x4_pd(vd, 1), lo = _mm512_extractf64x4_pd(vd, 0);
-  hi = _mm256_round_pd(hi, _MM_FROUND_TO_NEAREST_INT |_MM_FROUND_NO_EXC);
-  lo = _mm256_round_pd(lo, _MM_FROUND_TO_NEAREST_INT |_MM_FROUND_NO_EXC);
-  return _mm512_insertf64x4(_mm512_castpd256_pd512(lo), hi, 1);
+  return _mm512_roundscale_pd(vd, _MM_FROUND_TO_NEAREST_INT |_MM_FROUND_NO_EXC);
 }
 
 static INLINE vint2 vcastu_vi2_vi(vint vi) {
@@ -224,6 +233,9 @@ static INLINE vint vxor_vi_vi_vi(vint x, vint y) { return _mm256_xor_si256(x, y)
 #define vsll_vi_vi_i(x, c) _mm256_slli_epi32(x, c)
 #define vsrl_vi_vi_i(x, c) _mm256_srli_epi32(x, c)
 #define vsra_vi_vi_i(x, c) _mm256_srai_epi32(x, c)
+//@#define vsll_vi_vi_i(x, c) _mm256_slli_epi32(x, c)
+//@#define vsrl_vi_vi_i(x, c) _mm256_srli_epi32(x, c)
+//@#define vsra_vi_vi_i(x, c) _mm256_srai_epi32(x, c)
 
 static INLINE vint veq_vi_vi_vi(vint x, vint y) { return _mm256_cmpeq_epi32(x, y); }
 static INLINE vint vgt_vi_vi_vi(vint x, vint y) { return _mm256_cmpgt_epi32(x, y); }
@@ -296,6 +308,8 @@ static INLINE vfloat vgetmant_vf_vf(vfloat d) { return _mm512_getmant_ps(d, _MM_
 
 #define vfixup_vd_vd_vd_vi2_i(a, b, c, imm) _mm512_fixupimm_pd((a), (b), (c), (imm))
 #define vfixup_vf_vf_vf_vi2_i(a, b, c, imm) _mm512_fixupimm_ps((a), (b), (c), (imm))
+//@#define vfixup_vd_vd_vd_vi2_i(a, b, c, imm) _mm512_fixupimm_pd((a), (b), (c), (imm))
+//@#define vfixup_vf_vf_vf_vi2_i(a, b, c, imm) _mm512_fixupimm_ps((a), (b), (c), (imm))
 
 #if defined(_MSC_VER)
 // This function is needed when debugging on MSVC.
@@ -340,19 +354,11 @@ static INLINE vint2 vrint_vi2_vf(vfloat vf) { return vcast_vi2_vm(_mm512_cvtps_e
 static INLINE vint2 vtruncate_vi2_vf(vfloat vf) { return vcast_vi2_vm(_mm512_cvttps_epi32(vf)); }
 
 static INLINE vfloat vtruncate_vf_vf(vfloat vd) {
-  __m256 hi = _mm256_castpd_ps(_mm512_extractf64x4_pd(vreinterpret_vd_vf(vd), 1));
-  __m256 lo = _mm256_castpd_ps(_mm512_extractf64x4_pd(vreinterpret_vd_vf(vd), 0));
-  hi = _mm256_round_ps(hi, _MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC);
-  lo = _mm256_round_ps(lo, _MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC);
-  return vreinterpret_vf_vd(_mm512_insertf64x4(_mm512_castpd256_pd512(_mm256_castps_pd(lo)), _mm256_castps_pd(hi), 1));
+  return _mm512_roundscale_ps(vd, _MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC);
 }
  
 static INLINE vfloat vrint_vf_vf(vfloat vd) {
-  __m256 hi = _mm256_castpd_ps(_mm512_extractf64x4_pd(vreinterpret_vd_vf(vd), 1));
-  __m256 lo = _mm256_castpd_ps(_mm512_extractf64x4_pd(vreinterpret_vd_vf(vd), 0));
-  hi = _mm256_round_ps(hi, _MM_FROUND_TO_NEAREST_INT |_MM_FROUND_NO_EXC);
-  lo = _mm256_round_ps(lo, _MM_FROUND_TO_NEAREST_INT |_MM_FROUND_NO_EXC);
-  return vreinterpret_vf_vd(_mm512_insertf64x4(_mm512_castpd256_pd512(_mm256_castps_pd(lo)), _mm256_castps_pd(hi), 1));
+  return _mm512_roundscale_ps(vd, _MM_FROUND_TO_NEAREST_INT |_MM_FROUND_NO_EXC);
 }
 
 static INLINE vfloat vadd_vf_vf_vf(vfloat x, vfloat y) { return _mm512_add_ps(x, y); }
@@ -408,6 +414,9 @@ static INLINE vint2 vandnot_vi2_vo_vi2(vopmask o, vint2 m) {
 #define vsll_vi2_vi2_i(x, c) _mm512_slli_epi32(x, c)
 #define vsrl_vi2_vi2_i(x, c) _mm512_srli_epi32(x, c)
 #define vsra_vi2_vi2_i(x, c) _mm512_srai_epi32(x, c)
+//@#define vsll_vi2_vi2_i(x, c) _mm512_slli_epi32(x, c)
+//@#define vsrl_vi2_vi2_i(x, c) _mm512_srli_epi32(x, c)
+//@#define vsra_vi2_vi2_i(x, c) _mm512_srai_epi32(x, c)
 static INLINE vopmask veq_vo_vi2_vi2(vint2 x, vint2 y) { return _mm512_cmpeq_epi32_mask(x, y); }
 static INLINE vopmask vgt_vo_vi2_vi2(vint2 x, vint2 y) { return _mm512_cmpgt_epi32_mask(x, y); }
 
@@ -536,8 +545,6 @@ static INLINE void vsscatter2_v_p_i_i_vf(float *ptr, int offset, int step, vfloa
 
 //
 
-typedef Sleef_quad8 vargquad;
-
 static INLINE vmask2 vinterleave_vm2_vm2(vmask2 v) {
   return (vmask2) { _mm512_unpacklo_epi64(v.x, v.y), _mm512_unpackhi_epi64(v.x, v.y) };
 }
@@ -567,45 +574,25 @@ static INLINE vmask vuninterleave_vm_vm(vmask vm) {
 }
 
 static vmask2 vloadu_vm2_p(void *p) {
-  vmask2 vm2 = {
-    vloadu_vi2_p((int32_t *)p),
-    vloadu_vi2_p((int32_t *)((uint8_t *)p + sizeof(vmask)))
-  };
+  vmask2 vm2;
+  memcpy(&vm2, p, VECTLENDP * 16);
   return vm2;
 }
 
-static void vstoreu_v_p_vm2(void *p, vmask2 vm2) {
-  vstoreu_v_p_vi2((int32_t *)p, vcast_vi2_vm(vm2.x));
-  vstoreu_v_p_vi2((int32_t *)((uint8_t *)p + sizeof(vmask)), vcast_vi2_vm(vm2.y));
-}
+#if !defined(SLEEF_GENHEADER)
+typedef Sleef_quad8 vargquad;
 
 static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
-#if !defined(_MSC_VER)
-  union {
-    vargquad aq;
-    vmask2 vm2;
-  } c;
-  c.aq = aq;
-  return vinterleave_vm2_vm2(c.vm2);
-#else
   return vinterleave_vm2_vm2(vloadu_vm2_p(&aq));
-#endif
 }
 
 static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
-#if !defined(_MSC_VER)
-  union {
-    vargquad aq;
-    vmask2 vm2;
-  } c;
-  c.vm2 = vuninterleave_vm2_vm2(vm2);
-  return c.aq;
-#else
-  vargquad a;
-  vstoreu_v_p_vm2(&a, vuninterleave_vm2_vm2(vm2));
-  return a;
-#endif
+  vm2 = vuninterleave_vm2_vm2(vm2);
+  vargquad aq;
+  memcpy(&aq, &vm2, VECTLENDP * 16);
+  return aq;
 }
+#endif // #if !defined(SLEEF_GENHEADER)
 
 #ifdef __INTEL_COMPILER
 static INLINE int vtestallzeros_i_vo64(vopmask g) { return _mm512_mask2int(g) == 0; }
@@ -621,6 +608,8 @@ static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) { return _mm512_cmp_epi64
 
 #define vsll64_vm_vm_i(x, c) _mm512_slli_epi64(x, c)
 #define vsrl64_vm_vm_i(x, c) _mm512_srli_epi64(x, c)
+//@#define vsll64_vm_vm_i(x, c) _mm512_slli_epi64(x, c)
+//@#define vsrl64_vm_vm_i(x, c) _mm512_srli_epi64(x, c)
 
 static INLINE vmask vcast_vm_vi(vint vi) {
   return _mm512_cvtepi32_epi64(vi);

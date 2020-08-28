@@ -23,6 +23,7 @@
     <ul class="disc">
       <li><a href="compile.xhtml#cmake">About CMake</a></li>
       <li><a href="compile.xhtml#linux">Compiling and installing library on Linux</a></li>
+      <li><a href="compile.xhtml#debian">Installing library on Debian and Ubuntu</a></li>
       <li><a href="compile.xhtml#MSVC">Compiling library with Microsoft Visual C++</a></li>
       <li><a href="compile.xhtml#hello">Compiling and running "Hello SLEEF"</a></li>
       <li><a href="compile.xhtml#import">Importing SLEEF into your project</a></li>
@@ -179,10 +180,10 @@ optimized, or any other special set of flags.
 <h2 id="linux">Compiling and installing library on Linux</h2>
 
 <p class="noindent">
-  You need to install libmpfr and OpenMP(libmpfr is only required to
-  build the tester, and it is not linked to the library). In order to
-  build the library, please change the directory to sleef-3.X and run
-  the following commands.
+  In order to build the library, you need to install libmpfr and
+  OpenMP(libmpfr is only required to build the tester, and it is not
+  linked to the library). Please change the directory to sleef-3.X and
+  run the following commands.
 
   <pre class="command">$ mkdir build
 $ cd build
@@ -196,6 +197,17 @@ $ sudo make install</pre>
   In order to uninstall the libraries and headers, run the following command.
 
   <pre class="command" style="margin-top: 1em;">$ sudo xargs rm -v &lt; install_manifest.txt</pre>
+</p>
+
+<h2 id="debian">Installing library on Debian and Ubuntu</h2>
+
+<p class="noindent">
+  If you are using Debian 10(Buster), Ubuntu 18.04(Bionic) or later,
+  then you can install the library through apt-get. The DFT library
+  will not be installed.
+
+  <pre class="command">$ sudo apt-get update
+$ sudo apt-get install libsleef-dev</pre>
 </p>
 
 <h2 id="MSVC">Compiling library with Microsoft Visual C++</h2>
@@ -305,7 +317,7 @@ $ &block;</pre>
 </p>
 
 <p class="footer">
-  Copyright &copy; 2018 SLEEF Project.<br/>
+  Copyright &copy; <!--YEAR--> SLEEF Project.<br/>
   SLEEF is open-source software and is distributed under the Boost Software License, Version 1.0.
 </p>
 

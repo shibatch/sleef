@@ -1,4 +1,4 @@
-//          Copyright Naoki Shibata 2010 - 2019.
+//   Copyright Naoki Shibata and contributors 2010 - 2020.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -11,14 +11,6 @@
 #include <inttypes.h>
 #include <assert.h>
 
-#if defined(POWER64_UNDEF_USE_EXTERN_INLINES)
-// This is a workaround required to cross compile for PPC64 binaries
-#include <features.h>
-#ifdef __USE_EXTERN_INLINES
-#undef __USE_EXTERN_INLINES
-#endif
-#endif
-
 #include <math.h>
 
 #if defined(_MSC_VER)
@@ -30,73 +22,139 @@
 #endif
 
 #include "misc.h"
+
+#if !defined(USE_INLINE_HEADER)
 #include "sleef.h"
+#else // #if !defined(USE_INLINE_HEADER)
+#include <stddef.h>
+#include <stdint.h>
+#include <float.h>
+#include <limits.h>
+
+#if defined(__AVX2__) || defined(__aarch64__) || defined(__arm__) || defined(__powerpc64__)
+#ifndef FP_FAST_FMA
+#define FP_FAST_FMA
+#endif
+#endif
+
+#if defined(_MSC_VER) && !defined(__STDC__)
+#define __STDC__ 1
+#endif
+
+#if (defined(__GNUC__) || defined(__CLANG__)) && (defined(__i386__) || defined(__x86_64__))
+#include <x86intrin.h>
+#endif
+
+#if (defined(_MSC_VER))
+#include <intrin.h>
+#endif
+
+#if defined(__ARM_NEON__) || defined(__ARM_NEON)
+#include <arm_neon.h>
+#endif
+
+#if defined(__ARM_FEATURE_SVE)
+#include <arm_sve.h>
+#endif
+
+#if defined(__VSX__)
+#include <altivec.h>
+#endif
+
+#if defined(__VX__)
+#include <vecintrin.h>
+#endif
+
+#define SLEEF_ALWAYS_INLINE inline
+#define SLEEF_INLINE
+#define SLEEF_CONST
+#include USE_INLINE_HEADER
+#include MACRO_ONLY_HEADER
+
+#endif // #if !defined(USE_INLINE_HEADER)
+
 #include "testerutil.h"
 
 #define DORENAME
 
 #ifdef ENABLE_SSE2
+#include "renamesse2.h"
+#if !defined(USE_INLINE_HEADER)
 #define CONFIG 2
 #include "helpersse2.h"
-#include "renamesse2.h"
 typedef Sleef___m128d_2 vdouble2;
 typedef Sleef___m128_2 vfloat2;
+#endif
 #endif
 
 #ifdef ENABLE_SSE4
+#include "renamesse4.h"
+#if !defined(USE_INLINE_HEADER)
 #define CONFIG 4
 #include "helpersse2.h"
-#include "renamesse4.h"
 typedef Sleef___m128d_2 vdouble2;
 typedef Sleef___m128_2 vfloat2;
+#endif
 #endif
 
 #ifdef ENABLE_AVX
+#include "renameavx.h"
+#if !defined(USE_INLINE_HEADER)
 #define CONFIG 1
 #include "helperavx.h"
-#include "renameavx.h"
 typedef Sleef___m256d_2 vdouble2;
 typedef Sleef___m256_2 vfloat2;
+#endif
 #endif
 
 #ifdef ENABLE_FMA4
+#include "renamefma4.h"
+#if !defined(USE_INLINE_HEADER)
 #define CONFIG 4
 #include "helperavx.h"
-#include "renamefma4.h"
 typedef Sleef___m256d_2 vdouble2;
 typedef Sleef___m256_2 vfloat2;
+#endif
 #endif
 
 #ifdef ENABLE_AVX2
+#include "renameavx2.h"
+#if !defined(USE_INLINE_HEADER)
 #define CONFIG 1
 #include "helperavx2.h"
-#include "renameavx2.h"
 typedef Sleef___m256d_2 vdouble2;
 typedef Sleef___m256_2 vfloat2;
 #endif
+#endif
 
 #ifdef ENABLE_AVX2128
+#include "renameavx2128.h"
+#if !defined(USE_INLINE_HEADER)
 #define CONFIG 1
 #include "helperavx2_128.h"
-#include "renameavx2128.h"
 typedef Sleef___m128d_2 vdouble2;
 typedef Sleef___m128_2 vfloat2;
 #endif
+#endif
 
 #ifdef ENABLE_AVX512F
+#include "renameavx512f.h"
+#if !defined(USE_INLINE_HEADER)
 #define CONFIG 1
 #include "helperavx512f.h"
-#include "renameavx512f.h"
 typedef Sleef___m512d_2 vdouble2;
 typedef Sleef___m512_2 vfloat2;
 #endif
+#endif
 
 #ifdef ENABLE_AVX512FNOFMA
+#include "renameavx512fnofma.h"
+#if !defined(USE_INLINE_HEADER)
 #define CONFIG 2
 #include "helperavx512f.h"
-#include "renameavx512fnofma.h"
 typedef Sleef___m512d_2 vdouble2;
 typedef Sleef___m512_2 vfloat2;
+#endif
 #endif
 
 #ifdef ENABLE_VECEXT
@@ -112,33 +170,41 @@ typedef Sleef___m512_2 vfloat2;
 #endif
 
 #ifdef ENABLE_NEON32
+#include "renameneon32.h"
+#if !defined(USE_INLINE_HEADER)
 #define CONFIG 1
 #include "helperneon32.h"
-#include "renameneon32.h"
 typedef Sleef_float32x4_t_2 vfloat2;
+#endif
 #endif
 
 #ifdef ENABLE_NEON32VFPV4
+#include "renameneon32vfpv4.h"
+#if !defined(USE_INLINE_HEADER)
 #define CONFIG 4
 #include "helperneon32.h"
-#include "renameneon32vfpv4.h"
 typedef Sleef_float32x4_t_2 vfloat2;
+#endif
 #endif
 
 #ifdef ENABLE_ADVSIMD
+#include "renameadvsimd.h"
+#if !defined(USE_INLINE_HEADER)
 #define CONFIG 1
 #include "helperadvsimd.h"
-#include "renameadvsimd.h"
 typedef Sleef_float64x2_t_2 vdouble2;
 typedef Sleef_float32x4_t_2 vfloat2;
 #endif
+#endif
 
 #ifdef ENABLE_ADVSIMDNOFMA
+#include "renameadvsimdnofma.h"
+#if !defined(USE_INLINE_HEADER)
 #define CONFIG 2
 #include "helperadvsimd.h"
-#include "renameadvsimdnofma.h"
 typedef Sleef_float64x2_t_2 vdouble2;
 typedef Sleef_float32x4_t_2 vfloat2;
+#endif
 #endif
 
 #ifdef ENABLE_DSP128
@@ -150,21 +216,23 @@ typedef Sleef___m128_2 vfloat2;
 #endif
 
 #ifdef ENABLE_SVE
+#include "renamesve.h"
+#if !defined(USE_INLINE_HEADER)
 #define CONFIG 1
 #include "helpersve.h"
-#ifdef DORENAME
-#include "renamesve.h"
 typedef Sleef_svfloat64_t_2 vdouble2;
 typedef Sleef_svfloat32_t_2 vfloat2;
 #endif
 #endif
 
 #ifdef ENABLE_SVENOFMA
+#include "renamesvenofma.h"
+#if !defined(USE_INLINE_HEADER)
 #define CONFIG 2
 #include "helpersve.h"
-#include "renamesvenofma.h"
 typedef Sleef_svfloat64_t_2 vdouble2;
 typedef Sleef_svfloat32_t_2 vfloat2;
+#endif
 #endif
 
 #ifdef ENABLE_DSP256
@@ -176,70 +244,108 @@ typedef Sleef___m256_2 vfloat2;
 #endif
 
 #ifdef ENABLE_VSX
+#include "renamevsx.h"
+#if !defined(USE_INLINE_HEADER)
 #define CONFIG 1
 #include "helperpower_128.h"
 #include "renamevsx.h"
-typedef Sleef_vector_double_2 vdouble2;
-typedef Sleef_vector_float_2 vfloat2;
+typedef Sleef___vector_double_2 vdouble2;
+typedef Sleef___vector_float_2 vfloat2;
+#endif
 #endif
 
 #ifdef ENABLE_VSXNOFMA
+#include "renamevsxnofma.h"
+#if !defined(USE_INLINE_HEADER)
 #define CONFIG 2
 #include "helperpower_128.h"
 #include "renamevsxnofma.h"
-typedef Sleef_vector_double_2 vdouble2;
-typedef Sleef_vector_float_2 vfloat2;
+typedef Sleef___vector_double_2 vdouble2;
+typedef Sleef___vector_float_2 vfloat2;
+#endif
+#endif
+
+#ifdef ENABLE_ZVECTOR2
+#include "renamezvector2.h"
+#if !defined(USE_INLINE_HEADER)
+#define CONFIG 140
+#include "helpers390x_128.h"
+typedef Sleef_SLEEF_VECTOR_DOUBLE_2 vdouble2;
+typedef Sleef_SLEEF_VECTOR_FLOAT_2 vfloat2;
+#endif
+#endif
+
+#ifdef ENABLE_ZVECTOR2NOFMA
+#include "renamezvector2nofma.h"
+#if !defined(USE_INLINE_HEADER)
+#define CONFIG 141
+#include "helpers390x_128.h"
+typedef Sleef_SLEEF_VECTOR_DOUBLE_2 vdouble2;
+typedef Sleef_SLEEF_VECTOR_FLOAT_2 vfloat2;
+#endif
 #endif
 
 #ifdef ENABLE_PUREC_SCALAR
+#include "renamepurec_scalar.h"
+#if !defined(USE_INLINE_HEADER)
 #define CONFIG 1
 #include "helperpurec_scalar.h"
-#include "renamepurec_scalar.h"
 typedef Sleef_double_2 vdouble2;
 typedef Sleef_float_2 vfloat2;
 #endif
+#endif
 
 #ifdef ENABLE_PURECFMA_SCALAR
+#include "renamepurecfma_scalar.h"
+#if !defined(USE_INLINE_HEADER)
 #define CONFIG 2
 #include "helperpurec_scalar.h"
-#include "renamepurecfma_scalar.h"
 typedef Sleef_double_2 vdouble2;
 typedef Sleef_float_2 vfloat2;
+#endif
 #endif
 
 //
 
 #ifdef ENABLE_DP
-int check_featureDP() {
-  if (vavailability_i(1) == 0) return 0;
+int check_featureDP(double d) {
   double s[VECTLENDP];
   int i;
   for(i=0;i<VECTLENDP;i++) {
-    s[i] = 1.0;
+    s[i] = d;
   }
   vdouble a = vloadu_vd_p(s);
   a = xpow(a, a);
   vstoreu_v_p_vd(s, a);
-  return 1;
+  return s[0] == s[0];
 }
-#else
-int check_featureDP() { return 0; }
+
+#if !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA) || defined(USE_INLINE_HEADER))
+static vdouble vd2getx_vd_vd2(vdouble2 v) { return v.x; }
+static vdouble vd2gety_vd_vd2(vdouble2 v) { return v.y; }
 #endif
+#else // #ifdef ENABLE_DP
+int check_featureDP() { return 0; }
+#endif // #ifdef ENABLE_DP
 
 #ifdef ENABLE_SP
-int check_featureSP() {
-  if (vavailability_i(2) == 0) return 0;
+int check_featureSP(float d) {
   float s[VECTLENSP];
   int i;
   for(i=0;i<VECTLENSP;i++) {
-    s[i] = 1.0;
+    s[i] = d;
   }
   vfloat a = vloadu_vf_p(s);
   a = xpowf(a, a);
   vstoreu_v_p_vf(s, a);
-  return 1;
+  return s[0] == s[0];
 }
-#else
+
+#if !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA) || defined(USE_INLINE_HEADER))
+static vfloat vf2getx_vf_vf2(vfloat2 v) { return v.x; }
+static vfloat vf2gety_vf_vf2(vfloat2 v) { return v.y; }
+#endif
+#else // #ifdef ENABLE_DP
 int check_featureSP() { return 0; }
 #endif
 
@@ -275,8 +381,8 @@ int check_featureSP() { return 0; }
       vdouble2 v;							\
       vdouble a = vloadu_vd_p(s);					\
       v = funcName(a);							\
-      vstoreu_v_p_vd(s, v.x);						\
-      vstoreu_v_p_vd(t, v.y);						\
+      vstoreu_v_p_vd(s, vd2getx_vd_vd2(v));				\
+      vstoreu_v_p_vd(t, vd2gety_vd_vd2(v));				\
       Sleef_double2 d2;							\
       d2.x = s[idx];							\
       d2.y = t[idx];							\
@@ -368,27 +474,27 @@ int check_featureSP() { return 0; }
     }							\
   }
 
-#define func_f2_f(funcStr, funcName) {				\
-    while (startsWith(buf, funcStr " ")) {			\
-      uint32_t u;						\
-      sscanf(buf, funcStr " %x", &u);				\
-      float s[VECTLENSP], t[VECTLENSP];				\
-      memrand(s, sizeof(s));					\
-      memrand(t, sizeof(t));					\
-      int idx = xrand() & (VECTLENSP-1);			\
-      s[idx] = u2f(u);						\
-      vfloat2 v;						\
-      vfloat a = vloadu_vf_p(s);				\
-      v = funcName(a);						\
-      vstoreu_v_p_vf(s, v.x);					\
-      vstoreu_v_p_vf(t, v.y);					\
-      Sleef_float2 d2;						\
-      d2.x = s[idx];						\
-      d2.y = t[idx];						\
-      printf("%x %x\n", f2u(d2.x), f2u(d2.y));			\
-      fflush(stdout);						\
-      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;		\
-    }								\
+#define func_f2_f(funcStr, funcName) {			\
+    while (startsWith(buf, funcStr " ")) {		\
+      uint32_t u;					\
+      sscanf(buf, funcStr " %x", &u);			\
+      float s[VECTLENSP], t[VECTLENSP];			\
+      memrand(s, sizeof(s));				\
+      memrand(t, sizeof(t));				\
+      int idx = xrand() & (VECTLENSP-1);		\
+      s[idx] = u2f(u);					\
+      vfloat2 v;					\
+      vfloat a = vloadu_vf_p(s);			\
+      v = funcName(a);					\
+      vstoreu_v_p_vf(s, vf2getx_vf_vf2(v));		\
+      vstoreu_v_p_vf(t, vf2gety_vf_vf2(v));		\
+      Sleef_float2 d2;					\
+      d2.x = s[idx];					\
+      d2.y = t[idx];					\
+      printf("%x %x\n", f2u(d2.x), f2u(d2.y));		\
+      fflush(stdout);					\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;	\
+    }							\
   }
 
 #define func_f_f_f(funcStr, funcName) {			\
@@ -441,7 +547,9 @@ int do_test(int argc, char **argv) {
     fflush(stdout);
   }
 
+#if !defined(USE_INLINE_HEADER)
   fprintf(stderr, "IUT : %s\n", (const char *)xgetPtrf(0));
+#endif
   fflush(stderr);
   
   char buf[BUFSIZE];
@@ -526,6 +634,7 @@ int do_test(int argc, char **argv) {
     func_d_d_d("fdim", xfdim);
     func_d_d_d("nextafter", xnextafter);
     func_d_d_d("fmod", xfmod);
+    func_d_d_d("remainder", xremainder);
 
     func_d2_d("modf", xmodf);
 
@@ -608,6 +717,7 @@ int do_test(int argc, char **argv) {
     func_f_f_f("fdimf", xfdimf);
     func_f_f_f("nextafterf", xnextafterf);
     func_f_f_f("fmodf", xfmodf);
+    func_f_f_f("remainderf", xremainderf);
 
     func_f2_f("modff", xmodff);
 

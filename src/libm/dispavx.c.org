@@ -1,4 +1,4 @@
-//          Copyright Naoki Shibata 2010 - 2019.
+//   Copyright Naoki Shibata and contributors 2010 - 2020.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -48,7 +48,7 @@ static int cpuSupportsFMA4() {
   if (ret == -1) {
     int32_t reg[4];
     Sleef_x86CpuID(reg, 0x80000001, 0);
-    ret = (reg[3] & (1 << 16)) != 0;
+    ret = (reg[2] & (1 << 16)) != 0;
   }
   return ret;
 }

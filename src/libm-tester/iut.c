@@ -1,4 +1,4 @@
-//          Copyright Naoki Shibata 2010 - 2019.
+//   Copyright Naoki Shibata and contributors 2010 - 2020.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -9,14 +9,6 @@
 #include <string.h>
 #include <inttypes.h>
 #include <assert.h>
-
-#if defined(POWER64_UNDEF_USE_EXTERN_INLINES)
-// This is a workaround required to cross compile for PPC64 binaries
-#include <features.h>
-#ifdef __USE_EXTERN_INLINES
-#undef __USE_EXTERN_INLINES
-#endif
-#endif
 
 #include <math.h>
 
@@ -331,6 +323,11 @@ int main(int argc, char **argv) {
       uint64_t u, v;
       sscanf(buf, "fmod %" PRIx64 " %" PRIx64, &u, &v);
       u = d2u(xfmod(u2d(u), u2d(v)));
+      printf("%" PRIx64 "\n", u);
+    } else if (startsWith(buf, "remainder ")) {
+      uint64_t u, v;
+      sscanf(buf, "remainder %" PRIx64 " %" PRIx64, &u, &v);
+      u = d2u(xremainder(u2d(u), u2d(v)));
       printf("%" PRIx64 "\n", u);
     } else if (startsWith(buf, "fabs ")) {
       uint64_t u;
@@ -702,6 +699,11 @@ int main(int argc, char **argv) {
       uint32_t u, v;
       sscanf(buf, "fmodf %x %x", &u, &v);
       u = f2u(xfmodf(u2f(u), u2f(v)));
+      printf("%x\n", u);
+    } else if (startsWith(buf, "remainderf ")) {
+      uint32_t u, v;
+      sscanf(buf, "remainderf %x %x", &u, &v);
+      u = f2u(xremainderf(u2f(u), u2f(v)));
       printf("%x\n", u);
     } else if (startsWith(buf, "fabsf ")) {
       uint32_t u;

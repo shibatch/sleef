@@ -1,11 +1,11 @@
-//          Copyright Naoki Shibata 2010 - 2019.
+//   Copyright Naoki Shibata and contributors 2010 - 2020.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
 ALIGNED(8192) void dft2f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -19,7 +19,7 @@ ALIGNED(8192) void dft2f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRIC
 
 ALIGNED(8192) void but2f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -35,7 +35,7 @@ ALIGNED(8192) void but2f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const 
 
 ALIGNED(8192) void but2b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -51,7 +51,7 @@ ALIGNED(8192) void but2b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const 
 
 ALIGNED(8192) void tbut2f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -67,7 +67,7 @@ ALIGNED(8192) void tbut2f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const
 
 ALIGNED(8192) void tbut2b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -83,7 +83,7 @@ ALIGNED(8192) void tbut2b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const
 
 ALIGNED(8192) void dft4f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -107,7 +107,7 @@ ALIGNED(8192) void dft4f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRIC
 
 ALIGNED(8192) void dft4b_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -131,7 +131,7 @@ ALIGNED(8192) void dft4b_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRIC
 
 ALIGNED(8192) void but4f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -159,7 +159,7 @@ ALIGNED(8192) void but4f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const 
 
 ALIGNED(8192) void but4b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -187,7 +187,7 @@ ALIGNED(8192) void but4b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const 
 
 ALIGNED(8192) void tbut4f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -215,7 +215,7 @@ ALIGNED(8192) void tbut4f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const
 
 ALIGNED(8192) void tbut4b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -244,7 +244,7 @@ ALIGNED(8192) void tbut4b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const
 #if MAXBUTWIDTH >= 3
 ALIGNED(8192) void dft8f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -290,7 +290,7 @@ ALIGNED(8192) void dft8f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRIC
 
 ALIGNED(8192) void dft8b_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -336,7 +336,7 @@ ALIGNED(8192) void dft8b_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRIC
 
 ALIGNED(8192) void but8f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -390,7 +390,7 @@ ALIGNED(8192) void but8f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const 
 
 ALIGNED(8192) void but8b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -444,7 +444,7 @@ ALIGNED(8192) void but8b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const 
 
 ALIGNED(8192) void tbut8f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -498,7 +498,7 @@ ALIGNED(8192) void tbut8f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const
 
 ALIGNED(8192) void tbut8b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -554,7 +554,7 @@ ALIGNED(8192) void tbut8b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const
 #if MAXBUTWIDTH >= 4
 ALIGNED(8192) void dft16f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -654,7 +654,7 @@ ALIGNED(8192) void dft16f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRI
 
 ALIGNED(8192) void dft16b_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -754,7 +754,7 @@ ALIGNED(8192) void dft16b_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRI
 
 ALIGNED(8192) void but16f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -870,7 +870,7 @@ ALIGNED(8192) void but16f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const
 
 ALIGNED(8192) void but16b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -986,7 +986,7 @@ ALIGNED(8192) void but16b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const
 
 ALIGNED(8192) void tbut16f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -1102,7 +1102,7 @@ ALIGNED(8192) void tbut16f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, cons
 
 ALIGNED(8192) void tbut16b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -1220,7 +1220,7 @@ ALIGNED(8192) void tbut16b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, cons
 #if MAXBUTWIDTH >= 5
 ALIGNED(8192) void dft32f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -1450,7 +1450,7 @@ ALIGNED(8192) void dft32f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRI
 
 ALIGNED(8192) void dft32b_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -1680,7 +1680,7 @@ ALIGNED(8192) void dft32b_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRI
 
 ALIGNED(8192) void but32f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -1942,7 +1942,7 @@ ALIGNED(8192) void but32f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const
 
 ALIGNED(8192) void but32b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -2204,7 +2204,7 @@ ALIGNED(8192) void but32b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const
 
 ALIGNED(8192) void tbut32f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -2466,7 +2466,7 @@ ALIGNED(8192) void tbut32f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, cons
 
 ALIGNED(8192) void tbut32b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -2730,7 +2730,7 @@ ALIGNED(8192) void tbut32b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, cons
 #if MAXBUTWIDTH >= 6
 ALIGNED(8192) void dft64f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -3264,7 +3264,7 @@ ALIGNED(8192) void dft64f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRI
 
 ALIGNED(8192) void dft64b_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -3798,7 +3798,7 @@ ALIGNED(8192) void dft64b_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRI
 
 ALIGNED(8192) void but64f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -4396,7 +4396,7 @@ ALIGNED(8192) void but64f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const
 
 ALIGNED(8192) void but64b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -4994,7 +4994,7 @@ ALIGNED(8192) void but64b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const
 
 ALIGNED(8192) void tbut64f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -5592,7 +5592,7 @@ ALIGNED(8192) void tbut64f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, cons
 
 ALIGNED(8192) void tbut64b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -6194,7 +6194,7 @@ ALIGNED(8192) void tbut64b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, cons
 #if MAXBUTWIDTH >= 7
 ALIGNED(8192) void dft128f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -7418,7 +7418,7 @@ ALIGNED(8192) void dft128f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTR
 
 ALIGNED(8192) void dft128b_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -8642,7 +8642,7 @@ ALIGNED(8192) void dft128b_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTR
 
 ALIGNED(8192) void but128f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -9994,7 +9994,7 @@ ALIGNED(8192) void but128f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, cons
 
 ALIGNED(8192) void but128b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -11346,7 +11346,7 @@ ALIGNED(8192) void but128b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, cons
 
 ALIGNED(8192) void tbut128f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;
@@ -12698,7 +12698,7 @@ ALIGNED(8192) void tbut128f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, con
 
 ALIGNED(8192) void tbut128b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
-  int i;
+  int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
     int i0 = i << LOG2VECWIDTH;

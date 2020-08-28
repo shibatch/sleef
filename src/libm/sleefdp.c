@@ -1,4 +1,4 @@
-//          Copyright Naoki Shibata 2010 - 2019.
+//   Copyright Naoki Shibata and contributors 2010 - 2020.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -624,7 +624,7 @@ static Sleef_double2 atan2k_u1(Sleef_double2 y, Sleef_double2 x) {
   t = ddnormalize_d2_d2(t);
 
   double t2 = t.x * t.x, t4 = t2 * t2, t8 = t4 * t4, t16 = t8 * t8;
-  u = POLY17(t.x, t2, t4, t8, t16,
+  u = POLY16(t.x, t2, t4, t8,
 	     1.06298484191448746607415e-05,
 	     -0.000125620649967286867384336,
 	     0.00070557664296393412389774,
@@ -640,8 +640,8 @@ static Sleef_double2 atan2k_u1(Sleef_double2 y, Sleef_double2 x) {
 	     0.0587946590969581003860434,
 	     -0.0666620884778795497194182,
 	     0.0769225330296203768654095,
-	     -0.0909090442773387574781907,
-	     0.111111108376896236538123);
+	     -0.0909090442773387574781907);
+  u = mla(u, t.x, 0.111111108376896236538123);
   u = mla(u, t.x, -0.142857142756268568062339);
   u = mla(u, t.x, 0.199999999997977351284817);
   u = mla(u, t.x, -0.333333333333317605173818);
@@ -746,17 +746,19 @@ typedef struct {
   int32_t i;
 } ddi_t;
 
+static INLINE CONST double orsign(double x, double y) {
+  return longBitsToDouble(doubleToRawLongBits(x) | (doubleToRawLongBits(y) & (1LL << 63)));
+}
+
 static CONST di_t rempisub(double x) {
   // This function is equivalent to :
-  // di_t ret = { x - round(4 * x) * 0.25, (int32_t)(round(4 * x) - round(x) * 4) };
+  // di_t ret = { x - rint(4 * x) * 0.25, (int32_t)(rint(4 * x) - rint(x) * 4) };
   di_t ret;
-  double fr = x - (double)(1LL << 28) * (int32_t)(x * (1.0 / (1LL << 28)));
-  ret.i = ((7 & ((x > 0 ? 4 : 3) + (int32_t)(fr * 8))) - 3) >> 1;
-  fr = fr - 0.25 * (int32_t)(fr * 4 + mulsign(0.5, x));
-  fr = fabsk(fr) > 0.25 ? (fr - mulsign(0.5, x)) : fr;
-  fr = fabsk(fr) > 1e+10 ? 0 : fr;
-  if (fabsk(x) == 0.12499999999999998612) { fr = x; ret.i = 0; }
-  ret.d = fr;
+  double c = mulsign(1LL << 52, x);
+  double rint4x = fabsk(4*x) > 1LL << 52 ? (4*x) : orsign(mla(4, x, c) - c, x);
+  double rintx  = fabsk(  x) > 1LL << 52 ?   x   : orsign(x + c - c       , x);
+  ret.d = mla(-0.25, rint4x,      x);
+  ret.i = mla(-4   , rintx , rint4x);
   return ret;
 }
 
@@ -1329,7 +1331,7 @@ EXPORT CONST double xtan(double d) {
     ql = rintk(d * (2 * M_1_PI));
     x = mla(ql, -PI_A2*0.5, d);
     x = mla(ql, -PI_B2*0.5, x);
-  } else if (fabsk(d) < 1e+7) {
+  } else if (fabsk(d) < 1e+6) {
     double dqh = trunck(d * ((2 * M_1_PI) / (1 << 24))) * (double)(1 << 24);
     ql = rintk(d * (2 * M_1_PI) - dqh);
 
@@ -2296,13 +2298,8 @@ EXPORT CONST double xround(double d) {
 }
 
 EXPORT CONST double xrint(double d) {
-  double x = d + 0.5;
-  double fr = x - (double)(1LL << 31) * (int32_t)(x * (1.0 / (1LL << 31)));
-  int32_t isodd = (1 & (int32_t)fr) != 0;
-  fr = fr - (int32_t)fr;
-  fr = (fr < 0 || (fr == 0 && isodd)) ? fr+1.0 : fr;
-  x = d == 0.50000000000000011102 ? 0 : x;  // nextafter(0.5, 1)
-  return (xisinf(d) || fabsk(d) >= (double)(1LL << 52)) ? d : copysignk(x - fr, d);
+  double c = mulsign(1LL << 52, d);
+  return fabsk(d) > 1LL << 52 ? d : orsign(d + c - c, d);
 }
 
 EXPORT CONST double xhypot_u05(double x, double y) {
@@ -2408,23 +2405,56 @@ static INLINE CONST double ptrunc(double x) {
 }
 
 EXPORT CONST double xfmod(double x, double y) {
-  double nu = fabsk(x), de = fabsk(y), s = 1, q;
-  if (de < DBL_MIN) { nu *= 1ULL << 54; de *= 1ULL << 54; s = 1.0 / (1ULL << 54); }
-  Sleef_double2 r = dd(nu, 0);
-  double rde = toward0(1.0 / de);
+  double n = fabsk(x), d = fabsk(y), s = 1, q;
+  if (d < DBL_MIN) { n *= 1ULL << 54; d *= 1ULL << 54; s = 1.0 / (1ULL << 54); }
+  Sleef_double2 r = dd(n, 0);
+  double rd = toward0(1.0 / d);
   
-  for(int i=0;i < 21;i++) { // ceil(log2(DBL_MAX) / 51) + 1
-    q = (de+de > r.x && r.x >= de) ? 1 : (toward0(r.x) * rde);
-    r = ddnormalize_d2_d2(ddadd2_d2_d2_d2(r, ddmul_d2_d_d(removelsb(ptrunc(q)), -de)));
-    if (r.x < de) break;
+  for(int i=0;i < 21;i++) { // ceil(log2(DBL_MAX) / 52)
+    q = removelsb(ptrunc(toward0(r.x) * rd));
+    q = (3*d > r.x && r.x > d) ? 2 : q;
+    q = (2*d > r.x && r.x > d) ? 1 : q;
+    q = r.x == d ? (r.y >= 0 ? 1 : 0) : q;
+    r = ddnormalize_d2_d2(ddadd2_d2_d2_d2(r, ddmul_d2_d_d(q, -d)));
+    if (r.x < d) break;
   }
   
   double ret = r.x * s;
-  if (r.x + r.y == de) ret = 0;
+  if (r.x + r.y == d) ret = 0;
   ret = mulsign(ret, x);
-  if (nu < de) ret = x;
-  if (de == 0) ret = SLEEF_NAN;
+  if (n < d) ret = x;
+  if (d == 0) ret = SLEEF_NAN;
   
+  return ret;
+}
+
+static INLINE CONST double rintk2(double d) {
+  double c = mulsign(1LL << 52, d);
+  return fabsk(d) > 1LL << 52 ? d : orsign(d + c - c, d);
+}
+
+EXPORT CONST double xremainder(double x, double y) {
+  double n = fabsk(x), d = fabsk(y), s = 1, q;
+  if (d < DBL_MIN*2) { n *= 1ULL << 54; d *= 1ULL << 54; s = 1.0 / (1ULL << 54); }
+  double rd = 1.0 / d;
+  Sleef_double2 r = dd(n, 0);
+  int qisodd = 0;
+  
+  for(int i=0;i < 21;i++) { // ceil(log2(DBL_MAX) / 52)
+    q = removelsb(rintk2(r.x * rd));
+    if (fabsk(r.x) < 1.5 * d) q = r.x < 0 ? -1 : 1;
+    if (fabsk(r.x) < 0.5 * d || (fabsk(r.x) == 0.5 * d && !qisodd)) q = 0;
+    if (q == 0) break;
+    if (xisinf(q * -d)) q = q + mulsign(-1, r.x);
+    qisodd ^= xisodd(q);
+    r = ddnormalize_d2_d2(ddadd2_d2_d2_d2(r, ddmul_d2_d_d(q, -d)));
+  }
+  
+  double ret = r.x * s;
+  ret = mulsign(ret, x);
+  if (xisinf(y)) ret = xisinf(x) ? SLEEF_NAN : x;
+  if (d == 0) ret = SLEEF_NAN;
+
   return ret;
 }
 
@@ -2621,7 +2651,7 @@ EXPORT CONST double xerfc_u15(double a) {
 }
 
 #ifdef ENABLE_MAIN
-// gcc -w -DENABLE_MAIN -I../common sleefdp.c -lm
+// gcc -w -DENABLE_MAIN -I../common sleefdp.c rempitab.c -lm
 #include <stdlib.h>
 int main(int argc, char **argv) {
   double d1 = atof(argv[1]);

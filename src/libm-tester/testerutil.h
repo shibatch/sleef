@@ -1,4 +1,4 @@
-//          Copyright Naoki Shibata 2010 - 2019.
+//   Copyright Naoki Shibata and contributors 2010 - 2020.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -13,7 +13,7 @@
 
 #define M_PIf ((float)M_PI)
 
-int enableFlushToZero;
+extern int enableFlushToZero;
 double flushToZero(double y);
 
 int isnumber(double x);

@@ -1,4 +1,4 @@
-//          Copyright Naoki Shibata 2010 - 2019.
+//   Copyright Naoki Shibata and contributors 2010 - 2020.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -12,18 +12,23 @@
 #endif
 
 #define ENABLE_SP
+//@#define ENABLE_SP
 #define LOG2VECTLENSP 2
+//@#define LOG2VECTLENSP 2
 #define VECTLENSP (1 << LOG2VECTLENSP)
+//@#define VECTLENSP (1 << LOG2VECTLENSP)
 
 #if CONFIG == 4
 #define ISANAME "AARCH32 NEON-VFPV4"
 #define ENABLE_FMA_SP
+//@#define ENABLE_FMA_SP
 #else
 #define ISANAME "AARCH32 NEON"
 #endif
 #define DFTPRIORITY 10
 
 #define ENABLE_RECSQRT_SP
+//@#define ENABLE_RECSQRT_SP
 
 #include <arm_neon.h>
 #include <stdint.h>
@@ -207,6 +212,9 @@ static INLINE vint2 vandnot_vi2_vo_vi2(vopmask x, vint2 y) { return (vint2)vbicq
 #define vsll_vi2_vi2_i(x, c) vshlq_n_s32(x, c)
 #define vsrl_vi2_vi2_i(x, c) vreinterpretq_s32_u32(vshrq_n_u32(vreinterpretq_u32_s32(x), c))
 #define vsra_vi2_vi2_i(x, c) vshrq_n_s32(x, c)
+//@#define vsll_vi2_vi2_i(x, c) vshlq_n_s32(x, c)
+//@#define vsrl_vi2_vi2_i(x, c) vreinterpretq_s32_u32(vshrq_n_u32(vreinterpretq_u32_s32(x), c))
+//@#define vsra_vi2_vi2_i(x, c) vshrq_n_s32(x, c)
 
 static INLINE vopmask veq_vo_vi2_vi2(vint2 x, vint2 y) { return vceqq_s32(x, y); }
 static INLINE vopmask vgt_vo_vi2_vi2(vint2 x, vint2 y) { return vcgtq_s32(x, y); }

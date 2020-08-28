@@ -1,4 +1,4 @@
-//          Copyright Naoki Shibata 2010 - 2019.
+//   Copyright Naoki Shibata and contributors 2010 - 2020.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -1590,13 +1590,14 @@ EXPORT CONST float xexp10f(float d) {
   s = mlaf(q, -L10Uf, d);
   s = mlaf(q, -L10Lf, s);
   
-  u = +0.2064004987e+0;
-  u = mlaf(u, s, +0.5417877436e+0);
-  u = mlaf(u, s, +0.1171286821e+1);
-  u = mlaf(u, s, +0.2034656048e+1);
-  u = mlaf(u, s, +0.2650948763e+1);
-  u = mlaf(u, s, +0.2302585125e+1);
-  u = dfnormalize_f2_f2(dfadd_f2_f_f2(1, dfmul_f2_f_f(u, s))).x;
+  u = +0.6802555919e-1;
+  u = mlaf(u, s, +0.2078080326e+0);
+  u = mlaf(u, s, +0.5393903852e+0);
+  u = mlaf(u, s, +0.1171245337e+1);
+  u = mlaf(u, s, +0.2034678698e+1);
+  u = mlaf(u, s, +0.2650949001e+1);
+  Sleef_float2 x = dfadd_f2_f2_f(df(2.3025851249694824219, -3.1705172516493593157e-08), u * s);
+  u = dfnormalize_f2_f2(dfadd_f2_f_f2(1, dfmul_f2_f2_f(x, s))).x;
 
   u = ldexp2kf(u, q);
 
@@ -2019,8 +2020,10 @@ EXPORT CONST float xfmodf(float x, float y) {
   float rde = toward0f(1.0f / de);
 
   for(int i=0;i<8;i++) { // ceil(log2(FLT_MAX) / 22)+1
-    q = (de+de > r.x && r.x >= de) ? 1.0f : (toward0f(r.x) * rde);
-    r = dfnormalize_f2_f2(dfadd2_f2_f2_f2(r, dfmul_f2_f_f(ptruncf(q), -de)));
+    q = ptruncf(toward0f(r.x) * rde);
+    q = (3*de > r.x && r.x >= de) ? 2 : q;
+    q = (2*de > r.x && r.x >= de) ? 1 : q;
+    r = dfnormalize_f2_f2(dfadd2_f2_f2_f2(r, dfmul_f2_f_f(q, -de)));
     if (r.x < de) break;
   }
   
@@ -2029,6 +2032,39 @@ EXPORT CONST float xfmodf(float x, float y) {
   ret = mulsignf(ret, x);
   if (nu < de) ret = x;
   if (de == 0) ret = SLEEF_NANf;
+
+  return ret;
+}
+
+static INLINE CONST float rintfk2(float d) {
+  float x = d + 0.5f;
+  int32_t isodd = (1 & (int32_t)x) != 0;
+  float fr = x - (int32_t)x;
+  fr = (fr < 0 || (fr == 0 && isodd)) ? fr+1.0f : fr;
+  return (fabsfk(d) >= (float)(1LL << 23)) ? d : copysignfk(x - fr, d);
+}
+
+EXPORT CONST float xremainderf(float x, float y) {
+  float n = fabsfk(x), d = fabsfk(y), s = 1, q;
+  if (d < FLT_MIN*2) { n *= 1ULL << 25; d *= 1ULL << 25; s = 1.0f / (1ULL << 25); }
+  float rd = 1.0f / d;
+  Sleef_float2 r = df(n, 0);
+  int qisodd = 0;
+
+  for(int i=0;i<8;i++) { // ceil(log2(FLT_MAX) / 22)+1
+    q = rintfk2(r.x * rd);
+    if (fabsfk(r.x) < 1.5f * d) q = r.x < 0 ? -1 : 1;
+    if (fabsfk(r.x) < 0.5f * d || (fabsfk(r.x) == 0.5f * d && !qisodd)) q = 0;
+    if (q == 0) break;
+    if (xisinff(q * -d)) q = q + mulsignf(-1, r.x);
+    qisodd ^= (1 & (int)q) != 0 && fabsfk(q) < (float)(1LL << 24);
+    r = dfnormalize_f2_f2(dfadd2_f2_f2_f2(r, dfmul_f2_f_f(q, -d)));
+  }
+  
+  float ret = r.x * s;
+  ret = mulsignf(ret, x);
+  if (xisinff(y)) ret = xisinff(x) ? SLEEF_NANf : x;
+  if (d == 0) ret = SLEEF_NANf;
 
   return ret;
 }
@@ -2354,7 +2390,7 @@ EXPORT CONST float xerfcf_u15(float a) {
 //
 
 #ifdef ENABLE_MAIN
-// gcc -w -DENABLE_MAIN -I../common sleefsp.c -lm
+// gcc -w -DENABLE_MAIN -I../common sleefsp.c rempitab.c -lm
 #include <stdlib.h>
 int main(int argc, char **argv) {
   float d1 = atof(argv[1]);

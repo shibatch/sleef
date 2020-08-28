@@ -1,4 +1,4 @@
-//          Copyright Naoki Shibata 2010 - 2019.
+//   Copyright Naoki Shibata and contributors 2010 - 2020.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -18,14 +18,26 @@
 #include "testerutil.h"
 
 #ifdef __VSX__
-typedef vector double vector_double;
-typedef vector float  vector_float;
+#include <altivec.h>
+#undef vector
+#undef bool
+typedef __vector double __vector_double;
+typedef __vector float  __vector_float;
+#endif
+
+#if defined(__VX__) && defined(__VEC__)
+#ifndef SLEEF_VECINTRIN_H_INCLUDED
+#include <vecintrin.h>
+#define SLEEF_VECINTRIN_H_INCLUDED
+#endif
+typedef __attribute__((vector_size(16))) double vector_double;
+typedef __attribute__((vector_size(16))) float  vector_float;
 #endif
 
 //
 
-#define XNAN  (((union { long long int u; double d; })  { .u = 0xffffffffffffffffLL }).d)
-#define XNANf (((union { long int u; float d; })  { .u = 0xffffffff }).d)
+#define XNAN  (((union { int64_t u; double d; })  { .u = 0xffffffffffffffffLL }).d)
+#define XNANf (((union { int32_t u; float d; })  { .u = 0xffffffff }).d)
 
 static INLINE double unifyValue(double x) { x = !(x == x) ? XNAN  : x; return x; }
 static INLINE float unifyValuef(float  x) { x = !(x == x) ? XNANf : x; return x; }
@@ -68,22 +80,42 @@ static INLINE svfloat64_t setsvfloat64_t(double d, int r) { double a[svcntd()]; 
 static INLINE double getsvfloat64_t(svfloat64_t v, int r) { double a[svcntd()]; svst1_f64(svptrue_b8(), a, v); return unifyValue(a[r & (svcntd()-1)]); }
 static INLINE svfloat32_t setsvfloat32_t(float d, int r)  { float  a[svcntw()]; memrand(a, sizeof(a)); a[r & (svcntw()-1)] = d; return svld1_f32(svptrue_b8(), a); }
 static INLINE float getsvfloat32_t(svfloat32_t v, int r)  { float  a[svcntw()]; svst1_f32(svptrue_b8(), a, v); return unifyValuef(a[r & (svcntw()-1)]); }
+
+static svfloat64_t vd2getx_vd_vd2(svfloat64x2_t v) { return svget2_f64(v, 0); }
+static svfloat64_t vd2gety_vd_vd2(svfloat64x2_t v) { return svget2_f64(v, 1); }
+static svfloat32_t vf2getx_vf_vf2(svfloat32x2_t v) { return svget2_f32(v, 0); }
+static svfloat32_t vf2gety_vf_vf2(svfloat32x2_t v) { return svget2_f32(v, 1); }
 #endif
 
 #ifdef __VSX__
-static INLINE vector_double setvector_double(double d, int r) { double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return (vector double) ( a[0], a[1] ); }
-static INLINE double getvector_double(vector double v, int r) { double a[2]; return unifyValue(v[r & 1]); }
-static INLINE vector_float setvector_float(float d, int r) { float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return (vector float) ( a[0], a[1], a[2], a[3] ); }
-static INLINE float getvector_float(vector float v, int r) { float a[4]; return unifyValuef(v[r & 3]); }
+static INLINE __vector double set__vector_double(double d, int r) { double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return vec_vsx_ld(0, a); }
+static INLINE double get__vector_double(__vector double v, int r) { double a[2]; vec_vsx_st(v, 0, a); return unifyValue(a[r & 1]); }
+static INLINE __vector float set__vector_float(float d, int r) { float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return vec_vsx_ld(0, a); }
+static INLINE float get__vector_float(__vector float v, int r) { float a[4]; vec_vsx_st(v, 0, a); return unifyValuef(a[r & 3]); }
+#endif
+
+#ifdef __VX__
+static INLINE __attribute__((vector_size(16))) double setSLEEF_VECTOR_DOUBLE(double d, int r) { double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return (__attribute__((vector_size(16))) double) { a[0], a[1] }; }
+static INLINE double getSLEEF_VECTOR_DOUBLE(__attribute__((vector_size(16))) double v, int r) { return unifyValue(v[r & 1]); }
+static INLINE __attribute__((vector_size(16))) float setSLEEF_VECTOR_FLOAT(float d, int r) { float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return (__attribute__((vector_size(16))) float) { a[0], a[1], a[2], a[3] }; }
+static INLINE float getSLEEF_VECTOR_FLOAT(__attribute__((vector_size(16))) float v, int r) { return unifyValuef(v[r & 3]); }
 #endif
 
 //
 
 // ATR = cinz_, NAME = sin, TYPE = d2, ULP = u35, EXT = sse2
 #define FUNC(ATR, NAME, TYPE, ULP, EXT) Sleef_ ## ATR ## NAME ## TYPE ## _ ## ULP ## EXT
-#define TYPE2(TYPE) Sleef_ ## TYPE ## _2
+#define _TYPE2(TYPE) Sleef_ ## TYPE ## _2
+#define TYPE2(TYPE) _TYPE2(TYPE)
 #define SET(TYPE) set ## TYPE
 #define GET(TYPE) get ## TYPE
+
+#ifndef __ARM_FEATURE_SVE
+static DPTYPE vd2getx_vd_vd2(TYPE2(DPTYPE) v) { return v.x; }
+static DPTYPE vd2gety_vd_vd2(TYPE2(DPTYPE) v) { return v.y; }
+static SPTYPE vf2getx_vf_vf2(TYPE2(SPTYPE) v) { return v.x; }
+static SPTYPE vf2gety_vf_vf2(TYPE2(SPTYPE) v) { return v.y; }
+#endif
 
 //
 
@@ -103,13 +135,23 @@ static INLINE float getvector_float(vector float v, int r) { float a[4]; return 
     } else puts((char *)mes);						\
   } while(0)
 
-//
-//  printf("%.10g %.10g\n", arg, GET(TYPE)(vx, r));
+#if defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+#define convertEndianness(ptr, len) do {				\
+  for(int k=0;k<len/2;k++) {						\
+    unsigned char t = ((unsigned char *)ptr)[k];			\
+    ((unsigned char *)ptr)[k] = ((unsigned char *)ptr)[len-1-k];	\
+    ((unsigned char *)ptr)[len-1-k] = t;				\
+  }									\
+  } while(0)
+#else
+#define convertEndianness(ptr, len)
+#endif
 
 #define exec_d_d(ATR, NAME, ULP, TYPE, TSX, EXT, arg) do {		\
     int r = xrand() & 0xffff;						\
     DPTYPE vx = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (arg, r));	\
     double fx = GET(TYPE)(vx, r);					\
+    convertEndianness(&fx, sizeof(double));				\
     MD5_Update(&ctx, &fx, sizeof(double));				\
   } while(0)
 
@@ -138,8 +180,10 @@ static INLINE float getvector_float(vector float v, int r) { float a[4]; return 
 #define exec_d2_d(ATR, NAME, ULP, TYPE, TSX, EXT, arg) do {		\
     int r = xrand() & 0xffff;						\
     TYPE2(TYPE) vx2 = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE)(arg, r)); \
-    double fxx = GET(TYPE)(vx2.x, r), fxy = GET(TYPE)(vx2.y, r);	\
+    double fxx = GET(TYPE)(vd2getx_vd_vd2(vx2), r), fxy = GET(TYPE)(vd2gety_vd_vd2(vx2), r); \
+    convertEndianness(&fxx, sizeof(double));				\
     MD5_Update(&ctx, &fxx, sizeof(double));				\
+    convertEndianness(&fxy, sizeof(double));				\
     MD5_Update(&ctx, &fxy, sizeof(double));				\
   } while(0)
 
@@ -158,6 +202,7 @@ static INLINE float getvector_float(vector float v, int r) { float a[4]; return 
     int r = xrand() & 0xffff;						\
     DPTYPE vx = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (argu, r), SET(TYPE) (argv, r)); \
     double fx = GET(TYPE)(vx, r);					\
+    convertEndianness(&fx, sizeof(double));				\
     MD5_Update(&ctx, &fx, sizeof(double));				\
   } while(0)
 
@@ -178,6 +223,7 @@ static INLINE float getvector_float(vector float v, int r) { float a[4]; return 
     int r = xrand() & 0xffff;						\
     SPTYPE vx = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (arg, r));	\
     float fx = GET(TYPE)(vx, r);					\
+    convertEndianness(&fx, sizeof(float));				\
     MD5_Update(&ctx, &fx, sizeof(float));				\
   } while(0)
 
@@ -204,8 +250,10 @@ static INLINE float getvector_float(vector float v, int r) { float a[4]; return 
 #define exec_f2_f(ATR, NAME, ULP, TYPE, TSX, EXT, arg) do {		\
     int r = xrand() & 0xffff;						\
     TYPE2(TYPE) vx2 = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (arg, r)); \
-    float fxx = GET(TYPE)(vx2.x, r), fxy = GET(TYPE)(vx2.y, r);		\
+    float fxx = GET(TYPE)(vf2getx_vf_vf2(vx2), r), fxy = GET(TYPE)(vf2gety_vf_vf2(vx2), r); \
+    convertEndianness(&fxx, sizeof(float));				\
     MD5_Update(&ctx, &fxx, sizeof(float));				\
+    convertEndianness(&fxy, sizeof(float));				\
     MD5_Update(&ctx, &fxy, sizeof(float));				\
   } while(0)
 
@@ -220,10 +268,12 @@ static INLINE float getvector_float(vector float v, int r) { float a[4]; return 
 
 //
 
+
 #define exec_f_f_f(ATR, NAME, ULP, TYPE, TSX, EXT, argu, argv) do {	\
     int r = xrand() & 0xffff;						\
     SPTYPE vx = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (argu, r), SET(TYPE) (argv, r)); \
     float fx = GET(TYPE)(vx, r);					\
+    convertEndianness(&fx, sizeof(float));				\
     MD5_Update(&ctx, &fx, sizeof(float));				\
   } while(0)
 
@@ -282,7 +332,7 @@ int do_test(int argc, char **argv)
   test_d_d(exp10, u35, -1000, 1000, 200001);
   test_d_d(expm1, u10, -1000, 1000, 200001);
   test_d_d_d(pow, u10, -100, 100, 451, -100, 100, 451);
-  
+
   testu_d_d(cbrt, u10, 1e-14, 1e+14, 100001);
   testu_d_d(cbrt, u10, -1e-14, -1e+14, 100001);
   testu_d_d(cbrt, u35, 1e-14, 1e+14, 100001);
@@ -307,7 +357,7 @@ int do_test(int argc, char **argv)
   test_d_d(asinh, u10, -700, 700, 200001);
   test_d_d(acosh, u10, 1, 700, 200001);
   test_d_d(atanh, u10, -700, 700, 200001);
-  
+
   test_d_d(lgamma, u10, -5000, 5000, 200001);
   test_d_d(tgamma, u10, -10, 10, 200001);
   test_d_d(erf, u10, -100, 100, 200001);
@@ -319,6 +369,7 @@ int do_test(int argc, char **argv)
   test_d_d_d(fmin, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
   test_d_d_d(fdim, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
   test_d_d_d(fmod, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
+  test_d_d_d(remainder, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
   test_d2_d(modf, , -1e+14, 1e+14, 200001);
   test_d_d_d(nextafter, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
 
@@ -354,7 +405,7 @@ int do_test(int argc, char **argv)
   test_f_f(exp10, u35, -1000, 1000, 200001);
   test_f_f(expm1, u10, -1000, 1000, 200001);
   test_f_f_f(pow, u10, -100, 100, 451, -100, 100, 451);
-  
+
   testu_f_f(cbrt, u10, 1e-14, 1e+14, 100001);
   testu_f_f(cbrt, u10, -1e-14, -1e+14, 100001);
   testu_f_f(cbrt, u35, 1e-14, 1e+14, 100001);
@@ -379,7 +430,7 @@ int do_test(int argc, char **argv)
   test_f_f(asinh, u10, -88, 88, 200001);
   test_f_f(acosh, u10, 1, 88, 200001);
   test_f_f(atanh, u10, -88, 88, 200001);
-  
+
   test_f_f(lgamma, u10, -5000, 5000, 200001);
   test_f_f(tgamma, u10, -10, 10, 200001);
   test_f_f(erf, u10, -100, 100, 200001);
@@ -391,6 +442,7 @@ int do_test(int argc, char **argv)
   test_f_f_f(fmin, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
   test_f_f_f(fdim, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
   test_f_f_f(fmod, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
+  test_f_f_f(remainder, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
   test_f2_f(modf, , -1e+14, 1e+14, 200001);
   test_f_f_f(nextafter, , -1e+10, 1e+10, 451, -1e+10, 1e+10, 451);
 

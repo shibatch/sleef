@@ -1,4 +1,4 @@
-//          Copyright Naoki Shibata 2010 - 2019.
+//   Copyright Naoki Shibata and contributors 2010 - 2020.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -10,14 +10,6 @@
 #include <time.h>
 #include <float.h>
 #include <limits.h>
-
-#if defined(POWER64_UNDEF_USE_EXTERN_INLINES)
-// This is a workaround required to cross compile for PPC64 binaries
-#include <features.h>
-#ifdef __USE_EXTERN_INLINES
-#undef __USE_EXTERN_INLINES
-#endif
-#endif
 
 #include <math.h>
 
@@ -922,6 +914,21 @@ int main(int argc,char **argv)
 
       if (fabs((double)d / d2) < 1e+38 && u0 > 0.5) {
 	printf("Pure C fmodf arg=%.20g, %.20g  ulp=%.20g\n", d, d2, u0);
+	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_set_d(frx, d, GMP_RNDN);
+      mpfr_set_d(fry, d2, GMP_RNDN);
+      mpfr_remainder(frx, frx, fry, GMP_RNDN);
+
+      double u0 = countULPsp(t = xremainderf(d, d2), frx);
+      long double c = mpfr_get_ld(frx, GMP_RNDN);
+
+      if (fabs((double)d / d2) < 1e+38 && u0 > 0.5) {
+	printf("Pure C remainderf arg=%.20g, %.20g  ulp=%.20g\n", d, d2, u0);
 	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
 	fflush(stdout); ecnt++;
       }
