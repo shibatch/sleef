@@ -23,6 +23,9 @@ pipeline {
 			 cd build
 			 /usr/local/bin/cmake -GNinja ..
 			 ninja
+			 export OMP_WAIT_POLICY=passive
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         /usr/local/bin/ctest -j `nproc`
 			 '''
             	     }
                 }
