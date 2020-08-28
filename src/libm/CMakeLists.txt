@@ -12,7 +12,7 @@ set(EXT_ENABLE_ALIAS AVX512F ADVSIMD NEON32 VSX ZVECTOR2)
 # File generated for the headers
 set(SLEEF_ORG_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/sleeflibm_header.h.org)
 set(SLEEF_ORG_FOOTER ${CMAKE_CURRENT_SOURCE_DIR}/sleeflibm_footer.h.org)
-set(SLEEF_INCLUDE_HEADER ${CMAKE_BINARY_DIR}/include/sleef.h)
+set(SLEEF_INCLUDE_HEADER ${sleef_BINARY_DIR}/include/sleef.h)
 
 configure_file(${SLEEF_ORG_HEADER} ${SLEEF_INCLUDE_HEADER})
 
