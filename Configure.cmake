@@ -2,12 +2,11 @@ include(CheckCCompilerFlag)
 include(CheckCSourceCompiles)
 include(CheckTypeSize)
 
-# Some toolchains require explicit linking of the libraries following.
-find_library(LIB_MPFR mpfr)
-find_library(LIBM m)
-find_library(LIBGMP gmp)
-find_library(LIBRT rt)
-find_library(LIBFFTW3 fftw3)
+if (BUILD_STATIC_TEST_BINS)
+  set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+  set(BUILD_SHARED_LIBS OFF)
+  set(CMAKE_EXE_LINKER_FLAGS "-static")
+endif()
 
 if (NOT CMAKE_CROSSCOMPILING AND NOT SLEEF_FORCE_FIND_PACKAGE_SSL)
   find_package(OpenSSL)
@@ -32,25 +31,38 @@ if (ENFORCE_TESTER3 AND NOT SLEEF_OPENSSL_FOUND)
   message(FATAL_ERROR "ENFORCE_TESTER3 is specified and OpenSSL not found")
 endif()
 
-if (LIB_MPFR)
-  find_path(MPFR_INCLUDE_DIR
-    NAMES mpfr.h
-    ONLY_CMAKE_FIND_ROOT_PATH)
-endif(LIB_MPFR)
+if (NOT (RUNNING_ON_APPVEYOR AND SLEEF_CLANG_ON_WINDOWS))
+  # We rely on Cygwin tools in order to test the builds on
+  # appveyor. However, if we try to link these libraries, cmake finds
+  # the Cygwin version of libraries, which causes errors.
+  
+  # Some toolchains require explicit linking of the libraries following.
+  find_library(LIB_MPFR mpfr)
+  find_library(LIBM m)
+  find_library(LIBGMP gmp)
+  find_library(LIBRT rt)
+  find_library(LIBFFTW3 fftw3)
 
-if (LIBFFTW3)
-  find_path(FFTW3_INCLUDE_DIR
-    NAMES fftw3.h
-    ONLY_CMAKE_FIND_ROOT_PATH)
-endif(LIBFFTW3)
+  if (LIB_MPFR)
+    find_path(MPFR_INCLUDE_DIR
+      NAMES mpfr.h
+      ONLY_CMAKE_FIND_ROOT_PATH)
+  endif(LIB_MPFR)
 
-if (NOT LIBM)
-  set(LIBM "")
-endif()
+  if (LIBFFTW3)
+    find_path(FFTW3_INCLUDE_DIR
+      NAMES fftw3.h
+      ONLY_CMAKE_FIND_ROOT_PATH)
+  endif(LIBFFTW3)
 
-if (NOT LIBRT)
-  set(LIBRT "")
-endif()
+  if (NOT LIBM)
+    set(LIBM "")
+  endif()
+
+  if (NOT LIBRT)
+    set(LIBRT "")
+  endif()
+endif(NOT (RUNNING_ON_APPVEYOR AND SLEEF_CLANG_ON_WINDOWS))
 
 # The library currently supports the following SIMD architectures
 set(SLEEF_SUPPORTED_EXTENSIONS
@@ -58,6 +70,7 @@ set(SLEEF_SUPPORTED_EXTENSIONS
   ADVSIMD ADVSIMDNOFMA SVE SVENOFMA                     # Aarch64
   NEON32 NEON32VFPV4                                    # Aarch32
   VSX VSXNOFMA                                          # PPC64
+  ZVECTOR2 ZVECTOR2NOFMA		                # IBM Z
   PUREC_SCALAR PURECFMA_SCALAR                          # Generic type
   CACHE STRING "List of SIMD architectures supported by libsleef."
   )
@@ -201,6 +214,27 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
   set(TESTER3_DEFINITIONS_VSX      ATR=finz_ DPTYPE=__vector_double SPTYPE=__vector_float DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vsx)
   set(TESTER3_DEFINITIONS_VSXNOFMA ATR=cinz_ DPTYPE=__vector_double SPTYPE=__vector_float DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vsxnofma)
 
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "s390x")
+  set(SLEEF_ARCH_S390X ON CACHE INTERNAL "True for IBM Z architecture.")
+
+  set(SLEEF_HEADER_LIST
+    ZVECTOR_
+    ZVECTOR2
+    ZVECTOR2NOFMA
+    PUREC_SCALAR
+    PURECFMA_SCALAR
+  )
+
+  set(HEADER_PARAMS_ZVECTOR_      finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__)
+  set(HEADER_PARAMS_ZVECTOR2      finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ zvector2)
+  set(HEADER_PARAMS_ZVECTOR2NOFMA cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ zvector2nofma)
+  set(ALIAS_PARAMS_ZVECTOR2_DP  2 "__vector double" "__vector int" - zvector2)
+  set(ALIAS_PARAMS_ZVECTOR2_SP -4 "__vector float"  "__vector int" - zvector2)
+
+  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-march=z14;-mzvector")
+
+  set(TESTER3_DEFINITIONS_ZVECTOR2      ATR=finz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=zvector2)
+  set(TESTER3_DEFINITIONS_ZVECTOR2NOFMA ATR=cinz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=zvector2nofma)
 endif()
 
 command_arguments(HEADER_PARAMS_PUREC_SCALAR    cinz_ 1 1 double float int32_t int32_t __STDC__ purec)
@@ -230,6 +264,8 @@ command_arguments(RENAME_PARAMS_NEON32          cinz_ 2 4 neon)
 command_arguments(RENAME_PARAMS_NEON32VFPV4     finz_ 2 4 neonvfpv4)
 command_arguments(RENAME_PARAMS_VSX             finz_ 2 4 vsx)
 command_arguments(RENAME_PARAMS_VSXNOFMA        cinz_ 2 4 vsxnofma)
+command_arguments(RENAME_PARAMS_ZVECTOR2             finz_ 2 4 zvector2)
+command_arguments(RENAME_PARAMS_ZVECTOR2NOFMA        cinz_ 2 4 zvector2nofma)
 command_arguments(RENAME_PARAMS_PUREC_SCALAR    cinz_ 1 1 purec)
 command_arguments(RENAME_PARAMS_PURECFMA_SCALAR finz_ 1 1 purecfma)
 # The vector length parameters in SVE, for SP and DP, are chosen for
@@ -286,6 +322,11 @@ set(CLANG_FLAGS_ENABLE_SVENOFMA "-march=armv8-a+sve")
 # PPC64
 set(CLANG_FLAGS_ENABLE_VSX "-mcpu=power8")
 set(CLANG_FLAGS_ENABLE_VSXNOFMA "-mcpu=power8")
+# IBM z
+set(CLANG_FLAGS_ENABLE_ZVECTOR2 "-march=z14;-mzvector")
+set(CLANG_FLAGS_ENABLE_ZVECTOR2NOFMA "-march=z14;-mzvector")
+
+set(FLAGS_OTHERS "")
 
 # All variables storing compiler flags should be prefixed with FLAGS_
 if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
@@ -294,7 +335,7 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
   set(FLAGS_FASTMATH "-ffast-math")
 
   # Without the options below, gcc generates calls to libm
-  set(FLAGS_NO_ERRNO "-fno-math-errno -fno-trapping-math")
+  string(CONCAT FLAGS_OTHERS "-fno-math-errno -fno-trapping-math")
   
   # Intel vector extensions.
   foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
@@ -310,6 +351,33 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
     string(CONCAT FLAGS_WALL ${FLAGS_WALL} " -Wno-psabi")
     set(FLAGS_ENABLE_NEON32 "-mfpu=neon")
   endif(CMAKE_C_COMPILER_ID MATCHES "GNU")
+
+  if(CMAKE_C_COMPILER_ID MATCHES "Clang" AND ENABLE_LTO)
+    if (NOT LLVM_AR_COMMAND)
+      find_program(LLVM_AR_COMMAND "llvm-ar")
+    endif()
+    if (LLVM_AR_COMMAND)
+      SET(CMAKE_AR ${LLVM_AR_COMMAND})
+      SET(CMAKE_C_ARCHIVE_CREATE "<CMAKE_AR> rcs <TARGET> <LINK_FLAGS> <OBJECTS>")
+      SET(CMAKE_C_ARCHIVE_FINISH "true")
+    endif(LLVM_AR_COMMAND)
+    string(CONCAT FLAGS_OTHERS "-flto=thin")
+  endif(CMAKE_C_COMPILER_ID MATCHES "Clang" AND ENABLE_LTO)
+
+  # Flags for generating inline headers
+  set(FLAG_PREPROCESS "-E")
+  set(FLAG_PRESERVE_COMMENTS "-C")
+  set(FLAG_INCLUDE "-I")
+  set(FLAG_DEFINE "-D")
+
+  if (SLEEF_CLANG_ON_WINDOWS)
+    # The following line is required to prevent clang from displaying
+    # many warnings. Clang on Windows references MSVC header files,
+    # which have deprecation and security attributes for many
+    # functions.
+
+    string(CONCAT FLAGS_WALL ${FLAGS_WALL} " -D_CRT_SECURE_NO_WARNINGS -Wno-deprecated-declarations")
+  endif()
 elseif(MSVC)
   # Intel vector extensions.
   if (CMAKE_CL_64)
@@ -327,7 +395,13 @@ elseif(MSVC)
   set(FLAGS_ENABLE_AVX512FNOFMA /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /D__AVX512F__ /arch:AVX2)
   set(FLAGS_ENABLE_PURECFMA_SCALAR /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /arch:AVX2)
   set(FLAGS_WALL "/D_CRT_SECURE_NO_WARNINGS")
+
   set(FLAGS_NO_ERRNO "")
+
+  set(FLAG_PREPROCESS "/E")
+  set(FLAG_PRESERVE_COMMENTS "/C")
+  set(FLAG_INCLUDE "/I")
+  set(FLAG_DEFINE "/D")
 elseif(CMAKE_C_COMPILER_ID MATCHES "Intel")
   set(FLAGS_ENABLE_SSE2 "-msse2")
   set(FLAGS_ENABLE_SSE4 "-msse4.1")
@@ -337,17 +411,24 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "Intel")
   set(FLAGS_ENABLE_AVX512F "-xCOMMON-AVX512")
   set(FLAGS_ENABLE_AVX512FNOFMA "-xCOMMON-AVX512")
   set(FLAGS_ENABLE_PURECFMA_SCALAR "-march=core-avx2")
+  set(FLAGS_ENABLE_FMA4 "-msse2")  # This is a dummy flag
   set(FLAGS_STRICTMATH "-fp-model strict -Qoption,cpp,--extended_float_type")
   set(FLAGS_FASTMATH "-fp-model fast=2 -Qoption,cpp,--extended_float_type")
   set(FLAGS_WALL "-fmax-errors=3 -Wall -Wno-unused -Wno-attributes")
+
   set(FLAGS_NO_ERRNO "")
+
+  set(FLAG_PREPROCESS "-E")
+  set(FLAG_PRESERVE_COMMENTS "-C")
+  set(FLAG_INCLUDE "-I")
+  set(FLAG_DEFINE "-D")
 endif()
 
-set(SLEEF_C_FLAGS "${FLAGS_WALL} ${FLAGS_STRICTMATH} ${FLAGS_NO_ERRNO}")
+set(SLEEF_C_FLAGS "${FLAGS_WALL} ${FLAGS_STRICTMATH} ${FLAGS_OTHERS}")
 if(CMAKE_C_COMPILER_ID MATCHES "GNU" AND CMAKE_C_COMPILER_VERSION VERSION_GREATER 6.99)
-  set(DFT_C_FLAGS "${FLAGS_WALL}")
+  set(DFT_C_FLAGS "${FLAGS_WALL} ${FLAGS_OTHERS}")
 else()
-  set(DFT_C_FLAGS "${FLAGS_WALL} ${FLAGS_FASTMATH}")
+  set(DFT_C_FLAGS "${FLAGS_WALL} ${FLAGS_FASTMATH} ${FLAGS_OTHERS}")
 endif()
 
 if (CMAKE_SYSTEM_PROCESSOR MATCHES "^i.86$" AND CMAKE_C_COMPILER_ID MATCHES "GNU")
@@ -363,7 +444,7 @@ if(CYGWIN OR MINGW)
   set(DFT_C_FLAGS "${DFT_C_FLAGS} -fno-asynchronous-unwind-tables")
 endif()
 
-if(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64" AND CMAKE_C_COMPILER_ID MATCHES "GNU" AND CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL 10.0 AND CMAKE_C_COMPILER_VERSION VERSION_LESS_EQUAL 10.1)
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64" AND CMAKE_C_COMPILER_ID MATCHES "GNU" AND CMAKE_C_COMPILER_VERSION VERSION_GREATER 9.3 AND CMAKE_C_COMPILER_VERSION VERSION_LESS 10.2)
   set(SLEEF_C_FLAGS "${SLEEF_C_FLAGS} -fno-shrink-wrap -fno-tree-vrp")
   set(DFT_C_FLAGS "${DFT_C_FLAGS} -fno-shrink-wrap -fno-tree-vrp")
 endif()
@@ -416,7 +497,7 @@ option(DISABLE_SSE2 "Disable SSE2" OFF)
 option(ENFORCE_SSE2 "Build fails if SSE2 is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_X86 AND NOT DISABLE_SSE2)
-  set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_SSE2})
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_SSE2})
   CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
   #include <intrin.h>
@@ -438,7 +519,7 @@ option(DISABLE_SSE4 "Disable SSE4" OFF)
 option(ENFORCE_SSE4 "Build fails if SSE4 is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_X86 AND NOT DISABLE_SSE4)
-  set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_SSE4})
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_SSE4})
   CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
   #include <intrin.h>
@@ -460,7 +541,7 @@ option(ENFORCE_AVX "Disable AVX" OFF)
 option(ENFORCE_AVX "Build fails if AVX is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_X86 AND NOT DISABLE_AVX)
-  set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX})
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX})
   CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
   #include <intrin.h>
@@ -482,7 +563,7 @@ option(DISABLE_FMA4 "Disable FMA4" OFF)
 option(ENFORCE_FMA4 "Build fails if FMA4 is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_X86 AND NOT DISABLE_FMA4)
-  set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_FMA4})
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_FMA4})
   CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
   #include <intrin.h>
@@ -504,7 +585,7 @@ option(DISABLE_AVX2 "Disable AVX2" OFF)
 option(ENFORCE_AVX2 "Build fails if AVX2 is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_X86 AND NOT DISABLE_AVX2)
-  set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX2})
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX2})
   CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
   #include <intrin.h>
@@ -531,7 +612,7 @@ option(DISABLE_AVX512F "Disable AVX512F" OFF)
 option(ENFORCE_AVX512F "Build fails if AVX512F is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_X86 AND NOT DISABLE_AVX512F)
-  set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX512F})
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX512F})
   CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
   #include <intrin.h>
@@ -563,7 +644,7 @@ option(DISABLE_SVE "Disable SVE" OFF)
 option(ENFORCE_SVE "Build fails if SVE is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_AARCH64 AND NOT DISABLE_SVE)
-  set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_SVE})
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_SVE})
   CHECK_C_SOURCE_COMPILES("
   #include <arm_sve.h>
   int main() {
@@ -585,7 +666,7 @@ option(DISABLE_VSX "Disable VSX" OFF)
 option(ENFORCE_VSX "Build fails if VSX is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_PPC64 AND NOT DISABLE_VSX)
-  set (CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_VSX})
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_VSX})
   CHECK_C_SOURCE_COMPILES("
   #include <altivec.h>
   #ifndef __LITTLE_ENDIAN__
@@ -607,6 +688,30 @@ endif()
 
 if (ENFORCE_VSX AND NOT COMPILER_SUPPORTS_VSX)
   message(FATAL_ERROR "ENFORCE_VSX is specified and that feature is disabled or not supported by the compiler")
+endif()
+
+# IBM Z
+
+option(DISABLE_ZVECTOR2 "Disable ZVECTOR2" OFF)
+option(ENFORCE_ZVECTOR2 "Build fails if ZVECTOR2 is not supported by the compiler" OFF)
+
+if(SLEEF_ARCH_S390X AND NOT DISABLE_ZVECTOR2)
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_ZVECTOR2}")
+  CHECK_C_SOURCE_COMPILES("
+  #include <vecintrin.h>
+  int main() {
+    __vector float d;
+    d = vec_sqrt(d);
+  }"
+    COMPILER_SUPPORTS_ZVECTOR2)
+
+  if(COMPILER_SUPPORTS_ZVECTOR2)
+    set(COMPILER_SUPPORTS_ZVECTOR2NOFMA 1)
+  endif()
+endif()
+
+if (ENFORCE_ZVECTOR2 AND NOT COMPILER_SUPPORTS_ZVECTOR2)
+  message(FATAL_ERROR "ENFORCE_ZVECTOR2 is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # OpenMP
@@ -656,6 +761,7 @@ CHECK_C_SOURCE_COMPILES("
 if (COMPILER_SUPPORTS_WEAK_ALIASES AND
     NOT CMAKE_SYSTEM_PROCESSOR MATCHES "arm" AND
     NOT CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64" AND
+    NOT SLEEF_CLANG_ON_WINDOWS AND
     NOT MINGW AND BUILD_GNUABI_LIBS)
   set(ENABLE_GNUABI ${COMPILER_SUPPORTS_WEAK_ALIASES})
 endif()
@@ -707,6 +813,10 @@ if (NOT SVE_VECTOR_BITS)
   set(SVE_VECTOR_BITS 128)
 endif()
 
+#
+
+find_program(SED_COMMAND sed)
+
 ##
 
 if(SLEEF_SHOW_ERROR_LOG)
@@ -716,16 +826,13 @@ if(SLEEF_SHOW_ERROR_LOG)
   endif()
 endif(SLEEF_SHOW_ERROR_LOG)
 
-# Detect if cmake is running on Travis
-string(COMPARE NOTEQUAL "" "$ENV{TRAVIS}" RUNNING_ON_TRAVIS)
-
-if (${RUNNING_ON_TRAVIS} AND CMAKE_C_COMPILER_ID MATCHES "Clang")
+if (RUNNING_ON_TRAVIS AND CMAKE_C_COMPILER_ID MATCHES "Clang")
   message(STATUS "Travis bug workaround turned on")
   set(COMPILER_SUPPORTS_OPENMP FALSE)   # Workaround for https://github.com/travis-ci/travis-ci/issues/8613
   set(COMPILER_SUPPORTS_FLOAT128 FALSE) # Compilation on unroll_0_vecextqp.c does not finish on Travis
 endif()
 
-if (MSVC)
+if (MSVC OR SLEEF_CLANG_ON_WINDOWS)
   set(COMPILER_SUPPORTS_OPENMP FALSE)   # At this time, OpenMP is not supported on MSVC
 endif()
 

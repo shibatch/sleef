@@ -49,17 +49,14 @@ matrix:
       addons:
         apt:
           packages:
-            - gcc-8
-      env:
-        - LABEL="arm64-gcc"
-    - os: linux
-      arch: arm64
-      addons:
-        apt:
-          packages:
             - clang-8
       env:
         - LABEL="arm64-clang"
+    - os: linux
+      services: docker
+      env:
+        - LABEL="armhf-gcc"
+        - ENABLE_DOCKER="true"
     - arch: ppc64le
       dist: bionic
       env:
@@ -71,9 +68,26 @@ matrix:
       env:
         - LABEL=common
         - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
+    - arch: s390x
+      dist: bionic
+      env:
+        - LABEL=common
+        - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
+    - os: linux
+      arch: s390x
+      compiler: clang-8
+      addons:
+        apt:
+          packages:
+            - clang-8
+      env:
+        - LABEL="common"
+        - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
 
 before_install:
      - export PATH=$PATH:/usr/bin
+     - if [[ -x /bin/true ]]; then LD_SHOW_AUXV=1 /bin/true; fi
+     - sed '/^ *$/q' /proc/cpuinfo || true
      - cd ${TRAVIS_BUILD_DIR}
      - chmod +x ${TRAVIS_BUILD_DIR}/travis/*.sh
      - if [[ "${ENABLE_DOCKER}" == "true" ]]; then ${TRAVIS_BUILD_DIR}/travis/setupdocker.sh; fi

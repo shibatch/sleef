@@ -5,7 +5,7 @@
 
 #if CONFIG == 1 || CONFIG == 2
 
-#ifndef __AVX512F__
+#if !defined(__AVX512F__) && !defined(SLEEF_GENHEADER)
 #error Please specify -mavx512f.
 #endif
 
@@ -14,22 +14,32 @@
 #endif
 
 #define ENABLE_DP
+//@#define ENABLE_DP
 #define LOG2VECTLENDP 3
+//@#define LOG2VECTLENDP 3
 #define VECTLENDP (1 << LOG2VECTLENDP)
+//@#define VECTLENDP (1 << LOG2VECTLENDP)
 
 #define ENABLE_SP
+//@#define ENABLE_SP
 #define LOG2VECTLENSP (LOG2VECTLENDP+1)
+//@#define LOG2VECTLENSP (LOG2VECTLENDP+1)
 #define VECTLENSP (1 << LOG2VECTLENSP)
+//@#define VECTLENSP (1 << LOG2VECTLENSP)
 
 #if CONFIG == 1
 #define ENABLE_FMA_DP
+//@#define ENABLE_FMA_DP
 #define ENABLE_FMA_SP
-#define SPLIT_KERNEL
+//@#define ENABLE_FMA_SP
 #endif
 
 #define FULL_FP_ROUNDING
+//@#define FULL_FP_ROUNDING
 #define ACCURATE_SQRT
+//@#define ACCURATE_SQRT
 
+#if !defined(SLEEF_GENHEADER)
 #if defined(_MSC_VER)
 #include <intrin.h>
 #else
@@ -38,6 +48,7 @@
 
 #include <stdint.h>
 #include "misc.h"
+#endif // #if !defined(SLEEF_GENHEADER)
 
 typedef __m512i vmask;
 typedef __mmask16 vopmask;
@@ -53,6 +64,8 @@ typedef struct {
 } vmask2;
 
 //
+
+#if !defined(SLEEF_GENHEADER)
 
 #ifndef __SLEEF_H__
 void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
@@ -81,6 +94,8 @@ static INLINE int vavailability_i(int name) {
 #define ISANAME "AVX512FNOFMA"
 #define DFTPRIORITY 0
 #endif
+
+#endif // #if !defined(SLEEF_GENHEADER)
 
 static INLINE void vprefetch_v_p(const void *ptr) { _mm_prefetch(ptr, _MM_HINT_T0); }
 
@@ -218,6 +233,9 @@ static INLINE vint vxor_vi_vi_vi(vint x, vint y) { return _mm256_xor_si256(x, y)
 #define vsll_vi_vi_i(x, c) _mm256_slli_epi32(x, c)
 #define vsrl_vi_vi_i(x, c) _mm256_srli_epi32(x, c)
 #define vsra_vi_vi_i(x, c) _mm256_srai_epi32(x, c)
+//@#define vsll_vi_vi_i(x, c) _mm256_slli_epi32(x, c)
+//@#define vsrl_vi_vi_i(x, c) _mm256_srli_epi32(x, c)
+//@#define vsra_vi_vi_i(x, c) _mm256_srai_epi32(x, c)
 
 static INLINE vint veq_vi_vi_vi(vint x, vint y) { return _mm256_cmpeq_epi32(x, y); }
 static INLINE vint vgt_vi_vi_vi(vint x, vint y) { return _mm256_cmpgt_epi32(x, y); }
@@ -290,6 +308,8 @@ static INLINE vfloat vgetmant_vf_vf(vfloat d) { return _mm512_getmant_ps(d, _MM_
 
 #define vfixup_vd_vd_vd_vi2_i(a, b, c, imm) _mm512_fixupimm_pd((a), (b), (c), (imm))
 #define vfixup_vf_vf_vf_vi2_i(a, b, c, imm) _mm512_fixupimm_ps((a), (b), (c), (imm))
+//@#define vfixup_vd_vd_vd_vi2_i(a, b, c, imm) _mm512_fixupimm_pd((a), (b), (c), (imm))
+//@#define vfixup_vf_vf_vf_vi2_i(a, b, c, imm) _mm512_fixupimm_ps((a), (b), (c), (imm))
 
 #if defined(_MSC_VER)
 // This function is needed when debugging on MSVC.
@@ -394,6 +414,9 @@ static INLINE vint2 vandnot_vi2_vo_vi2(vopmask o, vint2 m) {
 #define vsll_vi2_vi2_i(x, c) _mm512_slli_epi32(x, c)
 #define vsrl_vi2_vi2_i(x, c) _mm512_srli_epi32(x, c)
 #define vsra_vi2_vi2_i(x, c) _mm512_srai_epi32(x, c)
+//@#define vsll_vi2_vi2_i(x, c) _mm512_slli_epi32(x, c)
+//@#define vsrl_vi2_vi2_i(x, c) _mm512_srli_epi32(x, c)
+//@#define vsra_vi2_vi2_i(x, c) _mm512_srai_epi32(x, c)
 static INLINE vopmask veq_vo_vi2_vi2(vint2 x, vint2 y) { return _mm512_cmpeq_epi32_mask(x, y); }
 static INLINE vopmask vgt_vo_vi2_vi2(vint2 x, vint2 y) { return _mm512_cmpgt_epi32_mask(x, y); }
 
@@ -522,8 +545,6 @@ static INLINE void vsscatter2_v_p_i_i_vf(float *ptr, int offset, int step, vfloa
 
 //
 
-typedef Sleef_quad8 vargquad;
-
 static INLINE vmask2 vinterleave_vm2_vm2(vmask2 v) {
   return (vmask2) { _mm512_unpacklo_epi64(v.x, v.y), _mm512_unpackhi_epi64(v.x, v.y) };
 }
@@ -558,6 +579,9 @@ static vmask2 vloadu_vm2_p(void *p) {
   return vm2;
 }
 
+#if !defined(SLEEF_GENHEADER)
+typedef Sleef_quad8 vargquad;
+
 static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
   return vinterleave_vm2_vm2(vloadu_vm2_p(&aq));
 }
@@ -568,6 +592,7 @@ static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
   memcpy(&aq, &vm2, VECTLENDP * 16);
   return aq;
 }
+#endif // #if !defined(SLEEF_GENHEADER)
 
 #ifdef __INTEL_COMPILER
 static INLINE int vtestallzeros_i_vo64(vopmask g) { return _mm512_mask2int(g) == 0; }
@@ -583,6 +608,8 @@ static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) { return _mm512_cmp_epi64
 
 #define vsll64_vm_vm_i(x, c) _mm512_slli_epi64(x, c)
 #define vsrl64_vm_vm_i(x, c) _mm512_srli_epi64(x, c)
+//@#define vsll64_vm_vm_i(x, c) _mm512_slli_epi64(x, c)
+//@#define vsrl64_vm_vm_i(x, c) _mm512_srli_epi64(x, c)
 
 static INLINE vmask vcast_vm_vi(vint vi) {
   return _mm512_cvtepi32_epi64(vi);

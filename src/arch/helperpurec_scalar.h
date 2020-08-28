@@ -3,10 +3,15 @@
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
+#if !defined(SLEEF_GENHEADER)
 #include <stdint.h>
+#endif
 
 #ifndef ENABLE_BUILTIN_MATH
+
+#if !defined(SLEEF_GENHEADER)
 #include <math.h>
+#endif
 
 #define SQRT sqrt
 #define SQRTF sqrtf
@@ -30,29 +35,37 @@
 
 #endif
 
+#if !defined(SLEEF_GENHEADER)
 #include "misc.h"
+#endif
 
 #ifndef CONFIG
 #error CONFIG macro not defined
 #endif
 
 #define ENABLE_DP
+//@#define ENABLE_DP
 #define ENABLE_SP
+//@#define ENABLE_SP
 
 #if CONFIG == 2
 #define ENABLE_FMA_DP
+//@#define ENABLE_FMA_DP
 #define ENABLE_FMA_SP
+//@#define ENABLE_FMA_SP
 
-#if defined(__AVX2__) || defined(__aarch64__) || defined(__arm__) || defined(__powerpc64__)
+#if defined(__AVX2__) || defined(__aarch64__) || defined(__arm__) || defined(__powerpc64__) || defined(__zarch__)
 #ifndef FP_FAST_FMA
 #define FP_FAST_FMA
+//@#define FP_FAST_FMA
 #endif
 #ifndef FP_FAST_FMAF
 #define FP_FAST_FMAF
+//@#define FP_FAST_FMAF
 #endif
 #endif
 
-#if !defined(FP_FAST_FMA) || !defined(FP_FAST_FMAF)
+#if (!defined(FP_FAST_FMA) || !defined(FP_FAST_FMAF)) && !defined(SLEEF_GENHEADER)
 #error FP_FAST_FMA or FP_FAST_FMAF not defined
 #endif
 #define ISANAME "Pure C scalar with FMA"
@@ -62,14 +75,20 @@
 #endif // #if CONFIG == 2
 
 #define LOG2VECTLENDP 0
+//@#define LOG2VECTLENDP 0
 #define VECTLENDP (1 << LOG2VECTLENDP)
+//@#define VECTLENDP (1 << LOG2VECTLENDP)
 #define LOG2VECTLENSP 0
+//@#define LOG2VECTLENSP 0
 #define VECTLENSP (1 << LOG2VECTLENSP)
+//@#define VECTLENSP (1 << LOG2VECTLENSP)
 
 #define ACCURATE_SQRT
+//@#define ACCURATE_SQRT
 
 #if defined(__SSE4_1__) || defined(__aarch64__)
 #define FULL_FP_ROUNDING
+//@#define FULL_FP_ROUNDING
 #endif
 
 #define DFTPRIORITY LOG2VECTLENDP
@@ -290,8 +309,13 @@ static INLINE vfloat vtruncate_vf_vf(vfloat vd) { return vcast_vf_vi2(vtruncate_
 static INLINE vfloat vcast_vf_f(float f) { return f; }
 static INLINE vmask vreinterpret_vm_vf(vfloat vf) { union { vfloat vf; vmask vm; } cnv; cnv.vf = vf; return cnv.vm; }
 static INLINE vfloat vreinterpret_vf_vm(vmask vm) { union { vfloat vf; vmask vm; } cnv; cnv.vm = vm; return cnv.vf; }
+#if defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+static INLINE vfloat vreinterpret_vf_vi2(vint2 vi) { union { vfloat vf[2]; vint2 vi2; } cnv; cnv.vi2 = vi; return cnv.vf[1]; }
+static INLINE vint2 vreinterpret_vi2_vf(vfloat vf) { union { vfloat vf[2]; vint2 vi2; } cnv; cnv.vi2 = 0; cnv.vf[1] = vf; return cnv.vi2; }
+#else
 static INLINE vfloat vreinterpret_vf_vi2(vint2 vi) { union { vfloat vf; vint2 vi2; } cnv; cnv.vi2 = vi; return cnv.vf; }
 static INLINE vint2 vreinterpret_vi2_vf(vfloat vf) { union { vfloat vf; vint2 vi2; } cnv; cnv.vi2 = 0; cnv.vf = vf; return cnv.vi2; }
+#endif
 
 static INLINE vfloat vadd_vf_vf_vf(vfloat x, vfloat y) { return x + y; }
 static INLINE vfloat vsub_vf_vf_vf(vfloat x, vfloat y) { return x - y; }
@@ -299,7 +323,7 @@ static INLINE vfloat vmul_vf_vf_vf(vfloat x, vfloat y) { return x * y; }
 static INLINE vfloat vdiv_vf_vf_vf(vfloat x, vfloat y) { return x / y; }
 static INLINE vfloat vrec_vf_vf   (vfloat x)           { return 1 / x; }
 
-static INLINE vfloat vabs_vf_vf(vfloat x) { versatileVector v = { .f = x }; v.x &= 0x7fffffff; return v.f; }
+static INLINE vfloat vabs_vf_vf(vfloat x) { versatileVector v = { .f = x }; v.i[0] &= 0x7fffffff; return v.f; }
 static INLINE vfloat vneg_vf_vf(vfloat x) { return -x; }
 
 static INLINE vfloat vmax_vf_vf_vf(vfloat x, vfloat y) { return x > y ? x : y; }
@@ -329,7 +353,7 @@ static INLINE vopmask vge_vo_vf_vf(vfloat x, vfloat y)  { return x >= y ? ~(uint
 
 static INLINE vint2 vadd_vi2_vi2_vi2(vint2 x, vint2 y) { versatileVector v = { .i2 = x }, w = { .i2 = y }; v.i[0] += w.i[0]; v.i[1] += w.i[1]; return v.i2; }
 static INLINE vint2 vsub_vi2_vi2_vi2(vint2 x, vint2 y) { versatileVector v = { .i2 = x }, w = { .i2 = y }; v.i[0] -= w.i[0]; v.i[1] -= w.i[1]; return v.i2; }
-static INLINE vint2 vneg_vi2_vi2(vint2 x)              { versatileVector v = { .i2 = x }; v.i[0] = -v.i[0]; return v.i2; }
+static INLINE vint2 vneg_vi2_vi2(vint2 x)              { versatileVector v = { .i2 = x }; v.i[0] = -v.i[0]; v.i[1] = -v.i[1]; return v.i2; }
 
 static INLINE vint2 vand_vi2_vi2_vi2(vint2 x, vint2 y)    { return x & y; }
 static INLINE vint2 vandnot_vi2_vi2_vi2(vint2 x, vint2 y) { return y & ~x; }
@@ -376,8 +400,6 @@ static INLINE void vstream_v_p_vf(float *ptr, vfloat v) { *ptr = v; }
 
 //
 
-typedef Sleef_quad1 vargquad;
-
 static INLINE vmask2 vinterleave_vm2_vm2(vmask2 v) { return v; }
 static INLINE vmask2 vuninterleave_vm2_vm2(vmask2 v) { return v; }
 static INLINE vint vuninterleave_vi_vi(vint v) { return v; }
@@ -385,6 +407,9 @@ static INLINE vdouble vinterleave_vd_vd(vdouble vd) { return vd; }
 static INLINE vdouble vuninterleave_vd_vd(vdouble vd) { return vd; }
 static INLINE vmask vinterleave_vm_vm(vmask vm) { return vm; }
 static INLINE vmask vuninterleave_vm_vm(vmask vm) { return vm; }
+
+#if !defined(SLEEF_GENHEADER)
+typedef Sleef_quad1 vargquad;
 
 static vmask2 vloadu_vm2_p(void *p) {
   vmask2 vm2;
@@ -402,6 +427,7 @@ static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
   memcpy(&aq, &vm2, VECTLENDP * 16);
   return aq;
 }
+#endif // #if !defined(SLEEF_GENHEADER)
 
 static INLINE int vtestallzeros_i_vo64(vopmask g) { return !g ? ~(uint32_t)0 : 0; }
 static INLINE vmask vsel_vm_vo64_vm_vm(vopmask o, vmask x, vmask y) { return o ? x : y; }
@@ -411,6 +437,8 @@ static INLINE vmask vneg64_vm_vm(vmask x) { return -(int64_t)x; }
 
 #define vsll64_vm_vm_i(x, c) ((uint64_t)(x) << (c))
 #define vsrl64_vm_vm_i(x, c) ((uint64_t)(x) >> (c))
+//@#define vsll64_vm_vm_i(x, c) ((uint64_t)(x) << (c))
+//@#define vsrl64_vm_vm_i(x, c) ((uint64_t)(x) >> (c))
 
 static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) { return (int64_t)x > (int64_t)y ? ~(uint32_t)0 : 0; }
 

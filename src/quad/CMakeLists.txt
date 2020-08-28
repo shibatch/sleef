@@ -1,7 +1,7 @@
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/include/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${CMAKE_SOURCE_DIR}/src/libm)         # dd.h
+include_directories(${sleef_SOURCE_DIR}/src/libm)         # dd.h
 
 set(COMMON_TARGET_PROPERTIES C_STANDARD 99)
 
@@ -48,7 +48,7 @@ set(CMAKE_C_FLAGS "${ORG_CMAKE_C_FLAGS} ${SLEEF_C_FLAGS}")
 # --------------------------------------------------------------------
 set(SLEEFQUAD_ORG_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/sleefquad_header.h.org)
 set(SLEEFQUAD_ORG_FOOTER ${CMAKE_CURRENT_SOURCE_DIR}/sleefquad_footer.h.org)
-set(SLEEFQUAD_INCLUDE_HEADER ${CMAKE_BINARY_DIR}/include/sleefquad.h)
+set(SLEEFQUAD_INCLUDE_HEADER ${sleef_BINARY_DIR}/include/sleefquad.h)
 
 set(SLEEF_HEADER_COMMANDS "")
 list(APPEND SLEEF_HEADER_COMMANDS COMMAND ${CMAKE_COMMAND} -E copy ${SLEEFQUAD_ORG_HEADER} ${SLEEFQUAD_INCLUDE_HEADER})
@@ -59,7 +59,7 @@ foreach(SIMD ${SLEEFQUAD_SUPPORTED_EXT})
   endif()
 endforeach()
 
-if(MSVC OR MINGW AND WIN32)
+if((MSVC OR MINGW AND WIN32) OR SLEEF_CLANG_ON_WINDOWS)
   string(REPLACE "/" "\\" sleef_footer_input_file "${SLEEFQUAD_ORG_FOOTER}")
   list(APPEND SLEEF_HEADER_COMMANDS COMMAND type ${sleef_footer_input_file} >> ${SLEEFQUAD_INCLUDE_HEADER})
 else()
@@ -136,6 +136,7 @@ add_library(sleefquad rempitabqp.c ${SLEEFQUAD_OBJECTS})
 set_target_properties(sleefquad PROPERTIES
   VERSION ${SLEEF_VERSION}
   SOVERSION ${SLEEF_SOVERSION}
+  PUBLIC_HEADER ${SLEEFQUAD_INCLUDE_HEADER}
   ${COMMON_TARGET_PROPERTIES}
 )
 
@@ -149,5 +150,7 @@ endif()
 # Install
 # --------------------------------------------------------------------
 # Install libsleef and sleef.h
-install(FILES ${SLEEFQUAD_INCLUDE_HEADER} DESTINATION include)
-install(TARGETS sleefquad DESTINATION lib)
+install(TARGETS sleefquad
+        PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")

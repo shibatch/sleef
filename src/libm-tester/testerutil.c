@@ -25,6 +25,10 @@
 #include <unistd.h>
 #endif
 
+#if defined(_MSC_VER)
+#include <io.h>
+#endif
+
 #include "misc.h"
 
 #define DENORMAL_DBL_MIN (4.9406564584124654418e-324)
