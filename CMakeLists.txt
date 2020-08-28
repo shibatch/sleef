@@ -41,9 +41,13 @@ project(SLEEF
 	VERSION ${SLEEF_VERSION}
 	LANGUAGES C)
 
+# For specifying installation directories
+include(GNUInstallDirs)
+
 if(NOT DEFINED SLEEF_SOURCE_DIR)
    set(SLEEF_SOURCE_DIR ${CMAKE_SOURCE_DIR})
 endif()
+
 if(NOT DEFINED SLEEF_BINARY_DIR)
    set(SLEEF_BINARY_DIR ${CMAKE_BINARY_DIR})
 endif()
