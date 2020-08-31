@@ -161,6 +161,22 @@ pipeline {
 			 '''
             	     }
                 }
+
+                stage('clang-6.0') {
+            	     agent { label 'clang-6' }
+            	     steps {
+	    	     	 sh '''
+                	 echo "clang-6.0 on" `hostname`
+		         export CC=clang-6.0
+			 rm -rf build
+ 			 mkdir build
+			 cd build
+			 cmake -GNinja -DBUILD_QUAD=TRUE -DBUILD_INLINE_HEADERS=TRUE ..
+			 ninja
+		         ctest -j `nproc`
+			 '''
+            	     }
+                }
             }
         }
     }
