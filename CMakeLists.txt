@@ -22,11 +22,15 @@ option(ENABLE_ALTSQRT "Enable alternative sqrt method (aarch64 only)" OFF)
 
 option(DISABLE_FFTW "Disable testing the DFT library with FFTW" OFF)
 
-# See doc/build-with-cmake.md for instructions on how to build Sleef.
 cmake_minimum_required(VERSION 3.4.3)
+
 # Set to NEW when updating cmake_minimum_required to VERSION >= 3.7.2
 if(${CMAKE_VERSION} VERSION_GREATER "3.7.1")
   cmake_policy(SET CMP0066 OLD)
+endif()
+
+if(${CMAKE_VERSION} VERSION_GREATER "3.14.99")
+  cmake_policy(SET CMP0091 NEW)
 endif()
 
 enable_testing()
