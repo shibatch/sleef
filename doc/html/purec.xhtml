@@ -10,7 +10,7 @@
 <link rel="stylesheet" type="text/css" href="texlike.css"/>
 <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Ubuntu" />
 <link rel="stylesheet" type="text/css" href="sleef.css"/>
-<title>SLEEF Documentation</title>
+<title>SLEEF - Math library reference (scalar)</title>
 </head>
 <body translate="no" class="notranslate">
 <h1>SLEEF Documentation - Math library reference</h1>
@@ -34,10 +34,11 @@
       <li><a href="purec.xhtml#nearint">Nearest integer functions</a></li>
       <li><a href="purec.xhtml#other">Other functions</a></li>
     </ul>
-    <li><a class="underlined" href="x86.xhtml">Data types and functions for x86 architectures</a></li>
-    <li><a class="underlined" href="aarch64.xhtml">Data types and functions for AArch64 architectures</a></li>
-    <li><a class="underlined" href="aarch32.xhtml">Data types and functions for AArch32 architectures</a></li>
+    <li><a class="underlined" href="x86.xhtml">Data types and functions for x86 architecture</a></li>
+    <li><a class="underlined" href="aarch64.xhtml">Data types and functions for AArch64 architecture</a></li>
+    <li><a class="underlined" href="aarch32.xhtml">Data types and functions for AArch32 architecture</a></li>
     <li><a class="underlined" href="ppc64.xhtml">Data types and functions for PPC64 architecture</a></li>
+    <li><a class="underlined" href="s390x.xhtml">Data types and functions for System/390 architecture</a></li>
   </ul>
   </li>
   <li>&nbsp;</li>
@@ -118,7 +119,7 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="header">Description</p>
 
 <p class="noindent">
-  These functions evaluates the sine function of a value
+  These functions evaluate the sine function of a value
   in <i class="var">a</i>. The error bound of the returned value is
   1.0 ULP.  These functions treat the non-number arguments and return
   non-numbers as specified in the C99 specification. These functions
@@ -144,7 +145,7 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="header">Description</p>
 
 <p class="noindent">
-  These functions evaluates the sine function of a value
+  These functions evaluate the sine function of a value
   in <i class="var">a</i>. The error bound of the returned value is
   3.5 ULP. These functions treat the non-number arguments and return
   non-numbers as specified in the C99 specification. These functions
@@ -170,7 +171,7 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="header">Description</p>
 
 <p class="noindent">
-  These functions evaluates the cosine function of a value
+  These functions evaluate the cosine function of a value
   in <i class="var">a</i>. The error bound of the returned value is
   1.0 ULP. These functions treat the non-number arguments and return
   non-numbers as specified in the C99 specification. These functions
@@ -196,7 +197,7 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="header">Description</p>
 
 <p class="noindent">
-  These functions evaluates the cosine function of a value
+  These functions evaluate the cosine function of a value
   in <i class="var">a</i>. The error bound of the returned value is
   3.5 ULP. These functions treat the non-number arguments and return
   non-numbers as specified in the C99 specification. These functions
@@ -337,7 +338,7 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="header">Description</p>
 
 <p class="noindent">
-  These functions evaluates the sine functions of <i class="math">
+  These functions evaluate the sine functions of <i class="math">
   &pi;<i class="var">a</i> </i>. The error bound of the returned value
   are max(0.506 ULP, DBL_MIN) if <i class="var">a</i> is in [-1e+9,
   1e+9] for double-precision function, or max(0.506 ULP, FLT_MIN) if
@@ -367,7 +368,7 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="header">Description</p>
 
 <p class="noindent">
-  These functions evaluates the cosine functions of <i class="math">
+  These functions evaluate the cosine functions of <i class="math">
   &pi;<i class="var">a</i> </i>. The error bound of the returned value
   are max(0.506 ULP, DBL_MIN) if <i class="var">a</i> is in [-1e+9,
   1e+9] for double-precision function, or max(0.506 ULP, FLT_MIN) if
@@ -398,7 +399,7 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="header">Description</p>
 
 <p class="noindent">
-  These functions evaluates the tangent function of a value
+  These functions evaluate the tangent function of a value
   in <i class="var">a</i>. The error bound of the returned value is
   1.0 ULP. These functions treat the non-number arguments and return
   non-numbers as specified in the C99 specification. These functions
@@ -424,7 +425,7 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="header">Description</p>
 
 <p class="noindent">
-  These functions evaluates the tangent function of a value
+  These functions evaluate the tangent function of a value
   in <i class="var">a</i>. The error bound of the returned value is
   3.5 ULP. These functions treat the non-number arguments and return
   non-numbers as specified in the C99 specification. These functions
@@ -858,7 +859,7 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="header">Description</p>
 
 <p class="noindent">
-  These functions evaluates the arc sine function of a value
+  These functions evaluate the arc sine function of a value
   in <i class="var">a</i>. The error bound of the returned value is 1.0 ULP. These
   functions treat the non-number arguments and return non-numbers as
   specified in the C99 specification. These functions do not set errno
@@ -884,7 +885,7 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="header">Description</p>
 
 <p class="noindent">
-  These functions evaluates the arc sine function of a value
+  These functions evaluate the arc sine function of a value
   in <i class="var">a</i>. The error bound of the returned value is 3.5 ULP. These
   functions treat the non-number arguments and return non-numbers as
   specified in the C99 specification. These functions do not set errno
@@ -910,7 +911,7 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="header">Description</p>
 
 <p class="noindent">
-  These functions evaluates the arc cosine function of a value
+  These functions evaluate the arc cosine function of a value
   in <i class="var">a</i>. The error bound of the returned value is 1.0 ULP. These
   functions treat the non-number arguments and return non-numbers as
   specified in the C99 specification. These functions do not set errno
@@ -936,7 +937,7 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="header">Description</p>
 
 <p class="noindent">
-  These functions evaluates the arc cosine function of a value
+  These functions evaluate the arc cosine function of a value
   in <i class="var">a</i>. The error bound of the returned value is 3.5 ULP. These
   functions treat the non-number arguments and return non-numbers as
   specified in the C99 specification. These functions do not set errno
@@ -962,7 +963,7 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="header">Description</p>
 
 <p class="noindent">
-  These functions evaluates the arc tangent function of a value
+  These functions evaluate the arc tangent function of a value
   in <i class="var">a</i>. The error bound of the returned value is 1.0 ULP. These
   functions treat the non-number arguments and return non-numbers as
   specified in the C99 specification. These functions do not set errno
@@ -988,7 +989,7 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="header">Description</p>
 
 <p class="noindent">
-  These functions evaluates the arc tangent function of a value
+  These functions evaluate the arc tangent function of a value
   in <i class="var">a</i>. The error bound of the returned value is 3.5 ULP. These
   functions treat the non-number arguments and return non-numbers as
   specified in the C99 specification. These functions do not set errno
@@ -1014,7 +1015,7 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="header">Description</p>
 
 <p class="noindent">
-  These functions evaluates the arc tangent function
+  These functions evaluate the arc tangent function
   of (<i class="var">y</i> / <i class="var">x</i>).  The quadrant of the
   result is determined according to the signs of <i class="var">x</i>
   and <i class="var">y</i>.  The error bounds of the returned values
@@ -1043,7 +1044,7 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="header">Description</p>
 
 <p class="noindent">
-  These functions evaluates the arc tangent function
+  These functions evaluate the arc tangent function
   of (<i class="var">y</i> / <i class="var">x</i>).  The quadrant of the result is determined
   according to the signs of <i class="var">x</i> and <i class="var">y</i>.  The error bound of
   the returned value is 3.5 ULP. These functions treat the non-number
@@ -1071,7 +1072,7 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="header">Description</p>
 
 <p class="noindent">
-  These functions evaluates the hyperbolic sine function of a value
+  These functions evaluate the hyperbolic sine function of a value
   in <i class="var">a</i>. The error bound of the returned value is 1.0 ULP
   if <i class="var">a</i> is in [-709, 709] for the double-precision function or
   [-88.5, 88.5] for the single-precision function . If <i class="var">a</i> is a
@@ -1101,7 +1102,7 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="header">Description</p>
 
 <p class="noindent">
-  These functions evaluates the hyperbolic sine function of a value
+  These functions evaluate the hyperbolic sine function of a value
   in <i class="var">a</i>. The error bound of the returned value is 3.5 ULP
   if <i class="var">a</i> is in [-709, 709] for the double-precision function or
   [-88, 88] for the single-precision function . If <i class="var">a</i> is a
@@ -1131,7 +1132,7 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="header">Description</p>
 
 <p class="noindent">
-  These functions evaluates the hyperbolic cosine function of a value
+  These functions evaluate the hyperbolic cosine function of a value
   in <i class="var">a</i>. The error bound of the returned value is 1.0 ULP
   if <i class="var">a</i> is in [-709, 709] for the double-precision function or
   [-88.5, 88.5] for the single-precision function . If <i class="var">a</i> is a
@@ -1161,7 +1162,7 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="header">Description</p>
 
 <p class="noindent">
-  These functions evaluates the hyperbolic cosine function of a value
+  These functions evaluate the hyperbolic cosine function of a value
   in <i class="var">a</i>. The error bound of the returned value is 3.5 ULP
   if <i class="var">a</i> is in [-709, 709] for the double-precision function or
   [-88, 88] for the single-precision function . If <i class="var">a</i> is a
@@ -1191,7 +1192,7 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="header">Description</p>
 
 <p class="noindent">
-  These functions evaluates the hyperbolic tangent function of a value
+  These functions evaluate the hyperbolic tangent function of a value
   in <i class="var">a</i>. The error bound of the returned value is 1.0 ULP for
   the double-precision function or 1.0001 ULP for the single-precision
   function. These functions treat the non-number arguments and return
@@ -1218,7 +1219,7 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="header">Description</p>
 
 <p class="noindent">
-  These functions evaluates the hyperbolic tangent function of a value
+  These functions evaluate the hyperbolic tangent function of a value
   in <i class="var">a</i>. The error bound of the returned value is 3.5 ULP for
   the double-precision function or 3.5 ULP for the single-precision
   function. These functions treat the non-number arguments and return
@@ -1245,7 +1246,7 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="header">Description</p>
 
 <p class="noindent">
-  These functions evaluates the inverse hyperbolic sine function of a
+  These functions evaluate the inverse hyperbolic sine function of a
   value in <i class="var">a</i>. The error bound of the returned value is 1.0 ULP
   if <i class="var">a</i> is in [-1.34e+154, 1.34e+154] for the double-precision
   function or 1.001 ULP if <i class="var">a</i> is in [-1.84e+19, 1.84e+19] for
@@ -1276,7 +1277,7 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="header">Description</p>
 
 <p class="noindent">
-  These functions evaluates the inverse hyperbolic cosine function of
+  These functions evaluate the inverse hyperbolic cosine function of
   a value in <i class="var">a</i>. The error bound of the returned value is 1.0
   ULP if <i class="var">a</i> is in [-1.34e+154, 1.34e+154] for the
   double-precision function or 1.001 ULP if <i class="var">a</i> is in [-1.84e+19,
@@ -1307,7 +1308,7 @@ extended-precision (80-bit) floating point values, which is defined in
 <p class="header">Description</p>
 
 <p class="noindent">
-  These functions evaluates the inverse hyperbolic tangent function of
+  These functions evaluate the inverse hyperbolic tangent function of
   a value in <i class="var">a</i>. The error bound of the returned value is 1.0
   ULP for the double-precision function or 1.0001 ULP for the
   single-precision function. These functions treat the non-number
@@ -1581,6 +1582,31 @@ max(0.50001 ULP, FLT_MIN), respectively.
 <p class="noindent">
   These functions return the value as specified in the C99
   specification of fmod and fmodf functions, if <i>|<i class="var">x</i> / <i class="var">y</i>|</i> is
+  smaller than 1e+300 and 1e+38, respectively. The returned value is
+  undefined, otherwise. These functions do not set errno nor raise an
+  exception.
+</p>
+
+<hr/>
+
+<p class="funcname"><b id="Sleef_remainder" class="func">Sleef_remainder</b>, <b id="Sleef_remainderf" class="func">Sleef_remainderf</b> - FP remainder</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b class="type">double</b> <b class="func">Sleef_remainder</b>(<b class="type">double</b> <i class="var">x</i>, <b class="type">double</b> <i class="var">y</i>);<br/>
+<b class="type">float</b> <b class="func">Sleef_remainderf</b>(<b class="type">float</b> <i class="var">x</i>, <b class="type">float</b> <i class="var">y</i>);<br/>
+<br/>
+<span class="normal">Link with</span> -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="noindent">
+  These functions return the value as specified in the C99
+  specification of remainder and remainderf functions, if <i>|<i class="var">x</i> / <i class="var">y</i>|</i> is
   smaller than 1e+300 and 1e+38, respectively. The returned value is
   undefined, otherwise. These functions do not set errno nor raise an
   exception.

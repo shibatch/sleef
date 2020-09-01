@@ -9,7 +9,7 @@
 <link rel="icon" href="favicon.png" />
 <link rel="stylesheet" type="text/css" href="texlike.css"/>
 <link rel="stylesheet" type="text/css" href="sleef.css"/>
-<title>SLEEF Documentation</title>
+<title>SLEEF - Other tools included in the package</title>
 </head>
 <body translate="no" class="notranslate">
 <h1>SLEEF Documentation - Other tools included in the package</h1>
@@ -37,27 +37,36 @@
 <h2 id="testerlibm">Libm tester</h2>
 
 <p class="noindent">
-  SLEEF libm has two kinds of testers, and each kind of testers has
+  SLEEF libm has three kinds of testers, and each kind of testers has
   its own role.
 </p>
 
 <p>
-  The first kind of testers consist of a tester and an IUT (which
-  stands for Implementation Under Test.) Those two are built as
-  separate executables, and communicate with each other using a
-  pipe. The role for this tester is to perform a perfunctory set of
-  tests to check if the build is correct. It is also performs
-  regression tests. Since the tester executable and the iut executable
-  are separated, the iut can be implemented with an exotic
-  languages. It is also possible to perform a test over the network.
+  The first kind of testers consists of a tester and an IUT (which
+  stands for Implementation Under Test.) The role for this tester is
+  to perform a perfunctory set of tests to check if the build is
+  correct. It also performs regression tests. The tester and IUT are
+  built as separate executables, and communicate with each other using
+  a pipe. Since these two are separate, the IUT can be implemented
+  with an exotic languages or on an operating system that does not
+  support libraries required for testing. It is also possible to
+  perform a test over the network.
 </p>
 
 <p>
   The second kind of testers are designed to run continuously. It
   repeats randomly generating arguments for each function, and
   comparing the results of each function to the results calculated
-  with the corresponding function in libmpfr. This tester is expected
-  to find bugs if it is run for sufficiently long time.
+  with the corresponding function in the MPFR library. This tester is
+  expected to find bugs if it is run for sufficiently long time.
+</p>
+
+<p>
+  The third kind of testers are for testing if bit-identical results
+  are returned from the functions that are supposed to return such
+  results. The MD5 hash value of all returned values from each
+  function is calculated and checked if it matches the precomputed
+  value.
 </p>
 
 
@@ -65,18 +74,16 @@
 
 <p class="noindent">
   SLEEF DFT has three kinds of testers. The first ones, named
-  naivetest, compare the results computed by SLEEF DFT with that from
-  a naive DFT implementation. These testers cannot be built with MSVC
+  naivetest, compare the results computed by SLEEF DFT with those by a
+  naive DFT implementation. These testers cannot be built with MSVC
   since complex data types are not supported. The second testers,
   named fftwtest, compare the results of computation between SLEEF DFT
-  and FFTW. Rigorous testing is possible with the second testers, but
-  obviously it requires FFTW to run. The third testers, named
+  and FFTW. This test requires FFTW library. The third testers, named
   roundtriptest, executes a forward transform followed by a backward
-  transform. Then, it compares the results with the original data. An
-  advantage of the third testers is that it does not require external
-  library and it runs on all environment, but there could be many
-  cases that this testing does not find flaw. The third testers are
-  used only if FFTW is not available.
+  transform. Then, it compares the results with the original data.
+  While this test does not require external library and it runs on all
+  environment, there could be cases where this test does not find some
+  flaw. The roundtrip testers are used only if FFTW is not available.
 </p>
 
 
@@ -90,10 +97,10 @@
 <p>
   In order to change the configurations, please edit gencoefdp.c. In
   the beginning of the file, specifications of the parameters for
-  generating coefficients are listed. Enable one of them by changing
-  #if. Then, run make to compile the source code. Run the gencoef, and
-  it will show the generated coefficients in a few minutes. It may
-  take longer time depending on the settings.
+  generating coefficients are listed. Please enable one of them by
+  changing #if. Then, run make to compile the source code. Run the
+  gencoef, and it will show the generated coefficients in a few
+  minutes. It may take longer time depending on the settings.
 </p>
 
 <p>
@@ -101,21 +108,21 @@
   regression for minimizing the maximum relative error. This problem
   can be reduced to a linear programming problem, and the Simplex
   method is used in this implementation. This requires multi-precision
-  calculation, and the implementation uses the MPFR library to do
-  this. In this phase, it uses only a small number of values
-  (specified by macro S, usually less than 100) within the input
-  domain of the kernel function to approximate the function.  The
-  function to approximate is given by FRFUNC function. Specifying
-  higher values for S does not always give better results.
+  calculation, and the implementation uses the MPFR library. In this
+  phase, it uses only a small number of values (specified by the macro
+  S, usually less than 100) within the input domain of the kernel
+  function to approximate the function. The function to approximate is
+  given by FRFUNC function. Specifying higher values for S does not
+  always give better results.
 </p>
 
 <p>
   The second phase is to optimize the coefficients so that it gives
   good accuracy with double precision calculation. In this phase, it
-  checks 10000 points (specified by macro Q) within the specified
+  checks 10000 points (specified by the macro Q) within the specified
   argument range to see if the polynomial gives good error bounds. In
   some cases, the last few terms have to be calculated in higher
-  precision in order to achieve 1 ULP or less overall accuracy, and
+  precision in order to achieve 1 ULP or better overall accuracy, and
   this implementation can take care of that. The L parameter specifies
   the number of high precision coefficients.
 </p>
@@ -150,7 +157,8 @@
 
 <p>
   Then, change directory to sleef-3.X/src/libm-benchmarks/. You also
-  need to set the build directory to BUILDDIR environment variable.
+  need to set the build directory to BUILDDIR environment
+  variable. You also need Java runtime environment.
 </p>
 
 <pre class="command">$ export BUILDDIR=$PATH:`pwd`/../../build</pre>

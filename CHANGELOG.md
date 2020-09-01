@@ -1,10 +1,12 @@
-# Changelog
-All notable changes to this project will be documented in this file.
+## 3.5 - 2020-09-01
+- IBM System/390 support is added.
+- The library can be built with Clang on Windows.
+- Static libraries with LTO can be generated.
+- Alternative division and sqrt methods can be chosen with AArch64.
+- Header files for inlining the whole SLEEF functions can be generated.
+- IEEE remainder function is added.
+- GCC-10 can now build SLEEF with SVE support.
 
-The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
-and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
-
-## Next release
 ## 3.4.1 - 2019-10-01
 ### Changed
 - Fixed accuracy problem with tan_u35, atan_u10, log2f_u35 and exp10f_u10.
@@ -34,6 +36,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 - Many functions are now faster
 - Testers are now faster
+
 ## 3.3.1 - 2018-08-20
 ### Added
 - FreeBSD support is added
@@ -42,6 +45,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Trigonometric functions now evaluate correctly with full FP
   domain.
   https://github.com/shibatch/sleef/pull/210
+
 ## 3.3 - 2018-07-06
 ### Added
 - SVE target support is added to libsleef.
@@ -57,6 +61,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   https://github.com/shibatch/sleef/pull/195
 - Payne-Hanek like argument reduction is added to libsleef.
   https://github.com/shibatch/sleef/pull/197
+
 ## 3.2 - 2018-02-26
 ### Added
 - The whole build system of the project migrated from makefiles to
@@ -89,3 +94,98 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Removed
 - Makefile build system
+
+## 3.1 - 2017-07-19
+- Added AArch64 support
+- Implemented the remaining C99 math functions : lgamma, tgamma,
+  erf, erfc, fabs, copysign, fmax, fmin, fdim, trunc, floor, ceil,
+  round, rint, modf, ldexp, nextafter, frexp, hypot, and fmod.
+- Added dispatcher for x86 functions
+- Improved reduction of trigonometric functions
+- Added support for 32-bit x86, Cygwin, etc.
+- Improved tester
+
+## 3.0 - 2017-02-07
+- New API is defined
+- Functions for DFT are added
+- sincospi functions are added
+- gencoef now supports single, extended and quad precision in addition to double precision
+- Linux, Windows and Mac OS X are supported
+- GCC, Clang, Intel Compiler, Microsoft Visual C++ are supported
+- The library can be compiled as DLLs
+- Files needed for creating a debian package are now included
+
+## 2.120 - 2017-01-30
+- Relicensed to Boost Software License Version 1.0
+
+## 2.110 - 2016-12-11
+- The valid range of argument is extended for trig functions
+- Specification of each functions regarding to the domain and accuracy is added
+- A coefficient generation tool is added
+- New testing tools are introduced
+- Following functions returned incorrect values when the argument is very large or small : exp, pow, asinh, acosh
+- SIMD xsin and xcos returned values more than 1 when FMA is enabled
+- Pure C cbrt returned incorrect values when the argument is negative
+- tan_u1 returned values with more than 1 ulp of error on rare occasions
+- Removed support for Java language(because no one seems using this)
+
+## 2.100 - 2016-12-04
+- Added support for AVX-512F and Clang Extended Vectors.
+
+## 2.90 - 2016-11-27
+- Added ilogbf. All the reported bugs(listed below) are fixed.
+- Log function returned incorrect values when the argument is very small.
+- Signs of returned values were incorrect when the argument is signed zero.
+- Tester incorrectly counted ULP in some cases.
+- ilogb function returned incorrect values in some cases.
+
+## 2.80 - 2013-05-18
+- Added support for ARM NEON. Added higher accuracy single
+  precision functions : sinf_u1, cosf_u1, sincosf_u1, tanf_u1, asinf_u1,
+  acosf_u1, atanf_u1, atan2f_u1, logf_u1, and cbrtf_u1.
+
+## 2.70 - 2013-04-30
+- Added higher accuracy functions : sin_u1, cos_u1, sincos_u1,
+  tan_u1, asin_u1, acos_u1, atan_u1, atan2_u1, log_u1, and
+  cbrt_u1. These functions evaluate the corresponding function with at
+  most 1 ulp of error.
+
+## 2.60 - 2013-03-26
+- Added the remaining single precision functions : powf, sinhf,
+  coshf, tanhf, exp2f, exp10f, log10f, log1pf. Added support for FMA4
+  (for AMD Bulldozer). Added more test cases. Fixed minor bugs (which
+  degraded accuracy in some rare cases).
+
+## 2.50 - 2013-03-12
+- Added support for AVX2. SLEEF now compiles with ICC.
+
+## 2.40 - 2013-03-07
+- Fixed incorrect denormal/nonnumber handling in ldexp, ldexpf,
+  sinf and cosf. Removed support for Go language.
+
+## 2.31 - 2012-07-05
+- Added sincosf.
+
+## 2.30 - 2012-01-20
+- Added single precision functions : sinf, cosf, tanf, asinf,
+  acosf, atanf, logf, expf, atan2f and cbrtf.
+
+## 2.20 - 2012-01-09
+- Added exp2, exp10, expm1, log10, log1p, and cbrt.
+
+## 2.10 - 2012-01-05
+- asin() and acos() are back.
+- Added ilogb() and ldexp().
+- Added hyperbolic functions.
+- Eliminated dependency on frexp, ldexp, fabs, isnan and isinf.
+
+## 2.00 - 2011-12-30
+- All of the algorithm has been updated.
+- Both accuracy and speed are improved since version 1.10.
+- Denormal number handling is also improved.
+
+## 1.10 - 2010-06-22
+- AVX support is added. Accuracy tester is added.
+
+## 1.00 - 2010-05-15
+- Initial release

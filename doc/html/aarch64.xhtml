@@ -10,10 +10,10 @@
 <link rel="stylesheet" type="text/css" href="texlike.css"/>
 <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Ubuntu" />
 <link rel="stylesheet" type="text/css" href="sleef.css"/>
-<title>SLEEF Documentation</title>
+<title>SLEEF - Math library reference (AArch64)</title>
 </head>
 <body translate="no" class="notranslate">
-<h1>SLEEF Documentation - Math library reference</h1>
+<h1>SLEEF Documentation - Math library reference (AArch64)</h1>
 
 <h2>Table of contents</h2>
 
@@ -38,6 +38,7 @@
     </ul>
     <li><a class="underlined" href="aarch32.xhtml">Data types and functions for AArch32 architecture</a></li>
     <li><a class="underlined" href="ppc64.xhtml">Data types and functions for PPC64 architecture</a></li>
+    <li><a class="underlined" href="s390x.xhtml">Data types and functions for System/390 architecture</a></li>
   </ul>
   </li>
   <li>&nbsp;</li>
@@ -3687,6 +3688,49 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_fmod"><b class="fu
 
 <p class="noindent">
 This is the vectorized function of <a href="purec.xhtml#Sleef_fmodf"><b class="func">Sleef_fmodf</b></a> with the same accuracy specification.
+</p>
+
+<hr/>
+
+<p class="funcname">Vectorized double precision FP remainder</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b class="type">float64x2_t</b> <b class="func">Sleef_remainderd2</b>(<b class="type">float64x2_t</b> <i class="var">a</i>, <b class="type">float64x2_t</b> <i class="var">b</i>);<br/>
+<b class="type">float64x2_t</b> <b class="func">Sleef_remainderd2_advsimd</b>(<b class="type">float64x2_t</b> <i class="var">a</i>, <b class="type">float64x2_t</b> <i class="var">b</i>);<br/>
+<b class="type">svfloat64_t</b> <b class="func">Sleef_remainderdx_sve</b>(<b class="type">svfloat64_t</b> <i class="var">a</i>, <b class="type">svfloat64_t</b> <i class="var">b</i>);<br/>
+<br/>
+<span class="normal">Link with</span> -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="noindent">
+This is the vectorized function of <a href="purec.xhtml#Sleef_remainder"><b class="func">Sleef_remainder</b></a> with the same accuracy specification.
+</p>
+
+<hr/>
+<p class="funcname">Vectorized single precision FP remainder</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b class="type">float32x4_t</b> <b class="func">Sleef_remainderf4</b>(<b class="type">float32x4_t</b> <i class="var">a</i>, <b class="type">float32x4_t</b> <i class="var">b</i>);<br/>
+<b class="type">float32x4_t</b> <b class="func">Sleef_remainderf4_advsimd</b>(<b class="type">float32x4_t</b> <i class="var">a</i>, <b class="type">float32x4_t</b> <i class="var">b</i>);<br/>
+<b class="type">svfloat32_t</b> <b class="func">Sleef_remainderfx_sve</b>(<b class="type">svfloat32_t</b> <i class="var">a</i>, <b class="type">svfloat32_t</b> <i class="var">b</i>);<br/>
+<br/>
+<span class="normal">Link with</span> -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="noindent">
+This is the vectorized function of <a href="purec.xhtml#Sleef_remainderf"><b class="func">Sleef_remainderf</b></a> with the same accuracy specification.
 </p>
 
 <hr/>

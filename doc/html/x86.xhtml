@@ -10,10 +10,10 @@
 <link rel="stylesheet" type="text/css" href="texlike.css"/>
 <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Ubuntu" />
 <link rel="stylesheet" type="text/css" href="sleef.css"/>
-<title>SLEEF Documentation</title>
+<title>SLEEF - Math library reference(x86)</title>
 </head>
 <body translate="no" class="notranslate">
-<h1>SLEEF Documentation - Math library reference</h1>
+<h1>SLEEF Documentation - Math library reference(x86)</h1>
 
 <h2>Table of contents</h2>
 
@@ -40,6 +40,7 @@
     <li><a class="underlined" href="aarch64.xhtml">Data types and functions for AArch64 architecture</a></li>
     <li><a class="underlined" href="aarch32.xhtml">Data types and functions for AArch32 architecture</a></li>
     <li><a class="underlined" href="ppc64.xhtml">Data types and functions for PPC64 architecture</a></li>
+    <li><a class="underlined" href="s390x.xhtml">Data types and functions for System/390 architecture</a></li>
   </ul>
   </li>
   <li>&nbsp;</li>
@@ -4976,6 +4977,67 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_fmod"><b class=
 
 <p class="noindent">
 These are the vectorized functions of <a href="purec.xhtml#Sleef_fmodf"><b class="func">Sleef_fmodf</b></a> with the same accuracy specification.
+</p>
+
+<hr/>
+
+<p class="funcname">Vectorized double precision FP remainder</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b class="type">__m128d</b> <b class="func">Sleef_remainderd2</b>(<b class="type">__m128d</b> <i class="var">a</i>, <b class="type">__m128d</b> <i class="var">b</i>);<br/>
+<b class="type">__m128d</b> <b class="func">Sleef_remainderd2_sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>, <b class="type">__m128d</b> <i class="var">b</i>);<br/>
+<b class="type">__m128d</b> <b class="func">Sleef_remainderd2_sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>, <b class="type">__m128d</b> <i class="var">b</i>);<br/>
+<b class="type">__m128d</b> <b class="func">Sleef_remainderd2_avx2128</b>(<b class="type">__m128d</b> <i class="var">a</i>, <b class="type">__m128d</b> <i class="var">b</i>);<br/>
+<br/>
+<b class="type">__m256d</b> <b class="func">Sleef_remainderd4</b>(<b class="type">__m256d</b> <i class="var">a</i>, <b class="type">__m256d</b> <i class="var">b</i>);<br/>
+<b class="type">__m256d</b> <b class="func">Sleef_remainderd4_avx</b>(<b class="type">__m256d</b> <i class="var">a</i>, <b class="type">__m256d</b> <i class="var">b</i>);<br/>
+<b class="type">__m256d</b> <b class="func">Sleef_remainderd4_fma4</b>(<b class="type">__m256d</b> <i class="var">a</i>, <b class="type">__m256d</b> <i class="var">b</i>);<br/>
+<b class="type">__m256d</b> <b class="func">Sleef_remainderd4_avx2</b>(<b class="type">__m256d</b> <i class="var">a</i>, <b class="type">__m256d</b> <i class="var">b</i>);<br/>
+<br/>
+<b class="type">__m512d</b> <b class="func">Sleef_remainderd8</b>(<b class="type">__m512d</b> <i class="var">a</i>, <b class="type">__m512d</b> <i class="var">b</i>);<br/>
+<b class="type">__m512d</b> <b class="func">Sleef_remainderd8_avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>, <b class="type">__m512d</b> <i class="var">b</i>);<br/>
+<br/>
+<span class="normal">Link with</span> -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="noindent">
+These are the vectorized functions of <a href="purec.xhtml#Sleef_remainder"><b class="func">Sleef_remainder</b></a> with the same accuracy specification.
+</p>
+
+<hr/>
+<p class="funcname">Vectorized single precision FP remainder</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b class="type">__m128</b> <b class="func">Sleef_remainderf4</b>(<b class="type">__m128</b> <i class="var">a</i>, <b class="type">__m128</b> <i class="var">b</i>);<br/>
+<b class="type">__m128</b> <b class="func">Sleef_remainderf4_sse2</b>(<b class="type">__m128</b> <i class="var">a</i>, <b class="type">__m128</b> <i class="var">b</i>);<br/>
+<b class="type">__m128</b> <b class="func">Sleef_remainderf4_sse4</b>(<b class="type">__m128</b> <i class="var">a</i>, <b class="type">__m128</b> <i class="var">b</i>);<br/>
+<b class="type">__m128</b> <b class="func">Sleef_remainderf4_avx2128</b>(<b class="type">__m128</b> <i class="var">a</i>, <b class="type">__m128</b> <i class="var">b</i>);<br/>
+<br/>
+<b class="type">__m256</b> <b class="func">Sleef_remainderf8</b>(<b class="type">__m256</b> <i class="var">a</i>, <b class="type">__m256</b> <i class="var">b</i>);<br/>
+<b class="type">__m256</b> <b class="func">Sleef_remainderf8_avx</b>(<b class="type">__m256</b> <i class="var">a</i>, <b class="type">__m256</b> <i class="var">b</i>);<br/>
+<b class="type">__m256</b> <b class="func">Sleef_remainderf8_fma4</b>(<b class="type">__m256</b> <i class="var">a</i>, <b class="type">__m256</b> <i class="var">b</i>);<br/>
+<b class="type">__m256</b> <b class="func">Sleef_remainderf8_avx2</b>(<b class="type">__m256</b> <i class="var">a</i>, <b class="type">__m256</b> <i class="var">b</i>);<br/>
+<br/>
+<b class="type">__m512</b> <b class="func">Sleef_remainderf16</b>(<b class="type">__m512</b> <i class="var">a</i>, <b class="type">__m512</b> <i class="var">b</i>);<br/>
+<b class="type">__m512</b> <b class="func">Sleef_remainderf16_avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>, <b class="type">__m512</b> <i class="var">b</i>);<br/>
+<br/>
+<span class="normal">Link with</span> -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="noindent">
+These are the vectorized functions of <a href="purec.xhtml#Sleef_remainderf"><b class="func">Sleef_remainderf</b></a> with the same accuracy specification.
 </p>
 
 <hr/>

@@ -9,7 +9,7 @@
 <link rel="icon" href="favicon.png" />
 <link rel="stylesheet" type="text/css" href="texlike.css"/>
 <link rel="stylesheet" type="text/css" href="sleef.css"/>
-<title>SLEEF Documentation</title>
+<title>SLEEF - Compiling and installing the library</title>
 </head>
 <body translate="no" class="notranslate">
 <h1>SLEEF Documentation - Compiling and installing the library</h1>
@@ -21,10 +21,11 @@
   <li>&nbsp;</li>
   <li><a class="underlined" href="compile.xhtml">Compiling and installing the library</a></li>
     <ul class="disc">
-      <li><a href="compile.xhtml#cmake">About CMake</a></li>
-      <li><a href="compile.xhtml#linux">Compiling and installing library on Linux</a></li>
-      <li><a href="compile.xhtml#debian">Installing library on Debian and Ubuntu</a></li>
-      <li><a href="compile.xhtml#MSVC">Compiling library with Microsoft Visual C++</a></li>
+      <li><a href="compile.xhtml#preliminaries">Preliminaries</a></li>
+      <li><a href="compile.xhtml#cmakevars">Common CMake variables</a></li>
+      <li><a href="compile.xhtml#linux">Compiling and installing the library on Linux</a></li>
+      <li><a href="compile.xhtml#debian">Installing the library on Debian and Ubuntu</a></li>
+      <li><a href="compile.xhtml#MSVC">Compiling the library with Microsoft Visual C++</a></li>
       <li><a href="compile.xhtml#hello">Compiling and running "Hello SLEEF"</a></li>
       <li><a href="compile.xhtml#import">Importing SLEEF into your project</a></li>
     </ul>
@@ -36,49 +37,41 @@
   <li><a class="underlined" href="additional.xhtml">Additional notes</a></li>
 </ul>
 
-<h2 id="cmake">About CMake</h2>
+<h2 id="preliminaries">Preliminaries</h2>
 
 <p class="noindent">
-<a class="underlined" href="http://www.cmake.org/">CMake</a> is an open-source and
-cross-platform building tool for software packages that provides easy
-managing of multiple build systems at a time. It works by allowing the
-developer to specify build parameters and rules in a simple text file
-that cmake then processes to generate project files for the actual
-native build tools (e.g. UNIX Makefiles, Microsoft Visual Studio,
-Apple XCode, etc). That means you can easily maintain multiple
-separate builds for one project and manage cross-platform hardware and
-software complexity.
+In order to build SLEEF, you need <a class="underlined"
+href="http://www.cmake.org/">CMake</a>, which is an open-source and
+cross-platform building tool. In order to test the library, it is
+better to have <a class="underlined" href="http://www.mpfr.org/">the
+GNU MPFR Library</a>, <a class="underlined"
+href="https://wiki.openssl.org/index.php/Libssl_API">Libssl</a> and
+<a class="underlined" href="http://www.fftw.org/">FFTW</a>.
 </p>
 
 <p>
-If you are not already familiar with cmake, please refer to the
+CMake works by allowing the developer to specify build parameters and
+rules in a simple text file that cmake then processes to generate
+project files for the actual native build tools (e.g. UNIX Makefiles,
+Microsoft Visual Studio, Apple XCode, etc). If you are not already
+familiar with cmake, please refer to the
 <a class="underlined" href="https://cmake.org/documentation/">official documentation</a>
 or
-the <a class="underlined" href="https://cmake.org/Wiki/CMake#Basic_Introductions">basic
-introductions in the wiki</a> (recommended).
-</p>
-
-<p>
-Before using CMake you will need to install/build the binaries on your
-system.  Most systems have cmake already installed or provided by the
-standard package manager. If that is not the case for you, please
-<a class="underlined" href="https://cmake.org/download/">download</a> and install now.
-For building SLEEF, version 3.4.3 is the minimum required.
+the <a class="underlined" href="https://gitlab.kitware.com/cmake/community/-/wikis/home">basic
+introductions in the wiki</a>.
 </p>
 
 <h3>Quick start</h3>
 
 <p class="noindent">
 1. Make sure cmake is available on the command-line. The command below
-should display a version number greater than or equal to 3.4.3.
+should display a version number greater than or equal to 3.5.1.
 </p>
 <pre class="command">$ cmake --version</pre>
 
 <p class="noindent">
-2. Download the tar from
-the <a class="underlined" href="https://sourceforge.net/projects/sleef/files/">software
-repository</a> or checkout out the source code from
-the <a class="underlined" href="https://github.com/shibatch/sleef">GitHub repository</a>.
+2. Checkout out the source code from our <a class="underlined"
+href="https://github.com/shibatch/sleef">GitHub repository</a>.
 </p>
 <pre class="command">$ git clone https://github.com/shibatch/sleef</pre>
 
@@ -92,29 +85,11 @@ $ mkdir build &amp;&amp; cd build</pre>
 <p class="noindent">
 4. Run cmake to configure your project and generate the system to build it:
 </p>
-<pre class="command">$ cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo \
-	-DCMAKE_INSTALL_PREFIX=../my-sleef-install \
-	..</pre>
+<pre class="command">$ cmake ..</pre>
 
 <p class="noindent">
-This flag configures an optimised libsleef shared library build with
-basic debug info.  By default, cmake will autodetect your system
-platform and configure the build using the default parameters. You can
-control and modify these parameters by setting variables when running
-cmake. See the list of <a class="underlined"
-href="#build-customization">options and variables</a> for customizing
-your build.
-</p>
-
-<p>
-NOTE: On <b style="font-weight: bold;">Windows</b>, you need to use a specific generator like this:
-`cmake -G"Visual Studio 15 2017 Win64" ..` specifying the Visual
-Studio version and targeting specifically `Win64` (to support
-compilation of AVX/AVX2) Check `cmake -G` to get a full list of
-supported Visual Studio project generators.  This generator will
-create a proper solution `SLEEF.sln` under the build directory.  You
-can still use `cmake --build .` to build without opening Visual
-Studio.
+See the list of <a class="underlined" href="#cmakevars">options and
+variables</a> for customizing your build.
 </p>
 
 <p class="noindent" style="margin-top: 1em;">
@@ -124,82 +99,189 @@ of the build directory:
 <pre class="command">$ make</pre>
 
 <p class="noindent">
-6. Install the library under ../my-sleef/install by running:
-</p>
-<pre class="command">$ make install</pre>
-
-<p class="noindent">
-7. You can execute the tests by running:
+6. You can execute the tests by running:
 </p>
 <pre class="command">$ make test</pre>
 
-<h3 id="build-customization">Build customization</h3>
-
 <p class="noindent">
-Variables dictate how the build is generated; options are defined and undefined,
-respectively, on the cmake command line like this:
+7. Install the library under ../my-sleef/install by running:
 </p>
-<ul style="margin-top: 1em; margin-bottom: 1em;">
-  <li>cmake -DVARIABLE=&lt;value&gt; &lt;cmake-build-dir&gt;</li>
-  <li>cmake -UVARIABLE &lt;cmake-build-dir&gt;</li>
-</ul>
-<p class="noindent">
-Build configurations allow a project to be built in different ways for debug,
-optimized, or any other special set of flags.
+<pre class="command">$ make install</pre>
+
+
+<h4 id="cmakevars">Common CMake variables</h4>
+
+<p>
+Below is the list of common cmake variables that are used to
+configure a build for SLEEF.
 </p>
 
-<h4>CMake Variables</h4>
-
 <ul style="margin-top: 1em; margin-bottom: 1em;">
-  <li>`CMAKE_BUILD_TYPE`: By default, CMake supports the following configuration:</li>
+  <li><b>CMAKE_BUILD_TYPE</b>: By default, CMake supports the following configuration:</li>
   <ul>
     <li>`Release`: Basic optimizations are turned on. This is the default setting.</li>
     <li>`Debug`: Basic debug flags are turned on. Optimization is disabled.</li>
     <li>`MinSizeRel`: Builds the smallest (but not fastest) object code</li>
     <li>`RelWithDebInfo`: Builds optimized code with debug information as well</li>
   </ul>
-  <li style="margin-top: 1em;">`CMAKE_INSTALL_PREFIX` : The prefix it
-  uses when running `make install`. Defaults to /usr/local on
-  GNU/Linux and MacOS. Defaults to C:/Program Files on Windows.</li>
-  <li style="margin-top: 1em;">`CMAKE_C_FLAGS_RELEASE` : The
-  optimization options used by the compiler.</li>
-  <li style="margin-top: 1em;">`BUILD_TESTS` : Avoid building testing
+  <li><b>BUILD_SHARED_LIBS</b> : Static libs are built if set to
+  FALSE</li>
+  <li><b>CMAKE_C_FLAGS_RELEASE</b> : The optimization options used by
+  the compiler.</li>
+  <li><b>CMAKE_INSTALL_PREFIX</b> : The prefix it uses when running
+  `make install`. Defaults to /usr/local on GNU/Linux and
+  MacOS. Defaults to C:/Program Files on Windows.</li>
+</ul>
+
+<h4>SLEEF-specific CMake variables</h4>
+
+<p>
+Below is the list of SLEEF-specific cmake variables.
+</p>
+
+<ul style="margin-top: 1em; margin-bottom: 1em;">
+  <!-- Options for building the entire library -->
+  <li><b>SLEEF_SHOW_CONFIG</b> : Show relevant
+  cmake variables upon configuring a build</li>
+  <li><b>SLEEF_SHOW_ERROR_LOG</b> : Show the content of
+  CMakeError.log</li>
+  <li><b>BUILD_TESTS</b> : Avoid building testing
   tools if set to FALSE</li>
-  <li style="margin-top: 1em;">`BUILD_GNUABI_LIBS` : Avoid building
+  <li><b>ENABLE_ALTDIV</b> : Enable alternative division method (aarch64 only)</li>
+  <li><b>ENABLE_ALTSQRT</b> : Enable alternative sqrt method (aarch64 only)</li>
+  <li><b>DISABLE_LONG_DOUBLE</b> : Disable support for long double data type</li>
+  <li><b>ENFORCE_LONG_DOUBLE</b> : Build fails if long double data type is
+  not supported by the compiler</li>
+  <li><b>DISABLE_FLOAT128</b> : Disable support for float128 data type</li>
+  <li><b>ENFORCE_FLOAT128</b> : Build fails if float128 data type is not
+  supported by the compiler</li>
+  <li><b>DISABLE_OPENMP</b> : Disable support for OpenMP</li>
+  <li><b>ENFORCE_OPENMP</b> : Build fails if OpenMP is not
+  supported by the compiler</li>
+
+  <!-- Options for LTO -->
+  <li><b>ENABLE_LTO</b> : Enable support for LTO with gcc, or thinLTO
+  with llvm</li>
+  <li><b>LLVM_AR_COMMAND</b> : Specify LLVM AR command when you build
+  the library with thinLTO support with clang.</li>
+  <li><b>SLEEF_ENABLE_LLVM_BITCODE</b> : Generate LLVM bitcode</li>
+  <li><b>BUILD_INLINE_HEADERS</b> : Generate header files for inlining
+  whole SLEEF functions</li>
+
+  <!-- Options regarding to vector extensions -->
+  <li style="margin-top: 1em;"><b>DISABLE_SSE2</b> : Disable support for x86 SSE2</li>
+  <li><b>ENFORCE_SSE2</b> : Build fails if SSE2 is not
+  supported by the compiler</li>
+  <li><b>DISABLE_SSE4</b> : Disable support for x86 SSE4</li>
+  <li><b>ENFORCE_SSE4</b> : Build fails if SSE4 is not
+  supported by the compiler</li>
+  <li><b>DISABLE_AVX</b> : Disable support for x86 AVX</li>
+  <li><b>ENFORCE_AVX</b> : Build fails if AVX is not
+  supported by the compiler</li>
+  <li><b>DISABLE_FMA4</b> : Disable support for x86 FMA4</li>
+  <li><b>ENFORCE_FMA4</b> : Build fails if FMA4 is not
+  supported by the compiler</li>
+  <li><b>DISABLE_AVX2</b> : Disable support for x86 AVX2</li>
+  <li><b>ENFORCE_AVX2</b> : Build fails if AVX2 is not
+  supported by the compiler</li>
+  <li><b>DISABLE_AVX512F</b> : Disable support for x86 AVX512F</li>
+  <li><b>ENFORCE_AVX512F</b> : Build fails if AVX512F is not
+  supported by the compiler</li>
+  <li><b>DISABLE_SVE</b> : Disable support for AArch64 SVE</li>
+  <li><b>ENFORCE_SVE</b> : Build fails if SVE is not
+  supported by the compiler</li>
+  <li><b>DISABLE_VSX</b> : Disable support for PowerPC VSX</li>
+  <li><b>ENFORCE_VSX</b> : Build fails if VSX is not
+  supported by the compiler</li>
+  <li><b>DISABLE_ZVECTOR2</b> : Disable support for ZVECTOR2</li>
+  <li><b>ENFORCE_ZVECTOR2</b> : Build fails if ZVECTOR2 is not
+  supported by the compiler</li>
+
+  <!-- Options for libm -->
+  <li style="margin-top: 1em;"><b>BUILD_GNUABI_LIBS</b> : Avoid building
   libraries with GNU ABI if set to FALSE</li>
-  <li style="margin-top: 1em;">`BUILD_DFT` : Avoid building DFT
+  <li><b>ENFORCE_TESTER3</b> : Build fails if
+  tester3 cannot be built</li>
+
+  <!-- Options for DFT -->
+  <li style="margin-top: 1em;"><b>BUILD_DFT</b> : Avoid building DFT
   libraries if set to FALSE</li>
-  <li style="margin-top: 1em;">`BUILD_SHARED_LIBS` : Static libs are
-  built if set to FALSE</li>
-  <li style="margin-top: 1em;">`SLEEFDFT_MAXBUTWIDTH` : This variable
+  <li><b>SLEEFDFT_MAXBUTWIDTH</b> : This variable
   specifies the maximum length of combined butterfly block used in the
   DFT. Setting this value to 7 makes DFT faster but compilation takes
   more time and the library size will be larger.</li>
+  <li><b>DISABLE_FFTW</b> : Disable FFW-based testing of the DFT
+  library.</li>
+
+  <!-- Options for Quad -->
+  <li style="margin-top: 1em;"><b>BUILD_QUAD</b> : An <b>experimental</b> quad-precision
+  library will be built if set to TRUE</li>
 </ul>
 
-<h2 id="linux">Compiling and installing library on Linux</h2>
+<h2 id="linux">Compiling and installing the library on Linux</h2>
 
 <p class="noindent">
-  In order to build the library, you need to install libmpfr and
-  OpenMP(libmpfr is only required to build the tester, and it is not
-  linked to the library). Please change the directory to sleef-3.X and
-  run the following commands.
+  In order to build the library, you need to install OpenMP. In order
+  to test the library, you need to install libmpfr, libssl and
+  libfftw3. Availability of these libraries are checked upon execution
+  of cmake. Please change the directory to sleef-3.X and run the
+  following commands.
 
-  <pre class="command">$ mkdir build
+  <pre class="command">$ sudo apt-get install libmpfr-dev libssl-dev libfftw3-dev
+$ mkdir build
 $ cd build
 $ cmake -DCMAKE_INSTALL_PREFIX=/usr ..
 $ make
 $ make test
 $ sudo make install</pre>
 </p>
-  
-<p class="noindent">
-  In order to uninstall the libraries and headers, run the following command.
 
-  <pre class="command" style="margin-top: 1em;">$ sudo xargs rm -v &lt; install_manifest.txt</pre>
+<p>
+  <b style="color:red">Parallel build is only supported with Ninja.</b>
 </p>
 
-<h2 id="debian">Installing library on Debian and Ubuntu</h2>
+<br/>
+
+<p>
+  In order to uninstall the libraries and headers, run the following command.
+</p>
+
+<pre class="command" style="margin-top: 1em;">$ sudo xargs rm -v &lt; install_manifest.txt</pre>
+
+<h3 id="lto">Building the library with LTO support</h3>
+
+<p>
+  You can build the library with link time opimization(LTO) support
+  with the following commands. Note that you can only build static
+  libraries with LTO support. You also have to use the same compiler
+  with the same version to build the library and other source codes.
+</p>
+
+<pre class="command">$ CC=gcc cmake -DBUILD_SHARED_LIBS=FALSE -DENABLE_LTO=TRUE ..</pre>
+
+<p>
+  In order to build the library with thinLTO support with clang, you
+  need to specify LLVM AR command that exactly corresponds to the
+  clang compiler.
+</p>
+
+<pre class="command">$ CC=clang-9 cmake -DBUILD_SHARED_LIBS=FALSE -DENABLE_LTO=TRUE -DLLVM_AR_COMMAND=llvm-ar-9 ..</pre>
+
+
+<h3 id="inline">Building the header files for inlining the whole SLEEF functions</h3>
+
+<p>
+  Header files for inlining the whole SLEEF functions can be built
+  with the following commands. With these header files, it may be
+  easier to inline the whole SLEEF functions than using LTO. You
+  cannot include more than one of these header files from the same
+  file. You have to specify "-ffp-contract=off" compiler option when
+  compiling a source code that includes one of these header files.
+</p>
+
+<pre class="command">$ cmake -DBUILD_INLINE_HEADERS=TRUE ..</pre>
+
+<h2 id="debian">Installing the library on Debian and Ubuntu</h2>
 
 <p class="noindent">
   If you are using Debian 10(Buster), Ubuntu 18.04(Bionic) or later,
@@ -210,20 +292,44 @@ $ sudo make install</pre>
 $ sudo apt-get install libsleef-dev</pre>
 </p>
 
-<h2 id="MSVC">Compiling library with Microsoft Visual C++</h2>
+<h2 id="MSVC">Compiling the library with Microsoft Visual C++</h2>
 
 <p class="noindent">
-  You need Visual Studio 2017. Open developer command prompt for
-  VS2017, change directory to sleef-3.X, and then run the following
-  commands.
-  
-  <pre class="command">D:\sleef-3.X> mkdir build
+  You need Visual Studio 2019. Open developer command prompt for
+  VS2019 and change directory to sleef-3.X. When configuring a build
+  with cmake, you need to use a specific generator: `cmake -G"Visual
+  Studio 16 2019" ..` This generator will create a proper solution
+  `SLEEF.sln` under the build directory. You can still use `cmake
+  --build .` to build the library without opening Visual Studio.
+</p>
+
+<p>
+  Below is an example of commands for building SLEEF with Visual
+  Studio.
+</p>
+
+<pre class="command">D:\sleef-3.X> mkdir build
 D:\sleef-3.X> cd build
-D:\sleef-3.X\build> cmake -G"Visual Studio 15 2017 Win64" ..
+D:\sleef-3.X\build> cmake -G"Visual Studio 15 2017 Win64" ..    &amp;:: If you are using VS2017
+D:\sleef-3.X\build> cmake -G"Visual Studio 16 2019" ..          &amp;:: If you are using VS2019
 D:\sleef-3.X\build> cmake --build . --config Release -- /maxcpucount:1</pre>
 
-  Note that parallel build is not supported on MSVC.
+
+<h3 id="cow">Compiling the library with Clang on Windows</h3>
+
+<p class="noindent">
+  You need Visual Studio 2019. Install ninja via VS2019 installer.
+  Download and install clang on Windows from <a class="underlined"
+  href="https://releases.llvm.org/download.html">llvm.org</a>. Below
+  is an example of commands for building SLEEF with Clang on Windows.
 </p>
+
+<pre class="command">D:\sleef-3.X> "c:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
+D:\sleef-3.X> mkdir build
+D:\sleef-3.X> cd build
+D:\sleef-3.X\build> cmake -GNinja -DCMAKE_C_COMPILER:PATH="C:\Program Files\LLVM\bin\clang.exe" ..
+D:\sleef-3.X\build> ninja</pre>
+
 
 <h2 id="hello">Compiling and running "Hello SLEEF"</h2>
 
@@ -296,17 +402,17 @@ $ &block;</pre>
 </p>
 
 <pre class="code">
-<code>cmake_minimum_required(VERSION 3.4.3)</code>
+<code>cmake_minimum_required(VERSION 3.5.1)</code>
 <code>include(ExternalProject)</code>
 <code>find_package(Git REQUIRED)</code>
 <code></code>
 <code>ExternalProject_Add(libsleef</code>
 <code>  GIT_REPOSITORY https://github.com/shibatch/sleef</code>
-<code>  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${sleef_BINARY_DIR}/contrib</code>
+<code>  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/contrib</code>
 <code>)</code>
 <code></code>
-<code>include_directories(${sleef_BINARY_DIR}/contrib/include)</code>
-<code>link_directories(${sleef_BINARY_DIR}/contrib/lib)</code>
+<code>include_directories(${CMAKE_BINARY_DIR}/contrib/include)</code>
+<code>link_directories(${CMAKE_BINARY_DIR}/contrib/lib)</code>
 <code></code>
 <code>add_executable(hellox86 hellox86.c)</code>
 <code>add_dependencies(hellox86 libsleef)</code>
