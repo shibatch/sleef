@@ -20,7 +20,7 @@
 
 #include "misc.h"
 
-extern const float rempitabsp[];
+extern const float Sleef_rempitabsp[];
 
 #ifdef DORENAME
 #include "rename.h"
@@ -446,18 +446,18 @@ static CONST dfi_t rempif(float a) {
   a = ldexp3kf(a, q);
   if (ex < 0) ex = 0;
   ex *= 4;
-  x = dfmul_f2_f_f(a, rempitabsp[ex]);
+  x = dfmul_f2_f_f(a, Sleef_rempitabsp[ex]);
   di = rempisubf(x.x);
   q = di.i;
   x.x = di.d;
   x = dfnormalize_f2_f2(x);
-  y = dfmul_f2_f_f(a, rempitabsp[ex+1]);
+  y = dfmul_f2_f_f(a, Sleef_rempitabsp[ex+1]);
   x = dfadd2_f2_f2_f2(x, y);
   di = rempisubf(x.x);
   q += di.i;
   x.x = di.d;
   x = dfnormalize_f2_f2(x);
-  y = dfmul_f2_f2_f(df(rempitabsp[ex+2], rempitabsp[ex+3]), a);
+  y = dfmul_f2_f2_f(df(Sleef_rempitabsp[ex+2], Sleef_rempitabsp[ex+3]), a);
   x = dfadd2_f2_f2_f2(x, y);
   x = dfnormalize_f2_f2(x);
   x = dfmul_f2_f2_f2(x, df(3.1415927410125732422f*2, -8.7422776573475857731e-08f*2));

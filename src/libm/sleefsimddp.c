@@ -14,7 +14,7 @@
 
 #include "misc.h"
 
-extern const double rempitabdp[];
+extern const double Sleef_rempitabdp[];
 
 #define __SLEEFSIMDDP_C__
 
@@ -414,18 +414,18 @@ static INLINE CONST ddi_t rempi(vdouble a) {
   a = vldexp3_vd_vd_vi(a, q);
   ex = vandnot_vi_vi_vi(vsra_vi_vi_i(ex, 31), ex);
   ex = vsll_vi_vi_i(ex, 2);
-  x = ddmul_vd2_vd_vd(a, vgather_vd_p_vi(rempitabdp, ex));
+  x = ddmul_vd2_vd_vd(a, vgather_vd_p_vi(Sleef_rempitabdp, ex));
   di_t di = rempisub(vd2getx_vd_vd2(x));
   q = digeti_vi_di(di);
   x = vd2setx_vd2_vd2_vd(x, digetd_vd_di(di));
   x = ddnormalize_vd2_vd2(x);
-  y = ddmul_vd2_vd_vd(a, vgather_vd_p_vi(rempitabdp+1, ex));
+  y = ddmul_vd2_vd_vd(a, vgather_vd_p_vi(Sleef_rempitabdp+1, ex));
   x = ddadd2_vd2_vd2_vd2(x, y);
   di = rempisub(vd2getx_vd_vd2(x));
   q = vadd_vi_vi_vi(q, digeti_vi_di(di));
   x = vd2setx_vd2_vd2_vd(x, digetd_vd_di(di));
   x = ddnormalize_vd2_vd2(x);
-  y = vcast_vd2_vd_vd(vgather_vd_p_vi(rempitabdp+2, ex), vgather_vd_p_vi(rempitabdp+3, ex));
+  y = vcast_vd2_vd_vd(vgather_vd_p_vi(Sleef_rempitabdp+2, ex), vgather_vd_p_vi(Sleef_rempitabdp+3, ex));
   y = ddmul_vd2_vd2_vd(y, a);
   x = ddadd2_vd2_vd2_vd2(x, y);
   x = ddnormalize_vd2_vd2(x);

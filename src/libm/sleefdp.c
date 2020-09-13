@@ -20,7 +20,7 @@
 
 #include "misc.h"
 
-extern const double rempitabdp[];
+extern const double Sleef_rempitabdp[];
 
 #ifdef DORENAME
 #include "rename.h"
@@ -771,18 +771,18 @@ static CONST ddi_t rempi(double a) {
   a = ldexp3k(a, q);
   if (ex < 0) ex = 0;
   ex *= 4;
-  x = ddmul_d2_d_d(a, rempitabdp[ex]);
+  x = ddmul_d2_d_d(a, Sleef_rempitabdp[ex]);
   di = rempisub(x.x);
   q = di.i;
   x.x = di.d;
   x = ddnormalize_d2_d2(x);
-  y = ddmul_d2_d_d(a, rempitabdp[ex+1]);
+  y = ddmul_d2_d_d(a, Sleef_rempitabdp[ex+1]);
   x = ddadd2_d2_d2_d2(x, y);
   di = rempisub(x.x);
   q += di.i;
   x.x = di.d;
   x = ddnormalize_d2_d2(x);
-  y = ddmul_d2_d2_d(dd(rempitabdp[ex+2], rempitabdp[ex+3]), a);
+  y = ddmul_d2_d2_d(dd(Sleef_rempitabdp[ex+2], Sleef_rempitabdp[ex+3]), a);
   x = ddadd2_d2_d2_d2(x, y);
   x = ddnormalize_d2_d2(x);
   x = ddmul_d2_d2_d2(x, dd(3.141592653589793116*2, 1.2246467991473532072e-16*2));

@@ -376,7 +376,7 @@ if(BUILD_INLINE_HEADERS)
 	    > ${CMAKE_CURRENT_BINARY_DIR}/include/sleefinline_${SIMDLC}.tmp6                               # > /build/src/libm/sleefSSE2.h.tmp6
 
 	  COMMAND $<TARGET_FILE:addSuffix> ${CMAKE_CURRENT_BINARY_DIR}/include/sleefinline_${SIMDLC}.tmp6  # addSuffix /build/src/libm/sleefSSE2.h.tmp6
-	    ${CMAKE_CURRENT_SOURCE_DIR}/keywords.txt "_${SIMDLC}"                                          # keywords.txt "_sse2"
+	    ${CMAKE_CURRENT_SOURCE_DIR}/keywords.txt "_${SIMDLC}_sleef"                                    # keywords.txt "_sse2_sleef"
             > ${PROJECT_BINARY_DIR}/include/sleefinline_${SIMDLC}.h                                        # > /build/include/sleefinline_sse2.h
 
 	  MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimddp.c ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdsp.c ${HEADER_${SIMD}}
