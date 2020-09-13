@@ -310,6 +310,10 @@ if(BUILD_INLINE_HEADERS)
   if(CMAKE_C_COMPILER_ID MATCHES "Intel")
     message(FATAL_ERROR "BUILD_INLINE_HEADERS is not supported with Intel Compiler")
   endif()
+
+  add_host_executable("addSuffix" addSuffix.c)
+  set_target_properties("addSuffix" PROPERTIES C_STANDARD 99)
+
   file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/include/)
   set(INLINE_HEADER_FILES_GENERATED "")
 
@@ -369,10 +373,14 @@ if(BUILD_INLINE_HEADERS)
 	  COMMAND ${SED_COMMAND} -e "s/^[[:space:]]*$//g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp4  # sed -e "s/^[[:space:]]*$//g" /build/src/libm/sleefSSE2.h.tmp4
 	    > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp5                                              # > /build/src/libm/sleefSSE2.h.tmp5
 	  COMMAND ${SED_COMMAND} "/^$/N;/^\\n$/D" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp5          # sed -e "/^$/N;/^\n$/D" /build/src/libm/sleefSSE2.h.tmp5
-	    > ${PROJECT_BINARY_DIR}/include/sleefinline_${SIMDLC}.h                                        # > /build/include/sleefinline_sse2.h
+	    > ${CMAKE_CURRENT_BINARY_DIR}/include/sleefinline_${SIMDLC}.tmp6                               # > /build/src/libm/sleefSSE2.h.tmp6
+
+	  COMMAND $<TARGET_FILE:addSuffix> ${CMAKE_CURRENT_BINARY_DIR}/include/sleefinline_${SIMDLC}.tmp6  # addSuffix /build/src/libm/sleefSSE2.h.tmp6
+	    ${CMAKE_CURRENT_SOURCE_DIR}/keywords.txt "_${SIMDLC}_sleef"                                    # keywords.txt "_sse2_sleef"
+            > ${PROJECT_BINARY_DIR}/include/sleefinline_${SIMDLC}.h                                        # > /build/include/sleefinline_sse2.h
 
 	  MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimddp.c ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdsp.c ${HEADER_${SIMD}}
-	  DEPENDS ${HEADER_${SIMD}}
+	  DEPENDS ${HEADER_${SIMD}} addSuffix
 	  VERBATIM
 	  )
 

@@ -14,7 +14,7 @@
 
 #include "misc.h"
 
-extern const float rempitabsp[];
+extern const float Sleef_rempitabsp[];
 
 #define __SLEEFSIMDSP_C__
 
@@ -485,18 +485,18 @@ static INLINE CONST dfi_t rempif(vfloat a) {
   a = vldexp3_vf_vf_vi2(a, q);
   ex = vandnot_vi2_vi2_vi2(vsra_vi2_vi2_i(ex, 31), ex);
   ex = vsll_vi2_vi2_i(ex, 2);
-  x = dfmul_vf2_vf_vf(a, vgather_vf_p_vi2(rempitabsp, ex));
+  x = dfmul_vf2_vf_vf(a, vgather_vf_p_vi2(Sleef_rempitabsp, ex));
   fi_t di = rempisubf(vf2getx_vf_vf2(x));
   q = figeti_vi2_di(di);
   x = vf2setx_vf2_vf2_vf(x, figetd_vf_di(di));
   x = dfnormalize_vf2_vf2(x);
-  y = dfmul_vf2_vf_vf(a, vgather_vf_p_vi2(rempitabsp+1, ex));
+  y = dfmul_vf2_vf_vf(a, vgather_vf_p_vi2(Sleef_rempitabsp+1, ex));
   x = dfadd2_vf2_vf2_vf2(x, y);
   di = rempisubf(vf2getx_vf_vf2(x));
   q = vadd_vi2_vi2_vi2(q, figeti_vi2_di(di));
   x = vf2setx_vf2_vf2_vf(x, figetd_vf_di(di));
   x = dfnormalize_vf2_vf2(x);
-  y = vcast_vf2_vf_vf(vgather_vf_p_vi2(rempitabsp+2, ex), vgather_vf_p_vi2(rempitabsp+3, ex));
+  y = vcast_vf2_vf_vf(vgather_vf_p_vi2(Sleef_rempitabsp+2, ex), vgather_vf_p_vi2(Sleef_rempitabsp+3, ex));
   y = dfmul_vf2_vf2_vf(y, a);
   x = dfadd2_vf2_vf2_vf2(x, y);
   x = dfnormalize_vf2_vf2(x);
