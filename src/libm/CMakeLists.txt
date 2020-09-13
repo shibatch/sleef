@@ -312,6 +312,7 @@ if(BUILD_INLINE_HEADERS)
   endif()
 
   add_host_executable("addSuffix" addSuffix.c)
+  set_target_properties("addSuffix" PROPERTIES C_STANDARD 99)
 
   file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/include/)
   set(INLINE_HEADER_FILES_GENERATED "")
