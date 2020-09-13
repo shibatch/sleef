@@ -12,7 +12,7 @@
 #define N 1000
 
 int nkeywords = 0, nalloc = 0;
-char **keywords, *suffix = "";
+char **keywords = NULL, *suffix = NULL;
 
 void insert(char *buf) {
   for(int i=0;i<nkeywords;i++) {
