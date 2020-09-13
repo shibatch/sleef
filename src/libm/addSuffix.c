@@ -20,24 +20,24 @@ void insert(char *buf) {
   }
 }
 
-void doit() {
+void doit(FILE *fp) {
   int state = 0;
   bool nl = true;
   char buf[N+10], *p = buf;
 
   for(;;) {
-    int c = getc(stdin);
+    int c = getc(fp);
     if (c == EOF) break;
     switch(state) {
     case 0:
       if (isalnum(c) || c == '_') {
-	ungetc(c, stdin);
+	ungetc(c, fp);
 	p = buf;
 	state = 1;
 	break;
       }
       if (c == '/') {
-	int c2 = getc(stdin);
+	int c2 = getc(fp);
 	if (c2 == '*') {
 	  putc(c, stdout);
 	  putc(c2, stdout);
@@ -47,17 +47,17 @@ void doit() {
 	  putc(c, stdout);
 	  putc(c2, stdout);
 	  do {
-	    c = getc(stdin);
+	    c = getc(fp);
 	    putc(c, stdout);
 	  } while(c != '\n');
 	  break;
 	}
-	ungetc(c2, stdin);
+	ungetc(c2, fp);
       }
       if (nl && c == '#') {
 	putc(c, stdout);
 	do {
-	  c = getc(stdin);
+	  c = getc(fp);
 	  putc(c, stdout);
 	} while(c != '\n');
 	break;
@@ -91,7 +91,7 @@ void doit() {
     case 2: // String
       if (c == '\\') {
 	putc(c, stdout);
-	putc(getc(stdin), stdout);
+	putc(getc(fp), stdout);
       } else if (c == '\"') {
 	putc(c, stdout);
 	state = 0;
@@ -103,7 +103,7 @@ void doit() {
     case 3: // Character
       if (c == '\\') {
 	putc(c, stdout);
-	putc(getc(stdin), stdout);
+	putc(getc(fp), stdout);
       } else if (c == '\'') {
 	putc(c, stdout);
 	state = 0;
@@ -114,14 +114,14 @@ void doit() {
 
     case 4: // Comment
       if (c == '*') {
-	int c2 = getc(stdin);
+	int c2 = getc(fp);
 	if (c2 == '/') {
 	  putc(c, stdout);
 	  putc(c2, stdout);
 	  state = 0;
 	  break;
 	}
-	ungetc(c2, stdin);
+	ungetc(c2, fp);
       }
       putc(c, stdout);
       break;
@@ -133,15 +133,15 @@ int main(int argc, char **argv) {
   nalloc = 1;
   keywords = malloc(sizeof(char *) * nalloc);
 
-  if (argc != 3) {
-    fprintf(stderr, "%s <keywords file> <suffix>\n", argv[0]);
+  if (argc != 4) {
+    fprintf(stderr, "%s <input file> <keywords file> <suffix>\n", argv[0]);
     fprintf(stderr, "Add the suffix to keywords\n");
     exit(-1);
   }
 
-  FILE *fp = fopen(argv[1], "r");
+  FILE *fp = fopen(argv[2], "r");
   if (fp == NULL) {
-    fprintf(stderr, "Cannot open %s\n", argv[1]);
+    fprintf(stderr, "Cannot open %s\n", argv[2]);
     exit(-1);
   }
 
@@ -160,9 +160,17 @@ int main(int argc, char **argv) {
 
   fclose(fp);
 
-  suffix = argv[2];
+  suffix = argv[3];
 
-  doit();
+  fp = fopen(argv[1], "r");
+  if (fp == NULL) {
+    fprintf(stderr, "Cannot open %s\n", argv[1]);
+    exit(-1);
+  }
+
+  doit(fp);
+
+  fclose(fp);
 
   exit(0);
 }
