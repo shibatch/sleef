@@ -305,6 +305,29 @@ typedef Sleef_float_2 vfloat2;
 #endif
 #endif
 
+#ifdef USE_INLINE_HEADER
+#define CONCAT_SIMD_SUFFIX_(keyword, suffix) keyword ## suffix
+#define CONCAT_SIMD_SUFFIX(keyword, suffix) CONCAT_SIMD_SUFFIX_(keyword, suffix)
+#define vmask CONCAT_SIMD_SUFFIX(vmask, SIMD_SUFFIX)
+#define vopmask CONCAT_SIMD_SUFFIX(vopmask, SIMD_SUFFIX)
+#define vdouble CONCAT_SIMD_SUFFIX(vdouble, SIMD_SUFFIX)
+#define vint CONCAT_SIMD_SUFFIX(vint, SIMD_SUFFIX)
+#define vfloat CONCAT_SIMD_SUFFIX(vfloat, SIMD_SUFFIX)
+#define vint2 CONCAT_SIMD_SUFFIX(vint2, SIMD_SUFFIX)
+#define vdouble2 CONCAT_SIMD_SUFFIX(vdouble2, SIMD_SUFFIX)
+#define vfloat2 CONCAT_SIMD_SUFFIX(vfloat2, SIMD_SUFFIX)
+#define vd2getx_vd_vd2 CONCAT_SIMD_SUFFIX(vd2getx_vd_vd2, SIMD_SUFFIX)
+#define vd2gety_vd_vd2 CONCAT_SIMD_SUFFIX(vd2gety_vd_vd2, SIMD_SUFFIX)
+#define vf2getx_vf_vf2 CONCAT_SIMD_SUFFIX(vf2getx_vf_vf2, SIMD_SUFFIX)
+#define vf2gety_vf_vf2 CONCAT_SIMD_SUFFIX(vf2gety_vf_vf2, SIMD_SUFFIX)
+#define vloadu_vd_p CONCAT_SIMD_SUFFIX(vloadu_vd_p, SIMD_SUFFIX)
+#define vstoreu_v_p_vd CONCAT_SIMD_SUFFIX(vstoreu_v_p_vd, SIMD_SUFFIX)
+#define vloadu_vf_p CONCAT_SIMD_SUFFIX(vloadu_vf_p, SIMD_SUFFIX)
+#define vstoreu_v_p_vf CONCAT_SIMD_SUFFIX(vstoreu_v_p_vf, SIMD_SUFFIX)
+#define vloadu_vi_p CONCAT_SIMD_SUFFIX(vloadu_vi_p, SIMD_SUFFIX)
+#define vstoreu_v_p_vi CONCAT_SIMD_SUFFIX(vstoreu_v_p_vi, SIMD_SUFFIX)
+#endif
+
 //
 
 #ifdef ENABLE_DP

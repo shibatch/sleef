@@ -147,6 +147,7 @@ macro(test_extension SIMD)
 	PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS}
 	USE_INLINE_HEADER="sleefinline_${LCSIMD}.h"
 	MACRO_ONLY_HEADER="macroonly${SIMD}.h"
+	SIMD_SUFFIX=_${LCSIMD}
 	)
       target_include_directories(${IUTINAME} PRIVATE ${PROJECT_BINARY_DIR}/inline)
       target_link_libraries(${IUTINAME} ${LIBM} ${LIBRT} ${TARGET_LIBINLINE})
