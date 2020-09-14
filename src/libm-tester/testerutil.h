@@ -30,7 +30,7 @@ float signf(float d);
 
 int readln(int fd, char *buf, int cnt);
 
-#define XRAND_MAX (0x100000000LL * (double)0x100000000LL)
+#define XRAND_MAX (INT64_C(0x100000000) * (double)INT64_C(0x100000000))
 
 void xsrand(uint64_t s);
 uint64_t xrand();

@@ -84,7 +84,7 @@ int readln(int fd, char *buf, int cnt) {
 static uint64_t xseed;
 
 uint64_t xrand() {
-  xseed = xseed * 6364136223846793005ULL + 1;
+  xseed = xseed * UINT64_C(6364136223846793005) + 1;
   return xseed;
 }
 

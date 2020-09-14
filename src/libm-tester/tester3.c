@@ -36,7 +36,7 @@ typedef __attribute__((vector_size(16))) float  vector_float;
 
 //
 
-#define XNAN  (((union { int64_t u; double d; })  { .u = 0xffffffffffffffffLL }).d)
+#define XNAN  (((union { int64_t u; double d; })  { .u = INT64_C(0xffffffffffffffff) }).d)
 #define XNANf (((union { int32_t u; float d; })  { .u = 0xffffffff }).d)
 
 static INLINE double unifyValue(double x) { x = !(x == x) ? XNAN  : x; return x; }

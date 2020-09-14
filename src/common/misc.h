@@ -45,7 +45,7 @@
 #define SLEEF_FP_ILOGBNAN ((int)2147483647)
 #endif
 
-#define SLEEF_SNAN (((union { long long int i; double d; }) { .i = 0x7ff0000000000001LL }).d)
+#define SLEEF_SNAN (((union { long long int i; double d; }) { .i = INT64_C(0x7ff0000000000001) }).d)
 #define SLEEF_SNANf (((union { long int i; float f; }) { .i = 0xff800001 }).f)
 
 

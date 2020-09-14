@@ -77,8 +77,8 @@ static char *toBCq(__float128 d) {
   int s = (int)(m >> 127);
   m = d == 0 ? 0 : ((m & ((((__uint128_t)1) << 112)-1)) | ((__uint128_t)1 << 112));
 
-  uint64_t h = m / 10000000000000000000ULL;
-  uint64_t l = m % 10000000000000000000ULL;
+  uint64_t h = m / UINT64_C(10000000000000000000);
+  uint64_t l = m % UINT64_C(10000000000000000000);
 
   char *ptr = frstr[(frstrcnt++) & 15];
   
