@@ -273,10 +273,9 @@ $ sudo make install</pre>
 <p>
   Header files for inlining the whole SLEEF functions can be built
   with the following commands. With these header files, it may be
-  easier to inline the whole SLEEF functions than using LTO. You
-  cannot include more than one of these header files from the same
-  file. You have to specify "-ffp-contract=off" compiler option when
-  compiling a source code that includes one of these header files.
+  easier to inline the whole SLEEF functions than using LTO. You have
+  to specify "-ffp-contract=off" compiler option when compiling a
+  source code that includes one of these header files.
 </p>
 
 <pre class="command">$ cmake -DBUILD_INLINE_HEADERS=TRUE ..</pre>
