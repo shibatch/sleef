@@ -38,7 +38,7 @@ static INLINE CONST Sleef_quad xfabsq(Sleef_quad x) {
   } cnv;
 
   cnv.q = x;
-  cnv.u[1] &= 0x7fffffffffffffffULL;
+  cnv.u[1] &= UINT64_C(0x7fffffffffffffff);
   return cnv.q;
 }
 
@@ -58,7 +58,7 @@ static INLINE CONST Sleef_quad upperq(Sleef_quad d) {
   } cnv;
 
   cnv.q = d;
-  cnv.u[0] &= ~((1ULL << (112/2+1)) - 1);
+  cnv.u[0] &= ~((UINT64_C(1) << (112/2+1)) - 1);
   return cnv.q;
 }
 

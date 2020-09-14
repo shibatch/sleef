@@ -428,7 +428,7 @@ typedef struct {
 
 static CONST fi_t rempisubf(float x) {
   fi_t ret;
-  float fr = x - (float)(1LL << 10) * (int32_t)(x * (1.0f / (1LL << 10)));
+  float fr = x - (float)(INT64_C(1) << 10) * (int32_t)(x * (1.0f / (INT64_C(1) << 10)));
   ret.i = ((7 & ((x > 0 ? 4 : 3) + (int32_t)(fr * 8))) - 3) >> 1;
   fr = fr - 0.25f * (int32_t)(fr * 4 + mulsignf(0.5f, x));
   fr = fabsfk(fr) > 0.125f ? (fr - mulsignf(0.5f, x)) : fr;
@@ -1066,7 +1066,7 @@ static Sleef_float2 atan2kf_u1(Sleef_float2 y, Sleef_float2 x) {
 }
 
 EXPORT CONST float xatan2f_u1(float y, float x) {
-  if (fabsfk(x) < 2.9387372783541830947e-39f) { y *= (1ULL << 24); x *= (1ULL << 24); } // nexttowardf((1.0 / FLT_MAX), 1)
+  if (fabsfk(x) < 2.9387372783541830947e-39f) { y *= (UINT64_C(1) << 24); x *= (UINT64_C(1) << 24); } // nexttowardf((1.0 / FLT_MAX), 1)
   Sleef_float2 d = atan2kf_u1(df(fabsfk(y), 0), df(x, 0));
   float r = d.x + d.y;
 
@@ -1133,7 +1133,7 @@ EXPORT CONST float xlogf(float d) {
   int e;
 
   int o = d < FLT_MIN;
-  if (o) d *= (float)(1LL << 32) * (float)(1LL << 32);
+  if (o) d *= (float)(INT64_C(1) << 32) * (float)(INT64_C(1) << 32);
       
   e = ilogb2kf(d * (1.0f/0.75f));
   m = ldexp3kf(d, -e);
@@ -1237,7 +1237,7 @@ static INLINE CONST Sleef_float2 logkf(float d) {
   int e;
 
   int o = d < FLT_MIN;
-  if (o) d *= (float)(1LL << 32) * (float)(1LL << 32);
+  if (o) d *= (float)(INT64_C(1) << 32) * (float)(INT64_C(1) << 32);
       
   e = ilogb2kf(d * (1.0f/0.75f));
   m = ldexp3kf(d, -e);
@@ -1265,7 +1265,7 @@ EXPORT CONST float xlogf_u1(float d) {
   int e;
 
   int o = d < FLT_MIN;
-  if (o) d *= (float)(1LL << 32) * (float)(1LL << 32);
+  if (o) d *= (float)(INT64_C(1) << 32) * (float)(INT64_C(1) << 32);
       
   e = ilogb2kf(d * (1.0f/0.75f));
   m = ldexp3kf(d, -e);
@@ -1318,8 +1318,8 @@ static INLINE CONST Sleef_float2 expk2f(Sleef_float2 d) {
 }
 
 EXPORT CONST float xpowf(float x, float y) {
-  int yisint = (y == (int)y) || (fabsfk(y) >= (float)(1LL << 24));
-  int yisodd = (1 & (int)y) != 0 && yisint && fabsfk(y) < (float)(1LL << 24);
+  int yisint = (y == (int)y) || (fabsfk(y) >= (float)(INT64_C(1) << 24));
+  int yisodd = (1 & (int)y) != 0 && yisint && fabsfk(y) < (float)(INT64_C(1) << 24);
 
   float result = expkf(dfmul_f2_f2_f(logkf(fabsfk(x)), y));
 
@@ -1340,7 +1340,7 @@ static INLINE CONST float logk3f(float d) {
   int e;
 
   int o = d < FLT_MIN;
-  if (o) d *= (float)(1LL << 32) * (float)(1LL << 32);
+  if (o) d *= (float)(INT64_C(1) << 32) * (float)(INT64_C(1) << 32);
       
   e = ilogb2kf(d * (1.0f/0.75f));
   m = ldexp3kf(d, -e);
@@ -1386,8 +1386,8 @@ static INLINE CONST float expk3f(float d) {
 EXPORT CONST float xfastpowf_u3500(float x, float y) {
   float result = expk3f(logk3f(fabsfk(x)) * y);
 
-  int yisint = (y == (int)y) || (fabsfk(y) >= (float)(1LL << 24));
-  int yisodd = (1 & (int)y) != 0 && yisint && fabsfk(y) < (float)(1LL << 24);
+  int yisint = (y == (int)y) || (fabsfk(y) >= (float)(INT64_C(1) << 24));
+  int yisodd = (1 & (int)y) != 0 && yisint && fabsfk(y) < (float)(INT64_C(1) << 24);
 
   result *= (x < 0 && yisodd) ? -1 : 1;
   if (x == 0) result = 0;
@@ -1645,7 +1645,7 @@ EXPORT CONST float xlog10f(float d) {
   int e;
 
   int o = d < FLT_MIN;
-  if (o) d *= (float)(1LL << 32) * (float)(1LL << 32);
+  if (o) d *= (float)(INT64_C(1) << 32) * (float)(INT64_C(1) << 32);
       
   e = ilogb2kf(d * (1.0f/0.75f));
   m = ldexp3kf(d, -e);
@@ -1678,7 +1678,7 @@ EXPORT CONST float xlog2f(float d) {
   int e;
 
   int o = d < FLT_MIN;
-  if (o) d *= (float)(1LL << 32) * (float)(1LL << 32);
+  if (o) d *= (float)(INT64_C(1) << 32) * (float)(INT64_C(1) << 32);
       
   e = ilogb2kf(d * (1.0f/0.75f));
   m = ldexp3kf(d, -e);
@@ -1709,7 +1709,7 @@ EXPORT CONST float xlog2f_u35(float d) {
   int e;
 
   int o = d < FLT_MIN;
-  if (o) d *= (float)(1LL << 32) * (float)(1LL << 32);
+  if (o) d *= (float)(INT64_C(1) << 32) * (float)(INT64_C(1) << 32);
       
   e = ilogb2kf(d * (1.0f/0.75f));
   m = ldexp3kf(d, -e);
@@ -1740,7 +1740,7 @@ EXPORT CONST float xlog1pf(float d) {
   float dp1 = d + 1;
   
   int o = dp1 < FLT_MIN;
-  if (o) dp1 *= (float)(1LL << 32) * (float)(1LL << 32);
+  if (o) dp1 *= (float)(INT64_C(1) << 32) * (float)(INT64_C(1) << 32);
       
   e = ilogb2kf(dp1 * (1.0f/0.75f));
 
@@ -1862,19 +1862,19 @@ EXPORT CONST float xfdimf(float x, float y) {
 
 EXPORT CONST float xtruncf(float x) {
   float fr = x - (int32_t)x;
-  return (xisinff(x) || fabsfk(x) >= (float)(1LL << 23)) ? x : copysignfk(x - fr, x);
+  return (xisinff(x) || fabsfk(x) >= (float)(INT64_C(1) << 23)) ? x : copysignfk(x - fr, x);
 }
 
 EXPORT CONST float xfloorf(float x) {
   float fr = x - (int32_t)x;
   fr = fr < 0 ? fr+1.0f : fr;
-  return (xisinff(x) || fabsfk(x) >= (float)(1LL << 23)) ? x : copysignfk(x - fr, x);
+  return (xisinff(x) || fabsfk(x) >= (float)(INT64_C(1) << 23)) ? x : copysignfk(x - fr, x);
 }
 
 EXPORT CONST float xceilf(float x) {
   float fr = x - (int32_t)x;
   fr = fr <= 0 ? fr : fr-1.0f;
-  return (xisinff(x) || fabsfk(x) >= (float)(1LL << 23)) ? x : copysignfk(x - fr, x);
+  return (xisinff(x) || fabsfk(x) >= (float)(INT64_C(1) << 23)) ? x : copysignfk(x - fr, x);
 }
 
 EXPORT CONST float xroundf(float d) {
@@ -1883,7 +1883,7 @@ EXPORT CONST float xroundf(float d) {
   if (fr == 0 && x <= 0) x--;
   fr = fr < 0 ? fr+1.0f : fr;
   x = d == 0.4999999701976776123f ? 0 : x;  // nextafterf(0.5, 0)
-  return (xisinff(d) || fabsfk(d) >= (float)(1LL << 23)) ? d : copysignfk(x - fr, d);
+  return (xisinff(d) || fabsfk(d) >= (float)(INT64_C(1) << 23)) ? d : copysignfk(x - fr, d);
 }
 
 EXPORT CONST float xrintf(float d) {
@@ -1892,12 +1892,12 @@ EXPORT CONST float xrintf(float d) {
   float fr = x - (int32_t)x;
   fr = (fr < 0 || (fr == 0 && isodd)) ? fr+1.0f : fr;
   x = d == 0.50000005960464477539f ? 0 : x;  // nextafterf(0.5, 1)
-  return (xisinff(d) || fabsfk(d) >= (float)(1LL << 23)) ? d : copysignfk(x - fr, d);
+  return (xisinff(d) || fabsfk(d) >= (float)(INT64_C(1) << 23)) ? d : copysignfk(x - fr, d);
 }
 
 EXPORT CONST Sleef_float2 xmodff(float x) {
   float fr = x - (int32_t)x;
-  fr = fabsfk(x) > (float)(1LL << 23) ? 0 : fr;
+  fr = fabsfk(x) > (float)(INT64_C(1) << 23) ? 0 : fr;
   Sleef_float2 ret = { copysignfk(fr, x), copysignfk(x - fr, x) };
   return ret;
 }
@@ -1980,7 +1980,7 @@ EXPORT CONST float xhypotf_u05(float x, float y) {
   float min = fminfk(x, y), n = min;
   float max = fmaxfk(x, y), d = max;
 
-  if (max < FLT_MIN) { n *= 1ULL << 24; d *= 1ULL << 24; }
+  if (max < FLT_MIN) { n *= UINT64_C(1) << 24; d *= UINT64_C(1) << 24; }
   Sleef_float2 t = dfdiv_f2_f2_f2(df(n, 0), df(d, 0));
   t = dfmul_f2_f2_f(dfsqrt_f2_f2(dfadd2_f2_f2_f(dfsqu_f2_f2(t), 1)), max);
   float ret = t.x + t.y;
@@ -2010,12 +2010,12 @@ static INLINE CONST float toward0f(float d) {
 }
 
 static INLINE CONST float ptruncf(float x) {
-  return fabsfk(x) >= (float)(1LL << 23) ? x : (x - (x - (int32_t)x));
+  return fabsfk(x) >= (float)(INT64_C(1) << 23) ? x : (x - (x - (int32_t)x));
 }
 
 EXPORT CONST float xfmodf(float x, float y) {
   float nu = fabsfk(x), de = fabsfk(y), s = 1, q;
-  if (de < FLT_MIN) { nu *= 1ULL << 25; de *= 1ULL << 25; s = 1.0f / (1ULL << 25); }
+  if (de < FLT_MIN) { nu *= UINT64_C(1) << 25; de *= UINT64_C(1) << 25; s = 1.0f / (UINT64_C(1) << 25); }
   Sleef_float2 r = df(nu, 0);
   float rde = toward0f(1.0f / de);
 
@@ -2041,12 +2041,12 @@ static INLINE CONST float rintfk2(float d) {
   int32_t isodd = (1 & (int32_t)x) != 0;
   float fr = x - (int32_t)x;
   fr = (fr < 0 || (fr == 0 && isodd)) ? fr+1.0f : fr;
-  return (fabsfk(d) >= (float)(1LL << 23)) ? d : copysignfk(x - fr, d);
+  return (fabsfk(d) >= (float)(INT64_C(1) << 23)) ? d : copysignfk(x - fr, d);
 }
 
 EXPORT CONST float xremainderf(float x, float y) {
   float n = fabsfk(x), d = fabsfk(y), s = 1, q;
-  if (d < FLT_MIN*2) { n *= 1ULL << 25; d *= 1ULL << 25; s = 1.0f / (1ULL << 25); }
+  if (d < FLT_MIN*2) { n *= UINT64_C(1) << 25; d *= UINT64_C(1) << 25; s = 1.0f / (UINT64_C(1) << 25); }
   float rd = 1.0f / d;
   Sleef_float2 r = df(n, 0);
   int qisodd = 0;
@@ -2057,7 +2057,7 @@ EXPORT CONST float xremainderf(float x, float y) {
     if (fabsfk(r.x) < 0.5f * d || (fabsfk(r.x) == 0.5f * d && !qisodd)) q = 0;
     if (q == 0) break;
     if (xisinff(q * -d)) q = q + mulsignf(-1, r.x);
-    qisodd ^= (1 & (int)q) != 0 && fabsfk(q) < (float)(1LL << 24);
+    qisodd ^= (1 & (int)q) != 0 && fabsfk(q) < (float)(INT64_C(1) << 24);
     r = dfnormalize_f2_f2(dfadd2_f2_f2_f2(r, dfmul_f2_f_f(q, -d)));
   }
   
@@ -2292,9 +2292,9 @@ static CONST df2 gammafk(float a) {
     (oref ? dfadd2_f2_f2_f2(dfx(1.1447298858494001639), dfneg_f2_f2(clc)) : clc); // log(M_PI)
   clln = otiny ? df(1, 0) : (oref ? clln : clld);
 
-  if (oref) x = dfmul_f2_f2_f2(clld, sinpifk(a - (float)(1LL << 12) * (int32_t)(a * (1.0 / (1LL << 12)))));
+  if (oref) x = dfmul_f2_f2_f2(clld, sinpifk(a - (float)(INT64_C(1) << 12) * (int32_t)(a * (1.0 / (INT64_C(1) << 12)))));
 
-  clld = otiny ? df(a*((1LL << 30)*(float)(1LL << 30)), 0) : (oref ? x : y);
+  clld = otiny ? df(a*((INT64_C(1) << 30)*(float)(INT64_C(1) << 30)), 0) : (oref ? x : y);
 
   df2 ret = { clc, dfdiv_f2_f2_f2(clln, clld) };
 

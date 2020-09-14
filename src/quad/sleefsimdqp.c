@@ -1182,7 +1182,7 @@ static INLINE CONST di_t rempisub(vdouble x) {
   vint vi = vtruncate_vi_vd(vsub_vd_vd_vd(y, vmul_vd_vd_vd(vrint_vd_vd(x), vcast_vd_d(4))));
   return disetdi_di_vd_vi(vsub_vd_vd_vd(x, vmul_vd_vd_vd(y, vcast_vd_d(0.25))), vi);
 #else
-  vdouble fr = vsub_vd_vd_vd(x, vmul_vd_vd_vd(vcast_vd_d(1LL << 28), vtruncate_vd_vd(vmul_vd_vd_vd(x, vcast_vd_d(1.0 / (1LL << 28))))));
+  vdouble fr = vsub_vd_vd_vd(x, vmul_vd_vd_vd(vcast_vd_d(INT64_C(1) << 28), vtruncate_vd_vd(vmul_vd_vd_vd(x, vcast_vd_d(1.0 / (INT64_C(1) << 28))))));
   vint vi = vadd_vi_vi_vi(vsel_vi_vo_vi_vi(vcast_vo32_vo64(vgt_vo_vd_vd(x, vcast_vd_d(0))), vcast_vi_i(4), vcast_vi_i(3)), vtruncate_vi_vd(vmul_vd_vd_vd(fr, vcast_vd_d(8))));
   vi = vsra_vi_vi_i(vsub_vi_vi_vi(vand_vi_vi_vi(vcast_vi_i(7), vi), vcast_vi_i(3)), 1);
   fr = vsub_vd_vd_vd(fr, vmul_vd_vd_vd(vcast_vd_d(0.25), vtruncate_vd_vd(vmla_vd_vd_vd_vd(fr, vcast_vd_d(4), vmulsign_vd_vd_vd(vcast_vd_d(0.5), x)))));
@@ -2040,8 +2040,8 @@ static tdx vcast_tdx_vf128(vmask2 f) {
   mz = vor_vm_vm_vm(mz, vcast_vm_i_i(0x39700000, 0));
 
   mx = vandnot_vm_vo64_vm(iszero, mx);
-  my = vreinterpret_vm_vd(vsub_vd_vd_vd(vreinterpret_vd_vm(my), vcast_vd_d(1.0 / (1ULL << 52))));
-  mz = vreinterpret_vm_vd(vsub_vd_vd_vd(vreinterpret_vd_vm(mz), vcast_vd_d(1.0 / ((1ULL << 52) * (double)(1ULL << 52)))));
+  my = vreinterpret_vm_vd(vsub_vd_vd_vd(vreinterpret_vd_vm(my), vcast_vd_d(1.0 / (UINT64_C(1) << 52))));
+  mz = vreinterpret_vm_vd(vsub_vd_vd_vd(vreinterpret_vd_vm(mz), vcast_vd_d(1.0 / ((UINT64_C(1) << 52) * (double)(UINT64_C(1) << 52)))));
 
   tdx r = tdxsetexyz_tdx_vm_vd_vd_vd(re, 
 				     vreinterpret_vd_vm(vor_vm_vm_vm(mx, signbit)), 
@@ -2088,8 +2088,8 @@ static INLINE CONST tdx vcast_tdx_vf128_fast(vmask2 f) {
   mz = vor_vm_vm_vm(mz, vcast_vm_i_i(0x39700000, 0));
 
   mx = vandnot_vm_vo64_vm(iszero, mx);
-  my = vreinterpret_vm_vd(vsub_vd_vd_vd(vreinterpret_vd_vm(my), vcast_vd_d(1.0 / (1ULL << 52))));
-  mz = vreinterpret_vm_vd(vsub_vd_vd_vd(vreinterpret_vd_vm(mz), vcast_vd_d(1.0 / ((1ULL << 52) * (double)(1ULL << 52)))));
+  my = vreinterpret_vm_vd(vsub_vd_vd_vd(vreinterpret_vd_vm(my), vcast_vd_d(1.0 / (UINT64_C(1) << 52))));
+  mz = vreinterpret_vm_vd(vsub_vd_vd_vd(vreinterpret_vd_vm(mz), vcast_vd_d(1.0 / ((UINT64_C(1) << 52) * (double)(UINT64_C(1) << 52)))));
 
   return tdxsetexyz_tdx_vm_vd_vd_vd(re, 
 				    vreinterpret_vd_vm(vor_vm_vm_vm(mx, signbit)), 
@@ -2101,15 +2101,15 @@ static INLINE CONST tdx vcast_tdx_vf128_fast(vmask2 f) {
 #define LOGXSCALE 1
 #define XSCALE (1 << LOGXSCALE)
 #define SX 61
-#define HBY (1.0 / (1ULL << 53))
+#define HBY (1.0 / (UINT64_C(1) << 53))
 #define LOGYSCALE 4
 #define YSCALE (1 << LOGYSCALE)
 #define SY 11
-#define HBZ (1.0 / ((1ULL << 53) * (double)(1ULL << 53)))
+#define HBZ (1.0 / ((UINT64_C(1) << 53) * (double)(UINT64_C(1) << 53)))
 #define LOGZSCALE 10
 #define ZSCALE (1 << LOGZSCALE)
 #define SZ 36
-#define HBR (1.0 / (1ULL << 60))
+#define HBR (1.0 / (UINT64_C(1) << 60))
 
 static vmask2 vcast_vf128_tdx_slow(tdx f) {
   vmask signbit = vand_vm_vm_vm(vreinterpret_vm_vd(tdxgetd3x_vd_tdx(f)), vcast_vm_i_i(0x80000000, 0));
@@ -2126,7 +2126,7 @@ static vmask2 vcast_vf128_tdx_slow(tdx f) {
   t = vsel_vd_vo_vd_vd(denorm, t, vcast_vd_d(1));
   f = tdxsete_tdx_tdx_vm(f, vsel_vm_vo64_vm_vm(denorm, vcast_vm_i_i(0, 1), tdxgete_vm_tdx(f)));
 
-  vopmask o = vlt_vo_vd_vd(tdxgetd3y_vd_tdx(f), vcast_vd_d(-1.0/(1ULL << 57)/(1ULL << 57)));
+  vopmask o = vlt_vo_vd_vd(tdxgetd3y_vd_tdx(f), vcast_vd_d(-1.0/(UINT64_C(1) << 57)/(UINT64_C(1) << 57)));
   o = vand_vo_vo_vo(o, veq_vo_vd_vd(tdxgetd3x_vd_tdx(f), vcast_vd_d(1)));
   o = vandnot_vo_vo_vo(veq64_vo_vm_vm(tdxgete_vm_tdx(f), vcast_vm_i_i(0, 1)), o);
   t = vsel_vd_vo_vd_vd(o, vcast_vd_d(2), t);
@@ -2774,9 +2774,9 @@ EXPORT void Sleef_qtostr(char *s, int n, vargquad a, int base) {
 
   if (visnanq_vo_vm2(c128.q)) { sprintf(p, "nan"); return; }
 
-  if ((c128.h & 0x8000000000000000ULL) != 0) {
+  if ((c128.h & UINT64_C(0x8000000000000000)) != 0) {
     *p++ = '-';
-    c128.h ^= 0x8000000000000000ULL;
+    c128.h ^= UINT64_C(0x8000000000000000);
   } else {
     *p++ = '+';
   }
