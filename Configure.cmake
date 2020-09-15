@@ -720,15 +720,6 @@ endif()
 
 option(ENFORCE_CUDA "Build fails if CUDA is not supported" OFF)
 
-if(ENABLE_CUDA)
-  check_language(CUDA)
-  find_package(CUDA)
-  find_library(LIBCUDA cuda)
-  if (NOT LIBCUDA)
-    set(LIBCUDA "")
-  endif()
-endif()
-
 if (ENFORCE_CUDA AND NOT CMAKE_CUDA_COMPILER)
   message(FATAL_ERROR "ENFORCE_CUDA is specified and that feature is disabled or not supported by the compiler")
 endif()

@@ -7,12 +7,6 @@
 // Use --fmad=false option to compile this file
 // Include cmath, cfloat and cstdint before including this file
 
-// You can put this include file inside a namespace, as follows
-
-// namespace sleef {
-// #include "sleefinline_cuda.h"
-// }
-
 __device__ const double Sleef_rempitabdp[] = {
   0.15915494309189531785, 1.7916237278037667488e-17, 2.5454160968749269937e-33, 2.1132476107887107169e-49,
   0.03415494309189533173, 4.0384494702232122736e-18, 1.0046721413651383112e-33, 2.1132476107887107169e-49,

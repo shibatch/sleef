@@ -333,6 +333,7 @@ __global__ void xerfcf_u15(float *r, float *a0) { *r = Sleef_erfcf1_u15cuda(*a0)
 #define BUFSIZE 1024
 
 int main(int argc, char **argv) {
+#if 0
   cuInit(0);
 
   int ndevice;
@@ -347,6 +348,7 @@ int main(int argc, char **argv) {
   cuDeviceGet(&device, 0);
   cuDeviceGetName(deviceName, 1000, device);
   fprintf(stderr, "Device : %s\n", deviceName);
+#endif
 
   vdouble2 *r2;
   vfloat2 *s2;

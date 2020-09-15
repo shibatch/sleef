@@ -287,13 +287,17 @@ typedef union {
 
 #elif defined(_MSC_VER) // #if (defined (__GNUC__) || defined (__clang__) || defined(__INTEL_COMPILER)) && !defined(_MSC_VER)
 
+#if defined(SLEEF_GENHEADER)
+
+#define INLINE SLEEF_ALWAYS_INLINE
+#define CONST SLEEF_CONST
+#define EXPORT SLEEF_INLINE
+#define NOEXPORT
+
+#else // #if defined(SLEEF_GENHEADER)
+
 #define INLINE __forceinline
 #define CONST
-#define RESTRICT
-#define ALIGNED(x)
-#define LIKELY(condition) (condition)
-#define UNLIKELY(condition) (condition)
-
 #ifndef SLEEF_STATIC_LIBS
 #define EXPORT __declspec(dllexport)
 #define NOEXPORT
@@ -301,6 +305,13 @@ typedef union {
 #define EXPORT
 #define NOEXPORT
 #endif
+
+#endif // #if defined(SLEEF_GENHEADER)
+
+#define RESTRICT
+#define ALIGNED(x)
+#define LIKELY(condition) (condition)
+#define UNLIKELY(condition) (condition)
 
 #if (defined(__GNUC__) || defined(__CLANG__)) && (defined(__i386__) || defined(__x86_64__)) && !defined(SLEEF_GENHEADER)
 #include <x86intrin.h>
