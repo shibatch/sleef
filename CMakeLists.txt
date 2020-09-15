@@ -22,6 +22,8 @@ option(ENABLE_ALTSQRT "Enable alternative sqrt method (aarch64 only)" OFF)
 
 option(DISABLE_FFTW "Disable testing the DFT library with FFTW" OFF)
 
+option(ENABLE_CUDA "Enable CUDA" OFF)
+
 cmake_minimum_required(VERSION 3.4.3)
 
 # Set to NEW when updating cmake_minimum_required to VERSION >= 3.7.2
@@ -36,14 +38,20 @@ endif()
 enable_testing()
 
 set(SLEEF_VERSION_MAJOR 3)
-set(SLEEF_VERSION_MINOR 5)
-set(SLEEF_VERSION_PATCHLEVEL 1)
+set(SLEEF_VERSION_MINOR 6)
+set(SLEEF_VERSION_PATCHLEVEL 0)
 set(SLEEF_VERSION ${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}.${SLEEF_VERSION_PATCHLEVEL})
 set(SLEEF_SOVERSION ${SLEEF_VERSION_MAJOR})
 
-project(SLEEF
-	VERSION ${SLEEF_VERSION}
-	LANGUAGES C)
+if (ENABLE_CUDA)
+  project(SLEEF
+    VERSION ${SLEEF_VERSION}
+    LANGUAGES C CUDA)
+else()
+  project(SLEEF
+    VERSION ${SLEEF_VERSION}
+    LANGUAGES C)
+endif()
 
 # For specifying installation directories
 include(GNUInstallDirs)

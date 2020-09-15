@@ -69,6 +69,17 @@ foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
   endif()
 endforeach()
 
+# Generate renamecuda.h
+
+set(HEADER_CUDA ${CMAKE_CURRENT_BINARY_DIR}/include/renamecuda.h)
+list(APPEND HEADER_FILES_GENERATED ${HEADER_CUDA})
+add_custom_command(OUTPUT ${HEADER_CUDA}
+  COMMAND echo Generating renamecuda.h: ${TARGET_MKRENAME} ${RENAME_PARAMS_CUDA}
+  COMMAND $<TARGET_FILE:${TARGET_MKRENAME}> ${RENAME_PARAMS_CUDA} > ${HEADER_CUDA}
+  DEPENDS ${TARGET_MKRENAME}
+  )
+add_custom_target(renameCUDA.h_generated DEPENDS ${HEADER_CUDA})
+
 # --------------------------------------------------------------------
 # TARGET_MKRENAME_GNUABI
 # renameXXX_gnuabi.h for each SIMD GNU Abi
@@ -385,8 +396,89 @@ if(BUILD_INLINE_HEADERS)
 	  )
 
 	list(APPEND INLINE_HEADER_FILES_GENERATED ${INLINE_HEADER_FILE})
-      endif()
+      endif(COMPILER_SUPPORTS_${SIMD})
     endforeach()
+
+    # Generate CUDA header file
+
+    set(SIMD CUDA)
+    string(TOLOWER ${SIMD} SIMDLC)
+
+    set(INLINE_HEADER_FILE ${PROJECT_BINARY_DIR}/include/sleefinline_cuda.h)
+
+    add_custom_command(
+      OUTPUT ${INLINE_HEADER_FILE} 
+
+      COMMAND echo Generating sleefinline_${SIMDLC}.h
+      
+      # Preprocess sleefsimddp.c with SLEEF_GENHEADER defined, comments are preserved
+      COMMAND "${CMAKE_C_COMPILER}"  ${FLAG_PREPROCESS} ${FLAG_PRESERVE_COMMENTS}                      # gcc -E -C 
+      ${FLAG_INCLUDE}${PROJECT_SOURCE_DIR}/src/common ${FLAG_INCLUDE}${PROJECT_SOURCE_DIR}/src/arch    # -I/sleef/src/common -I/sleef/src/arch
+      ${FLAG_INCLUDE}${CMAKE_CURRENT_BINARY_DIR}/include/                                              # -I/build/src/libm/include
+      ${FLAG_DEFINE}SLEEF_GENHEADER ${FLAG_DEFINE}ENABLE_${SIMD} ${FLAG_DEFINE}DORENAME                # -DSLEEF_GENHEADER -DENABLE_CUDA -DDORENAME
+      ${FLAG_DEFINE}SLEEF_ALWAYS_INLINE=__device__ ${FLAG_DEFINE}SLEEF_INLINE=__device__               # -DSLEEF_ALWAYS_INLINE=__device__ -DSLEEF_INLINE=__device__
+      ${FLAG_DEFINE}SLEEF_CONST=__device__ ${FLAG_DEFINE}static=__device__                             # -DSLEEF_CONST=__device__ -Dstatic=__device__
+      ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimddp.c > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp1      # /sleef/libm/sleefsimddp.c > /build/libm/sleefCUDA.h.tmp1
+
+      # Remove all lines except those begin with "//@"
+      COMMAND ${SED_COMMAND} -n -e "/^\\/\\/@#.*$/p" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp1   # sed -n -e "/^\\/\\/@#.*$/p" /build/src/libm/sleefCUDA.h.tmp1
+      > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp2                                                # > /build/src/libm/sleefCUDA.h.tmp2
+
+      # Remove "//@"
+      COMMAND ${SED_COMMAND} -e "s/^\\/\\/@#/#/g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp2      # sed -e "s/^\\/\\/@#/#/g" /build/src/libm/sleefCUDA.h.tmp2
+      > ${CMAKE_CURRENT_BINARY_DIR}/include/macroonly${SIMD}.h                                         # > /build/src/libm/include/macroonlyCUDA.h
+
+      # Preprocess sleefsimdsp.c with SLEEF_GENHEADER defined. Include macroonly*.h instead of helper*.h.
+      COMMAND "${CMAKE_C_COMPILER}" ${FLAG_PREPROCESS} ${FLAG_PRESERVE_COMMENTS}                       # gcc -E -C 
+      ${FLAG_INCLUDE}${PROJECT_SOURCE_DIR}/src/common ${FLAG_INCLUDE}${PROJECT_SOURCE_DIR}/src/arch    # -I/sleef/src/common -I/sleef/src/arch
+      ${FLAG_INCLUDE}${CMAKE_CURRENT_BINARY_DIR}/include/                                              # -I/build/src/libm/include
+      ${FLAG_DEFINE}SLEEF_GENHEADER ${FLAG_DEFINE}ENABLE_${SIMD} ${FLAG_DEFINE}DORENAME                # -DSLEEF_GENHEADER -DENABLE_CUDA -DDORENAME
+      ${FLAG_DEFINE}SLEEF_ALWAYS_INLINE=__device__ ${FLAG_DEFINE}SLEEF_INLINE=__device__               # -DSLEEF_ALWAYS_INLINE=__device__ -DSLEEF_INLINE=__device__
+      ${FLAG_DEFINE}SLEEF_CONST=__device__ ${FLAG_DEFINE}static=__device__                             # -DSLEEF_CONST=__device__ -Dstatic=__device__
+      ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdsp.c >> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp1     # /sleef/libm/sleefsimdsp.c >> /build/libm/sleefCUDA.h.tmp1
+
+      # Remove lines beginning with "#" so that the resulting file can be preprocessed again.
+      COMMAND ${SED_COMMAND} -e "s/^#.*//g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp1            # sed -e "s/^#.*//g" /build/src/libm/sleefCUDA.h.tmp1
+      > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.c                                                   # > /build/src/libm/sleefCUDA.h.c
+
+      # Preprocess the intemediate file again to remove comments
+      COMMAND "${CMAKE_C_COMPILER}" ${FLAG_PREPROCESS}                                                 # gcc -E
+      ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.c                                                     # /build/src/libm/sleefCUDA.h.c
+      > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp3                                                # > /build/src/libm/sleefCUDA.h.tmp3
+
+      # Embed version number into the header
+      COMMAND ${SED_COMMAND} -e                                                                        # sed -e
+      "s/%VERSION%/${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}.${SLEEF_VERSION_PATCHLEVEL}/g"        # "s/%VERSION%/3.5.0/g"
+      ${CMAKE_CURRENT_SOURCE_DIR}/sleefinline_cuda_header.h.org                                        # /sleef/libm/sleefinline_header.h.org
+      > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp4                                                # > /build/src/libm/sleefCUDA.h.tmp4
+
+      # Remove lines beginning with "#"
+      COMMAND ${SED_COMMAND} -e "s/^#.*//g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp3            # sed -e "s/^#.*//g" /build/src/libm/sleefCUDA.h.tmp3
+      >> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp4                                               # >> /build/src/libm/sleefCUDA.h.tmp4
+
+      # Replace multiple empty lines with a single empty line
+      COMMAND ${SED_COMMAND} -e "s/^[[:space:]]*$//g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp4  # sed -e "s/^[[:space:]]*$//g" /build/src/libm/sleefCUDA.h.tmp4
+      > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp5                                                # > /build/src/libm/sleefCUDA.h.tmp5
+      COMMAND ${SED_COMMAND} "/^$/N;/^\\n$/D" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp5          # sed -e "/^$/N;/^\n$/D" /build/src/libm/sleefCUDA.h.tmp5
+      > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp6                                                # > /build/src/libm/sleefCUDA.h.tmp6
+
+      # Remove redundant __device__
+      COMMAND ${SED_COMMAND} -e "s/__device__ __device__/__device__/g"                                 # sed -e "s/__device__ __device__/__device__/g"
+      -e "s/__device__ __device__/__device__/g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp6        # -e "s/__device__ __device__/__device__/g" /build/src/libm/sleefCUDA.h.tmp6
+      > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp7                                                # > /build/src/libm/sleefCUDA.h.tmp7
+
+      COMMAND $<TARGET_FILE:addSuffix> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp7                 # addSuffix /build/src/libm/sleefCUDA.h.tmp7
+      ${CMAKE_CURRENT_SOURCE_DIR}/keywords.txt "_${SIMDLC}_sleef"                                      # keywords.txt "_cuda_sleef"
+      > ${PROJECT_BINARY_DIR}/include/sleefinline_${SIMDLC}.h                                          # > /build/include/sleefinline_cuda.h
+
+      MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimddp.c ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdsp.c ${HEADER_${SIMD}}
+      DEPENDS ${HEADER_${SIMD}} addSuffix
+      VERBATIM
+      )
+
+    list(APPEND INLINE_HEADER_FILES_GENERATED ${INLINE_HEADER_FILE})
+
+    #
 
     add_custom_target(${TARGET_INLINE_HEADERS} ALL
       DEPENDS

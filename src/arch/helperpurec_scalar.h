@@ -48,13 +48,13 @@
 #define ENABLE_SP
 //@#define ENABLE_SP
 
-#if CONFIG == 2
+#if CONFIG == 2 || CONFIG == 3
 #define ENABLE_FMA_DP
 //@#define ENABLE_FMA_DP
 #define ENABLE_FMA_SP
 //@#define ENABLE_FMA_SP
 
-#if defined(__AVX2__) || defined(__aarch64__) || defined(__arm__) || defined(__powerpc64__) || defined(__zarch__)
+#if defined(__AVX2__) || defined(__aarch64__) || defined(__arm__) || defined(__powerpc64__) || defined(__zarch__) || CONFIG == 3
 #ifndef FP_FAST_FMA
 #define FP_FAST_FMA
 //@#define FP_FAST_FMA
@@ -68,11 +68,12 @@
 #if (!defined(FP_FAST_FMA) || !defined(FP_FAST_FMAF)) && !defined(SLEEF_GENHEADER)
 #error FP_FAST_FMA or FP_FAST_FMAF not defined
 #endif
+
 #define ISANAME "Pure C scalar with FMA"
 
-#else // #if CONFIG == 2
+#else // #if CONFIG == 2 || CONFIG == 3
 #define ISANAME "Pure C scalar"
-#endif // #if CONFIG == 2
+#endif // #if CONFIG == 2 || CONFIG == 3
 
 #define LOG2VECTLENDP 0
 //@#define LOG2VECTLENDP 0
@@ -86,7 +87,7 @@
 #define ACCURATE_SQRT
 //@#define ACCURATE_SQRT
 
-#if defined(__SSE4_1__) || defined(__aarch64__)
+#if defined(__SSE4_1__) || defined(__aarch64__) || CONFIG == 3
 #define FULL_FP_ROUNDING
 //@#define FULL_FP_ROUNDING
 #endif
