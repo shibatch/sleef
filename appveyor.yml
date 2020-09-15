@@ -15,7 +15,6 @@ install:
   - hostname
   - call "D:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
 build_script:
-  - set PATH=%PATH%;"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.0\bin"
   - set BUILDFOLDER=%CD%
   - set ORGPATH=%PATH%
   - if "%DO_TEST%" == "TRUE" echo PATH c:\Cygwin64\bin;c:\Cygwin64\usr\bin;%CD%\build-cygwin\bin;%PATH% > q.bat
