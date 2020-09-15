@@ -8,51 +8,50 @@ dist: bionic
 # Include osx jobs
 matrix:
   include:
-    # - os: osx
-    #   arch: amd64
-    #   compiler: clang # use default apple clang
-    #   env:
-    #     - LABEL="osx-clang"
-    # - os: linux
-    #   services: docker
-    #   env:
-    #     - LABEL="armhf-gcc"
-    #     - ENABLE_DOCKER="true"
-    # - os: linux
-    #   arch: amd64
-    #   addons:
-    #     apt:
-    #       packages:
-    #         - gcc-7
-    #   env:
-    #     - LABEL="x86_64-gcc"
-    # - os: linux
-    #   arch: amd64
-    #   addons:
-    #     apt:
-    #       packages:
-    #         - clang-7
-    #   env:
-    #     - LABEL="x86_64-clang"
-    # - os: linux
-    #   arch: arm64
-    #   addons:
-    #     apt:
-    #       sources:
-    #         - ubuntu-toolchain-r-test
-    #       packages:
-    #         - gcc-10
-    #   env:
-    #     - LABEL="arm64-gcc-sve"
-    # - os: linux
-    #   arch: arm64
-    #   addons:
-    #     apt:
-    #       packages:
-    #         - clang-8
-    #   env:
-    #     - LABEL="arm64-clang"
-
+    - os: osx
+      arch: amd64
+      compiler: clang # use default apple clang
+      env:
+        - LABEL="osx-clang"
+    - os: linux
+      services: docker
+      env:
+        - LABEL="armhf-gcc"
+        - ENABLE_DOCKER="true"
+    - os: linux
+      arch: amd64
+      addons:
+        apt:
+          packages:
+            - gcc-7
+      env:
+        - LABEL="x86_64-gcc"
+    - os: linux
+      arch: amd64
+      addons:
+        apt:
+          packages:
+            - clang-7
+      env:
+        - LABEL="x86_64-clang"
+    - os: linux
+      arch: arm64
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-10
+      env:
+        - LABEL="arm64-gcc-sve"
+    - os: linux
+      arch: arm64
+      addons:
+        apt:
+          packages:
+            - clang-8
+      env:
+        - LABEL="arm64-clang"
     - arch: ppc64le
       dist: bionic
       env:
