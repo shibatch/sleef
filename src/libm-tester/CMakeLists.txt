@@ -91,6 +91,17 @@ set_target_properties(${TARGET_IUT} PROPERTIES ${COMMON_TARGET_PROPERTIES})
 add_test_iut(${TARGET_IUT})
 set(IUT_LIST ${TARGET_IUT})
 
+# Compile executable 'iutcuda'
+if (BUILD_INLINE_HEADERS AND SED_COMMAND AND CMAKE_CUDA_COMPILER)
+  add_executable(iutcuda iutcuda.cu)
+  set_target_properties(iutcuda PROPERTIES LINKER_LANGUAGE CUDA)
+  target_compile_options(iutcuda PRIVATE "--fmad=false")
+  target_include_directories(iutcuda PRIVATE ${PROJECT_BINARY_DIR}/inline)
+  add_dependencies(iutcuda ${TARGET_INLINE_HEADERS})
+  add_test_iut(iutcuda)
+  list(APPEND IUT_LIST iutcuda)
+endif()
+
 set(IUT_SRC iutsimd.c iutsimdmain.c testerutil.c)
 
 # Add vector extension `iut`s
@@ -150,7 +161,7 @@ macro(test_extension SIMD)
 	SIMD_SUFFIX=_${LCSIMD}_sleef
 	)
       target_include_directories(${IUTINAME} PRIVATE ${PROJECT_BINARY_DIR}/inline)
-      target_link_libraries(${IUTINAME} ${LIBM} ${LIBRT} ${TARGET_LIBINLINE})
+      target_link_libraries(${IUTINAME} ${LIBM} ${LIBRT})
       add_dependencies(${IUTINAME} ${TARGET_INLINE_HEADERS})
       set_target_properties(${IUTINAME} PROPERTIES C_STANDARD 99)
       add_test_iut(${IUTINAME})
@@ -241,16 +252,6 @@ endmacro(test_extension)
 foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
   test_extension(${SIMD})
 endforeach()
-
-if (BUILD_INLINE_HEADERS AND SED_COMMAND AND CMAKE_CUDA_COMPILER)
-  add_executable(iutcuda iutcuda.cu)
-  set_target_properties(iutcuda PROPERTIES LINKER_LANGUAGE CUDA)
-  target_compile_options(iutcuda PRIVATE "--fmad=false")
-  target_include_directories(iutcuda PRIVATE ${PROJECT_BINARY_DIR}/inline)
-  add_dependencies(iutcuda ${TARGET_INLINE_HEADERS})
-  add_test_iut(iutcuda)
-  list(APPEND IUT_LIST iutcuda)
-endif()
 
 function(add_gnuabi_compatibility_test SIMD MASKED)
   if (MASKED)

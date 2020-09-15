@@ -486,12 +486,6 @@ if(BUILD_INLINE_HEADERS)
       )
     install(FILES ${INLINE_HEADER_FILES_GENERATED} DESTINATION include)
   endif(SED_COMMAND)
-
-  add_library(${TARGET_LIBINLINE} STATIC rempitab.c)
-  install(TARGETS ${TARGET_LIBINLINE}
-          PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-          LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-          ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}")
 endif(BUILD_INLINE_HEADERS)
 
 # On some systems we need to explicitly link libsleef against libm to
