@@ -52,26 +52,21 @@ matrix:
             - clang-8
       env:
         - LABEL="arm64-clang"
-    - os: linux
-      services: docker
-      env:
-        - LABEL="armhf-gcc"
-        - ENABLE_DOCKER="true"
     - arch: ppc64le
       dist: bionic
       env:
-        - LABEL=common
+        - LABEL="ppc64le-gcc"
         - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
     - arch: ppc64le
       compiler: clang
       dist: bionic
       env:
-        - LABEL=common
+        - LABEL="ppc64le-clang"
         - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
     - arch: s390x
       dist: bionic
       env:
-        - LABEL=common
+        - LABEL="s390x-gcc"
         - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
     - os: linux
       arch: s390x
@@ -81,7 +76,7 @@ matrix:
           packages:
             - clang-8
       env:
-        - LABEL="common"
+        - LABEL="s390x-clang"
         - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
 
 before_install:

@@ -497,7 +497,7 @@ option(DISABLE_SSE2 "Disable SSE2" OFF)
 option(ENFORCE_SSE2 "Build fails if SSE2 is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_X86 AND NOT DISABLE_SSE2)
-  set(CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_SSE2})
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_SSE2}")
   CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
   #include <intrin.h>
@@ -519,7 +519,7 @@ option(DISABLE_SSE4 "Disable SSE4" OFF)
 option(ENFORCE_SSE4 "Build fails if SSE4 is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_X86 AND NOT DISABLE_SSE4)
-  set(CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_SSE4})
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_SSE4}")
   CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
   #include <intrin.h>
@@ -541,7 +541,7 @@ option(ENFORCE_AVX "Disable AVX" OFF)
 option(ENFORCE_AVX "Build fails if AVX is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_X86 AND NOT DISABLE_AVX)
-  set(CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX})
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_AVX}")
   CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
   #include <intrin.h>
@@ -563,7 +563,7 @@ option(DISABLE_FMA4 "Disable FMA4" OFF)
 option(ENFORCE_FMA4 "Build fails if FMA4 is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_X86 AND NOT DISABLE_FMA4)
-  set(CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_FMA4})
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_FMA4}")
   CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
   #include <intrin.h>
@@ -585,7 +585,7 @@ option(DISABLE_AVX2 "Disable AVX2" OFF)
 option(ENFORCE_AVX2 "Build fails if AVX2 is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_X86 AND NOT DISABLE_AVX2)
-  set(CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX2})
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_AVX2}")
   CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
   #include <intrin.h>
@@ -612,7 +612,7 @@ option(DISABLE_AVX512F "Disable AVX512F" OFF)
 option(ENFORCE_AVX512F "Build fails if AVX512F is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_X86 AND NOT DISABLE_AVX512F)
-  set(CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_AVX512F})
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_AVX512F}")
   CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
   #include <intrin.h>
@@ -644,7 +644,7 @@ option(DISABLE_SVE "Disable SVE" OFF)
 option(ENFORCE_SVE "Build fails if SVE is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_AARCH64 AND NOT DISABLE_SVE)
-  set(CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_SVE})
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_SVE}")
   CHECK_C_SOURCE_COMPILES("
   #include <arm_sve.h>
   int main() {
@@ -666,7 +666,7 @@ option(DISABLE_VSX "Disable VSX" OFF)
 option(ENFORCE_VSX "Build fails if VSX is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_PPC64 AND NOT DISABLE_VSX)
-  set(CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_VSX})
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_VSX}")
   CHECK_C_SOURCE_COMPILES("
   #include <altivec.h>
   #ifndef __LITTLE_ENDIAN__
@@ -696,7 +696,7 @@ option(DISABLE_ZVECTOR2 "Disable ZVECTOR2" OFF)
 option(ENFORCE_ZVECTOR2 "Build fails if ZVECTOR2 is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_S390X AND NOT DISABLE_ZVECTOR2)
-  set(CMAKE_REQUIRED_FLAGS ${FLAGS_ENABLE_ZVECTOR2})
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_ZVECTOR2}")
   CHECK_C_SOURCE_COMPILES("
   #include <vecintrin.h>
   int main() {
