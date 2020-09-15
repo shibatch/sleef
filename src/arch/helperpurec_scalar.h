@@ -192,7 +192,7 @@ static INLINE vint vtruncate_vi_vd(vdouble vd) { return (int32_t)TRUNC(vd); }
 #else
 static INLINE vint vrint_vi_vd(vdouble a) {
   a += a > 0 ? 0.5 : -0.5;
-  versatileVector v = { .d = a }; v.x -= 1 & (int)a;
+  versatileVector v; v.d = a; v.x -= 1 & (int)a;
   return (int32_t)v.d;
 }
 static INLINE vdouble vrint_vd_vd(vdouble vd) { return vcast_vd_vi(vrint_vi_vd(vd)); }
@@ -216,7 +216,7 @@ static INLINE vdouble vmul_vd_vd_vd(vdouble x, vdouble y) { return x * y; }
 static INLINE vdouble vdiv_vd_vd_vd(vdouble x, vdouble y) { return x / y; }
 static INLINE vdouble vrec_vd_vd(vdouble x)               { return 1 / x; }
 
-static INLINE vdouble vabs_vd_vd(vdouble d) { versatileVector v = { .d = d }; v.x &= 0x7fffffffffffffffULL; return v.d; }
+static INLINE vdouble vabs_vd_vd(vdouble d) { versatileVector v; v.d = d; v.x &= 0x7fffffffffffffffULL; return v.d; }
 static INLINE vdouble vneg_vd_vd(vdouble d) { return -d; }
 
 static INLINE vdouble vmax_vd_vd_vd(vdouble x, vdouble y) { return x > y ? x : y; }
@@ -299,7 +299,7 @@ static INLINE vint2 vtruncate_vi2_vf(vfloat vf) { return (int32_t)TRUNCF(vf); }
 #else
 static INLINE vint2 vrint_vi2_vf(vfloat a) {
   a += a > 0 ? 0.5f : -0.5f;
-  versatileVector v = { .f = a }; v.u[0] -= 1 & (int)a;
+  versatileVector v; v.f = a; v.u[0] -= 1 & (int)a;
   return (int32_t)v.f;
 }
 static INLINE vfloat vrint_vf_vf(vfloat vd) { return vcast_vf_vi2(vrint_vi2_vf(vd)); }
@@ -324,7 +324,7 @@ static INLINE vfloat vmul_vf_vf_vf(vfloat x, vfloat y) { return x * y; }
 static INLINE vfloat vdiv_vf_vf_vf(vfloat x, vfloat y) { return x / y; }
 static INLINE vfloat vrec_vf_vf   (vfloat x)           { return 1 / x; }
 
-static INLINE vfloat vabs_vf_vf(vfloat x) { versatileVector v = { .f = x }; v.i[0] &= 0x7fffffff; return v.f; }
+static INLINE vfloat vabs_vf_vf(vfloat x) { versatileVector v; v.f = x; v.i[0] &= 0x7fffffff; return v.f; }
 static INLINE vfloat vneg_vf_vf(vfloat x) { return -x; }
 
 static INLINE vfloat vmax_vf_vf_vf(vfloat x, vfloat y) { return x > y ? x : y; }
@@ -352,9 +352,9 @@ static INLINE vopmask vle_vo_vf_vf(vfloat x, vfloat y)  { return x <= y ? ~(uint
 static INLINE vopmask vgt_vo_vf_vf(vfloat x, vfloat y)  { return x >  y ? ~(uint32_t)0 : 0; }
 static INLINE vopmask vge_vo_vf_vf(vfloat x, vfloat y)  { return x >= y ? ~(uint32_t)0 : 0; }
 
-static INLINE vint2 vadd_vi2_vi2_vi2(vint2 x, vint2 y) { versatileVector v = { .i2 = x }, w = { .i2 = y }; v.i[0] += w.i[0]; v.i[1] += w.i[1]; return v.i2; }
-static INLINE vint2 vsub_vi2_vi2_vi2(vint2 x, vint2 y) { versatileVector v = { .i2 = x }, w = { .i2 = y }; v.i[0] -= w.i[0]; v.i[1] -= w.i[1]; return v.i2; }
-static INLINE vint2 vneg_vi2_vi2(vint2 x)              { versatileVector v = { .i2 = x }; v.i[0] = -v.i[0]; v.i[1] = -v.i[1]; return v.i2; }
+static INLINE vint2 vadd_vi2_vi2_vi2(vint2 x, vint2 y) { versatileVector v, w; v.i2 = x; w.i2 = y; v.i[0] += w.i[0]; v.i[1] += w.i[1]; return v.i2; }
+static INLINE vint2 vsub_vi2_vi2_vi2(vint2 x, vint2 y) { versatileVector v, w; v.i2 = x; w.i2 = y; v.i[0] -= w.i[0]; v.i[1] -= w.i[1]; return v.i2; }
+static INLINE vint2 vneg_vi2_vi2(vint2 x)              { versatileVector v; v.i2 = x; v.i[0] = -v.i[0]; v.i[1] = -v.i[1]; return v.i2; }
 
 static INLINE vint2 vand_vi2_vi2_vi2(vint2 x, vint2 y)    { return x & y; }
 static INLINE vint2 vandnot_vi2_vi2_vi2(vint2 x, vint2 y) { return y & ~x; }
@@ -375,9 +375,9 @@ static INLINE vfloat vsel_vf_vo_vo_vo_f_f_f_f(vopmask o0, vopmask o1, vopmask o2
 static INLINE vint2 vand_vi2_vo_vi2(vopmask x, vint2 y) { return vcast_vm_vo(x) & y; }
 static INLINE vint2 vandnot_vi2_vo_vi2(vopmask x, vint2 y) { return y & ~vcast_vm_vo(x); }
 
-static INLINE vint2 vsll_vi2_vi2_i(vint2 x, int c) { versatileVector v = { .i2 = x }; v.u[0] <<= c; v.u[1] <<= c; return v.i2; }
-static INLINE vint2 vsrl_vi2_vi2_i(vint2 x, int c) { versatileVector v = { .i2 = x }; v.u[0] >>= c; v.u[1] >>= c; return v.i2; }
-static INLINE vint2 vsra_vi2_vi2_i(vint2 x, int c) { versatileVector v = { .i2 = x }; v.i[0] >>= c; v.i[1] >>= c; return v.i2; }
+static INLINE vint2 vsll_vi2_vi2_i(vint2 x, int c) { versatileVector v; v.i2 = x; v.u[0] <<= c; v.u[1] <<= c; return v.i2; }
+static INLINE vint2 vsrl_vi2_vi2_i(vint2 x, int c) { versatileVector v; v.i2 = x; v.u[0] >>= c; v.u[1] >>= c; return v.i2; }
+static INLINE vint2 vsra_vi2_vi2_i(vint2 x, int c) { versatileVector v; v.i2 = x; v.i[0] >>= c; v.i[1] >>= c; return v.i2; }
 
 static INLINE vopmask visinf_vo_vf (vfloat d) { return (d == SLEEF_INFINITYf || d == -SLEEF_INFINITYf) ? ~(uint32_t)0 : 0; }
 static INLINE vopmask vispinf_vo_vf(vfloat d) { return d == SLEEF_INFINITYf ? ~(uint32_t)0 : 0; }
