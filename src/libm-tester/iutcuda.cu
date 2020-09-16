@@ -350,6 +350,8 @@ int main(int argc, char **argv) {
   fprintf(stderr, "Device : %s\n", deviceName);
 #endif
 
+  cudaSetDeviceFlags(cudaDeviceScheduleSpin);
+
   vdouble2 *r2;
   vfloat2 *s2;
   double *r, *a0, *a1, *a2;

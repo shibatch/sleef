@@ -287,6 +287,10 @@ typedef union {
 
 #elif defined(_MSC_VER) // #if (defined (__GNUC__) || defined (__clang__) || defined(__INTEL_COMPILER)) && !defined(_MSC_VER)
 
+#pragma warning disable 4116 // warning C4116: unnamed type definition in parentheses
+#pragma warning disable 4244 // warning C4244: 'function': conversion from 'vopmask' to '__mmask8', possible loss of data
+#pragma warning disable 4305 // warning C4305: 'function': truncation from 'double' to 'float'
+
 #if defined(SLEEF_GENHEADER)
 
 #define INLINE SLEEF_ALWAYS_INLINE
