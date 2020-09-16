@@ -1,6 +1,7 @@
 include(CheckCCompilerFlag)
 include(CheckCSourceCompiles)
 include(CheckTypeSize)
+include(CheckLanguage)
 
 if (BUILD_STATIC_TEST_BINS)
   set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
@@ -264,21 +265,22 @@ command_arguments(RENAME_PARAMS_NEON32          cinz_ 2 4 neon)
 command_arguments(RENAME_PARAMS_NEON32VFPV4     finz_ 2 4 neonvfpv4)
 command_arguments(RENAME_PARAMS_VSX             finz_ 2 4 vsx)
 command_arguments(RENAME_PARAMS_VSXNOFMA        cinz_ 2 4 vsxnofma)
-command_arguments(RENAME_PARAMS_ZVECTOR2             finz_ 2 4 zvector2)
-command_arguments(RENAME_PARAMS_ZVECTOR2NOFMA        cinz_ 2 4 zvector2nofma)
+command_arguments(RENAME_PARAMS_ZVECTOR2        finz_ 2 4 zvector2)
+command_arguments(RENAME_PARAMS_ZVECTOR2NOFMA   cinz_ 2 4 zvector2nofma)
 command_arguments(RENAME_PARAMS_PUREC_SCALAR    cinz_ 1 1 purec)
 command_arguments(RENAME_PARAMS_PURECFMA_SCALAR finz_ 1 1 purecfma)
+command_arguments(RENAME_PARAMS_CUDA            finz_ 1 1 cuda)
 # The vector length parameters in SVE, for SP and DP, are chosen for
 # the smallest SVE vector size (128-bit). The name is generated using
 # the "x" token of VLA SVE vector functions.
 command_arguments(RENAME_PARAMS_SVE             finz_ x x sve)
 command_arguments(RENAME_PARAMS_SVENOFMA        cinz_ x x svenofma)
 
-command_arguments(RENAME_PARAMS_GNUABI_SSE2    sse2 b 2 4 _mm128d _mm128 _mm128i _mm128i __SSE2__)
-command_arguments(RENAME_PARAMS_GNUABI_AVX     avx c 4 8 __m256d __m256 __m128i "struct { __m128i x, y$<SEMICOLON> }" __AVX__)
-command_arguments(RENAME_PARAMS_GNUABI_AVX2    avx2 d 4 8 __m256d __m256 __m128i __m256i __AVX2__)
-command_arguments(RENAME_PARAMS_GNUABI_AVX512F avx512f e 8 16 __m512d __m512 __m256i __m512i __AVX512F__)
-command_arguments(RENAME_PARAMS_GNUABI_ADVSIMD advsimd n 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON)
+command_arguments(RENAME_PARAMS_GNUABI_SSE2     sse2 b 2 4 _mm128d _mm128 _mm128i _mm128i __SSE2__)
+command_arguments(RENAME_PARAMS_GNUABI_AVX      avx c 4 8 __m256d __m256 __m128i "struct { __m128i x, y$<SEMICOLON> }" __AVX__)
+command_arguments(RENAME_PARAMS_GNUABI_AVX2     avx2 d 4 8 __m256d __m256 __m128i __m256i __AVX2__)
+command_arguments(RENAME_PARAMS_GNUABI_AVX512F  avx512f e 8 16 __m512d __m512 __m256i __m512i __AVX512F__)
+command_arguments(RENAME_PARAMS_GNUABI_ADVSIMD  advsimd n 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON)
 # The vector length parameters in SVE, for SP and DP, are chosen for
 # the smallest SVE vector size (128-bit). The name is generated using
 # the "x" token of VLA SVE vector functions.
@@ -712,6 +714,14 @@ endif()
 
 if (ENFORCE_ZVECTOR2 AND NOT COMPILER_SUPPORTS_ZVECTOR2)
   message(FATAL_ERROR "ENFORCE_ZVECTOR2 is specified and that feature is disabled or not supported by the compiler")
+endif()
+
+# CUDA
+
+option(ENFORCE_CUDA "Build fails if CUDA is not supported" OFF)
+
+if (ENFORCE_CUDA AND NOT CMAKE_CUDA_COMPILER)
+  message(FATAL_ERROR "ENFORCE_CUDA is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # OpenMP

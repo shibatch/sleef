@@ -14,7 +14,9 @@
 
 #include "misc.h"
 
+#ifndef ENABLE_CUDA
 extern const double Sleef_rempitabdp[];
+#endif
 
 #define __SLEEFSIMDDP_C__
 
@@ -218,6 +220,14 @@ extern const double Sleef_rempitabdp[];
 #endif
 #endif
 
+#ifdef ENABLE_CUDA
+#define CONFIG 3
+#include "helperpurec_scalar.h"
+#ifdef DORENAME
+#include "renamecuda.h"
+#endif
+#endif
+
 //
 
 #define MLA(x, y, z) vmla_vd_vd_vd_vd((x), (y), (z))
@@ -403,7 +413,7 @@ static INLINE CONST di_t rempisub(vdouble x) {
 }
 
 static INLINE CONST ddi_t rempi(vdouble a) {
-  vdouble2 x, y, z;
+  vdouble2 x, y;
   vint ex = vilogb2k_vi_vd(a);
 #if defined(ENABLE_AVX512F) || defined(ENABLE_AVX512FNOFMA)
   ex = vandnot_vi_vi_vi(vsra_vi_vi_i(ex, 31), ex);

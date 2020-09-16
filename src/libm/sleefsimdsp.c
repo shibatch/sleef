@@ -14,7 +14,9 @@
 
 #include "misc.h"
 
+#ifndef ENABLE_CUDA
 extern const float Sleef_rempitabsp[];
+#endif
 
 #define __SLEEFSIMDSP_C__
 
@@ -314,6 +316,18 @@ extern const float Sleef_rempitabsp[];
 #endif
 #endif
 
+#ifdef ENABLE_CUDA
+#define CONFIG 3
+#if !defined(SLEEF_GENHEADER)
+#include "helperpurec_scalar.h"
+#else
+#include "macroonlyCUDA.h"
+#endif
+#ifdef DORENAME
+#include "renamecuda.h"
+#endif
+#endif
+
 //
 
 #define MLA(x, y, z) vmla_vf_vf_vf_vf((x), (y), (z))
@@ -474,7 +488,7 @@ static INLINE CONST fi_t rempisubf(vfloat x) {
 }
 
 static INLINE CONST dfi_t rempif(vfloat a) {
-  vfloat2 x, y, z;
+  vfloat2 x, y;
   vint2 ex = vilogb2k_vi2_vf(a);
 #if defined(ENABLE_AVX512F) || defined(ENABLE_AVX512FNOFMA)
   ex = vandnot_vi2_vi2_vi2(vsra_vi2_vi2_i(ex, 31), ex);
@@ -2973,8 +2987,8 @@ EXPORT CONST VECTOR_CC vfloat xhypotf_u05(vfloat x, vfloat y) {
 EXPORT CONST VECTOR_CC vfloat xhypotf_u35(vfloat x, vfloat y) {
   x = vabs_vf_vf(x);
   y = vabs_vf_vf(y);
-  vfloat min = vmin_vf_vf_vf(x, y), n = min;
-  vfloat max = vmax_vf_vf_vf(x, y), d = max;
+  vfloat min = vmin_vf_vf_vf(x, y);
+  vfloat max = vmax_vf_vf_vf(x, y);
 
   vfloat t = vdiv_vf_vf_vf(min, max);
   vfloat ret = vmul_vf_vf_vf(max, vsqrt_vf_vf(vmla_vf_vf_vf_vf(t, t, vcast_vf_f(1))));
@@ -2987,7 +3001,7 @@ EXPORT CONST VECTOR_CC vfloat xhypotf_u35(vfloat x, vfloat y) {
 
 EXPORT CONST VECTOR_CC vfloat xnextafterf(vfloat x, vfloat y) {
   x = vsel_vf_vo_vf_vf(veq_vo_vf_vf(x, vcast_vf_f(0)), vmulsign_vf_vf_vf(vcast_vf_f(0), y), x);
-  vint2 t, xi2 = vreinterpret_vi2_vf(x);
+  vint2 xi2 = vreinterpret_vi2_vf(x);
   vopmask c = vxor_vo_vo_vo(vsignbit_vo_vf(x), vge_vo_vf_vf(y, x));
 
   xi2 = vsel_vi2_vo_vi2_vi2(c, vsub_vi2_vi2_vi2(vcast_vi2_i(0), vxor_vi2_vi2_vi2(xi2, vcast_vi2_i(1 << 31))), xi2);
