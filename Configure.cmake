@@ -67,8 +67,8 @@ endif(NOT (RUNNING_ON_APPVEYOR AND SLEEF_CLANG_ON_WINDOWS))
 
 # The library currently supports the following SIMD architectures
 set(SLEEF_SUPPORTED_EXTENSIONS
-  AVX512F AVX512FNOFMA AVX2 AVX2128 FMA4 AVX SSE4 SSE2  # x86
-  ADVSIMD ADVSIMDNOFMA SVE SVENOFMA                     # Aarch64
+  AVX512FNOFMA AVX512F AVX2 AVX2128 FMA4 AVX SSE4 SSE2  # x86
+  SVENOFMA SVE ADVSIMDNOFMA ADVSIMD                     # Aarch64
   NEON32 NEON32VFPV4                                    # Aarch32
   VSX VSXNOFMA                                          # PPC64
   ZVECTOR2 ZVECTOR2NOFMA		                # IBM Z

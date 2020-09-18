@@ -10,10 +10,11 @@ pipeline {
 	    	     	 sh '''
                 	 echo "armclang+SVE on" `hostname`
 			 export CC=armclang
+			 export QEMU_CPU=max,sve-max-vq=1
 			 rm -rf build
  			 mkdir build
 			 cd build
-			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_INLINE_HEADERS=TRUE -DBUILD_QUAD=TRUE -DENFORCE_SVE=TRUE ..
+			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_INLINE_HEADERS=TRUE -DBUILD_QUAD=TRUE -DENFORCE_SVE=TRUE -DEMULATOR=qemu-aarch64 ..
 			 ninja
 			 export OMP_WAIT_POLICY=passive
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
@@ -29,10 +30,31 @@ pipeline {
 	    	     	 sh '''
                 	 echo "armclang+SVE+AAVPCS on" `hostname`
 			 export CC=armclang
+			 export QEMU_CPU=max,sve-max-vq=1
 			 rm -rf build
  			 mkdir build
 			 cd build
-			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DFORCE_AAVPCS=On -DENABLE_GNUABI=On -DBUILD_QUAD=TRUE -DENFORCE_SVE=TRUE ..
+			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_INLINE_HEADERS=TRUE -DFORCE_AAVPCS=On -DENABLE_GNUABI=On -DBUILD_QUAD=TRUE -DENFORCE_SVE=TRUE -DEMULATOR=qemu-aarch64 ..
+			 ninja
+			 export OMP_WAIT_POLICY=passive
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j `nproc`
+		         ninja install
+			 '''
+            	     }
+                }
+
+                stage('aarch64 gcc-10 static and cuda') {
+            	     agent { label 'cuda' }
+            	     steps {
+	    	     	 sh '''
+                	 echo "aarch64 gcc-10 and cuda on" `hostname`
+			 export CC=gcc-10.2.0
+			 export QEMU_CPU=max,sve-max-vq=1
+			 rm -rf build
+ 			 mkdir build
+			 cd build
+			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DBUILD_SHARED_LIBS=FALSE -DENFORCE_TESTER3=TRUE -DFORCE_AAVPCS=On -DENABLE_GNUABI=On -DBUILD_QUAD=TRUE -DENFORCE_SVE=TRUE -DBUILD_INLINE_HEADERS=TRUE -DENABLE_CUDA=TRUE -DENFORCE_CUDA=TRUE -DEMULATOR=qemu-aarch64 ..
 			 ninja
 			 export OMP_WAIT_POLICY=passive
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
