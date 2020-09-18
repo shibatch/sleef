@@ -5008,7 +5008,7 @@ void do_test() {
 }
 
 int main(int argc, char **argv) {
-  char *argv2[argc+2], *commandSde = NULL;
+  char *argv2[argc+2], *commandSde = NULL, *commandQEmu = NULL;
   int i, a2s;
 
   // BUGFIX: this flush is to prevent incorrect syncing with the
@@ -5021,6 +5021,9 @@ int main(int argc, char **argv) {
       enableFlushToZero = 1;
     } else if (a2s+1 < argc && strcmp(argv[a2s], "--sde") == 0) {
       commandSde = argv[a2s+1];
+      a2s++;
+    } else if (a2s+1 < argc && strcmp(argv[a2s], "--qemu") == 0) {
+      commandQEmu = argv[a2s+1];
       a2s++;
     } else {
       break;
@@ -5048,14 +5051,20 @@ int main(int argc, char **argv) {
     if (readln(ctop[0], str, 255) < 1 ||
 	sscanf(str, "%d", &u) != 1 ||
 	(u & 3) == 0) {
-      if (commandSde != NULL) {
+      if (commandSde != NULL || commandQEmu != NULL) {
 	close(ctop[0]);
 	close(ptoc[1]);
 
-	argv2[0] = commandSde;
-	argv2[1] = "--";
-	for(i=a2s;i<argc;i++) argv2[i-a2s+2] = argv[i];
-	argv2[argc-a2s+2] = NULL;
+	if (commandSde) {
+	  argv2[0] = commandSde;
+	  argv2[1] = "--";
+	  for(i=a2s;i<argc;i++) argv2[i-a2s+2] = argv[i];
+	  argv2[argc-a2s+2] = NULL;
+	} else {
+	  argv2[0] = commandQEmu;
+	  for(i=a2s;i<argc;i++) argv2[i-a2s+1] = argv[i];
+	  argv2[argc-a2s+1] = NULL;
+	}
 	
 	startChild(argv2[0], argv2);
 
@@ -5066,7 +5075,7 @@ int main(int argc, char **argv) {
 	  return 0;
 	}
 
-	printf("*** Using SDE\n");
+	printf("*** Using emulator\n");
       } else {
 	int status;
 	waitpid(pid, &status, 0);
