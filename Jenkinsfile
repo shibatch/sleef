@@ -10,6 +10,7 @@ pipeline {
 	    	     	 sh '''
                 	 echo "armclang+SVE on" `hostname`
 			 export CC=armclang
+			 export QEMU_CPU=max,sve-max-vq=1
 			 rm -rf build
  			 mkdir build
 			 cd build
@@ -29,6 +30,7 @@ pipeline {
 	    	     	 sh '''
                 	 echo "armclang+SVE+AAVPCS on" `hostname`
 			 export CC=armclang
+			 export QEMU_CPU=max,sve-max-vq=1
 			 rm -rf build
  			 mkdir build
 			 cd build
@@ -48,6 +50,7 @@ pipeline {
 	    	     	 sh '''
                 	 echo "aarch64 gcc-10 and cuda on" `hostname`
 			 export CC=gcc-10.2.0
+			 export QEMU_CPU=max,sve-max-vq=1
 			 rm -rf build
  			 mkdir build
 			 cd build
