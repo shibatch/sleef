@@ -62,6 +62,8 @@ typedef struct {
   vmask x, y;
 } vmask2;
 
+typedef vmask2 vargquad;
+
 //
 
 #if !defined(SLEEF_GENHEADER)
@@ -577,70 +579,14 @@ static INLINE void vsscatter2_v_p_i_i_vf(float *ptr, int offset, int step, vfloa
 
 //
 
-static INLINE vmask2 vinterleave_vm2_vm2(vmask2 v) {
-  return (vmask2) {
-    vreinterpret_vm_vd(_mm256_unpacklo_pd(vreinterpret_vd_vm(v.x), vreinterpret_vd_vm(v.y))),
-      vreinterpret_vm_vd(_mm256_unpackhi_pd(vreinterpret_vd_vm(v.x), vreinterpret_vd_vm(v.y))) };
-}
-
-static INLINE vmask2 vuninterleave_vm2_vm2(vmask2 v) {
-  return (vmask2) {
-    vreinterpret_vm_vd(_mm256_unpacklo_pd(vreinterpret_vd_vm(v.x), vreinterpret_vd_vm(v.y))),
-      vreinterpret_vm_vd(_mm256_unpackhi_pd(vreinterpret_vd_vm(v.x), vreinterpret_vd_vm(v.y))) };
-}
-
-static INLINE vint vuninterleave_vi_vi(vint v) {
-  return _mm_shuffle_epi32(v, (0 << 0) | (2 << 2) | (1 << 4) | (3 << 6));
-}
-
-static INLINE vdouble vinterleave_vd_vd(vdouble vd) {
-  double tmp[4];
-  vstoreu_v_p_vd(tmp, vd);
-  double t = tmp[1]; tmp[1] = tmp[2]; tmp[2] = t;
-  return vloadu_vd_p(tmp);
-}
-
-static INLINE vdouble vuninterleave_vd_vd(vdouble vd) {
-  double tmp[4];
-  vstoreu_v_p_vd(tmp, vd);
-  double t = tmp[1]; tmp[1] = tmp[2]; tmp[2] = t;
-  return vloadu_vd_p(tmp);
-}
-
-static INLINE vmask vinterleave_vm_vm(vmask vm) {
-  double tmp[4];
-  vstoreu_v_p_vd(tmp, vreinterpret_vd_vm(vm));
-  double t = tmp[1]; tmp[1] = tmp[2]; tmp[2] = t;
-  return vreinterpret_vm_vd(vloadu_vd_p(tmp));
-}
-
-static INLINE vmask vuninterleave_vm_vm(vmask vm) {
-  double tmp[4];
-  vstoreu_v_p_vd(tmp, vreinterpret_vd_vm(vm));
-  double t = tmp[1]; tmp[1] = tmp[2]; tmp[2] = t;
-  return vreinterpret_vm_vd(vloadu_vd_p(tmp));
-}
-
 static vmask2 vloadu_vm2_p(void *p) {
   vmask2 vm2;
   memcpy(&vm2, p, VECTLENDP * 16);
   return vm2;
 }
 
-#if !defined(SLEEF_GENHEADER)
-typedef Sleef_quad4 vargquad;
-
-static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
-  return vinterleave_vm2_vm2(vloadu_vm2_p(&aq));
-}
-
-static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
-  vm2 = vuninterleave_vm2_vm2(vm2);
-  vargquad aq;
-  memcpy(&aq, &vm2, VECTLENDP * 16);
-  return aq;
-}
-#endif // #if !defined(SLEEF_GENHEADER)
+static INLINE vmask2 vcast_vm2_aq(vargquad aq) { return aq; }
+static INLINE vargquad vcast_aq_vm2(vmask2 vm2) { return vm2; }
 
 static INLINE int vtestallzeros_i_vo64(vopmask g) {
   return _mm_movemask_epi8(_mm_or_si128(_mm256_extractf128_si256(g, 0), _mm256_extractf128_si256(g, 1))) == 0;

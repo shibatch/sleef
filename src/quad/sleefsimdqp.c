@@ -1231,6 +1231,7 @@ static INLINE CONST tdx sin_tdx_tdx(tdx a) {
   const double3 npil = { +2.9947698097183396659e-33, -1.1124542208633652815e-49, -5.6722319796403157441e-66 };
 
   vdouble3 d = vcast_vd3_tdx(a);
+
   vdouble dq = vrint_vd_vd(vmul_vd_vd_vd(vd3getx_vd_vd3(d), vcast_vd_d(1.0 / M_PI)));
   vint q = vrint_vi_vd(dq);
   d = tdadd2_vd3_vd3_vd3(d, tdmul_vd3_vd3_vd(vcast_vd3_d3(npiu), dq));
@@ -2048,7 +2049,7 @@ static tdx vcast_tdx_vf128(vmask2 f) {
 				     vreinterpret_vd_vm(vor_vm_vm_vm(my, signbit)), 
 				     vreinterpret_vd_vm(vor_vm_vm_vm(mz, signbit)));
 
-  vopmask fisdenorm = veq64_vo_vm_vm(tdxgete_vm_tdx(r), vcast_vm_i_i(0, 0));
+  vopmask fisdenorm = vandnot_vo_vo_vo(iszero, veq64_vo_vm_vm(tdxgete_vm_tdx(r), vcast_vm_i_i(0, 0))); // ??
 
   if (UNLIKELY(!vtestallzeros_i_vo64(vor_vo_vo_vo(veq64_vo_vm_vm(tdxgete_vm_tdx(r), vcast_vm_i_i(0, 0x7fff)),
 						  vandnot_vo_vo_vo(iszero, fisdenorm))))) {
@@ -2067,7 +2068,7 @@ static tdx vcast_tdx_vf128(vmask2 f) {
 
     vdouble t = vreinterpret_vd_vm(vor_vm_vm_vm(signbit, vreinterpret_vm_vd(vcast_vd_d(SLEEF_INFINITY))));
     r = tdxsetx_tdx_tdx_vd(r, vsel_vd_vo_vd_vd(fisnan, vcast_vd_d(SLEEF_INFINITY - SLEEF_INFINITY), vsel_vd_vo_vd_vd(fisinf, t, tdxgetd3x_vd_tdx(r))));
-    r = tdxsetx_tdx_tdx_vd(r, vreinterpret_vd_vm(vandnot_vm_vo64_vm(iszero, vreinterpret_vm_vd(tdxgetd3x_vd_tdx(r)))));
+    r = tdxsetx_tdx_tdx_vd(r, vreinterpret_vd_vm(vor_vm_vm_vm(signbit, vandnot_vm_vo64_vm(iszero, vreinterpret_vm_vd(tdxgetd3x_vd_tdx(r))))));
   }
 
   return r;
@@ -2322,7 +2323,7 @@ static INLINE CONST vmask2 vcast_vf128_tdx_fast(tdx f) {
 // Float128 conversion functions
 
 EXPORT CONST vargquad xcast_from_doubleq(vdouble d) {
-  return vcast_aq_vm2(vcast_vf128_tdx(vcast_tdx_vd(vinterleave_vd_vd(d))));
+  return vcast_aq_vm2(vcast_vf128_tdx(vcast_tdx_vd(d)));
 }
 
 EXPORT CONST vdouble xcast_to_doubleq(vargquad q) {
@@ -2330,7 +2331,7 @@ EXPORT CONST vdouble xcast_to_doubleq(vargquad q) {
   t = tdxsetx_tdx_tdx_vd(t, vadd_vd_vd_vd(vadd_vd_vd_vd(tdxgetd3z_vd_tdx(t), tdxgetd3y_vd_tdx(t)), tdxgetd3x_vd_tdx(t)));
   t = tdxsety_tdx_tdx_vd(t, vcast_vd_d(0));
   t = tdxsetz_tdx_tdx_vd(t, vcast_vd_d(0));
-  return vuninterleave_vd_vd(vcast_vd_tdx(t));
+  return vcast_vd_tdx(t);
 }
 
 // Float128 comparison functions
@@ -2343,7 +2344,7 @@ EXPORT CONST vint xcmpltq(vargquad ax, vargquad ay) {
 				       vand_vo_vo_vo(veq64_vo_vm_vm(vm2gety_vm_vm2(cy), vm2gety_vm_vm2(cx)), vugt64_vo_vm_vm(vm2getx_vm_vm2(cy), vm2getx_vm_vm2(cx)))));
   o = vcast_vo32_vo64(vandnot_vo_vo_vo(visnanq_vo_vm2(y), o));
   vint vi = vsel_vi_vo_vi_vi(o, vcast_vi_i(1), vcast_vi_i(0));
-  return vuninterleave_vi_vi(vi);
+  return vi;
 }
 
 EXPORT CONST vint xcmpgtq(vargquad ax, vargquad ay) {
@@ -2354,7 +2355,7 @@ EXPORT CONST vint xcmpgtq(vargquad ax, vargquad ay) {
 				       vand_vo_vo_vo(veq64_vo_vm_vm(vm2gety_vm_vm2(cx), vm2gety_vm_vm2(cy)), vugt64_vo_vm_vm(vm2getx_vm_vm2(cx), vm2getx_vm_vm2(cy)))));
   o = vcast_vo32_vo64(vandnot_vo_vo_vo(visnanq_vo_vm2(y), o));
   vint vi = vsel_vi_vo_vi_vi(o, vcast_vi_i(1), vcast_vi_i(0));
-  return vuninterleave_vi_vi(vi);
+  return vi;
 }
 
 EXPORT CONST vint xcmpleq(vargquad ax, vargquad ay) {
@@ -2367,7 +2368,7 @@ EXPORT CONST vint xcmpleq(vargquad ax, vargquad ay) {
 								  veq64_vo_vm_vm(vm2getx_vm_vm2(cy), vm2getx_vm_vm2(cx))))));
   o = vcast_vo32_vo64(vandnot_vo_vo_vo(visnanq_vo_vm2(y), o));
   vint vi = vsel_vi_vo_vi_vi(o, vcast_vi_i(1), vcast_vi_i(0));
-  return vuninterleave_vi_vi(vi);
+  return vi;
 }
 
 EXPORT CONST vint xcmpgeq(vargquad ax, vargquad ay) {
@@ -2380,7 +2381,7 @@ EXPORT CONST vint xcmpgeq(vargquad ax, vargquad ay) {
 								  veq64_vo_vm_vm(vm2getx_vm_vm2(cx), vm2getx_vm_vm2(cy))))));
   o = vcast_vo32_vo64(vandnot_vo_vo_vo(visnanq_vo_vm2(y), o));
   vint vi = vsel_vi_vo_vi_vi(o, vcast_vi_i(1), vcast_vi_i(0));
-  return vuninterleave_vi_vi(vi);
+  return vi;
 }
 
 EXPORT CONST vint xcmpeqq(vargquad ax, vargquad ay) {
@@ -2390,7 +2391,7 @@ EXPORT CONST vint xcmpeqq(vargquad ax, vargquad ay) {
   o = vandnot_vo_vo_vo(o, vand_vo_vo_vo(veq64_vo_vm_vm(vm2gety_vm_vm2(cy), vm2gety_vm_vm2(cx)), veq64_vo_vm_vm(vm2getx_vm_vm2(cx), vm2getx_vm_vm2(cy))));
   o = vcast_vo32_vo64(vandnot_vo_vo_vo(visnanq_vo_vm2(y), o));
   vint vi = vsel_vi_vo_vi_vi(o, vcast_vi_i(1), vcast_vi_i(0));
-  return vuninterleave_vi_vi(vi);
+  return vi;
 }
 
 EXPORT CONST vint xcmpneqq(vargquad ax, vargquad ay) {
@@ -2400,13 +2401,13 @@ EXPORT CONST vint xcmpneqq(vargquad ax, vargquad ay) {
   o = vandnot_vo_vo_vo(o, vnot_vo64_vo64(vand_vo_vo_vo(veq64_vo_vm_vm(vm2gety_vm_vm2(cy), vm2gety_vm_vm2(cx)), veq64_vo_vm_vm(vm2getx_vm_vm2(cx), vm2getx_vm_vm2(cy)))));
   o = vcast_vo32_vo64(vandnot_vo_vo_vo(visnanq_vo_vm2(y), o));
   vint vi = vsel_vi_vo_vi_vi(o, vcast_vi_i(1), vcast_vi_i(0));
-  return vuninterleave_vi_vi(vi);
+  return vi;
 }
 
 EXPORT CONST vint xunordq(vargquad ax, vargquad ay) {
   vopmask o = vor_vo_vo_vo(visnanq_vo_vm2(vcast_vm2_aq(ax)), visnanq_vo_vm2(vcast_vm2_aq(ay)));
   vint vi = vsel_vi_vo_vi_vi(vcast_vo32_vo64(o), vcast_vi_i(1), vcast_vi_i(0));
-  return vuninterleave_vi_vi(vi);
+  return vi;
 }
 
 // Float128 arithmetic functions
@@ -2633,6 +2634,37 @@ EXPORT CONST vargquad xatanq_u10(vargquad aa) {
   return vcast_aq_vm2(vcast_vf128_tdx(atan_tdx_tdx(vcast_tdx_vf128(vcast_vm2_aq(aa)))));
 }
 
+//
+
+EXPORT CONST vargquad xloadq(Sleef_quad *p) { // Sleef_load_quad2
+  vargquad a;
+  for(int i=0;i<VECTLENDP;i++) {
+    memcpy((char *)&a + (i            ) * sizeof(double), (char *)(p + i)                 , sizeof(double));
+    memcpy((char *)&a + (i + VECTLENDP) * sizeof(double), (char *)(p + i) + sizeof(double), sizeof(double));
+  }
+  return a;
+}
+
+EXPORT void xstoreq(Sleef_quad *p, vargquad a) { // Sleef_store_quad2
+  for(int i=0;i<VECTLENDP;i++) {
+    memcpy((char *)(p + i)                 , (char *)&a + (i            ) * sizeof(double), sizeof(double));
+    memcpy((char *)(p + i) + sizeof(double), (char *)&a + (i + VECTLENDP) * sizeof(double), sizeof(double));
+  }
+}
+
+EXPORT CONST Sleef_quad xgetq(vargquad a, int index) { // Sleef_get_quad2
+  Sleef_quad q;
+  memcpy((char *)&q                 , (char *)&a + (index            ) * sizeof(double), sizeof(double));
+  memcpy((char *)&q + sizeof(double), (char *)&a + (index + VECTLENDP) * sizeof(double), sizeof(double));
+  return q;
+}
+
+EXPORT CONST vargquad xsetq(vargquad a, int index, Sleef_quad q) { // Sleef_set_quad2
+  memcpy((char *)&a + (index            ) * sizeof(double), (char *)&q                 , sizeof(double));
+  memcpy((char *)&a + (index + VECTLENDP) * sizeof(double), (char *)&q + sizeof(double), sizeof(double));
+  return a;
+}
+
 // Float128 string functions
 
 #ifdef ENABLE_PUREC_SCALAR
@@ -2823,7 +2855,8 @@ EXPORT void Sleef_qtostr(char *s, int n, vargquad a, int base) {
 // Functions for debugging ------------------------------------------------------------------------------------------------------------
 
 #ifdef ENABLE_MAIN
-// gcc -DENABLE_MAIN -DENABLEFLOAT128 -Wno-attributes -I../libm -I../quad-tester -I../common -I../arch -DUSEMPFR -DENABLE_AVX2 -mavx2 -mfma sleefsimdqp.c ../common/common.c ../quad-tester/qtesterutil.c -lm -lmpfr
+// gcc -DENABLE_MAIN -DENABLEFLOAT128 -Wno-attributes -I../libm -I../quad-tester -I../common -I../arch -DUSEMPFR -DENABLE_AVX2 -mavx2 -mfma sleefsimdqp.c rempitabqp.c ../common/common.c ../quad-tester/qtesterutil.c -lm -lmpfr
+// gcc-10.2.0 -DENABLE_MAIN -Wno-attributes -I../libm -I../quad-tester -I../common -I../arch -DUSEMPFR -DENABLE_SVE -march=armv8-a+sve sleefsimdqp.c rempitabqp.c ../common/common.c ../quad-tester/qtesterutil.c -lm -lmpfr
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -2833,6 +2866,34 @@ EXPORT void Sleef_qtostr(char *s, int n, vargquad a, int base) {
 
 #include "qtesterutil.h"
 
+#if 0
+int main(int argc, char **argv) {
+  xsrand(time(NULL) + (int)getpid());
+  int lane = xrand() % VECTLENDP;
+
+  __float128 src[] = { 0.1, 0.2, 0.3, 3.14, 0.5, 0.6, 0.7, 0.8 };
+
+  vargquad aq0 = xloadq(src);
+
+  printvmask2("aq0 : ", aq0);
+
+  aq0 = xsetq(aq0, 0, (Sleef_quad)3.14);
+
+  printvmask2("aq0 : ", aq0);
+
+  aq0 = xsetq(aq0, 1, (Sleef_quad)2.718);
+
+  printvmask2("aq0 : ", aq0);
+
+  __float128 dst[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+
+  xstoreq(dst, aq0);
+
+  for(int i=0;i<8;i++) printf("%g %g\n", (double)dst[i], (double)xgetq(aq0, i));
+}
+#endif
+
+#if 1
 int main(int argc, char **argv) {
   xsrand(time(NULL) + (int)getpid());
   int lane = xrand() % VECTLENDP;
@@ -2850,12 +2911,13 @@ int main(int argc, char **argv) {
   mpfr_set_f128(fr0, q0, GMP_RNDN);
   if (argc >= 2) printf("arg0 : %s\n", sprintfr(fr0));
   vargquad a0;
-#if 1
+#if 0
   memrand(&a0, sizeof(vargquad));
-#else
+#elif 0
   memset(&a0, 0, sizeof(vargquad));
 #endif
-  a0.s[lane] = q0;
+  a0 = xsetq(a0, lane, q0);
+
 #if 0
   memrand(ad, sizeof(ad));
   ad[lane] = mpfr_get_d(fr0, GMP_RNDN);
@@ -2868,12 +2930,13 @@ int main(int argc, char **argv) {
   mpfr_set_f128(fr1, q1, GMP_RNDN);
   if (argc >= 3) printf("arg1 : %s\n", sprintfr(fr1));
   vargquad a1;
-#if 1
+#if 0
   memrand(&a1, sizeof(vargquad));
-#else
+#elif 0
   memset(&a1, 0, sizeof(vargquad));
 #endif
-  a1.s[lane] = q1;
+  a1 = xsetq(a1, lane, q1);
+
 #if 0
   memrand(ad, sizeof(ad));
   ad[lane] = mpfr_get_d(fr1, GMP_RNDN);
@@ -2882,32 +2945,65 @@ int main(int argc, char **argv) {
 
   //
 
-#if 1
-  vargquad a2 = xaddq_u05(a0, a1);
+  vargquad a2;
+
+#if 0
+  a2 = xaddq_u05(a0, a1);
   mpfr_add(fr2, fr0, fr1, GMP_RNDN);
+
+  printf("\nadd\n");
+  mpfr_set_f128(fr2, mpfr_get_f128(fr2, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr2));
+  mpfr_set_f128(fr2, xgetq(a2, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr2));
 #endif
 
 #if 0
-  vargquad a2 = xmulq_u05(a0, a1);
+  a2 = xmulq_u05(a0, a1);
   mpfr_mul(fr2, fr0, fr1, GMP_RNDN);
+
+  printf("\nmul\n");
+  mpfr_set_f128(fr2, mpfr_get_f128(fr2, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr2));
+  mpfr_set_f128(fr2, xgetq(a2, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr2));
 #endif
 
 #if 0
-  vargquad a2 = xdivq_u05(a0, a1);
+  a2 = xdivq_u05(a0, a1);
   mpfr_div(fr2, fr0, fr1, GMP_RNDN);
+
+  printf("\ndiv\n");
+  mpfr_set_f128(fr2, mpfr_get_f128(fr2, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr2));
+  mpfr_set_f128(fr2, xgetq(a2, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr2));
 #endif
 
 #if 0
-  vargquad a2 = xsqrtq_u05(a0);
+  a2 = xsqrtq_u05(a0);
   mpfr_sqrt(fr2, fr0, GMP_RNDN);
+
+  printf("\nsqrt\n");
+  mpfr_set_f128(fr2, mpfr_get_f128(fr2, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr2));
+  mpfr_set_f128(fr2, xgetq(a2, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr2));
+#endif
+
+#if 0
+  a2 = xsinq_u10(a0);
+  mpfr_sin(fr2, fr0, GMP_RNDN);
+
+  printf("\nsin\n");
+  mpfr_set_f128(fr2, mpfr_get_f128(fr2, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr2));
+  mpfr_set_f128(fr2, xgetq(a2, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr2));
 #endif
 
   //
 
-  mpfr_set_f128(fr2, mpfr_get_f128(fr2, GMP_RNDN), GMP_RNDN);
-  printf("corr : %s\n", sprintfr(fr2));
-  Sleef_quad q2 = a2.s[lane];
-  mpfr_set_f128(fr2, q2, GMP_RNDN);
-  printf("test : %s\n", sprintfr(fr2));
 }
+#endif
 #endif

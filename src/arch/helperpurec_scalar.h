@@ -114,6 +114,12 @@ typedef struct {
   vmask x, y;
 } vmask2;
 
+#if defined(ENABLEFLOAT128)
+typedef __float128 vargquad;
+#else
+typedef vmask2 vargquad;
+#endif
+
 //
 
 static INLINE int vavailability_i(int name) { return -1; }
@@ -401,17 +407,6 @@ static INLINE void vstream_v_p_vf(float *ptr, vfloat v) { *ptr = v; }
 
 //
 
-static INLINE vmask2 vinterleave_vm2_vm2(vmask2 v) { return v; }
-static INLINE vmask2 vuninterleave_vm2_vm2(vmask2 v) { return v; }
-static INLINE vint vuninterleave_vi_vi(vint v) { return v; }
-static INLINE vdouble vinterleave_vd_vd(vdouble vd) { return vd; }
-static INLINE vdouble vuninterleave_vd_vd(vdouble vd) { return vd; }
-static INLINE vmask vinterleave_vm_vm(vmask vm) { return vm; }
-static INLINE vmask vuninterleave_vm_vm(vmask vm) { return vm; }
-
-#if !defined(SLEEF_GENHEADER)
-typedef Sleef_quad1 vargquad;
-
 static vmask2 vloadu_vm2_p(void *p) {
   vmask2 vm2;
   memcpy(&vm2, p, VECTLENDP * 16);
@@ -419,16 +414,18 @@ static vmask2 vloadu_vm2_p(void *p) {
 }
 
 static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
-  return vinterleave_vm2_vm2(vloadu_vm2_p(&aq));
+  vmask2 vm2;
+  memcpy(&vm2, &aq, VECTLENDP * 16);
+  return vm2;
 }
 
 static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
-  vm2 = vuninterleave_vm2_vm2(vm2);
   vargquad aq;
   memcpy(&aq, &vm2, VECTLENDP * 16);
   return aq;
 }
-#endif // #if !defined(SLEEF_GENHEADER)
+
+//
 
 static INLINE int vtestallzeros_i_vo64(vopmask g) { return !g ? ~(uint32_t)0 : 0; }
 static INLINE vmask vsel_vm_vo64_vm_vm(vopmask o, vmask x, vmask y) { return o ? x : y; }

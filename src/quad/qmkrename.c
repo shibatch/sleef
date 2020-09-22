@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+#include <assert.h>
 
 #include "qfuncproto.h"
 
@@ -232,6 +233,36 @@ int main(int argc, char **argv) {
 		   isaub, isaname,
 		   vmaskname);
 	  }
+	  break;
+
+	case 14:
+	  assert(funcList[i].ulp == -1);
+	  printf("IMPORT CONST %s Sleef_%sq%s%s%s(Sleef_quad *);\n",
+		 vargquadname,
+		 funcList[i].name, wqp,
+		 isaub, isaname);
+	  break;
+	case 15:
+	  assert(funcList[i].ulp == -1);
+	  printf("IMPORT CONST void Sleef_%sq%s%s%s(Sleef_quad *, %s);\n",
+		 funcList[i].name, wqp,
+		 isaub, isaname,
+		 vargquadname);
+	  break;
+	case 16:
+	  assert(funcList[i].ulp == -1);
+	  printf("IMPORT CONST Sleef_quad Sleef_%sq%s%s%s(%s, int);\n",
+		 funcList[i].name, wqp,
+		 isaub, isaname,
+		 vargquadname);
+	  break;
+	case 17:
+	  assert(funcList[i].ulp == -1);
+	  printf("IMPORT CONST %s Sleef_%sq%s%s%s(%s, int, Sleef_quad);\n",
+		 vargquadname,
+		 funcList[i].name, wqp,
+		 isaub, isaname,
+		 vargquadname);
 	  break;
 	}
       }

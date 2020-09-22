@@ -34,6 +34,10 @@ typedef struct {
   11 : vargquad func(vdouble);
   12 : vmask func(vargquad);
   13 : vargquad func(vmask);
+  14 : vargquad func(Sleef_quad *);
+  15 : void func(Sleef_quad *, vargquad);
+  16 : Sleef_quad func(vargquad, int);
+  17 : vargquad func(vargquad, int, Sleef_quad);
  */
 
 funcSpec funcList[] = {
@@ -54,6 +58,10 @@ funcSpec funcList[] = {
 
   { "cast_to_double", -1, 0, 10, 0 },
   { "cast_from_double", -1, 0, 11, 0 },
+  { "load", -1, 0, 14, 0 },
+  { "store", -1, 0, 15, 0 },
+  { "get", -1, 0, 16, 0 },
+  { "set", -1, 0, 17, 0 },
 
   { "sin", 10, 1, 0, 0 },
   { "cos", 10, 1, 0, 0 },
