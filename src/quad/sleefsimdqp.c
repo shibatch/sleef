@@ -2806,11 +2806,7 @@ EXPORT void Sleef_qtostr(char *s, int n, vargquad a, int base) {
   union {
     vmask2 q;
     struct {
-#if defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
-      uint64_t h, l;
-#else
       uint64_t l, h;
-#endif
     };
   } c128 = { .q = vcast_vm2_aq(a) };
 
