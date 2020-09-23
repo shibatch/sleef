@@ -58,7 +58,7 @@ matrix:
         - LABEL="ppc64le-gcc"
         - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
     - arch: ppc64le
-      compiler: clang
+      compiler: clang-9
       dist: bionic
       env:
         - LABEL="ppc64le-clang"
