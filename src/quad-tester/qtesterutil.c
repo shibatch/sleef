@@ -67,22 +67,22 @@ int startsWith(char *str, char *prefix) {
 //
 
 xuint128 xu(uint64_t h, uint64_t l) {
-  xuint128 r = { l, h };
+  xuint128 r = { .l = l, .h = h };
   return r;
 }
 
 xuint128 sll128(uint64_t u, int c) {
   if (c < 64) {
-    xuint128 r = { u << c, u >> (64 - c) };
+    xuint128 r = { .l = u << c, .h = u >> (64 - c) };
     return r;
   }
 
-  xuint128 r = { 0, u << (c - 64) };
+  xuint128 r = { .l = 0, .h = u << (c - 64) };
   return r;
 }
 
 xuint128 add128(xuint128 x, xuint128 y) {
-  xuint128 r = { x.l + y.l, x.h + y.h };
+  xuint128 r = { .l = x.l + y.l, .h = x.h + y.h };
   if (r.l < x.l) r.h++;
   return r;
 }
@@ -99,7 +99,11 @@ typedef union {
   Sleef_quad q;
   xuint128 x;
   struct {
+#if defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+    uint64_t h, l;
+#else
     uint64_t l, h;
+#endif
   };
 } cnv_t;
 
@@ -290,7 +294,11 @@ void mpfr_set_f128(mpfr_t frx, Sleef_quad a, mpfr_rnd_t rnd) {
   union {
     Sleef_quad u;
     struct {
+#if defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+      uint64_t h, l;
+#else
       uint64_t l, h;
+#endif
     };
   } c128 = { .u = a };
 

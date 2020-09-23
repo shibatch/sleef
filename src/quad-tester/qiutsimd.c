@@ -106,6 +106,13 @@
 #define VARGQUAD Sleef_quadx2
 #endif
 
+#ifdef ENABLE_ZVECTOR2
+#define CONFIG 140
+#include "helpers390x_128.h"
+#include "qrenamezvector2.h"
+#define VARGQUAD Sleef_quadx2
+#endif
+
 #ifdef ENABLE_DSP128
 #define CONFIG 2
 #include "helpersse2.h"

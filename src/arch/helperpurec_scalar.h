@@ -407,23 +407,46 @@ static INLINE void vstream_v_p_vf(float *ptr, vfloat v) { *ptr = v; }
 
 //
 
+#if defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
 static vmask2 vloadu_vm2_p(void *p) {
   vmask2 vm2;
-  memcpy(&vm2, p, VECTLENDP * 16);
+  memcpy(8 + (char *)&vm2, p, 8);
+  memcpy((char *)&vm2, 8 + p, 8);
   return vm2;
 }
 
 static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
   vmask2 vm2;
-  memcpy(&vm2, &aq, VECTLENDP * 16);
+  memcpy(8 + (char *)&vm2, (char *)&aq, 8);
+  memcpy((char *)&vm2, 8 + (char *)&aq, 8);
   return vm2;
 }
 
 static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
   vargquad aq;
-  memcpy(&aq, &vm2, VECTLENDP * 16);
+  memcpy(8 + (char *)&aq, (char *)&vm2, 8);
+  memcpy((char *)&aq, 8 + (char *)&vm2, 8);
   return aq;
 }
+#else
+static vmask2 vloadu_vm2_p(void *p) {
+  vmask2 vm2;
+  memcpy(&vm2, p, 16);
+  return vm2;
+}
+
+static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
+  vmask2 vm2;
+  memcpy(&vm2, &aq, 16);
+  return vm2;
+}
+
+static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
+  vargquad aq;
+  memcpy(&aq, &vm2, 16);
+  return aq;
+}
+#endif
 
 //
 

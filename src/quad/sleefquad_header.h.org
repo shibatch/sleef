@@ -67,7 +67,7 @@ typedef struct {
 } Sleef_quadx2;
 #endif
 
-#if defined(__VX__)
+#if defined(__VX__) && defined(__VECTOR_KEYWORD_SUPPORTED__)
 #define Sleef_quadx2_DEFINED
 typedef struct {
   __vector unsigned long long x, y;

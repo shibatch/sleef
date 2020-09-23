@@ -90,12 +90,21 @@ void startChild(const char *path, char *const argv[]) {
 
 //
 
+#if defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+typedef union {
+  Sleef_quad q;
+  struct {
+    uint64_t h, l;
+  };
+} cnv128;
+#else
 typedef union {
   Sleef_quad q;
   struct {
     uint64_t l, h;
   };
 } cnv128;
+#endif
 
 #define child_q_q(funcStr, arg) do {					\
     char str[256];							\
