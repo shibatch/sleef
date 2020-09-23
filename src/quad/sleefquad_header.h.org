@@ -30,60 +30,81 @@ extern "C"
 
 #if !defined(Sleef_quad_DEFINED)
 #define Sleef_quad_DEFINED
-#if defined(ENABLEFLOAT128)
+#if defined(__SIZEOF_FLOAT128__)
 typedef __float128 Sleef_quad;
 #else
 typedef struct { uint64_t x, y; } Sleef_quad;
 #endif
 #endif
 
-#if !defined(Sleef_quad1_DEFINED)
-#define Sleef_quad1_DEFINED
-typedef union {
-  struct {
-    Sleef_quad x;
-  };
-  Sleef_quad s[1];
-} Sleef_quad1;
+#if !defined(Sleef_quadx1_DEFINED)
+#define Sleef_quadx1_DEFINED
+typedef struct {
+  uint64_t x, y;
+} Sleef_quadx1;
 #endif
 
-#if !defined(Sleef_quad2_DEFINED)
-#define Sleef_quad2_DEFINED
-typedef union {
-  struct {
-    Sleef_quad x, y;
-  };
-  Sleef_quad s[2];
-} Sleef_quad2;
+#if !defined(Sleef_quadx2_DEFINED)
+
+#if defined(__SSE2__)
+#define Sleef_quadx2_DEFINED
+typedef struct {
+  __m128i x, y;
+} Sleef_quadx2;
 #endif
 
-#if !defined(Sleef_quad4_DEFINED)
-#define Sleef_quad4_DEFINED
-typedef union {
-  struct {
-    Sleef_quad x, y, z, w;
-  };
-  Sleef_quad s[4];
-} Sleef_quad4;
+#if defined(__aarch64__)
+#define Sleef_quadx2_DEFINED
+typedef struct {
+  uint32x4_t x, y;
+} Sleef_quadx2;
 #endif
 
-#if !defined(Sleef_quad8_DEFINED)
-#define Sleef_quad8_DEFINED
-typedef union {
-  Sleef_quad s[8];
-} Sleef_quad8;
+#if defined(__VSX__)
+#define Sleef_quadx2_DEFINED
+typedef struct {
+  __vector unsigned int x, y;
+} Sleef_quadx2;
 #endif
 
-#if defined(__ARM_FEATURE_SVE) && !defined(Sleef_quadx_DEFINED)
-#define Sleef_quadx_DEFINED
-typedef union {
-  Sleef_quad s[32];
-} Sleef_quadx;
+#if defined(__VX__) && (defined(__VECTOR_KEYWORD_SUPPORTED__) || defined(__VEC__))
+#define Sleef_quadx2_DEFINED
+typedef struct {
+  __vector unsigned long long x, y;
+} Sleef_quadx2;
+#endif
+
+#endif // #if !defined(Sleef_quadx2_DEFINED)
+
+#if !defined(Sleef_quadx4_DEFINED)
+#if defined(__AVX__)
+#define Sleef_quadx4_DEFINED
+typedef struct {
+  __m256i x, y;
+} Sleef_quadx4;
+#endif
+#endif
+
+#if !defined(Sleef_quadx8_DEFINED)
+#if defined(__AVX512F__)
+#define Sleef_quadx8_DEFINED
+typedef struct {
+  __m512i x, y;
+} Sleef_quadx8;
+#endif
+#endif
+
+
+#if !defined(Sleef_svquad_DEFINED)
+#if defined(__ARM_FEATURE_SVE)
+#define Sleef_svquad_DEFINED
+typedef svfloat64x2_t Sleef_svquad;
+#endif
 #endif
 
 //
 
-IMPORT Sleef_quad1 Sleef_strtoq(const char *str, char **endptr, int base);
-IMPORT void Sleef_qtostr(char *s, int n, Sleef_quad1 a, int base);
+IMPORT Sleef_quad Sleef_strtoq(const char *str, char **endptr, int base);
+IMPORT void Sleef_qtostr(char *s, int n, Sleef_quad a, int base);
 
 //

@@ -63,6 +63,12 @@ typedef __vector int vint;
 typedef __vector float vfloat;
 typedef __vector int vint2;
 
+typedef struct {
+  vmask x, y;
+} vmask2;
+
+typedef vmask2 vargquad;
+
 //
 
 #if !defined(SLEEF_GENHEADER)
@@ -393,4 +399,52 @@ static INLINE vopmask visnan_vo_vf (vfloat d) { return vneq_vo_vf_vf(d, d); }
 static INLINE vint2 vrint_vi2_vf(vfloat vf) {
   vf = vrint_vf_vf(vf);
   return (vint) { vf[0], vf[1], vf[2], vf[3] };
+}
+
+//
+
+static vmask2 vloadu_vm2_p(void *p) {
+  vmask2 vm2;
+  memcpy(&vm2, p, VECTLENDP * 16);
+  return vm2;
+}
+
+static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
+  vmask2 m = { aq.y, aq.x };
+  return m;
+}
+static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
+  vargquad a = { vm2.y, vm2.x };
+  return a;
+}
+
+static INLINE int vtestallzeros_i_vo64(vopmask g) {
+  return vec_all_eq((__vector signed long long)g, (__vector signed long long){ 0, 0 });
+}
+
+static INLINE vmask vsel_vm_vo64_vm_vm(vopmask o, vmask x, vmask y) {
+  return (vmask)vec_sel((__vector signed long long)y, (__vector signed long long)x, (__vector __bool long long)o);
+}
+
+static INLINE vmask vsub64_vm_vm_vm(vmask x, vmask y) {
+  return (vmask)((__vector signed long long)x - (__vector signed long long)y);
+}
+
+static INLINE vmask vneg64_vm_vm(vmask x) {
+  return (vmask)((__vector signed long long) {0, 0} - (__vector signed long long)x);
+}
+
+static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) {
+  return (vopmask)vec_cmpgt((__vector signed long long)x, (__vector signed long long)y);
+}
+
+#define vsll64_vm_vm_i(x, c) ((vmask)((__vector unsigned long long)x << (__vector unsigned long long) { c, c }))
+#define vsrl64_vm_vm_i(x, c) ((vmask)((__vector unsigned long long)x >> (__vector unsigned long long) { c, c }))
+
+static INLINE vint vcast_vi_vm(vmask vm) {
+  return (vint) { vm[0], vm[1] };
+}
+
+static INLINE vmask vcast_vm_vi(vint vi) {
+  return (vmask) (__vector signed long long) { vi[0], vi[1] };
 }

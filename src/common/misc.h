@@ -177,7 +177,7 @@ typedef struct {
 #if defined(ENABLEFLOAT128)
 typedef __float128 Sleef_quad;
 #else
-typedef struct { double x, y; } Sleef_quad;
+typedef struct { uint64_t x, y; } Sleef_quad;
 #endif
 #endif
 

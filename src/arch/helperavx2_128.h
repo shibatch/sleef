@@ -60,6 +60,8 @@ typedef struct {
   vmask x, y;
 } vmask2;
 
+typedef vmask2 vargquad;
+
 //
 
 #if !defined(SLEEF_GENHEADER)
@@ -407,14 +409,6 @@ static INLINE void vsscatter2_v_p_i_i_vf(float *ptr, int offset, int step, vfloa
 
 //
 
-static INLINE vmask2 vinterleave_vm2_vm2(vmask2 v) {
-  return (vmask2) { _mm_unpacklo_epi64(v.x, v.y), _mm_unpackhi_epi64(v.x, v.y) };
-}
-
-static INLINE vmask2 vuninterleave_vm2_vm2(vmask2 v) {
-  return (vmask2) { _mm_unpacklo_epi64(v.x, v.y), _mm_unpackhi_epi64(v.x, v.y) };
-}
-
 static vmask2 vloadu_vm2_p(void *p) {
   vmask2 vm2 = {
     vloadu_vi2_p((int32_t *)p),
@@ -423,24 +417,13 @@ static vmask2 vloadu_vm2_p(void *p) {
   return vm2;
 }
 
+static INLINE vmask2 vcast_vm2_aq(vargquad aq) { return aq; }
+static INLINE vargquad vcast_aq_vm2(vmask2 vm2) { return vm2; }
+
 static void vstoreu_v_p_vm2(void *p, vmask2 vm2) {
   vstoreu_v_p_vi2((int32_t *)p, vcast_vi2_vm(vm2.x));
   vstoreu_v_p_vi2((int32_t *)((uint8_t *)p + sizeof(vmask)), vcast_vi2_vm(vm2.y));
 }
-
-#if !defined(SLEEF_GENHEADER)
-typedef Sleef_quad2 vargquad;
-
-static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
-  return vinterleave_vm2_vm2(vloadu_vm2_p(&aq));
-}
-
-static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
-  vargquad a;
-  vstoreu_v_p_vm2(&a, vuninterleave_vm2_vm2(vm2));
-  return a;
-}
-#endif // #if !defined(SLEEF_GENHEADER)
 
 static INLINE int vtestallzeros_i_vo64(vopmask g) { return _mm_movemask_epi8(g) == 0; }
 

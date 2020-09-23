@@ -4,7 +4,11 @@
 //          http://www.boost.org/LICENSE_1_0.txt)
 
 typedef struct {
+#if defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+  uint64_t h, l;
+#else
   uint64_t l, h;
+#endif
 } xuint128;
 
 xuint128 xu(uint64_t h, uint64_t l);

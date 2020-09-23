@@ -28,78 +28,98 @@
 #define CONFIG 1
 #include "helperpurec_scalar.h"
 #include "qrenamepurec_scalar.h"
+#define VARGQUAD Sleef_quad
 #endif
 
 #ifdef ENABLE_PURECFMA_SCALAR
 #define CONFIG 2
 #include "helperpurec_scalar.h"
 #include "qrenamepurecfma_scalar.h"
+#define VARGQUAD Sleef_quad
 #endif
 
 #ifdef ENABLE_SSE2
 #define CONFIG 2
 #include "helpersse2.h"
 #include "qrenamesse2.h"
+#define VARGQUAD Sleef_quadx2
 #endif
 
 #ifdef ENABLE_AVX2128
 #define CONFIG 1
 #include "helperavx2_128.h"
 #include "qrenameavx2128.h"
+#define VARGQUAD Sleef_quadx2
 #endif
 
 #ifdef ENABLE_AVX
 #define CONFIG 1
 #include "helperavx.h"
 #include "qrenameavx.h"
+#define VARGQUAD Sleef_quadx4
 #endif
 
 #ifdef ENABLE_FMA4
 #define CONFIG 4
 #include "helperavx.h"
 #include "qrenamefma4.h"
+#define VARGQUAD Sleef_quadx4
 #endif
 
 #ifdef ENABLE_AVX2
 #define CONFIG 1
 #include "helperavx2.h"
 #include "qrenameavx2.h"
+#define VARGQUAD Sleef_quadx4
 #endif
 
 #ifdef ENABLE_AVX512F
 #define CONFIG 1
 #include "helperavx512f.h"
 #include "qrenameavx512f.h"
+#define VARGQUAD Sleef_quadx8
 #endif
 
 #ifdef ENABLE_ADVSIMD
 #define CONFIG 1
 #include "helperadvsimd.h"
 #include "qrenameadvsimd.h"
+#define VARGQUAD Sleef_quadx2
 #endif
 
 #ifdef ENABLE_SVE
 #define CONFIG 1
 #include "helpersve.h"
 #include "qrenamesve.h"
+#define VARGQUAD Sleef_svquad
 #endif
 
 #ifdef ENABLE_VSX
 #define CONFIG 1
 #include "helperpower_128.h"
 #include "qrenamevsx.h"
+#define VARGQUAD Sleef_quadx2
+#endif
+
+#ifdef ENABLE_ZVECTOR2
+#define CONFIG 140
+#include "helpers390x_128.h"
+#include "qrenamezvector2.h"
+#define VARGQUAD Sleef_quadx2
 #endif
 
 #ifdef ENABLE_DSP128
 #define CONFIG 2
 #include "helpersse2.h"
 #include "qrenamedsp128.h"
+#define VARGQUAD Sleef_quadx2
 #endif
 
 #ifdef ENABLE_DSP256
 #define CONFIG 1
 #include "helperavx.h"
 #include "qrenamedsp256.h"
+#define VARGQUAD Sleef_quadx4
 #endif
 
 //
@@ -124,8 +144,8 @@ Sleef_quad nexttoward0q(Sleef_quad x, int n) {
   return cx.q;
 }
 
-static vargquad vset(vargquad v, int idx, Sleef_quad d) { v.s[idx] = d; return v; }
-static Sleef_quad vget(vargquad v, int idx) { return v.s[idx]; }
+static VARGQUAD vset(VARGQUAD v, int idx, Sleef_quad d) { return xsetq(v, idx, d); }
+static Sleef_quad vget(VARGQUAD v, int idx) { return xgetq(v, idx); }
 
 vdouble vsetd(vdouble v, int idx, double d) {
   double a[VECTLENDP];
@@ -170,7 +190,7 @@ int main(int argc,char **argv)
   //
 
   int cnt, ecnt = 0;
-  vargquad a0, a1, a2, a3;
+  VARGQUAD a0, a1, a2, a3;
   vdouble vd0 = vcast_vd_d(0), vd1, vd2, vd3;
   Sleef_quad q0, q1, q2, q3, t;
   mpfr_t frw, frx, fry, frz;

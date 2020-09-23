@@ -60,6 +60,8 @@ typedef struct {
   vmask x, y;
 } vmask2;
 
+typedef vmask2 vargquad;
+
 #define DFTPRIORITY 10
 
 static INLINE int vavailability_i(int name) { return 3; }
@@ -774,44 +776,14 @@ static INLINE VECTOR_CC void vsscatter2_v_p_i_i_vf(float *ptr, int offset, int s
 
 //
 
-static INLINE vmask2 vinterleave_vm2_vm2(vmask2 v) {
-  return (vmask2) {
-    vreinterpretq_u32_u64(vtrn1q_u64(vreinterpretq_u64_u32(v.x), vreinterpretq_u64_u32(v.y))),
-    vreinterpretq_u32_u64(vtrn2q_u64(vreinterpretq_u64_u32(v.x), vreinterpretq_u64_u32(v.y))) };
-}
-
-static INLINE vmask2 vuninterleave_vm2_vm2(vmask2 v) {
-  return (vmask2) {
-    vreinterpretq_u32_u64(vtrn1q_u64(vreinterpretq_u64_u32(v.x), vreinterpretq_u64_u32(v.y))),
-    vreinterpretq_u32_u64(vtrn2q_u64(vreinterpretq_u64_u32(v.x), vreinterpretq_u64_u32(v.y))) };
-}
-
-static INLINE vint vuninterleave_vi_vi(vint v) { return v; }
-static INLINE vdouble vinterleave_vd_vd(vdouble vd) { return vd; }
-static INLINE vdouble vuninterleave_vd_vd(vdouble vd) { return vd; }
-static INLINE vmask vinterleave_vm_vm(vmask vm) { return vm; }
-static INLINE vmask vuninterleave_vm_vm(vmask vm) { return vm; }
-
 static vmask2 vloadu_vm2_p(void *p) {
   vmask2 vm2;
   memcpy(&vm2, p, VECTLENDP * 16);
   return vm2;
 }
 
-#if !defined(SLEEF_GENHEADER)
-typedef Sleef_quad2 vargquad;
-
-static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
-  return vinterleave_vm2_vm2(vloadu_vm2_p(&aq));
-}
-
-static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
-  vm2 = vuninterleave_vm2_vm2(vm2);
-  vargquad aq;
-  memcpy(&aq, &vm2, VECTLENDP * 16);
-  return aq;
-}
-#endif // #if !defined(SLEEF_GENHEADER)
+static INLINE vmask2 vcast_vm2_aq(vargquad aq) { return aq; }
+static INLINE vargquad vcast_aq_vm2(vmask2 vm2) { return vm2; }
 
 static INLINE int vtestallzeros_i_vo64(vopmask g) {
   uint32x2_t x0 = vorr_u32(vget_low_u32(g), vget_high_u32(g));

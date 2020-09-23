@@ -127,6 +127,8 @@ static INLINE vmask2 vm2setxy_vm2_vm_vm(vmask x, vmask y) { return svcreate2_s32
 static INLINE vmask2 vm2setx_vm2_vm2_vm(vmask2 v, vmask x) { return svset2_s32(v, 0, x); }
 static INLINE vmask2 vm2sety_vm2_vm2_vm(vmask2 v, vmask y) { return svset2_s32(v, 1, y); }
 
+typedef vmask2 vargquad;
+
 // Auxiliary data types
 
 typedef svfloat64x2_t di_t;
@@ -1066,58 +1068,14 @@ static int vcast_i_vi2(vint2 v) {
 
 //
 
-static INLINE vmask2 vinterleave_vm2_vm2(vmask2 v) {
-  return vm2setxy_vm2_vm_vm(svreinterpret_s32_u64(svtrn1_u64(svreinterpret_u64_s32(vm2getx_vm_vm2(v)), svreinterpret_u64_s32(vm2gety_vm_vm2(v)))),
-			    svreinterpret_s32_u64(svtrn2_u64(svreinterpret_u64_s32(vm2getx_vm_vm2(v)), svreinterpret_u64_s32(vm2gety_vm_vm2(v)))));
-}
-
-static INLINE vmask2 vuninterleave_vm2_vm2(vmask2 v) {
-  return vm2setxy_vm2_vm_vm(svreinterpret_s32_u64(svtrn1_u64(svreinterpret_u64_s32(vm2getx_vm_vm2(v)), svreinterpret_u64_s32(vm2gety_vm_vm2(v)))),
-			    svreinterpret_s32_u64(svtrn2_u64(svreinterpret_u64_s32(vm2getx_vm_vm2(v)), svreinterpret_u64_s32(vm2gety_vm_vm2(v)))));
-}
-
-static INLINE vint vuninterleave_vi_vi(vint v) {
-  return svreinterpret_s32_u64(svuzp1_u64(svtrn1_u64(svreinterpret_u64_s32(v), svreinterpret_u64_s32(v)),
-					  svtrn2_u64(svreinterpret_u64_s32(v), svreinterpret_u64_s32(v))));
-}
-
-static INLINE vdouble vinterleave_vd_vd(vdouble vd) {
-  return svtrn1_f64(svzip1_f64(vd, vd), svzip2_f64(vd, vd));
-}
-
-static INLINE vdouble vuninterleave_vd_vd(vdouble vd) {
-  return svuzp1_f64(svtrn1_f64(vd, vd), svtrn2_f64(vd, vd));
-}
-
-static INLINE vmask vinterleave_vm_vm(vmask vm) {
-  return svreinterpret_s32_u64(svtrn1_u64(svzip1_u64(svreinterpret_u64_s32(vm), svreinterpret_u64_s32(vm)),
-					  svzip2_u64(svreinterpret_u64_s32(vm), svreinterpret_u64_s32(vm))));
-}
-static INLINE vmask vuninterleave_vm_vm(vmask vm) {
-  return svreinterpret_s32_u64(svuzp1_u64(svtrn1_u64(svreinterpret_u64_s32(vm), svreinterpret_u64_s32(vm)),
-					  svtrn2_u64(svreinterpret_u64_s32(vm), svreinterpret_u64_s32(vm))));
-}
-
 static vmask2 vloadu_vm2_p(void *p) {
   vmask2 vm2;
   memcpy(&vm2, p, VECTLENDP * 16);
   return vm2;
 }
 
-#if !defined(SLEEF_GENHEADER)
-typedef Sleef_quadx vargquad;
-
-static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
-  return vinterleave_vm2_vm2(vloadu_vm2_p(&aq));
-}
-
-static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
-  vm2 = vuninterleave_vm2_vm2(vm2);
-  vargquad aq;
-  memcpy(&aq, &vm2, VECTLENDP * 16);
-  return aq;
-}
-#endif // #if !defined(SLEEF_GENHEADER)
+static INLINE vmask2 vcast_vm2_aq(vargquad aq) { return aq; }
+static INLINE vargquad vcast_aq_vm2(vmask2 vm2) { return vm2; }
 
 static INLINE int vtestallzeros_i_vo64(vopmask g) {
   return svcntp_b64(svptrue_b64(), g) == 0;

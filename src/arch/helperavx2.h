@@ -60,6 +60,8 @@ typedef struct {
   vmask x, y;
 } vmask2;
 
+typedef vmask2 vargquad;
+
 //
 
 #if !defined(SLEEF_GENHEADER)
@@ -433,54 +435,14 @@ static INLINE void vsscatter2_v_p_i_i_vf(float *ptr, int offset, int step, vfloa
 
 //
 
-static INLINE vmask2 vinterleave_vm2_vm2(vmask2 v) {
-  return (vmask2) { _mm256_unpacklo_epi64(v.x, v.y), _mm256_unpackhi_epi64(v.x, v.y) };
-}
-
-static INLINE vmask2 vuninterleave_vm2_vm2(vmask2 v) {
-  return (vmask2) { _mm256_unpacklo_epi64(v.x, v.y), _mm256_unpackhi_epi64(v.x, v.y) };
-}
-
-static INLINE vint vuninterleave_vi_vi(vint v) {
-  return _mm_shuffle_epi32(v, (0 << 0) | (2 << 2) | (1 << 4) | (3 << 6));
-}
-
-static INLINE vdouble vinterleave_vd_vd(vdouble vd) {
-  return vreinterpret_vd_vm(_mm256_permute4x64_epi64(vreinterpret_vm_vd(vd), (3 << 6) | (1 << 4) | (2 << 2) | (0 << 0)));
-}
-
-static INLINE vdouble vuninterleave_vd_vd(vdouble vd) {
-  return vreinterpret_vd_vm(_mm256_permute4x64_epi64(vreinterpret_vm_vd(vd), (3 << 6) | (1 << 4) | (2 << 2) | (0 << 0)));
-}
-
-static INLINE vmask vinterleave_vm_vm(vmask vm) {
-  return _mm256_permute4x64_epi64(vm, (3 << 6) | (1 << 4) | (2 << 2) | (0 << 0));
-}
-
-static INLINE vmask vuninterleave_vm_vm(vmask vm) {
-  return _mm256_permute4x64_epi64(vm, (3 << 6) | (1 << 4) | (2 << 2) | (0 << 0));
-}
-
 static vmask2 vloadu_vm2_p(void *p) {
   vmask2 vm2;
   memcpy(&vm2, p, VECTLENDP * 16);
   return vm2;
 }
 
-#if !defined(SLEEF_GENHEADER)
-typedef Sleef_quad4 vargquad;
-
-static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
-  return vinterleave_vm2_vm2(vloadu_vm2_p(&aq));
-}
-
-static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
-  vm2 = vuninterleave_vm2_vm2(vm2);
-  vargquad aq;
-  memcpy(&aq, &vm2, VECTLENDP * 16);
-  return aq;
-}
-#endif // #if !defined(SLEEF_GENHEADER)
+static INLINE vmask2 vcast_vm2_aq(vargquad aq) { return aq; }
+static INLINE vargquad vcast_aq_vm2(vmask2 vm2) { return vm2; }
 
 static INLINE int vtestallzeros_i_vo64(vopmask g) {
   return _mm_movemask_epi8(_mm_or_si128(_mm256_extractf128_si256(g, 0), _mm256_extractf128_si256(g, 1))) == 0;
