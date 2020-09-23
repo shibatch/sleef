@@ -63,6 +63,12 @@ typedef __vector int vint;
 typedef __vector float vfloat;
 typedef __vector int vint2;
 
+typedef struct {
+  vmask x, y;
+} vmask2;
+
+typedef vmask2 vargquad;
+
 //
 
 #if !defined(SLEEF_GENHEADER)

@@ -45,19 +45,36 @@ typedef struct {
 #endif
 
 #if !defined(Sleef_quadx2_DEFINED)
+
 #if defined(__SSE2__)
 #define Sleef_quadx2_DEFINED
 typedef struct {
   __m128i x, y;
 } Sleef_quadx2;
 #endif
+
 #if defined(__aarch64__)
 #define Sleef_quadx2_DEFINED
 typedef struct {
   uint32x4_t x, y;
 } Sleef_quadx2;
 #endif
+
+#if defined(__VSX__)
+#define Sleef_quadx2_DEFINED
+typedef struct {
+  __vector unsigned int x, y;
+} Sleef_quadx2;
 #endif
+
+#if defined(__VX__)
+#define Sleef_quadx2_DEFINED
+typedef struct {
+  __vector unsigned long long x, y;
+} Sleef_quadx2;
+#endif
+
+#endif // #if !defined(Sleef_quadx2_DEFINED)
 
 #if !defined(Sleef_quadx4_DEFINED)
 #if defined(__AVX__)

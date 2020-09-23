@@ -106,6 +106,14 @@
 #endif
 #endif
 
+#ifdef ENABLE_ZVECTOR2
+#define CONFIG 140
+#include "helpers390x_128.h"
+#ifdef DORENAME
+#include "qrenamezvector2.h"
+#endif
+#endif
+
 //
 
 #include "dd.h"

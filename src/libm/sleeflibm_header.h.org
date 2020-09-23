@@ -63,6 +63,9 @@
 
 #if defined(__VSX__) && defined(__PPC64__) && defined(__LITTLE_ENDIAN__)
 #include <altivec.h>
+typedef __vector double SLEEF_VECTOR_DOUBLE;
+typedef __vector float  SLEEF_VECTOR_FLOAT;
+typedef __vector int    SLEEF_VECTOR_INT;
 #endif
 
 #if defined(__VX__) && defined(__VEC__)

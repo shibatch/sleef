@@ -80,7 +80,7 @@ set(SLEEF_SUPPORTED_GNUABI_EXTENSIONS
   CACHE STRING "List of SIMD architectures supported by libsleef for GNU ABI."
 )
 set(SLEEFQUAD_SUPPORTED_EXT
-  PUREC_SCALAR PURECFMA_SCALAR SSE2 AVX FMA4 AVX2 AVX512F ADVSIMD SVE)
+  PUREC_SCALAR PURECFMA_SCALAR SSE2 AVX FMA4 AVX2 AVX512F ADVSIMD SVE VSX)
 # Force set default build type if none was specified
 # Note: some sleef code requires the optimisation flags turned on
 if(NOT CMAKE_BUILD_TYPE)
