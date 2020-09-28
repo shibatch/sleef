@@ -482,14 +482,33 @@ int main(int argc,char **argv)
       Sleef_snprintf(s, 63, "%.40Qg", a0);
       q1 = vget(Sleef_strtoq(s, NULL), e);
       if (memcmp(&q0, &q1, sizeof(Sleef_quad)) != 0 && !(isnanf128(q0) && isnanf128(q1))) {
-	printf("snprintf(Qg)/strtoq arg=%s\n", sprintf128(q0));
+	printf("snprintf(Qg)/strtoq arg=%s str=%s test=%s\n", sprintf128(q0), s, sprintf128(q1));
 	fflush(stdout); ecnt++;
       }
 
       Sleef_snprintf(s, 63, "%Qa", a0);
       q1 = vget(Sleef_strtoq(s, NULL), e);
       if (memcmp(&q0, &q1, sizeof(Sleef_quad)) != 0 && !(isnanf128(q0) && isnanf128(q1))) {
-	printf("snprintf(Qa)/strtoq arg=%s\n", sprintf128(q0));
+	printf("snprintf(Qa)/strtoq arg=%s str=%s test=%s\n", sprintf128(q0), s, sprintf128(q1));
+	fflush(stdout); ecnt++;
+      }
+    }
+#else
+    if ((cnt & 15) == 1) {
+      char s[64];
+      Sleef_quad q1;
+
+      Sleef_snprintf(s, 63, "%.40Pg", &a0);
+      q1 = vget(Sleef_strtoq(s, NULL), e);
+      if (memcmp(&q0, &q1, sizeof(Sleef_quad)) != 0 && !(isnanf128(q0) && isnanf128(q1))) {
+	printf("snprintf(Qg)/strtoq arg=%s str=%s test=%s\n", sprintf128(q0), s, sprintf128(q1));
+	fflush(stdout); ecnt++;
+      }
+
+      Sleef_snprintf(s, 63, "%Pa", &a0);
+      q1 = vget(Sleef_strtoq(s, NULL), e);
+      if (memcmp(&q0, &q1, sizeof(Sleef_quad)) != 0 && !(isnanf128(q0) && isnanf128(q1))) {
+	printf("snprintf(Qa)/strtoq arg=%s str=%s test=%s\n", sprintf128(q0), s, sprintf128(q1));
 	fflush(stdout); ecnt++;
       }
     }

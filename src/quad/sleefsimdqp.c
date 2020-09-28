@@ -3348,10 +3348,13 @@ static int xvprintf(size_t (*consumer)(const char *ptr, size_t size, void *arg),
 
     // Read size prefix
 
-    int flag_quad = 0;
+    int flag_quad = 0, flag_ptrquad = 0;
 
     if (*fmt == 'Q') {
       flag_quad = 1;
+      fmt++;
+    } else if (*fmt == 'P') {
+      flag_ptrquad = 1;
       fmt++;
     } else {
       fmt += sizePrefixLen(fmt);
@@ -3365,7 +3368,14 @@ static int xvprintf(size_t (*consumer)(const char *ptr, size_t size, void *arg),
       // fall through
     case 'e': case 'f': case 'g':
       {
-	vargquad value = flag_quad ? va_arg(ap, vargquad) : xcast_from_doubleq(va_arg(ap, double));
+	vargquad value;
+	if (flag_quad) {
+	  value = va_arg(ap, vargquad);
+	} else if (flag_ptrquad) {
+	  value = *(vargquad *)va_arg(ap, vargquad *);
+	} else {
+	  value = xcast_from_doubleq(va_arg(ap, double));
+	}
 	count += snprintquad(xbuf, xbufsize, value, tolower(*fmt), width, precision, flags);
 	(*consumer)(xbuf, strlen(xbuf), arg);
       }
@@ -3377,6 +3387,8 @@ static int xvprintf(size_t (*consumer)(const char *ptr, size_t size, void *arg),
     case 'a':
       if (flag_quad) {
 	count += snprintquadhex(xbuf, xbufsize, va_arg(ap, vargquad), width, precision, flags);
+      } else if (flag_ptrquad) {
+	count += snprintquadhex(xbuf, xbufsize, *(vargquad *)va_arg(ap, vargquad *), width, precision, flags);
       } else {
 	count += snprintdoublehex(xbuf, xbufsize, va_arg(ap, double), width, precision, flags);
       }
@@ -3465,7 +3477,7 @@ EXPORT int Sleef_snprintf(char *str, size_t size, const char *fmt, ...) {
 #ifdef __GLIBC__
 #include <printf.h>
 
-static int pa_quad = -1, printf_modifier = -1;
+static int pa_quad = -1, printf_Qmodifier = -1, printf_Pmodifier = -1;
 
 static void Sleef_quad_va(void *ptr, va_list *ap) { 
   *(Sleef_quad *)ptr = va_arg(*ap, Sleef_quad);
@@ -3484,8 +3496,18 @@ static int printf_output(FILE *fp, const struct printf_info *info, const void *c
   if (info->left)          flags |= FLAG_LEFT;
   if (isupper(info->spec)) flags |= FLAG_UPPER;
 
-  vargquad q = (info->user & printf_modifier) ?
-    (**(const vargquad **)args[0]) : xcast_from_doubleq(**(const double **) args[0]);
+  vargquad q;
+  if (info->user & printf_Qmodifier) {
+    q = **(const vargquad **)args[0];
+  } else
+#if 0
+    if (info->user & printf_Pmodifier) {
+    q = ***(const vargquad ***)args[0];
+  } else
+#endif
+      {
+    q = xcast_from_doubleq(**(const double **) args[0]);
+  }
 
   int xbufsize = 5000;
   char *xbuf = malloc(xbufsize+10);
@@ -3505,8 +3527,12 @@ static int printf_output(FILE *fp, const struct printf_info *info, const void *c
 }
 
 EXPORT int Sleef_registerPrintfHook() {
-  printf_modifier = register_printf_modifier(L"Q");
-  if (printf_modifier == -1) return -1;
+  printf_Qmodifier = register_printf_modifier(L"Q");
+  if (printf_Qmodifier == -1) return -1;
+#if 0
+  printf_Pmodifier = register_printf_modifier(L"P");
+  if (printf_Pmodifier == -1) return -1;
+#endif
 
   pa_quad = register_printf_type(Sleef_quad_va);
   if (pa_quad == -1) return -2;
@@ -3664,46 +3690,6 @@ int main(int argc, char **argv) {
 
   //
 
-}
-#endif
-
-#if 0
-#include <quadmath.h>
-
-typedef union {
-  __float128 f;
-  Sleef_quad q;
-  struct {
-    uint64_t l, h;
-  };
-} cnv_t;
-
-int main(int argc, char **argv) {
-  char buf[1024];
-#if 1
-  Sleef_quad q = Sleef_strtoq(argv[2], NULL);
-  cnv_t cnv;
-  cnv.q = q;
-  printf("%016lx:%016lx\n", cnv.h, cnv.l);
-
-  Sleef_qtostr(buf, 1000, q);
-  printf("qtostr %s\n", buf);
-  Sleef_snprintf(buf, 1000, argv[1], q);
-  printf("t [%s]\n", buf);
-  quadmath_snprintf(buf, 1000, argv[1], q);
-  printf("c [%s]\n", buf);
-#elif 0
-  double d = atof(argv[1]);
-  printf("corr %10.a\n", d);
-  Sleef_printf("test %10.0a\n", d);
-#else
-  void *p = (void *)atol(argv[2]);
-
-  Sleef_snprintf(buf, 1000, argv[1], argv[2][0]);
-  printf("t [%s]\n", buf);
-  snprintf(buf, 1000, argv[1], argv[2][0]);
-  printf("c [%s]\n", buf);
-#endif
 }
 #endif
 
@@ -4163,52 +4149,15 @@ int main(int argc, char **argv) {
 }
 #endif
 
-#if 0
-#include <quadmath.h>
-
-int main(int argc, char **argv) {
-
-  __float128 q = strtoflt128(argv[1], NULL);
-
-  Sleef_registerPrintfHook();
-
-  printf("c %.40Qg %Qa\n", q, q);
-  //printf("t %.40@g %@a\n", q, q);
-}
-#endif
-
 #if 1
-#include <quadmath.h>
+//#include <quadmath.h>
 
 int main(int argc, char **argv) {
   __float128 q;
 
-  q = strtoflt128(argv[2], NULL);
-  printf(argv[1], q);
-  printf("\n");
-
   q = Sleef_strtoq(argv[2], NULL);
-  Sleef_printf(argv[1], q);
+  Sleef_printf(argv[1], &q);
   printf("\n");
-}
-#endif
-
-#if 0
-const wchar_t hello1[] = L"あいうえお";
-const wchar_t hello2[] = L"Tervehdys";
-
-int main(int argc, char *argv[])
-{
-  setlocale(LC_ALL, "C.UTF-8");
-
-  Sleef_printf("%% %d\n", 3);
-  Sleef_printf("          [12345678901234567890]\n");
-  Sleef_printf("printf 0: [%20s]\n", "hello");
-  Sleef_printf("printf 0: [%-20s]\n", "hello");
-  Sleef_printf("printf 1: [%20ls]\n", hello1);
-  Sleef_printf("printf 1: [%-20ls]\n", hello1);
-  Sleef_printf("printf 2: [%20ls]\n", hello2);
-  Sleef_printf("printf 2: [%-ls]\n", hello2);
 }
 #endif
 

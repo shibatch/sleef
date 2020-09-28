@@ -267,7 +267,8 @@ typedef union {
     }									\
   }
 
-#define func_snprintf_40Qg(funcStr) {						\
+#if !(defined(ENABLEFLOAT128) && defined(__clang__))
+#define func_snprintf_40Qg(funcStr) {					\
     while (startsWith(buf, funcStr " ")) {				\
       sentinel = 0;							\
       cnv128 c0;							\
@@ -282,7 +283,7 @@ typedef union {
     }									\
   }
 
-#define func_snprintf_Qa(funcStr) {						\
+#define func_snprintf_Qa(funcStr) {					\
     while (startsWith(buf, funcStr " ")) {				\
       sentinel = 0;							\
       cnv128 c0;							\
@@ -296,6 +297,37 @@ typedef union {
       if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
     }									\
   }
+#else
+#define func_snprintf_40Qg(funcStr) {					\
+    while (startsWith(buf, funcStr " ")) {				\
+      sentinel = 0;							\
+      cnv128 c0;							\
+      sscanf(buf, funcStr " %" PRIx64 ":%" PRIx64, &c0.h, &c0.l);	\
+      Sleef_quad a0;							\
+      a0 = c0.q;							\
+      char s[64];							\
+      Sleef_snprintf(s, 63, "%.40Pg", &a0);				\
+      printf("%s\n", s);						\
+      fflush(stdout);							\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
+    }									\
+  }
+
+#define func_snprintf_Qa(funcStr) {					\
+    while (startsWith(buf, funcStr " ")) {				\
+      sentinel = 0;							\
+      cnv128 c0;							\
+      sscanf(buf, funcStr " %" PRIx64 ":%" PRIx64, &c0.h, &c0.l);	\
+      Sleef_quad a0;							\
+      a0 = c0.q;							\
+      char s[64];							\
+      Sleef_snprintf(s, 63, "%Pa", &a0);				\
+      printf("%s\n", s);						\
+      fflush(stdout);							\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
+    }									\
+  }
+#endif
 
 int do_test(int argc, char **argv) {
   xsrand(time(NULL));
@@ -303,10 +335,8 @@ int do_test(int argc, char **argv) {
   {
     int k = 0;
     k += 1;
-#ifdef ENABLE_PUREC_SCALAR
-#if !(defined(ENABLEFLOAT128) && defined(__clang__))
+#if defined(ENABLE_PUREC_SCALAR)
     k += 2; // Enable string testing
-#endif
 #endif
     printf("%d\n", k);
     fflush(stdout);
