@@ -577,6 +577,15 @@ Sleef_quad cast_q_str(const char *s) {
   return q;
 }
 
+Sleef_quad cast_q_str_hex(const char *s) {
+  mpfr_t fr;
+  mpfr_inits(fr, NULL);
+  mpfr_set_str(fr, s, 16, GMP_RNDN);
+  Sleef_quad q = mpfr_get_f128(fr, GMP_RNDN);
+  mpfr_clears(fr, NULL);
+  return q;
+}
+
 Sleef_quad add_q_q(Sleef_quad q, Sleef_quad r) {
   mpfr_t fr0, fr1;
   mpfr_inits(fr0, fr1, NULL);

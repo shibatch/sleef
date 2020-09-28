@@ -258,7 +258,7 @@ typedef union {
       char s[64];							\
       sscanf(buf, funcStr " %63s", s);					\
       Sleef_quad a0;							\
-      a0 = Sleef_strtoq(s, NULL, 10);					\
+      a0 = Sleef_strtoq(s, NULL);					\
       cnv128 c0;							\
       c0.q = a0;							\
       printf("%" PRIx64 ":%" PRIx64 "\n", c0.h, c0.l);			\
@@ -267,7 +267,8 @@ typedef union {
     }									\
   }
 
-#define func_qtostr(funcStr) {						\
+#if !(defined(ENABLEFLOAT128) && defined(__clang__))
+#define func_snprintf_40Qg(funcStr) {					\
     while (startsWith(buf, funcStr " ")) {				\
       sentinel = 0;							\
       cnv128 c0;							\
@@ -275,12 +276,58 @@ typedef union {
       Sleef_quad a0;							\
       a0 = c0.q;							\
       char s[64];							\
-      Sleef_qtostr(s, 63, a0, 10);					\
+      Sleef_snprintf(s, 63, "%.40Qg", a0);				\
       printf("%s\n", s);						\
       fflush(stdout);							\
       if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
     }									\
   }
+
+#define func_snprintf_Qa(funcStr) {					\
+    while (startsWith(buf, funcStr " ")) {				\
+      sentinel = 0;							\
+      cnv128 c0;							\
+      sscanf(buf, funcStr " %" PRIx64 ":%" PRIx64, &c0.h, &c0.l);	\
+      Sleef_quad a0;							\
+      a0 = c0.q;							\
+      char s[64];							\
+      Sleef_snprintf(s, 63, "%Qa", a0);					\
+      printf("%s\n", s);						\
+      fflush(stdout);							\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
+    }									\
+  }
+#else
+#define func_snprintf_40Qg(funcStr) {					\
+    while (startsWith(buf, funcStr " ")) {				\
+      sentinel = 0;							\
+      cnv128 c0;							\
+      sscanf(buf, funcStr " %" PRIx64 ":%" PRIx64, &c0.h, &c0.l);	\
+      Sleef_quad a0;							\
+      a0 = c0.q;							\
+      char s[64];							\
+      Sleef_snprintf(s, 63, "%.40Pg", &a0);				\
+      printf("%s\n", s);						\
+      fflush(stdout);							\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
+    }									\
+  }
+
+#define func_snprintf_Qa(funcStr) {					\
+    while (startsWith(buf, funcStr " ")) {				\
+      sentinel = 0;							\
+      cnv128 c0;							\
+      sscanf(buf, funcStr " %" PRIx64 ":%" PRIx64, &c0.h, &c0.l);	\
+      Sleef_quad a0;							\
+      a0 = c0.q;							\
+      char s[64];							\
+      Sleef_snprintf(s, 63, "%Pa", &a0);				\
+      printf("%s\n", s);						\
+      fflush(stdout);							\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
+    }									\
+  }
+#endif
 
 int do_test(int argc, char **argv) {
   xsrand(time(NULL));
@@ -288,7 +335,7 @@ int do_test(int argc, char **argv) {
   {
     int k = 0;
     k += 1;
-#ifdef ENABLE_PUREC_SCALAR
+#if defined(ENABLE_PUREC_SCALAR)
     k += 2; // Enable string testing
 #endif
     printf("%d\n", k);
@@ -330,7 +377,8 @@ int do_test(int argc, char **argv) {
     func_i_q_q("cmpneqq", xcmpneqq);
     func_i_q_q("unordq", xunordq);
     func_strtoq("strtoq");
-    func_qtostr("qtostr");
+    func_snprintf_40Qg("snprintf_40Qg");
+    func_snprintf_Qa("snprintf_Qa");
     sentinel++;
   }
 
