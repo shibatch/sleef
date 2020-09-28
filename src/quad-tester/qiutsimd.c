@@ -304,7 +304,9 @@ int do_test(int argc, char **argv) {
     int k = 0;
     k += 1;
 #ifdef ENABLE_PUREC_SCALAR
+#if !(defined(ENABLEFLOAT128) && defined(__clang__))
     k += 2; // Enable string testing
+#endif
 #endif
     printf("%d\n", k);
     fflush(stdout);

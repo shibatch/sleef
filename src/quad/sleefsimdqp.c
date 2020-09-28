@@ -3500,6 +3500,8 @@ static int printf_output(FILE *fp, const struct printf_info *info, const void *c
   fwrite(xbuf, len, 1, fp);
 
   free(xbuf);
+
+  return len;
 }
 
 EXPORT int Sleef_registerPrintfHook() {

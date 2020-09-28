@@ -474,6 +474,7 @@ int main(int argc,char **argv)
     }
 
 #ifdef ENABLE_PUREC_SCALAR
+#if !(defined(ENABLEFLOAT128) && defined(__clang__))
     if ((cnt & 15) == 1) {
       char s[64];
       Sleef_quad q1;
@@ -492,6 +493,7 @@ int main(int argc,char **argv)
 	fflush(stdout); ecnt++;
       }
     }
+#endif
 #endif
 
     {
