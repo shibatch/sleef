@@ -2203,7 +2203,7 @@ static vmask2 vcast_vf128_tdx_slow(tdx f) {
   r = vm2sety_vm2_vm2_vm(r, vor_vm_vo64_vm(o, vm2gety_vm_vm2(r)));
   r = vm2setx_vm2_vm2_vm(r, vor_vm_vo64_vm(o, vm2getx_vm_vm2(r)));
 
-  r = vm2sety_vm2_vm2_vm(r, vor_vm_vm_vm(vm2gety_vm_vm2(r), signbit));
+  r = vm2sety_vm2_vm2_vm(r, vor_vm_vm_vm(vandnot_vm_vm_vm(vcast_vm_i_i(0x80000000, 0), vm2gety_vm_vm2(r)), signbit));
 
   return r;
 }
@@ -2681,7 +2681,7 @@ EXPORT CONST vargquad xsetq(vargquad a, int index, Sleef_quad q) { // Sleef_set_
 #include <string.h>
 #include <ctype.h>
 
-static const tdx pow10tab[14] = {
+static const tdx exp10tab[14] = {
   { 16386, { 1.25, 0, 0 } }, // 10
   { 16389, { 1.5625, 0, 0 } }, // 100
   { 16396, { 1.220703125, 0, 0 } }, // 10000
@@ -2698,10 +2698,13 @@ static const tdx pow10tab[14] = {
   { 43596, { 1.1768686554854577153, 3.0579788864750933707e-17, -2.6771867381968692559e-34 } }, // 1e+8192
 };
 
-static tdx pow10i(int n) {
+static tdx exp10i(int n) {
+  int neg = 0;
+  if (n < 0) { neg = 1; n = -n; }
   tdx r = vcast_tdx_vd(1);
   for(int i=0;i<14;i++)
-    if ((n & (1 << i)) != 0) r = mul2_tdx_tdx_tdx(r, pow10tab[i]);
+    if ((n & (1 << i)) != 0) r = mul2_tdx_tdx_tdx(r, exp10tab[i]);
+  if (neg) r = div2_tdx_tdx_tdx(vcast_tdx_vd(1), r);
   return r;
 }
 
@@ -2712,9 +2715,9 @@ static int ilog10(tdx t) {
     p = -1;
   }
   for(int i=12;i>=0;i--) {
-    int c = vcmp_vm_tdx_tdx(t, pow10tab[i]);
+    int c = vcmp_vm_tdx_tdx(t, exp10tab[i]);
     if ((p > 0 && c >= 0) || (p < 0 && c > 0)) {
-      t = div2_tdx_tdx_tdx(t, pow10tab[i]);
+      t = div2_tdx_tdx_tdx(t, exp10tab[i]);
       r |= (1 << i);
     }
   }
@@ -2722,11 +2725,49 @@ static int ilog10(tdx t) {
   return r * p;
 }
 
-EXPORT vargquad Sleef_strtoq(char *str, char **endptr, int base) {
+static vmask2 xsll128(vmask2 m, int c) {
+  if (c == 0) return m;
+  if (c >= 128) return imdvm2(0, 0);
+
+  if (c < 64) {
+    return imdvm2(vsll64_vm_vm_i(vm2getx_vm_vm2(m), c),
+		  vor_vm_vm_vm(vsll64_vm_vm_i(vm2gety_vm_vm2(m), c), vsrl64_vm_vm_i(vm2getx_vm_vm2(m), 64 - c)));
+  }
+
+  return imdvm2(0, vsll64_vm_vm_i(vm2getx_vm_vm2(m), c - 64));
+}
+
+static vmask2 xsrl128(vmask2 m, int c) {
+  if (c == 0) return m;
+  if (c >= 128) return imdvm2(0, 0);
+
+  if (c < 64) {
+    return imdvm2(vor_vm_vm_vm(vsrl64_vm_vm_i(vm2getx_vm_vm2(m), c), vsll64_vm_vm_i(vm2gety_vm_vm2(m), 64 - c)),
+		  vsrl64_vm_vm_i(vm2gety_vm_vm2(m), c));
+  }
+
+  return imdvm2(vsrl64_vm_vm_i(vm2gety_vm_vm2(m), c - 64), 0);
+}
+
+static int xclz128(vmask2 m) {
+  int n = m.y == 0 ? 128 : 64;
+  uint64_t u = m.y == 0 ? m.x : m.y, v;
+  v = u >> 32; if (v != 0) { n -= 32; u = v; }
+  v = u >> 16; if (v != 0) { n -= 16; u = v; }
+  v = u >>  8; if (v != 0) { n -=  8; u = v; }
+  v = u >>  4; if (v != 0) { n -=  4; u = v; }
+  v = u >>  2; if (v != 0) { n -=  2; u = v; }
+  v = u >>  1; if (v != 0) return n - 2;
+  return n - u;
+}
+
+//
+
+EXPORT vargquad Sleef_strtoq(char *str, char **endptr) {
   while(isspace(*str)) str++;
   char *p = str;
 
-  int positive = 1, bp = 0, e = 0, error = 0, mf = 0;
+  int positive = 1, bp = 0, e = 0, mf = 0;
   tdx n = vcast_tdx_vd(0), d = vcast_tdx_vd(1);
 
   if (*p == '-') {
@@ -2736,22 +2777,86 @@ EXPORT vargquad Sleef_strtoq(char *str, char **endptr, int base) {
 
   if (tolower(p[0]) == 'n' && tolower(p[1]) == 'a' && tolower(p[2]) == 'n') {
     if (endptr != NULL) *endptr = p+3;
-    vmask2 r = { vcast_vm_i_i(-1, -1), vcast_vm_i_i(-1, -1) };
+    vmask2 r = { vcast_vm_i_i(-1, -1), vcast_vm_i_i(0x7fffffff, -1) };
+    r.y |= ((uint64_t)!positive) << 63;
     return vcast_aq_vm2(r);
   }
 
   if (tolower(p[0]) == 'i' && tolower(p[1]) == 'n' && tolower(p[2]) == 'f') {
     if (endptr != NULL) *endptr = p+3;
-    if (positive) {
-      vmask2 r = { vcast_vm_i_i(0, 0), vcast_vm_i_i(0x7fff0000, 0) };
-      return vcast_aq_vm2(r);
-    } else {
-      vmask2 r = { vcast_vm_i_i(0, 0), vcast_vm_i_i(0xffff0000, 0) };
-      return vcast_aq_vm2(r);
-    }
+    if (tolower(p[3]) == 'i' && tolower(p[4]) == 'n' && tolower(p[5]) == 'i' &&
+	tolower(p[6]) == 't' && tolower(p[7]) == 'y' && endptr != NULL) *endptr = p+8;
+    vmask2 r = { vcast_vm_i_i(0, 0), vcast_vm_i_i(0x7fff0000, 0) };
+    r.y |= ((uint64_t)!positive) << 63;
+    return vcast_aq_vm2(r);
   }
 
-  while(*p != '\0' && !error) {
+  if (*p == '0' && *(p+1) == 'x') {
+    p += 2;
+    vmask2 m = { 0, 0 };
+    int pp = 0;
+
+    while(*p != '\0') {
+      int d = 0;
+      if (('0' <= *p && *p <= '9')) {
+	d = *p++ - '0';
+      } else if ('a' <= *p && *p <= 'f') {
+	d = *p++ - 'a' + 10;
+      } else if ('A' <= *p && *p <= 'F') {
+	d = *p++ - 'A' + 10;
+      } else if (*p == '.') {
+	if (bp) break;
+	bp = 1;
+	p++;
+	continue;
+      } else break;
+
+      mf = 1;
+      m = xsll128(m, 4);
+      m.x += d;
+      pp += bp * 4;
+      if (m.y >> 60) break;
+    }
+
+    while(('0' <= *p && *p <= '9') || ('a' <= *p && *p <= 'f') || ('A' <= *p && *p <= 'F')) p++;
+    if (*p == '.' && !bp) p++;
+    while(('0' <= *p && *p <= '9') || ('a' <= *p && *p <= 'f') || ('A' <= *p && *p <= 'F')) p++;
+
+    if (*p == 'p' || *p == 'P') {
+      char *q;
+      e = strtol(p+1, &q, 10);
+      if (p+1 == q || isspace(*(p+1))) {
+	e = 0;
+      } else {
+	p = q;
+      }
+    }
+
+    int nsl = xclz128(m) - 15;
+    e = e - pp - nsl + 0x3fff + 112;
+
+    if (e <= 0) {
+      nsl += 1 - e;
+      e = 0;
+    }
+
+    if (nsl >= 0) {
+      m = xsll128(m, nsl);
+    } else {
+      uint64_t u = m.x + ((1ULL) << (-nsl - 1));
+      if (u < m.x) m.y++;
+      m.x = u;
+      m = xsrl128(m, -nsl);
+    }
+
+    m.y &= 0x0000ffffffffffff;
+    m.y |= (((uint64_t)!positive) << 63) | ((((uint64_t)e) & 0x7fff) << 48);
+
+    if (endptr != NULL) *endptr = p;
+    return vcast_aq_vm2(m);
+  } 
+
+  while(*p != '\0') {
     if ('0' <= *p && *p <= '9') {
       n = add2_tdx_tdx_tdx(mul2_tdx_tdx_tdx(n, vcast_tdx_vd(10)), vcast_tdx_vd(*p - '0'));
       if (bp) d = mul2_tdx_tdx_tdx(d, vcast_tdx_vd(10));
@@ -2775,90 +2880,660 @@ EXPORT vargquad Sleef_strtoq(char *str, char **endptr, int base) {
       } else {
 	p = q;
       }
-      break;
     }
 
-    error = 1;
     break;
   }
 
-  if (error || !mf) {
+  if (!mf && !bp) {
     if (endptr != NULL) *endptr = str;
     vmask2 r = { vcast_vm_i_i(0, 0), vcast_vm_i_i(0, 0) };
     return vcast_aq_vm2(r);
   }
 
   n = div2_tdx_tdx_tdx(n, d);
-  if (e > 0) n = mul2_tdx_tdx_tdx(n, pow10i(+e));
-  if (e < 0) n = div2_tdx_tdx_tdx(n, pow10i(-e));
+  if (e > 0) n = mul2_tdx_tdx_tdx(n, exp10i(+e));
+  if (e < 0) n = div2_tdx_tdx_tdx(n, exp10i(-e));
   if (!positive) n = vneg_tdx_tdx(n);
 
-  if (endptr != NULL) *endptr = str;
+  if (endptr != NULL) *endptr = p;
 
   return vcast_aq_vm2(vcast_vf128_tdx(n));
 }
 
-EXPORT void Sleef_qtostr(char *s, int n, vargquad a, int base) {
-  if (n <= 0) return;
-  if (n > 48) n = 48;
-  if (n < 9) { *s = '\0'; return; }
+//
+
+#include <stdarg.h>
+#include <stddef.h>
+#include <ctype.h>
+
+#define FLAG_SIGN     (1 << 0)
+#define FLAG_BLANK    (1 << 1)
+#define FLAG_ALT      (1 << 2)
+#define FLAG_LEFT     (1 << 3)
+#define FLAG_ZERO     (1 << 4)
+#define FLAG_UPPER    (1 << 5)
+
+static int snprintquad(char *buf, size_t bufsize, vargquad argvalue, int typespec, int width, int precision, int flags) {
+  if (width > bufsize) width = bufsize;
 
   union {
     vmask2 q;
-    struct {
-      uint64_t l, h;
-    };
-  } c128 = { .q = vcast_vm2_aq(a) };
+    struct { uint64_t l, h; };
+  } c128 = { .q = vcast_vm2_aq(argvalue) };
 
-  char *p = s;
+  char *ptr = buf;
+  char prefix = 0;
+  int length = 0, flag_rtz = 0;
 
-  if (visnanq_vo_vm2(c128.q)) { sprintf(p, "nan"); return; }
+  assert(typespec == 'e' || typespec == 'f' || typespec == 'g');
 
   if ((c128.h & UINT64_C(0x8000000000000000)) != 0) {
-    *p++ = '-';
     c128.h ^= UINT64_C(0x8000000000000000);
+    prefix = '-';
+  } else if (flags & FLAG_SIGN) {
+    prefix = '+';
+  } else if (flags & FLAG_BLANK) {
+    prefix = ' ';
+  }
+
+  tdx value = vcast_tdx_vf128(c128.q);
+
+  if (visnanq_vo_vm2(c128.q)) {
+    if (prefix) *ptr++ = prefix;
+    ptr += snprintf(ptr, buf + bufsize - ptr, (flags & FLAG_UPPER) ? "NAN" : "nan");
+    flags &= ~FLAG_ZERO;
+  } else if (visinfq_vo_vm2(c128.q)) {
+    if (prefix) *ptr++ = prefix;
+    ptr += snprintf(ptr, buf + bufsize - ptr, (flags & FLAG_UPPER) ? "INF" : "inf");
+    flags &= ~FLAG_ZERO;
   } else {
-    *p++ = '+';
+    if (precision < 0) precision = 6;
+    if (precision > bufsize/2 - 10) precision = bufsize/2 - 10;
+    if (typespec == 'g' && precision > 0) precision--;
+
+    tdx rounder = mul2_tdx_tdx_tdx(vcast_tdx_vd(0.5), exp10i(-precision));
+
+    if (typespec == 'f') value = add2_tdx_tdx_tdx(value, rounder);
+
+    int exp = 0, e2 = 0;
+    if (!viszeroq_vo_vm2(c128.q)) {
+      exp = ilog10(value);
+      value = mul2_tdx_tdx_tdx(value, exp10i(-exp));
+    }
+
+    int flag_exp = typespec == 'e';
+
+    if (typespec != 'f') {
+      value = add2_tdx_tdx_tdx(value, rounder);
+    }
+
+    if ((int)vcmp_vm_tdx_tdx(value, vcast_tdx_vd(10.0)) >= 0) {
+      value = div2_tdx_tdx_tdx(value, vcast_tdx_vd(10));
+      exp++;
+    }
+
+    if (typespec == 'g') {
+      flag_rtz = !(flags & FLAG_ALT);
+      if (exp < -4 || exp > precision) {
+	typespec = 'e';
+      } else {
+	precision = precision - exp;
+	typespec = 'f';
+      }
+    }
+
+    if (typespec != 'e') e2 = exp;
+
+    int flag_dp = (precision > 0) | (flags & FLAG_ALT);
+
+    if (prefix) *ptr++ = prefix;
+
+    if (e2 < 0) {
+      *ptr++ = '0';
+    } else {
+      for(;e2>=0;e2--) {
+	int digit = (int)vcast_vd_tdx(value);
+	if ((int)vcmp_vm_tdx_tdx(value, vcast_tdx_vd(digit)) < 0) digit--;
+	if (ptr - buf >= bufsize-1) { *ptr = '\0'; return -1; }
+	*ptr++ = digit + '0';
+	value = mul2_tdx_tdx_tdx(add2_tdx_tdx_tdx(value, vcast_tdx_vd(-digit)), vcast_tdx_vd(10));
+      }
+    }
+
+    if (flag_dp) {
+      if (ptr - buf >= bufsize-1) { *ptr = '\0'; return -1; }
+      *ptr++ = '.';
+    }
+
+    for(e2++;e2 < 0 && precision > 0;precision--, e2++) {
+      if (ptr - buf >= bufsize-1) { *ptr = '\0'; return -1; }
+      *ptr++ = '0';
+    }
+
+    while (precision-- > 0) {
+      int digit = (int)vcast_vd_tdx(value);
+      if ((int)vcmp_vm_tdx_tdx(value, vcast_tdx_vd(digit)) < 0) digit--;
+      if (ptr - buf >= bufsize-1) { *ptr = '\0'; return -1; }
+      *ptr++ = digit + '0';
+      value = mul2_tdx_tdx_tdx(add2_tdx_tdx_tdx(value, vcast_tdx_vd(-digit)), vcast_tdx_vd(10));
+    }
+
+    if (flag_rtz && flag_dp) {
+      while(ptr[-1] == '0') *(--ptr) = 0;
+      assert(ptr > buf);
+      if (ptr[-1] == '.') *(--ptr) = 0;
+    }
+
+    if (flag_exp || (typespec == 'e' && exp)) {
+      if (ptr - buf >= bufsize-8) { *ptr = '\0'; return -1; }
+      *ptr++ = (flags & FLAG_UPPER) ? 'E' : 'e';
+      if (exp < 0){
+	*ptr++ = '-'; exp = -exp;
+      } else {
+	*ptr++ = '+';
+      }
+      if (exp >= 1000) {
+	*ptr++ = exp / 1000 + '0';
+	exp %= 1000;
+	*ptr++ = exp / 100 + '0';
+	exp %= 100;
+      } else if (exp >= 100) {
+	*ptr++ = exp / 100 + '0';
+	exp %= 100;
+      }
+      *ptr++ = exp / 10 + '0';
+      *ptr++ = exp % 10 + '0';
+    }
   }
 
-  if (visinfq_vo_vm2(c128.q)) { sprintf(p, "inf"); return; }
+  *ptr = 0;
 
-  tdx t = vcast_tdx_vf128(c128.q);
-  int e = ilog10(t);
+  length = ptr - buf;
+  ptr = buf;
 
-  if (e < 0) t = mul2_tdx_tdx_tdx(t, pow10i(-e-1));
-  if (e >= 0) t = div2_tdx_tdx_tdx(t, pow10i(+e+1));
-
-  t = add2_tdx_tdx_tdx(t, div2_tdx_tdx_tdx(vcast_tdx_vd(0.5), pow10i(n-8)));
-
-  *p++ = '.';
-
-  if ((int)vcmp_vm_tdx_tdx(t, vcast_tdx_vd(1)) >= 0) {
-    t = div2_tdx_tdx_tdx(t, vcast_tdx_vd(10));
-    e++;
+  if (!(flags & FLAG_LEFT) && length < width) {
+    int i;
+    int nPad = width - length;
+    for(i=width; i>=nPad; i--) {
+      ptr[i] = ptr[i-nPad];
+    }
+    i = prefix != 0 && (flags & FLAG_ZERO);
+    while (nPad--) {
+      ptr[i++] = (flags & FLAG_ZERO) ? '0' : ' ';
+    }
+    length = width;
   }
 
-  for(;n>=9;n--) {
-    t = mul2_tdx_tdx_tdx(t, vcast_tdx_vd(10));
-    int ia = (int)vcast_vd_tdx(t);
-    if ((int)vcmp_vm_tdx_tdx(t, vcast_tdx_vd(ia)) < 0) ia--;
-    *p++ = ia + '0';
-    t = add2_tdx_tdx_tdx(t, vcast_tdx_vd(-ia));
+  if (flags & FLAG_LEFT) {
+    while (length < width) {
+      ptr[length++] = ' ';
+    }
+    ptr[length] = '\0';
   }
 
-  if (viszeroq_vo_vm2(c128.q)) {
-    *p++ = '\0';
-    return;
-  }
-
-  *p++ = 'e';
-  e++;
-  if (e >= 0) *p++ = '+';
-  if (e < 0) { *p++ = '-'; e = -e; }
-
-  sprintf(p, "%d", e);
+  return length;
 }
+
+static int snprintquadhex(char *buf, size_t bufsize, vargquad argvalue, int width, int precision, int flags) {
+  if (width > bufsize) width = bufsize;
+  char *bufend = buf + bufsize, *ptr = buf;
+
+  union {
+    vmask2 q;
+    struct { uint64_t l, h; };
+  } c128 = { .q = vcast_vm2_aq(argvalue) };
+
+  int mainpos = 0;
+
+  if (c128.h >> 63) {
+    ptr += snprintf(ptr, bufend - ptr, "-");
+  } else if (flags & FLAG_SIGN) {
+    ptr += snprintf(ptr, bufend - ptr, "+");
+  } else if (flags & FLAG_BLANK) {
+    ptr += snprintf(ptr, bufend - ptr, " ");
+  }
+
+  if (visnanq_vo_vm2(c128.q)) {
+    ptr += snprintf(ptr, bufend - ptr, (flags & FLAG_UPPER) ? "NAN" : "nan");
+    flags &= ~FLAG_ZERO;
+  } else if (visinfq_vo_vm2(c128.q)) {
+    ptr += snprintf(ptr, bufend - ptr, (flags & FLAG_UPPER) ? "INF" : "inf");
+    flags &= ~FLAG_ZERO;
+  } else {
+    int iszero = viszeroq_vo_vm2(c128.q);
+    if (precision >= 0 && precision < 28) {
+      int s = (28 - precision) * 4 - 1;
+      if (s < 64) {
+	uint64_t u = c128.l + (((uint64_t)1) << s);
+	if (u < c128.l) c128.h++;
+	c128.l = u;
+      } else {
+	c128.h += ((uint64_t)1) << (s - 64);
+      }
+    }
+
+    int exp = (c128.h >> 48) & 0x7fff;
+    uint64_t h = c128.h << 16, l = c128.l;
+
+    ptr += snprintf(ptr, bufend - ptr, (flags & FLAG_UPPER) ? "0X" :"0x");
+    mainpos = ptr - buf;
+    ptr += snprintf(ptr, bufend - ptr, exp != 0 ? "1" : "0");
+
+    if ((!(h == 0 && l == 0 && precision < 0) && precision != 0) || (flags & FLAG_ALT)) ptr += snprintf(ptr, bufend - ptr, ".");
+
+    const char *digits = (flags & FLAG_UPPER) ? "0123456789ABCDEF" : "0123456789abcdef";
+
+    int niter = (precision < 0 || precision > 28) ? 28 : precision;
+
+    for(int i=0;i<12 && i < niter;i++) {
+      if (h == 0 && l == 0 && precision < 0) break;
+      ptr += snprintf(ptr, bufend - ptr, "%c", digits[(h >> 60) & 0xf]);
+      h <<= 4;
+    }
+
+    for(int i=0;i<16 && i < niter-12;i++) {
+      if (l == 0 && precision < 0) break;
+      ptr += snprintf(ptr, bufend - ptr, "%c", digits[(l >> 60) & 0xf]);
+      l <<= 4;
+    }
+
+    if (exp == 0) exp++;
+    if (iszero) exp = 0x3fff;
+
+    ptr += snprintf(ptr, bufend - ptr, "%c%+d", (flags & FLAG_UPPER) ? 'P' : 'p', exp - 0x3fff);
+  }
+
+  int length = ptr - buf;
+  ptr = buf;
+
+  if (!(flags & FLAG_ZERO)) mainpos = 0;
+
+  if (!(flags & FLAG_LEFT) && length < width) {
+    int i;
+    int nPad = width - length;
+    for(i=width;i-nPad>=mainpos; i--) {
+      ptr[i] = ptr[i-nPad];
+    }
+    i = mainpos;
+    while (nPad--) {
+      ptr[i++] = (flags & FLAG_ZERO) ? '0' : ' ';
+    }
+    length = width;
+  }
+
+  if (flags & FLAG_LEFT) {
+    while (length < width) {
+      ptr[length++] = ' ';
+    }
+    ptr[length] = '\0';
+  }
+
+  return length;
+}
+
+static int snprintdoublehex(char *buf, size_t bufsize, double value, int width, int precision, int flags) {
+  if (width > bufsize) width = bufsize;
+  char *bufend = buf + bufsize, *ptr = buf;
+
+  union {
+    double d;
+    uint64_t u;
+  } cnv = { .d = value };
+
+  int mainpos = 0;
+
+  if (cnv.u >> 63) {
+    ptr += snprintf(ptr, bufend - ptr, "-");
+  } else if (flags & FLAG_SIGN) {
+    ptr += snprintf(ptr, bufend - ptr, "+");
+  } else if (flags & FLAG_BLANK) {
+    ptr += snprintf(ptr, bufend - ptr, " ");
+  }
+
+  if (visnan_vo_vd(value)) {
+    ptr += snprintf(ptr, bufend - ptr, (flags & FLAG_UPPER) ? "NAN" : "nan");
+    flags &= ~FLAG_ZERO;
+  } else if (visinf_vo_vd(value)) {
+    ptr += snprintf(ptr, bufend - ptr, (flags & FLAG_UPPER) ? "INF" : "inf");
+    flags &= ~FLAG_ZERO;
+  } else {
+    if (precision >= 0 && precision < 13) cnv.u += ((uint64_t)1) << ((13 - precision) * 4 - 1);
+
+    int exp = (cnv.u >> 52) & 0x7ff;
+    uint64_t m = cnv.u << 12;
+
+    ptr += snprintf(ptr, bufend - ptr, (flags & FLAG_UPPER) ? "0X" :"0x");
+    mainpos = ptr - buf;
+    ptr += snprintf(ptr, bufend - ptr, exp != 0 ? "1" : "0");
+
+    if ((!(m == 0 && precision < 0) && precision != 0) || (flags & FLAG_ALT)) ptr += snprintf(ptr, bufend - ptr, ".");
+
+    const char *digits = (flags & FLAG_UPPER) ? "0123456789ABCDEF" : "0123456789abcdef";
+
+    int niter = (precision < 0 || precision > 13) ? 13 : precision;
+
+    for(int i=0;i<niter;i++) {
+      if (m == 0 && precision < 0) break;
+      ptr += snprintf(ptr, bufend - ptr, "%c", digits[(m >> 60) & 0xf]);
+      m <<= 4;
+    }
+
+    if (exp == 0) exp++;
+    if (value == 0) exp = 0x3ff;
+
+    ptr += snprintf(ptr, bufend - ptr, "%c%+d", (flags & FLAG_UPPER) ? 'P' : 'p', exp - 0x3ff);
+  }
+
+  int length = ptr - buf;
+  ptr = buf;
+
+  if (!(flags & FLAG_ZERO)) mainpos = 0;
+
+  if (!(flags & FLAG_LEFT) && length < width) {
+    int i;
+    int nPad = width - length;
+    for(i=width;i-nPad>=mainpos; i--) {
+      ptr[i] = ptr[i-nPad];
+    }
+    i = mainpos;
+    while (nPad--) {
+      ptr[i++] = (flags & FLAG_ZERO) ? '0' : ' ';
+    }
+    length = width;
+  }
+
+  if (flags & FLAG_LEFT) {
+    while (length < width) {
+      ptr[length++] = ' ';
+    }
+    ptr[length] = '\0';
+  }
+
+  return length;
+}
+
+static int sizePrefixLen(const char *fmt) {
+#if (defined(_MSC_VER))
+  if (strncmp(fmt, "I32", 3) == 0 || strncmp(fmt, "I64", 3) == 0) return 3;
+  if ((*fmt == 'h' && *(fmt+1) == 'h') || (*fmt == 'l' && *(fmt+1) == 'l')) return 2;
+  if (*fmt == 'h' || *fmt == 'j' || *fmt == 'l' || *fmt == 'L' || *fmt == 't' ||
+      *fmt == 'I' || *fmt == 'z' || *fmt == 'w') return 1;
+#else
+  if ((*fmt == 'h' && *(fmt+1) == 'h') || (*fmt == 'l' && *(fmt+1) == 'l')) return 2;
+  if (*fmt == 'h' || *fmt == 'l' || *fmt == 'q' || *fmt == 'L' || *fmt == 'j' ||
+      *fmt == 'z' || *fmt == 'Z' || *fmt == 't') return 1;
 #endif
+  return 0;
+}
+
+static int xvprintf(size_t (*consumer)(const char *ptr, size_t size, void *arg), void *arg, const char *fmt, va_list ap) {
+  int xbufsize = 5000;
+  char *xbuf = malloc(xbufsize+10);
+
+  int count = 0, errorflag = 0;
+  const char *fmtstart;
+
+  while(*fmt != '\0' && !errorflag) {
+    // Output until '%' is read
+
+    if (*fmt != '%') {
+      do {
+	(*consumer)(fmt++, 1, arg);
+	count++;
+      } while(*fmt != '%' && *fmt != '\0');
+
+      if (*fmt == '\0') break;
+    }
+
+    fmtstart = fmt;
+
+    if ((*++fmt) == '\0') {
+      errorflag = 1;
+      (*consumer)("%", 1, arg);
+      count++;
+      break;
+    }
+
+    // Read flags
+
+    int flags = 0, done = 0;
+    do {
+      switch(*fmt) {
+        case '-': flags |= FLAG_LEFT;  break;
+        case '+': flags |= FLAG_SIGN;  break;
+        case ' ': flags |= FLAG_BLANK; break;
+        case '#': flags |= FLAG_ALT;   break;
+        case '0': flags |= FLAG_ZERO;  break;
+        default:  done = 1; break;
+      }
+    } while(!done && (*++fmt) != 0);
+
+    // Read width
+
+    int width = 0;
+
+    if (*fmt == '*') {
+      width = va_arg(ap, int);
+      if (width < 0) {
+	flags |= FLAG_LEFT;
+        width = -width;
+      }
+      fmt++;
+    } else {
+      while(*fmt >= '0' && *fmt <= '9') {
+        width = width*10 + *fmt - '0';
+        fmt++;
+      }
+    }
+
+    // Read precision
+
+    int precision = -1;
+
+    if (*fmt == '.') {
+      precision = 0;
+      fmt++;
+      if (*fmt == '*') {
+        precision = va_arg(ap, int);
+        if (precision < 0) precision = -precision;
+        fmt++;
+      } else {
+        while(*fmt >= '0' && *fmt <= '9') {
+          precision = precision*10 + *fmt - '0';
+          fmt++;
+        }
+      }
+    }
+
+    // Read size prefix
+
+    int flag_quad = 0;
+
+    if (*fmt == 'Q') {
+      flag_quad = 1;
+      fmt++;
+    } else {
+      fmt += sizePrefixLen(fmt);
+    }
+
+    // Call type-specific function
+
+    switch(*fmt) {
+    case 'E': case 'F': case 'G':
+      flags |= FLAG_UPPER;
+      // fall through
+    case 'e': case 'f': case 'g':
+      {
+	vargquad value = flag_quad ? va_arg(ap, vargquad) : xcast_from_doubleq(va_arg(ap, double));
+	count += snprintquad(xbuf, xbufsize, value, tolower(*fmt), width, precision, flags);
+	(*consumer)(xbuf, strlen(xbuf), arg);
+      }
+      break;
+
+    case 'A':
+      flags |= FLAG_UPPER;
+      // fall through
+    case 'a':
+      if (flag_quad) {
+	count += snprintquadhex(xbuf, xbufsize, va_arg(ap, vargquad), width, precision, flags);
+      } else {
+	count += snprintdoublehex(xbuf, xbufsize, va_arg(ap, double), width, precision, flags);
+      }
+      (*consumer)(xbuf, strlen(xbuf), arg);
+      break;
+
+    default:
+      {
+	char *subfmt = malloc(fmt - fmtstart + 2);
+	memcpy(subfmt, fmtstart, fmt - fmtstart + 1);
+	subfmt[fmt - fmtstart + 1] = 0;
+	int ret = vsnprintf(xbuf, xbufsize, subfmt, ap);
+	free(subfmt);
+	if (ret < 0) break;
+	count += ret;
+	(*consumer)(xbuf, strlen(xbuf), arg);
+      }
+      break;
+    }
+
+    fmt++;
+  }
+
+  free(xbuf);
+
+  return errorflag ? -1 : count;
+}
+
+//
+
+typedef struct {
+  FILE *fp;
+} stream_consumer_t;
+
+static size_t stream_consumer(const char *ptr, size_t size, void *varg) {
+  stream_consumer_t *arg = (stream_consumer_t *)varg;
+  return fwrite(ptr, size, 1, arg->fp);
+}
+
+EXPORT int Sleef_fprintf(FILE *fp, const char *fmt, ...) {
+  va_list ap;
+  va_start(ap, fmt);
+  stream_consumer_t arg = { fp };
+  int ret = xvprintf(stream_consumer, &arg, fmt, ap);
+  va_end(ap);
+  return ret;
+}
+
+EXPORT int Sleef_printf(const char *fmt, ...) {
+  va_list ap;
+  va_start(ap, fmt);
+  stream_consumer_t arg = { stdout };
+  int ret = xvprintf(stream_consumer, &arg, fmt, ap);
+  va_end(ap);
+  return ret;
+}
+
+typedef struct {
+  char *buf;
+  size_t pos, size;
+} buf_consumer_t;
+
+static size_t buf_consumer(const char *ptr, size_t size, void *varg) {
+  buf_consumer_t *arg = (buf_consumer_t *)varg;
+
+  size_t p = 0;
+  while(p < size) {
+    if (arg->pos >= arg->size - 1) break;
+    arg->buf[arg->pos++] = ptr[p++];
+  }
+
+  arg->buf[arg->pos] = '\0';
+
+  return p;
+}
+
+EXPORT int Sleef_snprintf(char *str, size_t size, const char *fmt, ...) {
+  va_list ap;
+  va_start(ap, fmt);
+  buf_consumer_t arg = { str, 0, size };
+  int ret = xvprintf(buf_consumer, &arg, fmt, ap);
+  va_end(ap);
+  return ret;
+}
+
+#ifdef __GLIBC__
+#include <printf.h>
+
+static int pa_quad = -1, printf_modifier = -1;
+
+static void Sleef_quad_va(void *ptr, va_list *ap) { 
+  *(Sleef_quad *)ptr = va_arg(*ap, Sleef_quad);
+}
+
+static int printf_arginfo(const struct printf_info *info, size_t n, int *argtypes, int *s) {
+  if (n > 0) argtypes[0] = pa_quad;
+  return 1;
+}
+
+static int printf_output(FILE *fp, const struct printf_info *info, const void *const *args) {
+  int flags = 0;
+  if (info->showsign)      flags |= FLAG_SIGN;
+  if (info->space)         flags |= FLAG_BLANK;
+  if (info->alt)           flags |= FLAG_ALT;
+  if (info->left)          flags |= FLAG_LEFT;
+  if (isupper(info->spec)) flags |= FLAG_UPPER;
+
+  vargquad q = (info->user & printf_modifier) ?
+    (**(const vargquad **)args[0]) : xcast_from_doubleq(**(const double **) args[0]);
+
+  int xbufsize = 5000;
+  char *xbuf = malloc(xbufsize+10);
+
+  int len = 0;
+  if (tolower(info->spec) == 'a') {
+    len = snprintquadhex(xbuf, xbufsize, q, info->width, info->prec, flags);
+  } else {
+    len = snprintquad(xbuf, xbufsize, q, tolower(info->spec), info->width, info->prec, flags);
+  }
+
+  fwrite(xbuf, len, 1, fp);
+
+  free(xbuf);
+}
+
+EXPORT int Sleef_registerPrintfHook() {
+  printf_modifier = register_printf_modifier(L"Q");
+  if (printf_modifier == -1) return -1;
+
+  pa_quad = register_printf_type(Sleef_quad_va);
+  if (pa_quad == -1) return -2;
+
+  if (register_printf_specifier('a', printf_output, printf_arginfo)) return -3;
+  if (register_printf_specifier('e', printf_output, printf_arginfo)) return -4;
+  if (register_printf_specifier('f', printf_output, printf_arginfo)) return -5;
+  if (register_printf_specifier('g', printf_output, printf_arginfo)) return -6;
+  if (register_printf_specifier('A', printf_output, printf_arginfo)) return -7;
+  if (register_printf_specifier('E', printf_output, printf_arginfo)) return -8;
+  if (register_printf_specifier('F', printf_output, printf_arginfo)) return -9;
+  if (register_printf_specifier('G', printf_output, printf_arginfo)) return -10;
+
+  return 0;
+}
+
+EXPORT void Sleef_unregisterPrintfHook() {
+  register_printf_specifier('a', NULL, NULL);
+  register_printf_specifier('e', NULL, NULL);
+  register_printf_specifier('f', NULL, NULL);
+  register_printf_specifier('g', NULL, NULL);
+  register_printf_specifier('A', NULL, NULL);
+  register_printf_specifier('E', NULL, NULL);
+  register_printf_specifier('F', NULL, NULL);
+  register_printf_specifier('G', NULL, NULL);
+}
+#endif // #ifdef __GLIBC__
+
+#endif // #ifdef ENABLE_PUREC_SCALAR
 
 // Functions for debugging ------------------------------------------------------------------------------------------------------------
 
@@ -2871,37 +3546,12 @@ EXPORT void Sleef_qtostr(char *s, int n, vargquad a, int base) {
 #include <mpfr.h>
 #include <time.h>
 #include <unistd.h>
+#include <locale.h>
+#include <wchar.h>
 
 #include "qtesterutil.h"
 
 #if 0
-int main(int argc, char **argv) {
-  xsrand(time(NULL) + (int)getpid());
-  int lane = xrand() % VECTLENDP;
-
-  __float128 src[] = { 0.1, 0.2, 0.3, 3.14, 0.5, 0.6, 0.7, 0.8 };
-
-  vargquad aq0 = xloadq(src);
-
-  printvmask2("aq0 : ", aq0);
-
-  aq0 = xsetq(aq0, 0, (Sleef_quad)3.14);
-
-  printvmask2("aq0 : ", aq0);
-
-  aq0 = xsetq(aq0, 1, (Sleef_quad)2.718);
-
-  printvmask2("aq0 : ", aq0);
-
-  __float128 dst[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-
-  xstoreq(dst, aq0);
-
-  for(int i=0;i<8;i++) printf("%g %g\n", (double)dst[i], (double)xgetq(aq0, i));
-}
-#endif
-
-#if 1
 int main(int argc, char **argv) {
   xsrand(time(NULL) + (int)getpid());
   int lane = xrand() % VECTLENDP;
@@ -3014,4 +3664,550 @@ int main(int argc, char **argv) {
 
 }
 #endif
+
+#if 0
+#include <quadmath.h>
+
+typedef union {
+  __float128 f;
+  Sleef_quad q;
+  struct {
+    uint64_t l, h;
+  };
+} cnv_t;
+
+int main(int argc, char **argv) {
+  char buf[1024];
+#if 1
+  Sleef_quad q = Sleef_strtoq(argv[2], NULL);
+  cnv_t cnv;
+  cnv.q = q;
+  printf("%016lx:%016lx\n", cnv.h, cnv.l);
+
+  Sleef_qtostr(buf, 1000, q);
+  printf("qtostr %s\n", buf);
+  Sleef_snprintf(buf, 1000, argv[1], q);
+  printf("t [%s]\n", buf);
+  quadmath_snprintf(buf, 1000, argv[1], q);
+  printf("c [%s]\n", buf);
+#elif 0
+  double d = atof(argv[1]);
+  printf("corr %10.a\n", d);
+  Sleef_printf("test %10.0a\n", d);
+#else
+  void *p = (void *)atol(argv[2]);
+
+  Sleef_snprintf(buf, 1000, argv[1], argv[2][0]);
+  printf("t [%s]\n", buf);
+  snprintf(buf, 1000, argv[1], argv[2][0]);
+  printf("c [%s]\n", buf);
+#endif
+}
+#endif
+
+#if 0
+#include <quadmath.h>
+
+int testem(__float128 val) {
+  int ret = 0;
+  char *types[] = { "Qe", "Qf", "Qg", "Qa" };
+  for(int i=0;i<4;i++) {
+    for(int alt=0;alt<2;alt++) {
+      for(int zero=0;zero<2;zero++) {
+	for(int left=0;left<2;left++) {
+	  for(int blank=0;blank<2;blank++) {
+	    for(int sign=0;sign<2;sign++) {
+	      char buf[10000], corr[10000], corr2[10000], test[10000], vstr[10000];
+	      snprintf(buf, 90, "%%%s%s%s%s%s%s",
+		       alt ? "#" : "", 
+		       zero ? "0" : "", 
+		       left ? "-" : "", 
+		       blank ? " " : "", 
+		       sign ? "+" : "",
+		       types[i]);
+	      snprintf(corr2, 98, buf, val);
+	      snprintf(corr, 98, buf, strtoflt128(corr2, NULL));
+
+	      snprintf(buf, 90, "%%%s%s%s%s%s%s",
+		       alt ? "#" : "", 
+		       zero ? "0" : "", 
+		       left ? "-" : "", 
+		       blank ? " " : "", 
+		       sign ? "+" : "",
+		       types[i]);
+	      Sleef_snprintf(test, 98, buf, val);
+
+	      if(strcmp(test,corr) != 0 && strcmp(test,corr2) != 0) {
+		Sleef_qtostr(vstr, 9000, val);
+		printf("%s : c=[%s] t=[%s] %s\n", buf, corr, test, vstr);
+	      }
+
+	      for(int width=6;width<=16;width += 2) {
+		snprintf(buf, 90, "%%%s%s%s%s%s%d.%s",
+			 alt ? "#" : "", 
+			 zero ? "0" : "", 
+			 left ? "-" : "", 
+			 blank ? " " : "", 
+			 sign ? "+" : "",
+			 width, types[i]);
+		snprintf(corr2, 98, buf, val);
+		snprintf(corr, 98, buf, strtoflt128(corr2, NULL));
+
+		snprintf(buf, 90, "%%%s%s%s%s%s%d.%s",
+			 alt ? "#" : "", 
+			 zero ? "0" : "", 
+			 left ? "-" : "", 
+			 blank ? " " : "", 
+			 sign ? "+" : "",
+			 width, types[i]);
+		Sleef_snprintf(test, 98, buf, val);
+
+		if(strcmp(test,corr) != 0 && strcmp(test,corr2) != 0) {
+		  Sleef_qtostr(vstr, 9000, val);
+		  printf("%s : c=[%s] t=[%s] %s\n", buf, corr, test, vstr);
+		}
+	      }
+
+	      for(int prec=4;prec<=12;prec += 2) {
+		for(int width=6;width<=16;width += 2) {
+		  snprintf(buf, 90, "%%%s%s%s%s%s%d.%d%s",
+			   alt ? "#" : "", 
+			   zero ? "0" : "", 
+			   left ? "-" : "", 
+			   blank ? " " : "", 
+			   sign ? "+" : "",
+			   width, prec, types[i]);
+		  snprintf(corr2, 98, buf, val);
+		  snprintf(corr, 98, buf, strtoflt128(corr2, NULL));
+
+		  snprintf(buf, 90, "%%%s%s%s%s%s%d.%d%s",
+			    alt ? "#" : "", 
+			    zero ? "0" : "", 
+			    left ? "-" : "", 
+			    blank ? " " : "", 
+			    sign ? "+" : "",
+			    width, prec, types[i]);
+		  Sleef_snprintf(test, 98, buf, val);
+
+		  if(strcmp(test,corr) != 0 && strcmp(test,corr2) != 0) {
+		    Sleef_qtostr(vstr, 9000, val);
+		    printf("%s : c=[%s] t=[%s] %s\n", buf, corr, test, vstr);
+		  }
+		}
+
+		snprintf(buf, 90, "%%%s%s%s%s%s.%d%s",
+			 alt ? "#" : "", 
+			 zero ? "0" : "", 
+			 left ? "-" : "", 
+			 blank ? " " : "", 
+			 sign ? "+" : "",
+			 prec, types[i]);
+		snprintf(corr2, 98, buf, val);
+		snprintf(corr, 98, buf, strtoflt128(corr2, NULL));
+
+
+		snprintf(buf, 90, "%%%s%s%s%s%s.%d%s",
+			 alt ? "#" : "", 
+			 zero ? "0" : "", 
+			 left ? "-" : "", 
+			 blank ? " " : "", 
+			 sign ? "+" : "",
+			 prec, types[i]);
+		Sleef_snprintf(test, 98, buf, val);
+
+		if(strcmp(test,corr) != 0 && strcmp(test,corr2) != 0) {
+		  Sleef_qtostr(vstr, 9000, val);
+		  printf("%s : c=[%s] t=[%s] %s\n", buf, corr, test, vstr);
+		}
+	      }
+	    }
+	  }
+	}
+      }
+    }
+  }
+
+  return ret;
+}
+
+int main(int argc, char **argv) {
+  if (argc != 1) {
+    testem(Sleef_strtoq(argv[1], NULL));
+  } else {
+    static __float128 vals[] = {
+      1.2345678912345678912345e+0Q,
+      1.2345678912345678912345e+1Q,
+      1.2345678912345678912345e-1Q,
+      1.2345678912345678912345e+2Q,
+      1.2345678912345678912345e-2Q,
+      1.2345678912345678912345e+3Q,
+      1.2345678912345678912345e-3Q,
+      1.2345678912345678912345e+4Q,
+      1.2345678912345678912345e-4Q,
+      1.2345678912345678912345e+5Q,
+      1.2345678912345678912345e-5Q,
+      1.2345678912345678912345e+10Q,
+      1.2345678912345678912345e-10Q,
+      1.2345678912345678912345e+15Q,
+      1.2345678912345678912345e-15Q,
+      1.2345678912345678912345e+30Q,
+      1.2345678912345678912345e-30Q,
+      1.2345678912345678912345e-4950Q,
+      0.0Q, 1.0Q,
+      1e+1Q, 1e+2Q, 1e+3Q, 1e+4Q, 1e+5Q, 1e+6Q, 
+      1e-1Q, 1e-2Q, 1e-3Q, 1e-4Q, 1e-5Q, 1e-6Q, 
+      1e+300*1e+300,
+      1e+300*1e+300 - 1e+300*1e+300
+    };
+    for(int i=0;i<sizeof(vals)/sizeof(__float128);i++) {
+      if (testem(+vals[i])) break;
+      if (testem(-vals[i])) break;
+    }
+    printf("OK\n");
+
+    xsrand(time(NULL) + (int)getpid());
+
+    for(;;) {
+      __float128 q;
+      memrand(&q, sizeof(q));
+      if (fabsq(q) > 1e+10) continue;
+      if (testem(+q)) break;
+      if (testem(-q)) break;
+    }
+  }
+}
+#endif
+
+#if 0
+// double
+int testem(double val) {
+  int ret = 0;
+  char *types[] = { "e", "f", "g", "a" };
+  for(int i=0;i<4;i++) {
+    for(int alt=0;alt<2;alt++) {
+      for(int zero=0;zero<2;zero++) {
+	for(int left=0;left<2;left++) {
+	  for(int blank=0;blank<2;blank++) {
+	    for(int sign=0;sign<2;sign++) {
+	      char buf[10000], corr[10000], test[10000];
+	      snprintf(buf, 90, "%%%s%s%s%s%s%s",
+		       alt ? "#" : "", 
+		       zero ? "0" : "", 
+		       left ? "-" : "", 
+		       blank ? " " : "", 
+		       sign ? "+" : "",
+		       types[i]);
+	      snprintf(corr, 98, buf, val);
+
+	      snprintf(buf, 90, "%%%s%s%s%s%s%s",
+		       alt ? "#" : "", 
+		       zero ? "0" : "", 
+		       left ? "-" : "", 
+		       blank ? " " : "", 
+		       sign ? "+" : "",
+		       types[i]);
+	      Sleef_snprintf(test, 98, buf, val);
+
+	      if(strcmp(test,corr) != 0) {
+		printf("%s : c=[%s] t=[%s] <%016lx>\n", buf, corr, test, d2u(val));
+	      }
+
+	      for(int width=6;width<=16;width += 2) {
+		snprintf(buf, 90, "%%%s%s%s%s%s%d.%s",
+			 alt ? "#" : "", 
+			 zero ? "0" : "", 
+			 left ? "-" : "", 
+			 blank ? " " : "", 
+			 sign ? "+" : "",
+			 width, types[i]);
+		snprintf(corr, 98, buf, val);
+
+		snprintf(buf, 90, "%%%s%s%s%s%s%d.%s",
+			 alt ? "#" : "", 
+			 zero ? "0" : "", 
+			 left ? "-" : "", 
+			 blank ? " " : "", 
+			 sign ? "+" : "",
+			 width, types[i]);
+		Sleef_snprintf(test, 98, buf, val);
+
+		if(strcmp(test,corr) != 0) {
+		  printf("%s : c=[%s] t=[%s] <%016lx>\n", buf, corr, test, d2u(val));
+		}
+	      }
+
+	      for(int prec=4;prec<=12;prec += 2) {
+		for(int width=6;width<=16;width += 2) {
+		  snprintf(buf, 90, "%%%s%s%s%s%s%d.%d%s",
+			   alt ? "#" : "", 
+			   zero ? "0" : "", 
+			   left ? "-" : "", 
+			   blank ? " " : "", 
+			   sign ? "+" : "",
+			   width, prec, types[i]);
+		  snprintf(corr, 98, buf, val);
+
+		  snprintf(buf, 90, "%%%s%s%s%s%s%d.%d%s",
+			    alt ? "#" : "", 
+			    zero ? "0" : "", 
+			    left ? "-" : "", 
+			    blank ? " " : "", 
+			    sign ? "+" : "",
+			    width, prec, types[i]);
+		  Sleef_snprintf(test, 98, buf, val);
+
+		  if(strcmp(test,corr) != 0) {
+		    printf("%s : c=[%s] t=[%s] <%016lx>\n", buf, corr, test, d2u(val));
+		  }
+		}
+
+		snprintf(buf, 90, "%%%s%s%s%s%s.%d%s",
+			 alt ? "#" : "", 
+			 zero ? "0" : "", 
+			 left ? "-" : "", 
+			 blank ? " " : "", 
+			 sign ? "+" : "",
+			 prec, types[i]);
+		snprintf(corr, 98, buf, val);
+
+		snprintf(buf, 90, "%%%s%s%s%s%s.%d%s",
+			 alt ? "#" : "", 
+			 zero ? "0" : "", 
+			 left ? "-" : "", 
+			 blank ? " " : "", 
+			 sign ? "+" : "",
+			 prec, types[i]);
+		Sleef_snprintf(test, 98, buf, val);
+
+		if(strcmp(test,corr) != 0) {
+		  printf("%s : c=[%s] t=[%s] <%016lx>\n", buf, corr, test, d2u(val));
+		}
+	      }
+	    }
+	  }
+	}
+      }
+    }
+  }
+
+  return ret;
+}
+
+int main(int argc, char **argv) {
+  if (argc != 1) {
+    testem(atof(argv[1]));
+  } else {
+    static double vals[] = {
+      1.2345678912345678912345e+0,
+      1.2345678912345678912345e+1,
+      1.2345678912345678912345e-1,
+      1.2345678912345678912345e+2,
+      1.2345678912345678912345e-2,
+      1.2345678912345678912345e+3,
+      1.2345678912345678912345e-3,
+      1.2345678912345678912345e+4,
+      1.2345678912345678912345e-4,
+      1.2345678912345678912345e+5,
+      1.2345678912345678912345e-5,
+      1.2345678912345678912345e+10,
+      1.2345678912345678912345e-10,
+      1.2345678912345678912345e+15,
+      1.2345678912345678912345e-15,
+      1.2345678912345678912345e+30,
+      1.2345678912345678912345e-30,
+      1.2345678912345678912345e-320,
+      0, 1,
+      1e+1, 1e+2, 1e+3, 1e+4, 1e+5, 1e+6, 
+      1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6, 
+      1e+300*1e+300,
+      1e+300*1e+300 - 1e+300*1e+300
+    };
+    for(int i=0;i<sizeof(vals)/sizeof(double);i++) {
+      if (testem(+vals[i])) break;
+      if (testem(-vals[i])) break;
+    }
+    printf("OK\n");
+
+    xsrand(time(NULL) + (int)getpid());
+
+    for(;;) {
+      double d;
+      memrand(&d, sizeof(d));
+      if (fabs(d) > 1e+10) continue;
+      if (testem(+d)) break;
+      if (testem(-d)) break;
+    }
+  }
+}
+#endif
+
+#if 0
+int testem2(int64_t val) {
+  int ret = 0;
+  char *types[] = { "d", "u", "x", "ld", "lx", "o" };
+  for(int i=0;i<6;i++) {
+    for(int alt=0;alt<2;alt++) {
+      for(int zero=0;zero<2;zero++) {
+	for(int left=0;left<2;left++) {
+	  for(int blank=0;blank<2;blank++) {
+	    for(int sign=0;sign<2;sign++) {
+	      char buf[10000], corr[10000], test[10000];
+
+	      snprintf(buf, 90, "%%%s%s%s%s%s%s",
+		       alt ? "#" : "", 
+		       zero ? "0" : "", 
+		       left ? "-" : "", 
+		       blank ? " " : "", 
+		       sign ? "+" : "",
+		       types[i]);
+	      snprintf(corr, 98, buf, val);
+
+	      snprintf(buf, 90, "%%%s%s%s%s%s%s",
+		       alt ? "#" : "", 
+		       zero ? "0" : "", 
+		       left ? "-" : "", 
+		       blank ? " " : "", 
+		       sign ? "+" : "",
+		       types[i]);
+	      Sleef_snprintf(test, 98, buf, val);
+
+	      if(strcmp(test,corr) != 0) {
+		printf("%s : c=[%s] t=[%s]\n", buf, corr, test);
+	      }
+
+	      for(int width=6;width<=16;width += 2) {
+		snprintf(buf, 90, "%%%s%s%s%s%s%d.%s",
+			 alt ? "#" : "", 
+			 zero ? "0" : "", 
+			 left ? "-" : "", 
+			 blank ? " " : "", 
+			 sign ? "+" : "",
+			 width, types[i]);
+		snprintf(corr, 98, buf, val);
+
+		snprintf(buf, 90, "%%%s%s%s%s%s%d.%s",
+			 alt ? "#" : "", 
+			 zero ? "0" : "", 
+			 left ? "-" : "", 
+			 blank ? " " : "", 
+			 sign ? "+" : "",
+			 width, types[i]);
+		Sleef_snprintf(test, 98, buf, val);
+
+		if(strcmp(test,corr) != 0) {
+		  printf("%s : c=[%s] t=[%s]\n", buf, corr, test);
+		}
+	      }
+
+	      for(int prec=4;prec<=12;prec += 2) {
+		for(int width=6;width<=16;width += 2) {
+		  snprintf(buf, 90, "%%%s%s%s%s%s%d.%d%s",
+			   alt ? "#" : "", 
+			   zero ? "0" : "", 
+			   left ? "-" : "", 
+			   blank ? " " : "", 
+			   sign ? "+" : "",
+			   width, prec, types[i]);
+		  snprintf(corr, 98, buf, val);
+
+		  snprintf(buf, 90, "%%%s%s%s%s%s%d.%d%s",
+			    alt ? "#" : "", 
+			    zero ? "0" : "", 
+			    left ? "-" : "", 
+			    blank ? " " : "", 
+			    sign ? "+" : "",
+			    width, prec, types[i]);
+		  Sleef_snprintf(test, 98, buf, val);
+
+		  if(strcmp(test,corr) != 0) {
+		    printf("%s : c=[%s] t=[%s]\n", buf, corr, test);
+		  }
+		}
+
+		snprintf(buf, 90, "%%%s%s%s%s%s.%d%s",
+			 alt ? "#" : "", 
+			 zero ? "0" : "", 
+			 left ? "-" : "", 
+			 blank ? " " : "", 
+			 sign ? "+" : "",
+			 prec, types[i]);
+		snprintf(corr, 98, buf, val);
+
+		snprintf(buf, 90, "%%%s%s%s%s%s.%d%s",
+			 alt ? "#" : "", 
+			 zero ? "0" : "", 
+			 left ? "-" : "", 
+			 blank ? " " : "", 
+			 sign ? "+" : "",
+			 prec, types[i]);
+		Sleef_snprintf(test, 98, buf, val);
+
+		if(strcmp(test,corr) != 0) {
+		  printf("%s : c=[%s] t=[%s]\n", buf, corr, test);
+		}
+	      }
+	    }
+	  }
+	}
+      }
+    }
+  }
+
+  return ret;
+}
+
+int main(int argc, char **argv) {
+  testem2(atoi(argv[1]));
+}
+#endif
+
+#if 0
+#include <quadmath.h>
+
+int main(int argc, char **argv) {
+
+  __float128 q = strtoflt128(argv[1], NULL);
+
+  Sleef_registerPrintfHook();
+
+  printf("c %.40Qg %Qa\n", q, q);
+  //printf("t %.40@g %@a\n", q, q);
+}
+#endif
+
+#if 1
+#include <quadmath.h>
+
+int main(int argc, char **argv) {
+  __float128 q;
+
+  q = strtoflt128(argv[2], NULL);
+  printf(argv[1], q);
+  printf("\n");
+
+  q = Sleef_strtoq(argv[2], NULL);
+  Sleef_printf(argv[1], q);
+  printf("\n");
+}
+#endif
+
+#if 0
+const wchar_t hello1[] = L"あいうえお";
+const wchar_t hello2[] = L"Tervehdys";
+
+int main(int argc, char *argv[])
+{
+  setlocale(LC_ALL, "C.UTF-8");
+
+  Sleef_printf("%% %d\n", 3);
+  Sleef_printf("          [12345678901234567890]\n");
+  Sleef_printf("printf 0: [%20s]\n", "hello");
+  Sleef_printf("printf 0: [%-20s]\n", "hello");
+  Sleef_printf("printf 1: [%20ls]\n", hello1);
+  Sleef_printf("printf 1: [%-20ls]\n", hello1);
+  Sleef_printf("printf 2: [%20ls]\n", hello2);
+  Sleef_printf("printf 2: [%-ls]\n", hello2);
+}
+#endif
+
 #endif

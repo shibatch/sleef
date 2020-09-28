@@ -215,7 +215,8 @@ Sleef_quad child_cast_from_doubleq(double x) { child_q_d("cast_from_doubleq", x)
 double child_cast_to_doubleq(Sleef_quad x) { child_d_q("cast_to_doubleq", x); }
 
 Sleef_quad child_strtoq(const char *s) { child_q_str("strtoq", s); }
-void child_qtostr(char *ret, Sleef_quad x) { child_str_q("qtostr", ret, x); }
+void child_snprintf_40Qg(char *ret, Sleef_quad x) { child_str_q("snprintf_40Qg", ret, x); }
+void child_snprintf_Qa(char *ret, Sleef_quad x) { child_str_q("snprintf_Qa", ret, x); }
 
 Sleef_quad child_sqrtq_u05(Sleef_quad x) { child_q_q("sqrtq_u05", x); }
 Sleef_quad child_sinq_u10(Sleef_quad x) { child_q_q("sinq_u10", x); }
@@ -637,12 +638,28 @@ void do_test(int options) {
     }
     checkResult(success, maxError);
 
-    fprintf(stderr, "qtostr : ");
+    fprintf(stderr, "Sleef_snprintf %%.40Qg : ");
     for(int i=0;i<sizeof(stdCheckVals)/sizeof(char *);i++) {
       Sleef_quad a0 = cast_q_str(stdCheckVals[i]);
       char s[100];
-      child_qtostr(s, a0);
+      child_snprintf_40Qg(s, a0);
       Sleef_quad a1 = cast_q_str(s);
+      if (memcmp(&a0, &a1, sizeof(Sleef_quad)) == 0) continue;
+      if (isnanf128(a0) && isnanf128(a1)) continue;
+
+      fprintf(stderr, "\narg     = %s\nteststr = %s\ntest    = %s\ncorrect = %s\n",
+	      stdCheckVals[i], s, sprintf128(a0), sprintf128(a1));
+      success = 0;
+      break;
+    }
+    checkResult(success, maxError);
+
+    fprintf(stderr, "Sleef_snprintf %%Qa : ");
+    for(int i=0;i<sizeof(stdCheckVals)/sizeof(char *);i++) {
+      Sleef_quad a0 = cast_q_str(stdCheckVals[i]);
+      char s[100];
+      child_snprintf_Qa(s, a0);
+      Sleef_quad a1 = cast_q_str_hex(s);
       if (memcmp(&a0, &a1, sizeof(Sleef_quad)) == 0) continue;
       if (isnanf128(a0) && isnanf128(a1)) continue;
 

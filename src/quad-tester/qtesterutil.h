@@ -59,5 +59,6 @@ char *sprintf128(Sleef_quad x);
 
 double cast_d_q(Sleef_quad q);
 Sleef_quad cast_q_str(const char *s);
+Sleef_quad cast_q_str_hex(const char *s);
 Sleef_quad add_q_d(Sleef_quad q, double d);
 #endif

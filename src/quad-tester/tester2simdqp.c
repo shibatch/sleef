@@ -476,10 +476,19 @@ int main(int argc,char **argv)
 #ifdef ENABLE_PUREC_SCALAR
     if ((cnt & 15) == 1) {
       char s[64];
-      Sleef_qtostr(s, 63, a0, 10);
-      Sleef_quad q1 = vget(Sleef_strtoq(s, NULL, 10), e);
+      Sleef_quad q1;
+
+      Sleef_snprintf(s, 63, "%.40Qg", a0);
+      q1 = vget(Sleef_strtoq(s, NULL), e);
       if (memcmp(&q0, &q1, sizeof(Sleef_quad)) != 0 && !(isnanf128(q0) && isnanf128(q1))) {
-	printf("qtostr/strtoq arg=%s\n", sprintf128(q0));
+	printf("snprintf(Qg)/strtoq arg=%s\n", sprintf128(q0));
+	fflush(stdout); ecnt++;
+      }
+
+      Sleef_snprintf(s, 63, "%Qa", a0);
+      q1 = vget(Sleef_strtoq(s, NULL), e);
+      if (memcmp(&q0, &q1, sizeof(Sleef_quad)) != 0 && !(isnanf128(q0) && isnanf128(q1))) {
+	printf("snprintf(Qa)/strtoq arg=%s\n", sprintf128(q0));
 	fflush(stdout); ecnt++;
       }
     }
