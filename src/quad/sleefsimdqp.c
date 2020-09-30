@@ -3379,7 +3379,7 @@ EXPORT int Sleef_snprintf(char *str, size_t size, const char *fmt, ...) {
   return ret;
 }
 
-#ifdef __GLIBC__
+#if __GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ > 13)
 #include <printf.h>
 
 static int pa_quad = -1, printf_Qmodifier = -1, printf_Pmodifier = -1;
