@@ -2678,6 +2678,8 @@ EXPORT CONST vargquad xsetq(vargquad a, int index, Sleef_quad q) { // Sleef_set_
 #ifdef ENABLE_PUREC_SCALAR
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
+#include <stddef.h>
 #include <string.h>
 #include <ctype.h>
 
@@ -2763,9 +2765,9 @@ static int xclz128(vmask2 m) {
 
 //
 
-EXPORT vargquad Sleef_strtoq(char *str, char **endptr) {
+EXPORT vargquad Sleef_strtoq(const char *str, const char **endptr) {
   while(isspace(*str)) str++;
-  char *p = str;
+  const char *p = str;
 
   int positive = 1, bp = 0, e = 0, mf = 0;
   tdx n = vcast_tdx_vd(0), d = vcast_tdx_vd(1);
@@ -2835,17 +2837,21 @@ EXPORT vargquad Sleef_strtoq(char *str, char **endptr) {
     int nsl = xclz128(m) - 15;
     e = e - pp - nsl + 0x3fff + 112;
 
-    if (e <= 0) {
-      nsl += 1 - e;
+    if (e <= 0 || nsl == 128 - 15) {
+      nsl += e - 1;
       e = 0;
     }
 
     if (nsl >= 0) {
       m = xsll128(m, nsl);
     } else {
-      uint64_t u = m.x + ((1ULL) << (-nsl - 1));
-      if (u < m.x) m.y++;
-      m.x = u;
+      if (-nsl-1 < 64) {
+	uint64_t u = m.x + ((1ULL) << (-nsl - 1));
+	if (u < m.x) m.y++;
+	m.x = u;
+      } else {
+	m.y += ((1ULL) << (-nsl - 1 - 64));
+      }
       m = xsrl128(m, -nsl);
     }
 
@@ -2902,10 +2908,6 @@ EXPORT vargquad Sleef_strtoq(char *str, char **endptr) {
 }
 
 //
-
-#include <stdarg.h>
-#include <stddef.h>
-#include <ctype.h>
 
 #define FLAG_SIGN     (1 << 0)
 #define FLAG_BLANK    (1 << 1)
@@ -3172,126 +3174,29 @@ static int snprintquadhex(char *buf, size_t bufsize, vargquad argvalue, int widt
   return length;
 }
 
-static int snprintdoublehex(char *buf, size_t bufsize, double value, int width, int precision, int flags) {
-  if (width > bufsize) width = bufsize;
-  char *bufend = buf + bufsize, *ptr = buf;
-
-  union {
-    double d;
-    uint64_t u;
-  } cnv = { .d = value };
-
-  int mainpos = 0;
-
-  if (cnv.u >> 63) {
-    ptr += snprintf(ptr, bufend - ptr, "-");
-  } else if (flags & FLAG_SIGN) {
-    ptr += snprintf(ptr, bufend - ptr, "+");
-  } else if (flags & FLAG_BLANK) {
-    ptr += snprintf(ptr, bufend - ptr, " ");
-  }
-
-  if (visnan_vo_vd(value)) {
-    ptr += snprintf(ptr, bufend - ptr, (flags & FLAG_UPPER) ? "NAN" : "nan");
-    flags &= ~FLAG_ZERO;
-  } else if (visinf_vo_vd(value)) {
-    ptr += snprintf(ptr, bufend - ptr, (flags & FLAG_UPPER) ? "INF" : "inf");
-    flags &= ~FLAG_ZERO;
-  } else {
-    if (precision >= 0 && precision < 13) cnv.u += ((uint64_t)1) << ((13 - precision) * 4 - 1);
-
-    int exp = (cnv.u >> 52) & 0x7ff;
-    uint64_t m = cnv.u << 12;
-
-    ptr += snprintf(ptr, bufend - ptr, (flags & FLAG_UPPER) ? "0X" :"0x");
-    mainpos = ptr - buf;
-    ptr += snprintf(ptr, bufend - ptr, exp != 0 ? "1" : "0");
-
-    if ((!(m == 0 && precision < 0) && precision != 0) || (flags & FLAG_ALT)) ptr += snprintf(ptr, bufend - ptr, ".");
-
-    const char *digits = (flags & FLAG_UPPER) ? "0123456789ABCDEF" : "0123456789abcdef";
-
-    int niter = (precision < 0 || precision > 13) ? 13 : precision;
-
-    for(int i=0;i<niter;i++) {
-      if (m == 0 && precision < 0) break;
-      ptr += snprintf(ptr, bufend - ptr, "%c", digits[(m >> 60) & 0xf]);
-      m <<= 4;
-    }
-
-    if (exp == 0) exp++;
-    if (value == 0) exp = 0x3ff;
-
-    ptr += snprintf(ptr, bufend - ptr, "%c%+d", (flags & FLAG_UPPER) ? 'P' : 'p', exp - 0x3ff);
-  }
-
-  int length = ptr - buf;
-  ptr = buf;
-
-  if (!(flags & FLAG_ZERO)) mainpos = 0;
-
-  if (!(flags & FLAG_LEFT) && length < width) {
-    int i;
-    int nPad = width - length;
-    for(i=width;i-nPad>=mainpos; i--) {
-      ptr[i] = ptr[i-nPad];
-    }
-    i = mainpos;
-    while (nPad--) {
-      ptr[i++] = (flags & FLAG_ZERO) ? '0' : ' ';
-    }
-    length = width;
-  }
-
-  if (flags & FLAG_LEFT) {
-    while (length < width) {
-      ptr[length++] = ' ';
-    }
-    ptr[length] = '\0';
-  }
-
-  return length;
-}
-
-static int sizePrefixLen(const char *fmt) {
-#if (defined(_MSC_VER))
-  if (strncmp(fmt, "I32", 3) == 0 || strncmp(fmt, "I64", 3) == 0) return 3;
-  if ((*fmt == 'h' && *(fmt+1) == 'h') || (*fmt == 'l' && *(fmt+1) == 'l')) return 2;
-  if (*fmt == 'h' || *fmt == 'j' || *fmt == 'l' || *fmt == 'L' || *fmt == 't' ||
-      *fmt == 'I' || *fmt == 'z' || *fmt == 'w') return 1;
-#else
-  if ((*fmt == 'h' && *(fmt+1) == 'h') || (*fmt == 'l' && *(fmt+1) == 'l')) return 2;
-  if (*fmt == 'h' || *fmt == 'l' || *fmt == 'q' || *fmt == 'L' || *fmt == 'j' ||
-      *fmt == 'z' || *fmt == 'Z' || *fmt == 't') return 1;
-#endif
-  return 0;
-}
+#define XBUFSIZE 5000
 
 static int xvprintf(size_t (*consumer)(const char *ptr, size_t size, void *arg), void *arg, const char *fmt, va_list ap) {
-  int xbufsize = 5000;
-  char *xbuf = malloc(xbufsize+10);
+  char *xbuf = malloc(XBUFSIZE+10);
 
-  int count = 0, errorflag = 0;
-  const char *fmtstart;
+  int outlen = 0, errorflag = 0;
 
   while(*fmt != '\0' && !errorflag) {
-    // Output until '%' is read
+    // Copy the format string until a '%' is read
 
     if (*fmt != '%') {
       do {
-	(*consumer)(fmt++, 1, arg);
-	count++;
+	outlen += (*consumer)(fmt++, 1, arg);
       } while(*fmt != '%' && *fmt != '\0');
 
       if (*fmt == '\0') break;
     }
 
-    fmtstart = fmt;
+    const char *subfmtstart = fmt;
 
     if ((*++fmt) == '\0') {
       errorflag = 1;
-      (*consumer)("%", 1, arg);
-      count++;
+      outlen += (*consumer)("%", 1, arg);
       break;
     }
 
@@ -3357,16 +3262,19 @@ static int xvprintf(size_t (*consumer)(const char *ptr, size_t size, void *arg),
       flag_ptrquad = 1;
       fmt++;
     } else {
-      fmt += sizePrefixLen(fmt);
+      int pl = 0;
+      if (*fmt == 'h' || *fmt == 'l' || *fmt == 'j' || *fmt == 'z' || *fmt == 't' || *fmt == 'L') pl = 1;
+      if ((*fmt == 'h' && *(fmt+1) == 'h') || (*fmt == 'l' && *(fmt+1) == 'l')) pl = 2;
+      fmt += pl;
     }
 
     // Call type-specific function
 
     switch(*fmt) {
-    case 'E': case 'F': case 'G':
+    case 'E': case 'F': case 'G': case 'A':
       flags |= FLAG_UPPER;
       // fall through
-    case 'e': case 'f': case 'g':
+    case 'e': case 'f': case 'g': case 'a':
       {
 	vargquad value;
 	if (flag_quad) {
@@ -3374,37 +3282,27 @@ static int xvprintf(size_t (*consumer)(const char *ptr, size_t size, void *arg),
 	} else if (flag_ptrquad) {
 	  value = *(vargquad *)va_arg(ap, vargquad *);
 	} else {
-	  value = xcast_from_doubleq(va_arg(ap, double));
+	  goto other_types;
 	}
-	count += snprintquad(xbuf, xbufsize, value, tolower(*fmt), width, precision, flags);
-	(*consumer)(xbuf, strlen(xbuf), arg);
+	if (tolower(*fmt) == 'a') {
+	  snprintquadhex(xbuf, XBUFSIZE, value, width, precision, flags);
+	} else {
+	  snprintquad(xbuf, XBUFSIZE, value, tolower(*fmt), width, precision, flags);
+	}
+	outlen += (*consumer)(xbuf, strlen(xbuf), arg);
       }
-      break;
-
-    case 'A':
-      flags |= FLAG_UPPER;
-      // fall through
-    case 'a':
-      if (flag_quad) {
-	count += snprintquadhex(xbuf, xbufsize, va_arg(ap, vargquad), width, precision, flags);
-      } else if (flag_ptrquad) {
-	count += snprintquadhex(xbuf, xbufsize, *(vargquad *)va_arg(ap, vargquad *), width, precision, flags);
-      } else {
-	count += snprintdoublehex(xbuf, xbufsize, va_arg(ap, double), width, precision, flags);
-      }
-      (*consumer)(xbuf, strlen(xbuf), arg);
       break;
 
     default:
+    other_types:
       {
-	char *subfmt = malloc(fmt - fmtstart + 2);
-	memcpy(subfmt, fmtstart, fmt - fmtstart + 1);
-	subfmt[fmt - fmtstart + 1] = 0;
-	int ret = vsnprintf(xbuf, xbufsize, subfmt, ap);
+	char *subfmt = malloc(fmt - subfmtstart + 2);
+	memcpy(subfmt, subfmtstart, fmt - subfmtstart + 1);
+	subfmt[fmt - subfmtstart + 1] = 0;
+	int ret = vsnprintf(xbuf, XBUFSIZE, subfmt, ap);
 	free(subfmt);
-	if (ret < 0) break;
-	count += ret;
-	(*consumer)(xbuf, strlen(xbuf), arg);
+	if (ret < 0) { errorflag = 1; break; }
+	outlen += (*consumer)(xbuf, strlen(xbuf), arg);
       }
       break;
     }
@@ -3414,25 +3312,29 @@ static int xvprintf(size_t (*consumer)(const char *ptr, size_t size, void *arg),
 
   free(xbuf);
 
-  return errorflag ? -1 : count;
+  return errorflag ? -1 : outlen;
 }
 
 //
 
-typedef struct {
-  FILE *fp;
-} stream_consumer_t;
+typedef struct { FILE *fp; } stream_consumer_t;
 
 static size_t stream_consumer(const char *ptr, size_t size, void *varg) {
   stream_consumer_t *arg = (stream_consumer_t *)varg;
   return fwrite(ptr, size, 1, arg->fp);
 }
 
+EXPORT int Sleef_vfprintf(FILE *fp, const char *fmt, va_list ap) {
+  stream_consumer_t arg = { fp };
+  return xvprintf(stream_consumer, &arg, fmt, ap);
+}
+
+EXPORT int Sleef_vprintf(const char *fmt, va_list ap) { return Sleef_vfprintf(stdout, fmt, ap); }
+
 EXPORT int Sleef_fprintf(FILE *fp, const char *fmt, ...) {
   va_list ap;
   va_start(ap, fmt);
-  stream_consumer_t arg = { fp };
-  int ret = xvprintf(stream_consumer, &arg, fmt, ap);
+  int ret = Sleef_vfprintf(fp, fmt, ap);
   va_end(ap);
   return ret;
 }
@@ -3440,8 +3342,7 @@ EXPORT int Sleef_fprintf(FILE *fp, const char *fmt, ...) {
 EXPORT int Sleef_printf(const char *fmt, ...) {
   va_list ap;
   va_start(ap, fmt);
-  stream_consumer_t arg = { stdout };
-  int ret = xvprintf(stream_consumer, &arg, fmt, ap);
+  int ret = Sleef_vfprintf(stdout, fmt, ap);
   va_end(ap);
   return ret;
 }
@@ -3465,16 +3366,20 @@ static size_t buf_consumer(const char *ptr, size_t size, void *varg) {
   return p;
 }
 
+EXPORT int Sleef_vsnprintf(char *str, size_t size, const char *fmt, va_list ap) {
+  buf_consumer_t arg = { str, 0, size };
+  return xvprintf(buf_consumer, &arg, fmt, ap);
+}
+
 EXPORT int Sleef_snprintf(char *str, size_t size, const char *fmt, ...) {
   va_list ap;
   va_start(ap, fmt);
-  buf_consumer_t arg = { str, 0, size };
-  int ret = xvprintf(buf_consumer, &arg, fmt, ap);
+  int ret = Sleef_vsnprintf(str, size, fmt, ap);
   va_end(ap);
   return ret;
 }
 
-#ifdef __GLIBC__
+#if __GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ > 13)
 #include <printf.h>
 
 static int pa_quad = -1, printf_Qmodifier = -1, printf_Pmodifier = -1;
@@ -3484,11 +3389,19 @@ static void Sleef_quad_va(void *ptr, va_list *ap) {
 }
 
 static int printf_arginfo(const struct printf_info *info, size_t n, int *argtypes, int *s) {
-  if (n > 0) argtypes[0] = pa_quad;
-  return 1;
+  if (info->user & printf_Qmodifier) {
+    argtypes[0] = pa_quad;
+    return 1;
+  } else if (info->user & printf_Pmodifier) {
+    argtypes[0] = PA_FLAG_PTR | pa_quad;
+    return 1;
+  }
+  return -1;
 }
 
 static int printf_output(FILE *fp, const struct printf_info *info, const void *const *args) {
+  if (!(info->user & printf_Qmodifier || info->user & printf_Pmodifier)) return -2;
+
   int flags = 0;
   if (info->showsign)      flags |= FLAG_SIGN;
   if (info->space)         flags |= FLAG_BLANK;
@@ -3496,43 +3409,28 @@ static int printf_output(FILE *fp, const struct printf_info *info, const void *c
   if (info->left)          flags |= FLAG_LEFT;
   if (isupper(info->spec)) flags |= FLAG_UPPER;
 
-  vargquad q;
-  if (info->user & printf_Qmodifier) {
-    q = **(const vargquad **)args[0];
-  } else
-#if 0
-    if (info->user & printf_Pmodifier) {
-    q = ***(const vargquad ***)args[0];
-  } else
-#endif
-      {
-    q = xcast_from_doubleq(**(const double **) args[0]);
-  }
+  vargquad q = **(const vargquad **)args[0];
 
-  int xbufsize = 5000;
-  char *xbuf = malloc(xbufsize+10);
+  char *xbuf = malloc(XBUFSIZE+10);
 
   int len = 0;
   if (tolower(info->spec) == 'a') {
-    len = snprintquadhex(xbuf, xbufsize, q, info->width, info->prec, flags);
+    len = snprintquadhex(xbuf, XBUFSIZE, q, info->width, info->prec, flags);
   } else {
-    len = snprintquad(xbuf, xbufsize, q, tolower(info->spec), info->width, info->prec, flags);
+    len = snprintquad(xbuf, XBUFSIZE, q, tolower(info->spec), info->width, info->prec, flags);
   }
 
-  fwrite(xbuf, len, 1, fp);
+  size_t wlen = fwrite(xbuf, len, 1, fp);
 
   free(xbuf);
 
-  return len;
+  return (int)wlen;
 }
 
 EXPORT int Sleef_registerPrintfHook() {
   printf_Qmodifier = register_printf_modifier(L"Q");
-  if (printf_Qmodifier == -1) return -1;
-#if 0
   printf_Pmodifier = register_printf_modifier(L"P");
-  if (printf_Pmodifier == -1) return -1;
-#endif
+  if (printf_Qmodifier == -1 || printf_Pmodifier == -1) return -1;
 
   pa_quad = register_printf_type(Sleef_quad_va);
   if (pa_quad == -1) return -2;
@@ -3687,478 +3585,6 @@ int main(int argc, char **argv) {
   mpfr_set_f128(fr2, xgetq(a2, lane), GMP_RNDN);
   printf("test : %s\n", sprintfr(fr2));
 #endif
-
-  //
-
 }
 #endif
-
-#if 0
-#include <quadmath.h>
-
-int testem(__float128 val) {
-  int ret = 0;
-  char *types[] = { "Qe", "Qf", "Qg", "Qa" };
-  for(int i=0;i<4;i++) {
-    for(int alt=0;alt<2;alt++) {
-      for(int zero=0;zero<2;zero++) {
-	for(int left=0;left<2;left++) {
-	  for(int blank=0;blank<2;blank++) {
-	    for(int sign=0;sign<2;sign++) {
-	      char buf[10000], corr[10000], corr2[10000], test[10000], vstr[10000];
-	      snprintf(buf, 90, "%%%s%s%s%s%s%s",
-		       alt ? "#" : "", 
-		       zero ? "0" : "", 
-		       left ? "-" : "", 
-		       blank ? " " : "", 
-		       sign ? "+" : "",
-		       types[i]);
-	      snprintf(corr2, 98, buf, val);
-	      snprintf(corr, 98, buf, strtoflt128(corr2, NULL));
-
-	      snprintf(buf, 90, "%%%s%s%s%s%s%s",
-		       alt ? "#" : "", 
-		       zero ? "0" : "", 
-		       left ? "-" : "", 
-		       blank ? " " : "", 
-		       sign ? "+" : "",
-		       types[i]);
-	      Sleef_snprintf(test, 98, buf, val);
-
-	      if(strcmp(test,corr) != 0 && strcmp(test,corr2) != 0) {
-		Sleef_qtostr(vstr, 9000, val);
-		printf("%s : c=[%s] t=[%s] %s\n", buf, corr, test, vstr);
-	      }
-
-	      for(int width=6;width<=16;width += 2) {
-		snprintf(buf, 90, "%%%s%s%s%s%s%d.%s",
-			 alt ? "#" : "", 
-			 zero ? "0" : "", 
-			 left ? "-" : "", 
-			 blank ? " " : "", 
-			 sign ? "+" : "",
-			 width, types[i]);
-		snprintf(corr2, 98, buf, val);
-		snprintf(corr, 98, buf, strtoflt128(corr2, NULL));
-
-		snprintf(buf, 90, "%%%s%s%s%s%s%d.%s",
-			 alt ? "#" : "", 
-			 zero ? "0" : "", 
-			 left ? "-" : "", 
-			 blank ? " " : "", 
-			 sign ? "+" : "",
-			 width, types[i]);
-		Sleef_snprintf(test, 98, buf, val);
-
-		if(strcmp(test,corr) != 0 && strcmp(test,corr2) != 0) {
-		  Sleef_qtostr(vstr, 9000, val);
-		  printf("%s : c=[%s] t=[%s] %s\n", buf, corr, test, vstr);
-		}
-	      }
-
-	      for(int prec=4;prec<=12;prec += 2) {
-		for(int width=6;width<=16;width += 2) {
-		  snprintf(buf, 90, "%%%s%s%s%s%s%d.%d%s",
-			   alt ? "#" : "", 
-			   zero ? "0" : "", 
-			   left ? "-" : "", 
-			   blank ? " " : "", 
-			   sign ? "+" : "",
-			   width, prec, types[i]);
-		  snprintf(corr2, 98, buf, val);
-		  snprintf(corr, 98, buf, strtoflt128(corr2, NULL));
-
-		  snprintf(buf, 90, "%%%s%s%s%s%s%d.%d%s",
-			    alt ? "#" : "", 
-			    zero ? "0" : "", 
-			    left ? "-" : "", 
-			    blank ? " " : "", 
-			    sign ? "+" : "",
-			    width, prec, types[i]);
-		  Sleef_snprintf(test, 98, buf, val);
-
-		  if(strcmp(test,corr) != 0 && strcmp(test,corr2) != 0) {
-		    Sleef_qtostr(vstr, 9000, val);
-		    printf("%s : c=[%s] t=[%s] %s\n", buf, corr, test, vstr);
-		  }
-		}
-
-		snprintf(buf, 90, "%%%s%s%s%s%s.%d%s",
-			 alt ? "#" : "", 
-			 zero ? "0" : "", 
-			 left ? "-" : "", 
-			 blank ? " " : "", 
-			 sign ? "+" : "",
-			 prec, types[i]);
-		snprintf(corr2, 98, buf, val);
-		snprintf(corr, 98, buf, strtoflt128(corr2, NULL));
-
-
-		snprintf(buf, 90, "%%%s%s%s%s%s.%d%s",
-			 alt ? "#" : "", 
-			 zero ? "0" : "", 
-			 left ? "-" : "", 
-			 blank ? " " : "", 
-			 sign ? "+" : "",
-			 prec, types[i]);
-		Sleef_snprintf(test, 98, buf, val);
-
-		if(strcmp(test,corr) != 0 && strcmp(test,corr2) != 0) {
-		  Sleef_qtostr(vstr, 9000, val);
-		  printf("%s : c=[%s] t=[%s] %s\n", buf, corr, test, vstr);
-		}
-	      }
-	    }
-	  }
-	}
-      }
-    }
-  }
-
-  return ret;
-}
-
-int main(int argc, char **argv) {
-  if (argc != 1) {
-    testem(Sleef_strtoq(argv[1], NULL));
-  } else {
-    static __float128 vals[] = {
-      1.2345678912345678912345e+0Q,
-      1.2345678912345678912345e+1Q,
-      1.2345678912345678912345e-1Q,
-      1.2345678912345678912345e+2Q,
-      1.2345678912345678912345e-2Q,
-      1.2345678912345678912345e+3Q,
-      1.2345678912345678912345e-3Q,
-      1.2345678912345678912345e+4Q,
-      1.2345678912345678912345e-4Q,
-      1.2345678912345678912345e+5Q,
-      1.2345678912345678912345e-5Q,
-      1.2345678912345678912345e+10Q,
-      1.2345678912345678912345e-10Q,
-      1.2345678912345678912345e+15Q,
-      1.2345678912345678912345e-15Q,
-      1.2345678912345678912345e+30Q,
-      1.2345678912345678912345e-30Q,
-      1.2345678912345678912345e-4950Q,
-      0.0Q, 1.0Q,
-      1e+1Q, 1e+2Q, 1e+3Q, 1e+4Q, 1e+5Q, 1e+6Q, 
-      1e-1Q, 1e-2Q, 1e-3Q, 1e-4Q, 1e-5Q, 1e-6Q, 
-      1e+300*1e+300,
-      1e+300*1e+300 - 1e+300*1e+300
-    };
-    for(int i=0;i<sizeof(vals)/sizeof(__float128);i++) {
-      if (testem(+vals[i])) break;
-      if (testem(-vals[i])) break;
-    }
-    printf("OK\n");
-
-    xsrand(time(NULL) + (int)getpid());
-
-    for(;;) {
-      __float128 q;
-      memrand(&q, sizeof(q));
-      if (fabsq(q) > 1e+10) continue;
-      if (testem(+q)) break;
-      if (testem(-q)) break;
-    }
-  }
-}
-#endif
-
-#if 0
-// double
-int testem(double val) {
-  int ret = 0;
-  char *types[] = { "e", "f", "g", "a" };
-  for(int i=0;i<4;i++) {
-    for(int alt=0;alt<2;alt++) {
-      for(int zero=0;zero<2;zero++) {
-	for(int left=0;left<2;left++) {
-	  for(int blank=0;blank<2;blank++) {
-	    for(int sign=0;sign<2;sign++) {
-	      char buf[10000], corr[10000], test[10000];
-	      snprintf(buf, 90, "%%%s%s%s%s%s%s",
-		       alt ? "#" : "", 
-		       zero ? "0" : "", 
-		       left ? "-" : "", 
-		       blank ? " " : "", 
-		       sign ? "+" : "",
-		       types[i]);
-	      snprintf(corr, 98, buf, val);
-
-	      snprintf(buf, 90, "%%%s%s%s%s%s%s",
-		       alt ? "#" : "", 
-		       zero ? "0" : "", 
-		       left ? "-" : "", 
-		       blank ? " " : "", 
-		       sign ? "+" : "",
-		       types[i]);
-	      Sleef_snprintf(test, 98, buf, val);
-
-	      if(strcmp(test,corr) != 0) {
-		printf("%s : c=[%s] t=[%s] <%016lx>\n", buf, corr, test, d2u(val));
-	      }
-
-	      for(int width=6;width<=16;width += 2) {
-		snprintf(buf, 90, "%%%s%s%s%s%s%d.%s",
-			 alt ? "#" : "", 
-			 zero ? "0" : "", 
-			 left ? "-" : "", 
-			 blank ? " " : "", 
-			 sign ? "+" : "",
-			 width, types[i]);
-		snprintf(corr, 98, buf, val);
-
-		snprintf(buf, 90, "%%%s%s%s%s%s%d.%s",
-			 alt ? "#" : "", 
-			 zero ? "0" : "", 
-			 left ? "-" : "", 
-			 blank ? " " : "", 
-			 sign ? "+" : "",
-			 width, types[i]);
-		Sleef_snprintf(test, 98, buf, val);
-
-		if(strcmp(test,corr) != 0) {
-		  printf("%s : c=[%s] t=[%s] <%016lx>\n", buf, corr, test, d2u(val));
-		}
-	      }
-
-	      for(int prec=4;prec<=12;prec += 2) {
-		for(int width=6;width<=16;width += 2) {
-		  snprintf(buf, 90, "%%%s%s%s%s%s%d.%d%s",
-			   alt ? "#" : "", 
-			   zero ? "0" : "", 
-			   left ? "-" : "", 
-			   blank ? " " : "", 
-			   sign ? "+" : "",
-			   width, prec, types[i]);
-		  snprintf(corr, 98, buf, val);
-
-		  snprintf(buf, 90, "%%%s%s%s%s%s%d.%d%s",
-			    alt ? "#" : "", 
-			    zero ? "0" : "", 
-			    left ? "-" : "", 
-			    blank ? " " : "", 
-			    sign ? "+" : "",
-			    width, prec, types[i]);
-		  Sleef_snprintf(test, 98, buf, val);
-
-		  if(strcmp(test,corr) != 0) {
-		    printf("%s : c=[%s] t=[%s] <%016lx>\n", buf, corr, test, d2u(val));
-		  }
-		}
-
-		snprintf(buf, 90, "%%%s%s%s%s%s.%d%s",
-			 alt ? "#" : "", 
-			 zero ? "0" : "", 
-			 left ? "-" : "", 
-			 blank ? " " : "", 
-			 sign ? "+" : "",
-			 prec, types[i]);
-		snprintf(corr, 98, buf, val);
-
-		snprintf(buf, 90, "%%%s%s%s%s%s.%d%s",
-			 alt ? "#" : "", 
-			 zero ? "0" : "", 
-			 left ? "-" : "", 
-			 blank ? " " : "", 
-			 sign ? "+" : "",
-			 prec, types[i]);
-		Sleef_snprintf(test, 98, buf, val);
-
-		if(strcmp(test,corr) != 0) {
-		  printf("%s : c=[%s] t=[%s] <%016lx>\n", buf, corr, test, d2u(val));
-		}
-	      }
-	    }
-	  }
-	}
-      }
-    }
-  }
-
-  return ret;
-}
-
-int main(int argc, char **argv) {
-  if (argc != 1) {
-    testem(atof(argv[1]));
-  } else {
-    static double vals[] = {
-      1.2345678912345678912345e+0,
-      1.2345678912345678912345e+1,
-      1.2345678912345678912345e-1,
-      1.2345678912345678912345e+2,
-      1.2345678912345678912345e-2,
-      1.2345678912345678912345e+3,
-      1.2345678912345678912345e-3,
-      1.2345678912345678912345e+4,
-      1.2345678912345678912345e-4,
-      1.2345678912345678912345e+5,
-      1.2345678912345678912345e-5,
-      1.2345678912345678912345e+10,
-      1.2345678912345678912345e-10,
-      1.2345678912345678912345e+15,
-      1.2345678912345678912345e-15,
-      1.2345678912345678912345e+30,
-      1.2345678912345678912345e-30,
-      1.2345678912345678912345e-320,
-      0, 1,
-      1e+1, 1e+2, 1e+3, 1e+4, 1e+5, 1e+6, 
-      1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6, 
-      1e+300*1e+300,
-      1e+300*1e+300 - 1e+300*1e+300
-    };
-    for(int i=0;i<sizeof(vals)/sizeof(double);i++) {
-      if (testem(+vals[i])) break;
-      if (testem(-vals[i])) break;
-    }
-    printf("OK\n");
-
-    xsrand(time(NULL) + (int)getpid());
-
-    for(;;) {
-      double d;
-      memrand(&d, sizeof(d));
-      if (fabs(d) > 1e+10) continue;
-      if (testem(+d)) break;
-      if (testem(-d)) break;
-    }
-  }
-}
-#endif
-
-#if 0
-int testem2(int64_t val) {
-  int ret = 0;
-  char *types[] = { "d", "u", "x", "ld", "lx", "o" };
-  for(int i=0;i<6;i++) {
-    for(int alt=0;alt<2;alt++) {
-      for(int zero=0;zero<2;zero++) {
-	for(int left=0;left<2;left++) {
-	  for(int blank=0;blank<2;blank++) {
-	    for(int sign=0;sign<2;sign++) {
-	      char buf[10000], corr[10000], test[10000];
-
-	      snprintf(buf, 90, "%%%s%s%s%s%s%s",
-		       alt ? "#" : "", 
-		       zero ? "0" : "", 
-		       left ? "-" : "", 
-		       blank ? " " : "", 
-		       sign ? "+" : "",
-		       types[i]);
-	      snprintf(corr, 98, buf, val);
-
-	      snprintf(buf, 90, "%%%s%s%s%s%s%s",
-		       alt ? "#" : "", 
-		       zero ? "0" : "", 
-		       left ? "-" : "", 
-		       blank ? " " : "", 
-		       sign ? "+" : "",
-		       types[i]);
-	      Sleef_snprintf(test, 98, buf, val);
-
-	      if(strcmp(test,corr) != 0) {
-		printf("%s : c=[%s] t=[%s]\n", buf, corr, test);
-	      }
-
-	      for(int width=6;width<=16;width += 2) {
-		snprintf(buf, 90, "%%%s%s%s%s%s%d.%s",
-			 alt ? "#" : "", 
-			 zero ? "0" : "", 
-			 left ? "-" : "", 
-			 blank ? " " : "", 
-			 sign ? "+" : "",
-			 width, types[i]);
-		snprintf(corr, 98, buf, val);
-
-		snprintf(buf, 90, "%%%s%s%s%s%s%d.%s",
-			 alt ? "#" : "", 
-			 zero ? "0" : "", 
-			 left ? "-" : "", 
-			 blank ? " " : "", 
-			 sign ? "+" : "",
-			 width, types[i]);
-		Sleef_snprintf(test, 98, buf, val);
-
-		if(strcmp(test,corr) != 0) {
-		  printf("%s : c=[%s] t=[%s]\n", buf, corr, test);
-		}
-	      }
-
-	      for(int prec=4;prec<=12;prec += 2) {
-		for(int width=6;width<=16;width += 2) {
-		  snprintf(buf, 90, "%%%s%s%s%s%s%d.%d%s",
-			   alt ? "#" : "", 
-			   zero ? "0" : "", 
-			   left ? "-" : "", 
-			   blank ? " " : "", 
-			   sign ? "+" : "",
-			   width, prec, types[i]);
-		  snprintf(corr, 98, buf, val);
-
-		  snprintf(buf, 90, "%%%s%s%s%s%s%d.%d%s",
-			    alt ? "#" : "", 
-			    zero ? "0" : "", 
-			    left ? "-" : "", 
-			    blank ? " " : "", 
-			    sign ? "+" : "",
-			    width, prec, types[i]);
-		  Sleef_snprintf(test, 98, buf, val);
-
-		  if(strcmp(test,corr) != 0) {
-		    printf("%s : c=[%s] t=[%s]\n", buf, corr, test);
-		  }
-		}
-
-		snprintf(buf, 90, "%%%s%s%s%s%s.%d%s",
-			 alt ? "#" : "", 
-			 zero ? "0" : "", 
-			 left ? "-" : "", 
-			 blank ? " " : "", 
-			 sign ? "+" : "",
-			 prec, types[i]);
-		snprintf(corr, 98, buf, val);
-
-		snprintf(buf, 90, "%%%s%s%s%s%s.%d%s",
-			 alt ? "#" : "", 
-			 zero ? "0" : "", 
-			 left ? "-" : "", 
-			 blank ? " " : "", 
-			 sign ? "+" : "",
-			 prec, types[i]);
-		Sleef_snprintf(test, 98, buf, val);
-
-		if(strcmp(test,corr) != 0) {
-		  printf("%s : c=[%s] t=[%s]\n", buf, corr, test);
-		}
-	      }
-	    }
-	  }
-	}
-      }
-    }
-  }
-
-  return ret;
-}
-
-int main(int argc, char **argv) {
-  testem2(atoi(argv[1]));
-}
-#endif
-
-#if 1
-//#include <quadmath.h>
-
-int main(int argc, char **argv) {
-  __float128 q;
-
-  q = Sleef_strtoq(argv[2], NULL);
-  Sleef_printf(argv[1], &q);
-  printf("\n");
-}
-#endif
-
 #endif

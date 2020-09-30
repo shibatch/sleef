@@ -31,7 +31,7 @@ matrix:
       addons:
         apt:
           packages:
-            - clang-7
+            - clang-8
       env:
         - LABEL="x86_64-clang"
     - os: linux
