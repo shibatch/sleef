@@ -115,6 +115,7 @@ if(SLEEF_OPENSSL_FOUND)
   # Build tester3printf
   add_executable(tester3printf tester3printf.c)
   add_dependencies(tester3printf sleefquad sleefquad_headers ${TARGET_LIBSLEEF} ${TARGET_HEADERS})
+  set_target_properties(tester3printf PROPERTIES C_STANDARD 99)
   target_link_libraries(tester3printf sleefquad ${TARGET_LIBSLEEF} ${SLEEF_OPENSSL_LIBRARIES})
   target_compile_options(tester3printf PRIVATE -Wno-format )
 
