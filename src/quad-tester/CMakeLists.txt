@@ -110,3 +110,13 @@ if(LIB_MPFR AND NOT MINGW)
     endif()
   endif()
 endif(LIB_MPFR AND NOT MINGW)
+
+if(SLEEF_OPENSSL_FOUND)
+  # Build tester3printf
+  add_executable(tester3printf tester3printf.c)
+  add_dependencies(tester3printf sleefquad sleefquad_headers ${TARGET_LIBSLEEF} ${TARGET_HEADERS})
+  target_link_libraries(tester3printf sleefquad ${TARGET_LIBSLEEF} ${SLEEF_OPENSSL_LIBRARIES})
+  target_compile_options(tester3printf PRIVATE -Wno-format )
+
+  add_test(NAME tester3printf COMMAND tester3printf ${sleef_SOURCE_DIR}/src/quad-tester/hash_printf.txt)
+endif()
