@@ -27,32 +27,24 @@ void testem_rnd(__float128 val) {
 	for(int left=0;left<2;left++) {
 	  for(int blank=0;blank<2;blank++) {
 	    for(int sign=0;sign<2;sign++) {
-	      char buf[100], corr[100], corr2[100], test[100];
+	      char fmt[100], corr[100], corr2[100], test[100];
 	      int lc, lc2, lt;
 
 	      // no width, no prec
 
-	      snprintf(buf, 99, "%%%s%s%s%s%s%s",
+	      snprintf(fmt, 99, "%%%s%s%s%s%s%s",
 		       alt ? "#" : "", 
 		       zero ? "0" : "", 
 		       left ? "-" : "", 
 		       blank ? " " : "", 
 		       sign ? "+" : "",
 		       types[i]);
-	      lc2 = snprintf(corr2, 99, buf, val);
-	      lc = snprintf(corr, 99, buf, strtoflt128(corr2, NULL));
-
-	      snprintf(buf, 99, "%%%s%s%s%s%s%s",
-		       alt ? "#" : "", 
-		       zero ? "0" : "", 
-		       left ? "-" : "", 
-		       blank ? " " : "", 
-		       sign ? "+" : "",
-		       types[i]);
-	      lt = Sleef_snprintf(test, 99, buf, val);
+	      lc2 = snprintf(corr2, 99, fmt, val);
+	      lc = snprintf(corr, 99, fmt, strtoflt128(corr2, NULL));
+	      lt = Sleef_snprintf(test, 99, fmt, val);
 
 	      if((lc != lt && lc2 != lt) || (strcmp(test, corr) != 0 && strcmp(test, corr2) != 0)) {
-		printf("val=%Qa %s : c=[%s](%d) t=[%s](%d)\n", val, buf, corr, lc, test, lt);
+		printf("val=%Qa %s : c=[%s](%d) t=[%s](%d)\n", val, fmt, corr, lc, test, lt);
 		return;
 	      }
 	      if (strtoflt128(corr, NULL) != Sleef_strtoq(corr, NULL) && strstr(corr, "nan") == NULL) {
@@ -62,27 +54,19 @@ void testem_rnd(__float128 val) {
 
 	      // width
 
-	      snprintf(buf, 99, "%%%s%s%s%s%s%d.%s",
+	      snprintf(fmt, 99, "%%%s%s%s%s%s%d.%s",
 		       alt ? "#" : "", 
 		       zero ? "0" : "", 
 		       left ? "-" : "", 
 		       blank ? " " : "", 
 		       sign ? "+" : "",
 		       width, types[i]);
-	      lc2 = snprintf(corr2, 99, buf, val);
-	      lc = snprintf(corr, 99, buf, strtoflt128(corr2, NULL));
-
-	      snprintf(buf, 99, "%%%s%s%s%s%s%d.%s",
-		       alt ? "#" : "", 
-		       zero ? "0" : "", 
-		       left ? "-" : "", 
-		       blank ? " " : "", 
-		       sign ? "+" : "",
-		       width, types[i]);
-	      lt = Sleef_snprintf(test, 99, buf, val);
+	      lc2 = snprintf(corr2, 99, fmt, val);
+	      lc = snprintf(corr, 99, fmt, strtoflt128(corr2, NULL));
+	      lt = Sleef_snprintf(test, 99, fmt, val);
 
 	      if((lc != lt && lc2 != lt) || (strcmp(test, corr) != 0 && strcmp(test, corr2) != 0)) {
-		printf("val=%Qa %s : c=[%s](%d) t=[%s](%d)\n", val, buf, corr, lc, test, lt);
+		printf("val=%Qa %s : c=[%s](%d) t=[%s](%d)\n", val, fmt, corr, lc, test, lt);
 		return;
 	      }
 	      if (strtoflt128(corr, NULL) != Sleef_strtoq(corr, NULL) && strstr(corr, "nan") == NULL) {
@@ -92,27 +76,19 @@ void testem_rnd(__float128 val) {
 
 	      // prec
 
-	      snprintf(buf, 99, "%%%s%s%s%s%s.%d%s",
+	      snprintf(fmt, 99, "%%%s%s%s%s%s.%d%s",
 		       alt ? "#" : "", 
 		       zero ? "0" : "", 
 		       left ? "-" : "", 
 		       blank ? " " : "", 
 		       sign ? "+" : "",
 		       prec, types[i]);
-	      lc2 = snprintf(corr2, 99, buf, val);
-	      lc = snprintf(corr, 99, buf, strtoflt128(corr2, NULL));
-
-	      snprintf(buf, 99, "%%%s%s%s%s%s.%d%s",
-		       alt ? "#" : "", 
-		       zero ? "0" : "", 
-		       left ? "-" : "", 
-		       blank ? " " : "", 
-		       sign ? "+" : "",
-		       prec, types[i]);
-	      lt = Sleef_snprintf(test, 99, buf, val);
+	      lc2 = snprintf(corr2, 99, fmt, val);
+	      lc = snprintf(corr, 99, fmt, strtoflt128(corr2, NULL));
+	      lt = Sleef_snprintf(test, 99, fmt, val);
 
 	      if((lc != lt && lc2 != lt) || (strcmp(test, corr) != 0 && strcmp(test, corr2) != 0)) {
-		printf("val=%Qa %s : c=[%s](%d) t=[%s](%d)\n", val, buf, corr, lc, test, lt);
+		printf("val=%Qa %s : c=[%s](%d) t=[%s](%d)\n", val, fmt, corr, lc, test, lt);
 		return;
 	      }
 	      if (strtoflt128(corr, NULL) != Sleef_strtoq(corr, NULL) && strstr(corr, "nan") == NULL) {
@@ -122,27 +98,19 @@ void testem_rnd(__float128 val) {
 
 	      // both
 
-	      snprintf(buf, 99, "%%%s%s%s%s%s%d.%d%s",
+	      snprintf(fmt, 99, "%%%s%s%s%s%s%d.%d%s",
 		       alt ? "#" : "", 
 		       zero ? "0" : "", 
 		       left ? "-" : "", 
 		       blank ? " " : "", 
 		       sign ? "+" : "",
 		       width, prec, types[i]);
-	      lc2 = snprintf(corr2, 99, buf, val);
-	      lc = snprintf(corr, 99, buf, strtoflt128(corr2, NULL));
-
-	      snprintf(buf, 99, "%%%s%s%s%s%s%d.%d%s",
-		       alt ? "#" : "", 
-		       zero ? "0" : "", 
-		       left ? "-" : "", 
-		       blank ? " " : "", 
-		       sign ? "+" : "",
-		       width, prec, types[i]);
-	      lt = Sleef_snprintf(test, 99, buf, val);
+	      lc2 = snprintf(corr2, 99, fmt, val);
+	      lc = snprintf(corr, 99, fmt, strtoflt128(corr2, NULL));
+	      lt = Sleef_snprintf(test, 99, fmt, val);
 
 	      if((lc != lt && lc2 != lt) || (strcmp(test, corr) != 0 && strcmp(test, corr2) != 0)) {
-		printf("val=%Qa %s : c=[%s](%d) t=[%s](%d)\n", val, buf, corr, lc, test, lt);
+		printf("val=%Qa %s : c=[%s](%d) t=[%s](%d)\n", val, fmt, corr, lc, test, lt);
 		return;
 	      }
 	      if (strtoflt128(corr, NULL) != Sleef_strtoq(corr, NULL) && strstr(corr, "nan") == NULL) {
@@ -166,30 +134,22 @@ int testem(__float128 val) {
 	for(int left=0;left<2;left++) {
 	  for(int blank=0;blank<2;blank++) {
 	    for(int sign=0;sign<2;sign++) {
-	      char buf[100], corr[100], corr2[100], test[100];
+	      char fmt[100], corr[100], corr2[100], test[100];
 	      int lc, lc2, lt;
 
-	      snprintf(buf, 99, "%%%s%s%s%s%s%s",
+	      snprintf(fmt, 99, "%%%s%s%s%s%s%s",
 		       alt ? "#" : "", 
 		       zero ? "0" : "", 
 		       left ? "-" : "", 
 		       blank ? " " : "", 
 		       sign ? "+" : "",
 		       types[i]);
-	      lc2 = snprintf(corr2, 99, buf, val);
-	      lc = snprintf(corr, 99, buf, strtoflt128(corr2, NULL));
-
-	      snprintf(buf, 99, "%%%s%s%s%s%s%s",
-		       alt ? "#" : "", 
-		       zero ? "0" : "", 
-		       left ? "-" : "", 
-		       blank ? " " : "", 
-		       sign ? "+" : "",
-		       types[i]);
-	      lt = Sleef_snprintf(test, 99, buf, val);
+	      lc2 = snprintf(corr2, 99, fmt, val);
+	      lc = snprintf(corr, 99, fmt, strtoflt128(corr2, NULL));
+	      lt = Sleef_snprintf(test, 99, fmt, val);
 
 	      if((lc != lt && lc2 != lt) || (strcmp(test, corr) != 0 && strcmp(test, corr2) != 0)) {
-		printf("val=%Qa %s : c=[%s](%d) t=[%s](%d)\n", val, buf, corr, lc, test, lt);
+		printf("val=%Qa %s : c=[%s](%d) t=[%s](%d)\n", val, fmt, corr, lc, test, lt);
 		ret = 1;
 	      }
 	      if (strtoflt128(corr, NULL) != Sleef_strtoq(corr, NULL) && strstr(corr, "nan") == NULL) {
@@ -200,27 +160,19 @@ int testem(__float128 val) {
 	      int prec = xrand() % 30, width = xrand() % 30;
 
 	      for(int width=6;width<=16;width += 2) {
-		snprintf(buf, 99, "%%%s%s%s%s%s%d.%s",
+		snprintf(fmt, 99, "%%%s%s%s%s%s%d.%s",
 			 alt ? "#" : "", 
 			 zero ? "0" : "", 
 			 left ? "-" : "", 
 			 blank ? " " : "", 
 			 sign ? "+" : "",
 			 width, types[i]);
-		lc2 = snprintf(corr2, 99, buf, val);
-		lc = snprintf(corr, 99, buf, strtoflt128(corr2, NULL));
-
-		snprintf(buf, 99, "%%%s%s%s%s%s%d.%s",
-			 alt ? "#" : "", 
-			 zero ? "0" : "", 
-			 left ? "-" : "", 
-			 blank ? " " : "", 
-			 sign ? "+" : "",
-			 width, types[i]);
-		lt = Sleef_snprintf(test, 99, buf, val);
+		lc2 = snprintf(corr2, 99, fmt, val);
+		lc = snprintf(corr, 99, fmt, strtoflt128(corr2, NULL));
+		lt = Sleef_snprintf(test, 99, fmt, val);
 
 		if((lc != lt && lc2 != lt) || (strcmp(test, corr) != 0 && strcmp(test, corr2) != 0)) {
-		  printf("val=%Qa %s : c=[%s](%d) t=[%s](%d)\n", val, buf, corr, lc, test, lt);
+		  printf("val=%Qa %s : c=[%s](%d) t=[%s](%d)\n", val, fmt, corr, lc, test, lt);
 		  ret = 1;
 		}
 		if (strtoflt128(corr, NULL) != Sleef_strtoq(corr, NULL) && strstr(corr, "nan") == NULL) {
@@ -231,27 +183,19 @@ int testem(__float128 val) {
 
 	      for(int prec=4;prec<=12;prec += 2) {
 		for(int width=6;width<=16;width += 2) {
-		  snprintf(buf, 99, "%%%s%s%s%s%s%d.%d%s",
+		  snprintf(fmt, 99, "%%%s%s%s%s%s%d.%d%s",
 			   alt ? "#" : "", 
 			   zero ? "0" : "", 
 			   left ? "-" : "", 
 			   blank ? " " : "", 
 			   sign ? "+" : "",
 			   width, prec, types[i]);
-		  lc2 = snprintf(corr2, 99, buf, val);
-		  lc = snprintf(corr, 99, buf, strtoflt128(corr2, NULL));
-
-		  snprintf(buf, 99, "%%%s%s%s%s%s%d.%d%s",
-			    alt ? "#" : "", 
-			    zero ? "0" : "", 
-			    left ? "-" : "", 
-			    blank ? " " : "", 
-			    sign ? "+" : "",
-			    width, prec, types[i]);
-		  lt = Sleef_snprintf(test, 99, buf, val);
+		  lc2 = snprintf(corr2, 99, fmt, val);
+		  lc = snprintf(corr, 99, fmt, strtoflt128(corr2, NULL));
+		  lt = Sleef_snprintf(test, 99, fmt, val);
 
 		  if((lc != lt && lc2 != lt) || (strcmp(test, corr) != 0 && strcmp(test, corr2) != 0)) {
-		    printf("val=%Qa %s : c=[%s](%d) t=[%s](%d)\n", val, buf, corr, lc, test, lt);
+		    printf("val=%Qa %s : c=[%s](%d) t=[%s](%d)\n", val, fmt, corr, lc, test, lt);
 		    ret = 1;
 		  }
 		  if (strtoflt128(corr, NULL) != Sleef_strtoq(corr, NULL) && strstr(corr, "nan") == NULL) {
@@ -260,27 +204,19 @@ int testem(__float128 val) {
 		  }
 		}
 
-		snprintf(buf, 99, "%%%s%s%s%s%s.%d%s",
+		snprintf(fmt, 99, "%%%s%s%s%s%s.%d%s",
 			 alt ? "#" : "", 
 			 zero ? "0" : "", 
 			 left ? "-" : "", 
 			 blank ? " " : "", 
 			 sign ? "+" : "",
 			 prec, types[i]);
-		lc2 = snprintf(corr2, 99, buf, val);
-		lc = snprintf(corr, 99, buf, strtoflt128(corr2, NULL));
-
-		snprintf(buf, 99, "%%%s%s%s%s%s.%d%s",
-			 alt ? "#" : "", 
-			 zero ? "0" : "", 
-			 left ? "-" : "", 
-			 blank ? " " : "", 
-			 sign ? "+" : "",
-			 prec, types[i]);
-		lt = Sleef_snprintf(test, 99, buf, val);
+		lc2 = snprintf(corr2, 99, fmt, val);
+		lc = snprintf(corr, 99, fmt, strtoflt128(corr2, NULL));
+		lt = Sleef_snprintf(test, 99, fmt, val);
 
 		if((lc != lt && lc2 != lt) || (strcmp(test, corr) != 0 && strcmp(test, corr2) != 0)) {
-		  printf("val=%Qa %s : c=[%s](%d) t=[%s](%d)\n", val, buf, corr, lc, test, lt);
+		  printf("val=%Qa %s : c=[%s](%d) t=[%s](%d)\n", val, fmt, corr, lc, test, lt);
 		  ret = 1;
 		  }
 		if (strtoflt128(corr, NULL) != Sleef_strtoq(corr, NULL) && strstr(corr, "nan") == NULL) {

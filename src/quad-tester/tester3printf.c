@@ -24,24 +24,24 @@ static void convertEndianness(void *ptr, int len) {
 #endif
 }
 
-static void testem(MD5_CTX *ctx, Sleef_quad val, char *fmt) {
+static void testem(MD5_CTX *ctx, Sleef_quad val, char *types) {
   for(int alt=0;alt<2;alt++) {
     for(int zero=0;zero<2;zero++) {
       for(int left=0;left<2;left++) {
 	for(int blank=0;blank<2;blank++) {
 	  for(int sign=0;sign<2;sign++) {
-	    static char buf[100];
+	    static char fmt[100], buf[100];
 	    Sleef_quad q;
 	    int r;
-	    snprintf(buf, 99, "%%%s%s%s%s%s%s",
+	    snprintf(fmt, 99, "%%%s%s%s%s%s%s",
 		     alt ? "#" : "", 
 		     zero ? "0" : "", 
 		     left ? "-" : "", 
 		     blank ? " " : "", 
 		     sign ? "+" : "",
-		     fmt);
+		     types);
 
-	    r = Sleef_snprintf(buf, 99, buf, val);
+	    r = Sleef_snprintf(buf, 99, fmt, &val);
 	    assert(r < 100);
 	    MD5_Update(ctx, buf, r < 0 ? 0 : r);
 	    q = Sleef_strtoq(buf, NULL);
@@ -49,15 +49,15 @@ static void testem(MD5_CTX *ctx, Sleef_quad val, char *fmt) {
 	    MD5_Update(ctx, &q, sizeof(Sleef_quad));
 
 	    for(int width=0;width<=40;width += 2) {
-	      snprintf(buf, 99, "%%%s%s%s%s%s%d.%s",
+	      snprintf(fmt, 99, "%%%s%s%s%s%s%d.%s",
 		       alt ? "#" : "", 
 		       zero ? "0" : "", 
 		       left ? "-" : "", 
 		       blank ? " " : "", 
 		       sign ? "+" : "",
-		       width, fmt);
+		       width, types);
 
-	      r = Sleef_snprintf(buf, 99, buf, val);
+	      r = Sleef_snprintf(buf, 99, fmt, &val);
 	      assert(r < 100);
 	      MD5_Update(ctx, buf, r < 0 ? 0 : r);
 	      q = Sleef_strtoq(buf, NULL);
@@ -67,15 +67,15 @@ static void testem(MD5_CTX *ctx, Sleef_quad val, char *fmt) {
 
 	    for(int prec=0;prec<=40;prec += 3) {
 	      for(int width=0;width<=40;width += 3) {
-		snprintf(buf, 99, "%%%s%s%s%s%s%d.%d%s",
+		snprintf(fmt, 99, "%%%s%s%s%s%s%d.%d%s",
 			 alt ? "#" : "", 
 			 zero ? "0" : "", 
 			 left ? "-" : "", 
 			 blank ? " " : "", 
 			 sign ? "+" : "",
-			 width, prec, fmt);
+			 width, prec, types);
 
-		r = Sleef_snprintf(buf, 99, buf, val);
+		r = Sleef_snprintf(buf, 99, fmt, &val);
 		assert(r < 100);
 		MD5_Update(ctx, buf, r < 0 ? 0 : r);
 		q = Sleef_strtoq(buf, NULL);
@@ -83,15 +83,15 @@ static void testem(MD5_CTX *ctx, Sleef_quad val, char *fmt) {
 		MD5_Update(ctx, &q, sizeof(Sleef_quad));
 	      }
 
-	      snprintf(buf, 99, "%%%s%s%s%s%s.%d%s",
+	      snprintf(fmt, 99, "%%%s%s%s%s%s.%d%s",
 		       alt ? "#" : "", 
 		       zero ? "0" : "", 
 		       left ? "-" : "", 
 		       blank ? " " : "", 
 		       sign ? "+" : "",
-		       prec, fmt);
+		       prec, types);
 
-	      r = Sleef_snprintf(buf, 99, buf, val);
+	      r = Sleef_snprintf(buf, 99, fmt, &val);
 	      assert(r < 100);
 	      MD5_Update(ctx, buf, r < 0 ? 0 : r);
 	      q = Sleef_strtoq(buf, NULL);
@@ -135,7 +135,7 @@ int main(int argc, char **argv) {
 
   //
 
-  static char *types[] = { "Qe", "Qf", "Qg", "Qa" };
+  static char *types[] = { "Pe", "Pf", "Pg", "Pa" };
 
   static const char *strvals[] = {
     "1.2345678912345678912345e+0Q",
