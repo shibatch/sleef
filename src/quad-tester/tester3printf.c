@@ -203,7 +203,5 @@ int main(int argc, char **argv) {
 
   if (fp != NULL) fclose(fp);
 
-  //
-
   exit(success ? 0 : -1);
 }
