@@ -106,35 +106,6 @@ static void testem(MD5_CTX *ctx, Sleef_quad val, char *types) {
 }
 
 int main(int argc, char **argv) {
-#if __GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ > 13)
-  Sleef_registerPrintfHook();
-  static char buf[110];
-  Sleef_quad q = Sleef_strtoq("3.1415926535897932384626433832795028842", NULL);
-
-  snprintf(buf, 100, "%50.40Pe", &q);
-  if (strcmp(buf, "    3.1415926535897932384626433832795027974791e+00") != 0) {
-    fprintf(stderr, "%%50.40Pe %s\n", buf);
-    exit(-1);
-  }
-  snprintf(buf, 100, "%50.40Pf", &q);
-  if (strcmp(buf, "        3.1415926535897932384626433832795027974791") != 0) {
-    fprintf(stderr, "%%50.40Pf %s\n", buf);
-    exit(-1);
-  }
-  snprintf(buf, 100, "%50.40Pg", &q);
-  if (strcmp(buf, "         3.141592653589793238462643383279502797479") != 0) {
-    fprintf(stderr, "%%50.40Pg %s\n", buf);
-    exit(-1);
-  }
-  snprintf(buf, 100, "%Pa", &q);
-  if (strcmp(buf, "0x1.921fb54442d18469898cc51701b8p+1") != 0) {
-    fprintf(stderr, "%%Pa %s\n", buf);
-    exit(-1);
-  }
-#endif
-
-  //
-
   FILE *fp = NULL;
 
   if (argc != 1) {
