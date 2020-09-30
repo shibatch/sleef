@@ -117,7 +117,7 @@ if(SLEEF_OPENSSL_FOUND)
   add_dependencies(tester3printf sleefquad sleefquad_headers ${TARGET_LIBSLEEF} ${TARGET_HEADERS})
   set_target_properties(tester3printf PROPERTIES C_STANDARD 99)
   target_link_libraries(tester3printf sleefquad ${TARGET_LIBSLEEF} ${SLEEF_OPENSSL_LIBRARIES})
-  target_compile_options(tester3printf PRIVATE -Wno-format )
+  target_include_directories(tester3printf PRIVATE ${SLEEF_OPENSSL_INCLUDE_DIR})
 
   add_test(NAME tester3printf COMMAND tester3printf ${sleef_SOURCE_DIR}/src/quad-tester/hash_printf.txt)
 endif()
