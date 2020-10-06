@@ -4,7 +4,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 set(CMAKE_C_FLAGS "${ORG_CMAKE_C_FLAGS} ${SLEEF_C_FLAGS}")
 
-set(EXT_ENABLE_ALIAS AVX512F ADVSIMD NEON32 VSX ZVECTOR2)
+set(EXT_ENABLE_ALIAS AVX512F ADVSIMD NEON32 VSX)
 
 # --------------------------------------------------------------------
 # sleef.h

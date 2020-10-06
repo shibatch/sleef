@@ -42,8 +42,8 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
   set(TEST3_CINZ purec_scalar vsxnofma)
   set(TEST3_FINZ purecfma_scalar vsx)
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "s390x")
-  set(TEST3_CINZ purec_scalar zvector2nofma)
-  set(TEST3_FINZ purecfma_scalar zvector2)
+  set(TEST3_CINZ purec_scalar vxenofma vxe2nofma)
+  set(TEST3_FINZ purecfma_scalar vxe vxe2)
 endif()
 
 #

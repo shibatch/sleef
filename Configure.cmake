@@ -71,7 +71,7 @@ set(SLEEF_SUPPORTED_EXTENSIONS
   SVENOFMA SVE ADVSIMDNOFMA ADVSIMD                     # Aarch64
   NEON32 NEON32VFPV4                                    # Aarch32
   VSX VSXNOFMA                                          # PPC64
-  ZVECTOR2 ZVECTOR2NOFMA		                # IBM Z
+  VXE VXENOFMA VXE2 VXE2NOFMA	                        # IBM Z
   PUREC_SCALAR PURECFMA_SCALAR                          # Generic type
   CACHE STRING "List of SIMD architectures supported by libsleef."
   )
@@ -80,7 +80,7 @@ set(SLEEF_SUPPORTED_GNUABI_EXTENSIONS
   CACHE STRING "List of SIMD architectures supported by libsleef for GNU ABI."
 )
 set(SLEEFQUAD_SUPPORTED_EXT
-  PUREC_SCALAR PURECFMA_SCALAR SSE2 AVX FMA4 AVX2 AVX512F ADVSIMD SVE VSX ZVECTOR2)
+  PUREC_SCALAR PURECFMA_SCALAR SSE2 AVX FMA4 AVX2 AVX512F ADVSIMD SVE VSX VXE VXE2)
 # Force set default build type if none was specified
 # Note: some sleef code requires the optimisation flags turned on
 if(NOT CMAKE_BUILD_TYPE)
@@ -219,23 +219,31 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "s390x")
   set(SLEEF_ARCH_S390X ON CACHE INTERNAL "True for IBM Z architecture.")
 
   set(SLEEF_HEADER_LIST
-    ZVECTOR_
-    ZVECTOR2
-    ZVECTOR2NOFMA
+#    VXE_
+    VXE
+    VXENOFMA
+    VXE2
+    VXE2NOFMA
     PUREC_SCALAR
     PURECFMA_SCALAR
   )
 
-  set(HEADER_PARAMS_ZVECTOR_      finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__)
-  set(HEADER_PARAMS_ZVECTOR2      finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ zvector2)
-  set(HEADER_PARAMS_ZVECTOR2NOFMA cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ zvector2nofma)
-  set(ALIAS_PARAMS_ZVECTOR2_DP  2 "__vector double" "__vector int" - zvector2)
-  set(ALIAS_PARAMS_ZVECTOR2_SP -4 "__vector float"  "__vector int" - zvector2)
+#  set(HEADER_PARAMS_VXE_          finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__)
+  set(HEADER_PARAMS_VXE           finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ vxe)
+  set(HEADER_PARAMS_VXENOFMA      cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ vxenofma)
+  set(HEADER_PARAMS_VXE2          finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ vxe2)
+  set(HEADER_PARAMS_VXE2NOFMA     cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ vxe2nofma)
+  set(ALIAS_PARAMS_VXE_DP  2 "__vector double" "__vector int" - vxe)
+  set(ALIAS_PARAMS_VXE_SP -4 "__vector float"  "__vector int" - vxe)
+  set(ALIAS_PARAMS_VXE2_DP  2 "__vector double" "__vector int" - vxe2)
+  set(ALIAS_PARAMS_VXE2_SP -4 "__vector float"  "__vector int" - vxe2)
 
   set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-march=z14;-mzvector")
 
-  set(TESTER3_DEFINITIONS_ZVECTOR2      ATR=finz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=zvector2)
-  set(TESTER3_DEFINITIONS_ZVECTOR2NOFMA ATR=cinz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=zvector2nofma)
+  set(TESTER3_DEFINITIONS_VXE       ATR=finz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vxe)
+  set(TESTER3_DEFINITIONS_VXENOFMA  ATR=cinz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vxenofma)
+  set(TESTER3_DEFINITIONS_VXE2      ATR=finz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vxe2)
+  set(TESTER3_DEFINITIONS_VXE2NOFMA ATR=cinz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vxe2nofma)
 endif()
 
 command_arguments(HEADER_PARAMS_PUREC_SCALAR    cinz_ 1 1 double float int32_t int32_t __STDC__ purec)
@@ -265,8 +273,10 @@ command_arguments(RENAME_PARAMS_NEON32          cinz_ 2 4 neon)
 command_arguments(RENAME_PARAMS_NEON32VFPV4     finz_ 2 4 neonvfpv4)
 command_arguments(RENAME_PARAMS_VSX             finz_ 2 4 vsx)
 command_arguments(RENAME_PARAMS_VSXNOFMA        cinz_ 2 4 vsxnofma)
-command_arguments(RENAME_PARAMS_ZVECTOR2        finz_ 2 4 zvector2)
-command_arguments(RENAME_PARAMS_ZVECTOR2NOFMA   cinz_ 2 4 zvector2nofma)
+command_arguments(RENAME_PARAMS_VXE             finz_ 2 4 vxe)
+command_arguments(RENAME_PARAMS_VXENOFMA        cinz_ 2 4 vxenofma)
+command_arguments(RENAME_PARAMS_VXE2            finz_ 2 4 vxe2)
+command_arguments(RENAME_PARAMS_VXE2NOFMA       cinz_ 2 4 vxe2nofma)
 command_arguments(RENAME_PARAMS_PUREC_SCALAR    cinz_ 1 1 purec)
 command_arguments(RENAME_PARAMS_PURECFMA_SCALAR finz_ 1 1 purecfma)
 command_arguments(RENAME_PARAMS_CUDA            finz_ 1 1 cuda)
@@ -325,8 +335,10 @@ set(CLANG_FLAGS_ENABLE_SVENOFMA "-march=armv8-a+sve")
 set(CLANG_FLAGS_ENABLE_VSX "-mcpu=power8")
 set(CLANG_FLAGS_ENABLE_VSXNOFMA "-mcpu=power8")
 # IBM z
-set(CLANG_FLAGS_ENABLE_ZVECTOR2 "-march=z14;-mzvector")
-set(CLANG_FLAGS_ENABLE_ZVECTOR2NOFMA "-march=z14;-mzvector")
+set(CLANG_FLAGS_ENABLE_VXE "-march=z14;-mzvector")
+set(CLANG_FLAGS_ENABLE_VXENOFMA "-march=z14;-mzvector")
+set(CLANG_FLAGS_ENABLE_VXE2 "-march=z15;-mzvector")
+set(CLANG_FLAGS_ENABLE_VXE2NOFMA "-march=z15;-mzvector")
 
 set(FLAGS_OTHERS "")
 
@@ -694,26 +706,50 @@ endif()
 
 # IBM Z
 
-option(DISABLE_ZVECTOR2 "Disable ZVECTOR2" OFF)
-option(ENFORCE_ZVECTOR2 "Build fails if ZVECTOR2 is not supported by the compiler" OFF)
+option(DISABLE_VXE "Disable VXE" OFF)
+option(ENFORCE_VXE "Build fails if VXE is not supported by the compiler" OFF)
 
-if(SLEEF_ARCH_S390X AND NOT DISABLE_ZVECTOR2)
-  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_ZVECTOR2}")
+if(SLEEF_ARCH_S390X AND NOT DISABLE_VXE)
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_VXE}")
   CHECK_C_SOURCE_COMPILES("
   #include <vecintrin.h>
   int main() {
     __vector float d;
     d = vec_sqrt(d);
   }"
-    COMPILER_SUPPORTS_ZVECTOR2)
+    COMPILER_SUPPORTS_VXE)
 
-  if(COMPILER_SUPPORTS_ZVECTOR2)
-    set(COMPILER_SUPPORTS_ZVECTOR2NOFMA 1)
+  if(COMPILER_SUPPORTS_VXE)
+    set(COMPILER_SUPPORTS_VXENOFMA 1)
   endif()
 endif()
 
-if (ENFORCE_ZVECTOR2 AND NOT COMPILER_SUPPORTS_ZVECTOR2)
-  message(FATAL_ERROR "ENFORCE_ZVECTOR2 is specified and that feature is disabled or not supported by the compiler")
+if (ENFORCE_VXE AND NOT COMPILER_SUPPORTS_VXE)
+  message(FATAL_ERROR "ENFORCE_VXE is specified and that feature is disabled or not supported by the compiler")
+endif()
+
+#
+
+option(DISABLE_VXE2 "Disable VXE2" OFF)
+option(ENFORCE_VXE2 "Build fails if VXE2 is not supported by the compiler" OFF)
+
+if(SLEEF_ARCH_S390X AND NOT DISABLE_VXE2)
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_VXE2}")
+  CHECK_C_SOURCE_COMPILES("
+  #include <vecintrin.h>
+  int main() {
+    __vector float d;
+    d = vec_sqrt(d);
+  }"
+    COMPILER_SUPPORTS_VXE2)
+
+  if(COMPILER_SUPPORTS_VXE2)
+    set(COMPILER_SUPPORTS_VXE2NOFMA 1)
+  endif()
+endif()
+
+if (ENFORCE_VXE2 AND NOT COMPILER_SUPPORTS_VXE2)
+  message(FATAL_ERROR "ENFORCE_VXE2 is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # CUDA

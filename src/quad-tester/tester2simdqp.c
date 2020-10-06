@@ -101,10 +101,17 @@
 #define VARGQUAD Sleef_quadx2
 #endif
 
-#ifdef ENABLE_ZVECTOR2
+#ifdef ENABLE_VXE
 #define CONFIG 140
 #include "helpers390x_128.h"
-#include "qrenamezvector2.h"
+#include "qrenamevxe.h"
+#define VARGQUAD Sleef_quadx2
+#endif
+
+#ifdef ENABLE_VXE2
+#define CONFIG 150
+#include "helpers390x_128.h"
+#include "qrenamevxe2.h"
 #define VARGQUAD Sleef_quadx2
 #endif
 
