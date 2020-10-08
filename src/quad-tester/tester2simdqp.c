@@ -215,10 +215,12 @@ int main(int argc,char **argv)
   mpfr_t frw, frx, fry, frz;
   mpfr_inits(frw, frx, fry, frz, NULL);
 
+#ifndef ENABLE_SVE
   memset(&a0, 0, sizeof(a0));
   memset(&a1, 0, sizeof(a1));
   memset(&a2, 0, sizeof(a2));
   memset(&a3, 0, sizeof(a3));
+#endif
 
   for(cnt = 0;ecnt < 1000;cnt++) {
     int e = cnt % VECTLENDP;
