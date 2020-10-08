@@ -107,6 +107,8 @@ static void testem(MD5_CTX *ctx, Sleef_quad val, char *types) {
 
 int main(int argc, char **argv) {
 #if __GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ > 13)
+#pragma GCC diagnostic ignored "-Wformat"
+#pragma GCC diagnostic ignored "-Wformat-extra-args"
   Sleef_registerPrintfHook();
   static char buf[110];
   Sleef_quad q = Sleef_strtoq("3.1415926535897932384626433832795028842", NULL);

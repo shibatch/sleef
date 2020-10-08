@@ -167,6 +167,25 @@ double vgetd(vdouble v, int idx) {
   return a[idx];
 }
 
+vmask vsetm(vmask v, int idx, uint64_t d) {
+  uint64_t a[VECTLENDP];
+  vstoreu_v_p_vd((double *)a, vreinterpret_vd_vm(v));
+  a[idx] = d;
+  return vreinterpret_vm_vd(vloadu_vd_p((double *)a));
+}
+
+uint64_t vgetm(vmask v, int idx) {
+  uint64_t a[VECTLENDP];
+  vstoreu_v_p_vd((double *)a, vreinterpret_vd_vm(v));
+  return a[idx];
+}
+
+int64_t vgetm_signed(vmask v, int idx) {
+  int64_t a[VECTLENDP];
+  vstoreu_v_p_vd((double *)a, vreinterpret_vd_vm(v));
+  return a[idx];
+}
+
 static int vgeti(vint v, int idx) {
   int a[VECTLENDP*2];
   vstoreu_v_p_vi(a, v);
@@ -203,6 +222,13 @@ int main(int argc,char **argv)
   mpfr_t frw, frx, fry, frz;
   mpfr_inits(frw, frx, fry, frz, NULL);
 
+#ifndef ENABLE_SVE
+  memset(&a0, 0, sizeof(a0));
+  memset(&a1, 0, sizeof(a1));
+  memset(&a2, 0, sizeof(a2));
+  memset(&a3, 0, sizeof(a3));
+#endif
+
   for(cnt = 0;ecnt < 1000;cnt++) {
     int e = cnt % VECTLENDP;
 
@@ -238,45 +264,54 @@ int main(int argc,char **argv)
     case 122:
       q0 = rndf128x();
       q1 = rndf128x();
-      q1 += 1;
+      q0 += q1;
       break;
     case 121:
+      q0 = rndf128x();
+      q1 = rndf128x();
+      q0 -= q1;
+      break;
+    case 120:
+      q0 = rndf128x();
+      q1 = rndf128x();
+      q1 += 1;
+      break;
+    case 119:
+      q0 = rndf128x();
+      q1 = rndf128x();
+      q0 += 1;
+      break;
+    case 118:
       q0 = rndf128x();
       q1 = rndf128x();
       q0 += 1;
       q1 -= 1;
       break;
-    case 120:
-      q0 = rndf128x();
-      q1 = rndf128x();
-      q1 += copysign(1, q1) * SLEEF_QUAD_MIN;
-      break;
-    case 119:
-      q0 = rndf128x();
-      q1 = rndf128x();
-      q1 = copysign(1, q1) * SLEEF_QUAD_MIN;
-      break;
-    case 118:
-      q0 = rndf128x();
-      q1 = rndf128x();
-      q0 += copysign(1, q0);
-      q1  = copysign(1, q1) * SLEEF_QUAD_MIN;
-      break;
     case 117:
       q0 = rndf128x();
       q1 = rndf128x();
-      q1 = copysign(1, q1) * SLEEF_QUAD_MIN;
+      q0 -= 1;
+      q1 += 1;
       break;
     case 116:
       q0 = rndf128x();
       q1 = rndf128x();
-      q0 += copysign(1, q0);
-      q1  = copysign(1, q1) * SLEEF_QUAD_MIN;
+      q1 += copysign(1, q1) * SLEEF_QUAD_MIN;
       break;
     case 115:
       q0 = rndf128x();
       q1 = rndf128x();
-      q1 += copysign(1, q1) * SLEEF_QUAD_MAX;
+      q0 += copysign(1, q0) * SLEEF_QUAD_MIN;
+      break;
+    case 114:
+      q0 = rndf128x();
+      q1 = rndf128x();
+      q1 -= copysign(1, q1) * SLEEF_QUAD_MIN;
+      break;
+    case 113:
+      q0 = rndf128x();
+      q1 = rndf128x();
+      q0 -= copysign(1, q0) * SLEEF_QUAD_MIN;
       break;
 #endif
     default:
@@ -396,6 +431,60 @@ int main(int argc,char **argv)
 	printf(ISANAME " cast_to_double arg=%s\n", sprintf128(q0));
 	printf("test = %.20g\n", td);
 	printf("corr = %.20g\n", cd);
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      int64_t i64 = mpfr_get_sj(frx, GMP_RNDN);
+      vd0 = vreinterpret_vd_vm(vsetm(vreinterpret_vm_vd(vd0), e, i64));
+      t = vget(xcast_from_int64q(vreinterpret_vm_vd(vd0)), e);
+      mpfr_set_sj(frz, i64, GMP_RNDN);
+      Sleef_quad q2 = mpfr_get_f128(frz, GMP_RNDN);
+
+      if (memcmp(&t, &q2, sizeof(Sleef_quad)) != 0) {
+	printf(ISANAME " cast_from_int64q arg=%lld\n", (long long)i64);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(q2));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      int64_t td = vgetm_signed(xcast_to_int64q(a0), e);
+      int64_t cd = mpfr_get_sj(frx, GMP_RNDZ);
+
+      if (cd != td && !isnan(mpfr_get_d(frx, GMP_RNDN))) {
+	printf(ISANAME " cast_to_int64q arg=%s\n", sprintf128(q0));
+	printf("test = %lld\n", (long long)td);
+	printf("corr = %lld\n", (long long)cd);
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      uint64_t u64 = mpfr_get_uj(frx, GMP_RNDN);
+      vd0 = vreinterpret_vd_vm(vsetm(vreinterpret_vm_vd(vd0), e, u64));
+      t = vget(xcast_from_uint64q(vreinterpret_vm_vd(vd0)), e);
+      mpfr_set_uj(frz, u64, GMP_RNDN);
+      Sleef_quad q2 = mpfr_get_f128(frz, GMP_RNDN);
+
+      if (memcmp(&t, &q2, sizeof(Sleef_quad)) != 0) {
+	printf(ISANAME " cast_from_uint64q arg=%llu\n", (unsigned long long)u64);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(q2));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      uint64_t td = vgetm_signed(xcast_to_uint64q(a0), e);
+      uint64_t cd = mpfr_get_uj(frx, GMP_RNDZ);
+
+      if (cd != td && !isnan(mpfr_get_d(frx, GMP_RNDN))) {
+	printf(ISANAME " cast_to_uint64q arg=%s\n", sprintf128(q0));
+	printf("test = %llu\n", (unsigned long long)td);
+	printf("corr = %llu\n", (unsigned long long)cd);
 	fflush(stdout); ecnt++;
       }
     }

@@ -259,6 +259,41 @@ typedef union {
     }							\
   }
 
+#define func_m_q(funcStr, funcName) {					\
+    while (startsWith(buf, funcStr " ")) {				\
+      sentinel = 0;							\
+      int lane = xrand() % VECTLENDP;					\
+      cnv128 c0;							\
+      sscanf(buf, funcStr " %" PRIx64 ":%" PRIx64, &c0.h, &c0.l);	\
+      VARGQUAD a0;							\
+      memrand(&a0, SIZEOF_VARGQUAD);					\
+      a0 = xsetq(a0, lane, c0.q);					\
+      double d[VECTLENDP];						\
+      vstoreu_v_p_vd(d, vreinterpret_vd_vm(funcName(a0)));		\
+      printf("%" PRIx64 "\n", d2u(d[lane]));				\
+      fflush(stdout);							\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
+    }									\
+  }
+
+#define func_q_m(funcStr, funcName) {			\
+    while (startsWith(buf, funcStr " ")) {		\
+      sentinel = 0;					\
+      int lane = xrand() % VECTLENDP;			\
+      uint64_t u;					\
+      sscanf(buf, funcStr " %" PRIx64, &u);		\
+      double s[VECTLENDP];				\
+      memrand(s, sizeof(s));				\
+      s[lane] = u2d(u);					\
+      VARGQUAD a0 = funcName(vreinterpret_vm_vd(vloadu_vd_p(s)));	\
+      cnv128 c0;					\
+      c0.q = xgetq(a0, lane);				\
+      printf("%" PRIx64 ":%" PRIx64 "\n", c0.h, c0.l);	\
+      fflush(stdout);					\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;	\
+    }							\
+  }
+
 #define func_strtoq(funcStr) {						\
     while (startsWith(buf, funcStr " ")) {				\
       sentinel = 0;							\
@@ -376,6 +411,10 @@ int do_test(int argc, char **argv) {
     func_q_q("negq", xnegq);
     func_q_d("cast_from_doubleq", xcast_from_doubleq);
     func_d_q("cast_to_doubleq", xcast_to_doubleq);
+    func_q_m("cast_from_int64q", xcast_from_int64q);
+    func_m_q("cast_to_int64q", xcast_to_int64q);
+    func_q_m("cast_from_uint64q", xcast_from_uint64q);
+    func_m_q("cast_to_uint64q", xcast_to_uint64q);
     func_i_q_q("cmpltq", xcmpltq);
     func_i_q_q("cmpgtq", xcmpgtq);
     func_i_q_q("cmpleq", xcmpleq);
