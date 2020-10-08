@@ -287,10 +287,6 @@ typedef union {
 
 #elif defined(_MSC_VER) // #if (defined (__GNUC__) || defined (__clang__) || defined(__INTEL_COMPILER)) && !defined(_MSC_VER)
 
-#pragma warning(disable:4116) // warning C4116: unnamed type definition in parentheses
-#pragma warning(disable:4244) // warning C4244: 'function': conversion from 'vopmask' to '__mmask8', possible loss of data
-#pragma warning(disable:4305) // warning C4305: 'function': truncation from 'double' to 'float'
-
 #if defined(SLEEF_GENHEADER)
 
 #define INLINE SLEEF_ALWAYS_INLINE
@@ -361,4 +357,23 @@ typedef union {
 #define VECTOR_CC __attribute__((aarch64_vector_pcs))
 #else
 #define VECTOR_CC
+#endif
+
+//
+
+#if defined (__GNUC__) && !defined(__INTEL_COMPILER)
+#pragma GCC diagnostic ignored "-Wunknown-pragmas"
+#if !defined (__clang__)
+#pragma GCC diagnostic ignored "-Wattribute-alias"
+#pragma GCC diagnostic ignored "-Wlto-type-mismatch"
+#pragma GCC diagnostic ignored "-Wstringop-overflow"
+#endif
+#endif
+
+#if defined(_MSC_VER)
+#pragma warning(disable:4101) // warning C4101: 'v': unreferenced local variable
+#pragma warning(disable:4116) // warning C4116: unnamed type definition in parentheses
+#pragma warning(disable:4244) // warning C4244: 'function': conversion from 'vopmask' to '__mmask8', possible loss of data
+#pragma warning(disable:4267) // warning C4267: 'initializing': conversion from 'size_t' to 'const int', possible loss of data
+#pragma warning(disable:4305) // warning C4305: 'function': truncation from 'double' to 'float'
 #endif
