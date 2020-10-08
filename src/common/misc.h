@@ -362,6 +362,7 @@ typedef union {
 //
 
 #if defined (__GNUC__) && !defined(__INTEL_COMPILER)
+#pragma GCC diagnostic ignored "-Wpragmas"
 #pragma GCC diagnostic ignored "-Wunknown-pragmas"
 #if !defined (__clang__)
 #pragma GCC diagnostic ignored "-Wattribute-alias"
