@@ -58,6 +58,10 @@ funcSpec funcList[] = {
 
   { "cast_to_double", -1, 0, 10, 0 },
   { "cast_from_double", -1, 0, 11, 0 },
+  { "cast_to_int64", -1, 0, 12, 0 },
+  { "cast_from_int64", -1, 0, 13, 0 },
+  { "cast_to_uint64", -1, 0, 12, 0 },
+  { "cast_from_uint64", -1, 0, 13, 0 },
   { "load", -1, 0, 14, 0 },
   { "store", -1, 0, 15, 0 },
   { "get", -1, 0, 16, 0 },
