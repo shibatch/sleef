@@ -2349,8 +2349,8 @@ EXPORT CONST vmask xcast_to_int64q(vargquad q) {
   vmask e = tdxgete_vm_tdx(t);
   vdouble3 d3 = vcast_vd3_tdx(t);
 
-  vopmask mp = vand_vo_vo_vo(vge_vo_vd_vd(vd3getx_vd_vd3(d3), vcast_vd_d(0)),
-			     vgt64_vo_vm_vm(e, vcast_vm_i_i(0, 16383 + 100)));
+  vopmask positive = vge_vo_vd_vd(vd3getx_vd_vd3(d3), vcast_vd_d(0));
+  vopmask mp = vand_vo_vo_vo(positive, vgt64_vo_vm_vm(e, vcast_vm_i_i(0, 16383 + 100)));
   mp = vor_vo_vo_vo(mp, vneq_vo_vd_vd(vd3getx_vd_vd3(d3), vd3getx_vd_vd3(d3)));
 
   vopmask mn = vand_vo_vo_vo(vlt_vo_vd_vd(vd3getx_vd_vd3(d3), vcast_vd_d(0)),
@@ -2374,12 +2374,11 @@ EXPORT CONST vmask xcast_to_int64q(vargquad q) {
   d = ddadd2_vd2_vd2_vd(d, vmul_vd_vd_vd(vcast_vd_vi(i1), vcast_vd_d(-(double)(INT64_C(1) << (64 - 28*2)))));
   d = ddnormalize_vd2_vd2(d);
   vint i2 = vtruncate_vi_vd(vd2getx_vd_vd2(d));
-  vint i3 = vsel_vi_vo_vi_vi(vcast_vo32_vo64(vand_vo_vo_vo(vand_vo_vo_vo(veq_vo_vd_vd(vcast_vd_vi(i2), vd2getx_vd_vd2(d)),
-									 vgt_vo_vd_vd(vd2getx_vd_vd2(d), vcast_vd_d(0))),
-							   vlt_vo_vd_vd(vd2gety_vd_vd2(d), vcast_vd_d(0)))), vcast_vi_i(-1), vcast_vi_i(0));
-  vint i4 = vsel_vi_vo_vi_vi(vcast_vo32_vo64(vand_vo_vo_vo(vand_vo_vo_vo(veq_vo_vd_vd(vcast_vd_vi(i2), vd2getx_vd_vd2(d)),
-									 vlt_vo_vd_vd(vd2getx_vd_vd2(d), vcast_vd_d(0))),
-							   vgt_vo_vd_vd(vd2gety_vd_vd2(d), vcast_vd_d(0)))), vcast_vi_i(+1), vcast_vi_i(0));
+  d = ddnormalize_vd2_vd2(ddadd2_vd2_vd2_vd(d, vcast_vd_vi(vneg_vi_vi(i2))));
+  vint i3 = vsel_vi_vo_vi_vi(vcast_vo32_vo64(vand_vo_vo_vo   (positive, vlt_vo_vd_vd(vd2getx_vd_vd2(d), vcast_vd_d(0)))),
+			     vcast_vi_i(-1), vcast_vi_i(0));
+  vint i4 = vsel_vi_vo_vi_vi(vcast_vo32_vo64(vandnot_vo_vo_vo(positive, vgt_vo_vd_vd(vd2getx_vd_vd2(d), vcast_vd_d(0)))),
+			     vcast_vi_i(+1), vcast_vi_i(0));
 
   vmask ti = vsll64_vm_vm_i(vcast_vm_vi(i0), 64 - 28*1);
   ti = vadd64_vm_vm_vm(ti, vsll64_vm_vm_i(vcast_vm_vi(i1), 64 - 28*2));
@@ -2417,9 +2416,9 @@ EXPORT CONST vmask xcast_to_uint64q(vargquad q) {
   d = ddadd2_vd2_vd2_vd(d, vmul_vd_vd_vd(vcast_vd_vi(i1), vcast_vd_d(-(double)(INT64_C(1) << (64 - 28*2)))));
   d = ddnormalize_vd2_vd2(d);
   vint i2 = vtruncate_vi_vd(vd2getx_vd_vd2(d));
-  vint i3 = vsel_vi_vo_vi_vi(vcast_vo32_vo64(vand_vo_vo_vo(vand_vo_vo_vo(veq_vo_vd_vd(vcast_vd_vi(i2), vd2getx_vd_vd2(d)),
-									 vgt_vo_vd_vd(vd2getx_vd_vd2(d), vcast_vd_d(0))),
-							   vlt_vo_vd_vd(vd2gety_vd_vd2(d), vcast_vd_d(0)))), vcast_vi_i(-1), vcast_vi_i(0));
+  d = ddnormalize_vd2_vd2(ddadd2_vd2_vd2_vd(d, vcast_vd_vi(vneg_vi_vi(i2))));
+  vint i3 = vsel_vi_vo_vi_vi(vcast_vo32_vo64(vlt_vo_vd_vd(vd2getx_vd_vd2(d), vcast_vd_d(0))),
+			     vcast_vi_i(-1), vcast_vi_i(0));
 
   vmask ti = vsll64_vm_vm_i(vcast_vm_vi(i0), 64 - 28*1);
   ti = vadd64_vm_vm_vm(ti, vsll64_vm_vm_i(vcast_vm_vi(i1), 64 - 28*2));
@@ -2516,7 +2515,7 @@ EXPORT CONST vint xcmpeqq(vargquad ax, vargquad ay) {
   return vi;
 }
 
-EXPORT CONST vint xcmpneqq(vargquad ax, vargquad ay) {
+EXPORT CONST vint xcmpneq(vargquad ax, vargquad ay) {
   vmask2 x = vcast_vm2_aq(ax), cx = vcmpcnv_vm2_vm2(x);
   vmask2 y = vcast_vm2_aq(ay), cy = vcmpcnv_vm2_vm2(y);
   vopmask o = visnanq_vo_vm2(x);
@@ -2524,6 +2523,18 @@ EXPORT CONST vint xcmpneqq(vargquad ax, vargquad ay) {
   o = vcast_vo32_vo64(vandnot_vo_vo_vo(visnanq_vo_vm2(y), o));
   vint vi = vsel_vi_vo_vi_vi(o, vcast_vi_i(1), vcast_vi_i(0));
   return vi;
+}
+
+EXPORT CONST vint xcmpq(vargquad ax, vargquad ay) {
+  vmask2 x = vcast_vm2_aq(ax), cx = vcmpcnv_vm2_vm2(x);
+  vmask2 y = vcast_vm2_aq(ay), cy = vcmpcnv_vm2_vm2(y);
+
+  vopmask oeq = vand_vo_vo_vo(veq64_vo_vm_vm(vm2gety_vm_vm2(cy), vm2gety_vm_vm2(cx)), veq64_vo_vm_vm(vm2getx_vm_vm2(cx), vm2getx_vm_vm2(cy)));
+  oeq = vor_vo_vo_vo(oeq, vor_vo_vo_vo(visnanq_vo_vm2(x), visnanq_vo_vm2(y)));
+  vopmask ogt = vor_vo_vo_vo(vgt64_vo_vm_vm(vm2gety_vm_vm2(cx), vm2gety_vm_vm2(cy)),
+			     vand_vo_vo_vo(veq64_vo_vm_vm(vm2gety_vm_vm2(cx), vm2gety_vm_vm2(cy)), vugt64_vo_vm_vm(vm2getx_vm_vm2(cx), vm2getx_vm_vm2(cy))));
+  vmask m = vsel_vm_vo64_vm_vm(oeq, vcast_vm_i_i(0, 0), vsel_vm_vo64_vm_vm(ogt, vcast_vm_i_i(0, 1), vcast_vm_i_i(-1, -1)));
+  return vcast_vi_vm(m);
 }
 
 EXPORT CONST vint xunordq(vargquad ax, vargquad ay) {

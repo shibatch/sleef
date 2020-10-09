@@ -534,20 +534,20 @@ int main(int argc,char **argv)
 
     {
       int ci = mpfr_lessgreater_p(frx, fry);
-      int ti = vgeti(xcmpneqq(a0, a1), e);
+      int ti = vgeti(xcmpneq(a0, a1), e);
 
       if (ci != ti) {
-	printf(ISANAME " cmpneq arg=%s, %s,  test = %d, corr = %d \n", sprintf128(q0), sprintf128(q1), ti, ci);
+	printf(ISANAME " cmpne arg=%s, %s,  test = %d, corr = %d \n", sprintf128(q0), sprintf128(q1), ti, ci);
 	fflush(stdout); ecnt++;
       }
     }
 
     {
-      int ci = mpfr_unordered_p(frx, fry);
-      int ti = vgeti(xunordq(a0, a1), e);
+      int ci = mpfr_cmp(frx, fry);
+      int ti = vgeti(xcmpq(a0, a1), e);
 
       if (ci != ti) {
-	printf(ISANAME " unord arg=%s, %s,  test = %d, corr = %d \n", sprintf128(q0), sprintf128(q1), ti, ci);
+	printf(ISANAME " cmp arg=%s, %s,  test = %d, corr = %d \n", sprintf128(q0), sprintf128(q1), ti, ci);
 	fflush(stdout); ecnt++;
       }
     }

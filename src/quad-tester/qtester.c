@@ -229,7 +229,8 @@ int child_cmpgtq(Sleef_quad x, Sleef_quad y) { child_i_q_q("cmpgtq", x, y); }
 int child_cmpleq(Sleef_quad x, Sleef_quad y) { child_i_q_q("cmpleq", x, y); }
 int child_cmpgeq(Sleef_quad x, Sleef_quad y) { child_i_q_q("cmpgeq", x, y); }
 int child_cmpeqq(Sleef_quad x, Sleef_quad y) { child_i_q_q("cmpeqq", x, y); }
-int child_cmpneqq(Sleef_quad x, Sleef_quad y) { child_i_q_q("cmpneqq", x, y); }
+int child_cmpneq(Sleef_quad x, Sleef_quad y) { child_i_q_q("cmpneq", x, y); }
+int child_cmpq  (Sleef_quad x, Sleef_quad y) { child_i_q_q("cmpq"  , x, y); }
 int child_unordq(Sleef_quad x, Sleef_quad y) { child_i_q_q("unordq", x, y); }
 
 Sleef_quad child_cast_from_doubleq(double x) { child_q_d("cast_from_doubleq", x); }
@@ -517,8 +518,12 @@ void do_test(int options) {
   testComparisonOuterLoop(mpfr_equal_p, child_cmpeqq, stdCheckVals);
   checkResult(success, -1);
 
-  fprintf(stderr, "cmpneq : ");
-  testComparisonOuterLoop(mpfr_lessgreater_p, child_cmpneqq, stdCheckVals);
+  fprintf(stderr, "cmpne : ");
+  testComparisonOuterLoop(mpfr_lessgreater_p, child_cmpneq, stdCheckVals);
+  checkResult(success, -1);
+
+  fprintf(stderr, "cmpq : ");
+  testComparisonOuterLoop(mpfr_cmp, child_cmpq, stdCheckVals);
   checkResult(success, -1);
 
   fprintf(stderr, "unordq : ");

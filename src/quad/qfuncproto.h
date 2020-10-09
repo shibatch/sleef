@@ -53,7 +53,8 @@ funcSpec funcList[] = {
   { "cmpgt", -1, 0, 9, 0 },
   { "cmpge", -1, 0, 9, 0 },
   { "cmpeq", -1, 0, 9, 0 },
-  { "cmpneq", -1, 0, 9, 0 },
+  { "cmpne", -1, 0, 9, 0 },
+  { "cmp"  , -1, 0, 9, 0 },
   { "unord", -1, 0, 9, 0 },
 
   { "cast_to_double", -1, 0, 10, 0 },
