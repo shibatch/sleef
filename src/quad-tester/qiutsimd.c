@@ -413,7 +413,8 @@ int do_test(int argc, char **argv) {
     func_i_q_q("cmpleq", xcmpleq);
     func_i_q_q("cmpgeq", xcmpgeq);
     func_i_q_q("cmpeqq", xcmpeqq);
-    func_i_q_q("cmpneqq", xcmpneqq);
+    func_i_q_q("cmpneq", xcmpneq);
+    func_i_q_q("cmpq", xcmpq);
     func_i_q_q("unordq", xunordq);
     func_strtoq("strtoq");
     func_snprintf_40Qg("snprintf_40Qg");
