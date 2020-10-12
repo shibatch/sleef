@@ -411,12 +411,12 @@ int do_test(int argc, char **argv) {
     printf("%d\n", k);
     fflush(stdout);
   }
-  
+
+#if VECTLENDP > 1
   // Do simple testing on splat, select and SLEEF_Q
   {
     VARGQUAD v0 = xsplatq(SLEEF_Q(+0x1921fb54442d1LL, 0x8469898cc51701b8ULL, 1));
-    VARGQUAD v1;
-    memset(&v1, 0, sizeof(v1));
+    VARGQUAD v1 = xsplatq(SLEEF_Q(+0x0000000000000LL, 0x0000000000000000ULL, 0));
     v1 = xsetq(v1, 1, SLEEF_Q(+0x15bf0a8b14576LL, 0x95355fb8ac404e7aULL, 1));
     v1 = xmulq_u05(v0, v1);
 
@@ -430,6 +430,7 @@ int do_test(int argc, char **argv) {
       exit(-1);
     }
   }
+#endif
 
   char buf[BUFSIZE];
   fgets(buf, BUFSIZE-1, stdin);
