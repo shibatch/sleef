@@ -412,7 +412,7 @@ int do_test(int argc, char **argv) {
     fflush(stdout);
   }
 
-#if defined(ENABLE_SVE) || VECTLENDP > 1
+#if !defined(ENABLE_PUREC_SCALAR) && !defined(ENABLE_PURECFMA_SCALAR)
   // Do simple testing on splat, select and SLEEF_Q
   {
     VARGQUAD v0 = xsplatq(SLEEF_Q(+0x1921fb54442d1LL, 0x8469898cc51701b8ULL, 1));
