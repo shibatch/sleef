@@ -99,32 +99,26 @@ typedef svfloat64x2_t Sleef_svquad;
 #define SLEEF_Q(H, L, E) (						\
       (union {								\
 	struct {							\
-	  unsigned s : 1;						\
-	  unsigned e : 15;						\
-	  uint64_t h : 48;						\
-	  uint64_t l : 64;						\
+	  uint64_t h, l;						\
 	};								\
 	Sleef_quad q;							\
       }) {								\
-	.s = (int64_t)(H) < 0 ? 1 : 0,					\
-	.h = ((int64_t)(H) < 0 ? -(int64_t)(H) : (int64_t)(H)) & 0xffffffffffffUL, \
-	.l = (uint64_t)(L),						\
-	.e = (int32_t)(E) + 16383 }.q)
+        .h = (((int64_t)(H) < 0 ? 1ULL : 0ULL) << 63) |			\
+             ((0x7fff & (uint64_t)((E) + 16383)) << 48) |		\
+	     ((int64_t)(H) < 0 ? -(int64_t)(H) : (int64_t)(H) & 0xffffffffffffULL), \
+	.l = (uint64_t)(L)}.q)
 #else
 #define SLEEF_Q(H, L, E) (						\
       (union {								\
 	struct {							\
-	  uint64_t l : 64;						\
-	  uint64_t h : 48;						\
-	  unsigned e : 15;						\
-	  unsigned s : 1;						\
+	  uint64_t l, h;						\
 	};								\
 	Sleef_quad q;							\
       }) {								\
-	.s = (int64_t)(H) < 0 ? 1 : 0,					\
-	.h = ((int64_t)(H) < 0 ? -(int64_t)(H) : (int64_t)(H)) & 0xffffffffffffUL, \
-	.l = (uint64_t)(L),						\
-	.e = (int32_t)(E) + 16383 }.q)
+        .h = (((int64_t)(H) < 0 ? 1ULL : 0ULL) << 63) |			\
+             ((0x7fff & (uint64_t)((E) + 16383)) << 48) |		\
+	     ((int64_t)(H) < 0 ? -(int64_t)(H) : (int64_t)(H) & 0xffffffffffffULL), \
+	.l = (uint64_t)(L)}.q)
 #endif
 
 //

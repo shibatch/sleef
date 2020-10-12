@@ -426,7 +426,7 @@ int do_test(int argc, char **argv) {
     vstoreu_v_p_vi(t, vi);
 
     if (!(t[0] == 0 && t[1] == 1)) {
-      fprintf(stderr, "Basic testing on splat and select failed\n");
+      fprintf(stderr, "Testing on splat and select failed\n");
       exit(-1);
     }
   }
