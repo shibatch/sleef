@@ -170,6 +170,7 @@ static vmask2 vm2sety_vm2_vm2_vm(vmask2 v, vmask y) { v.y = y; return v; }
 
 #if defined(ENABLE_MAIN)
 #include <stdio.h>
+#include <wchar.t>
 
 static void printvmask(char *mes, vmask g) {
   uint64_t u[VECTLENDP];
@@ -209,6 +210,14 @@ static void printvint(char *mes, vint vi) {
   vstoreu_v_p_vi((int32_t *)u, vi);
   printf("%s ", mes);
   for(int i=0;i<VECTLENDP;i++) printf("%08x : ", (unsigned)u[i]);
+  printf("\n");
+}
+
+static void printvint64(char *mes, vint64 vi) {
+  uint64_t u[VECTLENDP*2];
+  vstoreu_v_p_vd((double *)u, vreinterpret_vd_vm(vreinterpret_vm_vi64(vi)));
+  printf("%s ", mes);
+  for(int i=0;i<VECTLENDP;i++) printf("%016x : ", (unsigned long)u[i]);
   printf("\n");
 }
 
@@ -2344,7 +2353,7 @@ EXPORT CONST vdouble xcast_to_doubleq(vargquad q) {
   return vcast_vd_tdx(t);
 }
 
-EXPORT CONST vmask xcast_to_int64q(vargquad q) {
+EXPORT CONST vint64 xcast_to_int64q(vargquad q) {
   tdx t = vcast_tdx_vf128(vcast_vm2_aq(q));
   vmask e = tdxgete_vm_tdx(t);
   vdouble3 d3 = vcast_vd3_tdx(t);
@@ -2384,11 +2393,12 @@ EXPORT CONST vmask xcast_to_int64q(vargquad q) {
   ti = vadd64_vm_vm_vm(ti, vsll64_vm_vm_i(vcast_vm_vi(i1), 64 - 28*2));
   ti = vadd64_vm_vm_vm(ti, vcast_vm_vi(vadd_vi_vi_vi(vadd_vi_vi_vi(i2, i3), i4)));
 
-  return vsel_vm_vo64_vm_vm(mp, vcast_vm_i_i(0x7fffffff, 0xffffffff),
-			    vsel_vm_vo64_vm_vm(mn, vcast_vm_i_i(0x80000000, 0), ti));
+  vmask r = vsel_vm_vo64_vm_vm(mp, vcast_vm_i_i(0x7fffffff, 0xffffffff),
+			       vsel_vm_vo64_vm_vm(mn, vcast_vm_i_i(0x80000000, 0), ti));
+  return vreinterpret_vi64_vm(r);
 }
 
-EXPORT CONST vmask xcast_to_uint64q(vargquad q) {
+EXPORT CONST vuint64 xcast_to_uint64q(vargquad q) {
   tdx t = vcast_tdx_vf128(vcast_vm2_aq(q));
   vmask e = tdxgete_vm_tdx(t);
   vdouble3 d3 = vcast_vd3_tdx(t);
@@ -2424,11 +2434,13 @@ EXPORT CONST vmask xcast_to_uint64q(vargquad q) {
   ti = vadd64_vm_vm_vm(ti, vsll64_vm_vm_i(vcast_vm_vi(i1), 64 - 28*2));
   ti = vadd64_vm_vm_vm(ti, vcast_vm_vi(vadd_vi_vi_vi(i2, i3)));
 
-  return vsel_vm_vo64_vm_vm(mp, vcast_vm_i_i(0xffffffff, 0xffffffff),
-			    vsel_vm_vo64_vm_vm(mn, vcast_vm_i_i(0, 0), ti));
+  vmask r = vsel_vm_vo64_vm_vm(mp, vcast_vm_i_i(0xffffffff, 0xffffffff),
+			       vsel_vm_vo64_vm_vm(mn, vcast_vm_i_i(0, 0), ti));
+  return vreinterpret_vu64_vm(r);
 }
 
-EXPORT CONST vargquad xcast_from_int64q(vmask a) {
+EXPORT CONST vargquad xcast_from_int64q(vint64 ia) {
+  vmask a = vreinterpret_vm_vi64(ia);
   a = vadd64_vm_vm_vm(a, vcast_vm_i_i(0x80000000, 0));
   vint h = vcastu_vi_vi2(vcast_vi2_vm(vsrl64_vm_vm_i(a, 8)));
   vint m = vcastu_vi_vi2(vcast_vi2_vm(vand_vm_vm_vm(vsll64_vm_vm_i(a, 12), vcast_vm_i_i(0xfffff, 0))));
@@ -2442,7 +2454,8 @@ EXPORT CONST vargquad xcast_from_int64q(vmask a) {
   return vcast_aq_vm2(vcast_vf128_tdx(vcast_tdx_vd3(d3)));
 }
 
-EXPORT CONST vargquad xcast_from_uint64q(vmask a) {
+EXPORT CONST vargquad xcast_from_uint64q(vuint64 ia) {
+  vmask a = vreinterpret_vm_vu64(ia);
   vint h = vcastu_vi_vi2(vcast_vi2_vm(vsrl64_vm_vm_i(a, 8)));
   vint m = vcastu_vi_vi2(vcast_vi2_vm(vand_vm_vm_vm(vsll64_vm_vm_i(a, 12), vcast_vm_i_i(0xfffff, 0))));
   vint l = vcastu_vi_vi2(vcast_vi2_vm(vand_vm_vm_vm(vsll64_vm_vm_i(a, 32), vcast_vm_i_i(0xfffff, 0))));
@@ -2457,7 +2470,7 @@ EXPORT CONST vargquad xcast_from_uint64q(vmask a) {
 
 // Float128 comparison functions
 
-EXPORT CONST vint xcmpltq(vargquad ax, vargquad ay) {
+EXPORT CONST vint xicmpltq(vargquad ax, vargquad ay) {
   vmask2 x = vcast_vm2_aq(ax), cx = vcmpcnv_vm2_vm2(x);
   vmask2 y = vcast_vm2_aq(ay), cy = vcmpcnv_vm2_vm2(y);
   vopmask o = visnanq_vo_vm2(x);
@@ -2468,7 +2481,7 @@ EXPORT CONST vint xcmpltq(vargquad ax, vargquad ay) {
   return vi;
 }
 
-EXPORT CONST vint xcmpgtq(vargquad ax, vargquad ay) {
+EXPORT CONST vint xicmpgtq(vargquad ax, vargquad ay) {
   vmask2 x = vcast_vm2_aq(ax), cx = vcmpcnv_vm2_vm2(x);
   vmask2 y = vcast_vm2_aq(ay), cy = vcmpcnv_vm2_vm2(y);
   vopmask o = visnanq_vo_vm2(x);
@@ -2479,7 +2492,7 @@ EXPORT CONST vint xcmpgtq(vargquad ax, vargquad ay) {
   return vi;
 }
 
-EXPORT CONST vint xcmpleq(vargquad ax, vargquad ay) {
+EXPORT CONST vint xicmpleq(vargquad ax, vargquad ay) {
   vmask2 x = vcast_vm2_aq(ax), cx = vcmpcnv_vm2_vm2(x);
   vmask2 y = vcast_vm2_aq(ay), cy = vcmpcnv_vm2_vm2(y);
   vopmask o = visnanq_vo_vm2(x);
@@ -2492,7 +2505,7 @@ EXPORT CONST vint xcmpleq(vargquad ax, vargquad ay) {
   return vi;
 }
 
-EXPORT CONST vint xcmpgeq(vargquad ax, vargquad ay) {
+EXPORT CONST vint xicmpgeq(vargquad ax, vargquad ay) {
   vmask2 x = vcast_vm2_aq(ax), cx = vcmpcnv_vm2_vm2(x);
   vmask2 y = vcast_vm2_aq(ay), cy = vcmpcnv_vm2_vm2(y);
   vopmask o = visnanq_vo_vm2(x);
@@ -2505,7 +2518,7 @@ EXPORT CONST vint xcmpgeq(vargquad ax, vargquad ay) {
   return vi;
 }
 
-EXPORT CONST vint xcmpeqq(vargquad ax, vargquad ay) {
+EXPORT CONST vint xicmpeqq(vargquad ax, vargquad ay) {
   vmask2 x = vcast_vm2_aq(ax), cx = vcmpcnv_vm2_vm2(x);
   vmask2 y = vcast_vm2_aq(ay), cy = vcmpcnv_vm2_vm2(y);
   vopmask o = visnanq_vo_vm2(x);
@@ -2515,7 +2528,7 @@ EXPORT CONST vint xcmpeqq(vargquad ax, vargquad ay) {
   return vi;
 }
 
-EXPORT CONST vint xcmpneq(vargquad ax, vargquad ay) {
+EXPORT CONST vint xicmpneq(vargquad ax, vargquad ay) {
   vmask2 x = vcast_vm2_aq(ax), cx = vcmpcnv_vm2_vm2(x);
   vmask2 y = vcast_vm2_aq(ay), cy = vcmpcnv_vm2_vm2(y);
   vopmask o = visnanq_vo_vm2(x);
@@ -2525,7 +2538,7 @@ EXPORT CONST vint xcmpneq(vargquad ax, vargquad ay) {
   return vi;
 }
 
-EXPORT CONST vint xcmpq(vargquad ax, vargquad ay) {
+EXPORT CONST vint xicmpq(vargquad ax, vargquad ay) {
   vmask2 x = vcast_vm2_aq(ax), cx = vcmpcnv_vm2_vm2(x);
   vmask2 y = vcast_vm2_aq(ay), cy = vcmpcnv_vm2_vm2(y);
 
@@ -2537,10 +2550,20 @@ EXPORT CONST vint xcmpq(vargquad ax, vargquad ay) {
   return vcast_vi_vm(m);
 }
 
-EXPORT CONST vint xunordq(vargquad ax, vargquad ay) {
+EXPORT CONST vint xiunordq(vargquad ax, vargquad ay) {
   vopmask o = vor_vo_vo_vo(visnanq_vo_vm2(vcast_vm2_aq(ax)), visnanq_vo_vm2(vcast_vm2_aq(ay)));
   vint vi = vsel_vi_vo_vi_vi(vcast_vo32_vo64(o), vcast_vi_i(1), vcast_vi_i(0));
   return vi;
+}
+
+EXPORT CONST vargquad xiselectq(vint vi, vargquad a0, vargquad a1) {
+  vmask2 m0 = vcast_vm2_aq(a0), m1 = vcast_vm2_aq(a1);
+  vopmask o = vcast_vo64_vo32(veq_vo_vi_vi(vi, vcast_vi_i(0)));
+  vmask2 m2 = vm2setxy_vm2_vm_vm(
+    vsel_vm_vo64_vm_vm(o, vm2getx_vm_vm2(m0), vm2getx_vm_vm2(m1)),
+    vsel_vm_vo64_vm_vm(o, vm2gety_vm_vm2(m0), vm2gety_vm_vm2(m1))
+  );
+  return vcast_aq_vm2(m2);
 }
 
 // Float128 arithmetic functions
@@ -2769,7 +2792,8 @@ EXPORT CONST vargquad xatanq_u10(vargquad aa) {
 
 //
 
-EXPORT CONST vargquad xloadq(Sleef_quad *p) { // Sleef_load_quad2
+#ifndef ENABLE_SVE
+EXPORT CONST vargquad xloadq(Sleef_quad *p) {
   vargquad a;
   for(int i=0;i<VECTLENDP;i++) {
     memcpy((char *)&a + (i            ) * sizeof(double), (char *)(p + i)                 , sizeof(double));
@@ -2778,25 +2802,89 @@ EXPORT CONST vargquad xloadq(Sleef_quad *p) { // Sleef_load_quad2
   return a;
 }
 
-EXPORT void xstoreq(Sleef_quad *p, vargquad a) { // Sleef_store_quad2
+EXPORT void xstoreq(Sleef_quad *p, vargquad a) {
   for(int i=0;i<VECTLENDP;i++) {
     memcpy((char *)(p + i)                 , (char *)&a + (i            ) * sizeof(double), sizeof(double));
     memcpy((char *)(p + i) + sizeof(double), (char *)&a + (i + VECTLENDP) * sizeof(double), sizeof(double));
   }
 }
 
-EXPORT CONST Sleef_quad xgetq(vargquad a, int index) { // Sleef_get_quad2
+EXPORT CONST Sleef_quad xgetq(vargquad a, int index) {
   Sleef_quad q;
   memcpy((char *)&q                 , (char *)&a + (index            ) * sizeof(double), sizeof(double));
   memcpy((char *)&q + sizeof(double), (char *)&a + (index + VECTLENDP) * sizeof(double), sizeof(double));
   return q;
 }
 
-EXPORT CONST vargquad xsetq(vargquad a, int index, Sleef_quad q) { // Sleef_set_quad2
+EXPORT CONST vargquad xsetq(vargquad a, int index, Sleef_quad q) {
   memcpy((char *)&a + (index            ) * sizeof(double), (char *)&q                 , sizeof(double));
   memcpy((char *)&a + (index + VECTLENDP) * sizeof(double), (char *)&q + sizeof(double), sizeof(double));
   return a;
 }
+
+EXPORT CONST vargquad xsplatq(Sleef_quad p) {
+  vargquad a;
+  for(int i=0;i<VECTLENDP;i++) {
+    memcpy((char *)&a + (i            ) * sizeof(double), (char *)(&p)                 , sizeof(double));
+    memcpy((char *)&a + (i + VECTLENDP) * sizeof(double), (char *)(&p) + sizeof(double), sizeof(double));
+  }
+  return a;
+}
+#else
+EXPORT CONST vargquad xloadq(Sleef_quad *p) {
+  double a[VECTLENDP*2];
+  for(int i=0;i<VECTLENDP;i++) {
+    memcpy((char *)a + (i            ) * sizeof(double), (char *)(p + i)                 , sizeof(double));
+    memcpy((char *)a + (i + VECTLENDP) * sizeof(double), (char *)(p + i) + sizeof(double), sizeof(double));
+  }
+
+  return vm2setxy_vm2_vm_vm(svld1_s32(ptrue, (int32_t *)&a[0]), svld1_s32(ptrue, (int32_t *)&a[VECTLENDP]));
+}
+
+EXPORT void xstoreq(Sleef_quad *p, vargquad m) {
+  double a[VECTLENDP*2];
+  svst1_s32(ptrue, (int32_t *)&a[0        ], vm2getx_vm_vm2(m));
+  svst1_s32(ptrue, (int32_t *)&a[VECTLENDP], vm2gety_vm_vm2(m));
+
+  for(int i=0;i<VECTLENDP;i++) {
+    memcpy((char *)(p + i)                 , (char *)a + (i            ) * sizeof(double), sizeof(double));
+    memcpy((char *)(p + i) + sizeof(double), (char *)a + (i + VECTLENDP) * sizeof(double), sizeof(double));
+  }
+}
+
+EXPORT CONST Sleef_quad xgetq(vargquad m, int index) {
+  double a[VECTLENDP*2];
+  svst1_s32(ptrue, (int32_t *)&a[0        ], vm2getx_vm_vm2(m));
+  svst1_s32(ptrue, (int32_t *)&a[VECTLENDP], vm2gety_vm_vm2(m));
+
+  Sleef_quad q;
+  memcpy((char *)&q                 , (char *)a + (index            ) * sizeof(double), sizeof(double));
+  memcpy((char *)&q + sizeof(double), (char *)a + (index + VECTLENDP) * sizeof(double), sizeof(double));
+  return q;
+}
+
+EXPORT CONST vargquad xsetq(vargquad m, int index, Sleef_quad q) {
+  double a[VECTLENDP*2];
+  svst1_s32(ptrue, (int32_t *)&a[0        ], vm2getx_vm_vm2(m));
+  svst1_s32(ptrue, (int32_t *)&a[VECTLENDP], vm2gety_vm_vm2(m));
+
+  memcpy((char *)a + (index            ) * sizeof(double), (char *)&q                 , sizeof(double));
+  memcpy((char *)a + (index + VECTLENDP) * sizeof(double), (char *)&q + sizeof(double), sizeof(double));
+
+  return vm2setxy_vm2_vm_vm(svld1_s32(ptrue, (int32_t *)&a[0]), svld1_s32(ptrue, (int32_t *)&a[VECTLENDP]));
+}
+
+EXPORT CONST vargquad xsplatq(Sleef_quad p) {
+  double a[VECTLENDP*2];
+
+  for(int i=0;i<VECTLENDP;i++) {
+    memcpy((char *)a + (i            ) * sizeof(double), (char *)(&p)                 , sizeof(double));
+    memcpy((char *)a + (i + VECTLENDP) * sizeof(double), (char *)(&p) + sizeof(double), sizeof(double));
+  }
+
+  return vm2setxy_vm2_vm_vm(svld1_s32(ptrue, (int32_t *)&a[0]), svld1_s32(ptrue, (int32_t *)&a[VECTLENDP]));
+}
+#endif
 
 #ifdef ENABLE_PUREC_SCALAR
 #include <stdio.h>
@@ -3377,6 +3465,7 @@ static int xvprintf(size_t (*consumer)(const char *ptr, size_t size, void *arg),
     // Read size prefix
 
     int flag_quad = 0, flag_ptrquad = 0;
+    int size_prefix = 0, subfmt_processed = 0;
 
     if (*fmt == 'Q') {
       flag_quad = 1;
@@ -3386,12 +3475,21 @@ static int xvprintf(size_t (*consumer)(const char *ptr, size_t size, void *arg),
       fmt++;
     } else {
       int pl = 0;
-      if (*fmt == 'h' || *fmt == 'l' || *fmt == 'j' || *fmt == 'z' || *fmt == 't' || *fmt == 'L') pl = 1;
-      if ((*fmt == 'h' && *(fmt+1) == 'h') || (*fmt == 'l' && *(fmt+1) == 'l')) pl = 2;
+      if (*fmt == 'h' || *fmt == 'l' || *fmt == 'j' || *fmt == 'z' || *fmt == 't' || *fmt == 'L') {
+	size_prefix = *fmt;
+	pl = 1;
+      }
+      if ((*fmt == 'h' && *(fmt+1) == 'h') || (*fmt == 'l' && *(fmt+1) == 'l')) {
+	size_prefix = *fmt + 256 * *(fmt+1);
+	pl = 2;
+      }
       fmt += pl;
     }
 
     // Call type-specific function
+
+    va_list ap2;
+    va_copy(ap2, ap);
 
     switch(*fmt) {
     case 'E': case 'F': case 'G': case 'A':
@@ -3400,34 +3498,81 @@ static int xvprintf(size_t (*consumer)(const char *ptr, size_t size, void *arg),
     case 'e': case 'f': case 'g': case 'a':
       {
 	vargquad value;
-	if (flag_quad) {
-	  value = va_arg(ap, vargquad);
-	} else if (flag_ptrquad) {
-	  value = *(vargquad *)va_arg(ap, vargquad *);
-	} else {
-	  goto other_types;
+	if (flag_quad || flag_ptrquad) {
+	  if (flag_quad) {
+	    value = va_arg(ap, vargquad);
+	  } else {
+	    value = *(vargquad *)va_arg(ap, vargquad *);
+	  }
+	  if (tolower(*fmt) == 'a') {
+	    snprintquadhex(xbuf, XBUFSIZE, value, width, precision, flags);
+	  } else {
+	    snprintquad(xbuf, XBUFSIZE, value, tolower(*fmt), width, precision, flags);
+	  }
+	  outlen += (*consumer)(xbuf, strlen(xbuf), arg);
+	  subfmt_processed = 1;
+	  break;
 	}
-	if (tolower(*fmt) == 'a') {
-	  snprintquadhex(xbuf, XBUFSIZE, value, width, precision, flags);
-	} else {
-	  snprintquad(xbuf, XBUFSIZE, value, tolower(*fmt), width, precision, flags);
+
+	if (size_prefix == 0) { // double and long double
+	  va_arg(ap, double);
+	} else if (size_prefix == 'L') {
+	  va_arg(ap, long double);
+	} else errorflag = 1;
+      }
+      break;
+
+    case 'd': case 'i': case 'u': case 'o': case 'x': case 'X':
+      {
+	switch(size_prefix) {
+	case 0: case 'h': case 'h' + 256*'h': va_arg(ap, int); break;
+	case 'l': va_arg(ap, long int); break;
+	case 'j': va_arg(ap, intmax_t); break;
+	case 'z': va_arg(ap, size_t); break;
+	case 't': va_arg(ap, ptrdiff_t); break;
+	case 'l' + 256*'l': va_arg(ap, long long int); break;
+	default: errorflag = 1; break;
 	}
-	outlen += (*consumer)(xbuf, strlen(xbuf), arg);
+      }
+      break;
+
+    case 'c':
+      if (size_prefix == 0) {
+	va_arg(ap, int);
+      } else
+#if 0
+	if (size_prefix == 'l') {
+	  va_arg(ap, wint_t); // wint_t is not defined
+	} else
+#endif
+	  errorflag = 1;
+      break;
+
+    case 's':
+      if (size_prefix == 0 || size_prefix == 'l') {
+	va_arg(ap, void *);
+      } else errorflag = 1;
+      break;
+
+    case 'p': case 'n':
+      {
+	if ((*fmt == 'p' && size_prefix != 0) || size_prefix == 'L') { errorflag = 1; break; }
+	va_arg(ap, void *);
       }
       break;
 
     default:
-    other_types:
-      {
-	char *subfmt = malloc(fmt - subfmtstart + 2);
-	memcpy(subfmt, subfmtstart, fmt - subfmtstart + 1);
-	subfmt[fmt - subfmtstart + 1] = 0;
-	int ret = vsnprintf(xbuf, XBUFSIZE, subfmt, ap);
-	free(subfmt);
-	if (ret < 0) { errorflag = 1; break; }
-	outlen += (*consumer)(xbuf, strlen(xbuf), arg);
-      }
-      break;
+      errorflag = 1;
+    }
+
+    if (!subfmt_processed) {
+      char *subfmt = malloc(fmt - subfmtstart + 2);
+      memcpy(subfmt, subfmtstart, fmt - subfmtstart + 1);
+      subfmt[fmt - subfmtstart + 1] = 0;
+      int ret = vsnprintf(xbuf, XBUFSIZE, subfmt, ap2);
+      free(subfmt);
+      if (ret < 0) { errorflag = 1; break; }
+      outlen += (*consumer)(xbuf, strlen(xbuf), arg);
     }
 
     fmt++;
@@ -3602,6 +3747,19 @@ EXPORT void Sleef_unregisterPrintfHook() {
 
 #if 0
 int main(int argc, char **argv) {
+  Sleef_quad q0 = strtoflt128(argv[1], NULL);
+  Sleef_quad q1 = strtoflg128(argv[2], NULL);
+
+  vint64 ti = xcast_to_int64q(q0);
+  printfvint64("t ", ti);
+
+  int64_t ci = (int64_t)q0;
+  printf("c %ld\n", ci);
+}
+#endif
+
+#if 1
+int main(int argc, char **argv) {
   xsrand(time(NULL) + (int)getpid());
   int lane = xrand() % VECTLENDP;
   printf("lane = %d\n", lane);
@@ -3676,7 +3834,7 @@ int main(int argc, char **argv) {
   printf("test : %s\n", sprintfr(fr2));
 #endif
 
-#if 0
+#if 1
   a2 = xdivq_u05(a0, a1);
   mpfr_div(fr2, fr0, fr1, GMP_RNDN);
 
@@ -3687,7 +3845,7 @@ int main(int argc, char **argv) {
   printf("test : %s\n", sprintfr(fr2));
 #endif
 
-#if 0
+#if 1
   a2 = xsqrtq_u05(a0);
   mpfr_sqrt(fr2, fr0, GMP_RNDN);
 
@@ -3698,7 +3856,7 @@ int main(int argc, char **argv) {
   printf("test : %s\n", sprintfr(fr2));
 #endif
 
-#if 0
+#if 1
   a2 = xsinq_u10(a0);
   mpfr_sin(fr2, fr0, GMP_RNDN);
 

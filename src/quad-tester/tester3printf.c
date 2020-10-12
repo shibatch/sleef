@@ -105,6 +105,25 @@ static void testem(MD5_CTX *ctx, Sleef_quad val, char *types) {
   }
 }
 
+static int test2(const char *fmt, ...) {
+  static char tbuf[256], cbuf[256];
+  
+  va_list ap;
+  va_start(ap, fmt);
+  int tret = Sleef_vsnprintf(tbuf, 255, fmt, ap);
+  va_end(ap);
+
+  va_start(ap, fmt);
+  int cret = vsnprintf(cbuf, 255, fmt, ap);
+  va_end(ap);
+
+  int success = tret == cret && strcmp(tbuf, cbuf) == 0;
+
+  if (!success) fprintf(stderr, "fmt = %s\ntret = [%s]\ncret = [%s]\n", fmt, tbuf, cbuf);
+
+  return success;
+}
+
 int main(int argc, char **argv) {
 #if __GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ > 13)
 #pragma GCC diagnostic ignored "-Wformat"
@@ -187,6 +206,31 @@ int main(int argc, char **argv) {
   }
 
   int success = 1;
+
+  //
+
+  success = success && test2("head %d tail", 123);
+  success = success && test2("head %.8d %hhd %hd %d %ld %lld %jd %zd %td %.4d tail",
+			     123, (signed char)1, (short int)2, (int)3, (long int)4, (long long int)5, (intmax_t)6, (size_t)7, (ptrdiff_t) 8, 321);
+  success = success && test2("head %10.8d %hhi %hi %i %li %lli %ji %zi %ti %8.5d tail",
+			     123, (signed char)1, (short int)2, (int)3, (long int)4, (long long int)5, (intmax_t)6, (size_t)7, (ptrdiff_t) 8, 321);
+  success = success && test2("head %-10d %hhx %hx %x %lx %llx %jx %zx %tx %-10.9d tail",
+			     123, (unsigned char)1, (short unsigned)2, (unsigned)3, (long unsigned)4, (long long unsigned)5, (uintmax_t)6, (size_t)7, (ptrdiff_t) 8, 321);
+  success = success && test2("head %+10d %hhX %hX %X %lX %llX %jX %zX %tX %+10.9d tail",
+			     123, (unsigned char)1, (short unsigned)2, (unsigned)3, (long unsigned)4, (long long unsigned)5, (uintmax_t)6, (size_t)7, (ptrdiff_t) 8, 321);
+  success = success && test2("head %d %hhu %hu %u %lu %llu %ju %zu %tu %d tail",
+			     123, (unsigned char)1, (short unsigned)2, (unsigned)3, (long unsigned)4, (long long unsigned)5, (uintmax_t)6, (size_t)7, (ptrdiff_t) 8, 321);
+  success = success && test2("head %d %hho %ho %o %lo %llo %jo %zo %to %d tail",
+			     123, (unsigned char)1, (short unsigned)2, (unsigned)3, (long unsigned)4, (long long unsigned)5, (uintmax_t)6, (size_t)7, (ptrdiff_t) 8, 321);
+  success = success && test2("head %d %f %F %e %E %g %G %a %A %d tail",
+			     123, 0.11, 0.21, 0.31, 0.41, 0.51, 0.61, 0.71, 0.81, 321);
+  success = success && test2("head %d %Lf %LF %Le %LE %Lg %LG %La %LA %d tail",
+			     123, 0.11L, 0.21L, 0.31L, 0.41L, 0.51L, 0.61L, 0.71L, 0.81L, 321);
+  success = success && test2("head %d %c %s %p %p %d tail", 123, 111, "string", NULL, &success, 321);
+
+  if (!success) exit(-1);
+
+  //
 
   for(int j=0;j<4;j++) {
     MD5_CTX ctx;

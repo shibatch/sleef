@@ -95,6 +95,40 @@ typedef svfloat64x2_t Sleef_svquad;
 
 //
 
+#if defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+#define SLEEF_Q(H, L, E) (						\
+      (union {								\
+	struct {							\
+	  unsigned s : 1;						\
+	  unsigned e : 15;						\
+	  uint64_t h : 48;						\
+	  uint64_t l : 64;						\
+	};								\
+	Sleef_quad q;							\
+      }) {								\
+	.s = (int64_t)(H) < 0 ? 1 : 0,					\
+	.h = ((int64_t)(H) < 0 ? -(int64_t)(H) : (int64_t)(H)) & 0xffffffffffffUL, \
+	.l = (uint64_t)(L),						\
+	.e = (int32_t)(E) + 16383 }.q)
+#else
+#define SLEEF_Q(H, L, E) (						\
+      (union {								\
+	struct {							\
+	  uint64_t l : 64;						\
+	  uint64_t h : 48;						\
+	  unsigned e : 15;						\
+	  unsigned s : 1;						\
+	};								\
+	Sleef_quad q;							\
+      }) {								\
+	.s = (int64_t)(H) < 0 ? 1 : 0,					\
+	.h = ((int64_t)(H) < 0 ? -(int64_t)(H) : (int64_t)(H)) & 0xffffffffffffUL, \
+	.l = (uint64_t)(L),						\
+	.e = (int32_t)(E) + 16383 }.q)
+#endif
+
+//
+
 #include <stdio.h>
 #include <stdarg.h>
 

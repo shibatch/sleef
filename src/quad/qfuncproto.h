@@ -32,12 +32,16 @@ typedef struct {
   9 : vint func(vargquad, vargquad);
   10 : vdouble func(vargquad);
   11 : vargquad func(vdouble);
-  12 : vmask func(vargquad);
-  13 : vargquad func(vmask);
+  12 : vargquad func(Sleef_quad);
+  13 : vargquad func(vint, Sleef_quad, Sleef_quad);
   14 : vargquad func(Sleef_quad *);
   15 : void func(Sleef_quad *, vargquad);
   16 : Sleef_quad func(vargquad, int);
   17 : vargquad func(vargquad, int, Sleef_quad);
+  18 : vint64 func(vargquad);
+  19 : vargquad func(vint64);
+  20 : vuint64 func(vargquad);
+  21 : vargquad func(vuint64);
  */
 
 funcSpec funcList[] = {
@@ -48,25 +52,27 @@ funcSpec funcList[] = {
   { "neg", -1, 0, 0, 0 },
   { "sqrt", 5, 2, 0, 0 },
 
-  { "cmplt", -1, 0, 9, 0 },
-  { "cmple", -1, 0, 9, 0 },
-  { "cmpgt", -1, 0, 9, 0 },
-  { "cmpge", -1, 0, 9, 0 },
-  { "cmpeq", -1, 0, 9, 0 },
-  { "cmpne", -1, 0, 9, 0 },
-  { "cmp"  , -1, 0, 9, 0 },
-  { "unord", -1, 0, 9, 0 },
+  { "icmplt", -1, 0, 9, 0 },
+  { "icmple", -1, 0, 9, 0 },
+  { "icmpgt", -1, 0, 9, 0 },
+  { "icmpge", -1, 0, 9, 0 },
+  { "icmpeq", -1, 0, 9, 0 },
+  { "icmpne", -1, 0, 9, 0 },
+  { "icmp"  , -1, 0, 9, 0 },
+  { "iunord", -1, 0, 9, 0 },
+  { "iselect", -1, 0, 13, 0 },
 
   { "cast_to_double", -1, 0, 10, 0 },
   { "cast_from_double", -1, 0, 11, 0 },
-  { "cast_to_int64", -1, 0, 12, 0 },
-  { "cast_from_int64", -1, 0, 13, 0 },
-  { "cast_to_uint64", -1, 0, 12, 0 },
-  { "cast_from_uint64", -1, 0, 13, 0 },
+  { "cast_to_int64", -1, 0, 18, 0 },
+  { "cast_from_int64", -1, 0, 19, 0 },
+  { "cast_to_uint64", -1, 0, 20, 0 },
+  { "cast_from_uint64", -1, 0, 21, 0 },
   { "load", -1, 0, 14, 0 },
   { "store", -1, 0, 15, 0 },
   { "get", -1, 0, 16, 0 },
   { "set", -1, 0, 17, 0 },
+  { "splat", -1, 0, 12, 0 },
 
   { "sin", 10, 1, 0, 0 },
   { "cos", 10, 1, 0, 0 },

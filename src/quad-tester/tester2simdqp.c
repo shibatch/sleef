@@ -167,15 +167,15 @@ vmask vsetm(vmask v, int idx, uint64_t d) {
   return vreinterpret_vm_vd(vloadu_vd_p((double *)a));
 }
 
-uint64_t vgetm(vmask v, int idx) {
-  uint64_t a[VECTLENDP];
-  vstoreu_v_p_vd((double *)a, vreinterpret_vd_vm(v));
+int64_t vgeti64(vint64 v, int idx) {
+  int64_t a[VECTLENDP];
+  vstoreu_v_p_vd((double *)a, vreinterpret_vd_vm(vreinterpret_vm_vi64(v)));
   return a[idx];
 }
 
-int64_t vgetm_signed(vmask v, int idx) {
-  int64_t a[VECTLENDP];
-  vstoreu_v_p_vd((double *)a, vreinterpret_vd_vm(v));
+uint64_t vgetu64(vuint64 v, int idx) {
+  uint64_t a[VECTLENDP];
+  vstoreu_v_p_vd((double *)a, vreinterpret_vd_vm(vreinterpret_vm_vu64(v)));
   return a[idx];
 }
 
@@ -431,7 +431,7 @@ int main(int argc,char **argv)
     {
       int64_t i64 = mpfr_get_sj(frx, GMP_RNDN);
       vd0 = vreinterpret_vd_vm(vsetm(vreinterpret_vm_vd(vd0), e, i64));
-      t = vget(xcast_from_int64q(vreinterpret_vm_vd(vd0)), e);
+      t = vget(xcast_from_int64q(vreinterpret_vi64_vm(vreinterpret_vm_vd(vd0))), e);
       mpfr_set_sj(frz, i64, GMP_RNDN);
       Sleef_quad q2 = mpfr_get_f128(frz, GMP_RNDN);
 
@@ -444,7 +444,7 @@ int main(int argc,char **argv)
     }
 
     {
-      int64_t td = vgetm_signed(xcast_to_int64q(a0), e);
+      int64_t td = vgeti64(xcast_to_int64q(a0), e);
       int64_t cd = mpfr_get_sj(frx, GMP_RNDZ);
 
       if (cd != td && !isnan(mpfr_get_d(frx, GMP_RNDN))) {
@@ -458,7 +458,7 @@ int main(int argc,char **argv)
     {
       uint64_t u64 = mpfr_get_uj(frx, GMP_RNDN);
       vd0 = vreinterpret_vd_vm(vsetm(vreinterpret_vm_vd(vd0), e, u64));
-      t = vget(xcast_from_uint64q(vreinterpret_vm_vd(vd0)), e);
+      t = vget(xcast_from_uint64q(vreinterpret_vu64_vm(vreinterpret_vm_vd(vd0))), e);
       mpfr_set_uj(frz, u64, GMP_RNDN);
       Sleef_quad q2 = mpfr_get_f128(frz, GMP_RNDN);
 
@@ -471,7 +471,7 @@ int main(int argc,char **argv)
     }
 
     {
-      uint64_t td = vgetm_signed(xcast_to_uint64q(a0), e);
+      uint64_t td = vgetu64(xcast_to_uint64q(a0), e);
       uint64_t cd = mpfr_get_uj(frx, GMP_RNDZ);
 
       if (cd != td && !isnan(mpfr_get_d(frx, GMP_RNDN))) {
@@ -484,80 +484,80 @@ int main(int argc,char **argv)
 
     {
       int ci = mpfr_less_p(frx, fry);
-      int ti = vgeti(xcmpltq(a0, a1), e);
+      int ti = vgeti(xicmpltq(a0, a1), e);
 
       if (ci != ti) {
-	printf(ISANAME " cmpltq arg=%s, %s,  test = %d, corr = %d \n", sprintf128(q0), sprintf128(q1), ti, ci);
+	printf(ISANAME " icmpltq arg=%s, %s,  test = %d, corr = %d \n", sprintf128(q0), sprintf128(q1), ti, ci);
 	fflush(stdout); ecnt++;
       }
     }
 
     {
       int ci = mpfr_greater_p(frx, fry);
-      int ti = vgeti(xcmpgtq(a0, a1), e);
+      int ti = vgeti(xicmpgtq(a0, a1), e);
 
       if (ci != ti) {
-	printf(ISANAME " cmpgtq arg=%s, %s,  test = %d, corr = %d \n", sprintf128(q0), sprintf128(q1), ti, ci);
+	printf(ISANAME " icmpgtq arg=%s, %s,  test = %d, corr = %d \n", sprintf128(q0), sprintf128(q1), ti, ci);
 	fflush(stdout); ecnt++;
       }
     }
 
     {
       int ci = mpfr_lessequal_p(frx, fry);
-      int ti = vgeti(xcmpleq(a0, a1), e);
+      int ti = vgeti(xicmpleq(a0, a1), e);
 
       if (ci != ti) {
-	printf(ISANAME " cmpleq arg=%s, %s,  test = %d, corr = %d \n", sprintf128(q0), sprintf128(q1), ti, ci);
+	printf(ISANAME " icmpleq arg=%s, %s,  test = %d, corr = %d \n", sprintf128(q0), sprintf128(q1), ti, ci);
 	fflush(stdout); ecnt++;
       }
     }
 
     {
       int ci = mpfr_greaterequal_p(frx, fry);
-      int ti = vgeti(xcmpgeq(a0, a1), e);
+      int ti = vgeti(xicmpgeq(a0, a1), e);
 
       if (ci != ti) {
-	printf(ISANAME " cmpgeq arg=%s, %s,  test = %d, corr = %d \n", sprintf128(q0), sprintf128(q1), ti, ci);
+	printf(ISANAME " icmpgeq arg=%s, %s,  test = %d, corr = %d \n", sprintf128(q0), sprintf128(q1), ti, ci);
 	fflush(stdout); ecnt++;
       }
     }
 
     {
       int ci = mpfr_equal_p(frx, fry);
-      int ti = vgeti(xcmpeqq(a0, a1), e);
+      int ti = vgeti(xicmpeqq(a0, a1), e);
 
       if (ci != ti) {
-	printf(ISANAME " cmpeq arg=%s, %s,  test = %d, corr = %d \n", sprintf128(q0), sprintf128(q1), ti, ci);
+	printf(ISANAME " icmpeq arg=%s, %s,  test = %d, corr = %d \n", sprintf128(q0), sprintf128(q1), ti, ci);
 	fflush(stdout); ecnt++;
       }
     }
 
     {
       int ci = mpfr_lessgreater_p(frx, fry);
-      int ti = vgeti(xcmpneq(a0, a1), e);
+      int ti = vgeti(xicmpneq(a0, a1), e);
 
       if (ci != ti) {
-	printf(ISANAME " cmpne arg=%s, %s,  test = %d, corr = %d \n", sprintf128(q0), sprintf128(q1), ti, ci);
+	printf(ISANAME " icmpne arg=%s, %s,  test = %d, corr = %d \n", sprintf128(q0), sprintf128(q1), ti, ci);
 	fflush(stdout); ecnt++;
       }
     }
 
     {
       int ci = mpfr_cmp(frx, fry);
-      int ti = vgeti(xcmpq(a0, a1), e);
+      int ti = vgeti(xicmpq(a0, a1), e);
 
       if (ci != ti) {
-	printf(ISANAME " cmp arg=%s, %s,  test = %d, corr = %d \n", sprintf128(q0), sprintf128(q1), ti, ci);
+	printf(ISANAME " icmp arg=%s, %s,  test = %d, corr = %d \n", sprintf128(q0), sprintf128(q1), ti, ci);
 	fflush(stdout); ecnt++;
       }
     }
 
     {
       int ci = mpfr_unordered_p(frx, fry);
-      int ti = vgeti(xunordq(a0, a1), e);
+      int ti = vgeti(xiunordq(a0, a1), e);
 
       if (ci != ti) {
-	printf(ISANAME " unord arg=%s, %s,  test = %d, corr = %d \n", sprintf128(q0), sprintf128(q1), ti, ci);
+	printf(ISANAME " iunord arg=%s, %s,  test = %d, corr = %d \n", sprintf128(q0), sprintf128(q1), ti, ci);
 	fflush(stdout); ecnt++;
       }
     }
