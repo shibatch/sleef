@@ -67,6 +67,8 @@ typedef __vector double       SLEEF_VECTOR_DOUBLE;
 typedef __vector float        SLEEF_VECTOR_FLOAT;
 typedef __vector int          SLEEF_VECTOR_INT;
 typedef __vector unsigned int SLEEF_VECTOR_UINT;
+typedef __vector long long SLEEF_VECTOR_LONGLONG;
+typedef __vector unsigned long long SLEEF_VECTOR_ULONGLONG;
 #endif
 
 #if defined(__VX__) && defined(__VEC__)
@@ -78,6 +80,7 @@ typedef __vector double       SLEEF_VECTOR_DOUBLE;
 typedef __vector float        SLEEF_VECTOR_FLOAT;
 typedef __vector int          SLEEF_VECTOR_INT;
 typedef __vector unsigned int SLEEF_VECTOR_UINT;
+typedef __vector long long SLEEF_VECTOR_LONGLONG;
 typedef __vector unsigned long long SLEEF_VECTOR_ULONGLONG;
 #endif
 
@@ -126,7 +129,7 @@ typedef struct {
 
 #if !defined(Sleef_quad_DEFINED)
 #define Sleef_quad_DEFINED
-#if defined(__SIZEOF_FLOAT128__) || (defined(__linux__) && defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__)))
+#if defined(__SIZEOF_FLOAT128__) || (defined(__linux__) && defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))) || (defined(__PPC64__) && defined(__GNUC__) && !defined(__clang__) && __GNUC__ >= 8)
 typedef __float128 Sleef_quad;
 #else
 typedef struct { uint64_t x, y; } Sleef_quad;

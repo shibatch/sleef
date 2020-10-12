@@ -75,6 +75,9 @@ typedef __vector signed long long  v__i64;
 typedef __vector unsigned long long  v__u64;
 #define v__b64 __vector __bool long long
 
+typedef __vector long long vint64;
+typedef __vector unsigned long long vuint64;
+
 typedef struct {
   vmask x, y;
 } vmask2;
@@ -836,3 +839,8 @@ static INLINE vint vcast_vi_vm(vmask vm) {
 static INLINE vmask vcast_vm_vi(vint vi) {
   return (vmask) (__vector signed long long) { vi[0], vi[1] };
 }
+
+static INLINE vmask vreinterpret_vm_vi64(vint64 v) { return (vmask)v; }
+static INLINE vint64 vreinterpret_vi64_vm(vmask m) { return (vint64)m; }
+static INLINE vmask vreinterpret_vm_vu64(vuint64 v) { return (vmask)v; }
+static INLINE vuint64 vreinterpret_vu64_vm(vmask m) { return (vuint64)m; }

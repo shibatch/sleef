@@ -56,6 +56,9 @@ typedef int32x4_t vint2;
 typedef float64x2_t vdouble;
 typedef int32x2_t vint;
 
+typedef int64x2_t vint64;
+typedef uint64x2_t vuint64;
+
 typedef struct {
   vmask x, y;
 } vmask2;
@@ -815,3 +818,8 @@ static INLINE vmask vcast_vm_vi(vint vi) {
   return vor_vm_vm_vm(vcast_vm_vi2(vcastu_vi2_vi(vreinterpret_s32_u32(vget_low_u32(vgt_vo_vi_vi(vcast_vi_i(0), vi))))), m);
 }
 static INLINE vint vcast_vi_vm(vmask vm) { return vreinterpret_s32_u32(vmovn_u64(vreinterpretq_u64_u32(vm))); }
+
+static INLINE vmask vreinterpret_vm_vi64(vint64 v)  { return vreinterpretq_u32_s64(v); }
+static INLINE vint64 vreinterpret_vi64_vm(vmask m)  { return vreinterpretq_s64_u32(m); }
+static INLINE vmask vreinterpret_vm_vu64(vuint64 v) { return vreinterpretq_u32_u64(v); }
+static INLINE vuint64 vreinterpret_vu64_vm(vmask m) { return vreinterpretq_u64_u32(m); }

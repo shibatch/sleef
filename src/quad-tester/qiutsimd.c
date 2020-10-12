@@ -252,7 +252,7 @@ typedef union {
     }							\
   }
 
-#define func_m_q(funcStr, funcName) {					\
+#define func_i64_q(funcStr, funcName) {					\
     while (startsWith(buf, funcStr " ")) {				\
       sentinel = 0;							\
       int lane = xrand() % VECTLENDP;					\
@@ -262,14 +262,14 @@ typedef union {
       memrand(&a0, SIZEOF_VARGQUAD);					\
       a0 = xsetq(a0, lane, c0.q);					\
       double d[VECTLENDP];						\
-      vstoreu_v_p_vd(d, vreinterpret_vd_vm(funcName(a0)));		\
+      vstoreu_v_p_vd(d, vreinterpret_vd_vm(vreinterpret_vm_vi64(funcName(a0)))); \
       printf("%" PRIx64 "\n", d2u(d[lane]));				\
       fflush(stdout);							\
       if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
     }									\
   }
 
-#define func_q_m(funcStr, funcName) {			\
+#define func_q_i64(funcStr, funcName) {			\
     while (startsWith(buf, funcStr " ")) {		\
       sentinel = 0;					\
       int lane = xrand() % VECTLENDP;			\
@@ -278,7 +278,42 @@ typedef union {
       double s[VECTLENDP];				\
       memrand(s, sizeof(s));				\
       s[lane] = u2d(u);					\
-      VARGQUAD a0 = funcName(vreinterpret_vm_vd(vloadu_vd_p(s)));	\
+      VARGQUAD a0 = funcName(vreinterpret_vi64_vm(vreinterpret_vm_vd(vloadu_vd_p(s))));	\
+      cnv128 c0;					\
+      c0.q = xgetq(a0, lane);				\
+      printf("%" PRIx64 ":%" PRIx64 "\n", c0.h, c0.l);	\
+      fflush(stdout);					\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;	\
+    }							\
+  }
+
+#define func_u64_q(funcStr, funcName) {					\
+    while (startsWith(buf, funcStr " ")) {				\
+      sentinel = 0;							\
+      int lane = xrand() % VECTLENDP;					\
+      cnv128 c0;							\
+      sscanf(buf, funcStr " %" PRIx64 ":%" PRIx64, &c0.h, &c0.l);	\
+      VARGQUAD a0;							\
+      memrand(&a0, SIZEOF_VARGQUAD);					\
+      a0 = xsetq(a0, lane, c0.q);					\
+      double d[VECTLENDP];						\
+      vstoreu_v_p_vd(d, vreinterpret_vd_vm(vreinterpret_vm_vu64(funcName(a0)))); \
+      printf("%" PRIx64 "\n", d2u(d[lane]));				\
+      fflush(stdout);							\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
+    }									\
+  }
+
+#define func_q_u64(funcStr, funcName) {			\
+    while (startsWith(buf, funcStr " ")) {		\
+      sentinel = 0;					\
+      int lane = xrand() % VECTLENDP;			\
+      uint64_t u;					\
+      sscanf(buf, funcStr " %" PRIx64, &u);		\
+      double s[VECTLENDP];				\
+      memrand(s, sizeof(s));				\
+      s[lane] = u2d(u);					\
+      VARGQUAD a0 = funcName(vreinterpret_vu64_vm(vreinterpret_vm_vd(vloadu_vd_p(s))));	\
       cnv128 c0;					\
       c0.q = xgetq(a0, lane);				\
       printf("%" PRIx64 ":%" PRIx64 "\n", c0.h, c0.l);	\
@@ -376,7 +411,27 @@ int do_test(int argc, char **argv) {
     printf("%d\n", k);
     fflush(stdout);
   }
-  
+
+#if !defined(ENABLE_PUREC_SCALAR) && !defined(ENABLE_PURECFMA_SCALAR)
+  // Do simple testing on splat, select and SLEEF_Q
+  {
+    VARGQUAD v0 = xsplatq(SLEEF_Q(+0x1921fb54442d1LL, 0x8469898cc51701b8ULL, 1));
+    VARGQUAD v1 = xsplatq(SLEEF_Q(+0x0000000000000LL, 0x0000000000000000ULL, 0));
+    v1 = xsetq(v1, 1, SLEEF_Q(+0x15bf0a8b14576LL, 0x95355fb8ac404e7aULL, 1));
+    v1 = xmulq_u05(v0, v1);
+
+    vint vi = xicmpeqq(v1, xsplatq(SLEEF_Q(+0x1114580b45d47LL, 0x49e6108579a2d0caULL, 3)));
+    int t[VECTLENDP*2];
+    memset(t, 0, sizeof(t));
+    vstoreu_v_p_vi(t, vi);
+
+    if (!(t[0] == 0 && t[1] == 1)) {
+      fprintf(stderr, "Testing on splat and select failed\n");
+      exit(-1);
+    }
+  }
+#endif
+
   char buf[BUFSIZE];
   fgets(buf, BUFSIZE-1, stdin);
   int sentinel = 0;
@@ -404,23 +459,25 @@ int do_test(int argc, char **argv) {
     func_q_q("negq", xnegq);
     func_q_d("cast_from_doubleq", xcast_from_doubleq);
     func_d_q("cast_to_doubleq", xcast_to_doubleq);
-    func_q_m("cast_from_int64q", xcast_from_int64q);
-    func_m_q("cast_to_int64q", xcast_to_int64q);
-    func_q_m("cast_from_uint64q", xcast_from_uint64q);
-    func_m_q("cast_to_uint64q", xcast_to_uint64q);
-    func_i_q_q("cmpltq", xcmpltq);
-    func_i_q_q("cmpgtq", xcmpgtq);
-    func_i_q_q("cmpleq", xcmpleq);
-    func_i_q_q("cmpgeq", xcmpgeq);
-    func_i_q_q("cmpeqq", xcmpeqq);
-    func_i_q_q("cmpneq", xcmpneq);
-    func_i_q_q("cmpq", xcmpq);
-    func_i_q_q("unordq", xunordq);
+    func_q_i64("cast_from_int64q", xcast_from_int64q);
+    func_i64_q("cast_to_int64q", xcast_to_int64q);
+    func_q_u64("cast_from_uint64q", xcast_from_uint64q);
+    func_u64_q("cast_to_uint64q", xcast_to_uint64q);
+    func_i_q_q("icmpltq", xicmpltq);
+    func_i_q_q("icmpgtq", xicmpgtq);
+    func_i_q_q("icmpleq", xicmpleq);
+    func_i_q_q("icmpgeq", xicmpgeq);
+    func_i_q_q("icmpeqq", xicmpeqq);
+    func_i_q_q("icmpneq", xicmpneq);
+    func_i_q_q("icmpq", xicmpq);
+    func_i_q_q("iunordq", xiunordq);
     func_strtoq("strtoq");
     func_snprintf_40Qg("snprintf_40Qg");
     func_snprintf_Qa("snprintf_Qa");
     sentinel++;
   }
+
+  //
 
   return 0;
 }

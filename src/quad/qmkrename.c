@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
     fprintf(stderr, "\n");
 
     fprintf(stderr, "Generate a part of header for library functions\n");
-    fprintf(stderr, "Usage : %s <width> <vargquad type> <vargquad2 type> <vdouble type> <vfloat type> <vmask type> <vint type> <Macro to enable> [<isa>]\n", argv[0]);
+    fprintf(stderr, "Usage : %s <width> <vargquad type> <vargquad2 type> <vdouble type> <vfloat type> <vmask type> <vint type> <vint64 type> <vuint64 type> <Macro to enable> [<isa>]\n", argv[0]);
     fprintf(stderr, "\n");
 
     exit(-1);
@@ -51,9 +51,11 @@ int main(int argc, char **argv) {
     char *vfloatname = argv[5];
     char *vmaskname = argv[6];
     char *vintname = argv[7];
-    char *architecture = argv[8];
-    char *isaname = argc == 10 ? argv[9] : "";
-    char *isaub = argc == 10 ? "_" : "";
+    char *vint64name = argv[8];
+    char *vuint64name = argv[9];
+    char *architecture = argv[10];
+    char *isaname = argc == 12 ? argv[11] : "";
+    char *isaub = argc == 12 ? "_" : "";
 
     if (strcmp(isaname, "sve") == 0) wqp = "x";
 
@@ -205,34 +207,19 @@ int main(int argc, char **argv) {
 	  }
 	  break;
 	case 12:
-	  if (funcList[i].ulp >= 0) {
-	    printf("IMPORT CONST %s Sleef_%sq%s_u%02d%s(%s);\n",
-		   vmaskname,
-		   funcList[i].name, wqp,
-		   funcList[i].ulp, isaname,
-		   vargquadname);
-	  } else {
-	    printf("IMPORT CONST %s Sleef_%sq%s%s%s(%s);\n",
-		   vmaskname,
-		   funcList[i].name, wqp,
-		   isaub, isaname,
-		   vargquadname);
-	  }
+	  assert(funcList[i].ulp == -1);
+	  printf("IMPORT CONST %s Sleef_%sq%s%s%s(Sleef_quad);\n",
+		 vargquadname,
+		 funcList[i].name, wqp,
+		 isaub, isaname);
 	  break;
 	case 13:
-	  if (funcList[i].ulp >= 0) {
-	    printf("IMPORT CONST %s Sleef_%sq%s_u%02d%s(%s);\n",
-		   vargquadname,
-		   funcList[i].name, wqp,
-		   funcList[i].ulp, isaname,
-		   vmaskname);
-	  } else {
-	    printf("IMPORT CONST %s Sleef_%sq%s%s%s(%s);\n",
-		   vargquadname,
-		   funcList[i].name, wqp,
-		   isaub, isaname,
-		   vmaskname);
-	  }
+	  assert(funcList[i].ulp == -1);
+	  printf("IMPORT CONST %s Sleef_%sq%s%s%s(%s, Sleef_quad, Sleef_quad);\n",
+		 vargquadname,
+		 funcList[i].name, wqp,
+		 isaub, isaname,
+		 vintname);
 	  break;
 
 	case 14:
@@ -263,6 +250,66 @@ int main(int argc, char **argv) {
 		 funcList[i].name, wqp,
 		 isaub, isaname,
 		 vargquadname);
+	  break;
+	case 18:
+	  if (funcList[i].ulp >= 0) {
+	    printf("IMPORT CONST %s Sleef_%sq%s_u%02d%s(%s);\n",
+		   vint64name,
+		   funcList[i].name, wqp,
+		   funcList[i].ulp, isaname,
+		   vargquadname);
+	  } else {
+	    printf("IMPORT CONST %s Sleef_%sq%s%s%s(%s);\n",
+		   vint64name,
+		   funcList[i].name, wqp,
+		   isaub, isaname,
+		   vargquadname);
+	  }
+	  break;
+	case 19:
+	  if (funcList[i].ulp >= 0) {
+	    printf("IMPORT CONST %s Sleef_%sq%s_u%02d%s(%s);\n",
+		   vargquadname,
+		   funcList[i].name, wqp,
+		   funcList[i].ulp, isaname,
+		   vint64name);
+	  } else {
+	    printf("IMPORT CONST %s Sleef_%sq%s%s%s(%s);\n",
+		   vargquadname,
+		   funcList[i].name, wqp,
+		   isaub, isaname,
+		   vint64name);
+	  }
+	  break;
+	case 20:
+	  if (funcList[i].ulp >= 0) {
+	    printf("IMPORT CONST %s Sleef_%sq%s_u%02d%s(%s);\n",
+		   vuint64name,
+		   funcList[i].name, wqp,
+		   funcList[i].ulp, isaname,
+		   vargquadname);
+	  } else {
+	    printf("IMPORT CONST %s Sleef_%sq%s%s%s(%s);\n",
+		   vuint64name,
+		   funcList[i].name, wqp,
+		   isaub, isaname,
+		   vargquadname);
+	  }
+	  break;
+	case 21:
+	  if (funcList[i].ulp >= 0) {
+	    printf("IMPORT CONST %s Sleef_%sq%s_u%02d%s(%s);\n",
+		   vargquadname,
+		   funcList[i].name, wqp,
+		   funcList[i].ulp, isaname,
+		   vuint64name);
+	  } else {
+	    printf("IMPORT CONST %s Sleef_%sq%s%s%s(%s);\n",
+		   vargquadname,
+		   funcList[i].name, wqp,
+		   isaub, isaname,
+		   vuint64name);
+	  }
 	  break;
 	}
       }

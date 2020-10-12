@@ -56,6 +56,9 @@ typedef __m128i vint;
 typedef __m256 vfloat;
 typedef __m256i vint2;
 
+typedef __m256i vint64;
+typedef __m256i vuint64;
+
 typedef struct {
   vmask x, y;
 } vmask2;
@@ -464,3 +467,8 @@ static INLINE vint vcast_vi_vm(vmask vm) {
   return _mm_or_si128(_mm_castps_si128(_mm_shuffle_ps(_mm_castsi128_ps(_mm256_castsi256_si128(vm)), _mm_set1_ps(0), 0x08)),
   		      _mm_castps_si128(_mm_shuffle_ps(_mm_set1_ps(0), _mm_castsi128_ps(_mm256_extractf128_si256(vm, 1)), 0x80)));
 }
+
+static INLINE vmask vreinterpret_vm_vi64(vint64 v) { return v; }
+static INLINE vint64 vreinterpret_vi64_vm(vmask m) { return m; }
+static INLINE vmask vreinterpret_vm_vu64(vuint64 v) { return v; }
+static INLINE vuint64 vreinterpret_vu64_vm(vmask m) { return m; }

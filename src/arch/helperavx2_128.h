@@ -56,6 +56,9 @@ typedef __m128i vint;
 typedef __m128  vfloat;
 typedef __m128i vint2;
 
+typedef __m128i vint64;
+typedef __m128i vuint64;
+
 typedef struct {
   vmask x, y;
 } vmask2;
@@ -437,3 +440,8 @@ static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) { return _mm_cmpgt_epi64(
 #define vsrl64_vm_vm_i(x, c) _mm_srli_epi64(x, c)
 //@#define vsll64_vm_vm_i(x, c) _mm_slli_epi64(x, c)
 //@#define vsrl64_vm_vm_i(x, c) _mm_srli_epi64(x, c)
+
+static INLINE vmask vreinterpret_vm_vi64(vint64 v) { return v; }
+static INLINE vint64 vreinterpret_vi64_vm(vmask m) { return m; }
+static INLINE vmask vreinterpret_vm_vu64(vuint64 v) { return v; }
+static INLINE vuint64 vreinterpret_vu64_vm(vmask m) { return m; }

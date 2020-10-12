@@ -103,6 +103,9 @@ typedef svint32_t vint2;
 typedef svfloat64_t vdouble;
 typedef svint32_t vint;
 
+typedef svint64_t vint64;
+typedef svuint64_t vuint64;
+
 // Double-double data type with setter/getter functions
 typedef svfloat64x2_t vdouble2;
 static INLINE vdouble  vd2getx_vd_vd2(vdouble2 v) { return svget2_f64(v, 0); }
@@ -1106,3 +1109,8 @@ static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) {
 
 static INLINE vmask vcast_vm_vi(vint vi) { return svreinterpret_s32_s64(svextw_s64_z(ptrue, svreinterpret_s64_s32(vi))); }
 static INLINE vint vcast_vi_vm(vmask vm) { return vand_vm_vm_vm(vm, vcast_vm_i_i(0, 0xffffffff)); }
+
+static INLINE vmask vreinterpret_vm_vi64(vint64 v)  { return svreinterpret_s32_s64(v); }
+static INLINE vint64 vreinterpret_vi64_vm(vmask m)  { return svreinterpret_s64_s32(m); }
+static INLINE vmask vreinterpret_vm_vu64(vuint64 v) { return svreinterpret_s32_u64(v); }
+static INLINE vuint64 vreinterpret_vu64_vm(vmask m) { return svreinterpret_u64_s32(m); }
