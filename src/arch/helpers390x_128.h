@@ -194,8 +194,8 @@ static INLINE vdouble vsel_vd_vo_vd_vd(vopmask o, vdouble x, vdouble y) { return
 static INLINE vfloat vsel_vf_vo_vf_vf(vopmask o, vfloat x, vfloat y) { return vec_sel(y, x, (__vector unsigned int)o); }
 static INLINE vint2 vsel_vi2_vo_vi2_vi2(vopmask o, vint2 x, vint2 y) { return vec_sel(y, x, (__vector unsigned int)o); }
 
-static INLINE int vtestallones_i_vo64(vopmask g) { return g[0] == 0xffffffffffffffffLL && g[1] == 0xffffffffffffffffLL; }
-static INLINE int vtestallones_i_vo32(vopmask g) { return g[0] == 0xffffffffffffffffLL && g[1] == 0xffffffffffffffffLL; }
+static INLINE int vtestallones_i_vo32(vopmask g) { return vec_all_ne((vint2)g, (vint2 ) { 0, 0, 0, 0 }); }
+static INLINE int vtestallones_i_vo64(vopmask g) { return vec_all_ne((__vector unsigned long long)g, (__vector unsigned long long) { 0, 0 }); }
 
 static INLINE vopmask vcast_vo32_vo64(vopmask g) { return (vopmask)(vint) { g[0] != 0 ? -1 : 0, g[1] != 0 ? -1 : 0, 0, 0 }; }
 static INLINE vopmask vcast_vo64_vo32(vopmask g) { return (vopmask) { ((vint)g)[0] != 0 ? 0xffffffffffffffffLL : 0, ((vint)g)[1] != 0 ? 0xffffffffffffffffLL : 0 }; }
