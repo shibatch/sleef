@@ -59,6 +59,9 @@ typedef __m256i vint;
 typedef __m512 vfloat;
 typedef __m512i vint2;
 
+typedef __m512i vint64;
+typedef __m512i vuint64;
+
 typedef struct {
   vmask x, y;
 } vmask2;
@@ -579,3 +582,8 @@ static INLINE vmask vcast_vm_vi(vint vi) {
 static INLINE vint vcast_vi_vm(vmask vm) {
   return _mm512_cvtepi64_epi32(vm);
 }
+
+static INLINE vmask vreinterpret_vm_vi64(vint64 v) { return v; }
+static INLINE vint64 vreinterpret_vi64_vm(vmask m) { return m; }
+static INLINE vmask vreinterpret_vm_vu64(vuint64 v) { return v; }
+static INLINE vuint64 vreinterpret_vu64_vm(vmask m) { return m; }

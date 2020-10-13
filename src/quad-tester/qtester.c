@@ -224,13 +224,14 @@ Sleef_quad child_mulq_u05(Sleef_quad x, Sleef_quad y) { child_q_q_q("mulq_u05", 
 Sleef_quad child_divq_u05(Sleef_quad x, Sleef_quad y) { child_q_q_q("divq_u05", x, y); }
 Sleef_quad child_negq(Sleef_quad x) { child_q_q("negq", x); }
 
-int child_cmpltq(Sleef_quad x, Sleef_quad y) { child_i_q_q("cmpltq", x, y); }
-int child_cmpgtq(Sleef_quad x, Sleef_quad y) { child_i_q_q("cmpgtq", x, y); }
-int child_cmpleq(Sleef_quad x, Sleef_quad y) { child_i_q_q("cmpleq", x, y); }
-int child_cmpgeq(Sleef_quad x, Sleef_quad y) { child_i_q_q("cmpgeq", x, y); }
-int child_cmpeqq(Sleef_quad x, Sleef_quad y) { child_i_q_q("cmpeqq", x, y); }
-int child_cmpneqq(Sleef_quad x, Sleef_quad y) { child_i_q_q("cmpneqq", x, y); }
-int child_unordq(Sleef_quad x, Sleef_quad y) { child_i_q_q("unordq", x, y); }
+int child_icmpltq(Sleef_quad x, Sleef_quad y) { child_i_q_q("icmpltq", x, y); }
+int child_icmpgtq(Sleef_quad x, Sleef_quad y) { child_i_q_q("icmpgtq", x, y); }
+int child_icmpleq(Sleef_quad x, Sleef_quad y) { child_i_q_q("icmpleq", x, y); }
+int child_icmpgeq(Sleef_quad x, Sleef_quad y) { child_i_q_q("icmpgeq", x, y); }
+int child_icmpeqq(Sleef_quad x, Sleef_quad y) { child_i_q_q("icmpeqq", x, y); }
+int child_icmpneq(Sleef_quad x, Sleef_quad y) { child_i_q_q("icmpneq", x, y); }
+int child_icmpq  (Sleef_quad x, Sleef_quad y) { child_i_q_q("icmpq"  , x, y); }
+int child_iunordq(Sleef_quad x, Sleef_quad y) { child_i_q_q("iunordq", x, y); }
 
 Sleef_quad child_cast_from_doubleq(double x) { child_q_d("cast_from_doubleq", x); }
 double child_cast_to_doubleq(Sleef_quad x) { child_d_q("cast_to_doubleq", x); }
@@ -497,32 +498,36 @@ void do_test(int options) {
 
   //
 
-  fprintf(stderr, "cmpltq : ");
-  testComparisonOuterLoop(mpfr_less_p, child_cmpltq, stdCheckVals);
+  fprintf(stderr, "icmpltq : ");
+  testComparisonOuterLoop(mpfr_less_p, child_icmpltq, stdCheckVals);
   checkResult(success, -1);
 
-  fprintf(stderr, "cmpgtq : ");
-  testComparisonOuterLoop(mpfr_greater_p, child_cmpgtq, stdCheckVals);
+  fprintf(stderr, "icmpgtq : ");
+  testComparisonOuterLoop(mpfr_greater_p, child_icmpgtq, stdCheckVals);
   checkResult(success, -1);
 
-  fprintf(stderr, "cmpleq : ");
-  testComparisonOuterLoop(mpfr_lessequal_p, child_cmpleq, stdCheckVals);
+  fprintf(stderr, "icmpleq : ");
+  testComparisonOuterLoop(mpfr_lessequal_p, child_icmpleq, stdCheckVals);
   checkResult(success, -1);
 
-  fprintf(stderr, "cmpgeq : ");
-  testComparisonOuterLoop(mpfr_greaterequal_p, child_cmpgeq, stdCheckVals);
+  fprintf(stderr, "icmpgeq : ");
+  testComparisonOuterLoop(mpfr_greaterequal_p, child_icmpgeq, stdCheckVals);
   checkResult(success, -1);
 
-  fprintf(stderr, "cmpeq : ");
-  testComparisonOuterLoop(mpfr_equal_p, child_cmpeqq, stdCheckVals);
+  fprintf(stderr, "icmpeq : ");
+  testComparisonOuterLoop(mpfr_equal_p, child_icmpeqq, stdCheckVals);
   checkResult(success, -1);
 
-  fprintf(stderr, "cmpneq : ");
-  testComparisonOuterLoop(mpfr_lessgreater_p, child_cmpneqq, stdCheckVals);
+  fprintf(stderr, "icmpne : ");
+  testComparisonOuterLoop(mpfr_lessgreater_p, child_icmpneq, stdCheckVals);
   checkResult(success, -1);
 
-  fprintf(stderr, "unordq : ");
-  testComparisonOuterLoop(mpfr_unordered_p, child_unordq, stdCheckVals);
+  fprintf(stderr, "icmpq : ");
+  testComparisonOuterLoop(mpfr_cmp, child_icmpq, stdCheckVals);
+  checkResult(success, -1);
+
+  fprintf(stderr, "iunordq : ");
+  testComparisonOuterLoop(mpfr_unordered_p, child_iunordq, stdCheckVals);
   checkResult(success, -1);
 
   //
