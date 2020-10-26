@@ -75,7 +75,7 @@ static INLINE VECTOR_CC float32x4_t setfloat32x4_t(float d, int r) { float a[4];
 static INLINE VECTOR_CC float getfloat32x4_t(float32x4_t v, int r) { float a[4]; vst1q_f32(a, v); return unifyValuef(a[r & 3]); }
 #endif
 
-#ifdef __ARM_FEATURE_SVE
+#ifdef AARCH64_SVE
 static INLINE svfloat64_t setsvfloat64_t(double d, int r) { double a[svcntd()]; memrand(a, sizeof(a)); a[r & (svcntd()-1)] = d; return svld1_f64(svptrue_b8(), a); }
 static INLINE double getsvfloat64_t(svfloat64_t v, int r) { double a[svcntd()]; svst1_f64(svptrue_b8(), a, v); return unifyValue(a[r & (svcntd()-1)]); }
 static INLINE svfloat32_t setsvfloat32_t(float d, int r)  { float  a[svcntw()]; memrand(a, sizeof(a)); a[r & (svcntw()-1)] = d; return svld1_f32(svptrue_b8(), a); }
@@ -110,7 +110,7 @@ static INLINE float getSLEEF_VECTOR_FLOAT(__attribute__((vector_size(16))) float
 #define SET(TYPE) set ## TYPE
 #define GET(TYPE) get ## TYPE
 
-#ifndef __ARM_FEATURE_SVE
+#ifndef AARCH64_SVE
 static DPTYPE vd2getx_vd_vd2(TYPE2(DPTYPE) v) { return v.x; }
 static DPTYPE vd2gety_vd_vd2(TYPE2(DPTYPE) v) { return v.y; }
 static SPTYPE vf2getx_vf_vf2(TYPE2(SPTYPE) v) { return v.x; }
