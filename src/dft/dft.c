@@ -306,19 +306,6 @@ static void dispatch(SleefDFT *p, const int N, real *d, const real *s, const int
       *(element_t *)&row[x2].r[y2*2+0] = r;				\
     }} while(0)
 
-#if defined(__zarch__) && defined(__GNUC__) && !defined(__clang__)
-// This is a workaround of a bug in gcc on s390
-static void transpose(real *RESTRICT ALIGNED(256) d, real *RESTRICT ALIGNED(256) s, const int log2n, const int log2m) {
-  for(int y=0;y<(1 << log2n);y++) {
-    for(int x=0;x<(1 << log2m);x++) {
-      real r0 = s[((y << log2m)+x)*2+0];
-      real r1 = s[((y << log2m)+x)*2+1];
-      d[((x << log2n)+y)*2+0] = r0;
-      d[((x << log2n)+y)*2+1] = r1;
-    }
-  }
-}
-#else
 static void transpose(real *RESTRICT ALIGNED(256) d, real *RESTRICT ALIGNED(256) s, const int log2n, const int log2m) {
   if (log2n < LOG2BS || log2m < LOG2BS) {
     for(int y=0;y<(1 << log2n);y++) {
@@ -369,22 +356,8 @@ static void transpose(real *RESTRICT ALIGNED(256) d, real *RESTRICT ALIGNED(256)
     }
   }
 }
-#endif // #if defined(__zarch__) && defined(__GNUC__) && !defined(__clang__)
 
 #ifdef _OPENMP
-#if defined(__zarch__) && defined(__GNUC__) && !defined(__clang__)
-// This is a workaround of a bug in gcc on s390
-static void transposeMT(real *RESTRICT ALIGNED(256) d, real *RESTRICT ALIGNED(256) s, int log2n, int log2m) {
-  for(int y=0;y<(1 << log2n);y++) {
-    for(int x=0;x<(1 << log2m);x++) {
-      real r0 = s[((y << log2m)+x)*2+0];
-      real r1 = s[((y << log2m)+x)*2+1];
-      d[((x << log2n)+y)*2+0] = r0;
-      d[((x << log2n)+y)*2+1] = r1;
-    }
-  }
-}
-#else
 static void transposeMT(real *RESTRICT ALIGNED(256) d, real *RESTRICT ALIGNED(256) s, int log2n, int log2m) {
   if (log2n < LOG2BS || log2m < LOG2BS) {
     for(int y=0;y<(1 << log2n);y++) {
@@ -437,7 +410,6 @@ static void transposeMT(real *RESTRICT ALIGNED(256) d, real *RESTRICT ALIGNED(25
     }
   }
 }
-#endif // #if defined(__zarch__) && defined(__GNUC__) && !defined(__clang__)
 #endif // #ifdef _OPENMP
 
 // Table generator
