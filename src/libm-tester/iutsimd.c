@@ -305,6 +305,14 @@ typedef Sleef_SLEEF_VECTOR_FLOAT_2 vfloat2;
 #endif
 #endif
 
+#ifdef ENABLE_DSPS390X_128
+#define CONFIG 150
+#include "helpers390x_128.h"
+#include "renamedsp128.h"
+typedef Sleef_SLEEF_VECTOR_DOUBLE_2 vdouble2;
+typedef Sleef_SLEEF_VECTOR_FLOAT_2 vfloat2;
+#endif
+
 #ifdef ENABLE_PUREC_SCALAR
 #include "renamepurec_scalar.h"
 #if !defined(USE_INLINE_HEADER)

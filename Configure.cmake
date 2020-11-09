@@ -133,7 +133,7 @@ if((CMAKE_SYSTEM_PROCESSOR MATCHES "x86") OR (CMAKE_SYSTEM_PROCESSOR MATCHES "AM
   command_arguments(ALIAS_PARAMS_AVX512F_DP   8 __m512d __m256i e avx512f)
   command_arguments(ALIAS_PARAMS_AVX512F_SP -16 __m512  __m512i e avx512f)
 
-  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mavx2;-mfma")
+  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mavx2;-mfma;-fno-strict-aliasing")
 
   set(TESTER3_DEFINITIONS_SSE2          ATR=cinz_ DPTYPE=__m128d SPTYPE=__m128 DPTYPESPEC=d2 SPTYPESPEC=f4  EXTSPEC=sse2)
   set(TESTER3_DEFINITIONS_SSE4          ATR=cinz_ DPTYPE=__m128d SPTYPE=__m128 DPTYPESPEC=d2 SPTYPESPEC=f4  EXTSPEC=sse4)
@@ -192,7 +192,7 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
   command_arguments(ALIAS_PARAMS_NEON32_SP -4 float32x4_t int32x4_t - neon)
   command_arguments(ALIAS_PARAMS_NEON32_DP 0)
 
-  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mfpu=vfpv4")
+  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mfpu=vfpv4;-fno-strict-aliasing")
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
   set(SLEEF_ARCH_PPC64 ON CACHE INTERNAL "True for PPC64 architecture.")
 
@@ -210,7 +210,7 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
   set(ALIAS_PARAMS_VSX_DP  2 "__vector double" "__vector int" - vsx)
   set(ALIAS_PARAMS_VSX_SP -4 "__vector float" "__vector int" - vsx)
 
-  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mvsx")
+  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mvsx;-fno-strict-aliasing")
 
   set(TESTER3_DEFINITIONS_VSX      ATR=finz_ DPTYPE=__vector_double SPTYPE=__vector_float DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vsx)
   set(TESTER3_DEFINITIONS_VSXNOFMA ATR=cinz_ DPTYPE=__vector_double SPTYPE=__vector_float DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vsxnofma)
@@ -219,7 +219,7 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "s390x")
   set(SLEEF_ARCH_S390X ON CACHE INTERNAL "True for IBM Z architecture.")
 
   set(SLEEF_HEADER_LIST
-#    VXE_
+    VXE_
     VXE
     VXENOFMA
     VXE2
@@ -228,7 +228,7 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "s390x")
     PURECFMA_SCALAR
   )
 
-#  set(HEADER_PARAMS_VXE_          finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__)
+  set(HEADER_PARAMS_VXE_          finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__)
   set(HEADER_PARAMS_VXE           finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ vxe)
   set(HEADER_PARAMS_VXENOFMA      cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ vxenofma)
   set(HEADER_PARAMS_VXE2          finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ vxe2)
@@ -238,7 +238,7 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "s390x")
   set(ALIAS_PARAMS_VXE2_DP  2 "__vector double" "__vector int" - vxe2)
   set(ALIAS_PARAMS_VXE2_SP -4 "__vector float"  "__vector int" - vxe2)
 
-  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-march=z14;-mzvector")
+  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-march=z14;-mzvector;-fno-strict-aliasing")
 
   set(TESTER3_DEFINITIONS_VXE       ATR=finz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vxe)
   set(TESTER3_DEFINITIONS_VXENOFMA  ATR=cinz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vxenofma)
@@ -347,6 +347,7 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
   # Always compile sleef with -ffp-contract.
   set(FLAGS_STRICTMATH "-ffp-contract=off")
   set(FLAGS_FASTMATH "-ffast-math")
+  set(FLAGS_NOSTRICTALIASING "-fno-strict-aliasing")
 
   # Without the options below, gcc generates calls to libm
   string(CONCAT FLAGS_OTHERS "-fno-math-errno -fno-trapping-math")
@@ -424,10 +425,11 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "Intel")
   set(FLAGS_ENABLE_AVX2128 "-march=core-avx2")
   set(FLAGS_ENABLE_AVX512F "-xCOMMON-AVX512")
   set(FLAGS_ENABLE_AVX512FNOFMA "-xCOMMON-AVX512")
-  set(FLAGS_ENABLE_PURECFMA_SCALAR "-march=core-avx2")
+  set(FLAGS_ENABLE_PURECFMA_SCALAR "-march=core-avx2;-fno-strict-aliasing")
   set(FLAGS_ENABLE_FMA4 "-msse2")  # This is a dummy flag
   set(FLAGS_STRICTMATH "-fp-model strict -Qoption,cpp,--extended_float_type")
   set(FLAGS_FASTMATH "-fp-model fast=2 -Qoption,cpp,--extended_float_type")
+  set(FLAGS_NOSTRICTALIASING "-fno-strict-aliasing")
   set(FLAGS_WALL "-fmax-errors=3 -Wall -Wno-unused -Wno-attributes")
 
   set(FLAGS_NO_ERRNO "")
@@ -442,7 +444,7 @@ set(SLEEF_C_FLAGS "${FLAGS_WALL} ${FLAGS_STRICTMATH} ${FLAGS_OTHERS}")
 if(CMAKE_C_COMPILER_ID MATCHES "GNU" AND CMAKE_C_COMPILER_VERSION VERSION_GREATER 6.99)
   set(DFT_C_FLAGS "${FLAGS_WALL} ${FLAGS_OTHERS}")
 else()
-  set(DFT_C_FLAGS "${FLAGS_WALL} ${FLAGS_FASTMATH} ${FLAGS_OTHERS}")
+  set(DFT_C_FLAGS "${FLAGS_WALL} ${FLAGS_NOSTRICTALIASING} ${FLAGS_FASTMATH} ${FLAGS_OTHERS}")
 endif()
 
 if (CMAKE_SYSTEM_PROCESSOR MATCHES "^i.86$" AND CMAKE_C_COMPILER_ID MATCHES "GNU")
