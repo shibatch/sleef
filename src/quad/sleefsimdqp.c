@@ -106,11 +106,19 @@
 #endif
 #endif
 
-#ifdef ENABLE_ZVECTOR2
+#ifdef ENABLE_VXE
 #define CONFIG 140
 #include "helpers390x_128.h"
 #ifdef DORENAME
-#include "qrenamezvector2.h"
+#include "qrenamevxe.h"
+#endif
+#endif
+
+#ifdef ENABLE_VXE2
+#define CONFIG 150
+#include "helpers390x_128.h"
+#ifdef DORENAME
+#include "qrenamevxe2.h"
 #endif
 #endif
 

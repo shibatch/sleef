@@ -35,23 +35,6 @@ matrix:
       env:
         - LABEL="x86_64-clang"
     - os: linux
-      arch: s390x
-      compiler: clang-10
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - clang-10
-      env:
-        - LABEL="s390x-clang"
-        - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
-    - arch: s390x
-      dist: bionic
-      env:
-        - LABEL="s390x-gcc"
-        - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
-    - os: linux
       arch: arm64
       addons:
         apt:
@@ -79,6 +62,23 @@ matrix:
       dist: bionic
       env:
         - LABEL="ppc64le-clang"
+        - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
+    - arch: s390x
+      dist: bionic
+      env:
+        - LABEL="s390x-gcc"
+        - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
+    - os: linux
+      arch: s390x
+      compiler: clang-10
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - clang-10
+      env:
+        - LABEL="s390x-clang"
         - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
 
 before_install:

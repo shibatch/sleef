@@ -2,5 +2,5 @@
 set -ev
 cd build
 ninja all
-ctest -j `nproc`
+ctest -V -j `nproc`
 ninja install

@@ -170,19 +170,35 @@ extern const double Sleef_rempitabdp[];
 #endif
 #endif
 
-#ifdef ENABLE_ZVECTOR2
+#ifdef ENABLE_VXE
 #define CONFIG 140
 #include "helpers390x_128.h"
 #ifdef DORENAME
-#include "renamezvector2.h"
+#include "renamevxe.h"
 #endif
 #endif
 
-#ifdef ENABLE_ZVECTOR2NOFMA
+#ifdef ENABLE_VXENOFMA
 #define CONFIG 141
 #include "helpers390x_128.h"
 #ifdef DORENAME
-#include "renamezvector2nofma.h"
+#include "renamevxenofma.h"
+#endif
+#endif
+
+#ifdef ENABLE_VXE2
+#define CONFIG 150
+#include "helpers390x_128.h"
+#ifdef DORENAME
+#include "renamevxe2.h"
+#endif
+#endif
+
+#ifdef ENABLE_VXE2NOFMA
+#define CONFIG 151
+#include "helpers390x_128.h"
+#ifdef DORENAME
+#include "renamevxe2nofma.h"
 #endif
 #endif
 

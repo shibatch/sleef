@@ -246,27 +246,51 @@ extern const float Sleef_rempitabsp[];
 #endif
 #endif
 
-#ifdef ENABLE_ZVECTOR2
+#ifdef ENABLE_VXE
 #define CONFIG 140
 #if !defined(SLEEF_GENHEADER)
 #include "helpers390x_128.h"
 #else
-#include "macroonlyZVECTOR2.h"
+#include "macroonlyVXE.h"
 #endif
 #ifdef DORENAME
-#include "renamezvector2.h"
+#include "renamevxe.h"
 #endif
 #endif
 
-#ifdef ENABLE_ZVECTOR2NOFMA
+#ifdef ENABLE_VXENOFMA
 #define CONFIG 141
 #if !defined(SLEEF_GENHEADER)
 #include "helpers390x_128.h"
 #else
-#include "macroonlyZVECTOR2NOFMA.h"
+#include "macroonlyVXENOFMA.h"
 #endif
 #ifdef DORENAME
-#include "renamezvector2nofma.h"
+#include "renamevxenofma.h"
+#endif
+#endif
+
+#ifdef ENABLE_VXE2
+#define CONFIG 150
+#if !defined(SLEEF_GENHEADER)
+#include "helpers390x_128.h"
+#else
+#include "macroonlyVXE2.h"
+#endif
+#ifdef DORENAME
+#include "renamevxe2.h"
+#endif
+#endif
+
+#ifdef ENABLE_VXE2NOFMA
+#define CONFIG 151
+#if !defined(SLEEF_GENHEADER)
+#include "helpers390x_128.h"
+#else
+#include "macroonlyVXE2NOFMA.h"
+#endif
+#ifdef DORENAME
+#include "renamevxe2nofma.h"
 #endif
 #endif
 

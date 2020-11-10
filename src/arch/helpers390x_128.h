@@ -3,14 +3,14 @@
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#if CONFIG == 140 || CONFIG == 141
+#if CONFIG == 140 || CONFIG == 141 || CONFIG == 150 || CONFIG == 151
 
 #if !defined(__VX__) && !defined(SLEEF_GENHEADER)
 #error This helper is for IBM s390x.
 #endif
 
 #if __ARCH__ < 12 && !defined(SLEEF_GENHEADER)
-#error Please specify -march=z14.
+#error Please specify -march=z14 or higher.
 #endif
 
 #else
@@ -31,7 +31,7 @@
 #define VECTLENSP (1 << LOG2VECTLENSP)
 //@#define VECTLENSP (1 << LOG2VECTLENSP)
 
-#if CONFIG == 140
+#if CONFIG == 140 || CONFIG == 150
 #define ENABLE_FMA_DP
 //@#define ENABLE_FMA_DP
 #define ENABLE_FMA_SP
@@ -83,7 +83,12 @@ static INLINE int vavailability_i(int n) {
   return 0;
 }
 
-#define ISANAME "ZVECTOR2"
+#if CONFIG == 140 || CONFIG == 141
+#define ISANAME "VXE"
+#else
+#define ISANAME "VXE2"
+#endif
+
 #define DFTPRIORITY 14
 
 #endif // #if !defined(SLEEF_GENHEADER)
@@ -189,8 +194,8 @@ static INLINE vdouble vsel_vd_vo_vd_vd(vopmask o, vdouble x, vdouble y) { return
 static INLINE vfloat vsel_vf_vo_vf_vf(vopmask o, vfloat x, vfloat y) { return vec_sel(y, x, (__vector unsigned int)o); }
 static INLINE vint2 vsel_vi2_vo_vi2_vi2(vopmask o, vint2 x, vint2 y) { return vec_sel(y, x, (__vector unsigned int)o); }
 
-static INLINE int vtestallones_i_vo64(vopmask g) { return g[0] == 0xffffffffffffffffLL && g[1] == 0xffffffffffffffffLL; }
-static INLINE int vtestallones_i_vo32(vopmask g) { return g[0] == 0xffffffffffffffffLL && g[1] == 0xffffffffffffffffLL; }
+static INLINE int vtestallones_i_vo32(vopmask g) { return vec_all_ne((vint2)g, (vint2 ) { 0, 0, 0, 0 }); }
+static INLINE int vtestallones_i_vo64(vopmask g) { return vec_all_ne((__vector unsigned long long)g, (__vector unsigned long long) { 0, 0 }); }
 
 static INLINE vopmask vcast_vo32_vo64(vopmask g) { return (vopmask)(vint) { g[0] != 0 ? -1 : 0, g[1] != 0 ? -1 : 0, 0, 0 }; }
 static INLINE vopmask vcast_vo64_vo32(vopmask g) { return (vopmask) { ((vint)g)[0] != 0 ? 0xffffffffffffffffLL : 0, ((vint)g)[1] != 0 ? 0xffffffffffffffffLL : 0 }; }
@@ -233,7 +238,7 @@ static INLINE vfloat vnegpos_vf_vf(vfloat d) { return vreinterpret_vf_vm(vxor_vm
 static INLINE vdouble vabs_vd_vd(vdouble d) { return vec_abs(d); }
 static INLINE vdouble vsubadd_vd_vd_vd(vdouble x, vdouble y) { return vadd_vd_vd_vd(x, vnegpos_vd_vd(y)); }
 
-#if CONFIG == 140
+#if CONFIG == 140 || CONFIG == 150
 static INLINE vdouble vmla_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return vec_madd(x, y, z); }
 static INLINE vdouble vmlapn_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return vec_msub(x, y, z); }
 static INLINE vdouble vmlanp_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return vec_nmsub(x, y, z); }
@@ -251,7 +256,7 @@ static INLINE vdouble vfmann_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { retu
 
 static INLINE vfloat vsubadd_vf_vf_vf(vfloat x, vfloat y) { return vadd_vf_vf_vf(x, vnegpos_vf_vf(y)); }
 
-#if CONFIG == 140
+#if CONFIG == 140 || CONFIG == 150
 static INLINE vfloat vmla_vf_vf_vf_vf  (vfloat x, vfloat y, vfloat z) { return __builtin_s390_vfmasb(x, y, z); }
 static INLINE vfloat vmlanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vec_nmsub(x, y, z); }
 static INLINE vfloat vmlapn_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return __builtin_s390_vfmssb(x, y, z); }
