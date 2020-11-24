@@ -326,7 +326,7 @@ static INLINE CONST VECTOR_CC vint vilogbk_vi_vd(vdouble d) {
   vopmask o = vlt_vo_vd_vd(d, vcast_vd_d(4.9090934652977266E-91));
   d = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(vcast_vd_d(2.037035976334486E90), d), d);
   vint q = vcastu_vi_vi2(vreinterpret_vi2_vd(d));
-  q = vand_vi_vi_vi(q, vcast_vi_i(((1 << 12)-1) << 20));
+  q = vand_vi_vi_vi(q, vcast_vi_i(((1U << 12) - 1) << 20));
   q = vsrl_vi_vi_i(q, 20);
   q = vsub_vi_vi_vi(q, vsel_vi_vo_vi_vi(vcast_vo32_vo64(o), vcast_vi_i(300 + 0x3ff), vcast_vi_i(0x3ff)));
   return q;
