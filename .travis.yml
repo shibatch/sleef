@@ -8,11 +8,11 @@ dist: bionic
 # Include osx jobs
 matrix:
   include:
-    - os: osx
-      arch: amd64
-      compiler: clang # use default apple clang
-      env:
-        - LABEL="osx-clang"
+    # - os: osx
+    #   arch: amd64
+    #   compiler: clang # use default apple clang
+    #   env:
+    #     - LABEL="osx-clang"
     - os: linux
       services: docker
       env:

@@ -332,7 +332,7 @@ static INLINE VECTOR_CC vmask veq_vm_vi2_vi2(vint2 x, vint2 y) { return vceqq_s3
 static INLINE VECTOR_CC vmask vgt_vm_vi2_vi2(vint2 x, vint2 y) { return vcgeq_s32(x, y); }
 // Comparison returning integers
 static INLINE VECTOR_CC vint2 vgt_vi2_vi2_vi2(vint2 x, vint2 y) {
-  return vreinterpretq_s32_u32(vcgeq_s32(x, y));
+  return vreinterpretq_s32_u32(vcgtq_s32(x, y));
 }
 static INLINE VECTOR_CC vint2 veq_vi2_vi2_vi2(vint2 x, vint2 y) {
   return vreinterpretq_s32_u32(vceqq_s32(x, y));

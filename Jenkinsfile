@@ -83,11 +83,31 @@ pipeline {
             	     }
                 }
 
+                stage('Mac') {
+            	     agent { label 'mac' }
+            	     steps {
+	    	     	 sh '''
+                	 echo "Mac with clang on" `hostname`
+			 export PATH=$PATH:/opt/local/bin:/opt/local/bin:/usr/local/bin:/usr/bin:/bin
+			 export CC=clang
+			 rm -rf build
+ 			 mkdir build
+			 cd build
+			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl -DENFORCE_TESTER3=TRUE -DBUILD_INLINE_HEADERS=TRUE -DBUILD_QUAD=TRUE -DENFORCE_SSE2=TRUE -DENFORCE_SSE4=TRUE -DENFORCE_AVX=TRUE -DENFORCE_FMA4=TRUE -DENFORCE_AVX2=TRUE -DENFORCE_AVX512F=TRUE ..
+			 ninja
+			 export OMP_WAIT_POLICY=passive
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j `sysctl -n hw.logicalcpu`
+		         ninja install
+			 '''
+            	     }
+                }
+
                 stage('Static libs on mac') {
             	     agent { label 'mac' }
             	     steps {
 	    	     	 sh '''
-                	 echo "macOS on" `hostname`
+                	 echo "Mac with gcc on" `hostname`
 			 export PATH=$PATH:/opt/local/bin:/opt/local/bin:/usr/local/bin:/usr/bin:/bin
 			 export CC=gcc-9
 			 rm -rf build
