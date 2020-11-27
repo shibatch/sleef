@@ -70,7 +70,7 @@ set(SLEEF_SUPPORTED_EXTENSIONS
   AVX512FNOFMA AVX512F AVX2 AVX2128 FMA4 AVX SSE4 SSE2  # x86
   SVENOFMA SVE ADVSIMDNOFMA ADVSIMD                     # Aarch64
   NEON32 NEON32VFPV4                                    # Aarch32
-  VSX VSXNOFMA                                          # PPC64
+  VSX VSXNOFMA VSX3 VSX3NOFMA                           # PPC64
   VXE VXENOFMA VXE2 VXE2NOFMA	                        # IBM Z
   PUREC_SCALAR PURECFMA_SCALAR                          # Generic type
   CACHE STRING "List of SIMD architectures supported by libsleef."
@@ -80,7 +80,7 @@ set(SLEEF_SUPPORTED_GNUABI_EXTENSIONS
   CACHE STRING "List of SIMD architectures supported by libsleef for GNU ABI."
 )
 set(SLEEFQUAD_SUPPORTED_EXT
-  PUREC_SCALAR PURECFMA_SCALAR SSE2 AVX2 AVX512F ADVSIMD SVE VSX ZVECTOR2)
+  PUREC_SCALAR PURECFMA_SCALAR SSE2 AVX2 AVX512F ADVSIMD SVE VSX VSX3 VXE VXE2)
 # Force set default build type if none was specified
 # Note: some sleef code requires the optimisation flags turned on
 if(NOT CMAKE_BUILD_TYPE)
@@ -200,20 +200,24 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
     VSX_
     VSX
     VSXNOFMA
+    VSX3
+    VSX3NOFMA
     PUREC_SCALAR
     PURECFMA_SCALAR
   )
 
-  set(HEADER_PARAMS_VSX       finz_ 2 4 "__vector double" "__vector float" "__vector int" "__vector int" __VSX__ vsx)
-  set(HEADER_PARAMS_VSX_      finz_ 2 4 "__vector double" "__vector float" "__vector int" "__vector int" __VSX__ vsx)
-  set(HEADER_PARAMS_VSXNOFMA  cinz_ 2 4 "__vector double" "__vector float" "__vector int" "__vector int" __VSX__ vsxnofma)
-  set(ALIAS_PARAMS_VSX_DP  2 "__vector double" "__vector int" - vsx)
-  set(ALIAS_PARAMS_VSX_SP -4 "__vector float" "__vector int" - vsx)
+  set(HEADER_PARAMS_VSX_      finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VSX__)
+  set(HEADER_PARAMS_VSX       finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VSX__ vsx)
+  set(HEADER_PARAMS_VSXNOFMA  cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VSX__ vsxnofma)
+  set(HEADER_PARAMS_VSX3      finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VSX__ vsx3)
+  set(HEADER_PARAMS_VSX3NOFMA cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VSX__ vsx3nofma)
 
   set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mvsx;-fno-strict-aliasing")
 
-  set(TESTER3_DEFINITIONS_VSX      ATR=finz_ DPTYPE=__vector_double SPTYPE=__vector_float DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vsx)
-  set(TESTER3_DEFINITIONS_VSXNOFMA ATR=cinz_ DPTYPE=__vector_double SPTYPE=__vector_float DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vsxnofma)
+  set(TESTER3_DEFINITIONS_VSX       ATR=finz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vsx)
+  set(TESTER3_DEFINITIONS_VSXNOFMA  ATR=cinz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vsxnofma)
+  set(TESTER3_DEFINITIONS_VSX3      ATR=finz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vsx3)
+  set(TESTER3_DEFINITIONS_VSX3NOFMA ATR=cinz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vsx3nofma)
 
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "s390x")
   set(SLEEF_ARCH_S390X ON CACHE INTERNAL "True for IBM Z architecture.")
@@ -233,10 +237,6 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "s390x")
   set(HEADER_PARAMS_VXENOFMA      cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ vxenofma)
   set(HEADER_PARAMS_VXE2          finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ vxe2)
   set(HEADER_PARAMS_VXE2NOFMA     cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ vxe2nofma)
-  set(ALIAS_PARAMS_VXE_DP  2 "__vector double" "__vector int" - vxe)
-  set(ALIAS_PARAMS_VXE_SP -4 "__vector float"  "__vector int" - vxe)
-  set(ALIAS_PARAMS_VXE2_DP  2 "__vector double" "__vector int" - vxe2)
-  set(ALIAS_PARAMS_VXE2_SP -4 "__vector float"  "__vector int" - vxe2)
 
   set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-march=z14;-mzvector;-fno-strict-aliasing")
 
@@ -273,6 +273,8 @@ command_arguments(RENAME_PARAMS_NEON32          cinz_ 2 4 neon)
 command_arguments(RENAME_PARAMS_NEON32VFPV4     finz_ 2 4 neonvfpv4)
 command_arguments(RENAME_PARAMS_VSX             finz_ 2 4 vsx)
 command_arguments(RENAME_PARAMS_VSXNOFMA        cinz_ 2 4 vsxnofma)
+command_arguments(RENAME_PARAMS_VSX3            finz_ 2 4 vsx3)
+command_arguments(RENAME_PARAMS_VSX3NOFMA       cinz_ 2 4 vsx3nofma)
 command_arguments(RENAME_PARAMS_VXE             finz_ 2 4 vxe)
 command_arguments(RENAME_PARAMS_VXENOFMA        cinz_ 2 4 vxenofma)
 command_arguments(RENAME_PARAMS_VXE2            finz_ 2 4 vxe2)
@@ -334,6 +336,8 @@ set(CLANG_FLAGS_ENABLE_SVENOFMA "-march=armv8-a+sve")
 # PPC64
 set(CLANG_FLAGS_ENABLE_VSX "-mcpu=power8")
 set(CLANG_FLAGS_ENABLE_VSXNOFMA "-mcpu=power8")
+set(CLANG_FLAGS_ENABLE_VSX3 "-mcpu=power9")
+set(CLANG_FLAGS_ENABLE_VSX3NOFMA "-mcpu=power9")
 # IBM z
 set(CLANG_FLAGS_ENABLE_VXE "-march=z14;-mzvector")
 set(CLANG_FLAGS_ENABLE_VXENOFMA "-march=z14;-mzvector")
@@ -704,6 +708,35 @@ endif()
 
 if (ENFORCE_VSX AND NOT COMPILER_SUPPORTS_VSX)
   message(FATAL_ERROR "ENFORCE_VSX is specified and that feature is disabled or not supported by the compiler")
+endif()
+
+# VSX3
+
+option(DISABLE_VSX "Disable VSX3" OFF)
+option(ENFORCE_VSX "Build fails if VSX3 is not supported by the compiler" OFF)
+
+if(SLEEF_ARCH_PPC64 AND NOT DISABLE_VSX3)
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_VSX3}")
+  CHECK_C_SOURCE_COMPILES("
+  #include <altivec.h>
+  #ifndef __LITTLE_ENDIAN__
+    #error \"Only VSX3 little-endian mode is supported \"
+  #endif
+  int main() {
+    static vector double d;
+    static vector unsigned long long a, b;
+
+    d = vec_insert_exp(a, b);
+  }"
+    COMPILER_SUPPORTS_VSX3)
+
+  if (COMPILER_SUPPORTS_VSX3)
+    set(COMPILER_SUPPORTS_VSX3NOFMA 1)
+  endif()
+endif()
+
+if (ENFORCE_VSX3 AND NOT COMPILER_SUPPORTS_VSX3)
+  message(FATAL_ERROR "ENFORCE_VSX3 is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # IBM Z

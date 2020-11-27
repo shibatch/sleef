@@ -249,8 +249,8 @@ typedef Sleef___m256_2 vfloat2;
 #define CONFIG 1
 #include "helperpower_128.h"
 #include "renamevsx.h"
-typedef Sleef___vector_double_2 vdouble2;
-typedef Sleef___vector_float_2 vfloat2;
+typedef Sleef_SLEEF_VECTOR_DOUBLE_2 vdouble2;
+typedef Sleef_SLEEF_VECTOR_FLOAT_2 vfloat2;
 #endif
 #endif
 
@@ -260,8 +260,30 @@ typedef Sleef___vector_float_2 vfloat2;
 #define CONFIG 2
 #include "helperpower_128.h"
 #include "renamevsxnofma.h"
-typedef Sleef___vector_double_2 vdouble2;
-typedef Sleef___vector_float_2 vfloat2;
+typedef Sleef_SLEEF_VECTOR_DOUBLE_2 vdouble2;
+typedef Sleef_SLEEF_VECTOR_FLOAT_2 vfloat2;
+#endif
+#endif
+
+#ifdef ENABLE_VSX3
+#include "renamevsx3.h"
+#if !defined(USE_INLINE_HEADER)
+#define CONFIG 3
+#include "helperpower_128.h"
+#include "renamevsx3.h"
+typedef Sleef_SLEEF_VECTOR_DOUBLE_2 vdouble2;
+typedef Sleef_SLEEF_VECTOR_FLOAT_2 vfloat2;
+#endif
+#endif
+
+#ifdef ENABLE_VSX3NOFMA
+#include "renamevsx3nofma.h"
+#if !defined(USE_INLINE_HEADER)
+#define CONFIG 4
+#include "helperpower_128.h"
+#include "renamevsx3nofma.h"
+typedef Sleef_SLEEF_VECTOR_DOUBLE_2 vdouble2;
+typedef Sleef_SLEEF_VECTOR_FLOAT_2 vfloat2;
 #endif
 #endif
 
@@ -305,8 +327,16 @@ typedef Sleef_SLEEF_VECTOR_FLOAT_2 vfloat2;
 #endif
 #endif
 
+#ifdef ENABLE_DSPPOWER_128
+#define CONFIG 1
+#include "helperpower_128.h"
+#include "renamedsp128.h"
+typedef Sleef_SLEEF_VECTOR_DOUBLE_2 vdouble2;
+typedef Sleef_SLEEF_VECTOR_FLOAT_2 vfloat2;
+#endif
+
 #ifdef ENABLE_DSPS390X_128
-#define CONFIG 150
+#define CONFIG 140
 #include "helpers390x_128.h"
 #include "renamedsp128.h"
 typedef Sleef_SLEEF_VECTOR_DOUBLE_2 vdouble2;

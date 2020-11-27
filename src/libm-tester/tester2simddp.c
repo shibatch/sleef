@@ -130,16 +130,32 @@ typedef Sleef_float32x4_t_2 vfloat2;
 #define CONFIG 1
 #include "helperpower_128.h"
 #include "renamevsx.h"
-typedef Sleef___vector_double_2 vdouble2;
-typedef Sleef___vector_float_2 vfloat2;
+typedef Sleef_SLEEF_VECTOR_DOUBLE_2 vdouble2;
+typedef Sleef_SLEEF_VECTOR_FLOAT_2 vfloat2;
 #endif
 
 #ifdef ENABLE_VSXNOFMA
 #define CONFIG 2
 #include "helperpower_128.h"
 #include "renamevsxnofma.h"
-typedef Sleef___vector_double_2 vdouble2;
-typedef Sleef___vector_float_2 vfloat2;
+typedef Sleef_SLEEF_VECTOR_DOUBLE_2 vdouble2;
+typedef Sleef_SLEEF_VECTOR_FLOAT_2 vfloat2;
+#endif
+
+#ifdef ENABLE_VSX3
+#define CONFIG 3
+#include "helperpower_128.h"
+#include "renamevsx3.h"
+typedef Sleef_SLEEF_VECTOR_DOUBLE_2 vdouble2;
+typedef Sleef_SLEEF_VECTOR_FLOAT_2 vfloat2;
+#endif
+
+#ifdef ENABLE_VSX3NOFMA
+#define CONFIG 4
+#include "helperpower_128.h"
+#include "renamevsx3nofma.h"
+typedef Sleef_SLEEF_VECTOR_DOUBLE_2 vdouble2;
+typedef Sleef_SLEEF_VECTOR_FLOAT_2 vfloat2;
 #endif
 
 #ifdef ENABLE_VXE

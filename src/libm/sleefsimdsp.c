@@ -246,6 +246,30 @@ extern const float Sleef_rempitabsp[];
 #endif
 #endif
 
+#ifdef ENABLE_VSX3
+#define CONFIG 3
+#if !defined(SLEEF_GENHEADER)
+#include "helperpower_128.h"
+#else
+#include "macroonlyVSX3.h"
+#endif
+#ifdef DORENAME
+#include "renamevsx3.h"
+#endif
+#endif
+
+#ifdef ENABLE_VSX3NOFMA
+#define CONFIG 4
+#if !defined(SLEEF_GENHEADER)
+#include "helperpower_128.h"
+#else
+#include "macroonlyVSX3NOFMA.h"
+#endif
+#ifdef DORENAME
+#include "renamevsx3nofma.h"
+#endif
+#endif
+
 #ifdef ENABLE_VXE
 #define CONFIG 140
 #if !defined(SLEEF_GENHEADER)

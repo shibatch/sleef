@@ -106,6 +106,14 @@
 #endif
 #endif
 
+#ifdef ENABLE_VSX3
+#define CONFIG 3
+#include "helperpower_128.h"
+#ifdef DORENAME
+#include "qrenamevsx3.h"
+#endif
+#endif
+
 #ifdef ENABLE_VXE
 #define CONFIG 140
 #include "helpers390x_128.h"

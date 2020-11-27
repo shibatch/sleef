@@ -4,7 +4,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 set(CMAKE_C_FLAGS "${ORG_CMAKE_C_FLAGS} ${SLEEF_C_FLAGS}")
 
-set(EXT_ENABLE_ALIAS AVX512F ADVSIMD NEON32 VSX)
+set(EXT_ENABLE_ALIAS AVX512F ADVSIMD NEON32)
 
 # --------------------------------------------------------------------
 # sleef.h
@@ -571,6 +571,47 @@ if (SLEEF_ARCH_X86)
   endif()
 endif(SLEEF_ARCH_X86)
 
+if (SLEEF_ARCH_PPC64)
+  # Target disppower_128.c
+
+  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/disppower_128.c
+    COMMENT "Generating disppower_128.c"
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/disppower_128.c.org ${CMAKE_CURRENT_BINARY_DIR}/disppower_128.c
+    COMMAND $<TARGET_FILE:${TARGET_MKDISP}> 2 4 SLEEF_VECTOR_DOUBLE SLEEF_VECTOR_FLOAT SLEEF_VECTOR_INT vsx vsx3 >> ${CMAKE_CURRENT_BINARY_DIR}/disppower_128.c
+    DEPENDS ${TARGET_MKDISP}
+    )
+  add_custom_target(disppower_128.c_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/disppower_128.c)
+
+  # Target renamedsp128.h
+
+  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h
+    COMMENT "Generating renamedsp128.h"
+    COMMAND $<TARGET_FILE:${TARGET_MKRENAME}> - 2 4 > ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h
+    DEPENDS ${TARGET_MKRENAME}
+    )
+  add_custom_target(renamedsp128.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h)
+
+  # Target disppower_128_obj
+
+  add_library(disppower_128_obj OBJECT disppower_128.c)
+  target_compile_options(disppower_128_obj PRIVATE ${FLAGS_ENABLE_VSX})
+  if(COMPILER_SUPPORTS_VSX3)
+    set(DISPATCHER_DEFINITIONS ENABLE_VSX3=1)
+  endif()
+  set_target_properties(disppower_128_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
+  target_compile_definitions(disppower_128_obj PRIVATE ${COMMON_TARGET_DEFINITIONS} ${DISPATCHER_DEFINITIONS})
+  target_include_directories(disppower_128_obj PRIVATE ${CMAKE_BINARY_DIR}/include)
+  add_dependencies(disppower_128_obj disppower_128.c_generated renamedsp128.h_generated ${TARGET_HEADERS})
+  target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:disppower_128_obj>)
+
+  if(COMPILER_SUPPORTS_VSX3)
+    add_library(tryvsx3_obj OBJECT tryvsx3.c)
+    target_compile_options(tryvsx3_obj PRIVATE ${FLAGS_ENABLE_VSX3})
+    set_target_properties(tryvsx3_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
+    target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:tryvsx3_obj>)
+  endif()
+endif(SLEEF_ARCH_PPC64)
+
 if (SLEEF_ARCH_S390X)
   # Target disps390x_128.c
 
@@ -594,17 +635,22 @@ if (SLEEF_ARCH_S390X)
   # Target disps390x_128_obj
 
   add_library(disps390x_128_obj OBJECT disps390x_128.c)
+  target_compile_options(disps390x_128_obj PRIVATE ${FLAGS_ENABLE_VXE})
   if(COMPILER_SUPPORTS_VXE2)
-    target_compile_options(disps390x_128_obj PRIVATE ${FLAGS_ENABLE_VXE2})
     set(DISPATCHER_DEFINITIONS ENABLE_VXE2=1)
-  else()
-    target_compile_options(disps390x_128_obj PRIVATE ${FLAGS_ENABLE_VXE})
   endif()
   set_target_properties(disps390x_128_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
   target_compile_definitions(disps390x_128_obj PRIVATE ${COMMON_TARGET_DEFINITIONS} ${DISPATCHER_DEFINITIONS})
   target_include_directories(disps390x_128_obj PRIVATE ${CMAKE_BINARY_DIR}/include)
   add_dependencies(disps390x_128_obj disps390x_128.c_generated renamedsp128.h_generated ${TARGET_HEADERS})
   target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:disps390x_128_obj>)
+
+  if(COMPILER_SUPPORTS_VXE2)
+    add_library(tryvxe2_obj OBJECT tryvxe2.c)
+    target_compile_options(tryvxe2_obj PRIVATE ${FLAGS_ENABLE_VSX3})
+    set_target_properties(tryvxe2_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
+    target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:tryvxe2_obj>)
+  endif()
 endif(SLEEF_ARCH_S390X)
 
 # --------------------------------------------------------------------

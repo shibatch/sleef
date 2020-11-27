@@ -3,7 +3,7 @@
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#if CONFIG == 1 || CONFIG == 2
+#if CONFIG == 1 || CONFIG == 2 || CONFIG == 3 || CONFIG == 4
 
 #ifndef __VSX__
 #error Please specify -mcpu=power8 or -mcpu=power9
@@ -27,7 +27,7 @@
 #define VECTLENSP (1 << LOG2VECTLENSP)
 //@#define VECTLENSP (1 << LOG2VECTLENSP)
 
-#if CONFIG == 1
+#if CONFIG == 1 || CONFIG == 3
 #define ENABLE_FMA_DP
 //@#define ENABLE_FMA_DP
 #define ENABLE_FMA_SP
@@ -733,7 +733,7 @@ static INLINE vdouble vsqrt_vd_vd(vdouble d)
 /**********************************************
  ** FMA3
  **********************************************/
-#if CONFIG == 1
+#if CONFIG == 1 || CONFIG == 3
 
 static INLINE vfloat vmla_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z)
 { return vec_madd(x, y, z); }

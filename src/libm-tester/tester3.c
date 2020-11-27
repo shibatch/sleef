@@ -88,10 +88,10 @@ static svfloat32_t vf2gety_vf_vf2(svfloat32x2_t v) { return svget2_f32(v, 1); }
 #endif
 
 #ifdef __VSX__
-static INLINE __vector double set__vector_double(double d, int r) { double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return vec_vsx_ld(0, a); }
-static INLINE double get__vector_double(__vector double v, int r) { double a[2]; vec_vsx_st(v, 0, a); return unifyValue(a[r & 1]); }
-static INLINE __vector float set__vector_float(float d, int r) { float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return vec_vsx_ld(0, a); }
-static INLINE float get__vector_float(__vector float v, int r) { float a[4]; vec_vsx_st(v, 0, a); return unifyValuef(a[r & 3]); }
+static INLINE __vector double setSLEEF_VECTOR_DOUBLE(double d, int r) { double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return vec_vsx_ld(0, a); }
+static INLINE double getSLEEF_VECTOR_DOUBLE(__vector double v, int r) { double a[2]; vec_vsx_st(v, 0, a); return unifyValue(a[r & 1]); }
+static INLINE __vector float setSLEEF_VECTOR_FLOAT(float d, int r) { float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return vec_vsx_ld(0, a); }
+static INLINE float getSLEEF_VECTOR_FLOAT(__vector float v, int r) { float a[4]; vec_vsx_st(v, 0, a); return unifyValuef(a[r & 3]); }
 #endif
 
 #ifdef __VX__
