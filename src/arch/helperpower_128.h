@@ -50,7 +50,12 @@
 #include "misc.h"
 #endif // #if !defined(SLEEF_GENHEADER)
 
+#if CONFIG == 1 || CONFIG == 2
 #define ISANAME "VSX"
+#else
+#define ISANAME "VSX-3"
+#endif
+
 #define DFTPRIORITY 25
 
 static INLINE int vavailability_i(int name) { return 3; }
