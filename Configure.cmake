@@ -712,8 +712,8 @@ endif()
 
 # VSX3
 
-option(DISABLE_VSX "Disable VSX3" OFF)
-option(ENFORCE_VSX "Build fails if VSX3 is not supported by the compiler" OFF)
+option(DISABLE_VSX3 "Disable VSX3" OFF)
+option(ENFORCE_VSX3 "Build fails if VSX3 is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_PPC64 AND NOT DISABLE_VSX3)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_VSX3}")
