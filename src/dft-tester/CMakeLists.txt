@@ -18,6 +18,7 @@ function(add_test_dft TESTNAME)
   else()
     add_test(NAME ${TESTNAME} COMMAND ${EMULATOR} ${ARGN})
   endif()
+  set_tests_properties(${TESTNAME} PROPERTIES COST 0.1)
 endfunction()
 
 # Include directories
