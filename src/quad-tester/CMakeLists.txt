@@ -37,7 +37,7 @@ if(SLEEF_OPENSSL_FOUND)
   else()
     add_test(NAME tester3printf COMMAND tester3printf ${sleef_SOURCE_DIR}/src/quad-tester/hash_printf.txt)
   endif()
-  set_tests_properties(tester3printf PROPERTIES COST 1.0)
+  set_tests_properties(tester3printf PROPERTIES COST 5.0)
 endif()
 
 #
