@@ -10,13 +10,14 @@ set(EXT_ENABLE_ALIAS AVX512F ADVSIMD NEON32 VSX)
 # sleef.h
 # --------------------------------------------------------------------
 # File generated for the headers
-set(SLEEF_ORG_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/sleeflibm_header.h.org)
+set(SLEEF_ORG_HEADER ${CMAKE_CURRENT_BINARY_DIR}/sleeflibm_header.h.org)
 set(SLEEF_ORG_FOOTER ${CMAKE_CURRENT_SOURCE_DIR}/sleeflibm_footer.h.org)
 set(SLEEF_INCLUDE_HEADER ${sleef_BINARY_DIR}/include/sleef.h)
 
-configure_file(${SLEEF_ORG_HEADER} ${SLEEF_INCLUDE_HEADER})
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/sleeflibm_header.h.org.in ${SLEEF_ORG_HEADER})
 
 set(SLEEF_HEADER_COMMANDS "")
+list(APPEND SLEEF_HEADER_COMMANDS COMMAND ${CMAKE_COMMAND} -E copy ${SLEEF_ORG_HEADER} ${SLEEF_INCLUDE_HEADER})
 foreach(SIMD ${SLEEF_HEADER_LIST})
   list(APPEND SLEEF_HEADER_COMMANDS COMMAND echo Generating sleef.h: ${TARGET_MKRENAME} ${HEADER_PARAMS_${SIMD}})
   list(APPEND SLEEF_HEADER_COMMANDS COMMAND $<TARGET_FILE:${TARGET_MKRENAME}> ${HEADER_PARAMS_${SIMD}} >> ${SLEEF_INCLUDE_HEADER})
