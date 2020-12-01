@@ -353,7 +353,7 @@ if (SLEEF_ARCH_PPC64)
   target_compile_options(iutdsp128 PRIVATE ${FLAGS_ENABLE_VSX})
   target_link_libraries(iutdsp128 ${TARGET_LIBSLEEF} ${LIBM} ${LIBRT})
   add_dependencies(iutdsp128 ${TARGET_HEADERS} ${TARGET_LIBSLEEF})
-  add_test_iut(iutdsp128)
+  add_test_iut(iutdsp128 1.0)
   list(APPEND IUT_LIST iutdsp128)
 endif(SLEEF_ARCH_PPC64)
 
