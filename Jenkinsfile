@@ -15,8 +15,8 @@ pipeline {
 			 docker exec jenkins mkdir /build
 			 docker cp /tmp/builddir.tgz jenkins:/tmp/
 			 docker exec jenkins tar xf /tmp/builddir.tgz -C /build
-			 docker exec jenkins rm /tmp/builddir.tgz
-			 rm /tmp/buliddir.tgz
+			 docker exec jenkins rm -f /tmp/builddir.tgz
+			 rm -f /tmp/builddir.tgz
 			 docker exec jenkins bash -c "set -ev;export OMP_WAIT_POLICY=passive;cd /build;rm -rf build;mkdir build;cd build;cmake -GNinja -DBUILD_QUAD=TRUE -DBUILD_INLINE_HEADERS=TRUE -DENFORCE_SSE2=TRUE -DENFORCE_SSE4=TRUE -DENFORCE_AVX=TRUE -DENFORCE_FMA4=TRUE -DENFORCE_AVX2=TRUE -DENFORCE_AVX512F=TRUE ..;ninja;ctest -j `nproc`"
 			 docker stop jenkins
 			 '''
