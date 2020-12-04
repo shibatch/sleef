@@ -10,7 +10,9 @@ pipeline {
 	    	     	 sh '''
                 	 echo "i386 on" `hostname`
 			 tar cfz /tmp/builddir.tgz .
-			 docker start jenkins
+			 docker start jenkins || true
+			 docker exec jenkins apt-get update
+			 docker exec jenkins apt-get -y dist-upgrade
 			 docker exec jenkins rm -rf /build
 			 docker exec jenkins mkdir /build
 			 docker cp /tmp/builddir.tgz jenkins:/tmp/
