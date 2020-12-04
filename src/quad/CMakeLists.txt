@@ -146,7 +146,7 @@ set_target_properties(sleefquad PROPERTIES
 
 set_target_properties(sleefquad PROPERTIES ${COMMON_TARGET_PROPERTIES})
 
-if(LIBM AND NOT COMPILER_SUPPORTS_BUILTIN_MATH)
+if(LIBM AND ((NOT COMPILER_SUPPORTS_BUILTIN_MATH) OR (SLEEF_ARCH_32BIT AND SLEEF_ARCH_X86)))
   target_link_libraries(sleefquad ${LIBM})
 endif()
 

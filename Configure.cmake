@@ -110,6 +110,10 @@ function(command_arguments PROPNAME)
 endfunction()
 
 # PLATFORM DETECTION
+if(CMAKE_SIZEOF_VOID_P EQUAL 4)
+  set(SLEEF_ARCH_32BIT ON CACHE INTERNAL "True for 32-bit architecture.")
+endif()
+
 if((CMAKE_SYSTEM_PROCESSOR MATCHES "x86") OR (CMAKE_SYSTEM_PROCESSOR MATCHES "AMD64") OR (CMAKE_SYSTEM_PROCESSOR MATCHES "amd64") OR (CMAKE_SYSTEM_PROCESSOR MATCHES "^i.86$"))
   set(SLEEF_ARCH_X86 ON CACHE INTERNAL "True for x86 architecture.")
 
@@ -359,6 +363,11 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
   set(FLAGS_FASTMATH "-ffast-math")
   set(FLAGS_NOSTRICTALIASING "-fno-strict-aliasing")
 
+  if (SLEEF_ARCH_X86 AND SLEEF_ARCH_32BIT)
+    string(CONCAT FLAGS_STRICTMATH ${FLAGS_STRICTMATH} " -msse2 -mfpmath=sse")
+    string(CONCAT FLAGS_FASTMATH ${FLAGS_FASTMATH} " -msse2 -mfpmath=sse")
+  endif()
+  
   # Without the options below, gcc generates calls to libm
   string(CONCAT FLAGS_OTHERS "-fno-math-errno -fno-trapping-math")
   
