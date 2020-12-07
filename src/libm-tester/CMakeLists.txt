@@ -170,7 +170,7 @@ macro(test_extension SIMD)
 	MACRO_ONLY_HEADER="macroonly${SIMD}.h"
 	SIMD_SUFFIX=_${LCSIMD}_sleef
 	)
-      target_include_directories(${IUTINAME} PRIVATE ${PROJECT_BINARY_DIR}/inline)
+      target_include_directories(${IUTINAME} PRIVATE ${PROJECT_BINARY_DIR}/include)
       target_link_libraries(${IUTINAME} ${LIBM} ${LIBRT})
       add_dependencies(${IUTINAME} ${TARGET_INLINE_HEADERS})
       set_target_properties(${IUTINAME} PROPERTIES C_STANDARD 99)

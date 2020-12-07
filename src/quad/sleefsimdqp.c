@@ -5,10 +5,12 @@
 
 // Always use -ffp-contract=off option to compile SLEEF.
 
+#if !defined(SLEEF_GENHEADER)
 #include <stdint.h>
 #include <assert.h>
 #include <limits.h>
 #include <float.h>
+#endif
 
 #include "misc.h"
 
@@ -40,30 +42,7 @@
 #ifdef DORENAME
 #include "qrenamesse2.h"
 #endif
-#endif
-
-#ifdef ENABLE_AVX2128
-#define CONFIG 1
-#include "helperavx2_128.h"
-#ifdef DORENAME
-#include "qrenameavx2128.h"
-#endif
-#endif
-
-#ifdef ENABLE_AVX
-#define CONFIG 1
-#include "helperavx.h"
-#ifdef DORENAME
-#include "qrenameavx.h"
-#endif
-#endif
-
-#ifdef ENABLE_FMA4
-#define CONFIG 4
-#include "helperavx.h"
-#ifdef DORENAME
-#include "qrenamefma4.h"
-#endif
+typedef vmask2 Sleef_quadx2;
 #endif
 
 #ifdef ENABLE_AVX2
@@ -72,6 +51,7 @@
 #ifdef DORENAME
 #include "qrenameavx2.h"
 #endif
+typedef vmask2 Sleef_quadx4;
 #endif
 
 #ifdef ENABLE_AVX512F
@@ -80,6 +60,7 @@
 #ifdef DORENAME
 #include "qrenameavx512f.h"
 #endif
+typedef vmask2 Sleef_quadx8;
 #endif
 
 #ifdef ENABLE_ADVSIMD
@@ -88,6 +69,7 @@
 #ifdef DORENAME
 #include "qrenameadvsimd.h"
 #endif
+typedef vmask2 Sleef_quadx2;
 #endif
 
 #ifdef ENABLE_SVE
@@ -96,6 +78,7 @@
 #ifdef DORENAME
 #include "qrenamesve.h"
 #endif
+typedef vmask2 Sleef_svquad;
 #endif
 
 #ifdef ENABLE_VSX
@@ -104,6 +87,7 @@
 #ifdef DORENAME
 #include "qrenamevsx.h"
 #endif
+typedef vmask2 Sleef_quadx2;
 #endif
 
 #ifdef ENABLE_VXE
@@ -112,6 +96,7 @@
 #ifdef DORENAME
 #include "qrenamevxe.h"
 #endif
+typedef vmask2 Sleef_quadx2;
 #endif
 
 #ifdef ENABLE_VXE2
@@ -120,6 +105,7 @@
 #ifdef DORENAME
 #include "qrenamevxe2.h"
 #endif
+typedef vmask2 Sleef_quadx2;
 #endif
 
 //
@@ -2895,12 +2881,14 @@ EXPORT CONST vargquad xsplatq(Sleef_quad p) {
 #endif
 
 #ifdef ENABLE_PUREC_SCALAR
+#if !defined(SLEEF_GENHEADER)
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <stddef.h>
 #include <string.h>
 #include <ctype.h>
+#endif
 
 static const tdx exp10tab[14] = {
   { 16386, { 1.25, 0, 0 } }, // 10

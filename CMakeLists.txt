@@ -122,6 +122,7 @@ set(TARGET_LIBSLEEFGNUABI "sleefgnuabi")
 # Defined in src/libm/CMakeLists.txt via custom commands and a custom target
 set(TARGET_HEADERS "headers")
 set(TARGET_INLINE_HEADERS "inline_headers")
+set(TARGET_QINLINE_HEADERS "quad_inline_headers")
 set(TARGET_LIBINLINE "sleefinline")
 # Generates executable files for running the test suite
 # Defined in src/libm-tester/CMakeLists.txt via command add_executable
