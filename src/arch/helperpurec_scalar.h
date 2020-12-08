@@ -117,7 +117,7 @@ typedef struct {
   vmask x, y;
 } vmask2;
 
-#if defined(ENABLEFLOAT128)
+#if defined(ENABLEFLOAT128) && CONFIG != 3
 typedef __float128 vargquad;
 #else
 typedef vmask2 vargquad;
