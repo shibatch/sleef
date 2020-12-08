@@ -5,12 +5,18 @@
 
 // Always use -ffp-contract=off option to compile SLEEF.
 
+#if !defined(SLEEF_GENHEADER)
 #include <stdint.h>
 #include <assert.h>
 #include <limits.h>
 #include <float.h>
+#endif
 
 #include "misc.h"
+
+#ifndef ENABLE_CUDA
+extern const double Sleef_rempitabqp[];
+#endif
 
 #define __SLEEFSIMDQP_C__
 
@@ -34,36 +40,22 @@
 #endif
 #endif
 
+#ifdef ENABLE_CUDA
+#define CONFIG 3
+#include "helperpurec_scalar.h"
+#ifdef DORENAME
+#include "qrenamecuda.h"
+#endif
+typedef vmask2 Sleef_quadx1;
+#endif
+
 #ifdef ENABLE_SSE2
 #define CONFIG 2
 #include "helpersse2.h"
 #ifdef DORENAME
 #include "qrenamesse2.h"
 #endif
-#endif
-
-#ifdef ENABLE_AVX2128
-#define CONFIG 1
-#include "helperavx2_128.h"
-#ifdef DORENAME
-#include "qrenameavx2128.h"
-#endif
-#endif
-
-#ifdef ENABLE_AVX
-#define CONFIG 1
-#include "helperavx.h"
-#ifdef DORENAME
-#include "qrenameavx.h"
-#endif
-#endif
-
-#ifdef ENABLE_FMA4
-#define CONFIG 4
-#include "helperavx.h"
-#ifdef DORENAME
-#include "qrenamefma4.h"
-#endif
+typedef vmask2 Sleef_quadx2;
 #endif
 
 #ifdef ENABLE_AVX2
@@ -72,6 +64,7 @@
 #ifdef DORENAME
 #include "qrenameavx2.h"
 #endif
+typedef vmask2 Sleef_quadx4;
 #endif
 
 #ifdef ENABLE_AVX512F
@@ -80,6 +73,7 @@
 #ifdef DORENAME
 #include "qrenameavx512f.h"
 #endif
+typedef vmask2 Sleef_quadx8;
 #endif
 
 #ifdef ENABLE_ADVSIMD
@@ -88,6 +82,7 @@
 #ifdef DORENAME
 #include "qrenameadvsimd.h"
 #endif
+typedef vmask2 Sleef_quadx2;
 #endif
 
 #ifdef ENABLE_SVE
@@ -96,6 +91,7 @@
 #ifdef DORENAME
 #include "qrenamesve.h"
 #endif
+typedef vmask2 Sleef_svquad;
 #endif
 
 #ifdef ENABLE_VSX
@@ -104,6 +100,7 @@
 #ifdef DORENAME
 #include "qrenamevsx.h"
 #endif
+typedef vmask2 Sleef_quadx2;
 #endif
 
 #ifdef ENABLE_VSX3
@@ -120,6 +117,7 @@
 #ifdef DORENAME
 #include "qrenamevxe.h"
 #endif
+typedef vmask2 Sleef_quadx2;
 #endif
 
 #ifdef ENABLE_VXE2
@@ -128,6 +126,7 @@
 #ifdef DORENAME
 #include "qrenamevxe2.h"
 #endif
+typedef vmask2 Sleef_quadx2;
 #endif
 
 //
@@ -1231,7 +1230,6 @@ static INLINE CONST di_t rempisub(vdouble x) {
 static CONST tdi_t rempio2q(tdx a) {
   const int N = 8, B = 8;
   const int NCOL = 53-B, NROW = (16385+(53-B)*N-106)/NCOL+1;
-  extern const double Sleef_rempitabqp[];
 
   vmask e = vilogb_vm_tdx(a);
   e = vsel_vm_vo64_vm_vm(vgt64_vo_vm_vm(e, vcast_vm_i_i(0, 106)), e, vcast_vm_i_i(0, 106));
@@ -2809,7 +2807,16 @@ EXPORT CONST vargquad xatanq_u10(vargquad aa) {
 //
 
 #ifndef ENABLE_SVE
-EXPORT CONST vargquad xloadq(Sleef_quad *p) {
+
+#ifndef ENABLE_CUDA
+#define EXPORT2 EXPORT
+#define CONST2 CONST
+#else
+#define EXPORT2
+#define CONST2
+#endif
+
+EXPORT2 CONST2 vargquad xloadq(Sleef_quad *p) {
   vargquad a;
   for(int i=0;i<VECTLENDP;i++) {
     memcpy((char *)&a + (i            ) * sizeof(double), (char *)(p + i)                 , sizeof(double));
@@ -2818,27 +2825,27 @@ EXPORT CONST vargquad xloadq(Sleef_quad *p) {
   return a;
 }
 
-EXPORT void xstoreq(Sleef_quad *p, vargquad a) {
+EXPORT2 void xstoreq(Sleef_quad *p, vargquad a) {
   for(int i=0;i<VECTLENDP;i++) {
     memcpy((char *)(p + i)                 , (char *)&a + (i            ) * sizeof(double), sizeof(double));
     memcpy((char *)(p + i) + sizeof(double), (char *)&a + (i + VECTLENDP) * sizeof(double), sizeof(double));
   }
 }
 
-EXPORT CONST Sleef_quad xgetq(vargquad a, int index) {
+EXPORT2 CONST2 Sleef_quad xgetq(vargquad a, int index) {
   Sleef_quad q;
   memcpy((char *)&q                 , (char *)&a + (index            ) * sizeof(double), sizeof(double));
   memcpy((char *)&q + sizeof(double), (char *)&a + (index + VECTLENDP) * sizeof(double), sizeof(double));
   return q;
 }
 
-EXPORT CONST vargquad xsetq(vargquad a, int index, Sleef_quad q) {
+EXPORT2 CONST2 vargquad xsetq(vargquad a, int index, Sleef_quad q) {
   memcpy((char *)&a + (index            ) * sizeof(double), (char *)&q                 , sizeof(double));
   memcpy((char *)&a + (index + VECTLENDP) * sizeof(double), (char *)&q + sizeof(double), sizeof(double));
   return a;
 }
 
-EXPORT CONST vargquad xsplatq(Sleef_quad p) {
+EXPORT2 CONST2 vargquad xsplatq(Sleef_quad p) {
   vargquad a;
   for(int i=0;i<VECTLENDP;i++) {
     memcpy((char *)&a + (i            ) * sizeof(double), (char *)(&p)                 , sizeof(double));
@@ -2903,12 +2910,14 @@ EXPORT CONST vargquad xsplatq(Sleef_quad p) {
 #endif
 
 #ifdef ENABLE_PUREC_SCALAR
+#if !defined(SLEEF_GENHEADER)
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <stddef.h>
 #include <string.h>
 #include <ctype.h>
+#endif
 
 static const tdx exp10tab[14] = {
   { 16386, { 1.25, 0, 0 } }, // 10
