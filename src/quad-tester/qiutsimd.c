@@ -74,6 +74,10 @@
 #include USE_INLINE_HEADER
 #include MACRO_ONLY_HEADER
 
+#ifndef ENABLE_PUREC_SCALAR
+#include "sleefquadinline_purec_scalar.h"
+#endif
+
 #endif // #if !defined(USE_INLINE_HEADER)
 
 #include "qtesterutil.h"

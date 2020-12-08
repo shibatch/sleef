@@ -14,6 +14,10 @@
 
 #include "misc.h"
 
+#ifndef ENABLE_CUDA
+extern const double Sleef_rempitabqp[];
+#endif
+
 #define __SLEEFSIMDQP_C__
 
 #if (defined(_MSC_VER))
@@ -34,6 +38,15 @@
 #ifdef DORENAME
 #include "qrenamepurecfma_scalar.h"
 #endif
+#endif
+
+#ifdef ENABLE_CUDA
+#define CONFIG 3
+#include "helperpurec_scalar.h"
+#ifdef DORENAME
+#include "qrenamecuda.h"
+#endif
+typedef vmask2 Sleef_quadx1;
 #endif
 
 #ifdef ENABLE_SSE2
@@ -1209,7 +1222,6 @@ static INLINE CONST di_t rempisub(vdouble x) {
 static CONST tdi_t rempio2q(tdx a) {
   const int N = 8, B = 8;
   const int NCOL = 53-B, NROW = (16385+(53-B)*N-106)/NCOL+1;
-  extern const double Sleef_rempitabqp[];
 
   vmask e = vilogb_vm_tdx(a);
   e = vsel_vm_vo64_vm_vm(vgt64_vo_vm_vm(e, vcast_vm_i_i(0, 106)), e, vcast_vm_i_i(0, 106));
@@ -2787,7 +2799,16 @@ EXPORT CONST vargquad xatanq_u10(vargquad aa) {
 //
 
 #ifndef ENABLE_SVE
-EXPORT CONST vargquad xloadq(Sleef_quad *p) {
+
+#ifndef ENABLE_CUDA
+#define EXPORT2 EXPORT
+#define CONST2 CONST
+#else
+#define EXPORT2
+#define CONST2
+#endif
+
+EXPORT2 CONST2 vargquad xloadq(Sleef_quad *p) {
   vargquad a;
   for(int i=0;i<VECTLENDP;i++) {
     memcpy((char *)&a + (i            ) * sizeof(double), (char *)(p + i)                 , sizeof(double));
@@ -2796,27 +2817,27 @@ EXPORT CONST vargquad xloadq(Sleef_quad *p) {
   return a;
 }
 
-EXPORT void xstoreq(Sleef_quad *p, vargquad a) {
+EXPORT2 void xstoreq(Sleef_quad *p, vargquad a) {
   for(int i=0;i<VECTLENDP;i++) {
     memcpy((char *)(p + i)                 , (char *)&a + (i            ) * sizeof(double), sizeof(double));
     memcpy((char *)(p + i) + sizeof(double), (char *)&a + (i + VECTLENDP) * sizeof(double), sizeof(double));
   }
 }
 
-EXPORT CONST Sleef_quad xgetq(vargquad a, int index) {
+EXPORT2 CONST2 Sleef_quad xgetq(vargquad a, int index) {
   Sleef_quad q;
   memcpy((char *)&q                 , (char *)&a + (index            ) * sizeof(double), sizeof(double));
   memcpy((char *)&q + sizeof(double), (char *)&a + (index + VECTLENDP) * sizeof(double), sizeof(double));
   return q;
 }
 
-EXPORT CONST vargquad xsetq(vargquad a, int index, Sleef_quad q) {
+EXPORT2 CONST2 vargquad xsetq(vargquad a, int index, Sleef_quad q) {
   memcpy((char *)&a + (index            ) * sizeof(double), (char *)&q                 , sizeof(double));
   memcpy((char *)&a + (index + VECTLENDP) * sizeof(double), (char *)&q + sizeof(double), sizeof(double));
   return a;
 }
 
-EXPORT CONST vargquad xsplatq(Sleef_quad p) {
+EXPORT2 CONST2 vargquad xsplatq(Sleef_quad p) {
   vargquad a;
   for(int i=0;i<VECTLENDP;i++) {
     memcpy((char *)&a + (i            ) * sizeof(double), (char *)(&p)                 , sizeof(double));

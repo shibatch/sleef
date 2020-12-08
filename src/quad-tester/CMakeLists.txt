@@ -142,6 +142,19 @@ foreach(SIMD ${SLEEFQUAD_SUPPORTED_EXT})
   test_extension(${SIMD})
 endforeach()
 
+# Compile executable 'iutcuda'
+
+if (BUILD_INLINE_HEADERS AND SED_COMMAND AND CMAKE_CUDA_COMPILER)
+  add_executable(qiutcuda qiutcuda.cu)
+  set_target_properties(qiutcuda PROPERTIES LINKER_LANGUAGE CUDA)
+  target_compile_options(qiutcuda PRIVATE "--fmad=false")
+  add_dependencies(qiutcuda ${TARGET_QINLINE_HEADERS})
+  add_test_iut(qiutcuda 1.0)
+  list(APPEND IUT_LIST qiutcuda)
+endif()
+
+#
+
 if(LIB_MPFR AND NOT MINGW)
   # Compile executable 'qtester'
   add_host_executable(qtester qtester.c qtesterutil.c)
