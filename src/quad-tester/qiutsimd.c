@@ -157,6 +157,15 @@
 #endif
 #endif
 
+#ifdef ENABLE_VSX3
+#include "qrenamevsx3.h"
+#if !defined(USE_INLINE_HEADER)
+#define CONFIG 3
+#include "helperpower_128.h"
+#define VARGQUAD Sleef_quadx2
+#endif
+#endif
+
 #ifdef ENABLE_VXE
 #include "qrenamevxe.h"
 #if !defined(USE_INLINE_HEADER)

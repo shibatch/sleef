@@ -170,6 +170,22 @@ extern const double Sleef_rempitabdp[];
 #endif
 #endif
 
+#ifdef ENABLE_VSX3
+#define CONFIG 3
+#include "helperpower_128.h"
+#ifdef DORENAME
+#include "renamevsx3.h"
+#endif
+#endif
+
+#ifdef ENABLE_VSX3NOFMA
+#define CONFIG 4
+#include "helperpower_128.h"
+#ifdef DORENAME
+#include "renamevsx3nofma.h"
+#endif
+#endif
+
 #ifdef ENABLE_VXE
 #define CONFIG 140
 #include "helpers390x_128.h"

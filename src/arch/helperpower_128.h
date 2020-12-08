@@ -3,7 +3,7 @@
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#if CONFIG == 1 || CONFIG == 2
+#if CONFIG == 1 || CONFIG == 2 || CONFIG == 3 || CONFIG == 4
 
 #ifndef __VSX__
 #error Please specify -mcpu=power8 or -mcpu=power9
@@ -27,7 +27,7 @@
 #define VECTLENSP (1 << LOG2VECTLENSP)
 //@#define VECTLENSP (1 << LOG2VECTLENSP)
 
-#if CONFIG == 1
+#if CONFIG == 1 || CONFIG == 3
 #define ENABLE_FMA_DP
 //@#define ENABLE_FMA_DP
 #define ENABLE_FMA_SP
@@ -50,7 +50,12 @@
 #include "misc.h"
 #endif // #if !defined(SLEEF_GENHEADER)
 
+#if CONFIG == 1 || CONFIG == 2
 #define ISANAME "VSX"
+#else
+#define ISANAME "VSX-3"
+#endif
+
 #define DFTPRIORITY 25
 
 static INLINE int vavailability_i(int name) { return 3; }
@@ -121,7 +126,7 @@ typedef vmask2 vargquad;
 #define vzero__u64() vsetall__u64(0)
 
 //// Swap doubleword elements
-#ifdef __clang__
+#if defined(__clang__) || __GNUC__ >= 7
   static INLINE v__u64 v__swapd_u64(v__u64 v)
   { return vec_xxpermdi(v, v, 2); }
 #else
@@ -347,7 +352,7 @@ static INLINE vint2 vcastu_vi2_vi(vint vi)
 static INLINE vfloat vcast_vf_vi2(vint2 vi)
 {
   vfloat ret;
-#ifdef __clang__
+#if defined(__clang__) || __GNUC__ >= 9
   ret = __builtin_convertvector(vi, vfloat);
 #else
   __asm__ __volatile__("xvcvsxwsp %x0,%x1" : "=wa" (ret) : "wa" (vi));
@@ -360,7 +365,7 @@ static INLINE vdouble vcast_vd_vi(vint vi)
 {
   vdouble ret;
   vint swap = vec_mergeh(vi, vi);
-#ifdef __clang__
+#if defined(__clang__) || __GNUC__ >= 7
   ret = __builtin_vsx_xvcvsxwdp(swap);
 #else
   __asm__ __volatile__("xvcvsxwdp %x0,%x1" : "=wa" (ret) : "wa" (swap));
@@ -377,7 +382,7 @@ static INLINE vmask vcast_vm_i_i(int l, int h)
 static INLINE vint2 vtruncate_vi2_vf(vfloat vf)
 {
   vint2 ret;
-#ifdef __clang__
+#if defined(__clang__) || __GNUC__ >= 9
   ret = __builtin_convertvector(vf, vint2);
 #else
   __asm__ __volatile__("xvcvspsxws %x0,%x1" : "=wa" (ret) : "wa" (vf));
@@ -388,7 +393,7 @@ static INLINE vint2 vtruncate_vi2_vf(vfloat vf)
 static INLINE vint vtruncate_vi_vd(vdouble vd)
 {
   vint ret;
-#ifdef __clang__
+#if defined(__clang__) || __GNUC__ >= 7
   ret = __builtin_vsx_xvcvdpsxws(vd);
 #else
   __asm__ __volatile__("xvcvdpsxws %x0,%x1" : "=wa" (ret) : "wa" (vd));
@@ -618,7 +623,7 @@ static INLINE vdouble vreva2_vd_vd(vdouble vd)
 
 ////////////// Negation //////////////
 static INLINE vint vneg_vi_vi(vint e) {
-#ifdef __clang__
+#if defined(__clang__) || __GNUC__ >= 9
   return vec_neg(e);
 #else
   return vec_sub(vzero__vi(), e);
@@ -630,7 +635,7 @@ static INLINE vint2 vneg_vi2_vi2(vint2 e)
 static INLINE vfloat vneg_vf_vf(vfloat d)
 {
   vfloat ret;
-#ifdef __clang__
+#if defined(__clang__) || __GNUC__ >= 9
   ret = vec_neg(d);
 #else
   __asm__ __volatile__("xvnegsp %x0,%x1" : "=wa" (ret) : "wa" (d));
@@ -641,7 +646,7 @@ static INLINE vfloat vneg_vf_vf(vfloat d)
 static INLINE vdouble vneg_vd_vd(vdouble d)
 {
   vdouble ret;
-#ifdef __clang__
+#if defined(__clang__) || __GNUC__ >= 9
   ret = vec_neg(d);
 #else
   __asm__ __volatile__("xvnegdp %x0,%x1" : "=wa" (ret) : "wa" (d));
@@ -733,7 +738,7 @@ static INLINE vdouble vsqrt_vd_vd(vdouble d)
 /**********************************************
  ** FMA3
  **********************************************/
-#if CONFIG == 1
+#if CONFIG == 1 || CONFIG == 3
 
 static INLINE vfloat vmla_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z)
 { return vec_madd(x, y, z); }

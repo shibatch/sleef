@@ -41,6 +41,10 @@
 #include "helperpower_128.h"
 #endif
 
+#ifdef ENABLE_VSX3
+#include "helperpower_128.h"
+#endif
+
 #ifdef ENABLE_VXE
 #include "helpers390x_128.h"
 #endif
