@@ -36,6 +36,16 @@ typedef __m128 vfloat;
 typedef float64x2_t vdouble;
 typedef float32x4_t vfloat;
 #define ENABLED
+#elif defined(__VSX__)
+#include <altivec.h>
+typedef __vector double vdouble;
+typedef __vector float  vfloat;
+#define ENABLED
+#elif defined(__VX__)
+#include <vecintrin.h>
+typedef __vector double vdouble;
+typedef __vector float  vfloat;
+#define ENABLED
 #endif
 
 #ifdef ENABLED
