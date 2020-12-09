@@ -19,7 +19,7 @@ pipeline {
 			 docker exec jenkins tar xf /tmp/builddir.tgz -C /build
 			 docker exec jenkins rm -f /tmp/builddir.tgz
 			 rm -f /tmp/builddir.tgz
-			 docker exec jenkins bash -c "set -ev;export OMP_WAIT_POLICY=passive;cd /build;rm -rf build;mkdir build;cd build;export CC=gcc;cmake -GNinja -DBUILD_QUAD=TRUE -DBUILD_INLINE_HEADERS=TRUE ..;ninja;ctest -j `nproc`"
+			 docker exec jenkins bash -c "set -ev;export OMP_WAIT_POLICY=passive;cd /build;rm -rf build;mkdir build;cd build;export CC=gcc;export PATH=/opt/bin:$PATH;cmake -GNinja -DBUILD_QUAD=TRUE -DENFORCE_TESTER3=TRUE ..;ninja;ctest -j `nproc`"
 			 docker stop jenkins
 			 '''
             	     }
