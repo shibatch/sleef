@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
   int do128bit = 1;
   int do256bit = cpuSupportsAVX();
   int do512bit = cpuSupportsAVX512F();
-#elif defined(__ARM_NEON)
+#elif defined(__ARM_NEON) || defined(__VSX__) || defined(__VX__)
   int do128bit = 1;
 #else
 #error Unsupported architecture

@@ -55,6 +55,22 @@ benchsleef : benchsleef.c benchsleef128.o bench.h
 benchsleef128.o : benchsleef128.c bench.h
 	$(CC) benchsleef128.c -Wall -march=native -O0 -g -I$(BUILDDIR)/include -L$(BUILDDIR)/lib -Wno-attributes -c
 
+else ifeq ($(ARCH),s390x)
+
+benchsleef : benchsleef.c benchsleef128.o bench.h
+	$(CC) benchsleef.c benchsleef128.o -Wall -march=native -O0 -g -I$(BUILDDIR)/include -L$(BUILDDIR)/lib -Wno-attributes -lsleef -lm -o benchsleef
+
+benchsleef128.o : benchsleef128.c bench.h
+	$(CC) benchsleef128.c -Wall -mzvector -march=native -O0 -g -I$(BUILDDIR)/include -L$(BUILDDIR)/lib -Wno-attributes -c
+
+else ifeq ($(ARCH),ppc64le)
+
+benchsleef : benchsleef.c benchsleef128.o bench.h
+	$(CC) benchsleef.c benchsleef128.o -Wall -mcpu=native -O0 -g -I$(BUILDDIR)/include -L$(BUILDDIR)/lib -Wno-attributes -lsleef -lm -o benchsleef
+
+benchsleef128.o : benchsleef128.c bench.h
+	$(CC) benchsleef128.c -Wall -mcpu=native -O0 -g -I$(BUILDDIR)/include -L$(BUILDDIR)/lib -Wno-attributes -c
+
 else
 
 benchsleef : benchsleef.c benchsleef128.o benchsleef256.o benchsleef512.o bench.h
