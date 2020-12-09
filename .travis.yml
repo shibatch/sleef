@@ -13,11 +13,11 @@ matrix:
     #   compiler: clang # use default apple clang
     #   env:
     #     - LABEL="osx-clang"
-    - os: linux
-      services: docker
-      env:
-        - LABEL="armhf-gcc"
-        - ENABLE_DOCKER="true"
+    # - os: linux
+    #   services: docker
+    #   env:
+    #     - LABEL="armhf-gcc"
+    #     - ENABLE_DOCKER="true"
     - os: linux
       arch: amd64
       addons:
