@@ -1215,7 +1215,7 @@ int main(int argc,char **argv)
       double u0 = countULPdp(t = vget(xlgamma_u1(vd), e), frx);
 
       if (((d < 0 && fabsl(t - mpfr_get_ld(frx, GMP_RNDN)) > 1e-15 && u0 > 1) || (0 <= d && d < 2e+305 && u0 > 1) || (2e+305 <= d && !(u0 <= 1 || isinf(t))))) {
-	printf("Pure C xlgamma_u1 arg=%.20g ulp=%.20g\n", d, u0);
+	printf(ISANAME " xlgamma_u1 arg=%.20g ulp=%.20g\n", d, u0);
 	printf("Correct = %.20Lg, test = %.20g\n", mpfr_get_ld(frx, GMP_RNDN), t);
 	printf("Diff = %.20Lg\n", fabsl(t - mpfr_get_ld(frx, GMP_RNDN)));
 	fflush(stdout); ecnt++;
@@ -1229,7 +1229,7 @@ int main(int argc,char **argv)
       double u0 = countULP2dp(t = vget(xtgamma_u1(vd), e), frx);
 
       if (u0 > 1.0) {
-	printf("Pure C xtgamma_u1 arg=%.20g ulp=%.20g\n", d, u0);
+	printf(ISANAME " xtgamma_u1 arg=%.20g ulp=%.20g\n", d, u0);
 	printf("Correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
 	printf("Diff = %.20Lg\n", fabsl(t - mpfr_get_ld(frx, GMP_RNDN)));
 	fflush(stdout); ecnt++;
@@ -1245,7 +1245,7 @@ int main(int argc,char **argv)
       double u0 = countULP2dp(t = vget(xerfc_u15(vd), e), frx);
 
       if ((d > 26.2 && u0 > 2.5 && !(mpfr_get_d(frx, GMP_RNDN) == 0 && t <= ebz)) || (d <= 26.2 && u0 > 1.5)) {
-	printf("Pure C xerfc_u15 arg=%.20g ulp=%.20g\n", d, u0);
+	printf(ISANAME " xerfc_u15 arg=%.20g ulp=%.20g\n", d, u0);
 	printf("Correct = %.20Lg, test = %.20g\n", mpfr_get_ld(frx, GMP_RNDN), t);
 	fflush(stdout); ecnt++;
       }
@@ -1257,8 +1257,8 @@ int main(int argc,char **argv)
 
       double u0 = countULP2dp(t = vget(xerf_u1(vd), e), frx);
 
-      if (u0 > 1) {
-	printf("Pure C xerf_u1 arg=%.20g ulp=%.20g\n", d, u0);
+      if (u0 > 0.75) {
+	printf(ISANAME " xerf_u1 arg=%.20g ulp=%.20g\n", d, u0);
 	printf("Correct = %.20Lg, test = %.20g\n", mpfr_get_ld(frx, GMP_RNDN), t);
 	fflush(stdout); ecnt++;
       }

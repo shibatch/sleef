@@ -1220,7 +1220,7 @@ int main(int argc,char **argv)
 
       double u0 = countULP2sp(t = vget(xerff_u1(vd), e), frx);
       
-      if (u0 > 1.0) {
+      if (u0 > 0.75) {
 	printf(ISANAME " erff_u1 arg=%.20g ulp=%.20g\n", d, u0);
 	printf("correct = %.20g, test = %.20g\n", mpfr_get_d(frx, GMP_RNDN), t);
 	fflush(stdout); ecnt++;

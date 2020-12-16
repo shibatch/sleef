@@ -638,3 +638,7 @@ vtruncate_vm_vd
 vugt64_vo_vm_vm
 imdvm2
 mla
+dfmla
+poly2df_b
+poly2df
+poly4df

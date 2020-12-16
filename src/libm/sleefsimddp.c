@@ -3623,47 +3623,108 @@ EXPORT CONST VECTOR_CC vdouble xlgamma_u1(vdouble a) {
   return r;
 }
 
-/* TODO AArch64: potential optimization by using `vfmad_lane_f64` */
+static INLINE CONST vdouble2 ddmla(vdouble x, vdouble2 y, vdouble2 z) {
+  return ddadd_vd2_vd2_vd2(z, ddmul_vd2_vd2_vd(y, x));
+}
+
+static INLINE CONST vdouble2 poly2dd_b(vdouble x, vdouble2 c1, vdouble2 c0) { return ddmla(x, c1, c0); }
+static INLINE CONST vdouble2 poly2dd(vdouble x, vdouble c1, vdouble2 c0) { return ddmla(x, vcast_vd2_vd_vd(c1, vcast_vd_d(0)), c0); }
+static INLINE CONST vdouble2 poly4dd(vdouble x, vdouble c3, vdouble2 c2, vdouble2 c1, vdouble2 c0) {
+  return ddmla(vmul_vd_vd_vd(x, x), poly2dd(x, c3, c2), poly2dd_b(x, c1, c0));
+}
+
 EXPORT CONST VECTOR_CC vdouble xerf_u1(vdouble a) {
-  vdouble s = a, t, u;
-  vdouble2 d;
+  vdouble t, x = vabs_vd_vd(a);
+  vdouble2 t2;
+  vdouble x2 = vmul_vd_vd_vd(x, x), x4 = vmul_vd_vd_vd(x2, x2);
+  vdouble x8 = vmul_vd_vd_vd(x4, x4), x16 = vmul_vd_vd_vd(x8, x8);
+  vopmask o25 = vle_vo_vd_vd(x, vcast_vd_d(2.5));
 
-  a = vabs_vd_vd(a);
-  vopmask o0 = vlt_vo_vd_vd(a, vcast_vd_d(1.0));
-  vopmask o1 = vlt_vo_vd_vd(a, vcast_vd_d(3.7));
-  vopmask o2 = vlt_vo_vd_vd(a, vcast_vd_d(6.0));
-  u = vsel_vd_vo_vd_vd(o0, vmul_vd_vd_vd(a, a), a);
-  
-  t = vsel_vd_vo_vo_d_d_d(o0, o1, +0.6801072401395392157e-20, +0.2830954522087717660e-13, -0.5846750404269610493e-17);
-  t = vmla_vd_vd_vd_vd(t, u, vsel_vd_vo_vo_d_d_d(o0, o1, -0.2161766247570056391e-18, -0.1509491946179481940e-11, +0.6076691048812607898e-15));
-  t = vmla_vd_vd_vd_vd(t, u, vsel_vd_vo_vo_d_d_d(o0, o1, +0.4695919173301598752e-17, +0.3827857177807173152e-10, -0.3007518609604893831e-13));
-  t = vmla_vd_vd_vd_vd(t, u, vsel_vd_vo_vo_d_d_d(o0, o1, -0.9049140419888010819e-16, -0.6139733921558987241e-09, +0.9427906260824646063e-12));
-  t = vmla_vd_vd_vd_vd(t, u, vsel_vd_vo_vo_d_d_d(o0, o1, +0.1634018903557411517e-14, +0.6985387934608038824e-08, -0.2100110908269393629e-10));
-  t = vmla_vd_vd_vd_vd(t, u, vsel_vd_vo_vo_d_d_d(o0, o1, -0.2783485786333455216e-13, -0.5988224513034371474e-07, +0.3534639523461223473e-09));
-  t = vmla_vd_vd_vd_vd(t, u, vsel_vd_vo_vo_d_d_d(o0, o1, +0.4463221276786412722e-12, +0.4005716952355346640e-06, -0.4664967728285395926e-08));
-  t = vmla_vd_vd_vd_vd(t, u, vsel_vd_vo_vo_d_d_d(o0, o1, -0.6711366622850138987e-11, -0.2132190104575784400e-05, +0.4943823283769000532e-07));
-  t = vmla_vd_vd_vd_vd(t, u, vsel_vd_vo_vo_d_d_d(o0, o1, +0.9422759050232658346e-10, +0.9092461304042630325e-05, -0.4271203394761148254e-06));
-  t = vmla_vd_vd_vd_vd(t, u, vsel_vd_vo_vo_d_d_d(o0, o1, -0.1229055530100228477e-08, -0.3079188080966205457e-04, +0.3034067677404915895e-05));
-  t = vmla_vd_vd_vd_vd(t, u, vsel_vd_vo_vo_d_d_d(o0, o1, +0.1480719281585085023e-07, +0.7971413443082370762e-04, -0.1776295289066871135e-04));
-  t = vmla_vd_vd_vd_vd(t, u, vsel_vd_vo_vo_d_d_d(o0, o1, -0.1636584469123402714e-06, -0.1387853215225442864e-03, +0.8524547630559505050e-04));
-  t = vmla_vd_vd_vd_vd(t, u, vsel_vd_vo_vo_d_d_d(o0, o1, +0.1646211436588923363e-05, +0.6469678026257590965e-04, -0.3290582944961784398e-03));
-  t = vmla_vd_vd_vd_vd(t, u, vsel_vd_vo_vo_d_d_d(o0, o1, -0.1492565035840624866e-04, +0.4996645280372945860e-03, +0.9696966068789101157e-03));
-  t = vmla_vd_vd_vd_vd(t, u, vsel_vd_vo_vo_d_d_d(o0, o1, +0.1205533298178966496e-03, -0.1622802482842520535e-02, -0.1812527628046986137e-02));
-  t = vmla_vd_vd_vd_vd(t, u, vsel_vd_vo_vo_d_d_d(o0, o1, -0.8548327023450851166e-03, +0.1615320557049377171e-03, -0.4725409828123619017e-03));
-  t = vmla_vd_vd_vd_vd(t, u, vsel_vd_vo_vo_d_d_d(o0, o1, +0.5223977625442188799e-02, +0.1915262325574875607e-01, +0.2090315427924229266e-01));
-  t = vmla_vd_vd_vd_vd(t, u, vsel_vd_vo_vo_d_d_d(o0, o1, -0.2686617064513125569e-01, -0.1027818298486033455e+00, -0.1052041921842776645e+00));
-  t = vmla_vd_vd_vd_vd(t, u, vsel_vd_vo_vo_d_d_d(o0, o1, +0.1128379167095512753e+00, -0.6366172819842503827e+00, -0.6345351808766568347e+00));
-  t = vmla_vd_vd_vd_vd(t, u, vsel_vd_vo_vo_d_d_d(o0, o1, -0.3761263890318375380e+00, -0.1128379590648910469e+01, -0.1129442929103524396e+01));
-  d = ddmul_vd2_vd_vd(t, u);
+  if (LIKELY(vtestallones_i_vo64(o25))) {
+    // Abramowitz and Stegun
+    t = POLY21(x, x2, x4, x8, x16,
+	       -0.2083271002525222097e-14,
+	       +0.7151909970790897009e-13,
+	       -0.1162238220110999364e-11,
+	       +0.1186474230821585259e-10,
+	       -0.8499973178354613440e-10,
+	       +0.4507647462598841629e-9,
+	       -0.1808044474288848915e-8,
+	       +0.5435081826716212389e-8,
+	       -0.1143939895758628484e-7,
+	       +0.1215442362680889243e-7,
+	       +0.1669878756181250355e-7,
+	       -0.9808074602255194288e-7,
+	       +0.1389000557865837204e-6,
+	       +0.2945514529987331866e-6,
+	       -0.1842918273003998283e-5,
+	       +0.3417987836115362136e-5,
+	       +0.3860236356493129101e-5,
+	       -0.3309403072749947546e-4,
+	       +0.1060862922597579532e-3,
+	       +0.2323253155213076174e-3,
+	       +0.1490149719145544729e-3);
+    t2 = poly4dd(x, t,
+		 vcast_vd2_d_d(0.0092877958392275604405, 7.9287559463961107493e-19),
+		 vcast_vd2_d_d(0.042275531758784692937, 1.3785226620501016138e-19),
+		 vcast_vd2_d_d(0.07052369794346953491, 9.5846628070792092842e-19));
+    t2 = ddadd_vd2_vd_vd2(vcast_vd_d(1), ddmul_vd2_vd2_vd(t2, x));
+    t2 = ddsqu_vd2_vd2(t2);
+    t2 = ddsqu_vd2_vd2(t2);
+    t2 = ddsqu_vd2_vd2(t2);
+    t2 = ddsqu_vd2_vd2(t2);
+    t2 = ddrec_vd2_vd2(t2);
+  } else {
+#undef C2V
+#define C2V(c) (c)
+    t = POLY21(x, x2, x4, x8, x16,
+	       vsel_vd_vo_d_d(o25, -0.2083271002525222097e-14, -0.4024015130752621932e-18),
+	       vsel_vd_vo_d_d(o25, +0.7151909970790897009e-13, +0.3847193332817048172e-16),
+	       vsel_vd_vo_d_d(o25, -0.1162238220110999364e-11, -0.1749316241455644088e-14),
+	       vsel_vd_vo_d_d(o25, +0.1186474230821585259e-10, +0.5029618322872872715e-13),
+	       vsel_vd_vo_d_d(o25, -0.8499973178354613440e-10, -0.1025221466851463164e-11),
+	       vsel_vd_vo_d_d(o25, +0.4507647462598841629e-9, +0.1573695559331945583e-10),
+	       vsel_vd_vo_d_d(o25, -0.1808044474288848915e-8, -0.1884658558040203709e-9),
+	       vsel_vd_vo_d_d(o25, +0.5435081826716212389e-8, +0.1798167853032159309e-8),
+	       vsel_vd_vo_d_d(o25, -0.1143939895758628484e-7, -0.1380745342355033142e-7),
+	       vsel_vd_vo_d_d(o25, +0.1215442362680889243e-7, +0.8525705726469103499e-7),
+	       vsel_vd_vo_d_d(o25, +0.1669878756181250355e-7, -0.4160448058101303405e-6),
+	       vsel_vd_vo_d_d(o25, -0.9808074602255194288e-7, +0.1517272660008588485e-5),
+	       vsel_vd_vo_d_d(o25, +0.1389000557865837204e-6, -0.3341634127317201697e-5),
+	       vsel_vd_vo_d_d(o25, +0.2945514529987331866e-6, -0.2515023395879724513e-5),
+	       vsel_vd_vo_d_d(o25, -0.1842918273003998283e-5, +0.6539731269664907554e-4),
+	       vsel_vd_vo_d_d(o25, +0.3417987836115362136e-5, -0.3551065097428388658e-3),
+	       vsel_vd_vo_d_d(o25, +0.3860236356493129101e-5, +0.1210736097958368864e-2),
+	       vsel_vd_vo_d_d(o25, -0.3309403072749947546e-4, -0.2605566912579998680e-2),
+	       vsel_vd_vo_d_d(o25, +0.1060862922597579532e-3, +0.1252823202436093193e-2),
+	       vsel_vd_vo_d_d(o25, +0.2323253155213076174e-3, +0.1820191395263313222e-1),
+	       vsel_vd_vo_d_d(o25, +0.1490149719145544729e-3, -0.1021557155453465954e+0));
+    t2 = poly4dd(x, t,
+		 vsel_vd2_vo_vd2_vd2(o25, vcast_vd2_d_d(0.0092877958392275604405, 7.9287559463961107493e-19),
+				     vcast_vd2_d_d(-0.63691044383641748361, -2.4249477526539431839e-17)),
+		 vsel_vd2_vo_vd2_vd2(o25, vcast_vd2_d_d(0.042275531758784692937, 1.3785226620501016138e-19),
+				     vcast_vd2_d_d(-1.1282926061803961737, -6.2970338860410996505e-17)),
+		 vsel_vd2_vo_vd2_vd2(o25, vcast_vd2_d_d(0.07052369794346953491, 9.5846628070792092842e-19),
+				     vcast_vd2_d_d(-1.2261313785184804967e-05, -5.5329707514490107044e-22)));
+    vdouble2 s2 = ddadd_vd2_vd_vd2(vcast_vd_d(1), ddmul_vd2_vd2_vd(t2, x));
+    s2 = ddsqu_vd2_vd2(s2);
+    s2 = ddsqu_vd2_vd2(s2);
+    s2 = ddsqu_vd2_vd2(s2);
+    s2 = ddsqu_vd2_vd2(s2);
+    s2 = ddrec_vd2_vd2(s2);
+    t2 = vsel_vd2_vo_vd2_vd2(o25, s2, vcast_vd2_vd_vd(expk(t2), vcast_vd_d(0)));
+  }
 
-  d = ddadd2_vd2_vd2_vd2(d, vcast_vd2_vd_vd(vsel_vd_vo_vo_d_d_d(o0, o1, 1.1283791670955125586, 3.4110644736196137587e-08, 0.00024963035690526438285),
-					    vsel_vd_vo_vo_d_d_d(o0, o1, 1.5335459613165822674e-17, -2.4875650708323294246e-24, -5.4362665034856259795e-21)));
-  d = vsel_vd2_vo_vd2_vd2(o0, ddmul_vd2_vd2_vd(d, a), ddadd_vd2_vd_vd2(vcast_vd_d(1.0), ddneg_vd2_vd2(expk2(d))));
+  t2 = ddadd2_vd2_vd2_vd(t2, vcast_vd_d(-1));
 
-  u = vmulsign_vd_vd_vd(vsel_vd_vo_vd_vd(o2, vadd_vd_vd_vd(vd2getx_vd_vd2(d), vd2gety_vd_vd2(d)), vcast_vd_d(1)), s);
-  u = vsel_vd_vo_vd_vd(visnan_vo_vd(a), vcast_vd_d(SLEEF_NAN), u);
+  vdouble z = vneg_vd_vd(vadd_vd_vd_vd(vd2getx_vd_vd2(t2), vd2gety_vd_vd2(t2)));
+  z = vsel_vd_vo_vd_vd(vlt_vo_vd_vd(x, vcast_vd_d(1e-8)), vmul_vd_vd_vd(x, vcast_vd_d(1.12837916709551262756245475959)), z);
+  z = vsel_vd_vo_vd_vd(vge_vo_vd_vd(x, vcast_vd_d(6)), vcast_vd_d(1), z);
+  z = vsel_vd_vo_vd_vd(visinf_vo_vd(a), vcast_vd_d(1), z);
+  z = vsel_vd_vo_vd_vd(veq_vo_vd_vd(a, vcast_vd_d(0)), vcast_vd_d(0), z);
+  z = vmulsign_vd_vd_vd(z, a);
 
-  return u;
+  return z;
 }
 
 /* TODO AArch64: potential optimization by using `vfmad_lane_f64` */
@@ -3811,7 +3872,7 @@ EXPORT CONST void *xgetPtr(int name) {
 #include <math.h>
 int main(int argc, char **argv) {
   vdouble d1 = vcast_vd_d(atof(argv[1]));
-  vdouble d2 = vcast_vd_d(atof(argv[2]));
+  //vdouble d2 = vcast_vd_d(atof(argv[2]));
   //vdouble d3 = vcast_vd_d(atof(argv[3]));
   //vdouble r = xnextafter(d1, d2);
   //int i;
@@ -3819,15 +3880,15 @@ int main(int argc, char **argv) {
   //printf("%.20g\n", xfma(d1, d2, d3)[0]);;
   //printf("test %.20g\n", xtgamma_u1(d1)[0]);
   //printf("corr %.20g\n", tgamma(d1[0]));
-  //printf("test %.20g\n", xerf_u1(d1)[0]);
-  //printf("corr %.20g\n", erf(d1[0]));
+  printf("test %.20g\n", xerf_u1(d1)[0]);
+  printf("corr %.20g\n", erf(d1[0]));
   //printf("test %.20g\n", xerfc_u15(d1)[0]);
   //printf("corr %.20g\n", erfc(d1[0]));
   //printf("%.20g\n", nextafter(d1[0], d2[0]));;
   //printf("%.20g\n", vcast_d_vd(xhypot_u05(d1, d2)));
   //printf("%.20g\n", fr);
-  printf("%.20g\n", fmod(atof(argv[1]), atof(argv[2])));
-  printf("%.20g\n", xfmod(d1, d2)[0]);
+  //printf("%.20g\n", fmod(atof(argv[1]), atof(argv[2])));
+  //printf("%.20g\n", xfmod(d1, d2)[0]);
   //vdouble2 r = xsincospi_u35(a);
   //printf("%g, %g\n", vcast_d_vd(r.x), vcast_d_vd(r.y));
 }
