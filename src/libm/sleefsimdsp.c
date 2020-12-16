@@ -3466,9 +3466,9 @@ EXPORT CONST VECTOR_CC vfloat xerff_u1(vfloat a) {
   }
 
   t2 = dfadd2_vf2_vf2_vf(t2, vcast_vf_f(-1));
+  t2 = vsel_vf2_vo_vf2_vf2(vlt_vo_vf_vf(x, vcast_vf_f(1e-4)), dfmul_vf2_vf2_vf(vcast_vf2_f_f(-1.1283792257308959961, 5.8635383422197591097e-08), x), t2);
 
   vfloat z = vneg_vf_vf(vadd_vf_vf_vf(vf2getx_vf_vf2(t2), vf2gety_vf_vf2(t2)));
-  z = vsel_vf_vo_vf_vf(vlt_vo_vf_vf(x, vcast_vf_f(1e-8)), vmul_vf_vf_vf(x, vcast_vf_f(1.12837916709551262756245475959)), z);
   z = vsel_vf_vo_vf_vf(vge_vo_vf_vf(x, vcast_vf_f(6)), vcast_vf_f(1), z);
   z = vsel_vf_vo_vf_vf(visinf_vo_vf(a), vcast_vf_f(1), z);
   z = vsel_vf_vo_vf_vf(veq_vo_vf_vf(a, vcast_vf_f(0)), vcast_vf_f(0), z);

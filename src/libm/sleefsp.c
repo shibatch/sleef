@@ -2371,7 +2371,7 @@ EXPORT CONST float xerff_u1(float a) {
 
   t2 = dfadd2_f2_f2_f(t2, -1);
 
-  if (x < 1e-4) t2 = df(-1.12837916709551262756245475959 * x, 0);
+  if (x < 1e-4) t2 = dfmul_f2_f2_f(df(-1.1283792257308959961, 5.8635383422197591097e-08), x);
   return mulsignf(a == 0 ? 0 : (xisinff(a) ? 1 : (-t2.x - t2.y)), a);
 }
 
