@@ -996,7 +996,7 @@ int main(int argc,char **argv)
 
       double u0 = countULP2sp(t = xerff_u1(d), frx);
 
-      if (u0 > 1.0) {
+      if (u0 > 0.75) {
 	printf("Pure C erff arg=%.20g ulp=%.20g\n", d, u0);
 	printf("Correct = %.20Lg, test = %.20g\n", mpfr_get_ld(frx, GMP_RNDN), t);
 	fflush(stdout); ecnt++;
