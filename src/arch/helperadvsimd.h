@@ -193,7 +193,7 @@ static INLINE VECTOR_CC vfloat vfmanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) 
 }
 
 static INLINE VECTOR_CC vfloat vfmapn_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { // x * y - z
-  return vneg_vf_vf(vfmanp_vf_vf_vf_vf(x, y, z));
+  return vfma_vf_vf_vf_vf(x, y, vneg_vf_vf(z));
 }
 
 // Reciprocal 1/x, Division, Square root
@@ -405,7 +405,7 @@ static INLINE VECTOR_CC vdouble vfmanp_vd_vd_vd_vd(vdouble x, vdouble y, vdouble
 }
 
 static INLINE VECTOR_CC vdouble vfmapn_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { // x * y - z
-  return vneg_vd_vd(vfmanp_vd_vd_vd_vd(x, y, z));
+  return vfma_vd_vd_vd_vd(x, y, vneg_vd_vd(z));
 }
 
 // Reciprocal 1/x, Division, Square root
