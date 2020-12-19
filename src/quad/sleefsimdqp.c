@@ -675,9 +675,11 @@ static INLINE CONST vdouble poly8d(vdouble x, double c7, double c6, double c5, d
 
 //
 
+#if !defined(ENABLE_CUDA)
 typedef struct {
   double x, y;
 } double2;
+#endif
 
 static INLINE CONST double2 dd(double h, double l) {
   double2 ret = { h, l };
@@ -933,9 +935,11 @@ static INLINE CONST vdouble2 poly27dd(vdouble2 x, vdouble c26, double2 c25, doub
 
 //
 
+#ifndef ENABLE_CUDA
 typedef struct {
   double x, y, z;
 } double3;
+#endif
 
 static INLINE CONST vdouble3 vcast_vd3_d3(double3 td) {
   return vd3setxyz_vd3_vd_vd_vd(vcast_vd_d(td.x), vcast_vd_d(td.y), vcast_vd_d(td.z));

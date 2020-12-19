@@ -4,9 +4,13 @@
 //          http://www.boost.org/LICENSE_1_0.txt)
 
 #if !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA))
+#if !defined(ENABLE_CUDA)
 typedef struct {
   vfloat x, y;
 } vfloat2;
+#else
+typedef float2 vfloat2;
+#endif
 
 static vfloat  vf2getx_vf_vf2(vfloat2 v) { return v.x; }
 static vfloat  vf2gety_vf_vf2(vfloat2 v) { return v.y; }
