@@ -1,3 +1,4 @@
+
 # Options
 
 option(BUILD_SHARED_LIBS "Build shared libs" ON)
@@ -23,6 +24,65 @@ option(ENABLE_ALTSQRT "Enable alternative sqrt method (aarch64 only)" OFF)
 option(DISABLE_FFTW "Disable testing the DFT library with FFTW" OFF)
 
 option(ENABLE_CUDA "Enable CUDA" OFF)
+
+# Function used to generate safe command arguments for add_custom_command
+function(command_arguments PROPNAME)
+  set(quoted_args "")
+  foreach(arg ${ARGN})
+    list(APPEND quoted_args "\"${arg}\"" )
+  endforeach()
+  set(${PROPNAME} ${quoted_args} PARENT_SCOPE)
+endfunction()
+
+# Settings
+
+set(SLEEF_ALL_SUPPORTED_EXTENSIONS
+  AVX512FNOFMA AVX512F AVX2 AVX2128 FMA4 AVX SSE4 SSE2  # x86
+  SVENOFMA SVE ADVSIMDNOFMA ADVSIMD                     # Aarch64
+  NEON32 NEON32VFPV4                                    # Aarch32
+  VSX VSXNOFMA VSX3 VSX3NOFMA                           # PPC64
+  VXE VXENOFMA VXE2 VXE2NOFMA	                        # IBM Z
+  PUREC_SCALAR PURECFMA_SCALAR                          # Generic type
+  CACHE STRING "List of SIMD architectures supported by libsleef."
+  )
+
+set(SLEEF_SUPPORTED_LIBM_EXTENSIONS
+  AVX512FNOFMA AVX512F AVX2 AVX2128 FMA4 AVX SSE4 SSE2  # x86
+  SVENOFMA SVE ADVSIMDNOFMA ADVSIMD                     # Aarch64
+  NEON32 NEON32VFPV4                                    # Aarch32
+  VSX VSXNOFMA VSX3 VSX3NOFMA                           # PPC64
+  VXE VXENOFMA VXE2 VXE2NOFMA	                        # IBM Z
+  PUREC_SCALAR PURECFMA_SCALAR                          # Generic type
+  CACHE STRING "List of SIMD architectures supported by libsleef."
+  )
+set(SLEEF_SUPPORTED_GNUABI_EXTENSIONS 
+  SSE2 AVX AVX2 AVX512F ADVSIMD SVE
+  CACHE STRING "List of SIMD architectures supported by libsleef for GNU ABI."
+)
+
+set(SLEEF_SUPPORTED_QUAD_EXTENSIONS
+  PUREC_SCALAR PURECFMA_SCALAR SSE2 AVX2 AVX512F ADVSIMD SVE VSX VSX3 VXE VXE2)
+
+# MKMASKED_PARAMS
+
+command_arguments(MKMASKED_PARAMS_GNUABI_AVX512F_dp avx512f e 8)
+command_arguments(MKMASKED_PARAMS_GNUABI_AVX512F_sp avx512f e -16)
+
+command_arguments(MKMASKED_PARAMS_GNUABI_SVE_dp sve s 2)
+command_arguments(MKMASKED_PARAMS_GNUABI_SVE_sp sve s -4)
+
+#
+
+set(COSTOVERRIDE_AVX512F 10.0)
+set(COSTOVERRIDE_AVX512FNOFMA 10.0)
+set(COSTOVERRIDE_AVX2 2.0)
+set(COSTOVERRIDE_AVX 2.0)
+set(COSTOVERRIDE_NEON32 2.0)
+set(COSTOVERRIDE_NEON32VFPV4 2.0)
+set(COSTOVERRIDE_SVE 10.0)
+set(COSTOVERRIDE_SVENOFMA 10.0)
+
+#
 
 cmake_minimum_required(VERSION 3.4.3)
 

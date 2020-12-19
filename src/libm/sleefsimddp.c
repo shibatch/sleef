@@ -269,117 +269,13 @@ extern const double Sleef_rempitabdp[];
 //
 
 #include "dd.h"
-
-//
-
-static INLINE VECTOR_CC vopmask vnot_vo64_vo64(vopmask x) {
-  return vxor_vo_vo_vo(x, veq64_vo_vm_vm(vcast_vm_i_i(0, 0), vcast_vm_i_i(0, 0)));
-}
-
-static INLINE CONST VECTOR_CC vopmask vsignbit_vo_vd(vdouble d) {
-  return veq64_vo_vm_vm(vand_vm_vm_vm(vreinterpret_vm_vd(d), vreinterpret_vm_vd(vcast_vd_d(-0.0))), vreinterpret_vm_vd(vcast_vd_d(-0.0)));
-}
+#include "commonfuncs.h"
 
 // return d0 < d1 ? x : y
 static INLINE CONST VECTOR_CC vint vsel_vi_vd_vd_vi_vi(vdouble d0, vdouble d1, vint x, vint y) { return vsel_vi_vo_vi_vi(vcast_vo32_vo64(vlt_vo_vd_vd(d0, d1)), x, y); } 
 
 // return d0 < 0 ? x : 0
 static INLINE CONST VECTOR_CC vint vsel_vi_vd_vi(vdouble d, vint x) { return vand_vi_vo_vi(vcast_vo32_vo64(vsignbit_vo_vd(d)), x); }
-
-static INLINE CONST VECTOR_CC vopmask visnegzero_vo_vd(vdouble d) {
-  return veq64_vo_vm_vm(vreinterpret_vm_vd(d), vreinterpret_vm_vd(vcast_vd_d(-0.0)));
-}
-
-static INLINE CONST VECTOR_CC vopmask visnumber_vo_vd(vdouble x) {
-  return vandnot_vo_vo_vo(visinf_vo_vd(x), veq_vo_vd_vd(x, x));
-}
-
-static INLINE CONST VECTOR_CC vmask vsignbit_vm_vd(vdouble d) {
-  return vand_vm_vm_vm(vreinterpret_vm_vd(d), vreinterpret_vm_vd(vcast_vd_d(-0.0)));
-}
-
-static INLINE CONST VECTOR_CC vdouble vmulsign_vd_vd_vd(vdouble x, vdouble y) {
-  return vreinterpret_vd_vm(vxor_vm_vm_vm(vreinterpret_vm_vd(x), vsignbit_vm_vd(y)));
-}
-
-static INLINE CONST VECTOR_CC vdouble vcopysign_vd_vd_vd(vdouble x, vdouble y) {
-  return vreinterpret_vd_vm(vxor_vm_vm_vm(vandnot_vm_vm_vm(vreinterpret_vm_vd(vcast_vd_d(-0.0)), vreinterpret_vm_vd(x)), 
-					  vand_vm_vm_vm   (vreinterpret_vm_vd(vcast_vd_d(-0.0)), vreinterpret_vm_vd(y))));
-}
-
-static INLINE CONST VECTOR_CC vdouble vsign_vd_vd(vdouble d) {
-  return vmulsign_vd_vd_vd(vcast_vd_d(1.0), d);
-}
-
-static INLINE CONST VECTOR_CC vdouble vpow2i_vd_vi(vint q) {
-  q = vadd_vi_vi_vi(vcast_vi_i(0x3ff), q);
-  vint2 r = vcastu_vi2_vi(q);
-  return vreinterpret_vd_vi2(vsll_vi2_vi2_i(r, 20));
-}
-
-static INLINE CONST VECTOR_CC vdouble vldexp_vd_vd_vi(vdouble x, vint q) {
-  vint m = vsra_vi_vi_i(q, 31);
-  m = vsll_vi_vi_i(vsub_vi_vi_vi(vsra_vi_vi_i(vadd_vi_vi_vi(m, q), 9), m), 7);
-  q = vsub_vi_vi_vi(q, vsll_vi_vi_i(m, 2));
-  m = vadd_vi_vi_vi(vcast_vi_i(0x3ff), m);
-  m = vandnot_vi_vo_vi(vgt_vo_vi_vi(vcast_vi_i(0), m), m);
-  m = vsel_vi_vo_vi_vi(vgt_vo_vi_vi(m, vcast_vi_i(0x7ff)), vcast_vi_i(0x7ff), m);
-  vint2 r = vcastu_vi2_vi(m);
-  vdouble y = vreinterpret_vd_vi2(vsll_vi2_vi2_i(r, 20));
-  return vmul_vd_vd_vd(vmul_vd_vd_vd(vmul_vd_vd_vd(vmul_vd_vd_vd(vmul_vd_vd_vd(x, y), y), y), y), vpow2i_vd_vi(q));
-}
-
-static INLINE CONST VECTOR_CC vdouble vldexp2_vd_vd_vi(vdouble d, vint e) {
-  return vmul_vd_vd_vd(vmul_vd_vd_vd(d, vpow2i_vd_vi(vsra_vi_vi_i(e, 1))), vpow2i_vd_vi(vsub_vi_vi_vi(e, vsra_vi_vi_i(e, 1))));
-}
-
-static INLINE CONST VECTOR_CC vdouble vldexp3_vd_vd_vi(vdouble d, vint q) {
-  return vreinterpret_vd_vi2(vadd_vi2_vi2_vi2(vreinterpret_vi2_vd(d), vsll_vi2_vi2_i(vcastu_vi2_vi(q), 20)));
-}
-
-#if !defined(ENABLE_AVX512F) && !defined(ENABLE_AVX512FNOFMA)
-static INLINE CONST VECTOR_CC vint vilogbk_vi_vd(vdouble d) {
-  vopmask o = vlt_vo_vd_vd(d, vcast_vd_d(4.9090934652977266E-91));
-  d = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(vcast_vd_d(2.037035976334486E90), d), d);
-  vint q = vcastu_vi_vi2(vreinterpret_vi2_vd(d));
-  q = vand_vi_vi_vi(q, vcast_vi_i(((1U << 12) - 1) << 20));
-  q = vsrl_vi_vi_i(q, 20);
-  q = vsub_vi_vi_vi(q, vsel_vi_vo_vi_vi(vcast_vo32_vo64(o), vcast_vi_i(300 + 0x3ff), vcast_vi_i(0x3ff)));
-  return q;
-}
-
-static INLINE CONST VECTOR_CC vint vilogb2k_vi_vd(vdouble d) {
-  vint q = vcastu_vi_vi2(vreinterpret_vi2_vd(d));
-  q = vsrl_vi_vi_i(q, 20);
-  q = vand_vi_vi_vi(q, vcast_vi_i(0x7ff));
-  q = vsub_vi_vi_vi(q, vcast_vi_i(0x3ff));
-  return q;
-}
-#endif
-
-static INLINE CONST VECTOR_CC vopmask visint_vo_vd(vdouble d) {
-#ifdef FULL_FP_ROUNDING
-  return veq_vo_vd_vd(vtruncate_vd_vd(d), d);
-#else
-  vdouble x = vtruncate_vd_vd(vmul_vd_vd_vd(d, vcast_vd_d(1.0 / (INT64_C(1) << 31))));
-  x = vmla_vd_vd_vd_vd(vcast_vd_d(-(double)(INT64_C(1) << 31)), x, d);
-  return vor_vo_vo_vo(veq_vo_vd_vd(vtruncate_vd_vd(x), x),
-		      vgt_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(INT64_C(1) << 53)));
-#endif
-}
-
-static INLINE CONST VECTOR_CC vopmask visodd_vo_vd(vdouble d) {
-#ifdef FULL_FP_ROUNDING
-  vdouble x = vmul_vd_vd_vd(d, vcast_vd_d(0.5));
-  return vneq_vo_vd_vd(vtruncate_vd_vd(x), x);
-#else
-  vdouble x = vtruncate_vd_vd(vmul_vd_vd_vd(d, vcast_vd_d(1.0 / (INT64_C(1) << 31))));
-  x = vmla_vd_vd_vd_vd(vcast_vd_d(-(double)(INT64_C(1) << 31)), x, d);
-
-  return vand_vo_vo_vo(vcast_vo64_vo32(veq_vo_vi_vi(vand_vi_vi_vi(vtruncate_vi_vd(x), vcast_vi_i(1)), vcast_vi_i(1))),
-		       vlt_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(INT64_C(1) << 53)));
-#endif
-}
 
 //
 
@@ -391,57 +287,6 @@ EXPORT CONST VECTOR_CC vint xilogb(vdouble d) {
   e = vsel_vd_vo_vd_vd(visnan_vo_vd(d), vcast_vd_d(SLEEF_FP_ILOGBNAN), e);
   e = vsel_vd_vo_vd_vd(visinf_vo_vd(d), vcast_vd_d(INT_MAX), e);
   return vrint_vi_vd(e);
-}
-
-#if !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA))
-typedef struct {
-  vdouble d;
-  vint i;
-} di_t;
-
-static vdouble digetd_vd_di(di_t d) { return d.d; }
-static vint digeti_vi_di(di_t d) { return d.i; }
-static di_t disetdi_di_vd_vi(vdouble d, vint i) {
-  di_t r = { d, i };
-  return r;
-}
-
-typedef struct {
-  vdouble2 dd;
-  vint i;
-} ddi_t;
-
-static vdouble2 ddigetdd_vd2_ddi(ddi_t d) { return d.dd; }
-static vint ddigeti_vi_ddi(ddi_t d) { return d.i; }
-static ddi_t ddisetddi_ddi_vd2_vi(vdouble2 v, vint i) {
-  ddi_t r = { v, i };
-  return r;
-}
-static ddi_t ddisetdd_ddi_ddi_vd2(ddi_t ddi, vdouble2 v) {
-  ddi.dd = v;
-  return ddi;
-}
-#endif
-
-static INLINE CONST VECTOR_CC vdouble vorsign_vd_vd_vd(vdouble x, vdouble y) {
-  return vreinterpret_vd_vm(vor_vm_vm_vm(vreinterpret_vm_vd(x), vsignbit_vm_vd(y)));
-}
-
-static INLINE CONST di_t rempisub(vdouble x) {
-#ifdef FULL_FP_ROUNDING
-  vdouble y = vrint_vd_vd(vmul_vd_vd_vd(x, vcast_vd_d(4)));
-  vint vi = vtruncate_vi_vd(vsub_vd_vd_vd(y, vmul_vd_vd_vd(vrint_vd_vd(x), vcast_vd_d(4))));
-  return disetdi_di_vd_vi(vsub_vd_vd_vd(x, vmul_vd_vd_vd(y, vcast_vd_d(0.25))), vi);
-#else
-  vdouble c = vmulsign_vd_vd_vd(vcast_vd_d(INT64_C(1) << 52), x);
-  vdouble rint4x = vsel_vd_vo_vd_vd(vgt_vo_vd_vd(vabs_vd_vd(vmul_vd_vd_vd(vcast_vd_d(4), x)), vcast_vd_d(INT64_C(1) << 52)),
-				    vmul_vd_vd_vd(vcast_vd_d(4), x),
-				    vorsign_vd_vd_vd(vsub_vd_vd_vd(vmla_vd_vd_vd_vd(vcast_vd_d(4), x, c), c), x));
-  vdouble rintx  = vsel_vd_vo_vd_vd(vgt_vo_vd_vd(vabs_vd_vd(x), vcast_vd_d(INT64_C(1) << 52)),
-				    x, vorsign_vd_vd_vd(vsub_vd_vd_vd(vadd_vd_vd_vd(x, c), c), x));
-  return disetdi_di_vd_vi(vmla_vd_vd_vd_vd(vcast_vd_d(-0.25), rint4x, x),
-			  vtruncate_vi_vd(vmla_vd_vd_vd_vd(vcast_vd_d(-4), rintx, rint4x)));
-#endif
 }
 
 static INLINE CONST ddi_t rempi(vdouble a) {
@@ -2200,7 +2045,7 @@ EXPORT CONST VECTOR_CC vdouble xlog(vdouble d) {
   vdouble t, m;
   
 #if !defined(ENABLE_AVX512F) && !defined(ENABLE_AVX512FNOFMA)
-  vopmask o = vlt_vo_vd_vd(d, vcast_vd_d(DBL_MIN));
+  vopmask o = vlt_vo_vd_vd(d, vcast_vd_d(SLEEF_DBL_MIN));
   d = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(d, vcast_vd_d((double)(INT64_C(1) << 32) * (double)(INT64_C(1) << 32))), d);
   vint e = vilogb2k_vi_vd(vmul_vd_vd_vd(d, vcast_vd_d(1.0/0.75)));
   m = vldexp3_vd_vd_vi(d, vneg_vi_vi(e));
@@ -2324,7 +2169,7 @@ static INLINE CONST VECTOR_CC vdouble2 logk(vdouble d) {
   vdouble t, m;
 
 #if !defined(ENABLE_AVX512F) && !defined(ENABLE_AVX512FNOFMA)
-  vopmask o = vlt_vo_vd_vd(d, vcast_vd_d(DBL_MIN));
+  vopmask o = vlt_vo_vd_vd(d, vcast_vd_d(SLEEF_DBL_MIN));
   d = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(d, vcast_vd_d((double)(INT64_C(1) << 32) * (double)(INT64_C(1) << 32))), d);
   vint e = vilogb2k_vi_vd(vmul_vd_vd_vd(d, vcast_vd_d(1.0/0.75)));
   m = vldexp3_vd_vd_vi(d, vneg_vi_vi(e));
@@ -2371,7 +2216,7 @@ EXPORT CONST VECTOR_CC vdouble xlog_u1(vdouble d) {
   vdouble t, m, x2;
 
 #if !defined(ENABLE_AVX512F) && !defined(ENABLE_AVX512FNOFMA)
-  vopmask o = vlt_vo_vd_vd(d, vcast_vd_d(DBL_MIN));
+  vopmask o = vlt_vo_vd_vd(d, vcast_vd_d(SLEEF_DBL_MIN));
   d = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(d, vcast_vd_d((double)(INT64_C(1) << 32) * (double)(INT64_C(1) << 32))), d);
   vint e = vilogb2k_vi_vd(vmul_vd_vd_vd(d, vcast_vd_d(1.0/0.75)));
   m = vldexp3_vd_vd_vi(d, vneg_vi_vi(e));
@@ -2926,7 +2771,7 @@ EXPORT CONST VECTOR_CC vdouble xlog10(vdouble d) {
   vdouble t, m, x2;
 
 #if !defined(ENABLE_AVX512F) && !defined(ENABLE_AVX512FNOFMA)
-  vopmask o = vlt_vo_vd_vd(d, vcast_vd_d(DBL_MIN));
+  vopmask o = vlt_vo_vd_vd(d, vcast_vd_d(SLEEF_DBL_MIN));
   d = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(d, vcast_vd_d((double)(INT64_C(1) << 32) * (double)(INT64_C(1) << 32))), d);
   vint e = vilogb2k_vi_vd(vmul_vd_vd_vd(d, vcast_vd_d(1.0/0.75)));
   m = vldexp3_vd_vd_vi(d, vneg_vi_vi(e));
@@ -2977,7 +2822,7 @@ EXPORT CONST VECTOR_CC vdouble xlog2(vdouble d) {
   vdouble t, m, x2;
 
 #if !defined(ENABLE_AVX512F) && !defined(ENABLE_AVX512FNOFMA)
-  vopmask o = vlt_vo_vd_vd(d, vcast_vd_d(DBL_MIN));
+  vopmask o = vlt_vo_vd_vd(d, vcast_vd_d(SLEEF_DBL_MIN));
   d = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(d, vcast_vd_d((double)(INT64_C(1) << 32) * (double)(INT64_C(1) << 32))), d);
   vint e = vilogb2k_vi_vd(vmul_vd_vd_vd(d, vcast_vd_d(1.0/0.75)));
   m = vldexp3_vd_vd_vi(d, vneg_vi_vi(e));
@@ -3028,7 +2873,7 @@ EXPORT CONST VECTOR_CC vdouble xlog2_u35(vdouble d) {
   vdouble m, t, x, x2;
 
 #if !defined(ENABLE_AVX512F) && !defined(ENABLE_AVX512FNOFMA)
-  vopmask o = vlt_vo_vd_vd(d, vcast_vd_d(DBL_MIN));
+  vopmask o = vlt_vo_vd_vd(d, vcast_vd_d(SLEEF_DBL_MIN));
   d = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(d, vcast_vd_d((double)(INT64_C(1) << 32) * (double)(INT64_C(1) << 32))), d);
   vint e = vilogb2k_vi_vd(vmul_vd_vd_vd(d, vcast_vd_d(1.0/0.75)));
   m = vldexp3_vd_vd_vi(d, vneg_vi_vi(e));
@@ -3078,7 +2923,7 @@ EXPORT CONST VECTOR_CC vdouble xlog1p(vdouble d) {
   vdouble dp1 = vadd_vd_vd_vd(d, vcast_vd_d(1));
 
 #if !defined(ENABLE_AVX512F) && !defined(ENABLE_AVX512FNOFMA)
-  vopmask o = vlt_vo_vd_vd(dp1, vcast_vd_d(DBL_MIN));
+  vopmask o = vlt_vo_vd_vd(dp1, vcast_vd_d(SLEEF_DBL_MIN));
   dp1 = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(dp1, vcast_vd_d((double)(INT64_C(1) << 32) * (double)(INT64_C(1) << 32))), dp1);
   vint e = vilogb2k_vi_vd(vmul_vd_vd_vd(dp1, vcast_vd_d(1.0/0.75)));
   t = vldexp3_vd_vd_vi(vcast_vd_d(1), vneg_vi_vi(e));
@@ -3225,7 +3070,7 @@ EXPORT CONST VECTOR_CC vdouble xnextafter(vdouble x, vdouble y) {
 }
 
 EXPORT CONST VECTOR_CC vdouble xfrfrexp(vdouble x) {
-  x = vsel_vd_vo_vd_vd(vlt_vo_vd_vd(vabs_vd_vd(x), vcast_vd_d(DBL_MIN)), vmul_vd_vd_vd(x, vcast_vd_d(UINT64_C(1) << 63)), x);
+  x = vsel_vd_vo_vd_vd(vlt_vo_vd_vd(vabs_vd_vd(x), vcast_vd_d(SLEEF_DBL_MIN)), vmul_vd_vd_vd(x, vcast_vd_d(UINT64_C(1) << 63)), x);
 
   vmask xm = vreinterpret_vm_vd(x);
   xm = vand_vm_vm_vm(xm, vcast_vm_i_i(~0x7ff00000, ~0));
@@ -3240,7 +3085,7 @@ EXPORT CONST VECTOR_CC vdouble xfrfrexp(vdouble x) {
 }
 
 EXPORT CONST VECTOR_CC vint xexpfrexp(vdouble x) {
-  x = vsel_vd_vo_vd_vd(vlt_vo_vd_vd(vabs_vd_vd(x), vcast_vd_d(DBL_MIN)), vmul_vd_vd_vd(x, vcast_vd_d(UINT64_C(1) << 63)), x);
+  x = vsel_vd_vo_vd_vd(vlt_vo_vd_vd(vabs_vd_vd(x), vcast_vd_d(SLEEF_DBL_MIN)), vmul_vd_vd_vd(x, vcast_vd_d(UINT64_C(1) << 63)), x);
 
   vint ret = vcastu_vi_vi2(vreinterpret_vi2_vd(x));
   ret = vsub_vi_vi_vi(vand_vi_vi_vi(vsrl_vi_vi_i(ret, 20), vcast_vi_i(0x7ff)), vcast_vi_i(0x3fe));
@@ -3373,7 +3218,7 @@ EXPORT CONST VECTOR_CC vdouble xhypot_u05(vdouble x, vdouble y) {
   vdouble min = vmin_vd_vd_vd(x, y), n = min;
   vdouble max = vmax_vd_vd_vd(x, y), d = max;
 
-  vopmask o = vlt_vo_vd_vd(max, vcast_vd_d(DBL_MIN));
+  vopmask o = vlt_vo_vd_vd(max, vcast_vd_d(SLEEF_DBL_MIN));
   n = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(n, vcast_vd_d(UINT64_C(1) << 54)), n);
   d = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(d, vcast_vd_d(UINT64_C(1) << 54)), d);
 
@@ -3403,12 +3248,12 @@ EXPORT CONST VECTOR_CC vdouble xhypot_u35(vdouble x, vdouble y) {
   return ret;
 }
 
-static INLINE CONST VECTOR_CC vdouble vtoward0(vdouble x) { // returns nextafter(x, 0)
+static INLINE CONST VECTOR_CC vdouble vtoward0_vd_vd(vdouble x) { // returns nextafter(x, 0)
   vdouble t = vreinterpret_vd_vm(vadd64_vm_vm_vm(vreinterpret_vm_vd(x), vcast_vm_i_i(-1, -1)));
   return vsel_vd_vo_vd_vd(veq_vo_vd_vd(x, vcast_vd_d(0)), vcast_vd_d(0), t);
 }
 
-static INLINE CONST VECTOR_CC vdouble vptrunc(vdouble x) { // round to integer toward 0, positive argument only
+static INLINE CONST VECTOR_CC vdouble vptrunc_vd_vd(vdouble x) { // round to integer toward 0, positive argument only
 #ifdef FULL_FP_ROUNDING
   return vtruncate_vd_vd(x);
 #else
@@ -3421,15 +3266,15 @@ static INLINE CONST VECTOR_CC vdouble vptrunc(vdouble x) { // round to integer t
 /* TODO AArch64: potential optimization by using `vfmad_lane_f64` */
 EXPORT CONST VECTOR_CC vdouble xfmod(vdouble x, vdouble y) {
   vdouble n = vabs_vd_vd(x), d = vabs_vd_vd(y), s = vcast_vd_d(1), q;
-  vopmask o = vlt_vo_vd_vd(d, vcast_vd_d(DBL_MIN));
+  vopmask o = vlt_vo_vd_vd(d, vcast_vd_d(SLEEF_DBL_MIN));
   n = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(n, vcast_vd_d(UINT64_C(1) << 54)), n);
   d = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(d, vcast_vd_d(UINT64_C(1) << 54)), d);
   s  = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(s , vcast_vd_d(1.0 / (UINT64_C(1) << 54))), s);
   vdouble2 r = vcast_vd2_vd_vd(n, vcast_vd_d(0));
-  vdouble rd = vtoward0(vrec_vd_vd(d));
+  vdouble rd = vtoward0_vd_vd(vrec_vd_vd(d));
 
   for(int i=0;i<21;i++) { // ceil(log2(DBL_MAX) / 52)
-    q = vptrunc(vmul_vd_vd_vd(vtoward0(vd2getx_vd_vd2(r)), rd));
+    q = vptrunc_vd_vd(vmul_vd_vd_vd(vtoward0_vd_vd(vd2getx_vd_vd2(r)), rd));
 #ifndef ENABLE_FMA_DP
     q = vreinterpret_vd_vm(vand_vm_vm_vm(vreinterpret_vm_vd(q), vcast_vm_i_i(0xffffffff, 0xfffffffe)));
 #endif
@@ -3466,7 +3311,7 @@ static INLINE VECTOR_CC vdouble vrintk2_vd_vd(vdouble d) {
 
 EXPORT CONST VECTOR_CC vdouble xremainder(vdouble x, vdouble y) {
   vdouble n = vabs_vd_vd(x), d = vabs_vd_vd(y), s = vcast_vd_d(1), q;
-  vopmask o = vlt_vo_vd_vd(d, vcast_vd_d(DBL_MIN*2));
+  vopmask o = vlt_vo_vd_vd(d, vcast_vd_d(SLEEF_DBL_MIN*2));
   n = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(n, vcast_vd_d(UINT64_C(1) << 54)), n);
   d = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(d, vcast_vd_d(UINT64_C(1) << 54)), d);
   s  = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(s , vcast_vd_d(1.0 / (UINT64_C(1) << 54))), s);
@@ -3495,19 +3340,6 @@ EXPORT CONST VECTOR_CC vdouble xremainder(vdouble x, vdouble y) {
   ret = vsel_vd_vo_vd_vd(veq_vo_vd_vd(d, vcast_vd_d(0)), vcast_vd_d(SLEEF_NAN), ret);
   return ret;
 }
-
-#if !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA))
-  typedef struct {
-    vdouble2 a, b;
-  } dd2;
-
-static dd2 dd2setab_dd2_vd2_vd2(vdouble2 a, vdouble2 b) {
-  dd2 r = { a, b };
-  return r;
-}
-static vdouble2 dd2geta_vd2_dd2(dd2 d) { return d.a; }
-static vdouble2 dd2getb_vd2_dd2(dd2 d) { return d.b; }
-#endif
 
 /* TODO AArch64: potential optimization by using `vfmad_lane_f64` */
 static CONST dd2 gammak(vdouble a) {
@@ -3602,7 +3434,7 @@ EXPORT CONST VECTOR_CC vdouble xtgamma_u1(vdouble a) {
   r = vsel_vd_vo_vd_vd(o, vcast_vd_d(SLEEF_NAN), r);
 
   o = vand_vo_vo_vo(vand_vo_vo_vo(vor_vo_vo_vo(veq_vo_vd_vd(a, vcast_vd_d(SLEEF_INFINITY)), visnumber_vo_vd(a)),
-				  vge_vo_vd_vd(a, vcast_vd_d(-DBL_MIN))),
+				  vge_vo_vd_vd(a, vcast_vd_d(-SLEEF_DBL_MIN))),
 		    vor_vo_vo_vo(vor_vo_vo_vo(veq_vo_vd_vd(a, vcast_vd_d(0)), vgt_vo_vd_vd(a, vcast_vd_d(200))), visnan_vo_vd(r)));
   r = vsel_vd_vo_vd_vd(o, vmulsign_vd_vd_vd(vcast_vd_d(SLEEF_INFINITY), a), r);
   
@@ -3623,14 +3455,14 @@ EXPORT CONST VECTOR_CC vdouble xlgamma_u1(vdouble a) {
   return r;
 }
 
-static INLINE CONST vdouble2 ddmla(vdouble x, vdouble2 y, vdouble2 z) {
+static INLINE CONST vdouble2 ddmla_vd2_vd_vd2_vd2(vdouble x, vdouble2 y, vdouble2 z) {
   return ddadd_vd2_vd2_vd2(z, ddmul_vd2_vd2_vd(y, x));
 }
 
-static INLINE CONST vdouble2 poly2dd_b(vdouble x, vdouble2 c1, vdouble2 c0) { return ddmla(x, c1, c0); }
-static INLINE CONST vdouble2 poly2dd(vdouble x, vdouble c1, vdouble2 c0) { return ddmla(x, vcast_vd2_vd_vd(c1, vcast_vd_d(0)), c0); }
-static INLINE CONST vdouble2 poly4dd(vdouble x, vdouble c3, vdouble2 c2, vdouble2 c1, vdouble2 c0) {
-  return ddmla(vmul_vd_vd_vd(x, x), poly2dd(x, c3, c2), poly2dd_b(x, c1, c0));
+static INLINE CONST VECTOR_CC vdouble2 poly2dd_b(vdouble x, vdouble2 c1, vdouble2 c0) { return ddmla_vd2_vd_vd2_vd2(x, c1, c0); }
+static INLINE CONST VECTOR_CC vdouble2 poly2dd(vdouble x, vdouble c1, vdouble2 c0) { return ddmla_vd2_vd_vd2_vd2(x, vcast_vd2_vd_vd(c1, vcast_vd_d(0)), c0); }
+static INLINE CONST VECTOR_CC vdouble2 poly4dd(vdouble x, vdouble c3, vdouble2 c2, vdouble2 c1, vdouble2 c0) {
+  return ddmla_vd2_vd_vd2_vd2(vmul_vd_vd_vd(x, x), poly2dd(x, c3, c2), poly2dd_b(x, c1, c0));
 }
 
 EXPORT CONST VECTOR_CC vdouble xerf_u1(vdouble a) {

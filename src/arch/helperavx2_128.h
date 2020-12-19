@@ -441,6 +441,12 @@ static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) { return _mm_cmpgt_epi64(
 //@#define vsll64_vm_vm_i(x, c) _mm_slli_epi64(x, c)
 //@#define vsrl64_vm_vm_i(x, c) _mm_srli_epi64(x, c)
 
+static INLINE vmask vcast_vm_vi(vint vi) {
+  vmask m = _mm_and_si128(_mm_shuffle_epi32(vi, (0 << 6) | (1 << 4) | (0 << 2) | (0 << 0)), _mm_set_epi32(0, -1, 0, -1));
+  return vor_vm_vm_vm(vcastu_vi2_vi(vgt_vo_vi_vi(vcast_vi_i(0), vi)), m);
+}
+static INLINE vint vcast_vi_vm(vmask vm) { return _mm_shuffle_epi32(vm, 0x08); }
+
 static INLINE vmask vreinterpret_vm_vi64(vint64 v) { return v; }
 static INLINE vint64 vreinterpret_vi64_vm(vmask m) { return m; }
 static INLINE vmask vreinterpret_vm_vu64(vuint64 v) { return v; }

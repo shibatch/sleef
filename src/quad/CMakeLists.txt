@@ -1,23 +1,5 @@
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/)
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/include/)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${sleef_SOURCE_DIR}/src/libm)         # dd.h
 
-set(COMMON_TARGET_PROPERTIES C_STANDARD 99)
-
-if(COMPILER_SUPPORTS_FLOAT128)
-  list(APPEND COMMON_TARGET_DEFINITIONS ENABLEFLOAT128=1)
-endif()
-
-if(COMPILER_SUPPORTS_BUILTIN_MATH)
-  list(APPEND COMMON_TARGET_DEFINITIONS ENABLE_BUILTIN_MATH=1)
-endif()
-
-if (BUILD_SHARED_LIBS)
-  list(APPEND COMMON_TARGET_PROPERTIES POSITION_INDEPENDENT_CODE ON)
-endif()
-
-#
+# Settings
 
 set(QUAD_HEADER_PARAMS_PUREC_SCALAR    1 Sleef_quad   Sleef_quad2    double      float       uint64_t   int32_t   int64_t   uint64_t   __STDC__          purec)
 set(QUAD_HEADER_PARAMS_PURECFMA_SCALAR 1 Sleef_quad   Sleef_quad2    double      float       uint64_t   int32_t   int64_t   uint64_t   FP_FAST_FMA       purecfma)
@@ -48,6 +30,27 @@ set(QUAD_RENAME_PARAMS_CUDA            1 cuda)
 
 #
 
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/include/)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${sleef_SOURCE_DIR}/src/common)
+
+set(COMMON_TARGET_PROPERTIES C_STANDARD 99)
+
+if(COMPILER_SUPPORTS_FLOAT128)
+  list(APPEND COMMON_TARGET_DEFINITIONS ENABLEFLOAT128=1)
+endif()
+
+if(COMPILER_SUPPORTS_BUILTIN_MATH)
+  list(APPEND COMMON_TARGET_DEFINITIONS ENABLE_BUILTIN_MATH=1)
+endif()
+
+if (BUILD_SHARED_LIBS)
+  list(APPEND COMMON_TARGET_PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()
+
+#
+
 set(CMAKE_C_FLAGS "${ORG_CMAKE_C_FLAGS} ${SLEEF_C_FLAGS}")
 
 # --------------------------------------------------------------------
@@ -59,7 +62,7 @@ set(SLEEFQUAD_INCLUDE_HEADER ${sleef_BINARY_DIR}/include/sleefquad.h)
 
 set(SLEEF_HEADER_COMMANDS "")
 list(APPEND SLEEF_HEADER_COMMANDS COMMAND ${CMAKE_COMMAND} -E copy ${SLEEFQUAD_ORG_HEADER} ${SLEEFQUAD_INCLUDE_HEADER})
-foreach(SIMD ${SLEEFQUAD_SUPPORTED_EXT})
+foreach(SIMD ${SLEEF_SUPPORTED_QUAD_EXTENSIONS})
   if(COMPILER_SUPPORTS_${SIMD})
     list(APPEND SLEEF_HEADER_COMMANDS COMMAND echo Generating sleefquad.h: qmkrename ${QUAD_HEADER_PARAMS_${SIMD}})
     list(APPEND SLEEF_HEADER_COMMANDS COMMAND $<TARGET_FILE:qmkrename> ${QUAD_HEADER_PARAMS_${SIMD}} >> ${SLEEFQUAD_INCLUDE_HEADER})
@@ -90,7 +93,7 @@ add_host_executable(qmkrename qmkrename.c)
 set_target_properties(qmkrename PROPERTIES ${COMMON_TARGET_PROPERTIES})
 
 set(HEADER_FILES_GENERATED "")
-foreach(SIMD ${SLEEFQUAD_SUPPORTED_EXT})
+foreach(SIMD ${SLEEF_SUPPORTED_QUAD_EXTENSIONS})
   if(COMPILER_SUPPORTS_${SIMD})
     string(TOLOWER ${SIMD} SIMDLC)
     set(HEADER_${SIMD} ${CMAKE_CURRENT_BINARY_DIR}/include/qrename${SIMDLC}.h)
@@ -130,7 +133,7 @@ add_custom_target(sleefquad_headers ALL
 # libsleefquad
 # --------------------------------------------------------------------
 
-foreach(SIMD ${SLEEFQUAD_SUPPORTED_EXT})
+foreach(SIMD ${SLEEF_SUPPORTED_QUAD_EXTENSIONS})
   if(COMPILER_SUPPORTS_${SIMD})
     string(TOLOWER ${SIMD} SIMDLC)
     set(OBJECT "sleefquad${SIMDLC}_obj")
@@ -177,7 +180,7 @@ if(BUILD_INLINE_HEADERS)
   set(INLINE_HEADER_FILES_GENERATED "")
 
   if (SED_COMMAND)
-    foreach(SIMD ${SLEEFQUAD_SUPPORTED_EXT})
+    foreach(SIMD ${SLEEF_SUPPORTED_QUAD_EXTENSIONS})
       if(COMPILER_SUPPORTS_${SIMD})
 	string(TOLOWER ${SIMD} SIMDLC)
 
@@ -191,17 +194,16 @@ if(BUILD_INLINE_HEADERS)
 	  COMMAND "${CMAKE_C_COMPILER}" ${FLAG_PREPROCESS} ${FLAG_PRESERVE_COMMENTS}                        # gcc -E -C 
 	    ${FLAG_INCLUDE}${PROJECT_SOURCE_DIR}/src/common ${FLAG_INCLUDE}${PROJECT_SOURCE_DIR}/src/arch   # -I/sleef/src/common -I/sleef/src/arch
 	    ${FLAG_INCLUDE}${CMAKE_CURRENT_BINARY_DIR}/include/                                             # -I/build/src/quad/include
-	    ${FLAG_INCLUDE}${sleef_SOURCE_DIR}/src/libm                                                     # -I/build/src/libm
 	    ${FLAG_DEFINE}SLEEF_GENHEADER ${FLAG_DEFINE}ENABLE_${SIMD} ${FLAG_DEFINE}DORENAME               # -DSLEEF_GENHEADER -DENABLE_SSE2 -DDORENAME
 	    ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdqp.c > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp1    # /sleef/src/quad/sleefsimdqp.c > /build/quad/sleefSSE2.h.qtmp1
 
 	  # Remove all lines except those begin with "//@"
-	  COMMAND ${SED_COMMAND} -n -e "/^\\/\\/@#.*$/p" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp1   # sed -n -e "/^\\/\\/@#.*$/p" /build/src/libm/sleefSSE2.h.qtmp1
-	    > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp2                                              # > /build/src/libm/sleefSSE2.h.qtmp2
+	  COMMAND ${SED_COMMAND} -n -e "/^\\/\\/@#.*$/p" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp1   # sed -n -e "/^\\/\\/@#.*$/p" /build/src/quad/sleefSSE2.h.qtmp1
+	    > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp2                                              # > /build/src/quad/sleefSSE2.h.qtmp2
 
 	  # Remove "//@"
-	  COMMAND ${SED_COMMAND} -e "s/^\\/\\/@#/#/g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp2      # sed -e "s/^\\/\\/@#/#/g" /build/src/libm/sleefSSE2.h.qtmp2
-	    > ${CMAKE_CURRENT_BINARY_DIR}/include/qmacroonly${SIMD}.h                                       # > /build/src/libm/include/qmacroonlySSE2.h
+	  COMMAND ${SED_COMMAND} -e "s/^\\/\\/@#/#/g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp2      # sed -e "s/^\\/\\/@#/#/g" /build/src/common/sleefSSE2.h.qtmp2
+	    > ${CMAKE_CURRENT_BINARY_DIR}/include/qmacroonly${SIMD}.h                                       # > /build/src/common/include/qmacroonlySSE2.h
 
 	  # Remove lines beginning with "#" so that the resulting file can be preprocessed again.
 	  COMMAND ${SED_COMMAND} -e "s/^#.*//g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp1            # sed -e "s/^#.*//g" /build/src/quad/sleefSSE2.h.qtmp1
@@ -229,7 +231,7 @@ if(BUILD_INLINE_HEADERS)
 	    > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp6                                              # > /build/src/quad/sleefSSE2.h.qtmp6
 
 	  COMMAND $<TARGET_FILE:addSuffix> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp6                 # addSuffix /build/src/quad/sleefSSE2.h.qtmp6
-	    ${sleef_SOURCE_DIR}/src/libm/keywords.txt "_${SIMDLC}_sleefq"                                   # keywords.txt "_sse2_sleefq"
+	    ${sleef_SOURCE_DIR}/src/common/keywords.txt "_${SIMDLC}_sleefq"                                 # keywords.txt "_sse2_sleefq"
             > ${PROJECT_BINARY_DIR}/include/sleefquadinline_${SIMDLC}.h                                     # > /build/include/sleefquadinline_sse2.h
 
 	  MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdqp.c ${HEADER_${SIMD}}
@@ -257,19 +259,18 @@ if(BUILD_INLINE_HEADERS)
       COMMAND "${CMAKE_C_COMPILER}" ${FLAG_PREPROCESS} ${FLAG_PRESERVE_COMMENTS}                        # gcc -E -C 
       ${FLAG_INCLUDE}${PROJECT_SOURCE_DIR}/src/common ${FLAG_INCLUDE}${PROJECT_SOURCE_DIR}/src/arch     # -I/sleef/src/common -I/sleef/src/arch
       ${FLAG_INCLUDE}${CMAKE_CURRENT_BINARY_DIR}/include/                                               # -I/build/src/quad/include
-      ${FLAG_INCLUDE}${sleef_SOURCE_DIR}/src/libm                                                       # -I/build/src/libm
       ${FLAG_DEFINE}SLEEF_GENHEADER ${FLAG_DEFINE}ENABLE_${SIMD} ${FLAG_DEFINE}DORENAME                 # -DSLEEF_GENHEADER -DENABLE_CUDA -DDORENAME
       ${FLAG_DEFINE}SLEEF_ALWAYS_INLINE=__device__ ${FLAG_DEFINE}SLEEF_INLINE=__device__                # -DSLEEF_ALWAYS_INLINE=__device__ -DSLEEF_INLINE=__device__
       ${FLAG_DEFINE}SLEEF_CONST=__device__ ${FLAG_DEFINE}static=__device__                              # -DSLEEF_CONST=__device__ -Dstatic=__device__
       ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdqp.c > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp1      # /sleef/src/quad/sleefsimdqp.c > /build/quad/sleefCUDA.h.qtmp1
 
       # Remove all lines except those begin with "//@"
-      COMMAND ${SED_COMMAND} -n -e "/^\\/\\/@#.*$/p" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp1   # sed -n -e "/^\\/\\/@#.*$/p" /build/src/libm/sleefCUDA.h.qtmp1
-      > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp2                                                # > /build/src/libm/sleefCUDA.h.qtmp2
+      COMMAND ${SED_COMMAND} -n -e "/^\\/\\/@#.*$/p" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp1   # sed -n -e "/^\\/\\/@#.*$/p" /build/src/common/sleefCUDA.h.qtmp1
+      > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp2                                                # > /build/src/common/sleefCUDA.h.qtmp2
 
       # Remove "//@"
-      COMMAND ${SED_COMMAND} -e "s/^\\/\\/@#/#/g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp2      # sed -e "s/^\\/\\/@#/#/g" /build/src/libm/sleefCUDA.h.qtmp2
-      > ${CMAKE_CURRENT_BINARY_DIR}/include/qmacroonly${SIMD}.h                                         # > /build/src/libm/include/qmacroonlyCUDA.h
+      COMMAND ${SED_COMMAND} -e "s/^\\/\\/@#/#/g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp2      # sed -e "s/^\\/\\/@#/#/g" /build/src/common/sleefCUDA.h.qtmp2
+      > ${CMAKE_CURRENT_BINARY_DIR}/include/qmacroonly${SIMD}.h                                         # > /build/src/common/include/qmacroonlyCUDA.h
 
       # Remove lines beginning with "#" so that the resulting file can be preprocessed again.
       COMMAND ${SED_COMMAND} -e "s/^#.*//g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp1            # sed -e "s/^#.*//g" /build/src/quad/sleefCUDA.h.qtmp1
@@ -297,12 +298,12 @@ if(BUILD_INLINE_HEADERS)
       > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp6                                                # > /build/src/quad/sleefCUDA.h.qtmp6
 
       # Remove redundant __device__
-      COMMAND ${SED_COMMAND} -e "s/__device__ __device__/__device__/g"                                 # sed -e "s/__device__ __device__/__device__/g"
-      -e "s/__device__ __device__/__device__/g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp6        # -e "s/__device__ __device__/__device__/g" /build/src/libm/sleefCUDA.h.qtmp6
-      > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp7                                                # > /build/src/libm/sleefCUDA.h.qtmp7
+      COMMAND ${SED_COMMAND} -e "s/__device__ __device__/__device__/g"                                  # sed -e "s/__device__ __device__/__device__/g"
+      -e "s/__device__ __device__/__device__/g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp6        # -e "s/__device__ __device__/__device__/g" /build/src/common/sleefCUDA.h.qtmp6
+      > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp7                                                # > /build/src/common/sleefCUDA.h.qtmp7
 
       COMMAND $<TARGET_FILE:addSuffix> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp7                 # addSuffix /build/src/quad/sleefCUDA.h.qtmp7
-      ${sleef_SOURCE_DIR}/src/libm/keywords_cuda.txt "_${SIMDLC}_sleefq"                                # keywords_cuda.txt "_cuda_sleefq"
+      ${sleef_SOURCE_DIR}/src/common/keywords_cuda.txt "_${SIMDLC}_sleefq"                              # keywords_cuda.txt "_cuda_sleefq"
       > ${PROJECT_BINARY_DIR}/include/sleefquadinline_${SIMDLC}.h                                       # > /build/include/sleefquadinline_cuda.h
 
       MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdqp.c ${HEADER_${SIMD}}
