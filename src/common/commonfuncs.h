@@ -3,7 +3,7 @@
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#if !defined(ENABLE_SVE)
+#if !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA))
 typedef struct {
   vdouble x, y, z;
 } vdouble3;
