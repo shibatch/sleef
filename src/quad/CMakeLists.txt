@@ -302,7 +302,7 @@ if(BUILD_INLINE_HEADERS)
       > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp7                                                # > /build/src/libm/sleefCUDA.h.qtmp7
 
       COMMAND $<TARGET_FILE:addSuffix> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp7                 # addSuffix /build/src/quad/sleefCUDA.h.qtmp7
-      ${sleef_SOURCE_DIR}/src/libm/keywords.txt "_${SIMDLC}_sleefq"                                     # keywords.txt "_cuda_sleefq"
+      ${sleef_SOURCE_DIR}/src/libm/keywords_cuda.txt "_${SIMDLC}_sleefq"                                # keywords_cuda.txt "_cuda_sleefq"
       > ${PROJECT_BINARY_DIR}/include/sleefquadinline_${SIMDLC}.h                                       # > /build/include/sleefquadinline_cuda.h
 
       MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdqp.c ${HEADER_${SIMD}}
