@@ -12,11 +12,11 @@ typedef struct {
 typedef double2 vdouble2;
 #endif
 
-static vdouble  vd2getx_vd_vd2(vdouble2 v) { return v.x; }
-static vdouble  vd2gety_vd_vd2(vdouble2 v) { return v.y; }
-static vdouble2 vd2setxy_vd2_vd_vd(vdouble x, vdouble y)  { vdouble2 v; v.x = x; v.y = y; return v; }
-static vdouble2 vd2setx_vd2_vd2_vd(vdouble2 v, vdouble d) { v.x = d; return v; }
-static vdouble2 vd2sety_vd2_vd2_vd(vdouble2 v, vdouble d) { v.y = d; return v; }
+static INLINE CONST VECTOR_CC vdouble  vd2getx_vd_vd2(vdouble2 v) { return v.x; }
+static INLINE CONST VECTOR_CC vdouble  vd2gety_vd_vd2(vdouble2 v) { return v.y; }
+static INLINE CONST VECTOR_CC vdouble2 vd2setxy_vd2_vd_vd(vdouble x, vdouble y)  { vdouble2 v; v.x = x; v.y = y; return v; }
+static INLINE CONST VECTOR_CC vdouble2 vd2setx_vd2_vd2_vd(vdouble2 v, vdouble d) { v.x = d; return v; }
+static INLINE CONST VECTOR_CC vdouble2 vd2sety_vd2_vd2_vd(vdouble2 v, vdouble d) { v.y = d; return v; }
 #endif
 
 static INLINE CONST VECTOR_CC vdouble vupper_vd_vd(vdouble d) {

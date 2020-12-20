@@ -138,7 +138,7 @@ macro(test_extension SIMD)
   endif(COMPILER_SUPPORTS_${SIMD})
 endmacro(test_extension)
 
-foreach(SIMD ${SLEEFQUAD_SUPPORTED_EXT})
+foreach(SIMD ${SLEEF_SUPPORTED_QUAD_EXTENSIONS})
   test_extension(${SIMD})
 endforeach()
 

@@ -12,11 +12,11 @@ typedef struct {
 typedef float2 vfloat2;
 #endif
 
-static vfloat  vf2getx_vf_vf2(vfloat2 v) { return v.x; }
-static vfloat  vf2gety_vf_vf2(vfloat2 v) { return v.y; }
-static vfloat2 vf2setxy_vf2_vf_vf(vfloat x, vfloat y)  { vfloat2 v; v.x = x; v.y = y; return v; }
-static vfloat2 vf2setx_vf2_vf2_vf(vfloat2 v, vfloat d) { v.x = d; return v; }
-static vfloat2 vf2sety_vf2_vf2_vf(vfloat2 v, vfloat d) { v.y = d; return v; }
+static INLINE CONST VECTOR_CC vfloat  vf2getx_vf_vf2(vfloat2 v) { return v.x; }
+static INLINE CONST VECTOR_CC vfloat  vf2gety_vf_vf2(vfloat2 v) { return v.y; }
+static INLINE CONST VECTOR_CC vfloat2 vf2setxy_vf2_vf_vf(vfloat x, vfloat y)  { vfloat2 v; v.x = x; v.y = y; return v; }
+static INLINE CONST VECTOR_CC vfloat2 vf2setx_vf2_vf2_vf(vfloat2 v, vfloat d) { v.x = d; return v; }
+static INLINE CONST VECTOR_CC vfloat2 vf2sety_vf2_vf2_vf(vfloat2 v, vfloat d) { v.y = d; return v; }
 #endif
 
 static INLINE CONST VECTOR_CC vfloat vupper_vf_vf(vfloat d) {

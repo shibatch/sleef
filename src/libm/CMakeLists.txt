@@ -1,10 +1,170 @@
+
+# Settings
+
+if (SLEEF_ARCH_X86)
+  set(SLEEF_HEADER_LIST
+    SSE_
+    SSE2
+    SSE4
+    AVX_
+    AVX
+    FMA4
+    AVX2
+    AVX2128
+    AVX512F_
+    AVX512F
+    AVX512FNOFMA
+    PUREC_SCALAR
+    PURECFMA_SCALAR
+  )
+elseif(SLEEF_ARCH_AARCH64)
+  set(SLEEF_HEADER_LIST
+    ADVSIMD_
+    ADVSIMD
+    ADVSIMDNOFMA
+    SVE
+    SVENOFMA
+    PUREC_SCALAR
+    PURECFMA_SCALAR
+  )
+elseif(SLEEF_ARCH_AARCH32)
+  set(SLEEF_HEADER_LIST
+    NEON32_
+    NEON32
+    NEON32VFPV4
+    PUREC_SCALAR
+    PURECFMA_SCALAR
+  )
+elseif(SLEEF_ARCH_PPC64)
+  set(SLEEF_HEADER_LIST
+    VSX_
+    VSX
+    VSXNOFMA
+    VSX3
+    VSX3NOFMA
+    PUREC_SCALAR
+    PURECFMA_SCALAR
+  )
+elseif(SLEEF_ARCH_S390X)
+  set(SLEEF_HEADER_LIST
+    VXE_
+    VXE
+    VXENOFMA
+    VXE2
+    VXE2NOFMA
+    PUREC_SCALAR
+    PURECFMA_SCALAR
+  )
+endif()
+
+# HEADER_PARAMS
+
+command_arguments(HEADER_PARAMS_SSE_            cinz_ 2 4 __m128d __m128 __m128i __m128i __SSE2__)
+command_arguments(HEADER_PARAMS_SSE2            cinz_ 2 4 __m128d __m128 __m128i __m128i __SSE2__ sse2)
+command_arguments(HEADER_PARAMS_SSE4            cinz_ 2 4 __m128d __m128 __m128i __m128i __SSE2__ sse4)
+command_arguments(HEADER_PARAMS_AVX_            cinz_ 4 8 __m256d __m256 __m128i "struct { __m128i x, y$<SEMICOLON> }" __AVX__)
+command_arguments(HEADER_PARAMS_AVX             cinz_ 4 8 __m256d __m256 __m128i "struct { __m128i x, y$<SEMICOLON> }" __AVX__ avx)
+command_arguments(HEADER_PARAMS_FMA4            finz_ 4 8 __m256d __m256 __m128i "struct { __m128i x, y$<SEMICOLON> }" __AVX__ fma4)
+command_arguments(HEADER_PARAMS_AVX2            finz_ 4 8 __m256d __m256 __m128i __m256i __AVX__ avx2)
+command_arguments(HEADER_PARAMS_AVX2128         finz_ 2 4 __m128d __m128 __m128i __m128i __SSE2__ avx2128)
+command_arguments(HEADER_PARAMS_AVX512F_        finz_ 8 16 __m512d __m512 __m256i __m512i __AVX512F__)
+command_arguments(HEADER_PARAMS_AVX512F         finz_ 8 16 __m512d __m512 __m256i __m512i __AVX512F__ avx512f)
+command_arguments(HEADER_PARAMS_AVX512FNOFMA    cinz_ 8 16 __m512d __m512 __m256i __m512i __AVX512F__ avx512fnofma)
+
+command_arguments(HEADER_PARAMS_ADVSIMD_        finz_ 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON)
+command_arguments(HEADER_PARAMS_ADVSIMD         finz_ 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON advsimd)
+command_arguments(HEADER_PARAMS_ADVSIMDNOFMA    cinz_ 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON advsimdnofma)
+command_arguments(HEADER_PARAMS_SVE             finz_ x x svfloat64_t svfloat32_t svint32_t svint32_t __ARM_FEATURE_SVE sve)
+command_arguments(HEADER_PARAMS_SVENOFMA        cinz_ x x svfloat64_t svfloat32_t svint32_t svint32_t __ARM_FEATURE_SVE svenofma)
+
+command_arguments(HEADER_PARAMS_NEON32_         cinz_ 2 4 - float32x4_t int32x2_t int32x4_t __ARM_NEON__)
+command_arguments(HEADER_PARAMS_NEON32          cinz_ 2 4 - float32x4_t int32x2_t int32x4_t __ARM_NEON__ neon)
+command_arguments(HEADER_PARAMS_NEON32VFPV4     finz_ 2 4 - float32x4_t int32x2_t int32x4_t __ARM_NEON__ neonvfpv4)
+
+command_arguments(HEADER_PARAMS_VSX_            finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VSX__)
+command_arguments(HEADER_PARAMS_VSX             finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VSX__ vsx)
+command_arguments(HEADER_PARAMS_VSXNOFMA        cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VSX__ vsxnofma)
+command_arguments(HEADER_PARAMS_VSX3            finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VSX__ vsx3)
+command_arguments(HEADER_PARAMS_VSX3NOFMA       cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VSX__ vsx3nofma)
+
+command_arguments(HEADER_PARAMS_VXE_            finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__)
+command_arguments(HEADER_PARAMS_VXE             finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ vxe)
+command_arguments(HEADER_PARAMS_VXENOFMA        cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ vxenofma)
+command_arguments(HEADER_PARAMS_VXE2            finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ vxe2)
+command_arguments(HEADER_PARAMS_VXE2NOFMA       cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ vxe2nofma)
+
+command_arguments(HEADER_PARAMS_PUREC_SCALAR    cinz_ 1 1 double float int32_t int32_t __STDC__ purec)
+command_arguments(HEADER_PARAMS_PURECFMA_SCALAR finz_ 1 1 double float int32_t int32_t FP_FAST_FMA purecfma)
+
+# RENAME_PARAMS
+
+command_arguments(RENAME_PARAMS_SSE2            cinz_ 2 4 sse2)
+command_arguments(RENAME_PARAMS_SSE4            cinz_ 2 4 sse4)
+command_arguments(RENAME_PARAMS_AVX             cinz_ 4 8 avx)
+command_arguments(RENAME_PARAMS_FMA4            finz_ 4 8 fma4)
+command_arguments(RENAME_PARAMS_AVX2            finz_ 4 8 avx2)
+command_arguments(RENAME_PARAMS_AVX2128         finz_ 2 4 avx2128)
+command_arguments(RENAME_PARAMS_AVX512F         finz_ 8 16 avx512f)
+command_arguments(RENAME_PARAMS_AVX512FNOFMA    cinz_ 8 16 avx512fnofma)
+command_arguments(RENAME_PARAMS_ADVSIMD         finz_ 2 4 advsimd)
+command_arguments(RENAME_PARAMS_ADVSIMDNOFMA    cinz_ 2 4 advsimdnofma)
+command_arguments(RENAME_PARAMS_NEON32          cinz_ 2 4 neon)
+command_arguments(RENAME_PARAMS_NEON32VFPV4     finz_ 2 4 neonvfpv4)
+command_arguments(RENAME_PARAMS_VSX             finz_ 2 4 vsx)
+command_arguments(RENAME_PARAMS_VSXNOFMA        cinz_ 2 4 vsxnofma)
+command_arguments(RENAME_PARAMS_VSX3            finz_ 2 4 vsx3)
+command_arguments(RENAME_PARAMS_VSX3NOFMA       cinz_ 2 4 vsx3nofma)
+command_arguments(RENAME_PARAMS_VXE             finz_ 2 4 vxe)
+command_arguments(RENAME_PARAMS_VXENOFMA        cinz_ 2 4 vxenofma)
+command_arguments(RENAME_PARAMS_VXE2            finz_ 2 4 vxe2)
+command_arguments(RENAME_PARAMS_VXE2NOFMA       cinz_ 2 4 vxe2nofma)
+command_arguments(RENAME_PARAMS_PUREC_SCALAR    cinz_ 1 1 purec)
+command_arguments(RENAME_PARAMS_PURECFMA_SCALAR finz_ 1 1 purecfma)
+command_arguments(RENAME_PARAMS_CUDA            finz_ 1 1 cuda)
+
+# The vector length parameters in SVE, for SP and DP, are chosen for
+# the smallest SVE vector size (128-bit). The name is generated using
+# the "x" token of VLA SVE vector functions.
+command_arguments(RENAME_PARAMS_SVE             finz_ x x sve)
+command_arguments(RENAME_PARAMS_SVENOFMA        cinz_ x x svenofma)
+
+command_arguments(RENAME_PARAMS_GNUABI_SSE2     sse2 b 2 4 _mm128d _mm128 _mm128i _mm128i __SSE2__)
+command_arguments(RENAME_PARAMS_GNUABI_AVX      avx c 4 8 __m256d __m256 __m128i "struct { __m128i x, y$<SEMICOLON> }" __AVX__)
+command_arguments(RENAME_PARAMS_GNUABI_AVX2     avx2 d 4 8 __m256d __m256 __m128i __m256i __AVX2__)
+command_arguments(RENAME_PARAMS_GNUABI_AVX512F  avx512f e 8 16 __m512d __m512 __m256i __m512i __AVX512F__)
+command_arguments(RENAME_PARAMS_GNUABI_ADVSIMD  advsimd n 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON)
+# The vector length parameters in SVE, for SP and DP, are chosen for
+# the smallest SVE vector size (128-bit). The name is generated using
+# the "x" token of VLA SVE vector functions.
+command_arguments(RENAME_PARAMS_GNUABI_SVE sve s x x svfloat64_t svfloat32_t svint32_t svint32_t __ARM_SVE)
+
+# ALIAS_PARAMS
+
+command_arguments(ALIAS_PARAMS_AVX512F_DP   8 __m512d __m256i e avx512f)
+command_arguments(ALIAS_PARAMS_AVX512F_SP -16 __m512  __m512i e avx512f)
+
+command_arguments(ALIAS_PARAMS_ADVSIMD_DP  2 float64x2_t int32x2_t n advsimd)
+command_arguments(ALIAS_PARAMS_ADVSIMD_SP -4 float32x4_t int32x4_t n advsimd)
+
+command_arguments(ALIAS_PARAMS_NEON32_SP  -4 float32x4_t int32x4_t - neon)
+command_arguments(ALIAS_PARAMS_NEON32_DP   0)
+
+command_arguments(ALIAS_PARAMS_PUREC_SCALAR_DP     1 double int32_t purec cinz_)
+command_arguments(ALIAS_PARAMS_PUREC_SCALAR_SP    -1 float  int32_t purec cinz_)
+command_arguments(ALIAS_PARAMS_PURECFMA_SCALAR_DP  1 double int32_t purecfma finz_)
+command_arguments(ALIAS_PARAMS_PURECFMA_SCALAR_SP -1 float  int32_t purecfma finz_)
+
+#
+
+set(EXT_ENABLE_ALIAS AVX512F ADVSIMD NEON32)
+
+#
+
 file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/include/)
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/include/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 set(CMAKE_C_FLAGS "${ORG_CMAKE_C_FLAGS} ${SLEEF_C_FLAGS}")
-
-set(EXT_ENABLE_ALIAS AVX512F ADVSIMD NEON32)
 
 # --------------------------------------------------------------------
 # sleef.h
@@ -51,7 +211,7 @@ if(FORCE_AAVPCS)
 endif()
 
 set(HEADER_FILES_GENERATED "")
-foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
+foreach(SIMD ${SLEEF_SUPPORTED_LIBM_EXTENSIONS})
   if(COMPILER_SUPPORTS_${SIMD})
     # Need lowercase string for rename header
     string(TOLOWER ${SIMD} vecarch)
@@ -221,7 +381,7 @@ endif()
 
 # Include symbols for each SIMD architecture (if supported by the platform)
 # Note: adds object file as sources via cmake conditional generator expression
-foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
+foreach(SIMD ${SLEEF_SUPPORTED_LIBM_EXTENSIONS})
   if(COMPILER_SUPPORTS_${SIMD})
     list(FIND EXT_ENABLE_ALIAS ${SIMD} INDEX_ALIAS)
     string(TOLOWER ${SIMD} SIMDLC)
@@ -323,14 +483,11 @@ if(BUILD_INLINE_HEADERS)
     message(FATAL_ERROR "BUILD_INLINE_HEADERS is not supported with Intel Compiler")
   endif()
 
-  add_host_executable("addSuffix" addSuffix.c)
-  set_target_properties("addSuffix" PROPERTIES C_STANDARD 99)
-
   file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/include/)
   set(INLINE_HEADER_FILES_GENERATED "")
 
   if (SED_COMMAND)
-    foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
+    foreach(SIMD ${SLEEF_SUPPORTED_LIBM_EXTENSIONS})
       if(COMPILER_SUPPORTS_${SIMD})
 	string(TOLOWER ${SIMD} SIMDLC)
 
@@ -388,7 +545,7 @@ if(BUILD_INLINE_HEADERS)
 	    > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp6                                              # > /build/src/libm/sleefSSE2.h.tmp6
 
 	  COMMAND $<TARGET_FILE:addSuffix> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp6                 # addSuffix /build/src/libm/sleefSSE2.h.tmp6
-	    ${CMAKE_CURRENT_SOURCE_DIR}/keywords.txt "_${SIMDLC}_sleef"                                    # keywords.txt "_sse2_sleef"
+	    ${sleef_SOURCE_DIR}/src/common/keywords.txt "_${SIMDLC}_sleef"                                 # keywords.txt "_sse2_sleef"
             > ${PROJECT_BINARY_DIR}/include/sleefinline_${SIMDLC}.h                                        # > /build/include/sleefinline_sse2.h
 
 	  MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimddp.c ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdsp.c ${HEADER_${SIMD}}
@@ -469,7 +626,7 @@ if(BUILD_INLINE_HEADERS)
       > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp7                                                # > /build/src/libm/sleefCUDA.h.tmp7
 
       COMMAND $<TARGET_FILE:addSuffix> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp7                 # addSuffix /build/src/libm/sleefCUDA.h.tmp7
-      ${CMAKE_CURRENT_SOURCE_DIR}/keywords_cuda.txt "_${SIMDLC}_sleef"                                 # keywords_cuda.txt "_cuda_sleef"
+      ${sleef_SOURCE_DIR}/src/common/keywords_cuda.txt "_${SIMDLC}_sleef"                              # keywords_cuda.txt "_cuda_sleef"
       > ${PROJECT_BINARY_DIR}/include/sleefinline_${SIMDLC}.h                                          # > /build/include/sleefinline_cuda.h
 
       MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimddp.c ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdsp.c ${HEADER_${SIMD}}
@@ -756,7 +913,7 @@ if(CLANG_EXE_PATH AND SLEEF_ENABLE_LLVM_BITCODE)
   endforeach()
 
   # Generate LLVM bitcode for SIMD SLEEF
-  foreach(SIMD ${SLEEF_SUPPORTED_EXTENSIONS})
+  foreach(SIMD ${SLEEF_SUPPORTED_LIBM_EXTENSIONS})
     if (${SIMD} STREQUAL "NEON32" OR ${SIMD} STREQUAL "NEON32VFPV4")
       set(SIMD_SOURCES sleefsimdsp.c)
     else()
