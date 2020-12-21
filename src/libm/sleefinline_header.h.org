@@ -9,7 +9,7 @@
 #endif
 
 #ifndef SLEEF_INLINE
-#define SLEEF_INLINE inline
+#define SLEEF_INLINE static inline
 #endif
 
 #ifndef SLEEF_CONST

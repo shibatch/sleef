@@ -81,6 +81,12 @@ __global__ void xlog2q_u10(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_log2q
 __global__ void xlog10q_u10(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_log10q1_u10cuda(*a0); }
 __global__ void xlog1pq_u10(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_log1pq1_u10cuda(*a0); }
 
+__global__ void xfabsq(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_fabsq1_cuda(*a0); }
+__global__ void xcopysignq(Sleef_quadx1 *r, Sleef_quadx1 *a0, Sleef_quadx1 *a1) { *r = Sleef_copysignq1_cuda(*a0, *a1); }
+__global__ void xfmaxq(Sleef_quadx1 *r, Sleef_quadx1 *a0, Sleef_quadx1 *a1) { *r = Sleef_fmaxq1_cuda(*a0, *a1); }
+__global__ void xfminq(Sleef_quadx1 *r, Sleef_quadx1 *a0, Sleef_quadx1 *a1) { *r = Sleef_fminq1_cuda(*a0, *a1); }
+__global__ void xfdimq_u05(Sleef_quadx1 *r, Sleef_quadx1 *a0, Sleef_quadx1 *a1) { *r = Sleef_fdimq1_u05cuda(*a0, *a1); }
+
 //
 
 typedef union {
@@ -287,6 +293,11 @@ int main(int argc, char **argv) {
     func_q_q("log10q_u10", xlog10q_u10);
     func_q_q("log1pq_u10", xlog1pq_u10);
     func_q_q("negq", xnegq);
+    func_q_q("fabsq", xfabsq);
+    func_q_q_q("copysignq", xcopysignq);
+    func_q_q_q("fmaxq", xfmaxq);
+    func_q_q_q("fminq", xfminq);
+    func_q_q_q("fdimq_u05", xfdimq_u05);
 
     func_q_d("cast_from_doubleq", xcast_from_doubleq);
     func_d_q("cast_to_doubleq", xcast_to_doubleq);

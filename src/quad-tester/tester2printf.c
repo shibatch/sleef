@@ -18,7 +18,7 @@
 #include "sleefquad.h"
 #include "qtesterutil.h"
 
-void testem_rnd(__float128 val) {
+void testem_rnd(Sleef_quad val) {
   int prec = xrand() % 25, width = xrand() % 50;
   char *types[] = { "Qe", "Qf", "Qg", "Qa" };
   for(int i=0;i<4;i++) {
@@ -125,7 +125,7 @@ void testem_rnd(__float128 val) {
   }
 }
 
-int testem(__float128 val) {
+int testem(Sleef_quad val) {
   int ret = 0;
   char *types[] = { "Qe", "Qf", "Qg", "Qa" };
   for(int i=0;i<4;i++) {
@@ -238,7 +238,7 @@ int main(int argc, char **argv) {
 
   strtoflt128("1", NULL); // This is for registering hook
 
-  __float128 vals[] = {
+  Sleef_quad vals[] = {
     1.2345678912345678912345e+0Q,
     1.2345678912345678912345e+1Q,
     1.2345678912345678912345e-1Q,
@@ -269,13 +269,13 @@ int main(int argc, char **argv) {
     1e+300*1e+300, 1e+300*1e+300 - 1e+300*1e+300
   };
 
-  for(int i=0;i<sizeof(vals)/sizeof(__float128);i++) {
+  for(int i=0;i<sizeof(vals)/sizeof(Sleef_quad);i++) {
     if (testem(+vals[i])) exit(-1);
     if (testem(-vals[i])) exit(-1);
   }
 
   for(;;) {
-    __float128 q;
+    Sleef_quad q;
     memrand(&q, sizeof(q));
     if (fabsq(q) > 1e+25) continue;
     testem_rnd(q);
