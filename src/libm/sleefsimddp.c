@@ -285,7 +285,7 @@ EXPORT CONST VECTOR_CC vint xilogb(vdouble d) {
   vdouble e = vcast_vd_vi(vilogbk_vi_vd(vabs_vd_vd(d)));
   e = vsel_vd_vo_vd_vd(veq_vo_vd_vd(d, vcast_vd_d(0)), vcast_vd_d(SLEEF_FP_ILOGB0), e);
   e = vsel_vd_vo_vd_vd(visnan_vo_vd(d), vcast_vd_d(SLEEF_FP_ILOGBNAN), e);
-  e = vsel_vd_vo_vd_vd(visinf_vo_vd(d), vcast_vd_d(INT_MAX), e);
+  e = vsel_vd_vo_vd_vd(visinf_vo_vd(d), vcast_vd_d(SLEEF_INT_MAX), e);
   return vrint_vi_vd(e);
 }
 

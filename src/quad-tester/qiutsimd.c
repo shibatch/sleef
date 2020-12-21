@@ -545,12 +545,19 @@ int do_test(int argc, char **argv) {
     func_q_q("log10q_u10", xlog10q_u10);
     func_q_q("log1pq_u10", xlog1pq_u10);
     func_q_q("negq", xnegq);
+    func_q_q("fabsq", xfabsq);
+    func_q_q_q("copysignq", xcopysignq);
+    func_q_q_q("fmaxq", xfmaxq);
+    func_q_q_q("fminq", xfminq);
+    func_q_q_q("fdimq_u05", xfdimq_u05);
+
     func_q_d("cast_from_doubleq", xcast_from_doubleq);
     func_d_q("cast_to_doubleq", xcast_to_doubleq);
     func_q_i64("cast_from_int64q", xcast_from_int64q);
     func_i64_q("cast_to_int64q", xcast_to_int64q);
     func_q_u64("cast_from_uint64q", xcast_from_uint64q);
     func_u64_q("cast_to_uint64q", xcast_to_uint64q);
+
     func_i_q_q("icmpltq", xicmpltq);
     func_i_q_q("icmpgtq", xicmpgtq);
     func_i_q_q("icmpleq", xicmpleq);

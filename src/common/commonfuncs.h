@@ -116,7 +116,7 @@ static INLINE CONST VECTOR_CC tdi_t tdisettdi_tdi_vd3_vi(vdouble3 v, vint i) {
 #if defined(ENABLE_MAIN)
 // Functions for debugging
 #include <stdio.h>
-#include <wchar.t>
+#include <wchar.h>
 
 static void printvmask(char *mes, vmask g) {
   uint64_t u[VECTLENDP];
@@ -163,7 +163,7 @@ static void printvint64(char *mes, vint64 vi) {
   uint64_t u[VECTLENDP*2];
   vstoreu_v_p_vd((double *)u, vreinterpret_vd_vm(vreinterpret_vm_vi64(vi)));
   printf("%s ", mes);
-  for(int i=0;i<VECTLENDP;i++) printf("%016x : ", (unsigned long)u[i]);
+  for(int i=0;i<VECTLENDP;i++) printf("%016lx : ", (unsigned long)u[i]);
   printf("\n");
 }
 
@@ -358,6 +358,11 @@ static INLINE CONST vmask vilogbk_vm_vd(vdouble d) {
 }
 
 // vmask2 functions
+
+static INLINE CONST vopmask veq64_vo_vm2_vm2(vmask2 x, vmask2 y) {
+  return vand_vo_vo_vo(veq64_vo_vm_vm(vm2getx_vm_vm2(x), vm2getx_vm_vm2(y)),
+		       veq64_vo_vm_vm(vm2gety_vm_vm2(x), vm2gety_vm_vm2(y)));
+}
 
 static INLINE CONST vmask2 vsel_vm2_vo_vm2_vm2(vopmask o, vmask2 x, vmask2 y) {
   return vm2setxy_vm2_vm_vm(vsel_vm_vo64_vm_vm(o, vm2getx_vm_vm2(x), vm2getx_vm_vm2(y)), vsel_vm_vo64_vm_vm(o, vm2gety_vm_vm2(x), vm2gety_vm_vm2(y)));

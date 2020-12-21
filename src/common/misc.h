@@ -50,6 +50,7 @@
 
 #define SLEEF_FLT_MIN 0x1p-126
 #define SLEEF_DBL_MIN 0x1p-1022
+#define SLEEF_INT_MAX 2147483647
 
 //
 

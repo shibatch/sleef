@@ -469,8 +469,15 @@ vcast_vf128_tdx
 vcast_vf128_tdx_fast
 vcast_vf128_tdx_slow
 vcmp_vm_tdx_tdx
+vsignbit_vo_tdx
+visnan_vo_tdx
+veq_vo_tdx_tdx
+vneq_vo_tdx_tdx
 vge_vo_tdx_tdx
+vle_vo_tdx_tdx
 vgt_vo_tdx_tdx
+vlt_vo_tdx_tdx
+vcast_tdx_d
 vilogb_vm_tdx
 vneg_tdx_tdx
 vsel_tdx_vo64_tdx_tdx
@@ -633,6 +640,7 @@ vreinterpret_vi64_vm
 vreinterpret_vm_vi64
 vreinterpret_vm_vu64
 vreinterpret_vu64_vm
+veq64_vo_vm2_vm2
 vsel_vm2_vo_vm2_vm2
 vtruncate_vm_vd
 vugt64_vo_vm_vm

@@ -451,7 +451,7 @@ EXPORT CONST VECTOR_CC vint2 xilogbf(vfloat d) {
   vint2 e = vilogbk_vi2_vf(vabs_vf_vf(d));
   e = vsel_vi2_vo_vi2_vi2(veq_vo_vf_vf(d, vcast_vf_f(0.0f)), vcast_vi2_i(SLEEF_FP_ILOGB0), e);
   e = vsel_vi2_vo_vi2_vi2(visnan_vo_vf(d), vcast_vi2_i(SLEEF_FP_ILOGBNAN), e);
-  e = vsel_vi2_vo_vi2_vi2(visinf_vo_vf(d), vcast_vi2_i(INT_MAX), e);
+  e = vsel_vi2_vo_vi2_vi2(visinf_vo_vf(d), vcast_vi2_i(SLEEF_INT_MAX), e);
   return e;
 }
 
