@@ -450,6 +450,16 @@ void do_test(int options) {
     "Inf", "-Inf", "NaN"
   };
 
+  static const char *noNanCheckVals[] = {
+    "-0.0", "0.0", "+0.5", "-0.5", "+1.0", "-1.0", "+1.5", "-1.5", "+2.0", "-2.0", "+2.5", "-2.5",
+    "1.234", "-1.234", "+1.234e+100", "-1.234e+100", "+1.234e-100", "-1.234e-100",
+    "+1.234e+3000", "-1.234e+3000", "+1.234e-3000", "-1.234e-3000",
+    "3.1415926535897932384626433832795028841971693993751058209749445923078164",
+    "+" STR_QUAD_MIN, "-" STR_QUAD_MIN,
+    "+" STR_QUAD_DENORM_MIN, "-" STR_QUAD_DENORM_MIN,
+    "Inf", "-Inf"
+  };
+
   static const char *trigCheckVals[] = {
     "3.141592653589793238462643383279502884197169399375105820974944592307",
     "6.283185307179586476925286766559005768394338798750211641949889184615",
@@ -841,8 +851,8 @@ void do_test(int options) {
 
   fprintf(stderr, "copysignq : ");
   maxError = 0;
-  cmpDenormOuterLoop_q_q(mpfr_copysign, child_copysignq, noNegZeroCheckVals);
-  checkAccuracyOuterLoop2_q_q(mpfr_copysign, child_copysignq, stdCheckVals, 0);
+  cmpDenormOuterLoop_q_q(mpfr_copysign, child_copysignq, noNanCheckVals);
+  checkAccuracyOuterLoop2_q_q(mpfr_copysign, child_copysignq, noNanCheckVals, 0);
   checkAccuracyOuterLoop_q_q(mpfr_copysign, child_copysignq, "-1e-100", "-1e+100", 5 * NTEST, 0, 0);
   checkAccuracyOuterLoop_q_q(mpfr_copysign, child_copysignq, "0", "Inf", 5 * NTEST, 0, 1);
   checkResult(success, maxError);
