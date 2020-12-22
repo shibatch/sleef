@@ -259,6 +259,9 @@ Sleef_quad child_logq_u10(Sleef_quad x) { child_q_q("logq_u10", x); }
 Sleef_quad child_log2q_u10(Sleef_quad x) { child_q_q("log2q_u10", x); }
 Sleef_quad child_log10q_u10(Sleef_quad x) { child_q_q("log10q_u10", x); }
 Sleef_quad child_log1pq_u10(Sleef_quad x) { child_q_q("log1pq_u10", x); }
+Sleef_quad child_sinhq_u10(Sleef_quad x) { child_q_q("sinhq_u10", x); }
+Sleef_quad child_coshq_u10(Sleef_quad x) { child_q_q("coshq_u10", x); }
+Sleef_quad child_tanhq_u10(Sleef_quad x) { child_q_q("tanhq_u10", x); }
 
 Sleef_quad child_fabsq(Sleef_quad x) { child_q_q("fabsq", x); }
 Sleef_quad child_copysignq(Sleef_quad x, Sleef_quad y) { child_q_q_q("copysignq", x, y); }
@@ -821,6 +824,27 @@ void do_test(int options) {
   checkAccuracyOuterLoop2_q(mpfr_log1p, child_log1pq_u10, log1pCheckVals, 1.0);
   checkAccuracyOuterLoop_q(mpfr_log1p, child_log1pq_u10, "1e-100", "1e+100", 3 * NTEST, 1.0, 0);
   checkAccuracyOuterLoop_q(mpfr_log1p, child_log1pq_u10, "0", "Inf", 3 * NTEST, 1.0, 1);
+  checkResult(success, maxError);
+
+  fprintf(stderr, "sinhq_u10 : ");
+  maxError = 0;
+  cmpDenormOuterLoop_q(mpfr_sinh, child_sinhq_u10, stdCheckVals);
+  checkAccuracyOuterLoop2_q(mpfr_sinh, child_sinhq_u10, stdCheckVals, 1.0);
+  checkAccuracyOuterLoop_q(mpfr_sinh, child_sinhq_u10, "1e-15", "20000", 2 * NTEST, 1.0, 0);
+  checkResult(success, maxError);
+
+  fprintf(stderr, "coshq_u10 : ");
+  maxError = 0;
+  cmpDenormOuterLoop_q(mpfr_cosh, child_coshq_u10, stdCheckVals);
+  checkAccuracyOuterLoop2_q(mpfr_cosh, child_coshq_u10, stdCheckVals, 1.0);
+  checkAccuracyOuterLoop_q(mpfr_cosh, child_coshq_u10, "1e-15", "-20000", 2 * NTEST, 1.0, 0);
+  checkResult(success, maxError);
+
+  fprintf(stderr, "tanhq_u10 : ");
+  maxError = 0;
+  cmpDenormOuterLoop_q(mpfr_tanh, child_tanhq_u10, stdCheckVals);
+  checkAccuracyOuterLoop2_q(mpfr_tanh, child_tanhq_u10, stdCheckVals, 1.0);
+  checkAccuracyOuterLoop_q(mpfr_tanh, child_tanhq_u10, "1e-15", "40", 2 * NTEST, 1.0, 0);
   checkResult(success, maxError);
 
   //
