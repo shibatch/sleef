@@ -544,6 +544,10 @@ int do_test(int argc, char **argv) {
     func_q_q("log2q_u10", xlog2q_u10);
     func_q_q("log10q_u10", xlog10q_u10);
     func_q_q("log1pq_u10", xlog1pq_u10);
+    func_q_q("sinhq_u10", xsinhq_u10);
+    func_q_q("coshq_u10", xcoshq_u10);
+    func_q_q("tanhq_u10", xtanhq_u10);
+
     func_q_q("negq", xnegq);
     func_q_q("fabsq", xfabsq);
     func_q_q_q("copysignq", xcopysignq);

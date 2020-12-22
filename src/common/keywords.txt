@@ -431,6 +431,7 @@ add2_tdx_tdx_tdx
 asin_tdx_tdx
 atan_tdx_tdx
 cos_tdx_tdx
+cosh_tdx_tdx
 div2_tdx_tdx_tdx
 exp10_tdx_tdx
 exp2_tdx_tdx
@@ -443,9 +444,11 @@ log_tdx_tdx
 mul2_tdx_tdx_tdx
 mul_tdx_tdx_tdx
 sin_tdx_tdx
+sinh_tdx_tdx
 sqrt_tdx_tdx
 sub2_tdx_tdx_tdx
 tan_tdx_tdx
+tanh_tdx_tdx
 #
 tdxgetd3_vd3_tdx
 tdxgetd3x_vd_tdx
@@ -482,6 +485,8 @@ vlt_vo_tdx_tdx
 vcast_tdx_d
 vilogb_vm_tdx
 vneg_tdx_tdx
+vabs_tdx_tdx
+vmulsign_tdx_tdx_vd
 vsel_tdx_vo64_tdx_tdx
 #
 tdabs_vd3_vd3
@@ -626,6 +631,7 @@ visnonfiniteq_vo_vm2
 visnonfiniteq_vo_vm2_vm2
 visnonfiniteq_vo_vm2_vm2_vm2
 vispinfq_vo_vm2
+visminfq_vo_vm2
 viszeroq_vo_vm2
 vldexp1_vd_vd_vm
 vldexp2_vd_vd_vm

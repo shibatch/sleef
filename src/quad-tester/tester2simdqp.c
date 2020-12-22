@@ -416,6 +416,19 @@ int main(int argc,char **argv)
     }
 
     {
+      mpfr_dim(frz, frx, fry, GMP_RNDN);
+
+      double u0 = countULPf128(t = vget(xfdimq_u05(a0, a1), e), frz, 0);
+      
+      if (u0 > 0.5000000001) {
+	printf(ISANAME " fdim arg=%s %s ulp=%.20g\n", sprintf128(q0), sprintf128(q1), u0);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
       double d = mpfr_get_d(frx, GMP_RNDN);
       vd0 = vsetd(vd0, e, d);
       t = vget(xcast_from_doubleq(vd0), e);
@@ -708,6 +721,42 @@ int main(int argc,char **argv)
 
       if (u0 > 0.8) {
 	printf(ISANAME " log1p arg=%s ulp=%.20g\n", sprintf128(q0), u0);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_sinh(frz, frx, GMP_RNDN);
+      double u0 = countULPf128(t = vget(xsinhq_u10(a0), e), frz, 0);
+
+      if (u0 > 0.7) {
+	printf(ISANAME " sinh arg=%s ulp=%.20g\n", sprintf128(q0), u0);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_cosh(frz, frx, GMP_RNDN);
+      double u0 = countULPf128(t = vget(xcoshq_u10(a0), e), frz, 0);
+
+      if (u0 > 0.7) {
+	printf(ISANAME " cosh arg=%s ulp=%.20g\n", sprintf128(q0), u0);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_tanh(frz, frx, GMP_RNDN);
+      double u0 = countULPf128(t = vget(xtanhq_u10(a0), e), frz, 0);
+
+      if (u0 > 0.7) {
+	printf(ISANAME " tanh arg=%s ulp=%.20g\n", sprintf128(q0), u0);
 	printf("test = %s\n", sprintf128(t));
 	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
 	fflush(stdout); ecnt++;
