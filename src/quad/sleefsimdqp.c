@@ -1871,20 +1871,6 @@ static INLINE CONST VECTOR_CC tdx tanh_tdx_tdx(tdx x) {
   return d;
 }
 
-#if 0
-TDX_t tanh_tdx(TDX_t x) {
-  TDX_t y = abs_tdx(x);
-  y.e++;
-  TDX_t d = expm1_tdx(y);
-  d = div_tdx(d, add_tdx(cast_tdx_double(2), d));
-  d = y.e > 16389 ? cast_tdx_double(1): d;
-  d.dd = tdmulsign_d3_d3_d(d.dd, x.dd.x);
-  d = x.e < 16323 ? x : d;
-  d.dd.x = isnan(x.dd.x) ? NAN : d.dd.x;
-  return d;
-}
-#endif
-
 // Float128 functions ------------------------------------------------------------------------------------------------------------
 
 static CONST VECTOR_CC tdx vcast_tdx_vf128(vmask2 f) {

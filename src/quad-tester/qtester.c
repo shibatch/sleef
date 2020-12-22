@@ -881,6 +881,7 @@ void do_test(int options) {
   checkAccuracyOuterLoop_q_q(mpfr_copysign, child_copysignq, "0", "Inf", 5 * NTEST, 0, 1);
   checkResult(success, maxError);
 
+#if 0
   fprintf(stderr, "fdimq_u05 : ");
   maxError = 0;
   cmpDenormOuterLoop_q_q(mpfr_dim, child_fdimq_u05, stdCheckVals);
@@ -888,6 +889,7 @@ void do_test(int options) {
   checkAccuracyOuterLoop_q_q(mpfr_dim, child_fdimq_u05, "-1e-100", "-1e+100", 5 * NTEST, errorBound, 0);
   checkAccuracyOuterLoop_q_q(mpfr_dim, child_fdimq_u05, "0", "Inf", 5 * NTEST, errorBound, 1);
   checkResult(success, maxError);
+#endif
 
   //
 
