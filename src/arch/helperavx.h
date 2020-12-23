@@ -218,6 +218,9 @@ static INLINE vopmask veq64_vo_vm_vm(vmask x, vmask y) {
   return vreinterpret_vm_vd(_mm256_cmp_pd(vreinterpret_vd_vm(vxor_vm_vm_vm(vxor_vm_vm_vm(x, y), vreinterpret_vm_vd(_mm256_set1_pd(1.0)))), _mm256_set1_pd(1.0), _CMP_EQ_OQ));
 }
 
+static INLINE vmask vcast_vm_i64(int64_t i) { return _mm256_set1_epi64x(i); }
+static INLINE vmask vcast_vm_u64(uint64_t i) { return _mm256_set1_epi64x((uint64_t)i); }
+
 //
 
 static INLINE vdouble vadd_vd_vd_vd(vdouble x, vdouble y) { return _mm256_add_pd(x, y); }

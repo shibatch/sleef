@@ -138,7 +138,7 @@ static void printvopmask(char *mes, vopmask g) {
 }
 #else
 static void printvopmask(char *mes, vopmask g) {
-  vmask m = vand_vm_vo64_vm(g, vcast_vm_i_i(-1, -1));
+  vmask m = vand_vm_vo64_vm(g, vcast_vm_i64(-1));
   printvmask(mes, m);
 }
 #endif
@@ -190,7 +190,7 @@ static INLINE CONST VECTOR_CC vopmask visnumber_vo_vd(vdouble x) {
 }
 
 static INLINE CONST vopmask visnonfinite_vo_vd(vdouble x) {
-  return veq64_vo_vm_vm(vand_vm_vm_vm(vreinterpret_vm_vd(x), vcast_vm_i_i(0x7ff00000, 0)), vcast_vm_i_i(0x7ff00000, 0));
+  return veq64_vo_vm_vm(vand_vm_vm_vm(vreinterpret_vm_vd(x), vcast_vm_i64(INT64_C(0x7ff0000000000000))), vcast_vm_i64(INT64_C(0x7ff0000000000000)));
 }
 
 static INLINE CONST VECTOR_CC vopmask visint_vo_vd(vdouble d) {
@@ -226,7 +226,7 @@ static INLINE CONST vopmask vsignbit_vo_vd(vdouble d) {
 }
 
 static INLINE CONST vdouble vclearlsb_vd_vd_i(vdouble d, int n) {
-  return vreinterpret_vd_vm(vand_vm_vm_vm(vreinterpret_vm_vd(d), vcast_vm_i_i(-1, ~0U << n)));
+  return vreinterpret_vd_vm(vand_vm_vm_vm(vreinterpret_vm_vd(d), vcast_vm_u64((~UINT64_C(0)) << n)));
 }
 
 static INLINE CONST vdouble vmulsign_vd_vd_vd(vdouble x, vdouble y) {
@@ -267,15 +267,15 @@ static INLINE CONST VECTOR_CC vint vilogb2k_vi_vd(vdouble d) {
 static INLINE CONST vmask vilogb2k_vm_vd(vdouble d) {
   vmask m = vreinterpret_vm_vd(d);
   m = vsrl64_vm_vm_i(m, 20 + 32);
-  m = vand_vm_vm_vm(m, vcast_vm_i_i(0, 0x7ff));
-  m = vsub64_vm_vm_vm(m, vcast_vm_i_i(0, 0x3ff));
+  m = vand_vm_vm_vm(m, vcast_vm_i64(0x7ff));
+  m = vsub64_vm_vm_vm(m, vcast_vm_i64(0x3ff));
   return m;
 }
 
 static INLINE CONST vmask vilogb3k_vm_vd(vdouble d) {
   vmask m = vreinterpret_vm_vd(d);
   m = vsrl64_vm_vm_i(m, 20 + 32);
-  m = vand_vm_vm_vm(m, vcast_vm_i_i(0, 0x7ff));
+  m = vand_vm_vm_vm(m, vcast_vm_i64(0x7ff));
   return m;
 }
 
@@ -288,7 +288,7 @@ static INLINE CONST VECTOR_CC vdouble vpow2i_vd_vi(vint q) {
 }
 
 static INLINE CONST VECTOR_CC vdouble vpow2i_vd_vm(vmask q) {
-  q = vadd64_vm_vm_vm(vcast_vm_i_i(0, 0x3ff), q);
+  q = vadd64_vm_vm_vm(vcast_vm_i64(0x3ff), q);
   return vreinterpret_vd_vm(vsll64_vm_vm_i(q, 52));
 }
 
@@ -338,12 +338,12 @@ static INLINE CONST vmask vtruncate_vm_vd(vdouble d) { return vcast_vm_vi(vtrunc
 static INLINE CONST vopmask vlt64_vo_vm_vm(vmask x, vmask y) { return vgt64_vo_vm_vm(y, x); }
 
 static INLINE CONST vopmask vnot_vo64_vo64(vopmask x) {
-  return vxor_vo_vo_vo(x, veq64_vo_vm_vm(vcast_vm_i_i(0, 0), vcast_vm_i_i(0, 0)));
+  return vxor_vo_vo_vo(x, veq64_vo_vm_vm(vcast_vm_i64(0), vcast_vm_i64(0)));
 }
 
 static INLINE CONST vopmask vugt64_vo_vm_vm(vmask x, vmask y) { // unsigned compare
-  x = vxor_vm_vm_vm(vcast_vm_i_i(0x80000000, 0), x);
-  y = vxor_vm_vm_vm(vcast_vm_i_i(0x80000000, 0), y);
+  x = vxor_vm_vm_vm(vcast_vm_u64(UINT64_C(0x8000000000000000)), x);
+  y = vxor_vm_vm_vm(vcast_vm_u64(UINT64_C(0x8000000000000000)), y);
   return vgt64_vo_vm_vm(x, y);
 }
 
@@ -352,8 +352,8 @@ static INLINE CONST vmask vilogbk_vm_vd(vdouble d) {
   d = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(vcast_vd_d(2.037035976334486E90), d), d);
   vmask q = vreinterpret_vm_vd(d);
   q = vsrl64_vm_vm_i(q, 20 + 32);
-  q = vand_vm_vm_vm(q, vcast_vm_i_i(0, 0x7ff));
-  q = vsub64_vm_vm_vm(q, vsel_vm_vo64_vm_vm(o, vcast_vm_i_i(0, 300 + 0x3ff), vcast_vm_i_i(0, 0x3ff)));
+  q = vand_vm_vm_vm(q, vcast_vm_i64(0x7ff));
+  q = vsub64_vm_vm_vm(q, vsel_vm_vo64_vm_vm(o, vcast_vm_i64(300 + 0x3ff), vcast_vm_i64(0x3ff)));
   return q;
 }
 
@@ -370,15 +370,15 @@ static INLINE CONST vmask2 vsel_vm2_vo_vm2_vm2(vopmask o, vmask2 x, vmask2 y) {
 
 static INLINE CONST vmask2 vadd128_vm2_vm2_vm2(vmask2 x, vmask2 y) {
   vmask2 r = vm2setxy_vm2_vm_vm(vadd64_vm_vm_vm(vm2getx_vm_vm2(x), vm2getx_vm_vm2(y)), vadd64_vm_vm_vm(vm2gety_vm_vm2(x), vm2gety_vm_vm2(y)));
-  r = vm2sety_vm2_vm2_vm(r, vadd64_vm_vm_vm(vm2gety_vm_vm2(r), vand_vm_vo64_vm(vugt64_vo_vm_vm(vm2getx_vm_vm2(x), vm2getx_vm_vm2(r)), vcast_vm_i_i(0, 1))));
+  r = vm2sety_vm2_vm2_vm(r, vadd64_vm_vm_vm(vm2gety_vm_vm2(r), vand_vm_vo64_vm(vugt64_vo_vm_vm(vm2getx_vm_vm2(x), vm2getx_vm_vm2(r)), vcast_vm_i64(1))));
   return r;
 }
 
 static INLINE CONST vmask2 vneg128_vm2_vm2(vmask2 ax) {
-  vmask2 x = vm2setxy_vm2_vm_vm(vxor_vm_vm_vm(vm2getx_vm_vm2(ax), vcast_vm_i_i(0xffffffff, 0xffffffff)), 
-				vxor_vm_vm_vm(vm2gety_vm_vm2(ax), vcast_vm_i_i(0xffffffff, 0xffffffff)));
-  vmask2 r = vm2setxy_vm2_vm_vm(vadd64_vm_vm_vm(vm2getx_vm_vm2(x), vcast_vm_i_i(0, 1)), vm2gety_vm_vm2(x));
-  r = vm2sety_vm2_vm2_vm(r, vadd64_vm_vm_vm(vm2gety_vm_vm2(r), vand_vm_vo64_vm(veq64_vo_vm_vm(vm2getx_vm_vm2(r), vcast_vm_i_i(0, 0)), vcast_vm_i_i(0, 1))));
+  vmask2 x = vm2setxy_vm2_vm_vm(vxor_vm_vm_vm(vm2getx_vm_vm2(ax), vcast_vm_u64(~UINT64_C(0))), 
+				vxor_vm_vm_vm(vm2gety_vm_vm2(ax), vcast_vm_u64(~UINT64_C(0))));
+  vmask2 r = vm2setxy_vm2_vm_vm(vadd64_vm_vm_vm(vm2getx_vm_vm2(x), vcast_vm_i64(1)), vm2gety_vm_vm2(x));
+  r = vm2sety_vm2_vm2_vm(r, vadd64_vm_vm_vm(vm2gety_vm_vm2(r), vand_vm_vo64_vm(veq64_vo_vm_vm(vm2getx_vm_vm2(r), vcast_vm_i64(0)), vcast_vm_i64(1))));
   return r;
 }
 

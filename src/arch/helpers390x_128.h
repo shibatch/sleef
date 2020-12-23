@@ -201,6 +201,9 @@ static INLINE vopmask vcast_vo32_vo64(vopmask g) { return (vopmask)(vint) { g[0]
 static INLINE vopmask vcast_vo64_vo32(vopmask g) { return (vopmask) { ((vint)g)[0] != 0 ? 0xffffffffffffffffLL : 0, ((vint)g)[1] != 0 ? 0xffffffffffffffffLL : 0 }; }
 
 static INLINE vmask vcast_vm_i_i(int h, int l) { return (vmask)(vint){ h, l, h, l }; }
+static INLINE vmask vcast_vm_i64(int64_t i) { return (vmask)(vint64){ i, i }; }
+static INLINE vmask vcast_vm_u64(uint64_t i) { return (vmask)(vuint64){ i, i }; }
+
 static INLINE vint2 vcastu_vi2_vi(vint vi) { return (vint2){ vi[0], 0, vi[1], 0 }; }
 static INLINE vint vcastu_vi_vi2(vint2 vi2) { return (vint){ vi2[0], vi2[2] }; }
 

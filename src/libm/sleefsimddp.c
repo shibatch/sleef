@@ -3047,7 +3047,7 @@ EXPORT CONST VECTOR_CC vdouble xnextafter(vdouble x, vdouble y) {
   t = vadd_vi2_vi2_vi2(t, vrev21_vi2_vi2(vand_vi2_vi2_vi2(vcast_vi2_i_i(0, 1), veq_vi2_vi2_vi2(t, vcast_vi2_i_i(-1, 0)))));
   xi2 = vreinterpret_vi2_vd(vsel_vd_vo_vd_vd(c, vreinterpret_vd_vi2(t), vreinterpret_vd_vi2(xi2)));
 
-  xi2 = vsub_vi2_vi2_vi2(xi2, vcast_vi2_vm(vand_vm_vo64_vm(vneq_vo_vd_vd(x, y), vcast_vm_i_i(0, 1))));
+  xi2 = vsub_vi2_vi2_vi2(xi2, vcast_vi2_vm(vand_vm_vo64_vm(vneq_vo_vd_vd(x, y), vcast_vm_i64(1))));
 
   xi2 = vreinterpret_vi2_vd(vsel_vd_vo_vd_vd(vneq_vo_vd_vd(x, y),
 					     vreinterpret_vd_vi2(vadd_vi2_vi2_vi2(xi2, vrev21_vi2_vi2(vand_vi2_vi2_vi2(vcast_vi2_i_i(0, -1), veq_vi2_vi2_vi2(xi2, vcast_vi2_i_i(0, -1)))))),
@@ -3073,8 +3073,8 @@ EXPORT CONST VECTOR_CC vdouble xfrfrexp(vdouble x) {
   x = vsel_vd_vo_vd_vd(vlt_vo_vd_vd(vabs_vd_vd(x), vcast_vd_d(SLEEF_DBL_MIN)), vmul_vd_vd_vd(x, vcast_vd_d(UINT64_C(1) << 63)), x);
 
   vmask xm = vreinterpret_vm_vd(x);
-  xm = vand_vm_vm_vm(xm, vcast_vm_i_i(~0x7ff00000, ~0));
-  xm = vor_vm_vm_vm (xm, vcast_vm_i_i( 0x3fe00000,  0));
+  xm = vand_vm_vm_vm(xm, vcast_vm_i64(~INT64_C(0x7ff0000000000000)));
+  xm = vor_vm_vm_vm (xm, vcast_vm_i64( INT64_C(0x3fe0000000000000)));
 
   vdouble ret = vreinterpret_vd_vm(xm);
 
@@ -3249,7 +3249,7 @@ EXPORT CONST VECTOR_CC vdouble xhypot_u35(vdouble x, vdouble y) {
 }
 
 static INLINE CONST VECTOR_CC vdouble vtoward0_vd_vd(vdouble x) { // returns nextafter(x, 0)
-  vdouble t = vreinterpret_vd_vm(vadd64_vm_vm_vm(vreinterpret_vm_vd(x), vcast_vm_i_i(-1, -1)));
+  vdouble t = vreinterpret_vd_vm(vadd64_vm_vm_vm(vreinterpret_vm_vd(x), vcast_vm_i64(-1)));
   return vsel_vd_vo_vd_vd(veq_vo_vd_vd(x, vcast_vd_d(0)), vcast_vd_d(0), t);
 }
 
@@ -3276,7 +3276,7 @@ EXPORT CONST VECTOR_CC vdouble xfmod(vdouble x, vdouble y) {
   for(int i=0;i<21;i++) { // ceil(log2(DBL_MAX) / 52)
     q = vptrunc_vd_vd(vmul_vd_vd_vd(vtoward0_vd_vd(vd2getx_vd_vd2(r)), rd));
 #ifndef ENABLE_FMA_DP
-    q = vreinterpret_vd_vm(vand_vm_vm_vm(vreinterpret_vm_vd(q), vcast_vm_i_i(0xffffffff, 0xfffffffe)));
+    q = vreinterpret_vd_vm(vand_vm_vm_vm(vreinterpret_vm_vd(q), vcast_vm_u64(UINT64_C(0xfffffffffffffffe))));
 #endif
     q = vsel_vd_vo_vd_vd(vand_vo_vo_vo(vgt_vo_vd_vd(vmul_vd_vd_vd(vcast_vd_d(3), d), vd2getx_vd_vd2(r)),
 				       vge_vo_vd_vd(vd2getx_vd_vd2(r), d)),
@@ -3322,7 +3322,7 @@ EXPORT CONST VECTOR_CC vdouble xremainder(vdouble x, vdouble y) {
   for(int i=0;i<21;i++) { // ceil(log2(DBL_MAX) / 52)
     q = vrintk2_vd_vd(vmul_vd_vd_vd(vd2getx_vd_vd2(r), rd));
 #ifndef ENABLE_FMA_DP
-    q = vreinterpret_vd_vm(vand_vm_vm_vm(vreinterpret_vm_vd(q), vcast_vm_i_i(0xffffffff, 0xfffffffe)));
+    q = vreinterpret_vd_vm(vand_vm_vm_vm(vreinterpret_vm_vd(q), vcast_vm_u64(UINT64_C(0xfffffffffffffffe))));
 #endif
     q = vsel_vd_vo_vd_vd(vlt_vo_vd_vd(vabs_vd_vd(vd2getx_vd_vd2(r)), vmul_vd_vd_vd(d, vcast_vd_d(1.5))), vmulsign_vd_vd_vd(vcast_vd_d(1.0), vd2getx_vd_vd2(r)), q);
     q = vsel_vd_vo_vd_vd(vor_vo_vo_vo(vlt_vo_vd_vd(vabs_vd_vd(vd2getx_vd_vd2(r)), vmul_vd_vd_vd(d, vcast_vd_d(0.5))),
