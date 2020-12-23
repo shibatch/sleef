@@ -124,6 +124,23 @@ pipeline {
             	     }
                 }
 
+                stage('Arm Mac') {
+            	     agent { label 'mac' }
+            	     steps {
+	    	     	 sh '''
+                	 echo "Cross compiling for Arm Mac with clang on" `hostname`
+			 export PATH=$PATH:/opt/local/bin:/opt/local/bin:/usr/local/bin:/usr/bin:/bin
+			 export CC=clang
+			 (brew update && brew upgrade) || true
+			 rm -rf build
+ 			 mkdir build
+			 cd build
+			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DCMAKE_OSX_ARCHITECTURES=arm64 -DSLEEF_SHOW_CONFIG=1 -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_TESTS=FALSE ..
+			 ninja
+			 '''
+            	     }
+                }
+
                 stage('Mac') {
             	     agent { label 'mac' }
             	     steps {
@@ -150,7 +167,7 @@ pipeline {
 	    	     	 sh '''
                 	 echo "Mac with gcc on" `hostname`
 			 export PATH=$PATH:/opt/local/bin:/opt/local/bin:/usr/local/bin:/usr/bin:/bin
-			 export CC=gcc-9
+			 export CC=gcc-10
 			 rm -rf build
  			 mkdir build
 			 cd build
