@@ -167,7 +167,7 @@ pipeline {
 	    	     	 sh '''
                 	 echo "Mac with gcc on" `hostname`
 			 export PATH=$PATH:/opt/local/bin:/opt/local/bin:/usr/local/bin:/usr/bin:/bin
-			 export CC=gcc-9
+			 export CC=gcc-10
 			 rm -rf build
  			 mkdir build
 			 cd build
