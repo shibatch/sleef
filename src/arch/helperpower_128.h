@@ -377,6 +377,13 @@ static INLINE vdouble vcast_vd_vi(vint vi)
 static INLINE vmask vcast_vm_i_i(int l, int h)
 { return (vmask)vec_mergeh(vsetall__vi2(h), vsetall__vi2(l)); }
 
+static INLINE vmask vcast_vm_i64(int64_t i) {
+  return (vmask)vsetall__s64(i);
+}
+static INLINE vmask vcast_vm_u64(uint64_t i) {
+  return (vmask)vsetall__u64(i);
+}
+
 ////////////// Truncation //////////////
 
 static INLINE vint2 vtruncate_vi2_vf(vfloat vf)

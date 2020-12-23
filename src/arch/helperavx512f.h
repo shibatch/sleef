@@ -173,6 +173,9 @@ static INLINE vint vcastu_vi_vi2(vint2 vi) {
 
 static INLINE vmask vcast_vm_i_i(int i0, int i1) { return _mm512_set_epi32(i0, i1, i0, i1, i0, i1, i0, i1, i0, i1, i0, i1, i0, i1, i0, i1); }
 
+static INLINE vmask vcast_vm_i64(int64_t i) { return _mm512_set1_epi64(i); }
+static INLINE vmask vcast_vm_u64(uint64_t i) { return _mm512_set1_epi64((uint64_t)i); }
+
 static INLINE vopmask veq64_vo_vm_vm(vmask x, vmask y) { return _mm512_cmp_epi64_mask(x, y, _MM_CMPINT_EQ); }
 static INLINE vmask vadd64_vm_vm_vm(vmask x, vmask y) { return _mm512_add_epi64(x, y); }
 

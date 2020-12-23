@@ -182,6 +182,8 @@ vcast_vi2_vm
 vcast_vi_i
 vcast_vi_vm
 vcast_vm_i_i
+vcast_vm_i64
+vcast_vm_u64
 vcast_vm_vi
 vcast_vm_vi2
 vcast_vm_vo

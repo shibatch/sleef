@@ -192,6 +192,9 @@ static INLINE vmask vadd64_vm_vm_vm(vmask x, vmask y) { return _mm_add_epi64(x, 
 
 static INLINE vmask vcast_vm_i_i(int i0, int i1) { return _mm_set_epi32(i0, i1, i0, i1); }
 
+static INLINE vmask vcast_vm_i64(int64_t i) { return _mm_set1_epi64x(i); }
+static INLINE vmask vcast_vm_u64(uint64_t i) { return _mm_set1_epi64x((uint64_t)i); }
+
 //
 
 static INLINE vdouble vcast_vd_d(double d) { return _mm_set1_pd(d); }

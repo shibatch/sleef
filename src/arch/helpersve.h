@@ -665,6 +665,13 @@ static INLINE vmask vcast_vm_i_i(int i0, int i1) {
       svdup_n_u64((0xffffffff & (uint64_t)i1) | (((uint64_t)i0) << 32)));
 }
 
+static INLINE vmask vcast_vm_i64(int64_t i) {
+  return svreinterpret_s32_u64(svdup_n_u64((uint64_t)i));
+}
+static INLINE vmask vcast_vm_u64(uint64_t i) {
+  return svreinterpret_s32_u64(svdup_n_u64(i));
+}
+
 /*********************************/
 /* SVE for double precision math */
 /*********************************/

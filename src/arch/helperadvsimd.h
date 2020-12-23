@@ -709,6 +709,13 @@ static INLINE VECTOR_CC vmask vcast_vm_i_i(int i0, int i1) {
   return vreinterpretq_u32_u64(vdupq_n_u64((0xffffffff & (uint64_t)i1) | (((uint64_t)i0) << 32)));
 }
 
+static INLINE vmask vcast_vm_i64(int64_t i) {
+  return vreinterpretq_u32_u64(vdupq_n_u64((uint64_t)i));
+}
+static INLINE vmask vcast_vm_u64(uint64_t i) {
+  return vreinterpretq_u32_u64(vdupq_n_u64(i));
+}
+
 static INLINE VECTOR_CC vopmask veq64_vo_vm_vm(vmask x, vmask y) {
   return vreinterpretq_u32_u64(vceqq_s64(vreinterpretq_s64_u32(x), vreinterpretq_s64_u32(y)));
 }
