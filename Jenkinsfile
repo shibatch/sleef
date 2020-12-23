@@ -131,8 +131,7 @@ pipeline {
                 	 echo "Cross compiling for Arm Mac with clang on" `hostname`
 			 export PATH=$PATH:/opt/local/bin:/opt/local/bin:/usr/local/bin:/usr/bin:/bin
 			 export CC=clang
-			 brew update
-			 brew upgrade
+			 (brew update && brew upgrade) || true
 			 rm -rf build
  			 mkdir build
 			 cd build
