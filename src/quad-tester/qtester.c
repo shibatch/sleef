@@ -917,14 +917,8 @@ void do_test(int options) {
 
   fprintf(stderr, "fdimq_u05 : ");
   maxError = 0;
-#if !defined(__zarch__)
-  cmpDenormOuterLoop_q_q(mpfr_dim, child_fdimq_u05, stdCheckVals);
-  checkAccuracyOuterLoop2_q_q(mpfr_dim, child_fdimq_u05, stdCheckVals, 0.5);
-#else
-  // A workaround for a bug in MPFR
-  cmpDenormOuterLoop_q_q(mpfr_dim, child_fdimq_u05, noInfCheckVals);
+  cmpDenormOuterLoop_q_q(mpfr_dim, child_fdimq_u05, noInfCheckVals); // A workaround for a bug in MPFR
   checkAccuracyOuterLoop2_q_q(mpfr_dim, child_fdimq_u05, noInfCheckVals, 0.5);
-#endif
   checkAccuracyOuterLoop_q_q(mpfr_dim, child_fdimq_u05, "-1e-100", "-1e+100", 5 * NTEST, errorBound, 0);
   checkAccuracyOuterLoop_q_q(mpfr_dim, child_fdimq_u05, "0", "Inf", 5 * NTEST, errorBound, 1);
   checkResult(success, maxError);
