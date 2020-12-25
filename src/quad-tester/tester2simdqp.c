@@ -764,6 +764,42 @@ int main(int argc,char **argv)
     }
 
     {
+      mpfr_asinh(frz, frx, GMP_RNDN);
+      double u0 = countULPf128(t = vget(xasinhq_u10(a0), e), frz, 0);
+
+      if (u0 > 0.7) {
+	printf(ISANAME " asinh arg=%s ulp=%.20g\n", sprintf128(q0), u0);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_acosh(frz, frx, GMP_RNDN);
+      double u0 = countULPf128(t = vget(xacoshq_u10(a0), e), frz, 0);
+
+      if (u0 > 0.7) {
+	printf(ISANAME " acosh arg=%s ulp=%.20g\n", sprintf128(q0), u0);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_atanh(frz, frx, GMP_RNDN);
+      double u0 = countULPf128(t = vget(xatanhq_u10(a0), e), frz, 0);
+
+      if (u0 > 0.7) {
+	printf(ISANAME " atanh arg=%s ulp=%.20g\n", sprintf128(q0), u0);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
       mpfr_atan(frz, frx, GMP_RNDN);
       double u0 = countULPf128(t = vget(xatanq_u10(a0), e), frz, 0);
 
