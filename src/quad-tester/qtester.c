@@ -262,6 +262,9 @@ Sleef_quad child_log1pq_u10(Sleef_quad x) { child_q_q("log1pq_u10", x); }
 Sleef_quad child_sinhq_u10(Sleef_quad x) { child_q_q("sinhq_u10", x); }
 Sleef_quad child_coshq_u10(Sleef_quad x) { child_q_q("coshq_u10", x); }
 Sleef_quad child_tanhq_u10(Sleef_quad x) { child_q_q("tanhq_u10", x); }
+Sleef_quad child_asinhq_u10(Sleef_quad x) { child_q_q("asinhq_u10", x); }
+Sleef_quad child_acoshq_u10(Sleef_quad x) { child_q_q("acoshq_u10", x); }
+Sleef_quad child_atanhq_u10(Sleef_quad x) { child_q_q("atanhq_u10", x); }
 
 Sleef_quad child_fabsq(Sleef_quad x) { child_q_q("fabsq", x); }
 Sleef_quad child_copysignq(Sleef_quad x, Sleef_quad y) { child_q_q_q("copysignq", x, y); }
@@ -461,6 +464,16 @@ void do_test(int options) {
     "+" STR_QUAD_MIN, "-" STR_QUAD_MIN,
     "+" STR_QUAD_DENORM_MIN, "-" STR_QUAD_DENORM_MIN,
     "Inf", "-Inf"
+  };
+
+  static const char *noInfCheckVals[] = {
+    "-0.0", "0.0", "+0.5", "-0.5", "+1.0", "-1.0", "+1.5", "-1.5", "+2.0", "-2.0", "+2.5", "-2.5",
+    "1.234", "-1.234", "+1.234e+100", "-1.234e+100", "+1.234e-100", "-1.234e-100",
+    "+1.234e+3000", "-1.234e+3000", "+1.234e-3000", "-1.234e-3000",
+    "3.1415926535897932384626433832795028841971693993751058209749445923078164",
+    "+" STR_QUAD_MIN, "-" STR_QUAD_MIN,
+    "+" STR_QUAD_DENORM_MIN, "-" STR_QUAD_DENORM_MIN,
+    "NaN"
   };
 
   static const char *trigCheckVals[] = {
@@ -847,6 +860,27 @@ void do_test(int options) {
   checkAccuracyOuterLoop_q(mpfr_tanh, child_tanhq_u10, "1e-15", "40", 2 * NTEST, 1.0, 0);
   checkResult(success, maxError);
 
+  fprintf(stderr, "asinhq_u10 : ");
+  maxError = 0;
+  cmpDenormOuterLoop_q(mpfr_asinh, child_asinhq_u10, stdCheckVals);
+  checkAccuracyOuterLoop2_q(mpfr_asinh, child_asinhq_u10, stdCheckVals, 1.0);
+  checkAccuracyOuterLoop_q(mpfr_asinh, child_asinhq_u10, "1e-15", "20000", 2 * NTEST, 1.0, 0);
+  checkResult(success, maxError);
+
+  fprintf(stderr, "acoshq_u10 : ");
+  maxError = 0;
+  cmpDenormOuterLoop_q(mpfr_acosh, child_acoshq_u10, stdCheckVals);
+  checkAccuracyOuterLoop2_q(mpfr_acosh, child_acoshq_u10, stdCheckVals, 1.0);
+  checkAccuracyOuterLoop_q(mpfr_acosh, child_acoshq_u10, "1", "20000", 2 * NTEST, 1.0, 0);
+  checkResult(success, maxError);
+
+  fprintf(stderr, "atanhq_u10 : ");
+  maxError = 0;
+  cmpDenormOuterLoop_q(mpfr_atanh, child_atanhq_u10, stdCheckVals);
+  checkAccuracyOuterLoop2_q(mpfr_atanh, child_atanhq_u10, stdCheckVals, 1.0);
+  checkAccuracyOuterLoop_q(mpfr_atanh, child_atanhq_u10, "1e-15", "1", 2 * NTEST, 1.0, 0);
+  checkResult(success, maxError);
+
   //
 
   fprintf(stderr, "fabsq : ");
@@ -881,15 +915,19 @@ void do_test(int options) {
   checkAccuracyOuterLoop_q_q(mpfr_copysign, child_copysignq, "0", "Inf", 5 * NTEST, 0, 1);
   checkResult(success, maxError);
 
-#if 0
   fprintf(stderr, "fdimq_u05 : ");
   maxError = 0;
+#if !defined(__zarch__)
   cmpDenormOuterLoop_q_q(mpfr_dim, child_fdimq_u05, stdCheckVals);
   checkAccuracyOuterLoop2_q_q(mpfr_dim, child_fdimq_u05, stdCheckVals, 0.5);
+#else
+  // A workaround for a bug in MPFR
+  cmpDenormOuterLoop_q_q(mpfr_dim, child_fdimq_u05, noInfCheckVals);
+  checkAccuracyOuterLoop2_q_q(mpfr_dim, child_fdimq_u05, noInfCheckVals, 0.5);
+#endif
   checkAccuracyOuterLoop_q_q(mpfr_dim, child_fdimq_u05, "-1e-100", "-1e+100", 5 * NTEST, errorBound, 0);
   checkAccuracyOuterLoop_q_q(mpfr_dim, child_fdimq_u05, "0", "Inf", 5 * NTEST, errorBound, 1);
   checkResult(success, maxError);
-#endif
 
   //
 

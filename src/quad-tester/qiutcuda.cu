@@ -83,6 +83,9 @@ __global__ void xlog1pq_u10(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_log1
 __global__ void xsinhq_u10(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_sinhq1_u10cuda(*a0); }
 __global__ void xcoshq_u10(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_coshq1_u10cuda(*a0); }
 __global__ void xtanhq_u10(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_tanhq1_u10cuda(*a0); }
+__global__ void xasinhq_u10(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_asinhq1_u10cuda(*a0); }
+__global__ void xacoshq_u10(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_acoshq1_u10cuda(*a0); }
+__global__ void xatanhq_u10(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_atanhq1_u10cuda(*a0); }
 
 __global__ void xfabsq(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_fabsq1_cuda(*a0); }
 __global__ void xcopysignq(Sleef_quadx1 *r, Sleef_quadx1 *a0, Sleef_quadx1 *a1) { *r = Sleef_copysignq1_cuda(*a0, *a1); }
@@ -298,6 +301,9 @@ int main(int argc, char **argv) {
     func_q_q("sinhq_u10", xsinhq_u10);
     func_q_q("coshq_u10", xcoshq_u10);
     func_q_q("tanhq_u10", xtanhq_u10);
+    func_q_q("asinhq_u10", xasinhq_u10);
+    func_q_q("acoshq_u10", xacoshq_u10);
+    func_q_q("atanhq_u10", xatanhq_u10);
 
     func_q_q("negq", xnegq);
     func_q_q("fabsq", xfabsq);

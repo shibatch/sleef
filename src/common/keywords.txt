@@ -429,9 +429,12 @@ vxor_vm_vo64_vm
 vxor_vo_vo_vo
 #
 acos_tdx_tdx
+acosh_tdx_tdx
 add2_tdx_tdx_tdx
 asin_tdx_tdx
+asinh_tdx_tdx
 atan_tdx_tdx
+atanh_tdx_tdx
 cos_tdx_tdx
 cosh_tdx_tdx
 div2_tdx_tdx_tdx
