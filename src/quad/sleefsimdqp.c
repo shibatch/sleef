@@ -1889,8 +1889,8 @@ static INLINE CONST VECTOR_CC tdx asinh_tdx_tdx(tdx x) {
 static INLINE CONST VECTOR_CC tdx acosh_tdx_tdx(tdx x) {
   tdx d = mul2_tdx_tdx_tdx(add2_tdx_tdx_tdx(x, vcast_tdx_d(1)), add2_tdx_tdx_tdx(x, vcast_tdx_d(-1)));
   d = log1p_tdx_tdx(add2_tdx_tdx_tdx(sqrt_tdx_tdx(d), sub2_tdx_tdx_tdx(x, vcast_tdx_d(1))));
-  d = vsel_tdx_vo64_tdx_tdx(visinf_vo_vd(x.d3.x), vcast_tdx_d(SLEEF_INFINITY), d);
-  d = vsel_tdx_vo64_tdx_tdx(vlt_vo_vd_vd(x.d3.x, vcast_vd_d(0)), vcast_tdx_d(SLEEF_NAN), d);
+  d = vsel_tdx_vo64_tdx_tdx(visinf_vo_vd(tdxgetd3x_vd_tdx(x)), vcast_tdx_d(SLEEF_INFINITY), d);
+  d = vsel_tdx_vo64_tdx_tdx(vlt_vo_vd_vd(tdxgetd3x_vd_tdx(x), vcast_vd_d(0)), vcast_tdx_d(SLEEF_NAN), d);
   return d;
 }
 
