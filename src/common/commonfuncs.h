@@ -59,11 +59,11 @@ static INLINE CONST VECTOR_CC tdx tdxsetexyz_tdx_vm_vd_vd_vd(vmask e, vdouble x,
   return (tdx) { e, (vdouble3) { x, y, z } };
 }
 
-static INLINE CONST VECTOR_CC vmask vm2getx_vm_vm2(vmask2 v) { return v.x; }
-static INLINE CONST VECTOR_CC vmask vm2gety_vm_vm2(vmask2 v) { return v.y; }
-static INLINE CONST VECTOR_CC vmask2 vm2setxy_vm2_vm_vm(vmask x, vmask y) { return (vmask2) { x, y }; }
-static INLINE CONST VECTOR_CC vmask2 vm2setx_vm2_vm2_vm(vmask2 v, vmask x) { v.x = x; return v; }
-static INLINE CONST VECTOR_CC vmask2 vm2sety_vm2_vm2_vm(vmask2 v, vmask y) { v.y = y; return v; }
+static INLINE CONST VECTOR_CC vmask vqgetx_vm_vq(vquad v) { return v.x; }
+static INLINE CONST VECTOR_CC vmask vqgety_vm_vq(vquad v) { return v.y; }
+static INLINE CONST VECTOR_CC vquad vqsetxy_vq_vm_vm(vmask x, vmask y) { return (vquad) { x, y }; }
+static INLINE CONST VECTOR_CC vquad vqsetx_vq_vq_vm(vquad v, vmask x) { v.x = x; return v; }
+static INLINE CONST VECTOR_CC vquad vqsety_vq_vq_vm(vquad v, vmask y) { v.y = y; return v; }
 
 //
 
@@ -167,10 +167,10 @@ static void printvint64(char *mes, vint64 vi) {
   printf("\n");
 }
 
-static void printvmask2(char *mes, vmask2 g) {
+static void printvquad(char *mes, vquad g) {
   uint64_t u[VECTLENDP*2];
-  vstoreu_v_p_vd((double *)u, vreinterpret_vd_vm(vm2getx_vm_vm2(g)));
-  vstoreu_v_p_vd((double *)&u[VECTLENDP], vreinterpret_vd_vm(vm2gety_vm_vm2(g)));
+  vstoreu_v_p_vd((double *)u, vreinterpret_vd_vm(vqgetx_vm_vq(g)));
+  vstoreu_v_p_vd((double *)&u[VECTLENDP], vreinterpret_vd_vm(vqgety_vm_vq(g)));
   printf("%s ", mes);
   for(int i=0;i<VECTLENDP*2;i++) printf("%016lx : ", (unsigned long)(u[i]));
   printf("\n");
@@ -357,36 +357,36 @@ static INLINE CONST vmask vilogbk_vm_vd(vdouble d) {
   return q;
 }
 
-// vmask2 functions
+// vquad functions
 
-static INLINE CONST vopmask veq64_vo_vm2_vm2(vmask2 x, vmask2 y) {
-  return vand_vo_vo_vo(veq64_vo_vm_vm(vm2getx_vm_vm2(x), vm2getx_vm_vm2(y)),
-		       veq64_vo_vm_vm(vm2gety_vm_vm2(x), vm2gety_vm_vm2(y)));
+static INLINE CONST vopmask veq64_vo_vq_vq(vquad x, vquad y) {
+  return vand_vo_vo_vo(veq64_vo_vm_vm(vqgetx_vm_vq(x), vqgetx_vm_vq(y)),
+		       veq64_vo_vm_vm(vqgety_vm_vq(x), vqgety_vm_vq(y)));
 }
 
-static INLINE CONST vmask2 vsel_vm2_vo_vm2_vm2(vopmask o, vmask2 x, vmask2 y) {
-  return vm2setxy_vm2_vm_vm(vsel_vm_vo64_vm_vm(o, vm2getx_vm_vm2(x), vm2getx_vm_vm2(y)), vsel_vm_vo64_vm_vm(o, vm2gety_vm_vm2(x), vm2gety_vm_vm2(y)));
+static INLINE CONST vquad vsel_vq_vo_vq_vq(vopmask o, vquad x, vquad y) {
+  return vqsetxy_vq_vm_vm(vsel_vm_vo64_vm_vm(o, vqgetx_vm_vq(x), vqgetx_vm_vq(y)), vsel_vm_vo64_vm_vm(o, vqgety_vm_vq(x), vqgety_vm_vq(y)));
 }
 
-static INLINE CONST vmask2 vadd128_vm2_vm2_vm2(vmask2 x, vmask2 y) {
-  vmask2 r = vm2setxy_vm2_vm_vm(vadd64_vm_vm_vm(vm2getx_vm_vm2(x), vm2getx_vm_vm2(y)), vadd64_vm_vm_vm(vm2gety_vm_vm2(x), vm2gety_vm_vm2(y)));
-  r = vm2sety_vm2_vm2_vm(r, vadd64_vm_vm_vm(vm2gety_vm_vm2(r), vand_vm_vo64_vm(vugt64_vo_vm_vm(vm2getx_vm_vm2(x), vm2getx_vm_vm2(r)), vcast_vm_i64(1))));
+static INLINE CONST vquad vadd128_vq_vq_vq(vquad x, vquad y) {
+  vquad r = vqsetxy_vq_vm_vm(vadd64_vm_vm_vm(vqgetx_vm_vq(x), vqgetx_vm_vq(y)), vadd64_vm_vm_vm(vqgety_vm_vq(x), vqgety_vm_vq(y)));
+  r = vqsety_vq_vq_vm(r, vadd64_vm_vm_vm(vqgety_vm_vq(r), vand_vm_vo64_vm(vugt64_vo_vm_vm(vqgetx_vm_vq(x), vqgetx_vm_vq(r)), vcast_vm_i64(1))));
   return r;
 }
 
-static INLINE CONST vmask2 vneg128_vm2_vm2(vmask2 ax) {
-  vmask2 x = vm2setxy_vm2_vm_vm(vxor_vm_vm_vm(vm2getx_vm_vm2(ax), vcast_vm_u64(~UINT64_C(0))), 
-				vxor_vm_vm_vm(vm2gety_vm_vm2(ax), vcast_vm_u64(~UINT64_C(0))));
-  vmask2 r = vm2setxy_vm2_vm_vm(vadd64_vm_vm_vm(vm2getx_vm_vm2(x), vcast_vm_i64(1)), vm2gety_vm_vm2(x));
-  r = vm2sety_vm2_vm2_vm(r, vadd64_vm_vm_vm(vm2gety_vm_vm2(r), vand_vm_vo64_vm(veq64_vo_vm_vm(vm2getx_vm_vm2(r), vcast_vm_i64(0)), vcast_vm_i64(1))));
+static INLINE CONST vquad vneg128_vq_vq(vquad ax) {
+  vquad x = vqsetxy_vq_vm_vm(vxor_vm_vm_vm(vqgetx_vm_vq(ax), vcast_vm_u64(~UINT64_C(0))), 
+				vxor_vm_vm_vm(vqgety_vm_vq(ax), vcast_vm_u64(~UINT64_C(0))));
+  vquad r = vqsetxy_vq_vm_vm(vadd64_vm_vm_vm(vqgetx_vm_vq(x), vcast_vm_i64(1)), vqgety_vm_vq(x));
+  r = vqsety_vq_vq_vm(r, vadd64_vm_vm_vm(vqgety_vm_vq(r), vand_vm_vo64_vm(veq64_vo_vm_vm(vqgetx_vm_vq(r), vcast_vm_i64(0)), vcast_vm_i64(1))));
   return r;
 }
 
-static INLINE CONST vmask2 imdvm2_vm2_vm_vm(vmask x, vmask y) { vmask2 r = vm2setxy_vm2_vm_vm(x, y); return r; }
+static INLINE CONST vquad imdvq_vq_vm_vm(vmask x, vmask y) { vquad r = vqsetxy_vq_vm_vm(x, y); return r; }
 
 // imm must be smaller than 64
-#define vsrl128_vm2_vm2_i(m, imm)					\
-  imdvm2_vm2_vm_vm(vor_vm_vm_vm(vsrl64_vm_vm_i(vm2getx_vm_vm2(m), imm), vsll64_vm_vm_i(vm2gety_vm_vm2(m), 64-imm)), vsrl64_vm_vm_i(vm2gety_vm_vm2(m), imm))
+#define vsrl128_vq_vq_i(m, imm)					\
+  imdvq_vq_vm_vm(vor_vm_vm_vm(vsrl64_vm_vm_i(vqgetx_vm_vq(m), imm), vsll64_vm_vm_i(vqgety_vm_vq(m), 64-imm)), vsrl64_vm_vm_i(vqgety_vm_vq(m), imm))
 
 static INLINE CONST VECTOR_CC vdouble vorsign_vd_vd_vd(vdouble x, vdouble y) {
   return vreinterpret_vd_vm(vor_vm_vm_vm(vreinterpret_vm_vd(x), vsignbit_vm_vd(y)));

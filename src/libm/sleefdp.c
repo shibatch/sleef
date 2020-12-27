@@ -72,6 +72,7 @@ static INLINE CONST double trunck(double x) { return (double)(int)x; }
 static INLINE CONST double fmink(double x, double y) { return x < y ? x : y; }
 static INLINE CONST double fmaxk(double x, double y) { return x > y ? x : y; }
 
+static INLINE CONST int xsignbit(double d) { return (doubleToRawLongBits(d) & doubleToRawLongBits(-0.0)) == doubleToRawLongBits(-0.0); }
 static INLINE CONST int xisnan(double x) { return x != x; }
 static INLINE CONST int xisinf(double x) { return x == SLEEF_INFINITY || x == -SLEEF_INFINITY; }
 static INLINE CONST int xisminf(double x) { return x == -SLEEF_INFINITY; }
@@ -1644,14 +1645,13 @@ EXPORT CONST double xpow(double x, double y) {
 
   Sleef_double2 d = ddmul_d2_d2_d(logk(fabsk(x)), y);
   double result = expk(d);
-  if (d.x > 709.78271114955742909217217426) result = SLEEF_INFINITY;
 
-  result = xisnan(result) ? SLEEF_INFINITY : result;
-  result *= (x > 0 ? 1 : (!yisint ? SLEEF_NAN : (yisodd ? -1 : 1)));
+  result = (d.x > 709.78271114955742909217217426 || xisnan(result)) ? SLEEF_INFINITY : result;
+  result *= (x > 0 ? 1 : (yisint ? (yisodd ? -1 : 1) : SLEEF_NAN));
 
   double efx = mulsign(fabsk(x) - 1, y);
   if (xisinf(y)) result = efx < 0 ? 0.0 : (efx == 0 ? 1.0 : SLEEF_INFINITY);
-  if (xisinf(x) || x == 0) result = (yisodd ? sign(x) : 1) * ((x == 0 ? -y : y) < 0 ? 0 : SLEEF_INFINITY);
+  if (xisinf(x) || x == 0) result = mulsign((xsignbit(y) ^ (x == 0)) ? 0 : SLEEF_INFINITY, yisodd ? x : 1);
   if (xisnan(x) || xisnan(y)) result = SLEEF_NAN;
   if (y == 0 || x == 1) result = 1;
 

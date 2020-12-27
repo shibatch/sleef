@@ -728,6 +728,19 @@ int main(int argc,char **argv)
     }
 
     {
+      mpfr_pow(frz, frx, fry, GMP_RNDN);
+
+      double u0 = countULPf128(t = vget(xpowq_u10(a0, a1), e), frz, 0);
+      
+      if (u0 > 0.8) {
+	printf(ISANAME " pow arg=%s %s ulp=%.20g\n", sprintf128(q0), sprintf128(q1), u0);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
       mpfr_sinh(frz, frx, GMP_RNDN);
       double u0 = countULPf128(t = vget(xsinhq_u10(a0), e), frz, 0);
 
@@ -805,6 +818,19 @@ int main(int argc,char **argv)
 
       if (u0 > 0.8) {
 	printf(ISANAME " atan arg=%s ulp=%.20g\n", sprintf128(q0), u0);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_atan2(frz, frx, fry, GMP_RNDN);
+
+      double u0 = countULPf128(t = vget(xatan2q_u10(a0, a1), e), frz, 0);
+      
+      if (u0 > 0.8) {
+	printf(ISANAME " atan2 arg=%s %s ulp=%.20g\n", sprintf128(q0), sprintf128(q1), u0);
 	printf("test = %s\n", sprintf128(t));
 	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
 	fflush(stdout); ecnt++;

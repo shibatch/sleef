@@ -2323,10 +2323,9 @@ EXPORT CONST VECTOR_CC vdouble xpow(vdouble x, vdouble y) {
 			    result);
 
   result = vsel_vd_vo_vd_vd(vor_vo_vo_vo(visinf_vo_vd(x), veq_vo_vd_vd(x, vcast_vd_d(0.0))),
-			    vmul_vd_vd_vd(vsel_vd_vo_vd_vd(yisodd, vsign_vd_vd(x), vcast_vd_d(1.0)),
-					  vreinterpret_vd_vm(vandnot_vm_vo64_vm(vlt_vo_vd_vd(vsel_vd_vo_vd_vd(veq_vo_vd_vd(x, vcast_vd_d(0.0)), vneg_vd_vd(y), y), vcast_vd_d(0.0)),
-										vreinterpret_vm_vd(vcast_vd_d(SLEEF_INFINITY))))),
-			    result);
+			    vmulsign_vd_vd_vd(vsel_vd_vo_vd_vd(vxor_vo_vo_vo(vsignbit_vo_vd(y), veq_vo_vd_vd(x, vcast_vd_d(0.0))),
+							       vcast_vd_d(0), vcast_vd_d(SLEEF_INFINITY)),
+					      vsel_vd_vo_vd_vd(yisodd, x, vcast_vd_d(1))), result);
 
   result = vreinterpret_vd_vm(vor_vm_vo64_vm(vor_vo_vo_vo(visnan_vo_vd(x), visnan_vo_vd(y)), vreinterpret_vm_vd(result)));
 

@@ -115,12 +115,14 @@ typedef uint64_t vuint64;
 
 typedef struct {
   vmask x, y;
-} vmask2;
+} vquad;
 
 #if defined(ENABLEFLOAT128) && CONFIG != 3
 typedef __float128 vargquad;
 #else
-typedef vmask2 vargquad;
+typedef struct {
+  vmask x, y;
+} vargquad;
 #endif
 
 //
@@ -414,42 +416,42 @@ static INLINE void vstream_v_p_vf(float *ptr, vfloat v) { *ptr = v; }
 //
 
 #if defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
-static vmask2 vloadu_vm2_p(void *p) {
-  vmask2 vm2;
-  memcpy(8 + (char *)&vm2, p, 8);
-  memcpy((char *)&vm2, 8 + p, 8);
-  return vm2;
+static vquad vloadu_vq_p(void *p) {
+  vquad vq;
+  memcpy(8 + (char *)&vq, p, 8);
+  memcpy((char *)&vq, 8 + p, 8);
+  return vq;
 }
 
-static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
-  vmask2 vm2;
-  memcpy(8 + (char *)&vm2, (char *)&aq, 8);
-  memcpy((char *)&vm2, 8 + (char *)&aq, 8);
-  return vm2;
+static INLINE vquad vcast_vq_aq(vargquad aq) {
+  vquad vq;
+  memcpy(8 + (char *)&vq, (char *)&aq, 8);
+  memcpy((char *)&vq, 8 + (char *)&aq, 8);
+  return vq;
 }
 
-static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
+static INLINE vargquad vcast_aq_vq(vquad vq) {
   vargquad aq;
-  memcpy(8 + (char *)&aq, (char *)&vm2, 8);
-  memcpy((char *)&aq, 8 + (char *)&vm2, 8);
+  memcpy(8 + (char *)&aq, (char *)&vq, 8);
+  memcpy((char *)&aq, 8 + (char *)&vq, 8);
   return aq;
 }
 #else
-static vmask2 vloadu_vm2_p(void *p) {
-  vmask2 vm2;
-  memcpy(&vm2, p, 16);
-  return vm2;
+static vquad vloadu_vq_p(void *p) {
+  vquad vq;
+  memcpy(&vq, p, 16);
+  return vq;
 }
 
-static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
-  vmask2 vm2;
-  memcpy(&vm2, &aq, 16);
-  return vm2;
+static INLINE vquad vcast_vq_aq(vargquad aq) {
+  vquad vq;
+  memcpy(&vq, &aq, 16);
+  return vq;
 }
 
-static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
+static INLINE vargquad vcast_aq_vq(vquad vq) {
   vargquad aq;
-  memcpy(&aq, &vm2, 16);
+  memcpy(&aq, &vq, 16);
   return aq;
 }
 #endif

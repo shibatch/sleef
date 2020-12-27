@@ -175,4 +175,4 @@ int main(int argc, char **argv) {
   exit(0);
 }
 
-// cat sleefinline*.h | egrep -o '[a-zA-Z_][0-9a-zA-Z_]*' | sort | uniq > cand.txt
+// cat sleef*inline*.h | egrep -o '[a-zA-Z_][0-9a-zA-Z_]*' | sort | uniq > cand.txt

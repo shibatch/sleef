@@ -536,6 +536,7 @@ int do_test(int argc, char **argv) {
     func_q_q("asinq_u10", xasinq_u10);
     func_q_q("acosq_u10", xacosq_u10);
     func_q_q("atanq_u10", xatanq_u10);
+    func_q_q_q("atan2q_u10", xatan2q_u10);
     func_q_q("expq_u10", xexpq_u10);
     func_q_q("exp2q_u10", xexp2q_u10);
     func_q_q("exp10q_u10", xexp10q_u10);
@@ -544,6 +545,7 @@ int do_test(int argc, char **argv) {
     func_q_q("log2q_u10", xlog2q_u10);
     func_q_q("log10q_u10", xlog10q_u10);
     func_q_q("log1pq_u10", xlog1pq_u10);
+    func_q_q_q("powq_u10", xpowq_u10);
     func_q_q("sinhq_u10", xsinhq_u10);
     func_q_q("coshq_u10", xcoshq_u10);
     func_q_q("tanhq_u10", xtanhq_u10);

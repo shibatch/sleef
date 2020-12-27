@@ -68,9 +68,11 @@ typedef __vector unsigned long long vuint64;
 
 typedef struct {
   vmask x, y;
-} vmask2;
+} vquad;
 
-typedef vmask2 vargquad;
+typedef struct {
+  vmask x, y;
+} vargquad;
 
 //
 
@@ -414,18 +416,18 @@ static INLINE vint2 vrint_vi2_vf(vfloat vf) {
 
 //
 
-static vmask2 vloadu_vm2_p(void *p) {
-  vmask2 vm2;
-  memcpy(&vm2, p, VECTLENDP * 16);
-  return vm2;
+static vquad vloadu_vq_p(void *p) {
+  vquad vq;
+  memcpy(&vq, p, VECTLENDP * 16);
+  return vq;
 }
 
-static INLINE vmask2 vcast_vm2_aq(vargquad aq) {
-  vmask2 m = { aq.y, aq.x };
+static INLINE vquad vcast_vq_aq(vargquad aq) {
+  vquad m = { aq.y, aq.x };
   return m;
 }
-static INLINE vargquad vcast_aq_vm2(vmask2 vm2) {
-  vargquad a = { vm2.y, vm2.x };
+static INLINE vargquad vcast_aq_vq(vquad vq) {
+  vargquad a = { vq.y, vq.x };
   return a;
 }
 
