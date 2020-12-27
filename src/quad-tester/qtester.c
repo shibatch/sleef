@@ -251,6 +251,7 @@ Sleef_quad child_tanq_u10(Sleef_quad x) { child_q_q("tanq_u10", x); }
 Sleef_quad child_asinq_u10(Sleef_quad x) { child_q_q("asinq_u10", x); }
 Sleef_quad child_acosq_u10(Sleef_quad x) { child_q_q("acosq_u10", x); }
 Sleef_quad child_atanq_u10(Sleef_quad x) { child_q_q("atanq_u10", x); }
+Sleef_quad child_atan2q_u10(Sleef_quad x, Sleef_quad y) { child_q_q_q("atan2q_u10", x, y); }
 Sleef_quad child_expq_u10(Sleef_quad x) { child_q_q("expq_u10", x); }
 Sleef_quad child_exp2q_u10(Sleef_quad x) { child_q_q("exp2q_u10", x); }
 Sleef_quad child_exp10q_u10(Sleef_quad x) { child_q_q("exp10q_u10", x); }
@@ -259,6 +260,7 @@ Sleef_quad child_logq_u10(Sleef_quad x) { child_q_q("logq_u10", x); }
 Sleef_quad child_log2q_u10(Sleef_quad x) { child_q_q("log2q_u10", x); }
 Sleef_quad child_log10q_u10(Sleef_quad x) { child_q_q("log10q_u10", x); }
 Sleef_quad child_log1pq_u10(Sleef_quad x) { child_q_q("log1pq_u10", x); }
+Sleef_quad child_powq_u10(Sleef_quad x, Sleef_quad y) { child_q_q_q("powq_u10", x, y); }
 Sleef_quad child_sinhq_u10(Sleef_quad x) { child_q_q("sinhq_u10", x); }
 Sleef_quad child_coshq_u10(Sleef_quad x) { child_q_q("coshq_u10", x); }
 Sleef_quad child_tanhq_u10(Sleef_quad x) { child_q_q("tanhq_u10", x); }
@@ -437,7 +439,9 @@ void do_test(int options) {
   int success = 1;
 
   static const char *stdCheckVals[] = {
-    "-0.0", "0.0", "+0.5", "-0.5", "+1.0", "-1.0", "+1.5", "-1.5", "+2.0", "-2.0", "+2.5", "-2.5",
+    "-0.0", "0.0", "+0.25", "-0.25", "+0.5", "-0.5", "+0.75", "-0.75", "+1.0", "-1.0",
+    "+1.25", "-1.25", "+1.5", "-1.5", "+2.0", "-2.0", "+2.5", "-2.5", "+3.0", "-3.0",
+    "+4.0", "-4.0", "+5.0", "-5.0", "+6.0", "-6.0", "+7.0", "-7.0", 
     "1.234", "-1.234", "+1.234e+100", "-1.234e+100", "+1.234e-100", "-1.234e-100",
     "+1.234e+3000", "-1.234e+3000", "+1.234e-3000", "-1.234e-3000",
     "3.1415926535897932384626433832795028841971693993751058209749445923078164",
@@ -447,7 +451,9 @@ void do_test(int options) {
   };
 
   static const char *noNegZeroCheckVals[] = {
-    "0.0", "+0.5", "-0.5", "+1.0", "-1.0", "+1.5", "-1.5", "+2.0", "-2.0", "+2.5", "-2.5",
+    "0.0", "+0.25", "-0.25", "+0.5", "-0.5", "+0.75", "-0.75", "+1.0", "-1.0",
+    "+1.25", "-1.25", "+1.5", "-1.5", "+2.0", "-2.0", "+2.5", "-2.5", "+3.0", "-3.0",
+    "+4.0", "-4.0", "+5.0", "-5.0", "+6.0", "-6.0", "+7.0", "-7.0", 
     "1.234", "-1.234", "+1.234e+100", "-1.234e+100", "+1.234e-100", "-1.234e-100",
     "+1.234e+3000", "-1.234e+3000", "+1.234e-3000", "-1.234e-3000",
     "3.1415926535897932384626433832795028841971693993751058209749445923078164",
@@ -457,7 +463,9 @@ void do_test(int options) {
   };
 
   static const char *noNanCheckVals[] = {
-    "-0.0", "0.0", "+0.5", "-0.5", "+1.0", "-1.0", "+1.5", "-1.5", "+2.0", "-2.0", "+2.5", "-2.5",
+    "-0.0", "0.0", "+0.25", "-0.25", "+0.5", "-0.5", "+0.75", "-0.75", "+1.0", "-1.0",
+    "+1.25", "-1.25", "+1.5", "-1.5", "+2.0", "-2.0", "+2.5", "-2.5", "+3.0", "-3.0",
+    "+4.0", "-4.0", "+5.0", "-5.0", "+6.0", "-6.0", "+7.0", "-7.0", 
     "1.234", "-1.234", "+1.234e+100", "-1.234e+100", "+1.234e-100", "-1.234e-100",
     "+1.234e+3000", "-1.234e+3000", "+1.234e-3000", "-1.234e-3000",
     "3.1415926535897932384626433832795028841971693993751058209749445923078164",
@@ -467,7 +475,9 @@ void do_test(int options) {
   };
 
   static const char *noInfCheckVals[] = {
-    "-0.0", "0.0", "+0.5", "-0.5", "+1.0", "-1.0", "+1.5", "-1.5", "+2.0", "-2.0", "+2.5", "-2.5",
+    "-0.0", "0.0", "+0.25", "-0.25", "+0.5", "-0.5", "+0.75", "-0.75", "+1.0", "-1.0",
+    "+1.25", "-1.25", "+1.5", "-1.5", "+2.0", "-2.0", "+2.5", "-2.5", "+3.0", "-3.0",
+    "+4.0", "-4.0", "+5.0", "-5.0", "+6.0", "-6.0", "+7.0", "-7.0", 
     "1.234", "-1.234", "+1.234e+100", "-1.234e+100", "+1.234e-100", "-1.234e-100",
     "+1.234e+3000", "-1.234e+3000", "+1.234e-3000", "-1.234e-3000",
     "3.1415926535897932384626433832795028841971693993751058209749445923078164",
@@ -486,6 +496,8 @@ void do_test(int options) {
     "28976077832308491369.53730422794043954984410931622923280838485698255",
     "534514292032483373929840186580935391650.3203828374578833308216124114",
     "1.8188578844588316214011747138886493132669668866419621497938607555896e+77"
+    "3.141592653589793238462643383279502884197169399375105820974944592307e+1000",
+    "3.141592653589793238462643383279502884197169399375105820974944592307e+2000",
   };
 
 #define NTEST 1000
@@ -770,6 +782,14 @@ void do_test(int options) {
   checkAccuracyOuterLoop_q(mpfr_atan, child_atanq_u10, "-0", "-Inf", 3 * NTEST, 1.0, 1);
   checkResult(success, maxError);
 
+  fprintf(stderr, "atan2q_u10 : ");
+  maxError = 0;
+  cmpDenormOuterLoop_q_q(mpfr_atan2, child_atan2q_u10, stdCheckVals);
+  checkAccuracyOuterLoop2_q_q(mpfr_atan2, child_atan2q_u10, stdCheckVals, 1.0);
+  checkAccuracyOuterLoop_q_q(mpfr_atan2, child_atan2q_u10, "-1e-100", "-1e+100", 5 * NTEST, 1.0, 0);
+  checkAccuracyOuterLoop_q_q(mpfr_atan2, child_atan2q_u10, "0", "Inf", 5 * NTEST, 1.0, 1);
+  checkResult(success, maxError);
+
   fprintf(stderr, "expq_u10 : ");
   maxError = 0;
   cmpDenormOuterLoop_q(mpfr_exp, child_expq_u10, stdCheckVals);
@@ -837,6 +857,14 @@ void do_test(int options) {
   checkAccuracyOuterLoop2_q(mpfr_log1p, child_log1pq_u10, log1pCheckVals, 1.0);
   checkAccuracyOuterLoop_q(mpfr_log1p, child_log1pq_u10, "1e-100", "1e+100", 3 * NTEST, 1.0, 0);
   checkAccuracyOuterLoop_q(mpfr_log1p, child_log1pq_u10, "0", "Inf", 3 * NTEST, 1.0, 1);
+  checkResult(success, maxError);
+
+  fprintf(stderr, "powq_u10 : ");
+  maxError = 0;
+  cmpDenormOuterLoop_q_q(mpfr_pow, child_powq_u10, stdCheckVals);
+  checkAccuracyOuterLoop2_q_q(mpfr_pow, child_powq_u10, stdCheckVals, 1.0);
+  checkAccuracyOuterLoop_q_q(mpfr_pow, child_powq_u10, "-1e-100", "-1e+100", 5 * NTEST, 1.0, 0);
+  checkAccuracyOuterLoop_q_q(mpfr_pow, child_powq_u10, "0", "Inf", 5 * NTEST, 1.0, 1);
   checkResult(success, maxError);
 
   fprintf(stderr, "sinhq_u10 : ");

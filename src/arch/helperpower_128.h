@@ -85,9 +85,11 @@ typedef __vector unsigned long long vuint64;
 
 typedef struct {
   vmask x, y;
-} vmask2;
+} vquad;
 
-typedef vmask2 vargquad;
+typedef struct {
+  vmask x, y;
+} vargquad;
 
 /**********************************************
  ** Utilities
@@ -812,14 +814,23 @@ static INLINE vdouble vmlsubadd_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z)
 
 //
 
-static vmask2 vloadu_vm2_p(void *p) {
-  vmask2 vm2;
-  memcpy(&vm2, p, VECTLENDP * 16);
-  return vm2;
+static vquad vloadu_vq_p(void *p) {
+  vquad vq;
+  memcpy(&vq, p, VECTLENDP * 16);
+  return vq;
 }
 
-static INLINE vmask2 vcast_vm2_aq(vargquad aq) { return aq; }
-static INLINE vargquad vcast_aq_vm2(vmask2 vm2) { return vm2; }
+static INLINE vquad vcast_vq_aq(vargquad aq) {
+  vquad vq;
+  memcpy(&vq, &aq, VECTLENDP * 16);
+  return vq;
+}
+
+static INLINE vargquad vcast_aq_vq(vquad vq) {
+  vargquad aq;
+  memcpy(&aq, &vq, VECTLENDP * 16);
+  return aq;
+}
 
 static INLINE int vtestallzeros_i_vo64(vopmask g) {
   return vec_all_eq((__vector signed long long)g, vzero__s64());

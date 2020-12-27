@@ -19,6 +19,17 @@ static INLINE CONST VECTOR_CC vdouble2 vd2setx_vd2_vd2_vd(vdouble2 v, vdouble d)
 static INLINE CONST VECTOR_CC vdouble2 vd2sety_vd2_vd2_vd(vdouble2 v, vdouble d) { v.y = d; return v; }
 #endif
 
+#if !defined(ENABLE_CUDA)
+typedef struct {
+  double x, y;
+} double2;
+#endif
+
+static INLINE CONST VECTOR_CC double2 dd(double h, double l) {
+  double2 ret = { h, l };
+  return ret;
+}
+
 static INLINE CONST VECTOR_CC vdouble vupper_vd_vd(vdouble d) {
   return vreinterpret_vd_vm(vand_vm_vm_vm(vreinterpret_vm_vd(d), vcast_vm_i_i(0xffffffff, 0xf8000000)));
 }
@@ -29,6 +40,10 @@ static INLINE CONST VECTOR_CC vdouble2 vcast_vd2_vd_vd(vdouble h, vdouble l) {
 
 static INLINE CONST VECTOR_CC vdouble2 vcast_vd2_d_d(double h, double l) {
   return vd2setxy_vd2_vd_vd(vcast_vd_d(h), vcast_vd_d(l));
+}
+
+static INLINE CONST VECTOR_CC vdouble2 vcast_vd2_d2(double2 dd) {
+  return vd2setxy_vd2_vd_vd(vcast_vd_d(dd.x), vcast_vd_d(dd.y));
 }
 
 static INLINE CONST VECTOR_CC vdouble2 vsel_vd2_vo_vd2_vd2(vopmask m, vdouble2 x, vdouble2 y) {
@@ -98,6 +113,8 @@ static INLINE CONST VECTOR_CC vdouble2 ddnormalize_vd2_vd2(vdouble2 t) {
 static INLINE CONST VECTOR_CC vdouble2 ddscale_vd2_vd2_vd(vdouble2 d, vdouble s) {
   return vd2setxy_vd2_vd_vd(vmul_vd_vd_vd(vd2getx_vd_vd2(d), s), vmul_vd_vd_vd(vd2gety_vd_vd2(d), s));
 }
+
+static INLINE CONST VECTOR_CC vdouble2 ddscale_vd2_vd2_d(vdouble2 d, double s) { return ddscale_vd2_vd2_vd(d, vcast_vd_d(s)); }
 
 static INLINE CONST VECTOR_CC vdouble2 ddadd_vd2_vd_vd(vdouble x, vdouble y) {
   vdouble s = vadd_vd_vd_vd(x, y);
@@ -216,7 +233,7 @@ static INLINE CONST VECTOR_CC vdouble2 ddrec_vd2_vd2(vdouble2 d) {
   vdouble s = vrec_vd_vd(vd2getx_vd_vd2(d));
   return vd2setxy_vd2_vd_vd(s, vmul_vd_vd_vd(s, vfmanp_vd_vd_vd_vd(vd2gety_vd_vd2(d), s, vfmanp_vd_vd_vd_vd(vd2getx_vd_vd2(d), s, vcast_vd_d(1)))));
 }
-#else
+#else // #ifdef ENABLE_FMA_DP
 static INLINE CONST VECTOR_CC vdouble2 dddiv_vd2_vd2_vd2(vdouble2 n, vdouble2 d) {
   vdouble t = vrec_vd_vd(vd2getx_vd_vd2(d));
   vdouble dh  = vupper_vd_vd(vd2getx_vd_vd2(d)), dl  = vsub_vd_vd_vd(vd2getx_vd_vd2(d),  dh);
@@ -290,7 +307,7 @@ static INLINE CONST VECTOR_CC vdouble2 ddrec_vd2_vd2(vdouble2 d) {
 
   return vd2setxy_vd2_vd_vd(t, vmul_vd_vd_vd(t, vsub_vd_6vd(vcast_vd_d(1), vmul_vd_vd_vd(dh, th), vmul_vd_vd_vd(dh, tl), vmul_vd_vd_vd(dl, th), vmul_vd_vd_vd(dl, tl), vmul_vd_vd_vd(vd2gety_vd_vd2(d), t))));
 }
-#endif
+#endif // #ifdef ENABLE_FMA_DP
 
 static INLINE CONST VECTOR_CC vdouble2 ddsqrt_vd2_vd2(vdouble2 d) {
   vdouble t = vsqrt_vd_vd(vadd_vd_vd_vd(vd2getx_vd_vd2(d), vd2gety_vd_vd2(d)));
@@ -300,4 +317,8 @@ static INLINE CONST VECTOR_CC vdouble2 ddsqrt_vd2_vd2(vdouble2 d) {
 static INLINE CONST VECTOR_CC vdouble2 ddsqrt_vd2_vd(vdouble d) {
   vdouble t = vsqrt_vd_vd(d);
   return ddscale_vd2_vd2_vd(ddmul_vd2_vd2_vd2(ddadd2_vd2_vd_vd2(d, ddmul_vd2_vd_vd(t, t)), ddrec_vd2_vd(t)), vcast_vd_d(0.5));
+}
+
+static INLINE CONST VECTOR_CC vdouble2 ddmla_vd2_vd2_vd2_vd2(vdouble2 x, vdouble2 y, vdouble2 z) {
+  return ddadd_vd2_vd2_vd2(z, ddmul_vd2_vd2_vd2(x, y));
 }

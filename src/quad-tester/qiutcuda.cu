@@ -72,6 +72,7 @@ __global__ void xtanq_u10(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_tanq1_
 __global__ void xasinq_u10(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_asinq1_u10cuda(*a0); }
 __global__ void xacosq_u10(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_acosq1_u10cuda(*a0); }
 __global__ void xatanq_u10(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_atanq1_u10cuda(*a0); }
+__global__ void xatan2q_u10(Sleef_quadx1 *r, Sleef_quadx1 *a0, Sleef_quadx1 *a1) { *r = Sleef_atan2q1_u10cuda(*a0, *a1); }
 __global__ void xexpq_u10(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_expq1_u10cuda(*a0); }
 __global__ void xexp2q_u10(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_exp2q1_u10cuda(*a0); }
 __global__ void xexp10q_u10(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_exp10q1_u10cuda(*a0); }
@@ -80,6 +81,7 @@ __global__ void xlogq_u10(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_logq1_
 __global__ void xlog2q_u10(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_log2q1_u10cuda(*a0); }
 __global__ void xlog10q_u10(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_log10q1_u10cuda(*a0); }
 __global__ void xlog1pq_u10(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_log1pq1_u10cuda(*a0); }
+__global__ void xpowq_u10(Sleef_quadx1 *r, Sleef_quadx1 *a0, Sleef_quadx1 *a1) { *r = Sleef_powq1_u10cuda(*a0, *a1); }
 __global__ void xsinhq_u10(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_sinhq1_u10cuda(*a0); }
 __global__ void xcoshq_u10(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_coshq1_u10cuda(*a0); }
 __global__ void xtanhq_u10(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_tanhq1_u10cuda(*a0); }
@@ -290,6 +292,7 @@ int main(int argc, char **argv) {
     func_q_q("asinq_u10", xasinq_u10);
     func_q_q("acosq_u10", xacosq_u10);
     func_q_q("atanq_u10", xatanq_u10);
+    func_q_q_q("atan2q_u10", xatan2q_u10);
     func_q_q("expq_u10", xexpq_u10);
     func_q_q("exp2q_u10", xexp2q_u10);
     func_q_q("exp10q_u10", xexp10q_u10);
@@ -298,6 +301,7 @@ int main(int argc, char **argv) {
     func_q_q("log2q_u10", xlog2q_u10);
     func_q_q("log10q_u10", xlog10q_u10);
     func_q_q("log1pq_u10", xlog1pq_u10);
+    func_q_q_q("powq_u10", xpowq_u10);
     func_q_q("sinhq_u10", xsinhq_u10);
     func_q_q("coshq_u10", xcoshq_u10);
     func_q_q("tanhq_u10", xtanhq_u10);

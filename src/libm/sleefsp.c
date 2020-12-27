@@ -72,6 +72,7 @@ static INLINE CONST float fminfk(float x, float y) { return x < y ? x : y; }
 static INLINE CONST float fmaxfk(float x, float y) { return x > y ? x : y; }
 static INLINE CONST int xisintf(float x) { return (x == (int)x); }
 
+static INLINE CONST int xsignbitf(double d) { return (floatToRawIntBits(d) & floatToRawIntBits(-0.0)) == floatToRawIntBits(-0.0); }
 static INLINE CONST int xisnanf(float x) { return x != x; }
 static INLINE CONST int xisinff(float x) { return x == SLEEF_INFINITYf || x == -SLEEF_INFINITYf; }
 static INLINE CONST int xisminff(float x) { return x == -SLEEF_INFINITYf; }
@@ -1324,11 +1325,11 @@ EXPORT CONST float xpowf(float x, float y) {
   float result = expkf(dfmul_f2_f2_f(logkf(fabsfk(x)), y));
 
   result = xisnanf(result) ? SLEEF_INFINITYf : result;
-  result *=  (x >= 0 ? 1 : (!yisint ? SLEEF_NANf : (yisodd ? -1 : 1)));
+  result *= (x >= 0 ? 1 : (yisint ? (yisodd ? -1 : 1) : SLEEF_NANf));
 
   float efx = mulsignf(fabsfk(x) - 1, y);
   if (xisinff(y)) result = efx < 0 ? 0.0f : (efx == 0 ? 1.0f : SLEEF_INFINITYf);
-  if (xisinff(x) || x == 0) result = (yisodd ? signf(x) : 1) * ((x == 0 ? -y : y) < 0 ? 0 : SLEEF_INFINITYf);
+  if (xisinff(x) || x == 0) result = mulsignf((xsignbitf(y) ^ (x == 0)) ? 0 : SLEEF_INFINITYf, yisodd ? x : 1);
   if (xisnanf(x) || xisnanf(y)) result = SLEEF_NANf;
   if (y == 0 || x == 1) result = 1;
 

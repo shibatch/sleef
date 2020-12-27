@@ -122,15 +122,14 @@ static INLINE vfloat2 vf2setxy_vf2_vf_vf(vfloat x, vfloat y)  { return svcreate2
 static INLINE vfloat2 vf2setx_vf2_vf2_vf(vfloat2 v, vfloat d) { return svset2_f32(v, 0, d); }
 static INLINE vfloat2 vf2sety_vf2_vf2_vf(vfloat2 v, vfloat d) { return svset2_f32(v, 1, d); }
 
-// vmask2 is mainly used for quad-precision functions
-typedef svint32x2_t vmask2;
-static INLINE vmask vm2getx_vm_vm2(vmask2 v) { return svget2_s32(v, 0); }
-static INLINE vmask vm2gety_vm_vm2(vmask2 v) { return svget2_s32(v, 1); }
-static INLINE vmask2 vm2setxy_vm2_vm_vm(vmask x, vmask y) { return svcreate2_s32(x, y); }
-static INLINE vmask2 vm2setx_vm2_vm2_vm(vmask2 v, vmask x) { return svset2_s32(v, 0, x); }
-static INLINE vmask2 vm2sety_vm2_vm2_vm(vmask2 v, vmask y) { return svset2_s32(v, 1, y); }
+typedef svint32x2_t vquad;
+static INLINE vmask vqgetx_vm_vq(vquad v) { return svget2_s32(v, 0); }
+static INLINE vmask vqgety_vm_vq(vquad v) { return svget2_s32(v, 1); }
+static INLINE vquad vqsetxy_vq_vm_vm(vmask x, vmask y) { return svcreate2_s32(x, y); }
+static INLINE vquad vqsetx_vq_vq_vm(vquad v, vmask x) { return svset2_s32(v, 0, x); }
+static INLINE vquad vqsety_vq_vq_vm(vquad v, vmask y) { return svset2_s32(v, 1, y); }
 
-typedef vmask2 vargquad;
+typedef svint32x2_t vargquad;
 
 // Auxiliary data types
 
@@ -1078,14 +1077,14 @@ static int vcast_i_vi2(vint2 v) {
 
 //
 
-static vmask2 vloadu_vm2_p(void *p) {
-  vmask2 vm2;
-  memcpy(&vm2, p, VECTLENDP * 16);
-  return vm2;
+static vquad vloadu_vq_p(void *p) {
+  vquad vq;
+  memcpy(&vq, p, VECTLENDP * 16);
+  return vq;
 }
 
-static INLINE vmask2 vcast_vm2_aq(vargquad aq) { return aq; }
-static INLINE vargquad vcast_aq_vm2(vmask2 vm2) { return vm2; }
+static INLINE vquad vcast_vq_aq(vargquad aq) { return aq; }
+static INLINE vargquad vcast_aq_vq(vquad vq) { return vq; }
 
 static INLINE int vtestallzeros_i_vo64(vopmask g) {
   return svcntp_b64(svptrue_b64(), g) == 0;

@@ -61,9 +61,11 @@ typedef __m128i vuint64;
 
 typedef struct {
   vmask x, y;
-} vmask2;
+} vquad;
 
-typedef vmask2 vargquad;
+typedef struct {
+  vmask x, y;
+} vargquad;
 
 //
 
@@ -415,20 +417,29 @@ static INLINE void vsscatter2_v_p_i_i_vf(float *ptr, int offset, int step, vfloa
 
 //
 
-static vmask2 vloadu_vm2_p(void *p) {
-  vmask2 vm2 = {
+static vquad vloadu_vq_p(void *p) {
+  vquad vq = {
     vloadu_vi2_p((int32_t *)p),
     vloadu_vi2_p((int32_t *)((uint8_t *)p + sizeof(vmask)))
   };
-  return vm2;
+  return vq;
 }
 
-static INLINE vmask2 vcast_vm2_aq(vargquad aq) { return aq; }
-static INLINE vargquad vcast_aq_vm2(vmask2 vm2) { return vm2; }
+static INLINE vquad vcast_vq_aq(vargquad aq) {
+  vquad vq;
+  memcpy(&vq, &aq, VECTLENDP * 16);
+  return vq;
+}
 
-static void vstoreu_v_p_vm2(void *p, vmask2 vm2) {
-  vstoreu_v_p_vi2((int32_t *)p, vcast_vi2_vm(vm2.x));
-  vstoreu_v_p_vi2((int32_t *)((uint8_t *)p + sizeof(vmask)), vcast_vi2_vm(vm2.y));
+static INLINE vargquad vcast_aq_vq(vquad vq) {
+  vargquad aq;
+  memcpy(&aq, &vq, VECTLENDP * 16);
+  return aq;
+}
+
+static void vstoreu_v_p_vq(void *p, vquad vq) {
+  vstoreu_v_p_vi2((int32_t *)p, vcast_vi2_vm(vq.x));
+  vstoreu_v_p_vi2((int32_t *)((uint8_t *)p + sizeof(vmask)), vcast_vi2_vm(vq.y));
 }
 
 static INLINE int vtestallzeros_i_vo64(vopmask g) { return _mm_movemask_epi8(g) == 0; }

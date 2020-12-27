@@ -2325,11 +2325,10 @@ EXPORT CONST VECTOR_CC vfloat xpowf(vfloat x, vfloat y) {
 												      vcast_vf_f(SLEEF_INFINITYf))))),
 			    result);
 
-  result = vsel_vf_vo_vf_vf(vor_vo_vo_vo(visinf_vo_vf(x), veq_vo_vf_vf(x, vcast_vf_f(0))),
-			    vmul_vf_vf_vf(vsel_vf_vo_vf_vf(yisodd, vsign_vf_vf(x), vcast_vf_f(1)),
-					  vreinterpret_vf_vm(vandnot_vm_vo32_vm(vlt_vo_vf_vf(vsel_vf_vo_vf_vf(veq_vo_vf_vf(x, vcast_vf_f(0)), vneg_vf_vf(y), y), vcast_vf_f(0)),
-										vreinterpret_vm_vf(vcast_vf_f(SLEEF_INFINITYf))))),
-			    result);
+  result = vsel_vf_vo_vf_vf(vor_vo_vo_vo(visinf_vo_vf(x), veq_vo_vf_vf(x, vcast_vf_f(0.0))),
+			    vmulsign_vf_vf_vf(vsel_vf_vo_vf_vf(vxor_vo_vo_vo(vsignbit_vo_vf(y), veq_vo_vf_vf(x, vcast_vf_f(0.0f))),
+							       vcast_vf_f(0), vcast_vf_f(SLEEF_INFINITYf)),
+					      vsel_vf_vo_vf_vf(yisodd, x, vcast_vf_f(1))), result);
 
   result = vreinterpret_vf_vm(vor_vm_vo32_vm(vor_vo_vo_vo(visnan_vo_vf(x), visnan_vo_vf(y)), vreinterpret_vm_vf(result)));
 
