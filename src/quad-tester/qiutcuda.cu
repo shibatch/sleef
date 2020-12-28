@@ -95,6 +95,12 @@ __global__ void xfmaxq(Sleef_quadx1 *r, Sleef_quadx1 *a0, Sleef_quadx1 *a1) { *r
 __global__ void xfminq(Sleef_quadx1 *r, Sleef_quadx1 *a0, Sleef_quadx1 *a1) { *r = Sleef_fminq1_cuda(*a0, *a1); }
 __global__ void xfdimq_u05(Sleef_quadx1 *r, Sleef_quadx1 *a0, Sleef_quadx1 *a1) { *r = Sleef_fdimq1_u05cuda(*a0, *a1); }
 
+__global__ void xtruncq(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_truncq1_cuda(*a0); }
+__global__ void xfloorq(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_floorq1_cuda(*a0); }
+__global__ void xceilq(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_ceilq1_cuda(*a0); }
+__global__ void xroundq(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_roundq1_cuda(*a0); }
+__global__ void xrintq(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_rintq1_cuda(*a0); }
+
 //
 
 typedef union {
@@ -315,6 +321,12 @@ int main(int argc, char **argv) {
     func_q_q_q("fmaxq", xfmaxq);
     func_q_q_q("fminq", xfminq);
     func_q_q_q("fdimq_u05", xfdimq_u05);
+
+    func_q_q("truncq", xtruncq);
+    func_q_q("floorq", xfloorq);
+    func_q_q("ceilq", xceilq);
+    func_q_q("roundq", xroundq);
+    func_q_q("rintq", xrintq);
 
     func_q_d("cast_from_doubleq", xcast_from_doubleq);
     func_d_q("cast_to_doubleq", xcast_to_doubleq);

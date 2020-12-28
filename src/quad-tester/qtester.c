@@ -274,11 +274,30 @@ Sleef_quad child_fmaxq(Sleef_quad x, Sleef_quad y) { child_q_q_q("fmaxq", x, y);
 Sleef_quad child_fminq(Sleef_quad x, Sleef_quad y) { child_q_q_q("fminq", x, y); }
 Sleef_quad child_fdimq_u05(Sleef_quad x, Sleef_quad y) { child_q_q_q("fdimq_u05", x, y); }
 
+Sleef_quad child_truncq(Sleef_quad x) { child_q_q("truncq", x); }
+Sleef_quad child_floorq(Sleef_quad x) { child_q_q("floorq", x); }
+Sleef_quad child_ceilq(Sleef_quad x) { child_q_q("ceilq", x); }
+Sleef_quad child_roundq(Sleef_quad x) { child_q_q("roundq", x); }
+Sleef_quad child_rintq(Sleef_quad x) { child_q_q("rintq", x); }
+
 //
 
 #define cmpDenorm_q(mpfrFunc, childFunc, argx) do {			\
     mpfr_set_f128(frx, argx, GMP_RNDN);					\
     mpfrFunc(frz, frx, GMP_RNDN);					\
+    Sleef_quad t = childFunc(argx);					\
+    double u = countULPf128(t, frz, 1);					\
+    if (u >= 10) {							\
+      fprintf(stderr, "\narg     = %s\ntest    = %s\ncorrect = %s\nulp = %g\n",	\
+	      sprintf128(argx), sprintf128(t), sprintfr(frz), u);	\
+      success = 0;							\
+      break;								\
+    }									\
+  } while(0)
+
+#define cmpDenormNMR_q(mpfrFunc, childFunc, argx) do {			\
+    mpfr_set_f128(frx, argx, GMP_RNDN);					\
+    mpfrFunc(frz, frx);							\
     Sleef_quad t = childFunc(argx);					\
     double u = countULPf128(t, frz, 1);					\
     if (u >= 10) {							\
@@ -307,6 +326,20 @@ Sleef_quad child_fdimq_u05(Sleef_quad x, Sleef_quad y) { child_q_q_q("fdimq_u05"
 #define checkAccuracy_q(mpfrFunc, childFunc, argx, bound) do {		\
     mpfr_set_f128(frx, argx, GMP_RNDN);					\
     mpfrFunc(frz, frx, GMP_RNDN);					\
+    Sleef_quad t = childFunc(argx);					\
+    double e = countULPf128(t, frz, 0);					\
+    maxError = fmax(maxError, e);					\
+    if (e > bound) {							\
+      fprintf(stderr, "\narg = %s, test = %s, correct = %s, ULP = %lf\n", \
+	      sprintf128(argx), sprintf128(childFunc(argx)), sprintfr(frz), countULPf128(t, frz, 0)); \
+      success = 0;							\
+      break;								\
+    }									\
+  } while(0)
+
+#define checkAccuracyNMR_q(mpfrFunc, childFunc, argx, bound) do {	\
+    mpfr_set_f128(frx, argx, GMP_RNDN);					\
+    mpfrFunc(frz, frx);							\
     Sleef_quad t = childFunc(argx);					\
     double e = countULPf128(t, frz, 0);					\
     maxError = fmax(maxError, e);					\
@@ -365,6 +398,13 @@ Sleef_quad child_fdimq_u05(Sleef_quad x, Sleef_quad y) { child_q_q_q("fdimq_u05"
     }									\
   } while(0)
 
+#define cmpDenormOuterLoopNMR_q(mpfrFunc, childFunc, checkVals) do {	\
+    for(int i=0;i<sizeof(checkVals)/sizeof(char *);i++) {		\
+      Sleef_quad a0 = cast_q_str(checkVals[i]);				\
+      cmpDenormNMR_q(mpfrFunc, childFunc, a0);				\
+    }									\
+  } while(0)
+
 //
 
 #define checkAccuracyOuterLoop_q_q(mpfrFunc, childFunc, minStr, maxStr, nLoop, bound, seed) do { \
@@ -399,6 +439,22 @@ Sleef_quad child_fdimq_u05(Sleef_quad x, Sleef_quad y) { child_q_q_q("fdimq_u05"
     for(int i=0;i<sizeof(checkVals)/sizeof(char *);i++) {		\
       Sleef_quad x = cast_q_str(checkVals[i]);				\
       checkAccuracy_q(mpfrFunc, childFunc, x, bound);			\
+    }									\
+  } while(0)
+
+#define checkAccuracyOuterLoopNMR_q(mpfrFunc, childFunc, minStr, maxStr, nLoop, bound, seed) do { \
+    xsrand(seed);							\
+    Sleef_quad min = cast_q_str(minStr), max = cast_q_str(maxStr);	\
+    for(int i=0;i<nLoop && success;i++) {				\
+      Sleef_quad x = rndf128(min, max);					\
+      checkAccuracyNMR_q(mpfrFunc, childFunc, x, bound);		\
+    }									\
+  } while(0)
+
+#define checkAccuracyOuterLoop2NMR_q(mpfrFunc, childFunc, checkVals, bound) do { \
+    for(int i=0;i<sizeof(checkVals)/sizeof(char *);i++) {		\
+      Sleef_quad x = cast_q_str(checkVals[i]);				\
+      checkAccuracyNMR_q(mpfrFunc, childFunc, x, bound);		\
     }									\
   } while(0)
 
@@ -498,6 +554,31 @@ void do_test(int options) {
     "1.8188578844588316214011747138886493132669668866419621497938607555896e+77"
     "3.141592653589793238462643383279502884197169399375105820974944592307e+1000",
     "3.141592653589793238462643383279502884197169399375105820974944592307e+2000",
+  };
+
+  static const char *bigIntCheckVals[] = {
+    "+5192296858534827628530496329220094.0",
+    "+5192296858534827628530496329220094.25",
+    "+5192296858534827628530496329220094.5",
+    "+5192296858534827628530496329220094.75",
+    "+5192296858534827628530496329220095.0",
+    "+5192296858534827628530496329220095.25",
+    "+5192296858534827628530496329220095.5",
+    "+5192296858534827628530496329220095.75",
+    "+5192296858534827628530496329220096.0",
+    "+5192296858534827628530496329220097.0",
+    "+5192296858534827628530496329220098.0",
+    "-5192296858534827628530496329220094.0",
+    "-5192296858534827628530496329220094.25",
+    "-5192296858534827628530496329220094.5",
+    "-5192296858534827628530496329220094.75",
+    "-5192296858534827628530496329220095.0",
+    "-5192296858534827628530496329220095.25",
+    "-5192296858534827628530496329220095.5",
+    "-5192296858534827628530496329220095.75",
+    "-5192296858534827628530496329220096.0",
+    "-5192296858534827628530496329220097.0",
+    "-5192296858534827628530496329220098.0",
   };
 
 #define NTEST 1000
@@ -949,6 +1030,58 @@ void do_test(int options) {
   checkAccuracyOuterLoop2_q_q(mpfr_dim, child_fdimq_u05, noInfCheckVals, 0.5);
   checkAccuracyOuterLoop_q_q(mpfr_dim, child_fdimq_u05, "-1e-100", "-1e+100", 5 * NTEST, errorBound, 0);
   checkAccuracyOuterLoop_q_q(mpfr_dim, child_fdimq_u05, "0", "Inf", 5 * NTEST, errorBound, 1);
+  checkResult(success, maxError);
+
+  //
+
+  fprintf(stderr, "truncq : ");
+  maxError = 0;
+  cmpDenormOuterLoopNMR_q(mpfr_trunc, child_truncq, stdCheckVals);
+  cmpDenormOuterLoopNMR_q(mpfr_trunc, child_truncq, bigIntCheckVals);
+  checkAccuracyOuterLoop2NMR_q(mpfr_trunc, child_truncq, stdCheckVals, 0);
+  checkAccuracyOuterLoop2NMR_q(mpfr_trunc, child_truncq, bigIntCheckVals, 0);
+  checkAccuracyOuterLoopNMR_q(mpfr_trunc, child_truncq, "-1e-100", "-1e+100", 5 * NTEST, 0, 0);
+  checkAccuracyOuterLoopNMR_q(mpfr_trunc, child_truncq, "0", "Inf", 5 * NTEST, 0, 1);
+  checkResult(success, maxError);
+
+  fprintf(stderr, "floorq : ");
+  maxError = 0;
+  cmpDenormOuterLoopNMR_q(mpfr_floor, child_floorq, stdCheckVals);
+  cmpDenormOuterLoopNMR_q(mpfr_floor, child_floorq, bigIntCheckVals);
+  checkAccuracyOuterLoop2NMR_q(mpfr_floor, child_floorq, stdCheckVals, 0);
+  checkAccuracyOuterLoop2NMR_q(mpfr_floor, child_floorq, bigIntCheckVals, 0);
+  checkAccuracyOuterLoopNMR_q(mpfr_floor, child_floorq, "-1e-100", "-1e+100", 5 * NTEST, 0, 0);
+  checkAccuracyOuterLoopNMR_q(mpfr_floor, child_floorq, "0", "Inf", 5 * NTEST, 0, 1);
+  checkResult(success, maxError);
+
+  fprintf(stderr, "ceilq : ");
+  maxError = 0;
+  cmpDenormOuterLoopNMR_q(mpfr_ceil, child_ceilq, stdCheckVals);
+  cmpDenormOuterLoopNMR_q(mpfr_ceil, child_ceilq, bigIntCheckVals);
+  checkAccuracyOuterLoop2NMR_q(mpfr_ceil, child_ceilq, stdCheckVals, 0);
+  checkAccuracyOuterLoop2NMR_q(mpfr_ceil, child_ceilq, bigIntCheckVals, 0);
+  checkAccuracyOuterLoopNMR_q(mpfr_ceil, child_ceilq, "-1e-100", "-1e+100", 5 * NTEST, 0, 0);
+  checkAccuracyOuterLoopNMR_q(mpfr_ceil, child_ceilq, "0", "Inf", 5 * NTEST, 0, 1);
+  checkResult(success, maxError);
+
+  fprintf(stderr, "roundq : ");
+  maxError = 0;
+  cmpDenormOuterLoopNMR_q(mpfr_round, child_roundq, stdCheckVals);
+  cmpDenormOuterLoopNMR_q(mpfr_round, child_roundq, bigIntCheckVals);
+  checkAccuracyOuterLoop2NMR_q(mpfr_round, child_roundq, stdCheckVals, 0);
+  checkAccuracyOuterLoop2NMR_q(mpfr_round, child_roundq, bigIntCheckVals, 0);
+  checkAccuracyOuterLoopNMR_q(mpfr_round, child_roundq, "-1e-100", "-1e+100", 5 * NTEST, 0, 0);
+  checkAccuracyOuterLoopNMR_q(mpfr_round, child_roundq, "0", "Inf", 5 * NTEST, 0, 1);
+  checkResult(success, maxError);
+
+  fprintf(stderr, "rintq : ");
+  maxError = 0;
+  cmpDenormOuterLoop_q(mpfr_rint, child_rintq, stdCheckVals);
+  cmpDenormOuterLoop_q(mpfr_rint, child_rintq, bigIntCheckVals);
+  checkAccuracyOuterLoop2_q(mpfr_rint, child_rintq, stdCheckVals, 0);
+  checkAccuracyOuterLoop2_q(mpfr_rint, child_rintq, bigIntCheckVals, 0);
+  checkAccuracyOuterLoop_q(mpfr_rint, child_rintq, "-1e-100", "-1e+100", 5 * NTEST, 0, 0);
+  checkAccuracyOuterLoop_q(mpfr_rint, child_rintq, "0", "Inf", 5 * NTEST, 0, 1);
   checkResult(success, maxError);
 
   //

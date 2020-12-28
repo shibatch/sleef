@@ -2993,49 +2993,11 @@ EXPORT CONST VECTOR_CC vdouble xfdim(vdouble x, vdouble y) {
   return ret;
 }
 
-EXPORT CONST VECTOR_CC vdouble xtrunc(vdouble x) {
-#ifdef FULL_FP_ROUNDING
-  return vtruncate_vd_vd(x);
-#else
-  vdouble fr = vsub_vd_vd_vd(x, vmul_vd_vd_vd(vcast_vd_d(INT64_C(1) << 31), vcast_vd_vi(vtruncate_vi_vd(vmul_vd_vd_vd(x, vcast_vd_d(1.0 / (INT64_C(1) << 31)))))));
-  fr = vsub_vd_vd_vd(fr, vcast_vd_vi(vtruncate_vi_vd(fr)));
-  return vsel_vd_vo_vd_vd(vor_vo_vo_vo(visinf_vo_vd(x), vge_vo_vd_vd(vabs_vd_vd(x), vcast_vd_d(INT64_C(1) << 52))), x, vcopysign_vd_vd_vd(vsub_vd_vd_vd(x, fr), x));
-#endif
-}
-
-EXPORT CONST VECTOR_CC vdouble xfloor(vdouble x) {
-  vdouble fr = vsub_vd_vd_vd(x, vmul_vd_vd_vd(vcast_vd_d(INT64_C(1) << 31), vcast_vd_vi(vtruncate_vi_vd(vmul_vd_vd_vd(x, vcast_vd_d(1.0 / (INT64_C(1) << 31)))))));
-  fr = vsub_vd_vd_vd(fr, vcast_vd_vi(vtruncate_vi_vd(fr)));
-  fr = vsel_vd_vo_vd_vd(vlt_vo_vd_vd(fr, vcast_vd_d(0)), vadd_vd_vd_vd(fr, vcast_vd_d(1.0)), fr);
-  return vsel_vd_vo_vd_vd(vor_vo_vo_vo(visinf_vo_vd(x), vge_vo_vd_vd(vabs_vd_vd(x), vcast_vd_d(INT64_C(1) << 52))), x, vcopysign_vd_vd_vd(vsub_vd_vd_vd(x, fr), x));
-}
-
-EXPORT CONST VECTOR_CC vdouble xceil(vdouble x) {
-  vdouble fr = vsub_vd_vd_vd(x, vmul_vd_vd_vd(vcast_vd_d(INT64_C(1) << 31), vcast_vd_vi(vtruncate_vi_vd(vmul_vd_vd_vd(x, vcast_vd_d(1.0 / (INT64_C(1) << 31)))))));
-  fr = vsub_vd_vd_vd(fr, vcast_vd_vi(vtruncate_vi_vd(fr)));
-  fr = vsel_vd_vo_vd_vd(vle_vo_vd_vd(fr, vcast_vd_d(0)), fr, vsub_vd_vd_vd(fr, vcast_vd_d(1.0)));
-  return vsel_vd_vo_vd_vd(vor_vo_vo_vo(visinf_vo_vd(x), vge_vo_vd_vd(vabs_vd_vd(x), vcast_vd_d(INT64_C(1) << 52))), x, vcopysign_vd_vd_vd(vsub_vd_vd_vd(x, fr), x));
-}
-
-EXPORT CONST VECTOR_CC vdouble xround(vdouble d) {
-  vdouble x = vadd_vd_vd_vd(d, vcast_vd_d(0.5));
-  vdouble fr = vsub_vd_vd_vd(x, vmul_vd_vd_vd(vcast_vd_d(INT64_C(1) << 31), vcast_vd_vi(vtruncate_vi_vd(vmul_vd_vd_vd(x, vcast_vd_d(1.0 / (INT64_C(1) << 31)))))));
-  fr = vsub_vd_vd_vd(fr, vcast_vd_vi(vtruncate_vi_vd(fr)));
-  x = vsel_vd_vo_vd_vd(vand_vo_vo_vo(vle_vo_vd_vd(x, vcast_vd_d(0)), veq_vo_vd_vd(fr, vcast_vd_d(0))), vsub_vd_vd_vd(x, vcast_vd_d(1.0)), x);
-  fr = vsel_vd_vo_vd_vd(vlt_vo_vd_vd(fr, vcast_vd_d(0)), vadd_vd_vd_vd(fr, vcast_vd_d(1.0)), fr);
-  x = vsel_vd_vo_vd_vd(veq_vo_vd_vd(d, vcast_vd_d(0.49999999999999994449)), vcast_vd_d(0), x);
-  return vsel_vd_vo_vd_vd(vor_vo_vo_vo(visinf_vo_vd(d), vge_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(INT64_C(1) << 52))), d, vcopysign_vd_vd_vd(vsub_vd_vd_vd(x, fr), d));
-}
-
-EXPORT CONST VECTOR_CC vdouble xrint(vdouble d) {
-#ifdef FULL_FP_ROUNDING
-  return vrint_vd_vd(d);
-#else
-  vdouble c = vmulsign_vd_vd_vd(vcast_vd_d(INT64_C(1) << 52), d);
-  return vsel_vd_vo_vd_vd(vgt_vo_vd_vd(vabs_vd_vd(d), vcast_vd_d(INT64_C(1) << 52)),
-			  d, vorsign_vd_vd_vd(vsub_vd_vd_vd(vadd_vd_vd_vd(d, c), c), d));
-#endif
-}
+EXPORT CONST VECTOR_CC vdouble xtrunc(vdouble x) { return vtruncate2_vd_vd(x); }
+EXPORT CONST VECTOR_CC vdouble xfloor(vdouble x) { return vfloor2_vd_vd(x); }
+EXPORT CONST VECTOR_CC vdouble xceil(vdouble x) { return vceil2_vd_vd(x); }
+EXPORT CONST VECTOR_CC vdouble xround(vdouble x) { return vround2_vd_vd(x); }
+EXPORT CONST VECTOR_CC vdouble xrint(vdouble x) { return vrint2_vd_vd(x); }
 
 EXPORT CONST VECTOR_CC vdouble xnextafter(vdouble x, vdouble y) {
   x = vsel_vd_vo_vd_vd(veq_vo_vd_vd(x, vcast_vd_d(0)), vmulsign_vd_vd_vd(vcast_vd_d(0), y), x);

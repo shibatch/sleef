@@ -416,17 +416,17 @@ static INLINE vint2 vrint_vi2_vf(vfloat vf) {
 
 //
 
-static vquad vloadu_vq_p(void *p) {
+static vquad loadu_vq_p(void *p) {
   vquad vq;
   memcpy(&vq, p, VECTLENDP * 16);
   return vq;
 }
 
-static INLINE vquad vcast_vq_aq(vargquad aq) {
+static INLINE vquad cast_vq_aq(vargquad aq) {
   vquad m = { aq.y, aq.x };
   return m;
 }
-static INLINE vargquad vcast_aq_vq(vquad vq) {
+static INLINE vargquad cast_aq_vq(vquad vq) {
   vargquad a = { vq.y, vq.x };
   return a;
 }

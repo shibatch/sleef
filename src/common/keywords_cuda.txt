@@ -141,7 +141,7 @@ tdxsetz_tdx_tdx_vd
 vabs_vd_vd
 vabs_vf2_vf2
 vabs_vf_vf
-vadd128_vq_vq_vq
+add128_vq_vq_vq
 vadd64_vm_vm_vm
 vadd_vd_3vd
 vadd_vd_4vd
@@ -175,7 +175,7 @@ vandnot_vm_vo64_vm
 vandnot_vo_vo_vo
 vargquad
 vavailability_i
-vcast_aq_vq
+cast_aq_vq
 vcast_d_vd
 vcast_f_vf
 vcast_vd2_d2
@@ -202,7 +202,7 @@ vcast_vm_vi2
 vcast_vm_vo
 vcast_vo32_vo64
 vcast_vo64_vo32
-vcast_vq_aq
+cast_vq_aq
 vcastu_vi2_vi
 vcastu_vi_vi2
 vclearlsb_vd_vd_i
@@ -227,7 +227,6 @@ vdouble
 vdouble2
 vdouble3
 veq64_vo_vm_vm
-veq64_vo_vq_vq
 veq_vi2_vi2_vi2
 veq_vi_vi_vi
 veq_vo_vd_vd
@@ -312,7 +311,7 @@ vloadu_vd_p
 vloadu_vf_p
 vloadu_vi2_p
 vloadu_vi_p
-vloadu_vq_p
+loadu_vq_p
 vlt64_vo_vm_vm
 vlt_vo_vd_vd
 vlt_vo_vf_vf
@@ -333,7 +332,6 @@ vmul_vd_vd_vd
 vmul_vf_vf_vf
 vmulsign_vd_vd_vd
 vmulsign_vf_vf_vf
-vneg128_vq_vq
 vneg64_vm_vm
 vneg_vd_vd
 vneg_vf_vf
@@ -390,6 +388,7 @@ vrev21_vi2_vi2
 vreva2_vd_vd
 vreva2_vf_vf
 vrint_vd_vd
+vrint2_vd_vd
 vrint_vf_vf
 vrint_vi2_vf
 vrint_vi_vd
@@ -418,7 +417,7 @@ vsel_vi_vd_vd_vi_vi
 vsel_vi_vd_vi
 vsel_vi_vo_vi_vi
 vsel_vm_vo64_vm_vm
-vsel_vq_vo_vq_vq
+sel_vq_vo_vq_vq
 vsign_vd_vd
 vsign_vf_vf
 vsignbit_vm_vd
@@ -441,7 +440,7 @@ vstoreu_v_p_vd
 vstoreu_v_p_vf
 vstoreu_v_p_vi
 vstoreu_v_p_vi2
-vstoreu_v_p_vq
+storeu_v_p_vq
 vstream_v_p_vd
 vstream_v_p_vf
 vsub64_vm_vm_vm
@@ -464,6 +463,7 @@ vtestallzeros_i_vo64
 vtoward0_vd_vd
 vtoward0_vf_vf
 vtruncate_vd_vd
+vtruncate2_vd_vd
 vtruncate_vf_vf
 vtruncate_vi2_vf
 vtruncate_vi_vd
@@ -545,6 +545,7 @@ log_tdx_tdx
 logk_tdx_tdx
 lt_vo_tdx_tdx
 mla_vd3_vd3_vd3_vd3
+modf_tdx_tdx_ptdx
 mul2_vd3_vd3_vd3
 mul_tdx_tdx_tdx
 mul_vd3_vd2_vd2
@@ -554,6 +555,7 @@ mul_vd3_vd3_vd2
 mul_vd3_vd3_vd3
 mulsign_tdx_tdx_vd
 mulsign_vd3_vd3_vd
+mulsign_vq_vq_vq
 neg_tdx_tdx
 neg_vd3_vd3
 neq_vo_tdx_tdx
@@ -658,3 +660,7 @@ twosub_vd2_vd_vd
 twosubx_vd2_vd_vd_vd
 twosum_vd2_vd_vd
 twosumx_vd2_vd_vd_vd
+vtruncate2_vd_vd
+vfloor2_vd_vd
+vceil2_vd_vd
+vround2_vd_vd
