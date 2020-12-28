@@ -429,6 +429,66 @@ int main(int argc,char **argv)
     }
 
     {
+      mpfr_trunc(frz, frx);
+      double u0 = countULPf128(t = vget(xtruncq(a0), e), frz, 0);
+
+      if (u0 > 0.5) {
+	printf(ISANAME " trunc arg=%s ulp=%.20g\n", sprintf128(q0), u0);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_floor(frz, frx);
+      double u0 = countULPf128(t = vget(xfloorq(a0), e), frz, 0);
+
+      if (u0 > 0.5) {
+	printf(ISANAME " floor arg=%s ulp=%.20g\n", sprintf128(q0), u0);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_ceil(frz, frx);
+      double u0 = countULPf128(t = vget(xceilq(a0), e), frz, 0);
+
+      if (u0 > 0.5) {
+	printf(ISANAME " ceil arg=%s ulp=%.20g\n", sprintf128(q0), u0);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_round(frz, frx);
+      double u0 = countULPf128(t = vget(xroundq(a0), e), frz, 0);
+
+      if (u0 > 0.5) {
+	printf(ISANAME " round arg=%s ulp=%.20g\n", sprintf128(q0), u0);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
+      mpfr_rint(frz, frx, GMP_RNDN);
+      double u0 = countULPf128(t = vget(xrintq(a0), e), frz, 0);
+
+      if (u0 > 0.5) {
+	printf(ISANAME " rint arg=%s ulp=%.20g\n", sprintf128(q0), u0);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
       double d = mpfr_get_d(frx, GMP_RNDN);
       vd0 = vsetd(vd0, e, d);
       t = vget(xcast_from_doubleq(vd0), e);

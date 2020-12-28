@@ -414,40 +414,40 @@ static INLINE void vstream_v_p_vf(float *ptr, vfloat v) { *ptr = v; }
 //
 
 #if defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
-static vquad vloadu_vq_p(void *p) {
+static vquad loadu_vq_p(void *p) {
   vquad vq;
   memcpy(8 + (char *)&vq, p, 8);
   memcpy((char *)&vq, 8 + p, 8);
   return vq;
 }
 
-static INLINE vquad vcast_vq_aq(vargquad aq) {
+static INLINE vquad cast_vq_aq(vargquad aq) {
   vquad vq;
   memcpy(8 + (char *)&vq, (char *)&aq, 8);
   memcpy((char *)&vq, 8 + (char *)&aq, 8);
   return vq;
 }
 
-static INLINE vargquad vcast_aq_vq(vquad vq) {
+static INLINE vargquad cast_aq_vq(vquad vq) {
   vargquad aq;
   memcpy(8 + (char *)&aq, (char *)&vq, 8);
   memcpy((char *)&aq, 8 + (char *)&vq, 8);
   return aq;
 }
 #else
-static vquad vloadu_vq_p(void *p) {
+static vquad loadu_vq_p(void *p) {
   vquad vq;
   memcpy(&vq, p, 16);
   return vq;
 }
 
-static INLINE vquad vcast_vq_aq(vargquad aq) {
+static INLINE vquad cast_vq_aq(vargquad aq) {
   vquad vq;
   memcpy(&vq, &aq, 16);
   return vq;
 }
 
-static INLINE vargquad vcast_aq_vq(vquad vq) {
+static INLINE vargquad cast_aq_vq(vquad vq) {
   vargquad aq;
   memcpy(&aq, &vq, 16);
   return aq;

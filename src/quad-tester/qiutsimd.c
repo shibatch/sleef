@@ -560,6 +560,12 @@ int do_test(int argc, char **argv) {
     func_q_q_q("fminq", xfminq);
     func_q_q_q("fdimq_u05", xfdimq_u05);
 
+    func_q_q("truncq", xtruncq);
+    func_q_q("floorq", xfloorq);
+    func_q_q("ceilq", xceilq);
+    func_q_q("roundq", xroundq);
+    func_q_q("rintq", xrintq);
+
     func_q_d("cast_from_doubleq", xcast_from_doubleq);
     func_d_q("cast_to_doubleq", xcast_to_doubleq);
     func_q_i64("cast_from_int64q", xcast_from_int64q);

@@ -814,19 +814,19 @@ static INLINE vdouble vmlsubadd_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z)
 
 //
 
-static vquad vloadu_vq_p(void *p) {
+static vquad loadu_vq_p(void *p) {
   vquad vq;
   memcpy(&vq, p, VECTLENDP * 16);
   return vq;
 }
 
-static INLINE vquad vcast_vq_aq(vargquad aq) {
+static INLINE vquad cast_vq_aq(vargquad aq) {
   vquad vq;
   memcpy(&vq, &aq, VECTLENDP * 16);
   return vq;
 }
 
-static INLINE vargquad vcast_aq_vq(vquad vq) {
+static INLINE vargquad cast_aq_vq(vquad vq) {
   vargquad aq;
   memcpy(&aq, &vq, VECTLENDP * 16);
   return aq;

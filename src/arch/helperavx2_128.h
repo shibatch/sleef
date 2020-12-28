@@ -417,7 +417,7 @@ static INLINE void vsscatter2_v_p_i_i_vf(float *ptr, int offset, int step, vfloa
 
 //
 
-static vquad vloadu_vq_p(void *p) {
+static vquad loadu_vq_p(void *p) {
   vquad vq = {
     vloadu_vi2_p((int32_t *)p),
     vloadu_vi2_p((int32_t *)((uint8_t *)p + sizeof(vmask)))
@@ -425,13 +425,13 @@ static vquad vloadu_vq_p(void *p) {
   return vq;
 }
 
-static INLINE vquad vcast_vq_aq(vargquad aq) {
+static INLINE vquad cast_vq_aq(vargquad aq) {
   vquad vq;
   memcpy(&vq, &aq, VECTLENDP * 16);
   return vq;
 }
 
-static INLINE vargquad vcast_aq_vq(vquad vq) {
+static INLINE vargquad cast_aq_vq(vquad vq) {
   vargquad aq;
   memcpy(&aq, &vq, VECTLENDP * 16);
   return aq;

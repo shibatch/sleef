@@ -103,22 +103,26 @@ macro(test_extension SIMD)
     # inline version of quad functions.
 
     if (BUILD_INLINE_HEADERS AND SED_COMMAND)
-      string(CONCAT IUTINAME "qiuti" ${LCSIMD})
-      add_executable(${IUTINAME} ${IUT_SRC})
-      target_compile_options(${IUTINAME}
-	PRIVATE ${FLAGS_ENABLE_${SIMD}})
-      target_compile_definitions(${IUTINAME}
-	PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS}
-	USE_INLINE_HEADER="sleefquadinline_${LCSIMD}.h"
-	MACRO_ONLY_HEADER="qmacroonly${SIMD}.h"
-	SIMD_SUFFIX=_${LCSIMD}_sleefq
-	)
-      target_include_directories(${IUTINAME} PRIVATE ${PROJECT_BINARY_DIR}/include)
-      target_link_libraries(${IUTINAME} ${LIBM} ${LIBRT})
-      add_dependencies(${IUTINAME} ${TARGET_QINLINE_HEADERS})
-      set_target_properties(${IUTINAME} PROPERTIES C_STANDARD 99)
-      add_test_iut(${IUTINAME})
-      list(APPEND IUT_LIST ${IUTINAME})
+      if (MSVC AND NOT SLEEF_CLANG_ON_WINDOWS)
+	message(STATUS "Quad inline headers are not tested with MSVC")
+      else()
+	string(CONCAT IUTINAME "qiuti" ${LCSIMD})
+	add_executable(${IUTINAME} ${IUT_SRC})
+	target_compile_options(${IUTINAME}
+	  PRIVATE ${FLAGS_ENABLE_${SIMD}})
+	target_compile_definitions(${IUTINAME}
+	  PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS}
+	  USE_INLINE_HEADER="sleefquadinline_${LCSIMD}.h"
+	  MACRO_ONLY_HEADER="qmacroonly${SIMD}.h"
+	  SIMD_SUFFIX=_${LCSIMD}_sleefq
+	  )
+	target_include_directories(${IUTINAME} PRIVATE ${PROJECT_BINARY_DIR}/include)
+	target_link_libraries(${IUTINAME} ${LIBM} ${LIBRT})
+	add_dependencies(${IUTINAME} ${TARGET_QINLINE_HEADERS})
+	set_target_properties(${IUTINAME} PROPERTIES C_STANDARD 99)
+	add_test_iut(${IUTINAME})
+	list(APPEND IUT_LIST ${IUTINAME})
+      endif()
     endif(BUILD_INLINE_HEADERS AND SED_COMMAND)
 
     if(LIB_MPFR AND NOT MINGW)

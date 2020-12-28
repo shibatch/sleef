@@ -1077,14 +1077,14 @@ static int vcast_i_vi2(vint2 v) {
 
 //
 
-static vquad vloadu_vq_p(void *p) {
+static vquad loadu_vq_p(void *p) {
   vquad vq;
   memcpy(&vq, p, VECTLENDP * 16);
   return vq;
 }
 
-static INLINE vquad vcast_vq_aq(vargquad aq) { return aq; }
-static INLINE vargquad vcast_aq_vq(vquad vq) { return vq; }
+static INLINE vquad cast_vq_aq(vargquad aq) { return aq; }
+static INLINE vargquad cast_aq_vq(vquad vq) { return vq; }
 
 static INLINE int vtestallzeros_i_vo64(vopmask g) {
   return svcntp_b64(svptrue_b64(), g) == 0;
