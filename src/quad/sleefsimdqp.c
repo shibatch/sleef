@@ -2149,6 +2149,7 @@ static INLINE VECTOR_CC tdx remainder_tdx_tdx_tdx(tdx x, tdx y) {
     r = sub_tdx_tdx_tdx(r, mul_tdx_tdx_tdx(q, d));
   }
 
+  r = tdxsetx_tdx_tdx_vd(r, vsel_vd_vo_vd_vd(veq_vo_vd_vd(tdxgetd3x_vd_tdx(r), vcast_vd_d(0)), vcast_vd_d(0), tdxgetd3x_vd_tdx(r)));
   r = mulsign_tdx_tdx_vd(r, tdxgetd3x_vd_tdx(x));
   r = sel_tdx_vo_tdx_tdx(isinf_vo_tdx(y), sel_tdx_vo_tdx_tdx(isinf_vo_tdx(x), cast_tdx_d(SLEEF_NAN), x), r);
   r = sel_tdx_vo_tdx_tdx(vor_vo_vo_vo(isnan_vo_tdx(y), iszero_vo_tdx(y)), cast_tdx_d(SLEEF_NAN), r);
