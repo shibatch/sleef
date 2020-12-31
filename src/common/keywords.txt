@@ -667,3 +667,8 @@ vtruncate2_vd_vd
 vfloor2_vd_vd
 vceil2_vd_vd
 vround2_vd_vd
+isinf_vo_tdx
+trunc_tdx_tdx
+rint_tdx_tdx
+fmod_tdx_tdx_tdx
+remainder_tdx_tdx_tdx

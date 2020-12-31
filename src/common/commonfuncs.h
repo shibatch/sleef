@@ -205,6 +205,11 @@ static INLINE CONST vdouble vclearlsb_vd_vd_i(vdouble d, int n) {
   return vreinterpret_vd_vm(vand_vm_vm_vm(vreinterpret_vm_vd(d), vcast_vm_u64((~UINT64_C(0)) << n)));
 }
 
+static INLINE CONST VECTOR_CC vdouble vtoward0_vd_vd(vdouble x) { // returns nextafter(x, 0)
+  vdouble t = vreinterpret_vd_vm(vadd64_vm_vm_vm(vreinterpret_vm_vd(x), vcast_vm_i64(-1)));
+  return vsel_vd_vo_vd_vd(veq_vo_vd_vd(x, vcast_vd_d(0)), vcast_vd_d(0), t);
+}
+
 static INLINE CONST vdouble vmulsign_vd_vd_vd(vdouble x, vdouble y) {
   return vreinterpret_vd_vm(vxor_vm_vm_vm(vreinterpret_vm_vd(x), vsignbit_vm_vd(y)));
 }

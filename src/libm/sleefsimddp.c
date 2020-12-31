@@ -3209,11 +3209,6 @@ EXPORT CONST VECTOR_CC vdouble xhypot_u35(vdouble x, vdouble y) {
   return ret;
 }
 
-static INLINE CONST VECTOR_CC vdouble vtoward0_vd_vd(vdouble x) { // returns nextafter(x, 0)
-  vdouble t = vreinterpret_vd_vm(vadd64_vm_vm_vm(vreinterpret_vm_vd(x), vcast_vm_i64(-1)));
-  return vsel_vd_vo_vd_vd(veq_vo_vd_vd(x, vcast_vd_d(0)), vcast_vd_d(0), t);
-}
-
 static INLINE CONST VECTOR_CC vdouble vptrunc_vd_vd(vdouble x) { // round to integer toward 0, positive argument only
 #ifdef FULL_FP_ROUNDING
   return vtruncate_vd_vd(x);
