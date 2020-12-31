@@ -559,6 +559,8 @@ int do_test(int argc, char **argv) {
     func_q_q_q("fmaxq", xfmaxq);
     func_q_q_q("fminq", xfminq);
     func_q_q_q("fdimq_u05", xfdimq_u05);
+    func_q_q_q("fmodq", xfmodq);
+    func_q_q_q("remainderq", xremainderq);
 
     func_q_q("truncq", xtruncq);
     func_q_q("floorq", xfloorq);

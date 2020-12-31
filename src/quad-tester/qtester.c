@@ -273,6 +273,8 @@ Sleef_quad child_copysignq(Sleef_quad x, Sleef_quad y) { child_q_q_q("copysignq"
 Sleef_quad child_fmaxq(Sleef_quad x, Sleef_quad y) { child_q_q_q("fmaxq", x, y); }
 Sleef_quad child_fminq(Sleef_quad x, Sleef_quad y) { child_q_q_q("fminq", x, y); }
 Sleef_quad child_fdimq_u05(Sleef_quad x, Sleef_quad y) { child_q_q_q("fdimq_u05", x, y); }
+Sleef_quad child_fmodq(Sleef_quad x, Sleef_quad y) { child_q_q_q("fmodq", x, y); }
+Sleef_quad child_remainderq(Sleef_quad x, Sleef_quad y) { child_q_q_q("remainderq", x, y); }
 
 Sleef_quad child_truncq(Sleef_quad x) { child_q_q("truncq", x); }
 Sleef_quad child_floorq(Sleef_quad x) { child_q_q("floorq", x); }
@@ -1030,6 +1032,22 @@ void do_test(int options) {
   checkAccuracyOuterLoop2_q_q(mpfr_dim, child_fdimq_u05, noInfCheckVals, 0.5);
   checkAccuracyOuterLoop_q_q(mpfr_dim, child_fdimq_u05, "-1e-100", "-1e+100", 5 * NTEST, errorBound, 0);
   checkAccuracyOuterLoop_q_q(mpfr_dim, child_fdimq_u05, "0", "Inf", 5 * NTEST, errorBound, 1);
+  checkResult(success, maxError);
+
+  fprintf(stderr, "fmodq : ");
+  maxError = 0;
+  cmpDenormOuterLoop_q_q(mpfr_fmod, child_fmodq, stdCheckVals);
+  checkAccuracyOuterLoop2_q_q(mpfr_fmod, child_fmodq, stdCheckVals, 0);
+  checkAccuracyOuterLoop_q_q(mpfr_fmod, child_fmodq, "-1e-100", "-1e+100", 5 * NTEST, 0, 0);
+  checkAccuracyOuterLoop_q_q(mpfr_fmod, child_fmodq, "0", "Inf", 5 * NTEST, 0, 1);
+  checkResult(success, maxError);
+
+  fprintf(stderr, "remainderq : ");
+  maxError = 0;
+  cmpDenormOuterLoop_q_q(mpfr_remainder, child_remainderq, stdCheckVals);
+  checkAccuracyOuterLoop2_q_q(mpfr_remainder, child_remainderq, stdCheckVals, 0);
+  checkAccuracyOuterLoop_q_q(mpfr_remainder, child_remainderq, "-1e-100", "-1e+100", 5 * NTEST, 0, 0);
+  checkAccuracyOuterLoop_q_q(mpfr_remainder, child_remainderq, "0", "Inf", 5 * NTEST, 0, 1);
   checkResult(success, maxError);
 
   //

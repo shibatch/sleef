@@ -869,6 +869,10 @@ static INLINE CONST VECTOR_CC vopmask isnan_vo_tdx(tdx x) {
   return visnan_vo_vd(tdxgetd3x_vd_tdx(x));
 }
 
+static INLINE CONST VECTOR_CC vopmask isinf_vo_tdx(tdx x) {
+  return visinf_vo_vd(tdxgetd3x_vd_tdx(x));
+}
+
 static INLINE CONST VECTOR_CC vopmask iszero_vo_tdx(tdx x) {
   return vandnot_vo_vo_vo(visnan_vo_vd(tdxgetd3x_vd_tdx(x)), veq_vo_vd_vd(tdxgetd3x_vd_tdx(x), vcast_vd_d(0)));
 }
@@ -2024,7 +2028,7 @@ static INLINE CONST VECTOR_CC tdx atanh_tdx_tdx(tdx x) {
   return d;
 }
 
-static INLINE CONST VECTOR_CC tdx modf_tdx_tdx_ptdx(tdx x, tdx *iptr) {
+static INLINE VECTOR_CC tdx modf_tdx_tdx_ptdx(tdx x, tdx *iptr) {
   vopmask ob = vgt64_vo_vm_vm(tdxgete_vm_tdx(x), vcast_vm_i64(17000));
   vopmask os = vlt64_vo_vm_vm(tdxgete_vm_tdx(x), vcast_vm_i64(16300));
 
@@ -2054,6 +2058,99 @@ static INLINE CONST VECTOR_CC tdx modf_tdx_tdx_ptdx(tdx x, tdx *iptr) {
 			    sel_tdx_vo_tdx_tdx(os, x, cast_tdx_vd3(fp)));
 }
 
+static INLINE CONST VECTOR_CC tdx trunc_tdx_tdx(tdx x) {
+  tdx fp, ip;
+  fp = modf_tdx_tdx_ptdx(x, &ip);
+  return ip;
+}
+
+static INLINE CONST VECTOR_CC tdx rint_tdx_tdx(tdx x) {
+  tdx fp, ip;
+  fp = modf_tdx_tdx_ptdx(x, &ip);
+  vopmask isodd = isodd_vo_tdx(ip);
+  vmask c = cmp_vm_tdx_tdx(abs_tdx_tdx(fp), cast_tdx_d(0.5));
+  vopmask o = vor_vo_vo_vo(veq64_vo_vm_vm(c, vcast_vm_i64(1)),
+			   vand_vo_vo_vo(isodd, veq64_vo_vm_vm(c, vcast_vm_i64(0))));
+  return sel_tdx_vo_tdx_tdx(o, mulsign_tdx_tdx_vd(add_tdx_tdx_tdx(abs_tdx_tdx(ip), cast_tdx_d(1)), tdxgetd3x_vd_tdx(ip)), ip);
+}
+
+static INLINE VECTOR_CC tdx fmod_tdx_tdx_tdx(tdx x, tdx y) {
+  tdx n = abs_tdx_tdx(x), d = abs_tdx_tdx(y);
+  tdx r = n, rd = div_tdx_tdx_tdx(cast_tdx_d(1), d);
+
+  rd = tdxsetx_tdx_tdx_vd(rd, vclearlsb_vd_vd_i(vtoward0_vd_vd(tdxgetd3x_vd_tdx(rd)), 53 - (53*3 - 113) + 1));
+  rd = tdxsety_tdx_tdx_vd(rd, vcast_vd_d(0));
+  rd = tdxsetz_tdx_tdx_vd(rd, vcast_vd_d(0));
+
+  for(int i=0;i<750;i++) { // ((32768 + 113)/(53*3 - 113 - 1) + 1)
+    tdx q = mul_tdx_tdx_tdx(r, rd);
+    q = tdxsetx_tdx_tdx_vd(q, vclearlsb_vd_vd_i(vtoward0_vd_vd(tdxgetd3x_vd_tdx(q)), 53 - (53*3 - 113) + 1));
+    q = tdxsety_tdx_tdx_vd(q, vcast_vd_d(0));
+    q = tdxsetz_tdx_tdx_vd(q, vcast_vd_d(0));
+
+    q = trunc_tdx_tdx(q);
+
+    vmask c = cmp_vm_tdx_tdx(r, d);
+    q = sel_tdx_vo_tdx_tdx(vand_vo_vo_vo(vgt64_vo_vm_vm(cmp_vm_tdx_tdx(mul_tdx_tdx_tdx(d, cast_tdx_d(3)), r), vcast_vm_i64(0)),
+					 vgt64_vo_vm_vm(c, vcast_vm_i64(0))), cast_tdx_d(2), q);
+    q = sel_tdx_vo_tdx_tdx(vand_vo_vo_vo(vgt64_vo_vm_vm(cmp_vm_tdx_tdx(mul_tdx_tdx_tdx(d, cast_tdx_d(2)), r), vcast_vm_i64(0)),
+					 vgt64_vo_vm_vm(c, vcast_vm_i64(0))), cast_tdx_d(1), q);
+    q = sel_tdx_vo_tdx_tdx(veq64_vo_vm_vm(cmp_vm_tdx_tdx(r, d), vcast_vm_i64(0)), cast_tdx_d(1), q);
+
+    r = sub_tdx_tdx_tdx(r, mul_tdx_tdx_tdx(q, d));
+
+    if (vtestallones_i_vo64(vlt64_vo_vm_vm(cmp_vm_tdx_tdx(r, d), vcast_vm_i64(0)))) break;
+  }
+
+  r = mulsign_tdx_tdx_vd(r, tdxgetd3x_vd_tdx(x));
+  r = sel_tdx_vo_tdx_tdx(isinf_vo_tdx(y), sel_tdx_vo_tdx_tdx(isinf_vo_tdx(x), cast_tdx_d(SLEEF_NAN), x), r);
+  r = sel_tdx_vo_tdx_tdx(vor_vo_vo_vo(isnan_vo_tdx(y), iszero_vo_tdx(y)), cast_tdx_d(SLEEF_NAN), r);
+
+  return r;
+}
+
+static INLINE VECTOR_CC tdx remainder_tdx_tdx_tdx(tdx x, tdx y) {
+  tdx n = abs_tdx_tdx(x), d = abs_tdx_tdx(y);
+  tdx r = n, rd = div_tdx_tdx_tdx(cast_tdx_d(1), d);
+
+  rd = tdxsetx_tdx_tdx_vd(rd, vclearlsb_vd_vd_i(tdxgetd3x_vd_tdx(rd), 53 - (53*3 - 113) + 1));
+  rd = tdxsety_tdx_tdx_vd(rd, vcast_vd_d(0));
+  rd = tdxsetz_tdx_tdx_vd(rd, vcast_vd_d(0));
+
+  vopmask qisodd;
+  qisodd = vxor_vo_vo_vo(qisodd, qisodd);
+
+  for(int i=0;i<750;i++) { // ((32768 + 113)/(53*3 - 113 - 1) + 1)
+    tdx q = mul_tdx_tdx_tdx(r, rd);
+    q = tdxsetx_tdx_tdx_vd(q, vclearlsb_vd_vd_i(tdxgetd3x_vd_tdx(q), 53 - (53*3 - 113) + 1));
+    q = tdxsety_tdx_tdx_vd(q, vcast_vd_d(0));
+    q = tdxsetz_tdx_tdx_vd(q, vcast_vd_d(0));
+
+    q = rint_tdx_tdx(q);
+
+    q = sel_tdx_vo_tdx_tdx(vlt64_vo_vm_vm(cmp_vm_tdx_tdx(abs_tdx_tdx(r), mul_tdx_tdx_tdx(d, cast_tdx_d(1.5))), vcast_vm_i64(0)),
+			   cast_tdx_vd(vmulsign_vd_vd_vd(vcast_vd_d(1), tdxgetd3x_vd_tdx(r))), q);
+
+    vmask c = cmp_vm_tdx_tdx(abs_tdx_tdx(r), mul_tdx_tdx_tdx(d, cast_tdx_d(0.5)));
+
+    q = sel_tdx_vo_tdx_tdx(vor_vo_vo_vo(vlt64_vo_vm_vm(c, vcast_vm_i64(0)),
+					vandnot_vo_vo_vo(qisodd, veq64_vo_vm_vm(c, vcast_vm_i64(0)))),
+			   cast_tdx_d(0), q);
+
+    if (vtestallones_i_vo64(iszero_vo_tdx(q))) break;
+
+    qisodd = vxor_vo_vo_vo(qisodd, isodd_vo_tdx(q));
+
+    r = sub_tdx_tdx_tdx(r, mul_tdx_tdx_tdx(q, d));
+  }
+
+  r = mulsign_tdx_tdx_vd(r, tdxgetd3x_vd_tdx(x));
+  r = sel_tdx_vo_tdx_tdx(isinf_vo_tdx(y), sel_tdx_vo_tdx_tdx(isinf_vo_tdx(x), cast_tdx_d(SLEEF_NAN), x), r);
+  r = sel_tdx_vo_tdx_tdx(vor_vo_vo_vo(isnan_vo_tdx(y), iszero_vo_tdx(y)), cast_tdx_d(SLEEF_NAN), r);
+
+  return r;
+}
+
 // Float128 functions ------------------------------------------------------------------------------------------------------------
 
 static CONST VECTOR_CC tdx cast_tdx_vq(vquad f) {
@@ -2080,6 +2177,10 @@ static CONST VECTOR_CC tdx cast_tdx_vq(vquad f) {
 				     vreinterpret_vd_vm(vor_vm_vm_vm(mz, signbit)));
 
   vopmask fisdenorm = vandnot_vo_vo_vo(iszero, veq64_vo_vm_vm(tdxgete_vm_tdx(r), vcast_vm_i64(0))); // ??
+
+  vopmask sign = vsignbit_vo_vd(tdxgetd3x_vd_tdx(r));
+  r = tdxsetd3_tdx_tdx_vd3(r, normalize_vd3_vd3(tdxgetd3_vd3_tdx(r)));
+  r = tdxsetx_tdx_tdx_vd(r, vsel_vd_vo_vd_vd(iszero, vsel_vd_vo_vd_vd(sign, vcast_vd_d(-0.0), vcast_vd_d(0)), tdxgetd3x_vd_tdx(r)));
 
   if (UNLIKELY(!vtestallzeros_i_vo64(vor_vo_vo_vo(veq64_vo_vm_vm(tdxgete_vm_tdx(r), vcast_vm_i64(0x7fff)),
 						  vandnot_vo_vo_vo(iszero, fisdenorm))))) {
@@ -2730,6 +2831,8 @@ EXPORT CONST VECTOR_CC vargquad xnegq(vargquad aa) {
   return cast_aq_vq(a);
 }
 
+//
+
 EXPORT CONST VECTOR_CC vargquad xfabsq(vargquad aa) {
   vquad a = cast_vq_aq(aa);
   a = vqsety_vq_vq_vm(a, vand_vm_vm_vm(vqgety_vm_vq(a), vcast_vm_u64(0x7fffffffffffffff)));
@@ -2930,6 +3033,14 @@ EXPORT CONST VECTOR_CC vargquad xacoshq_u10(vargquad aa) {
 
 EXPORT CONST VECTOR_CC vargquad xatanhq_u10(vargquad aa) {
   return cast_aq_vq(cast_vq_tdx(atanh_tdx_tdx(cast_tdx_vq(cast_vq_aq(aa)))));
+}
+
+EXPORT CONST VECTOR_CC vargquad xfmodq(vargquad aa, vargquad ab) {
+  return cast_aq_vq(cast_vq_tdx(fmod_tdx_tdx_tdx(cast_tdx_vq(cast_vq_aq(aa)), cast_tdx_vq(cast_vq_aq(ab)))));
+}
+
+EXPORT CONST VECTOR_CC vargquad xremainderq(vargquad aa, vargquad ab) {
+  return cast_aq_vq(cast_vq_tdx(remainder_tdx_tdx_tdx(cast_tdx_vq(cast_vq_aq(aa)), cast_tdx_vq(cast_vq_aq(ab)))));
 }
 
 //
@@ -4143,7 +4254,7 @@ int main(int argc, char **argv) {
   printf("test : %s\n", sprintfr(fr2));
 #endif
 
-#if 1
+#if 0
   a2 = xtruncq(a0);
   mpfr_trunc(fr2, fr0);
 
@@ -4154,7 +4265,7 @@ int main(int argc, char **argv) {
   printf("test : %s\n", sprintfr(fr2));
 #endif
 
-#if 1
+#if 0
   a2 = xfloorq(a0);
   mpfr_floor(fr2, fr0);
 
@@ -4165,7 +4276,7 @@ int main(int argc, char **argv) {
   printf("test : %s\n", sprintfr(fr2));
 #endif
 
-#if 1
+#if 0
   a2 = xceilq(a0);
   mpfr_ceil(fr2, fr0);
 
@@ -4176,6 +4287,27 @@ int main(int argc, char **argv) {
   printf("test : %s\n", sprintfr(fr2));
 #endif
 
+#if 1
+  a2 = xfmodq(a0, a1);
+  mpfr_fmod(fr2, fr0, fr1, GMP_RNDN);
+
+  printf("\nfmod\n");
+  mpfr_set_f128(fr2, mpfr_get_f128(fr2, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr2));
+  mpfr_set_f128(fr2, xgetq(a2, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr2));
+#endif
+
+#if 1
+  a2 = xremainderq(a0, a1);
+  mpfr_remainder(fr2, fr0, fr1, GMP_RNDN);
+
+  printf("\nremainder\n");
+  mpfr_set_f128(fr2, mpfr_get_f128(fr2, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr2));
+  mpfr_set_f128(fr2, xgetq(a2, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr2));
+#endif
 }
 #endif
 #endif
