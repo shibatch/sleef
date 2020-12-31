@@ -2086,7 +2086,7 @@ static INLINE VECTOR_CC tdx fmod_tdx_tdx_tdx(tdx x, tdx y) {
   rd = tdxsety_tdx_tdx_vd(rd, vcast_vd_d(0));
   rd = tdxsetz_tdx_tdx_vd(rd, vcast_vd_d(0));
 
-  for(int i=0;i<750;i++) { // ((32768 + 113)/(53*3 - 113 - 1) + 1)
+  for(int i=0;i<800;i++) {
     tdx q = mul_tdx_tdx_tdx(r, rd);
     q = tdxsetx_tdx_tdx_vd(q, vclearlsb_vd_vd_i(vtoward0_vd_vd(tdxgetd3x_vd_tdx(q)), 53 - (53*3 - 113) + 1));
     q = tdxsety_tdx_tdx_vd(q, vcast_vd_d(0));
@@ -2125,7 +2125,7 @@ static INLINE VECTOR_CC tdx remainder_tdx_tdx_tdx(tdx x, tdx y) {
   vopmask qisodd;
   qisodd = vxor_vo_vo_vo(qisodd, qisodd);
 
-  for(int i=0;i<750;i++) { // ((32768 + 113)/(53*3 - 113 - 1) + 1)
+  for(int i=0;i<800;i++) { // ((32768 + 113)/(53*3 - 113 - 1) + 1)
     tdx q = mul_tdx_tdx_tdx(r, rd);
     q = tdxsetx_tdx_tdx_vd(q, vclearlsb_vd_vd_i(tdxgetd3x_vd_tdx(q), 53 - (53*3 - 113) + 1));
     q = tdxsety_tdx_tdx_vd(q, vcast_vd_d(0));
