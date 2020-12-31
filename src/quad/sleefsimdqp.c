@@ -38,6 +38,10 @@ extern const double Sleef_rempitabqp[];
 #ifdef DORENAME
 #include "qrenamepurecfma_scalar.h"
 #endif
+
+#if (defined(_MSC_VER))
+#pragma optimize("", off)
+#endif
 #endif
 
 #ifdef ENABLE_CUDA
