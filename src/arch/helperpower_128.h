@@ -350,6 +350,11 @@ static INLINE vopmask vcast_vo64_vo32(vopmask m)
 static INLINE vint2 vcastu_vi2_vi(vint vi)
 { return vec_mergeh(vzero__vi(), vi); }
 
+static INLINE vopmask vcast_vo_i(int i) {
+  i = i ? -1 : 0;
+  return (vopmask) { i, i, i, i };
+}
+
 // signed int to single-precision
 static INLINE vfloat vcast_vf_vi2(vint2 vi)
 {

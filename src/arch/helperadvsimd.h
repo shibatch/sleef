@@ -657,6 +657,9 @@ static INLINE VECTOR_CC vopmask vcast_vo32_vo64(vopmask m) {
 static INLINE VECTOR_CC vopmask vcast_vo64_vo32(vopmask m) {
   return vzipq_u32(m, m).val[0];
 }
+static INLINE VECTOR_CC vopmask vcast_vo_i(int i) {
+  return vreinterpretq_u32_u64(vdupq_n_u64((uint64_t)(i ? -1 : 0)));
+}
 
 static INLINE VECTOR_CC vopmask vand_vo_vo_vo(vopmask x, vopmask y) {
   return vandq_u32(x, y);

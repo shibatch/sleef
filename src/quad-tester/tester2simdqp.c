@@ -326,16 +326,16 @@ int main(int argc,char **argv)
       // once in 8 loops.
       switch(cnt & 7) {
       case 0:
-	q0 = rndf128(oneEMinus10Q, oneEPlus10Q);
-	q1 = rndf128(oneEMinus10Q, oneEPlus10Q);
+	q0 = rndf128(oneEMinus10Q, oneEPlus10Q, 1);
+	q1 = rndf128(oneEMinus10Q, oneEPlus10Q, 1);
 	break;
       case 1:
-	q0 = rndf128(oneEMinus100Q, oneEPlus100Q);
-	q1 = rndf128(oneEMinus100Q, oneEPlus100Q);
+	q0 = rndf128(oneEMinus100Q, oneEPlus100Q, 1);
+	q1 = rndf128(oneEMinus100Q, oneEPlus100Q, 1);
 	break;
       case 2:
-	q0 = rndf128(oneEMinus1000Q, oneEPlus1000Q);
-	q1 = rndf128(oneEMinus1000Q, oneEPlus1000Q);
+	q0 = rndf128(oneEMinus1000Q, oneEPlus1000Q, 1);
+	q1 = rndf128(oneEMinus1000Q, oneEPlus1000Q, 1);
 	break;
       default:
 	q0 = rndf128x();
@@ -923,7 +923,7 @@ int main(int argc,char **argv)
       }
     }
 
-    q0 = rndf128(oneEMinus300Q, oneQ);
+    q0 = rndf128(oneEMinus300Q, oneQ, 1);
     a0 = vset(a0, e, q0);
     mpfr_set_f128(frx, q0, GMP_RNDN);
 
@@ -972,7 +972,7 @@ int main(int argc,char **argv)
       break;
 
     default:
-      q0 = rndf128(1e-20, 1e+20);
+      q0 = rndf128(1e-20, 1e+20, 1);
       break;
     }
 

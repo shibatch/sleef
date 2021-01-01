@@ -203,6 +203,7 @@ vcast_vm_u64
 vcast_vm_vi
 vcast_vm_vi2
 vcast_vm_vo
+vcast_vo_i
 vcast_vo32_vo64
 vcast_vo64_vo32
 cast_vq_aq

@@ -19,7 +19,7 @@ int lt128(xuint128 x, xuint128 y);
 void xsrand(uint64_t s);
 uint64_t xrand();
 void memrand(void *p, int size);
-Sleef_quad rndf128(Sleef_quad min, Sleef_quad max);
+Sleef_quad rndf128(Sleef_quad min, Sleef_quad max, int setSignRandomly);
 Sleef_quad rndf128x();
 
 int readln(int fd, char *buf, int cnt);

@@ -2122,8 +2122,7 @@ static INLINE VECTOR_CC tdx remainder_tdx_tdx_tdx(tdx x, tdx y) {
   rd = tdxsety_tdx_tdx_vd(rd, vcast_vd_d(0));
   rd = tdxsetz_tdx_tdx_vd(rd, vcast_vd_d(0));
 
-  vopmask qisodd;
-  qisodd = vxor_vo_vo_vo(qisodd, qisodd);
+  vopmask qisodd = vcast_vo_i(0);
 
   for(int i=0;i<800;i++) { // ((32768 + 113)/(53*3 - 113 - 1) + 1)
     tdx q = mul_tdx_tdx_tdx(r, rd);

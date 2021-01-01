@@ -144,6 +144,8 @@ static INLINE vmask vor_vm_vo32_vm(vopmask o, vmask m) { return _mm512_mask_or_e
 static INLINE vopmask vcast_vo32_vo64(vopmask o) { return o; }
 static INLINE vopmask vcast_vo64_vo32(vopmask o) { return o; }
 
+static INLINE vopmask vcast_vo_i(int i) { return i ? -1 : 0; }
+
 //
 
 static INLINE vint vrint_vi_vd(vdouble vd) {
