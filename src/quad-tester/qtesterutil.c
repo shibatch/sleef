@@ -87,9 +87,23 @@ xuint128 add128(xuint128 x, xuint128 y) {
   return r;
 }
 
+static xuint128 cmpcnv(xuint128 cx) {
+  if ((cx.h & 0x8000000000000000ULL) != 0) {
+    cx.h ^= 0x7fffffffffffffffULL;
+    cx.l = ~cx.l;
+    cx.l++;
+    if (cx.l == 0) cx.h++;
+  }
+
+  cx.h ^= 0x8000000000000000ULL;
+
+  return cx;
+}
+
 int lt128(xuint128 x, xuint128 y) {
-  if (x.h < y.h) return 1;
-  if (x.h == y.h && x.l < y.l) return 1;
+  xuint128 cx = cmpcnv(x), cy = cmpcnv(y);
+  if (cx.h < cy.h) return 1;
+  if (cx.h == cy.h && cx.l < cy.l) return 1;
   return 0;
 }
 
@@ -158,17 +172,14 @@ void memrand(void *p, int size) {
   for(;i<size;i++) *r++ = xrand() & 0xff;
 }
 
-Sleef_quad rndf128(Sleef_quad min, Sleef_quad max) {
+Sleef_quad rndf128(Sleef_quad min, Sleef_quad max, int setSignRandomly) {
   cnv_t cmin = { .q = min }, cmax = { .q = max }, c;
-  uint64_t enablesign = cmin.h & cmax.h & UINT64_C(0x8000000000000000), sign = 0;
-  cmin.h &= UINT64_C(0x7fffffffffffffff);
-  cmax.h &= UINT64_C(0x7fffffffffffffff);
   do {
     memrand(&c.q, sizeof(Sleef_quad));
-    sign = c.h;
-    c.h &= UINT64_C(0x7fffffffffffffff);
   } while(isnonnumberf128(c.q) || lt128(c.x, cmin.x) || lt128(cmax.x, c.x));
-  c.h |= sign & enablesign;
+
+  if (setSignRandomly && (xrand() & 1)) c.h ^= UINT64_C(0x8000000000000000);
+
   return c.q;
 }
 

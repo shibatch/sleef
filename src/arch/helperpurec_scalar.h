@@ -142,6 +142,7 @@ static void vstoreu_v_p_vi(int32_t *p, vint v) { *p = v; }
 
 static INLINE vopmask vcast_vo32_vo64(vopmask m) { return m; }
 static INLINE vopmask vcast_vo64_vo32(vopmask m) { return m; }
+static INLINE vopmask vcast_vo_i(int i) { return i ? -1 : 0; }
 static INLINE vmask vcast_vm_i_i(int h, int l) { return (((uint64_t)h) << 32) | (uint32_t)l; }
 
 static INLINE vmask vcast_vm_i64(int64_t i) { return (int64_t)i; }

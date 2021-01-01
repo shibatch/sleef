@@ -131,6 +131,7 @@ static INLINE vfloat vgather_vf_p_vi2(const float *p, vint2 vi2) {
   return ((vfloat) { p[vi2[0]], p[vi2[1]], p[vi2[2]], p[vi2[3]] });
 }
 
+static INLINE vopmask vcast_vo_i(int i) { return (vopmask) { i ? (long long)-1 : 0, i ? (long long)-1 : 0 }; }
 static INLINE vint vcast_vi_i(int i) { return (vint) { i, i }; }
 static INLINE vint2 vcast_vi2_i(int i) { return (vint2) { i, i, i, i }; }
 static INLINE vfloat vcast_vf_f(float f) { return (vfloat) { f, f, f, f }; }

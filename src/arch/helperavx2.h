@@ -153,6 +153,8 @@ static INLINE vopmask vcast_vo64_vo32(vopmask o) {
   return _mm256_permutevar8x32_epi32(o, _mm256_set_epi32(3, 3, 2, 2, 1, 1, 0, 0));
 }
 
+static INLINE vopmask vcast_vo_i(int i) { return _mm256_set1_epi64x(i ? -1 : 0); }
+
 //
 
 static INLINE vint vrint_vi_vd(vdouble vd) { return _mm256_cvtpd_epi32(vd); }

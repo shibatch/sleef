@@ -190,6 +190,8 @@ static INLINE vopmask vcast_vo64_vo32(vopmask o) {
   return vreinterpret_vm_vd(_mm256_cmp_pd(_mm256_cvtepi32_pd(_mm256_castsi256_si128(o)), _mm256_set1_pd(-1.0), _CMP_EQ_OQ));
 }
 
+static INLINE vopmask vcast_vo_i(int i) { return _mm256_set1_epi64x(i ? -1 : 0); }
+
 //
 
 static INLINE vint vrint_vi_vd(vdouble vd) { return _mm256_cvtpd_epi32(vd); }

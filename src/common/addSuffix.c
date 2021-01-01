@@ -14,7 +14,12 @@
 int nkeywords = 0, nalloc = 0;
 char **keywords = NULL, *suffix = NULL;
 
+int nIgnore = 0;
+char **ignore = NULL;
+
 void insert(char *buf) {
+  for(int i=0;i<nIgnore;i++) if (strcmp(ignore[i], buf) == 0) return;
+
   for(int i=0;i<nkeywords;i++) {
     if (strcmp(keywords[i], buf) == 0) printf("%s", suffix);
   }
@@ -133,8 +138,8 @@ int main(int argc, char **argv) {
   nalloc = 1;
   keywords = malloc(sizeof(char *) * nalloc);
 
-  if (argc != 4) {
-    fprintf(stderr, "%s <input file> <keywords file> <suffix>\n", argv[0]);
+  if (argc < 4) {
+    fprintf(stderr, "%s <input file> <keywords file> <suffix> [<keywords to ignore> ... ]\n", argv[0]);
     fprintf(stderr, "Add the suffix to keywords\n");
     exit(-1);
   }
@@ -159,6 +164,9 @@ int main(int argc, char **argv) {
   }
 
   fclose(fp);
+
+  nIgnore = argc - 4;
+  ignore = argv + 4;
 
   suffix = argv[3];
 

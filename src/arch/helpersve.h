@@ -905,6 +905,7 @@ static INLINE vopmask veq64_vo_vm_vm(vmask x, vmask y) {
 // pure predicate operations
 static INLINE vopmask vcast_vo32_vo64(vopmask o) { return o; }
 static INLINE vopmask vcast_vo64_vo32(vopmask o) { return o; }
+static INLINE vopmask vcast_vo_i(int i) { return i ? svptrue_b8() : svpfalse_b8(); }
 
 // logical integer operations
 static INLINE vint vand_vi_vo_vi(vopmask x, vint y) {
