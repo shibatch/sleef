@@ -530,6 +530,7 @@ int do_test(int argc, char **argv) {
     func_q_q_q("mulq_u05", xmulq_u05);
     func_q_q_q("divq_u05", xdivq_u05);
     func_q_q("sqrtq_u05", xsqrtq_u05);
+    func_q_q("cbrtq_u10", xcbrtq_u10);
     func_q_q("sinq_u10", xsinq_u10);
     func_q_q("cosq_u10", xcosq_u10);
     func_q_q("tanq_u10", xtanq_u10);

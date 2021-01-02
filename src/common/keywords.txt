@@ -673,3 +673,4 @@ trunc_tdx_tdx
 rint_tdx_tdx
 fmod_tdx_tdx_tdx
 remainder_tdx_tdx_tdx
+cbrt_tdx_tdx

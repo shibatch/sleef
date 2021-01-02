@@ -245,6 +245,7 @@ void child_snprintf_40Qg(char *ret, Sleef_quad x) { child_str_q("snprintf_40Qg",
 void child_snprintf_Qa(char *ret, Sleef_quad x) { child_str_q("snprintf_Qa", ret, x); }
 
 Sleef_quad child_sqrtq_u05(Sleef_quad x) { child_q_q("sqrtq_u05", x); }
+Sleef_quad child_cbrtq_u10(Sleef_quad x) { child_q_q("cbrtq_u10", x); }
 Sleef_quad child_sinq_u10(Sleef_quad x) { child_q_q("sinq_u10", x); }
 Sleef_quad child_cosq_u10(Sleef_quad x) { child_q_q("cosq_u10", x); }
 Sleef_quad child_tanq_u10(Sleef_quad x) { child_q_q("tanq_u10", x); }
@@ -814,6 +815,14 @@ void do_test(int options) {
   checkAccuracyOuterLoop2_q(mpfr_sqrt, child_sqrtq_u05, stdCheckVals, 0.5);
   checkAccuracyOuterLoop_q(mpfr_sqrt, child_sqrtq_u05, "1e-100", "1e+100", 0, 5 * NTEST, errorBound, 0);
   checkAccuracyOuterLoop_q(mpfr_sqrt, child_sqrtq_u05, "1e-4000", "1e+4000", 0, 5 * NTEST, errorBound, 1);
+  checkResult(success, maxError);
+
+  fprintf(stderr, "cbrtq_u10 : ");
+  maxError = 0;
+  cmpDenormOuterLoop_q(mpfr_cbrt, child_cbrtq_u10, stdCheckVals);
+  checkAccuracyOuterLoop2_q(mpfr_cbrt, child_cbrtq_u10, stdCheckVals, 0.5);
+  checkAccuracyOuterLoop_q(mpfr_cbrt, child_cbrtq_u10, "1e-100", "1e+100", 1, 5 * NTEST, errorBound, 0);
+  checkAccuracyOuterLoop_q(mpfr_cbrt, child_cbrtq_u10, "1e-4000", "1e+4000", 1, 5 * NTEST, errorBound, 1);
   checkResult(success, maxError);
 
   fprintf(stderr, "sinq_u10 : ");
