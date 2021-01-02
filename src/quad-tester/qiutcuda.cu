@@ -66,7 +66,7 @@ __global__ void xcast_from_uint64q(Sleef_quadx1 *r0, uint64_t *u0) { *r0 = Sleef
 __global__ void xcast_to_uint64q(uint64_t *r0, Sleef_quadx1 *a0) { *r0 = Sleef_cast_to_uint64q1_cuda(*a0); }
 
 __global__ void xsqrtq_u05(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_sqrtq1_u05cuda(*a0); }
-__global__ void xcbrtq_u05(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_cbrtq1_u05cuda(*a0); }
+__global__ void xcbrtq_u10(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_cbrtq1_u10cuda(*a0); }
 __global__ void xsinq_u10(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_sinq1_u10cuda(*a0); }
 __global__ void xcosq_u10(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_cosq1_u10cuda(*a0); }
 __global__ void xtanq_u10(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_tanq1_u10cuda(*a0); }
