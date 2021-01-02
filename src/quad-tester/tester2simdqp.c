@@ -416,6 +416,19 @@ int main(int argc,char **argv)
     }
 
     {
+      mpfr_cbrt(frz, frx, GMP_RNDN);
+
+      double u0 = countULPf128(t = vget(xcbrtq_u10(a0), e), frz, 0);
+
+      if (u0 > 0.7) {
+	printf(ISANAME " cbrt arg=%s ulp=%.20g\n", sprintf128(q0), u0);
+	printf("test = %s\n", sprintf128(t));
+	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    {
       mpfr_dim(frz, frx, fry, GMP_RNDN);
 
       double u0 = countULPf128(t = vget(xfdimq_u05(a0, a1), e), frz, 0);
@@ -428,29 +441,31 @@ int main(int argc,char **argv)
       }
     }
 
-    {
-      mpfr_fmod(frz, frx, fry, GMP_RNDN);
+    if (cnt % 7 == 0) {
+      {
+	mpfr_fmod(frz, frx, fry, GMP_RNDN);
 
-      double u0 = countULPf128(t = vget(xfmodq(a0, a1), e), frz, 0);
+	double u0 = countULPf128(t = vget(xfmodq(a0, a1), e), frz, 0);
       
-      if (u0 > 0) {
-	printf(ISANAME " fmod arg=%s %s ulp=%.20g\n", sprintf128(q0), sprintf128(q1), u0);
-	printf("test = %s\n", sprintf128(t));
-	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
-	fflush(stdout); ecnt++;
+	if (u0 > 0) {
+	  printf(ISANAME " fmod arg=%s %s ulp=%.20g\n", sprintf128(q0), sprintf128(q1), u0);
+	  printf("test = %s\n", sprintf128(t));
+	  printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	  fflush(stdout); ecnt++;
+	}
       }
-    }
 
-    {
-      mpfr_remainder(frz, frx, fry, GMP_RNDN);
+      {
+	mpfr_remainder(frz, frx, fry, GMP_RNDN);
 
-      double u0 = countULPf128(t = vget(xremainderq(a0, a1), e), frz, 0);
+	double u0 = countULPf128(t = vget(xremainderq(a0, a1), e), frz, 0);
       
-      if (u0 > 0) {
-	printf(ISANAME " remainder arg=%s %s ulp=%.20g\n", sprintf128(q0), sprintf128(q1), u0);
-	printf("test = %s\n", sprintf128(t));
-	printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
-	fflush(stdout); ecnt++;
+	if (u0 > 0) {
+	  printf(ISANAME " remainder arg=%s %s ulp=%.20g\n", sprintf128(q0), sprintf128(q1), u0);
+	  printf("test = %s\n", sprintf128(t));
+	  printf("corr = %s\n\n", sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	  fflush(stdout); ecnt++;
+	}
       }
     }
 
