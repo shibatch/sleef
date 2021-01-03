@@ -198,6 +198,31 @@ typedef union {
     return c.q;								\
   } while(0)
 
+#define child_q_q_pi(funcStr, arg) do {					\
+    char str[256];							\
+    cnv128 c;								\
+    c.q = arg;								\
+    sprintf(str, funcStr " %" PRIx64 ":%" PRIx64 "\n", c.h, c.l);	\
+    write(ptoc[1], str, strlen(str));					\
+    if (fgets(str, 255, fpctop) == NULL) stop("child " funcStr);	\
+    int i;								\
+    sscanf(str, "%" PRIx64 ":%" PRIx64 " %d", &c.h, &c.l, &i);		\
+    *ptr = i;								\
+    return c.q;								\
+  } while(0)
+
+#define child_q_q_pq(funcStr, arg) do {					\
+    char str[256];							\
+    cnv128 c0, c1;							\
+    c0.q = arg;								\
+    sprintf(str, funcStr " %" PRIx64 ":%" PRIx64 "\n", c0.h, c0.l);	\
+    write(ptoc[1], str, strlen(str));					\
+    if (fgets(str, 255, fpctop) == NULL) stop("child " funcStr);	\
+    sscanf(str, "%" PRIx64 ":%" PRIx64 " %" PRIx64 ":%" PRIx64, &c0.h, &c0.l, &c1.h, &c1.l); \
+    *ptr = c1.q;							\
+    return c0.q;							\
+  } while(0)
+
 #define child_q_str(funcStr, arg) do {					\
     char str[256];							\
     sprintf(str, funcStr " %s\n", arg);					\
@@ -283,6 +308,9 @@ Sleef_quad child_ceilq(Sleef_quad x) { child_q_q("ceilq", x); }
 Sleef_quad child_roundq(Sleef_quad x) { child_q_q("roundq", x); }
 Sleef_quad child_rintq(Sleef_quad x) { child_q_q("rintq", x); }
 
+Sleef_quad child_frexpq(Sleef_quad x, int *ptr) { child_q_q_pi("frexpq", x); }
+Sleef_quad child_modfq(Sleef_quad x, Sleef_quad *ptr) { child_q_q_pq("modfq", x); }
+
 //
 
 #define cmpDenorm_q(mpfrFunc, childFunc, argx) do {			\
@@ -321,6 +349,36 @@ Sleef_quad child_rintq(Sleef_quad x) { child_q_q("rintq", x); }
       Sleef_quad qz = mpfr_get_f128(frz, GMP_RNDN);			\
       fprintf(stderr, "\narg     = %s,\n          %s\ntest    = %s\ncorrect = %s\nulp = %g\n", \
 	      sprintf128(argx), sprintf128(argy), sprintf128(t), sprintf128(qz), u); \
+      success = 0;							\
+      break;								\
+    }									\
+  } while(0)
+
+#define cmpDenorm_q_pi(mpfrFunc, childFunc, argx) do {		\
+    mpfr_set_f128(frx, argx, GMP_RNDN);					\
+    mpfr_exp_t e;							\
+    mpfrFunc(&e, frz, frx, GMP_RNDN);					\
+    int i;								\
+    Sleef_quad t = childFunc(argx, &i);					\
+    double u = countULPf128(t, frz, 1);					\
+    if (u >= 10 || i != (int)e) {					\
+      fprintf(stderr, "\narg     = %s\ntest    = %s, %d\ncorrect = %s, %d\nulp = %g\n",	\
+	      sprintf128(argx), sprintf128(t), i, sprintfr(frz), (int)e, u); \
+      success = 0;							\
+      break;								\
+    }									\
+  } while(0)
+
+#define cmpDenorm_q_pq(mpfrFunc, childFunc, argx) do {		\
+    mpfr_set_f128(frx, argx, GMP_RNDN);					\
+    mpfrFunc(fry, frz, frx, GMP_RNDN);					\
+    Sleef_quad qi, qf;							\
+    qf = childFunc(argx, &qi);						\
+    double u = countULPf128(qf, frz, 1);				\
+    double v = countULPf128(qi, fry, 1);				\
+    if (u >= 10 || v >= 10) {						\
+      fprintf(stderr, "\narg     = %s\ntest    = %s, %s\ncorrect = %s, %s\nulp = %g, %g\n", \
+	      sprintf128(argx), sprintf128(qf), sprintf128(qi), sprintfr(frz), sprintfr(fry), u, v); \
       success = 0;							\
       break;								\
     }									\
@@ -369,6 +427,39 @@ Sleef_quad child_rintq(Sleef_quad x) { child_q_q("rintq", x); }
     }									\
   } while(0)
 
+#define checkAccuracy_q_pi(mpfrFunc, childFunc, argx, bound) do {	\
+    mpfr_set_f128(frx, argx, GMP_RNDN);					\
+    mpfr_exp_t ex;							\
+    mpfrFunc(&ex, frz, frx, GMP_RNDN);					\
+    int i;								\
+    Sleef_quad t = childFunc(argx, &i);					\
+    double e = countULPf128(t, frz, 0);					\
+    maxError = fmax(maxError, e);					\
+    if (e > bound || i != (int)ex) {					\
+      fprintf(stderr, "\narg = %s, test = %s, %d, correct = %s, %d, ULP = %lf\n", \
+	      sprintf128(argx), sprintf128(t), i, sprintfr(frz), (int)ex, countULPf128(t, frz, 0)); \
+      success = 0;							\
+      break;								\
+    }									\
+  } while(0)
+
+#define checkAccuracy_q_pq(mpfrFunc, childFunc, argx, bound) do {	\
+    mpfr_set_f128(frx, argx, GMP_RNDN);					\
+    mpfrFunc(fry, frz, frx, GMP_RNDN);					\
+    Sleef_quad qi, qf;							\
+    qf = childFunc(argx, &qi);						\
+    double ef = countULPf128(qf, frz, 0);				\
+    double ei = countULPf128(qi, fry, 0);				\
+    maxError = fmax(maxError, ef);					\
+    maxError = fmax(maxError, ei);					\
+    if (ef > bound || ei > bound) {					\
+      fprintf(stderr, "\narg = %s, test = %s, %s, correct = %s, %s, ULP = %lf, %lf\n", \
+	      sprintf128(argx), sprintf128(qf), sprintf128(qi), sprintfr(frz), sprintfr(fry), ef, ei); \
+      success = 0;							\
+      break;								\
+    }									\
+  } while(0)
+
 #define testComparison(mpfrFunc, childFunc, argx, argy) do {		\
     mpfr_set_f128(frx, argx, GMP_RNDN);					\
     mpfr_set_f128(fry, argy, GMP_RNDN);					\
@@ -405,6 +496,20 @@ Sleef_quad child_rintq(Sleef_quad x) { child_q_q("rintq", x); }
     for(int i=0;i<sizeof(checkVals)/sizeof(char *);i++) {		\
       Sleef_quad a0 = cast_q_str(checkVals[i]);				\
       cmpDenormNMR_q(mpfrFunc, childFunc, a0);				\
+    }									\
+  } while(0)
+
+#define cmpDenormOuterLoop_q_pi(mpfrFunc, childFunc, checkVals) do {	\
+    for(int i=0;i<sizeof(checkVals)/sizeof(char *);i++) {		\
+      Sleef_quad a0 = cast_q_str(checkVals[i]);				\
+      cmpDenorm_q_pi(mpfrFunc, childFunc, a0);				\
+    }									\
+  } while(0)
+
+#define cmpDenormOuterLoop_q_pq(mpfrFunc, childFunc, checkVals) do {	\
+    for(int i=0;i<sizeof(checkVals)/sizeof(char *);i++) {		\
+      Sleef_quad a0 = cast_q_str(checkVals[i]);				\
+      cmpDenorm_q_pq(mpfrFunc, childFunc, a0);				\
     }									\
   } while(0)
 
@@ -468,6 +573,38 @@ Sleef_quad child_rintq(Sleef_quad x) { child_q_q("rintq", x); }
 	Sleef_quad a1 = cast_q_str(checkVals[j]);			\
 	testComparison(mpfrFunc, childFunc, a0, a1);			\
       }									\
+    }									\
+  } while(0)
+
+#define checkAccuracyOuterLoop_q_pi(mpfrFunc, childFunc, minStr, maxStr, sign, nLoop, bound, seed) do { \
+    xsrand(seed);							\
+    Sleef_quad min = cast_q_str(minStr), max = cast_q_str(maxStr);	\
+    for(int i=0;i<nLoop && success;i++) {				\
+      Sleef_quad x = rndf128(min, max, sign);				\
+      checkAccuracy_q_pi(mpfrFunc, childFunc, x, bound);		\
+    }									\
+  } while(0)
+
+#define checkAccuracyOuterLoop2_q_pi(mpfrFunc, childFunc, checkVals, bound) do { \
+    for(int i=0;i<sizeof(checkVals)/sizeof(char *);i++) {		\
+      Sleef_quad x = cast_q_str(checkVals[i]);				\
+      checkAccuracy_q_pi(mpfrFunc, childFunc, x, bound);		\
+    }									\
+  } while(0)
+
+#define checkAccuracyOuterLoop_q_pq(mpfrFunc, childFunc, minStr, maxStr, sign, nLoop, bound, seed) do { \
+    xsrand(seed);							\
+    Sleef_quad min = cast_q_str(minStr), max = cast_q_str(maxStr);	\
+    for(int i=0;i<nLoop && success;i++) {				\
+      Sleef_quad x = rndf128(min, max, sign);				\
+      checkAccuracy_q_pq(mpfrFunc, childFunc, x, bound);		\
+    }									\
+  } while(0)
+
+#define checkAccuracyOuterLoop2_q_pq(mpfrFunc, childFunc, checkVals, bound) do { \
+    for(int i=0;i<sizeof(checkVals)/sizeof(char *);i++) {		\
+      Sleef_quad x = cast_q_str(checkVals[i]);				\
+      checkAccuracy_q_pq(mpfrFunc, childFunc, x, bound);		\
     }									\
   } while(0)
 
@@ -543,6 +680,17 @@ void do_test(int options) {
     "+" STR_QUAD_MIN, "-" STR_QUAD_MIN,
     "+" STR_QUAD_DENORM_MIN, "-" STR_QUAD_DENORM_MIN,
     "NaN"
+  };
+
+  static const char *finiteCheckVals[] = {
+    "-0.0", "0.0", "+0.25", "-0.25", "+0.5", "-0.5", "+0.75", "-0.75", "+1.0", "-1.0",
+    "+1.25", "-1.25", "+1.5", "-1.5", "+2.0", "-2.0", "+2.5", "-2.5", "+3.0", "-3.0",
+    "+4.0", "-4.0", "+5.0", "-5.0", "+6.0", "-6.0", "+7.0", "-7.0", 
+    "1.234", "-1.234", "+1.234e+100", "-1.234e+100", "+1.234e-100", "-1.234e-100",
+    "+1.234e+3000", "-1.234e+3000", "+1.234e-3000", "-1.234e-3000",
+    "3.1415926535897932384626433832795028841971693993751058209749445923078164",
+    "+" STR_QUAD_MIN, "-" STR_QUAD_MIN,
+    "+" STR_QUAD_DENORM_MIN, "-" STR_QUAD_DENORM_MIN,
   };
 
   static const char *trigCheckVals[] = {
@@ -662,6 +810,22 @@ void do_test(int options) {
   fprintf(stderr, "iunordq : ");
   testComparisonOuterLoop(mpfr_unordered_p, child_iunordq, stdCheckVals);
   checkResult(success, -1);
+
+  //
+
+  fprintf(stderr, "frexp : ");
+  maxError = 0;
+  cmpDenormOuterLoop_q_pi(mpfr_frexp, child_frexpq, finiteCheckVals);
+  checkAccuracyOuterLoop2_q_pi(mpfr_frexp, child_frexpq, finiteCheckVals, 0);
+  checkAccuracyOuterLoop_q_pi(mpfr_frexp, child_frexpq, "1e-4000", "1e+4000", 1, 10 * NTEST, 0, 1);
+  checkResult(success, maxError);
+
+  fprintf(stderr, "modf : ");
+  maxError = 0;
+  cmpDenormOuterLoop_q_pq(mpfr_modf, child_modfq, stdCheckVals);
+  checkAccuracyOuterLoop2_q_pq(mpfr_modf, child_modfq, stdCheckVals, 0);
+  checkAccuracyOuterLoop_q_pq(mpfr_modf, child_modfq, "1e-4000", "1e+4000", 1, 10 * NTEST, 0, 1);
+  checkResult(success, maxError);
 
   //
 

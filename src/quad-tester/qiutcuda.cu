@@ -98,6 +98,9 @@ __global__ void xfdimq_u05(Sleef_quadx1 *r, Sleef_quadx1 *a0, Sleef_quadx1 *a1) 
 __global__ void xfmodq(Sleef_quadx1 *r, Sleef_quadx1 *a0, Sleef_quadx1 *a1) { *r = Sleef_fmodq1_cuda(*a0, *a1); }
 __global__ void xremainderq(Sleef_quadx1 *r, Sleef_quadx1 *a0, Sleef_quadx1 *a1) { *r = Sleef_remainderq1_cuda(*a0, *a1); }
 
+__global__ void xfrexpq(Sleef_quadx1 *r, Sleef_quadx1 *a0, int *i0) { *r = Sleef_frexpq1_cuda(*a0, i0); }
+__global__ void xmodfq(Sleef_quadx1 *r, Sleef_quadx1 *a0, Sleef_quadx1 *a1) { *r = Sleef_modfq1_cuda(*a0, a1); }
+
 __global__ void xtruncq(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_truncq1_cuda(*a0); }
 __global__ void xfloorq(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_floorq1_cuda(*a0); }
 __global__ void xceilq(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_ceilq1_cuda(*a0); }
@@ -247,6 +250,37 @@ typedef union {
     }							\
   }
 
+#define func_q_q_pi(funcStr, funcName) {				\
+    while (startsWith(buf, funcStr " ")) {				\
+      sentinel = 0;							\
+      cnv128 c0;							\
+      sscanf(buf, funcStr " %" PRIx64 ":%" PRIx64, &c0.h, &c0.l);	\
+      *a0 = Sleef_setq1_cuda(*a0, 0, c0.q);				\
+      funcName<<<1, 1>>>(r, a0, i0);					\
+      cudaDeviceSynchronize();						\
+      c0.q = Sleef_getq1_cuda(*r, 0);					\
+      printf("%" PRIx64 ":%" PRIx64 " %d\n", c0.h, c0.l, *i0);		\
+      fflush(stdout);							\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
+    }									\
+  }
+
+#define func_q_q_pq(funcStr, funcName) {				\
+    while (startsWith(buf, funcStr " ")) {				\
+      sentinel = 0;							\
+      cnv128 c0, c1;							\
+      sscanf(buf, funcStr " %" PRIx64 ":%" PRIx64, &c0.h, &c0.l);	\
+      *a0 = Sleef_setq1_cuda(*a0, 0, c0.q);				\
+      funcName<<<1, 1>>>(r, a0, a1);					\
+      cudaDeviceSynchronize();						\
+      c0.q = Sleef_getq1_cuda(*r, 0);					\
+      c1.q = Sleef_getq1_cuda(*a1, 0);					\
+      printf("%" PRIx64 ":%" PRIx64 " %" PRIx64 ":%" PRIx64 "\n", c0.h, c0.l, c1.h, c1.l); \
+      fflush(stdout);							\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
+    }									\
+  }
+
 int main(int argc, char **argv) {
 #if 0
   cuInit(0);
@@ -327,6 +361,8 @@ int main(int argc, char **argv) {
     func_q_q_q("fdimq_u05", xfdimq_u05);
     func_q_q_q("fmodq", xfmodq);
     func_q_q_q("remainderq", xremainderq);
+    func_q_q_pi("frexpq", xfrexpq);
+    func_q_q_pq("modfq", xmodfq);
 
     func_q_q("truncq", xtruncq);
     func_q_q("floorq", xfloorq);
