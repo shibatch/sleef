@@ -311,6 +311,24 @@ int main(int argc, char **argv) {
 		   vuint64name);
 	  }
 	  break;
+	case 22:
+	  {
+	    printf("IMPORT %s Sleef_%sq%s%s%s(%s, %s *);\n",
+		   vargquadname,
+		   funcList[i].name, wqp,
+		   isaub, isaname,
+		   vargquadname, vintname);
+	  }
+	  break;
+	case 23:
+	  {
+	    printf("IMPORT %s Sleef_%sq%s%s%s(%s, %s *);\n",
+		   vargquadname,
+		   funcList[i].name, wqp,
+		   isaub, isaname,
+		   vargquadname, vargquadname);
+	  }
+	  break;
 	}
       }
     }

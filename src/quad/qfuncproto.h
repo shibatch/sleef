@@ -20,16 +20,16 @@ typedef struct {
   2 : "_u05"
 
   funcType:
-  0 : vargquad func(vargquad);
-  1 : vargquad func(vargquad, vargquad);
-  2 : vargquad2 func(vargquad);
-  3 : vargquad func(vargquad, vint);
-  4 : vint func(vargquad);
-  5 : vargquad func(vargquad, vargquad, vargquad);
-  6 : vargquad2 func(vargquad);
-  7 : int func(int);
-  8 : void *func(int);
-  9 : vint func(vargquad, vargquad);
+   0 : vargquad func(vargquad);
+   1 : vargquad func(vargquad, vargquad);
+   2 : vargquad2 func(vargquad);
+   3 : vargquad func(vargquad, vint);
+   4 : vint func(vargquad);
+   5 : vargquad func(vargquad, vargquad, vargquad);
+   6 : vargquad2 func(vargquad);
+   7 : int func(int);
+   8 : void *func(int);
+   9 : vint func(vargquad, vargquad);
   10 : vdouble func(vargquad);
   11 : vargquad func(vdouble);
   12 : vargquad func(Sleef_quad);
@@ -42,6 +42,8 @@ typedef struct {
   19 : vargquad func(vint64);
   20 : vuint64 func(vargquad);
   21 : vargquad func(vuint64);
+  22 : vargquad func(vargquad, vint *);
+  23 : vargquad func(vargquad, vargquad *);
  */
 
 funcSpec funcList[] = {
@@ -117,6 +119,9 @@ funcSpec funcList[] = {
   { "fdim", 5, 2, 1, 0 },
   { "fmod", -1, 0, 1, 0 },
   { "remainder", -1, 0, 1, 0 },
+
+  { "frexp", -1, 0, 22, 0 },
+  { "modf", -1, 0, 23, 0 },
 
   //{ "ldexp", -1, 0, 3, 0 },
   //{ "ilogb", -1, 0, 4, 0 },

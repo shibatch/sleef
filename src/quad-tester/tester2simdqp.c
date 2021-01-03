@@ -441,7 +441,22 @@ int main(int argc,char **argv)
       }
     }
 
-    if (cnt % 7 == 0) {
+    {
+      mpfr_modf(frz, frw, frx, GMP_RNDN);
+
+      a2 = xmodfq(a0, &a3);
+      double u0 = countULPf128(q2 = vget(a2, e), frw, 0);
+      double u1 = countULPf128(q3 = vget(a3, e), frz, 0);
+      
+      if (u0 > 0 || u1 > 0) {
+	printf(ISANAME " modf arg=%s ulp=%.20g, %.20g\n", sprintf128(q0), u0, u1);
+	printf("test = %s, %s\n", sprintf128(q2), sprintf128(q3));
+	printf("corr = %s, %s\n\n", sprintf128(mpfr_get_f128(frw, GMP_RNDN)), sprintf128(mpfr_get_f128(frz, GMP_RNDN)));
+	fflush(stdout); ecnt++;
+      }
+    }
+
+    if (cnt % 101 == 0) {
       {
 	mpfr_fmod(frz, frx, fry, GMP_RNDN);
 
