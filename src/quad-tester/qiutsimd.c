@@ -1,4 +1,4 @@
-//   Copyright Naoki Shibata and contributors 2010 - 2020.
+//   Copyright Naoki Shibata and contributors 2010 - 2021.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -281,6 +281,46 @@ typedef union {
     }									\
   }
 
+#define func_q_q_q_q(funcStr, funcName) {				\
+    while (startsWith(buf, funcStr " ")) {				\
+      sentinel = 0;							\
+      int lane = xrand() % VECTLENDP;					\
+      cnv128 c0, c1, c2;						\
+      sscanf(buf, funcStr " %" PRIx64 ":%" PRIx64 " %" PRIx64 ":%" PRIx64 " %" PRIx64 ":%" PRIx64, \
+	     &c0.h, &c0.l, &c1.h, &c1.l, &c2.h, &c2.l);			\
+      VARGQUAD a0, a1, a2;						\
+      memrand(&a0, SIZEOF_VARGQUAD);					\
+      memrand(&a1, SIZEOF_VARGQUAD);					\
+      memrand(&a2, SIZEOF_VARGQUAD);					\
+      a0 = xsetq(a0, lane, c0.q);					\
+      a1 = xsetq(a1, lane, c1.q);					\
+      a2 = xsetq(a2, lane, c2.q);					\
+      a0 = funcName(a0, a1, a2);					\
+      c0.q = xgetq(a0, lane);						\
+      printf("%" PRIx64 ":%" PRIx64 "\n", c0.h, c0.l);			\
+      fflush(stdout);							\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
+    }									\
+  }
+
+#define func_i_q(funcStr, funcName) {					\
+    while (startsWith(buf, funcStr " ")) {				\
+      sentinel = 0;							\
+      int lane = xrand() % VECTLENDP;					\
+      cnv128 c0;							\
+      sscanf(buf, funcStr " %" PRIx64 ":%" PRIx64, &c0.h, &c0.l);	\
+      VARGQUAD a0;							\
+      memrand(&a0, SIZEOF_VARGQUAD);					\
+      a0 = xsetq(a0, lane, c0.q);					\
+      vint vi = funcName(a0);						\
+      int t[VECTLENDP*2];						\
+      vstoreu_v_p_vi(t, vi);						\
+      printf("%d\n", t[lane]);						\
+      fflush(stdout);							\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
+    }									\
+  }
+
 #define func_i_q_q(funcStr, funcName) {					\
     while (startsWith(buf, funcStr " ")) {				\
       sentinel = 0;							\
@@ -296,6 +336,27 @@ typedef union {
       int t[VECTLENDP*2];						\
       vstoreu_v_p_vi(t, vi);						\
       printf("%d\n", t[lane]);						\
+      fflush(stdout);							\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
+    }									\
+  }
+
+#define func_q_q_i(funcStr, funcName) {					\
+    while (startsWith(buf, funcStr " ")) {				\
+      sentinel = 0;							\
+      int lane = xrand() % VECTLENDP;					\
+      cnv128 c0;							\
+      int k;								\
+      sscanf(buf, funcStr " %" PRIx64 ":%" PRIx64 " %d", &c0.h, &c0.l, &k); \
+      VARGQUAD a0;							\
+      memrand(&a0, SIZEOF_VARGQUAD);					\
+      a0 = xsetq(a0, lane, c0.q);					\
+      int t[VECTLENDP*2];						\
+      memrand(t, sizeof(t));						\
+      t[lane] = k;							\
+      a0 = funcName(a0, vloadu_vi_p(t));				\
+      c0.q = xgetq(a0, lane);						\
+      printf("%" PRIx64 ":%" PRIx64 "\n", c0.h, c0.l);			\
       fflush(stdout);							\
       if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
     }									\
@@ -602,6 +663,10 @@ int do_test(int argc, char **argv) {
     func_q_q_q("remainderq", xremainderq);
     func_q_q_pi("frexpq", xfrexpq);
     func_q_q_pq("modfq", xmodfq);
+    func_i_q("ilogbq", xilogbq);
+    func_q_q_i("ldexpq", xldexpq);
+    func_q_q_q_q("fmaq_u05", xfmaq_u05);
+    func_q_q_q("hypotq_u05", xhypotq_u05);
 
     func_q_q("truncq", xtruncq);
     func_q_q("floorq", xfloorq);

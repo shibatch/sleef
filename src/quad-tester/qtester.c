@@ -1,4 +1,4 @@
-//   Copyright Naoki Shibata and contributors 2010 - 2020.
+//   Copyright Naoki Shibata and contributors 2010 - 2021.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -141,6 +141,31 @@ typedef union {
     return c0.q;							\
   } while(0)
 
+#define child_q_q_q_q(funcStr, arg0, arg1, arg2) do {			\
+    char str[256];							\
+    cnv128 c0, c1, c2;							\
+    c0.q = arg0;							\
+    c1.q = arg1;							\
+    c2.q = arg2;							\
+    sprintf(str, funcStr " %" PRIx64 ":%" PRIx64 " %" PRIx64 ":%" PRIx64 " %" PRIx64 ":%" PRIx64 "\n", c0.h, c0.l, c1.h, c1.l, c2.h, c2.l); \
+    write(ptoc[1], str, strlen(str));					\
+    if (fgets(str, 255, fpctop) == NULL) stop("child " funcStr);	\
+    sscanf(str, "%" PRIx64 ":%" PRIx64, &c0.h, &c0.l);			\
+    return c0.q;							\
+  } while(0)
+
+#define child_i_q(funcStr, arg0) do {					\
+    char str[256];							\
+    cnv128 c0;							\
+    c0.q = arg0;							\
+    sprintf(str, funcStr " %" PRIx64 ":%" PRIx64 "\n", c0.h, c0.l); \
+    write(ptoc[1], str, strlen(str));					\
+    if (fgets(str, 255, fpctop) == NULL) stop("child " funcStr);	\
+    int i;								\
+    sscanf(str, "%d", &i);						\
+    return i;								\
+  } while(0)
+
 #define child_i_q_q(funcStr, arg0, arg1) do {				\
     char str[256];							\
     cnv128 c0, c1;							\
@@ -152,6 +177,17 @@ typedef union {
     int i;								\
     sscanf(str, "%d", &i);						\
     return i;								\
+  } while(0)
+
+#define child_q_q_i(funcStr, arg0, arg1) do {				\
+    char str[256];							\
+    cnv128 c;								\
+    c.q = arg0;								\
+    sprintf(str, funcStr " %" PRIx64 ":%" PRIx64 " %d\n", c.h, c.l, arg1); \
+    write(ptoc[1], str, strlen(str));					\
+    if (fgets(str, 255, fpctop) == NULL) stop("child " funcStr);	\
+    sscanf(str, "%" PRIx64 ":%" PRIx64, &c.h, &c.l);			\
+    return c.q;								\
   } while(0)
 
 #define child_d_q(funcStr, arg) do {					\
@@ -301,15 +337,19 @@ Sleef_quad child_fminq(Sleef_quad x, Sleef_quad y) { child_q_q_q("fminq", x, y);
 Sleef_quad child_fdimq_u05(Sleef_quad x, Sleef_quad y) { child_q_q_q("fdimq_u05", x, y); }
 Sleef_quad child_fmodq(Sleef_quad x, Sleef_quad y) { child_q_q_q("fmodq", x, y); }
 Sleef_quad child_remainderq(Sleef_quad x, Sleef_quad y) { child_q_q_q("remainderq", x, y); }
+Sleef_quad child_frexpq(Sleef_quad x, int *ptr) { child_q_q_pi("frexpq", x); }
+Sleef_quad child_modfq(Sleef_quad x, Sleef_quad *ptr) { child_q_q_pq("modfq", x); }
+
+Sleef_quad child_hypotq_u05(Sleef_quad x, Sleef_quad y) { child_q_q_q("hypotq_u05", x, y); }
+Sleef_quad child_fmaq_u05(Sleef_quad x, Sleef_quad y, Sleef_quad z) { child_q_q_q_q("fmaq_u05", x, y, z); }
+Sleef_quad child_ldexpq(Sleef_quad x, int k) { child_q_q_i("ldexpq", x, k); }
+int child_ilogbq(Sleef_quad x) { child_i_q("ilogbq", x); }
 
 Sleef_quad child_truncq(Sleef_quad x) { child_q_q("truncq", x); }
 Sleef_quad child_floorq(Sleef_quad x) { child_q_q("floorq", x); }
 Sleef_quad child_ceilq(Sleef_quad x) { child_q_q("ceilq", x); }
 Sleef_quad child_roundq(Sleef_quad x) { child_q_q("roundq", x); }
 Sleef_quad child_rintq(Sleef_quad x) { child_q_q("rintq", x); }
-
-Sleef_quad child_frexpq(Sleef_quad x, int *ptr) { child_q_q_pi("frexpq", x); }
-Sleef_quad child_modfq(Sleef_quad x, Sleef_quad *ptr) { child_q_q_pq("modfq", x); }
 
 //
 
@@ -354,7 +394,23 @@ Sleef_quad child_modfq(Sleef_quad x, Sleef_quad *ptr) { child_q_q_pq("modfq", x)
     }									\
   } while(0)
 
-#define cmpDenorm_q_pi(mpfrFunc, childFunc, argx) do {		\
+#define cmpDenorm_q_q_q(mpfrFunc, childFunc, argw, argx, argy) do {	\
+    mpfr_set_f128(frw, argw, GMP_RNDN);					\
+    mpfr_set_f128(frx, argx, GMP_RNDN);					\
+    mpfr_set_f128(fry, argy, GMP_RNDN);					\
+    mpfrFunc(frz, frw, frx, fry, GMP_RNDN);				\
+    Sleef_quad t = childFunc(argw, argx, argy);				\
+    double u = countULPf128(t, frz, 1);					\
+    if (u >= 10) {							\
+      Sleef_quad qz = mpfr_get_f128(frz, GMP_RNDN);			\
+      fprintf(stderr, "\narg     = %s,\n          %s,\n          %s\ntest    = %s\ncorrect = %s\nulp = %g\n", \
+	      sprintf128(argw), sprintf128(argx), sprintf128(argy), sprintf128(t), sprintf128(qz), u); \
+      success = 0;							\
+      break;								\
+    }									\
+  } while(0)
+
+#define cmpDenorm_q_pi(mpfrFunc, childFunc, argx) do {			\
     mpfr_set_f128(frx, argx, GMP_RNDN);					\
     mpfr_exp_t e;							\
     mpfrFunc(&e, frz, frx, GMP_RNDN);					\
@@ -369,7 +425,7 @@ Sleef_quad child_modfq(Sleef_quad x, Sleef_quad *ptr) { child_q_q_pq("modfq", x)
     }									\
   } while(0)
 
-#define cmpDenorm_q_pq(mpfrFunc, childFunc, argx) do {		\
+#define cmpDenorm_q_pq(mpfrFunc, childFunc, argx) do {			\
     mpfr_set_f128(frx, argx, GMP_RNDN);					\
     mpfrFunc(fry, frz, frx, GMP_RNDN);					\
     Sleef_quad qi, qf;							\
@@ -427,6 +483,22 @@ Sleef_quad child_modfq(Sleef_quad x, Sleef_quad *ptr) { child_q_q_pq("modfq", x)
     }									\
   } while(0)
 
+#define checkAccuracy_q_q_q(mpfrFunc, childFunc, argw, argx, argy, bound) do {	\
+    mpfr_set_f128(frw, argw, GMP_RNDN);					\
+    mpfr_set_f128(frx, argx, GMP_RNDN);					\
+    mpfr_set_f128(fry, argy, GMP_RNDN);					\
+    mpfrFunc(frz, frw, frx, fry, GMP_RNDN);				\
+    Sleef_quad t = childFunc(argw, argx, argy);				\
+    double e = countULPf128(t, frz, 0);					\
+    maxError = fmax(maxError, e);					\
+    if (e > bound) {							\
+      fprintf(stderr, "\narg = %s, %s, %s, test = %s, correct = %s, ULP = %lf\n", \
+	      sprintf128(argw), sprintf128(argx), sprintf128(argy), sprintf128(childFunc(argw, argx, argy)), sprintfr(frz), countULPf128(t, frz, 0)); \
+      success = 0;							\
+      break;								\
+    }									\
+  } while(0)
+
 #define checkAccuracy_q_pi(mpfrFunc, childFunc, argx, bound) do {	\
     mpfr_set_f128(frx, argx, GMP_RNDN);					\
     mpfr_exp_t ex;							\
@@ -475,6 +547,13 @@ Sleef_quad child_modfq(Sleef_quad x, Sleef_quad *ptr) { child_q_q_pq("modfq", x)
 
 //
 
+#define cmpDenormOuterLoop_q(mpfrFunc, childFunc, checkVals) do {	\
+    for(int i=0;i<sizeof(checkVals)/sizeof(char *);i++) {		\
+      Sleef_quad a0 = cast_q_str(checkVals[i]);				\
+      cmpDenorm_q(mpfrFunc, childFunc, a0);				\
+    }									\
+  } while(0)
+
 #define cmpDenormOuterLoop_q_q(mpfrFunc, childFunc, checkVals) do {	\
     for(int i=0;i<sizeof(checkVals)/sizeof(char *);i++) {		\
       Sleef_quad a0 = cast_q_str(checkVals[i]);				\
@@ -485,10 +564,16 @@ Sleef_quad child_modfq(Sleef_quad x, Sleef_quad *ptr) { child_q_q_pq("modfq", x)
     }									\
   } while(0)
 
-#define cmpDenormOuterLoop_q(mpfrFunc, childFunc, checkVals) do {	\
+#define cmpDenormOuterLoop_q_q_q(mpfrFunc, childFunc, checkVals) do {	\
     for(int i=0;i<sizeof(checkVals)/sizeof(char *);i++) {		\
       Sleef_quad a0 = cast_q_str(checkVals[i]);				\
-      cmpDenorm_q(mpfrFunc, childFunc, a0);				\
+      for(int j=0;j<sizeof(checkVals)/sizeof(char *) && success;j++) {	\
+	Sleef_quad a1 = cast_q_str(checkVals[j]);			\
+	for(int k=0;k<sizeof(checkVals)/sizeof(char *) && success;k++) { \
+	  Sleef_quad a2 = cast_q_str(checkVals[k]);			\
+	  cmpDenorm_q_q_q(mpfrFunc, childFunc, a0, a1, a2);		\
+	}								\
+      }									\
     }									\
   } while(0)
 
@@ -515,6 +600,22 @@ Sleef_quad child_modfq(Sleef_quad x, Sleef_quad *ptr) { child_q_q_pq("modfq", x)
 
 //
 
+#define checkAccuracyOuterLoop_q(mpfrFunc, childFunc, minStr, maxStr, sign, nLoop, bound, seed) do { \
+    xsrand(seed);							\
+    Sleef_quad min = cast_q_str(minStr), max = cast_q_str(maxStr);	\
+    for(int i=0;i<nLoop && success;i++) {				\
+      Sleef_quad x = rndf128(min, max, sign);				\
+      checkAccuracy_q(mpfrFunc, childFunc, x, bound);			\
+    }									\
+  } while(0)
+
+#define checkAccuracyOuterLoop2_q(mpfrFunc, childFunc, checkVals, bound) do {	\
+    for(int i=0;i<sizeof(checkVals)/sizeof(char *);i++) {		\
+      Sleef_quad x = cast_q_str(checkVals[i]);				\
+      checkAccuracy_q(mpfrFunc, childFunc, x, bound);			\
+    }									\
+  } while(0)
+
 #define checkAccuracyOuterLoop_q_q(mpfrFunc, childFunc, minStr, maxStr, sign, nLoop, bound, seed) do { \
     xsrand(seed);							\
     Sleef_quad min = cast_q_str(minStr), max = cast_q_str(maxStr);	\
@@ -534,19 +635,27 @@ Sleef_quad child_modfq(Sleef_quad x, Sleef_quad *ptr) { child_q_q_pq("modfq", x)
     }									\
   } while(0)
 
-#define checkAccuracyOuterLoop_q(mpfrFunc, childFunc, minStr, maxStr, sign, nLoop, bound, seed) do { \
+#define checkAccuracyOuterLoop_q_q_q(mpfrFunc, childFunc, minStr, maxStr, sign, nLoop, bound, seed) do { \
     xsrand(seed);							\
     Sleef_quad min = cast_q_str(minStr), max = cast_q_str(maxStr);	\
     for(int i=0;i<nLoop && success;i++) {				\
+      Sleef_quad w = rndf128(min, max, sign);				\
       Sleef_quad x = rndf128(min, max, sign);				\
-      checkAccuracy_q(mpfrFunc, childFunc, x, bound);			\
+      Sleef_quad y = rndf128(min, max, sign);				\
+      checkAccuracy_q_q_q(mpfrFunc, childFunc, w, x, y, bound);		\
     }									\
   } while(0)
 
-#define checkAccuracyOuterLoop2_q(mpfrFunc, childFunc, checkVals, bound) do {	\
+#define checkAccuracyOuterLoop2_q_q_q(mpfrFunc, childFunc, checkVals, bound) do { \
     for(int i=0;i<sizeof(checkVals)/sizeof(char *);i++) {		\
       Sleef_quad x = cast_q_str(checkVals[i]);				\
-      checkAccuracy_q(mpfrFunc, childFunc, x, bound);			\
+      for(int j=0;j<sizeof(checkVals)/sizeof(char *);j++) {		\
+	Sleef_quad y = cast_q_str(checkVals[j]);			\
+	for(int k=0;k<sizeof(checkVals)/sizeof(char *);k++) {		\
+	  Sleef_quad z = cast_q_str(checkVals[k]);			\
+	  checkAccuracy_q_q_q(mpfrFunc, childFunc, x, y, z, bound);	\
+	}								\
+      }									\
     }									\
   } while(0)
 
@@ -629,8 +738,8 @@ void checkResult(int success, double e) {
 
 void do_test(int options) {
   mpfr_set_default_prec(256);
-  mpfr_t frx, fry, frz;
-  mpfr_inits(frx, fry, frz, NULL);
+  mpfr_t frw, frx, fry, frz;
+  mpfr_inits(frw, frx, fry, frz, NULL);
 
   int success = 1;
 
@@ -810,22 +919,6 @@ void do_test(int options) {
   fprintf(stderr, "iunordq : ");
   testComparisonOuterLoop(mpfr_unordered_p, child_iunordq, stdCheckVals);
   checkResult(success, -1);
-
-  //
-
-  fprintf(stderr, "frexp : ");
-  maxError = 0;
-  cmpDenormOuterLoop_q_pi(mpfr_frexp, child_frexpq, finiteCheckVals);
-  checkAccuracyOuterLoop2_q_pi(mpfr_frexp, child_frexpq, finiteCheckVals, 0);
-  checkAccuracyOuterLoop_q_pi(mpfr_frexp, child_frexpq, "1e-4000", "1e+4000", 1, 10 * NTEST, 0, 1);
-  checkResult(success, maxError);
-
-  fprintf(stderr, "modf : ");
-  maxError = 0;
-  cmpDenormOuterLoop_q_pq(mpfr_modf, child_modfq, stdCheckVals);
-  checkAccuracyOuterLoop2_q_pq(mpfr_modf, child_modfq, stdCheckVals, 0);
-  checkAccuracyOuterLoop_q_pq(mpfr_modf, child_modfq, "1e-4000", "1e+4000", 1, 10 * NTEST, 0, 1);
-  checkResult(success, maxError);
 
   //
 
@@ -1222,6 +1315,90 @@ void do_test(int options) {
   checkAccuracyOuterLoop_q_q(mpfr_remainder, child_remainderq, "1e-100", "1e+100", 1, 5 * NTEST, 0, 0);
   checkAccuracyOuterLoop_q_q(mpfr_remainder, child_remainderq, "1e-4000", "1e+4000", 1, 5 * NTEST, 0, 1);
   checkResult(success, maxError);
+
+  fprintf(stderr, "frexpq : ");
+  maxError = 0;
+  cmpDenormOuterLoop_q_pi(mpfr_frexp, child_frexpq, finiteCheckVals);
+  checkAccuracyOuterLoop2_q_pi(mpfr_frexp, child_frexpq, finiteCheckVals, 0);
+  checkAccuracyOuterLoop_q_pi(mpfr_frexp, child_frexpq, "1e-4000", "1e+4000", 1, 10 * NTEST, 0, 1);
+  checkResult(success, maxError);
+
+  fprintf(stderr, "modfq : ");
+  maxError = 0;
+  cmpDenormOuterLoop_q_pq(mpfr_modf, child_modfq, stdCheckVals);
+  checkAccuracyOuterLoop2_q_pq(mpfr_modf, child_modfq, stdCheckVals, 0);
+  checkAccuracyOuterLoop_q_pq(mpfr_modf, child_modfq, "1e-4000", "1e+4000", 1, 10 * NTEST, 0, 1);
+  checkResult(success, maxError);
+
+  fprintf(stderr, "hypotq : ");
+  maxError = 0;
+  cmpDenormOuterLoop_q_q(mpfr_hypot, child_hypotq_u05, stdCheckVals);
+  checkAccuracyOuterLoop2_q_q(mpfr_hypot, child_hypotq_u05, stdCheckVals, 0.5);
+  checkAccuracyOuterLoop_q_q(mpfr_hypot, child_hypotq_u05, "1e-100", "1e+100", 1, 5 * NTEST, errorBound, 0);
+  checkAccuracyOuterLoop_q_q(mpfr_hypot, child_hypotq_u05, "1e-4000", "1e+4000", 1, 5 * NTEST, errorBound, 1);
+  checkResult(success, maxError);
+
+  fprintf(stderr, "fmaq_u05 : ");
+  maxError = 0;
+  cmpDenormOuterLoop_q_q_q(mpfr_fma, child_fmaq_u05, stdCheckVals);
+  checkAccuracyOuterLoop2_q_q_q(mpfr_fma, child_fmaq_u05, stdCheckVals, 0.5);
+  checkAccuracyOuterLoop_q_q_q(mpfr_fma, child_fmaq_u05, "1e-100", "1e+100", 1, 5 * NTEST, errorBound, 0);
+  checkAccuracyOuterLoop_q_q_q(mpfr_fma, child_fmaq_u05, "1e-4000", "1e+4000", 1, 5 * NTEST, errorBound, 1);
+  checkResult(success, maxError);
+
+  {
+    fprintf(stderr, "ldexp : ");
+
+    static const int ldexpCheckVals[] = {
+      -40000, -32770, -32769, -32768, -32767, -32766, -32765, -16386, -16385, -16384, -16383, -16382, -5, -4, -3, -2, -1, 0,
+      +40000, +32770, +32769, +32768, +32767, +32766, +32765, +16386, +16385, +16384, +16383, +16382, +5, +4, +3, +2, +1
+    };
+    
+    for(int i=0;i<sizeof(ldexpCheckVals)/sizeof(int);i++) {
+      for(int j=0;j<sizeof(stdCheckVals)/sizeof(char *) && success;j++) {
+	Sleef_quad a0 = cast_q_str(stdCheckVals[j]);
+	Sleef_quad t = child_ldexpq(a0, ldexpCheckVals[i]);
+	mpfr_set_f128(frx, a0, GMP_RNDN);
+	mpfr_set(frz, frx, GMP_RNDN);
+	if (!mpfr_zero_p(frx)) mpfr_set_exp(frz, mpfr_get_exp(frz) + ldexpCheckVals[i]);
+	double u = countULPf128(t, frz, 0);
+	if (u > 0.5) {
+	  fprintf(stderr, "\narg     = %s, %d\ntest    = %s\ncorrect = %s\nulp = %g\n",
+		  sprintf128(a0), ldexpCheckVals[i], sprintf128(t), sprintfr(frz), u);
+	  success = 0;
+	  break;
+	}
+      }
+    }
+
+    checkResult(success, -1);
+  }
+
+  {
+    fprintf(stderr, "ilogb : ");
+
+    static const int correctIlogbVals[] = {
+      -2147483648, -2147483648, -2, -2, -1, -1, -1, -1,
+      0, 0, 0, 0, 0, 0, 1, 1,
+      1, 1, 1, 1, 2, 2, 2, 2,
+      2, 2, 2, 2, 0, 0, 332, 332,
+      -332, -332, 9966, 9966, -9966, -9966, 1, -16382,
+      -16382, -16494, -16494, 2147483647, 2147483647, 2147483647,
+    };
+
+    for(int i=0;i<sizeof(stdCheckVals)/sizeof(char *);i++) {
+      Sleef_quad a0 = cast_q_str(stdCheckVals[i]);
+      int t = child_ilogbq(a0);
+      if (t != correctIlogbVals[i]) {
+	fprintf(stderr, "\narg     = %s\ntest    = %d\ncorrect = %d\n",
+		sprintf128(a0), t, correctIlogbVals[i]);
+	success = 0;
+	break;
+      }
+    }
+
+    checkResult(success, -1);
+  }
 
   //
 

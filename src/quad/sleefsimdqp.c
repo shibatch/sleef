@@ -1,4 +1,4 @@
-//   Copyright Naoki Shibata and contributors 2010 - 2020.
+//   Copyright Naoki Shibata and contributors 2010 - 2021.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -2223,6 +2223,41 @@ static INLINE VECTOR_CC tdx remainder_tdx_tdx_tdx(tdx x, tdx y) {
   return r;
 }
 
+static INLINE VECTOR_CC tdx fma_tdx_tdx_tdx_tdx(tdx x, tdx y, tdx z) {
+  vdouble dx = tdxgetd3x_vd_tdx(x);
+  dx = vcopysign_vd_vd_vd(vsel_vd_vo_vd_vd(vor_vo_vo_vo(visnonfinite_vo_vd(dx), veq_vo_vd_vd(dx, vcast_vd_d(0))), dx, vcast_vd_d(1)), dx);
+  vdouble dy = tdxgetd3x_vd_tdx(y);
+  dy = vcopysign_vd_vd_vd(vsel_vd_vo_vd_vd(vor_vo_vo_vo(visnonfinite_vo_vd(dy), veq_vo_vd_vd(dy, vcast_vd_d(0))), dy, vcast_vd_d(1)), dy);
+  vdouble dz = tdxgetd3x_vd_tdx(z);
+  dz = vcopysign_vd_vd_vd(vsel_vd_vo_vd_vd(vor_vo_vo_vo(visnonfinite_vo_vd(dz), veq_vo_vd_vd(dz, vcast_vd_d(0))), dz, vcast_vd_d(1)), dz);
+  vdouble d = vadd_vd_vd_vd(vmul_vd_vd_vd(dx, dy), dz);
+
+  tdx r = add_tdx_tdx_tdx(mul_tdx_tdx_tdx(x, y), z);
+  r = tdxsetx_tdx_tdx_vd(r, vsel_vd_vo_vd_vd(visnonfinite_vo_vd(d), d, tdxgetd3x_vd_tdx(r)));
+  r = tdxsetx_tdx_tdx_vd(r, vsel_vd_vo_vd_vd(veq_vo_vd_vd(tdxgetd3x_vd_tdx(r), vcast_vd_d(0)), vmulsign_vd_vd_vd(vcast_vd_d(0), d), tdxgetd3x_vd_tdx(r)));
+  return r;
+}
+
+static INLINE VECTOR_CC tdx hypot_tdx_tdx_tdx(tdx x, tdx y) {
+  tdx r = sqrt_tdx_tdx(add_tdx_tdx_tdx(mul_tdx_tdx_tdx(x, x), mul_tdx_tdx_tdx(y, y)));
+  vopmask o = vor_vo_vo_vo(visinf_vo_vd(tdxgetd3x_vd_tdx(x)), visinf_vo_vd(tdxgetd3x_vd_tdx(y)));
+  return sel_tdx_vo_tdx_tdx(o, cast_tdx_d(SLEEF_INFINITY), r);
+}
+
+static INLINE VECTOR_CC vint ilogb_vi_tdx(tdx x) {
+  vmask e = vadd64_vm_vm_vm(tdxgete_vm_tdx(x), vcast_vm_i64(-16383));
+  e = vsel_vm_vo64_vm_vm(iszero_vo_tdx(x), vcast_vm_i64(SLEEF_FP_ILOGB0), e);
+  e = vsel_vm_vo64_vm_vm(isnan_vo_tdx(x), vcast_vm_i64(SLEEF_FP_ILOGBNAN), e);
+  e = vsel_vm_vo64_vm_vm(isinf_vo_tdx(x), vcast_vm_i64(INT_MAX), e);
+  return vcast_vi_vm(e);
+}
+
+static INLINE VECTOR_CC tdx ldexp_tdx_tdx_vi(tdx x, vint ei) {
+  vmask e = vcast_vm_vi(ei);
+  e = vsel_vm_vo64_vm_vm(iszero_vo_tdx(x), tdxgete_vm_tdx(x), vadd64_vm_vm_vm(tdxgete_vm_tdx(x), e));
+  return tdxsete_tdx_tdx_vm(x, e);
+}
+
 // Float128 functions ------------------------------------------------------------------------------------------------------------
 
 static CONST VECTOR_CC tdx cast_tdx_vq(vquad f) {
@@ -3119,6 +3154,22 @@ EXPORT VECTOR_CC vargquad xmodfq(vargquad aa, vargquad *pab) {
 
 EXPORT VECTOR_CC vargquad xfrexpq(vargquad aa, vint *pi) {
   return cast_aq_vq(cast_vq_tdx(frexp_tdx_tdx_pvi(cast_tdx_vq(cast_vq_aq(aa)), pi)));
+}
+
+EXPORT CONST VECTOR_CC vargquad xfmaq_u05(vargquad aa, vargquad ab, vargquad ac) {
+  return cast_aq_vq(cast_vq_tdx(fma_tdx_tdx_tdx_tdx(cast_tdx_vq(cast_vq_aq(aa)), cast_tdx_vq(cast_vq_aq(ab)), cast_tdx_vq(cast_vq_aq(ac)))));
+}
+
+EXPORT CONST VECTOR_CC vargquad xhypotq_u05(vargquad aa, vargquad ab) {
+  return cast_aq_vq(cast_vq_tdx(hypot_tdx_tdx_tdx(cast_tdx_vq(cast_vq_aq(aa)), cast_tdx_vq(cast_vq_aq(ab)))));
+}
+
+EXPORT CONST VECTOR_CC vint xilogbq(vargquad aa) {
+  return ilogb_vi_tdx(cast_tdx_vq(cast_vq_aq(aa)));
+}
+
+EXPORT CONST VECTOR_CC vargquad xldexpq(vargquad aa, vint e) {
+  return cast_aq_vq(cast_vq_tdx(ldexp_tdx_tdx_vi(cast_tdx_vq(cast_vq_aq(aa)), e)));
 }
 
 //
@@ -4111,8 +4162,8 @@ int main(int argc, char **argv) {
   char s[200];
   double ad[32];
   mpfr_set_default_prec(18000);
-  mpfr_t fr0, fr1, fr2;
-  mpfr_inits(fr0, fr1, fr2, NULL);
+  mpfr_t fr0, fr1, fr2, fr3;
+  mpfr_inits(fr0, fr1, fr2, fr3, NULL);
 
   mpfr_set_d(fr0, 0, GMP_RNDN);
   if (argc >= 2) mpfr_set_str(fr0, argv[1], 10, GMP_RNDN);
@@ -4127,12 +4178,6 @@ int main(int argc, char **argv) {
 #endif
   a0 = xsetq(a0, lane, q0);
 
-#if 0
-  memrand(ad, sizeof(ad));
-  ad[lane] = mpfr_get_d(fr0, GMP_RNDN);
-  a0 = xcast_from_doubleq(vloadu_vd_p(ad));
-#endif
-
   mpfr_set_d(fr1, 0, GMP_RNDN);
   if (argc >= 3) mpfr_set_str(fr1, argv[2], 10, GMP_RNDN);
   Sleef_quad q1 = mpfr_get_f128(fr1, GMP_RNDN);
@@ -4146,256 +4191,302 @@ int main(int argc, char **argv) {
 #endif
   a1 = xsetq(a1, lane, q1);
 
+  mpfr_set_d(fr2, 0, GMP_RNDN);
+  if (argc >= 4) mpfr_set_str(fr2, argv[3], 10, GMP_RNDN);
+  Sleef_quad q2 = mpfr_get_f128(fr2, GMP_RNDN);
+  mpfr_set_f128(fr2, q2, GMP_RNDN);
+  if (argc >= 4) printf("arg2 : %s\n", sprintfr(fr2));
+  vargquad a2;
 #if 0
-  memrand(ad, sizeof(ad));
-  ad[lane] = mpfr_get_d(fr1, GMP_RNDN);
-  a1 = xcast_from_doubleq(vloadu_vd_p(ad));
+  memrand(&a2, sizeof(vargquad));
+#elif 0
+  memset(&a2, 0, sizeof(vargquad));
 #endif
+  a2 = xsetq(a2, lane, q2);
 
   //
 
-  vargquad a2;
+  vargquad a3;
 
 #if 0
-  a2 = xaddq_u05(a0, a1);
-  mpfr_add(fr2, fr0, fr1, GMP_RNDN);
+  a3 = xaddq_u05(a0, a1);
+  mpfr_add(fr3, fr0, fr1, GMP_RNDN);
 
   printf("\nadd\n");
-  mpfr_set_f128(fr2, mpfr_get_f128(fr2, GMP_RNDN), GMP_RNDN);
-  printf("corr : %s\n", sprintfr(fr2));
-  mpfr_set_f128(fr2, xgetq(a2, lane), GMP_RNDN);
-  printf("test : %s\n", sprintfr(fr2));
+  mpfr_set_f128(fr3, mpfr_get_f128(fr3, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr3));
+  mpfr_set_f128(fr3, xgetq(a3, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr3));
 #endif
 
 #if 0
-  a2 = xsubq_u05(a0, a1);
-  mpfr_sub(fr2, fr0, fr1, GMP_RNDN);
+  a3 = xsubq_u05(a0, a1);
+  mpfr_sub(fr3, fr0, fr1, GMP_RNDN);
 
   printf("\nsub\n");
-  mpfr_set_f128(fr2, mpfr_get_f128(fr2, GMP_RNDN), GMP_RNDN);
-  printf("corr : %s\n", sprintfr(fr2));
-  mpfr_set_f128(fr2, xgetq(a2, lane), GMP_RNDN);
-  printf("test : %s\n", sprintfr(fr2));
+  mpfr_set_f128(fr3, mpfr_get_f128(fr3, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr3));
+  mpfr_set_f128(fr3, xgetq(a3, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr3));
 #endif
 
 #if 0
-  a2 = xmulq_u05(a0, a1);
-  mpfr_mul(fr2, fr0, fr1, GMP_RNDN);
+  a3 = xmulq_u05(a0, a1);
+  mpfr_mul(fr3, fr0, fr1, GMP_RNDN);
 
   printf("\nmul\n");
-  mpfr_set_f128(fr2, mpfr_get_f128(fr2, GMP_RNDN), GMP_RNDN);
-  printf("corr : %s\n", sprintfr(fr2));
-  mpfr_set_f128(fr2, xgetq(a2, lane), GMP_RNDN);
-  printf("test : %s\n", sprintfr(fr2));
+  mpfr_set_f128(fr3, mpfr_get_f128(fr3, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr3));
+  mpfr_set_f128(fr3, xgetq(a3, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr3));
 #endif
 
 #if 0
-  a2 = xdivq_u05(a0, a1);
-  mpfr_div(fr2, fr0, fr1, GMP_RNDN);
+  a3 = xdivq_u05(a0, a1);
+  mpfr_div(fr3, fr0, fr1, GMP_RNDN);
 
   printf("\ndiv\n");
-  mpfr_set_f128(fr2, mpfr_get_f128(fr2, GMP_RNDN), GMP_RNDN);
-  printf("corr : %s\n", sprintfr(fr2));
-  mpfr_set_f128(fr2, xgetq(a2, lane), GMP_RNDN);
-  printf("test : %s\n", sprintfr(fr2));
+  mpfr_set_f128(fr3, mpfr_get_f128(fr3, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr3));
+  mpfr_set_f128(fr3, xgetq(a3, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr3));
 #endif
 
 #if 0
-  a2 = xsqrtq_u05(a0);
-  mpfr_sqrt(fr2, fr0, GMP_RNDN);
+  a3 = xsqrtq_u05(a0);
+  mpfr_sqrt(fr3, fr0, GMP_RNDN);
 
   printf("\nsqrt\n");
-  mpfr_set_f128(fr2, mpfr_get_f128(fr2, GMP_RNDN), GMP_RNDN);
-  printf("corr : %s\n", sprintfr(fr2));
-  mpfr_set_f128(fr2, xgetq(a2, lane), GMP_RNDN);
-  printf("test : %s\n", sprintfr(fr2));
+  mpfr_set_f128(fr3, mpfr_get_f128(fr3, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr3));
+  mpfr_set_f128(fr3, xgetq(a3, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr3));
 #endif
 
 #if 0
-  a2 = xsinq_u10(a0);
-  mpfr_sin(fr2, fr0, GMP_RNDN);
+  a3 = xsinq_u10(a0);
+  mpfr_sin(fr3, fr0, GMP_RNDN);
 
   printf("\nsin\n");
-  mpfr_set_f128(fr2, mpfr_get_f128(fr2, GMP_RNDN), GMP_RNDN);
-  printf("corr : %s\n", sprintfr(fr2));
-  mpfr_set_f128(fr2, xgetq(a2, lane), GMP_RNDN);
-  printf("test : %s\n", sprintfr(fr2));
+  mpfr_set_f128(fr3, mpfr_get_f128(fr3, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr3));
+  mpfr_set_f128(fr3, xgetq(a3, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr3));
 #endif
 
 #if 0
-  a2 = xfabsq(a0);
-  mpfr_abs(fr2, fr0, GMP_RNDN);
+  a3 = xfabsq(a0);
+  mpfr_abs(fr3, fr0, GMP_RNDN);
 
   printf("\nfabs\n");
-  mpfr_set_f128(fr2, mpfr_get_f128(fr2, GMP_RNDN), GMP_RNDN);
-  printf("corr : %s\n", sprintfr(fr2));
-  mpfr_set_f128(fr2, xgetq(a2, lane), GMP_RNDN);
-  printf("test : %s\n", sprintfr(fr2));
+  mpfr_set_f128(fr3, mpfr_get_f128(fr3, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr3));
+  mpfr_set_f128(fr3, xgetq(a3, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr3));
 #endif
 
 #if 0
-  a2 = xcopysignq(a0, a1);
-  mpfr_copysign(fr2, fr0, fr1, GMP_RNDN);
+  a3 = xcopysignq(a0, a1);
+  mpfr_copysign(fr3, fr0, fr1, GMP_RNDN);
 
   printf("\ncopysign\n");
-  mpfr_set_f128(fr2, mpfr_get_f128(fr2, GMP_RNDN), GMP_RNDN);
-  printf("corr : %s\n", sprintfr(fr2));
-  mpfr_set_f128(fr2, xgetq(a2, lane), GMP_RNDN);
-  printf("test : %s\n", sprintfr(fr2));
+  mpfr_set_f128(fr3, mpfr_get_f128(fr3, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr3));
+  mpfr_set_f128(fr3, xgetq(a3, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr3));
 #endif
 
 #if 0
-  a2 = xfmaxq(a0, a1);
-  mpfr_max(fr2, fr0, fr1, GMP_RNDN);
+  a3 = xfmaxq(a0, a1);
+  mpfr_max(fr3, fr0, fr1, GMP_RNDN);
 
   printf("\nmax\n");
-  mpfr_set_f128(fr2, mpfr_get_f128(fr2, GMP_RNDN), GMP_RNDN);
-  printf("corr : %s\n", sprintfr(fr2));
-  mpfr_set_f128(fr2, xgetq(a2, lane), GMP_RNDN);
-  printf("test : %s\n", sprintfr(fr2));
+  mpfr_set_f128(fr3, mpfr_get_f128(fr3, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr3));
+  mpfr_set_f128(fr3, xgetq(a3, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr3));
 #endif
 
 #if 0
-  a2 = xfminq(a0, a1);
-  mpfr_min(fr2, fr0, fr1, GMP_RNDN);
+  a3 = xfminq(a0, a1);
+  mpfr_min(fr3, fr0, fr1, GMP_RNDN);
 
   printf("\nmin\n");
-  mpfr_set_f128(fr2, mpfr_get_f128(fr2, GMP_RNDN), GMP_RNDN);
-  printf("corr : %s\n", sprintfr(fr2));
-  mpfr_set_f128(fr2, xgetq(a2, lane), GMP_RNDN);
-  printf("test : %s\n", sprintfr(fr2));
+  mpfr_set_f128(fr3, mpfr_get_f128(fr3, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr3));
+  mpfr_set_f128(fr3, xgetq(a3, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr3));
 #endif
 
 #if 0
-  a2 = xfdimq_u05(a0, a1);
-  mpfr_dim(fr2, fr0, fr1, GMP_RNDN);
+  a3 = xfdimq_u05(a0, a1);
+  mpfr_dim(fr3, fr0, fr1, GMP_RNDN);
 
   printf("\nfdim\n");
-  mpfr_set_f128(fr2, mpfr_get_f128(fr2, GMP_RNDN), GMP_RNDN);
-  printf("corr : %s\n", sprintfr(fr2));
-  mpfr_set_f128(fr2, xgetq(a2, lane), GMP_RNDN);
-  printf("test : %s\n", sprintfr(fr2));
+  mpfr_set_f128(fr3, mpfr_get_f128(fr3, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr3));
+  mpfr_set_f128(fr3, xgetq(a3, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr3));
 #endif
 
 #if 0
-  a2 = xsinhq_u10(a0);
-  mpfr_sinh(fr2, fr0, GMP_RNDN);
+  a3 = xsinhq_u10(a0);
+  mpfr_sinh(fr3, fr0, GMP_RNDN);
 
   printf("\nsinh\n");
-  mpfr_set_f128(fr2, mpfr_get_f128(fr2, GMP_RNDN), GMP_RNDN);
-  printf("corr : %s\n", sprintfr(fr2));
-  mpfr_set_f128(fr2, xgetq(a2, lane), GMP_RNDN);
-  printf("test : %s\n", sprintfr(fr2));
+  mpfr_set_f128(fr3, mpfr_get_f128(fr3, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr3));
+  mpfr_set_f128(fr3, xgetq(a3, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr3));
 #endif
 
 #if 0
-  a2 = xcoshq_u10(a0);
-  mpfr_cosh(fr2, fr0, GMP_RNDN);
+  a3 = xcoshq_u10(a0);
+  mpfr_cosh(fr3, fr0, GMP_RNDN);
 
   printf("\ncosh\n");
-  mpfr_set_f128(fr2, mpfr_get_f128(fr2, GMP_RNDN), GMP_RNDN);
-  printf("corr : %s\n", sprintfr(fr2));
-  mpfr_set_f128(fr2, xgetq(a2, lane), GMP_RNDN);
-  printf("test : %s\n", sprintfr(fr2));
+  mpfr_set_f128(fr3, mpfr_get_f128(fr3, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr3));
+  mpfr_set_f128(fr3, xgetq(a3, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr3));
 #endif
 
 #if 0
-  a2 = xtanhq_u10(a0);
-  mpfr_tanh(fr2, fr0, GMP_RNDN);
+  a3 = xtanhq_u10(a0);
+  mpfr_tanh(fr3, fr0, GMP_RNDN);
 
   printf("\ntanh\n");
-  mpfr_set_f128(fr2, mpfr_get_f128(fr2, GMP_RNDN), GMP_RNDN);
-  printf("corr : %s\n", sprintfr(fr2));
-  mpfr_set_f128(fr2, xgetq(a2, lane), GMP_RNDN);
-  printf("test : %s\n", sprintfr(fr2));
+  mpfr_set_f128(fr3, mpfr_get_f128(fr3, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr3));
+  mpfr_set_f128(fr3, xgetq(a3, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr3));
 #endif
 
 #if 0
-  a2 = xatan2q_u10(a0, a1);
-  mpfr_atan2(fr2, fr0, fr1, GMP_RNDN);
+  a3 = xatan2q_u10(a0, a1);
+  mpfr_atan2(fr3, fr0, fr1, GMP_RNDN);
 
   printf("\natan2\n");
-  mpfr_set_f128(fr2, mpfr_get_f128(fr2, GMP_RNDN), GMP_RNDN);
-  printf("corr : %s\n", sprintfr(fr2));
-  mpfr_set_f128(fr2, xgetq(a2, lane), GMP_RNDN);
-  printf("test : %s\n", sprintfr(fr2));
+  mpfr_set_f128(fr3, mpfr_get_f128(fr3, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr3));
+  mpfr_set_f128(fr3, xgetq(a3, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr3));
 #endif
 
 #if 0
-  a2 = xpowq_u10(a0, a1);
-  mpfr_pow(fr2, fr0, fr1, GMP_RNDN);
+  a3 = xpowq_u10(a0, a1);
+  mpfr_pow(fr3, fr0, fr1, GMP_RNDN);
 
   printf("\npow\n");
-  mpfr_set_f128(fr2, mpfr_get_f128(fr2, GMP_RNDN), GMP_RNDN);
-  printf("corr : %s\n", sprintfr(fr2));
-  mpfr_set_f128(fr2, xgetq(a2, lane), GMP_RNDN);
-  printf("test : %s\n", sprintfr(fr2));
+  mpfr_set_f128(fr3, mpfr_get_f128(fr3, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr3));
+  mpfr_set_f128(fr3, xgetq(a3, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr3));
 #endif
 
 #if 0
-  a2 = xtruncq(a0);
-  mpfr_trunc(fr2, fr0);
+  a3 = xtruncq(a0);
+  mpfr_trunc(fr3, fr0);
 
   printf("\ntrunc\n");
-  mpfr_set_f128(fr2, mpfr_get_f128(fr2, GMP_RNDN), GMP_RNDN);
-  printf("corr : %s\n", sprintfr(fr2));
-  mpfr_set_f128(fr2, xgetq(a2, lane), GMP_RNDN);
-  printf("test : %s\n", sprintfr(fr2));
+  mpfr_set_f128(fr3, mpfr_get_f128(fr3, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr3));
+  mpfr_set_f128(fr3, xgetq(a3, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr3));
 #endif
 
 #if 0
-  a2 = xfloorq(a0);
-  mpfr_floor(fr2, fr0);
+  a3 = xfloorq(a0);
+  mpfr_floor(fr3, fr0);
 
   printf("\nfloor\n");
-  mpfr_set_f128(fr2, mpfr_get_f128(fr2, GMP_RNDN), GMP_RNDN);
-  printf("corr : %s\n", sprintfr(fr2));
-  mpfr_set_f128(fr2, xgetq(a2, lane), GMP_RNDN);
-  printf("test : %s\n", sprintfr(fr2));
+  mpfr_set_f128(fr3, mpfr_get_f128(fr3, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr3));
+  mpfr_set_f128(fr3, xgetq(a3, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr3));
 #endif
 
 #if 0
-  a2 = xceilq(a0);
-  mpfr_ceil(fr2, fr0);
+  a3 = xceilq(a0);
+  mpfr_ceil(fr3, fr0);
 
   printf("\nceil\n");
-  mpfr_set_f128(fr2, mpfr_get_f128(fr2, GMP_RNDN), GMP_RNDN);
-  printf("corr : %s\n", sprintfr(fr2));
-  mpfr_set_f128(fr2, xgetq(a2, lane), GMP_RNDN);
-  printf("test : %s\n", sprintfr(fr2));
+  mpfr_set_f128(fr3, mpfr_get_f128(fr3, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr3));
+  mpfr_set_f128(fr3, xgetq(a3, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr3));
 #endif
 
 #if 0
-  a2 = xfmodq(a0, a1);
-  mpfr_fmod(fr2, fr0, fr1, GMP_RNDN);
+  a3 = xfmodq(a0, a1);
+  mpfr_fmod(fr3, fr0, fr1, GMP_RNDN);
 
   printf("\nfmod\n");
-  mpfr_set_f128(fr2, mpfr_get_f128(fr2, GMP_RNDN), GMP_RNDN);
-  printf("corr : %s\n", sprintfr(fr2));
-  mpfr_set_f128(fr2, xgetq(a2, lane), GMP_RNDN);
-  printf("test : %s\n", sprintfr(fr2));
+  mpfr_set_f128(fr3, mpfr_get_f128(fr3, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr3));
+  mpfr_set_f128(fr3, xgetq(a3, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr3));
 #endif
 
 #if 0
-  a2 = xremainderq(a0, a1);
-  mpfr_remainder(fr2, fr0, fr1, GMP_RNDN);
+  a3 = xremainderq(a0, a1);
+  mpfr_remainder(fr3, fr0, fr1, GMP_RNDN);
 
   printf("\nremainder\n");
-  mpfr_set_f128(fr2, mpfr_get_f128(fr2, GMP_RNDN), GMP_RNDN);
-  printf("corr : %s\n", sprintfr(fr2));
-  mpfr_set_f128(fr2, xgetq(a2, lane), GMP_RNDN);
-  printf("test : %s\n", sprintfr(fr2));
+  mpfr_set_f128(fr3, mpfr_get_f128(fr3, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr3));
+  mpfr_set_f128(fr3, xgetq(a3, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr3));
+#endif
+
+#if 0
+  a3 = xcbrtq_u10(a0);
+  mpfr_cbrt(fr3, fr0, GMP_RNDN);
+
+  printf("\ncbrt\n");
+  mpfr_set_f128(fr3, mpfr_get_f128(fr3, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr3));
+  mpfr_set_f128(fr3, xgetq(a3, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr3));
 #endif
 
 #if 1
-  a2 = xcbrtq_u10(a0);
-  mpfr_cbrt(fr2, fr0, GMP_RNDN);
+  a3 = xfmaq_u05(a0, a1, a2);
+  mpfr_fma(fr3, fr0, fr1, fr2, GMP_RNDN);
 
-  printf("\ncbrt\n");
-  mpfr_set_f128(fr2, mpfr_get_f128(fr2, GMP_RNDN), GMP_RNDN);
-  printf("corr : %s\n", sprintfr(fr2));
-  mpfr_set_f128(fr2, xgetq(a2, lane), GMP_RNDN);
-  printf("test : %s\n", sprintfr(fr2));
+  printf("\nfma\n");
+  mpfr_set_f128(fr3, mpfr_get_f128(fr3, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr3));
+  mpfr_set_f128(fr3, xgetq(a3, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr3));
+#endif
+
+#if 0
+  a3 = xhypotq_u05(a0, a1);
+  mpfr_hypot(fr3, fr0, fr1, GMP_RNDN);
+
+  printf("\nhypot\n");
+  mpfr_set_f128(fr3, mpfr_get_f128(fr3, GMP_RNDN), GMP_RNDN);
+  printf("corr : %s\n", sprintfr(fr3));
+  mpfr_set_f128(fr3, xgetq(a3, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr3));
+#endif
+
+#if 0
+  vint vi = xilogbq(a0);
+
+  printf("\nilogb\n");
+  printf("corr : %d\n", ilogb((double)q0));
+  printf("test : %d\n", vi);
+#endif
+
+#if 0
+  a3 = xldexpq(a0, vcast_vi_i(atoi(argv[2])));
+
+  printf("\nldexp\n");
+  printf("corr : %.20g\n", ldexp((double)q0, atoi(argv[2])));
+  mpfr_set_f128(fr3, xgetq(a3, lane), GMP_RNDN);
+  printf("test : %s\n", sprintfr(fr3));
 #endif
 }
 #endif

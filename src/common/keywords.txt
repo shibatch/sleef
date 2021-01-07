@@ -675,3 +675,7 @@ fmod_tdx_tdx_tdx
 remainder_tdx_tdx_tdx
 cbrt_tdx_tdx
 frexp_tdx_tdx_pvi
+fma_tdx_tdx_tdx_tdx
+hypot_tdx_tdx_tdx
+ilogb_vi_tdx
+ldexp_tdx_tdx_vi
