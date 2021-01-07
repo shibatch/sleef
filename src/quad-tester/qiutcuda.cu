@@ -1,4 +1,4 @@
-//   Copyright Naoki Shibata and contributors 2010 - 2020.
+//   Copyright Naoki Shibata and contributors 2010 - 2021.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -97,9 +97,12 @@ __global__ void xfminq(Sleef_quadx1 *r, Sleef_quadx1 *a0, Sleef_quadx1 *a1) { *r
 __global__ void xfdimq_u05(Sleef_quadx1 *r, Sleef_quadx1 *a0, Sleef_quadx1 *a1) { *r = Sleef_fdimq1_u05cuda(*a0, *a1); }
 __global__ void xfmodq(Sleef_quadx1 *r, Sleef_quadx1 *a0, Sleef_quadx1 *a1) { *r = Sleef_fmodq1_cuda(*a0, *a1); }
 __global__ void xremainderq(Sleef_quadx1 *r, Sleef_quadx1 *a0, Sleef_quadx1 *a1) { *r = Sleef_remainderq1_cuda(*a0, *a1); }
-
 __global__ void xfrexpq(Sleef_quadx1 *r, Sleef_quadx1 *a0, int *i0) { *r = Sleef_frexpq1_cuda(*a0, i0); }
 __global__ void xmodfq(Sleef_quadx1 *r, Sleef_quadx1 *a0, Sleef_quadx1 *a1) { *r = Sleef_modfq1_cuda(*a0, a1); }
+__global__ void xfmaq_u05(Sleef_quadx1 *r, Sleef_quadx1 *a0, Sleef_quadx1 *a1, Sleef_quadx1 *a2) { *r = Sleef_fmaq1_cuda(*a0, *a1, *a2); }
+__global__ void xhypotq_u05(Sleef_quadx1 *r, Sleef_quadx1 *a0, Sleef_quadx1 *a1) { *r = Sleef_hypotq1_cuda(*a0, *a1); }
+__global__ void xilogbq(int *r, Sleef_quadx1 *a0) { *r = Sleef_ilogbq1_cuda(*a0); }
+__global__ void xldexpq(Sleef_quadx1 *r, Sleef_quadx1 *a0, int *i0) { *r = Sleef_ldexpq1_cuda(*a0, *i0); }
 
 __global__ void xtruncq(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_truncq1_cuda(*a0); }
 __global__ void xfloorq(Sleef_quadx1 *r, Sleef_quadx1 *a0) { *r = Sleef_floorq1_cuda(*a0); }

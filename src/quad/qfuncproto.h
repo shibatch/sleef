@@ -1,4 +1,4 @@
-//   Copyright Naoki Shibata and contributors 2010 - 2020.
+//   Copyright Naoki Shibata and contributors 2010 - 2021.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -119,13 +119,12 @@ funcSpec funcList[] = {
   { "fdim", 5, 2, 1, 0 },
   { "fmod", -1, 0, 1, 0 },
   { "remainder", -1, 0, 1, 0 },
-
   { "frexp", -1, 0, 22, 0 },
   { "modf", -1, 0, 23, 0 },
-
-  //{ "ldexp", -1, 0, 3, 0 },
-  //{ "ilogb", -1, 0, 4, 0 },
-  //{ "fma", -1, 0, 5, 0 },
+  { "hypot", 5, 2, 1, 0 },
+  { "ldexp", -1, 0, 3, 0 },
+  { "ilogb", -1, 0, 4, 0 },
+  { "fma", 5, 2, 5, 0 },
   
   { NULL, -1, 0, 0, 0 },
 };
