@@ -99,8 +99,8 @@ __global__ void xfmodq(Sleef_quadx1 *r, Sleef_quadx1 *a0, Sleef_quadx1 *a1) { *r
 __global__ void xremainderq(Sleef_quadx1 *r, Sleef_quadx1 *a0, Sleef_quadx1 *a1) { *r = Sleef_remainderq1_cuda(*a0, *a1); }
 __global__ void xfrexpq(Sleef_quadx1 *r, Sleef_quadx1 *a0, int *i0) { *r = Sleef_frexpq1_cuda(*a0, i0); }
 __global__ void xmodfq(Sleef_quadx1 *r, Sleef_quadx1 *a0, Sleef_quadx1 *a1) { *r = Sleef_modfq1_cuda(*a0, a1); }
-__global__ void xfmaq_u05(Sleef_quadx1 *r, Sleef_quadx1 *a0, Sleef_quadx1 *a1, Sleef_quadx1 *a2) { *r = Sleef_fmaq1_cuda(*a0, *a1, *a2); }
-__global__ void xhypotq_u05(Sleef_quadx1 *r, Sleef_quadx1 *a0, Sleef_quadx1 *a1) { *r = Sleef_hypotq1_cuda(*a0, *a1); }
+__global__ void xfmaq_u05(Sleef_quadx1 *r, Sleef_quadx1 *a0, Sleef_quadx1 *a1, Sleef_quadx1 *a2) { *r = Sleef_fmaq1_u05cuda(*a0, *a1, *a2); }
+__global__ void xhypotq_u05(Sleef_quadx1 *r, Sleef_quadx1 *a0, Sleef_quadx1 *a1) { *r = Sleef_hypotq1_u05cuda(*a0, *a1); }
 __global__ void xilogbq(int *r, Sleef_quadx1 *a0) { *r = Sleef_ilogbq1_cuda(*a0); }
 __global__ void xldexpq(Sleef_quadx1 *r, Sleef_quadx1 *a0, int *i0) { *r = Sleef_ldexpq1_cuda(*a0, *i0); }
 
@@ -152,6 +152,38 @@ typedef union {
     }									\
   }
 
+#define func_q_q_q_q(funcStr, funcName) {				\
+    while (startsWith(buf, funcStr " ")) {				\
+      sentinel = 0;							\
+      cnv128 c0, c1, c2;						\
+      sscanf(buf, funcStr " %" PRIx64 ":%" PRIx64 " %" PRIx64 ":%" PRIx64 " %" PRIx64 ":%" PRIx64, \
+	     &c0.h, &c0.l, &c1.h, &c1.l, &c2.h, &c2.l);			\
+      *a0 = Sleef_setq1_cuda(*a0, 0, c0.q);				\
+      *a1 = Sleef_setq1_cuda(*a1, 0, c1.q);				\
+      *a2 = Sleef_setq1_cuda(*a2, 0, c2.q);				\
+      funcName<<<1, 1>>>(r, a0, a1, a2);				\
+      cudaDeviceSynchronize();						\
+      c0.q = Sleef_getq1_cuda(*r, 0);					\
+      printf("%" PRIx64 ":%" PRIx64 "\n", c0.h, c0.l);			\
+      fflush(stdout);							\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
+    }									\
+  }
+
+#define func_i_q(funcStr, funcName) {					\
+    while (startsWith(buf, funcStr " ")) {				\
+      sentinel = 0;							\
+      cnv128 c0;							\
+      sscanf(buf, funcStr " %" PRIx64 ":%" PRIx64, &c0.h, &c0.l); \
+      *a0 = Sleef_setq1_cuda(*a0, 0, c0.q);				\
+      funcName<<<1, 1>>>(i0, a0);					\
+      cudaDeviceSynchronize();						\
+      printf("%d\n", *i0);						\
+      fflush(stdout);							\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
+    }									\
+  }
+
 #define func_i_q_q(funcStr, funcName) {					\
     while (startsWith(buf, funcStr " ")) {				\
       sentinel = 0;							\
@@ -162,6 +194,23 @@ typedef union {
       funcName<<<1, 1>>>(i0, a0, a1);					\
       cudaDeviceSynchronize();						\
       printf("%d\n", *i0);						\
+      fflush(stdout);							\
+      if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
+    }									\
+  }
+
+#define func_q_q_i(funcStr, funcName) {					\
+    while (startsWith(buf, funcStr " ")) {				\
+      sentinel = 0;							\
+      cnv128 c0;							\
+      int k;								\
+      sscanf(buf, funcStr " %" PRIx64 ":%" PRIx64 " %d", &c0.h, &c0.l, &k); \
+      *a0 = Sleef_setq1_cuda(*a0, 0, c0.q);				\
+      *i0 = k;								\
+      funcName<<<1, 1>>>(r, a0, i0);					\
+      cudaDeviceSynchronize();						\
+      c0.q = Sleef_getq1_cuda(*r, 0);					\
+      printf("%" PRIx64 ":%" PRIx64 "\n", c0.h, c0.l);			\
       fflush(stdout);							\
       if (fgets(buf, BUFSIZE-1, stdin) == NULL) break;			\
     }									\
@@ -304,7 +353,7 @@ int main(int argc, char **argv) {
 
   cudaSetDeviceFlags(cudaDeviceScheduleSpin);
 
-  Sleef_quadx1 *r, *a0, *a1;
+  Sleef_quadx1 *r, *a0, *a1, *a2;
   double *d0;
   int *i0;
   int64_t *i64;
@@ -312,6 +361,7 @@ int main(int argc, char **argv) {
   cudaMallocManaged(&r ,  1*sizeof(Sleef_quadx1));
   cudaMallocManaged(&a0,  1*sizeof(Sleef_quadx1));
   cudaMallocManaged(&a1,  1*sizeof(Sleef_quadx1));
+  cudaMallocManaged(&a2,  1*sizeof(Sleef_quadx1));
   cudaMallocManaged(&d0,  1*sizeof(double));
   cudaMallocManaged(&i0,  1*sizeof(int));
   cudaMallocManaged(&i64, 1*sizeof(int64_t));
@@ -366,6 +416,10 @@ int main(int argc, char **argv) {
     func_q_q_q("remainderq", xremainderq);
     func_q_q_pi("frexpq", xfrexpq);
     func_q_q_pq("modfq", xmodfq);
+    func_i_q("ilogbq", xilogbq);
+    func_q_q_i("ldexpq", xldexpq);
+    func_q_q_q_q("fmaq_u05", xfmaq_u05);
+    func_q_q_q("hypotq_u05", xhypotq_u05);
 
     func_q_q("truncq", xtruncq);
     func_q_q("floorq", xfloorq);
