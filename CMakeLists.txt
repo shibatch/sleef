@@ -22,6 +22,8 @@ option(ENABLE_ALTDIV  "Enable alternative division method (aarch64 only)" OFF)
 option(ENABLE_ALTSQRT "Enable alternative sqrt method (aarch64 only)" OFF)
 
 option(DISABLE_FFTW "Disable testing the DFT library with FFTW" OFF)
+option(DISABLE_MPFR "Disable testing with the MPFR library" OFF)
+option(DISABLE_SSL "Disable testing with the SSL library" OFF)
 
 option(ENABLE_CUDA "Enable CUDA" OFF)
 

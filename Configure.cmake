@@ -67,6 +67,14 @@ if (NOT (RUNNING_ON_APPVEYOR AND SLEEF_CLANG_ON_WINDOWS))
   endif()
 endif(NOT (RUNNING_ON_APPVEYOR AND SLEEF_CLANG_ON_WINDOWS))
 
+if (DISABLE_MPFR)
+  set(LIB_MPFR "")
+endif
+
+if (DISABLE_SSL)
+  set(SLEEF_OPENSSL_FOUND FALSE)
+endif
+
 # Force set default build type if none was specified
 # Note: some sleef code requires the optimisation flags turned on
 if(NOT CMAKE_BUILD_TYPE)
