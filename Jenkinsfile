@@ -12,12 +12,12 @@ pipeline {
 			 rm -rf build-native
 			 mkdir build-native
 			 cd build-native
-			 cmake -GNinja -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE ..
+			 /usr/bin/cmake -GNinja -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE ..
 			 cd ..
 			 rm -rf build-cross
  			 mkdir build-cross
 			 cd build-cross
-			 cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=/opt/android-ndk-r21d/build/cmake/android.toolchain.cmake -DNATIVE_BUILD_DIR=`pwd`/../build-native -DANDROID_ABI=arm64-v8a -DBUILD_INLINE_HEADERS=TRUE -DBUILD_QUAD=TRUE ..
+			 /usr/bin/cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=/opt/android-ndk-r21d/build/cmake/android.toolchain.cmake -DNATIVE_BUILD_DIR=`pwd`/../build-native -DANDROID_ABI=arm64-v8a -DBUILD_INLINE_HEADERS=TRUE -DBUILD_QUAD=TRUE ..
 			 ninja
 			 '''
             	     }

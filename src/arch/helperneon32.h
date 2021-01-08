@@ -3,7 +3,7 @@
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef __ARM_NEON
+#if !defined(__ARM_NEON) && !defined(SLEEF_GENHEADER)
 #error Please specify -mfpu=neon.
 #endif
 
