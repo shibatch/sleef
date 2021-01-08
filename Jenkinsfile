@@ -13,6 +13,7 @@ pipeline {
 			 mkdir build-native
 			 cd build-native
 			 /usr/bin/cmake -GNinja -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE ..
+			 ninja
 			 cd ..
 			 rm -rf build-cross
  			 mkdir build-cross
