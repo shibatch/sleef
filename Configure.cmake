@@ -69,11 +69,11 @@ endif(NOT (RUNNING_ON_APPVEYOR AND SLEEF_CLANG_ON_WINDOWS))
 
 if (DISABLE_MPFR)
   set(LIB_MPFR "")
-endif
+endif()
 
 if (DISABLE_SSL)
   set(SLEEF_OPENSSL_FOUND FALSE)
-endif
+endif()
 
 # Force set default build type if none was specified
 # Note: some sleef code requires the optimisation flags turned on
