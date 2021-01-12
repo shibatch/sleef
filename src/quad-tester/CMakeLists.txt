@@ -71,7 +71,7 @@ function(add_test_iut IUT C)
       set_tests_properties(${IUT} PROPERTIES COST ${C})
     else()
       add_test(NAME ${IUT}
-	COMMAND ${QTESTER} ${EMULATOR} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${IUT}
+	COMMAND ${QTESTER} "--qemu" ${EMULATOR} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${IUT}
 	WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
       set_tests_properties(${IUT} PROPERTIES COST ${C})
     endif()

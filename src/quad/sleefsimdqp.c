@@ -261,7 +261,7 @@ static INLINE CONST VECTOR_CC vdouble2 twoprod_vd2_vd_vd(vdouble x, vdouble y) {
 }
 
 static INLINE CONST VECTOR_CC vdouble3 scale_vd3_vd3_vd(vdouble3 d, vdouble s) {
-  return (vdouble3) { vmul_vd_vd_vd(vd3getx_vd_vd3(d), s), vmul_vd_vd_vd(vd3gety_vd_vd3(d), s), vmul_vd_vd_vd(vd3getz_vd_vd3(d), s) };
+  return cast_vd3_vd_vd_vd(vmul_vd_vd_vd(vd3getx_vd_vd3(d), s), vmul_vd_vd_vd(vd3gety_vd_vd3(d), s), vmul_vd_vd_vd(vd3getz_vd_vd3(d), s));
 }
 
 static INLINE CONST VECTOR_CC vdouble3 scale_vd3_vd3_d(vdouble3 d, double s) { return scale_vd3_vd3_vd(d, vcast_vd_d(s)); }
@@ -269,7 +269,7 @@ static INLINE CONST VECTOR_CC vdouble3 scale_vd3_vd3_d(vdouble3 d, double s) { r
 static INLINE CONST VECTOR_CC vdouble3 quickrenormalize_vd3_vd3(vdouble3 td) {
   vdouble2 u = quicktwosum_vd2_vd_vd(vd3getx_vd_vd3(td), vd3gety_vd_vd3(td));
   vdouble2 v = quicktwosum_vd2_vd_vd(vd2gety_vd_vd2(u), vd3getz_vd_vd3(td));
-  return (vdouble3) { vd2getx_vd_vd2(u), vd2getx_vd_vd2(v), vd2gety_vd_vd2(v) };
+  return cast_vd3_vd_vd_vd(vd2getx_vd_vd2(u), vd2getx_vd_vd2(v), vd2gety_vd_vd2(v));
 }
 
 static INLINE CONST VECTOR_CC vdouble3 normalize_vd3_vd3(vdouble3 td) {
@@ -405,31 +405,31 @@ static INLINE CONST VECTOR_CC vdouble3 mul_vd3_vd2_vd2(vdouble2 x, vdouble2 y) {
 }
 
 static INLINE CONST VECTOR_CC vdouble3 div2_vd3_vd3_vd3(vdouble3 n, vdouble3 q) {
-  vdouble2 d = ddrec_vd2_vd2((vdouble2) {vd3getx_vd_vd3(q), vd3gety_vd_vd3(q)});
+  vdouble2 d = ddrec_vd2_vd2(vcast_vd2_vd_vd(vd3getx_vd_vd3(q), vd3gety_vd_vd3(q)));
   return mul2_vd3_vd3_vd3(n, add_vd3_vd2_vd3(d, mul_vd3_vd2_vd3(ddscale_vd2_vd2_d(d, -1),
 								add_vd3_vd_vd3(vcast_vd_d(-1), mul_vd3_vd2_vd3(d, q)))));
 }
 
 static INLINE CONST VECTOR_CC vdouble3 div_vd3_vd3_vd3(vdouble3 n, vdouble3 q) {
-  vdouble2 d = ddrec_vd2_vd2((vdouble2) {vd3getx_vd_vd3(q), vd3gety_vd_vd3(q)});
+  vdouble2 d = ddrec_vd2_vd2(vcast_vd2_vd_vd(vd3getx_vd_vd3(q), vd3gety_vd_vd3(q)));
   return mul_vd3_vd3_vd3(n, add_vd3_vd2_vd3(d, mul_vd3_vd2_vd3(ddscale_vd2_vd2_d(d, -1),
 							       add_vd3_vd_vd3(vcast_vd_d(-1), mul_vd3_vd2_vd3(d, q)))));
 }
 
 static INLINE CONST VECTOR_CC vdouble3 rec_vd3_vd3(vdouble3 q) {
-  vdouble2 d = ddrec_vd2_vd2((vdouble2) {vd3getx_vd_vd3(q), vd3gety_vd_vd3(q)});
+  vdouble2 d = ddrec_vd2_vd2(vcast_vd2_vd_vd(vd3getx_vd_vd3(q), vd3gety_vd_vd3(q)));
   return add2_vd3_vd2_vd3(d, mul_vd3_vd2_vd3(ddscale_vd2_vd2_d(d, -1),
 					     add_vd3_vd_vd3(vcast_vd_d(-1), mul_vd3_vd2_vd3(d, q))));
 }
 
 static INLINE CONST VECTOR_CC vdouble3 rec_vd3_vd2(vdouble2 q) {
-  vdouble2 d = ddrec_vd2_vd2((vdouble2) {vd2getx_vd_vd2(q), vd2gety_vd_vd2(q)});
+  vdouble2 d = ddrec_vd2_vd2(vcast_vd2_vd_vd(vd2getx_vd_vd2(q), vd2gety_vd_vd2(q)));
   return add2_vd3_vd2_vd3(d, mul_vd3_vd2_vd3(ddscale_vd2_vd2_d(d, -1),
 					     add_vd3_vd_vd3(vcast_vd_d(-1), mul_vd3_vd2_vd2(d, q))));
 }
 
 static INLINE CONST VECTOR_CC vdouble3 sqrt_vd3_vd3(vdouble3 d) {
-  vdouble2 t = ddsqrt_vd2_vd2((vdouble2) {vd3getx_vd_vd3(d), vd3gety_vd_vd3(d)});
+  vdouble2 t = ddsqrt_vd2_vd2(vcast_vd2_vd_vd(vd3getx_vd_vd3(d), vd3gety_vd_vd3(d)));
   vdouble3 r = mul2_vd3_vd3_vd3(add2_vd3_vd3_vd3(d, mul_vd3_vd2_vd2(t, t)), rec_vd3_vd2(t));
   r = sel_vd3_vo_vd3_vd3(veq_vo_vd_vd(vd3getx_vd_vd3(d), vcast_vd_d(0)), cast_vd3_d_d_d(0, 0, 0), scale_vd3_vd3_d(r, 0.5));
   return r;
