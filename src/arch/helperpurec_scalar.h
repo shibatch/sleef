@@ -56,13 +56,17 @@
 
 #if defined(__AVX2__) || defined(__aarch64__) || defined(__arm__) || defined(__powerpc64__) || defined(__zarch__) || CONFIG == 3
 #ifndef FP_FAST_FMA
+//@#ifndef FP_FAST_FMA
 #define FP_FAST_FMA
 //@#define FP_FAST_FMA
 #endif
+//@#endif
 #ifndef FP_FAST_FMAF
+//@#ifndef FP_FAST_FMAF
 #define FP_FAST_FMAF
 //@#define FP_FAST_FMAF
 #endif
+//@#endif
 #endif
 
 #if (!defined(FP_FAST_FMA) || !defined(FP_FAST_FMAF)) && !defined(SLEEF_GENHEADER)
@@ -119,6 +123,8 @@ typedef struct {
 
 #if defined(ENABLEFLOAT128) && CONFIG != 3
 typedef __float128 vargquad;
+#elif defined(__SIZEOF_LONG_DOUBLE__) && defined(__aarch64__) && CONFIG != 3
+typedef long double vargquad;
 #else
 typedef vquad vargquad;
 #endif

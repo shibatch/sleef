@@ -179,6 +179,10 @@ typedef struct {
 #define Sleef_quad_DEFINED
 #if defined(ENABLEFLOAT128)
 typedef __float128 Sleef_quad;
+#define SLEEF_QUAD_C(x) (x ## Q)
+#elif defined(__SIZEOF_LONG_DOUBLE__) && defined(__aarch64__)
+typedef long double Sleef_quad;
+#define SLEEF_QUAD_C(x) (x ## L)
 #else
 typedef struct { uint64_t x, y; } Sleef_quad;
 #endif

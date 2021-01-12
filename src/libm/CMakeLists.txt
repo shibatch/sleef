@@ -549,7 +549,7 @@ if(BUILD_INLINE_HEADERS)
             > ${PROJECT_BINARY_DIR}/include/sleefinline_${SIMDLC}.h                                        # > /build/include/sleefinline_sse2.h
 
 	  MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimddp.c ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdsp.c ${HEADER_${SIMD}}
-	  DEPENDS ${HEADER_${SIMD}} addSuffix
+	  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimddp.c ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdsp.c ${HEADER_${SIMD}} addSuffix
 	  VERBATIM
 	  )
 
@@ -630,7 +630,7 @@ if(BUILD_INLINE_HEADERS)
       > ${PROJECT_BINARY_DIR}/include/sleefinline_${SIMDLC}.h                                          # > /build/include/sleefinline_cuda.h
 
       MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimddp.c ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdsp.c ${HEADER_${SIMD}}
-      DEPENDS ${HEADER_${SIMD}} addSuffix
+      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimddp.c ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdsp.c ${HEADER_${SIMD}} addSuffix
       VERBATIM
       )
 

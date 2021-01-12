@@ -283,6 +283,10 @@ else()
   set(DFT_C_FLAGS "${FLAGS_WALL} ${FLAGS_NOSTRICTALIASING} ${FLAGS_FASTMATH} ${FLAGS_OTHERS}")
 endif()
 
+if(CMAKE_C_COMPILER_ID MATCHES "GNU")
+  set(FLAGS_ENABLE_SVE "${FLAGS_ENABLE_SVE};-fno-tree-vrp")
+endif()
+
 if (CMAKE_SYSTEM_PROCESSOR MATCHES "^i.86$" AND CMAKE_C_COMPILER_ID MATCHES "GNU")
   set(SLEEF_C_FLAGS "${SLEEF_C_FLAGS} -msse2 -mfpmath=sse")
   set(DFT_C_FLAGS "${DFT_C_FLAGS} -msse2 -mfpmath=sse -m128bit-long-double")
