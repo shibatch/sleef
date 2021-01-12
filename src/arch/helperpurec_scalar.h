@@ -123,6 +123,8 @@ typedef struct {
 
 #if defined(ENABLEFLOAT128) && CONFIG != 3
 typedef __float128 vargquad;
+#elif defined(__SIZEOF_LONG_DOUBLE__) && defined(__aarch64__)
+typedef long double vargquad;
 #else
 typedef vquad vargquad;
 #endif
