@@ -35,21 +35,15 @@ extern const float Sleef_rempitabsp[];
 #include "estrin.h"
 
 static INLINE CONST int32_t floatToRawIntBits(float d) {
-  union {
-    float f;
-    int32_t i;
-  } tmp;
-  tmp.f = d;
-  return tmp.i;
+  int32_t ret;
+  memcpy(&ret, &d, sizeof(ret));
+  return ret;
 }
 
 static INLINE CONST float intBitsToFloat(int32_t i) {
-  union {
-    float f;
-    int32_t i;
-  } tmp;
-  tmp.i = i;
-  return tmp.f;
+  float ret;
+  memcpy(&ret, &i, sizeof(ret));
+  return ret;
 }
 
 static INLINE CONST float fabsfk(float x) {
@@ -1919,56 +1913,56 @@ EXPORT CONST float xldexpf(float x, int exp) {
 }
 
 EXPORT CONST float xnextafterf(float x, float y) {
-  union {
-    float f;
-    int32_t i;
-  } cx;
+  float cxf;
+  int32_t cxi;
 
-  cx.f = x == 0 ? mulsignf(0, y) : x;
-  int c = (cx.i < 0) == (y < x);
-  if (c) cx.i = -(cx.i ^ (1 << 31));
+  cxf = x == 0 ? mulsignf(0, y) : x;
+  memcpy(&cxi, &cxf, sizeof(cxi));
+  int c = (cxi < 0) == (y < x);
+  if (c) cxi = -(cxi ^ (1 << 31));
 
-  if (x != y) cx.i--;
+  if (x != y) cxi--;
 
-  if (c) cx.i = -(cx.i ^ (1 << 31));
+  if (c) cxi = -(cxi ^ (1 << 31));
 
-  if (cx.f == 0 && x != 0) cx.f = mulsignf(0, x);
-  if (x == 0 && y == 0) cx.f = y;
-  if (xisnanf(x) || xisnanf(y)) cx.f = SLEEF_NANf;
+  memcpy(&cxf, &cxi, sizeof(cxf));
+  if (cxf == 0 && x != 0) cxf = mulsignf(0, x);
+  if (x == 0 && y == 0) cxf = y;
+  if (xisnanf(x) || xisnanf(y)) cxf = SLEEF_NANf;
   
-  return cx.f;
+  return cxf;
 }
 
 EXPORT CONST float xfrfrexpf(float x) {
-  union {
-    float f;
-    int32_t u;
-  } cx;
+  float cxf;
+  int32_t cxu;
 
   if (fabsfk(x) < FLT_MIN) x *= (1 << 30);
   
-  cx.f = x;
-  cx.u &= ~0x7f800000U;
-  cx.u |=  0x3f000000U;
+  cxf = x;
+  memcpy(&cxu, &cxf, sizeof(cxu));
 
-  if (xisinff(x)) cx.f = mulsignf(SLEEF_INFINITYf, x);
-  if (x == 0) cx.f = x;
+  cxu &= ~0x7f800000U;
+  cxu |=  0x3f000000U;
+
+  memcpy(&cxf, &cxu, sizeof(cxf));
+  if (xisinff(x)) cxf = mulsignf(SLEEF_INFINITYf, x);
+  if (x == 0) cxf = x;
   
-  return cx.f;
+  return cxf;
 }
 
 EXPORT CONST int xexpfrexpf(float x) {
-  union {
-    float f;
-    uint32_t u;
-  } cx;
+  float cxf;
+  uint32_t cxu;
 
   int ret = 0;
   
   if (fabsfk(x) < FLT_MIN) { x *= (1 << 30); ret = -30; }
   
-  cx.f = x;
-  ret += (int32_t)(((cx.u >> 23) & 0xff)) - 0x7e;
+  cxf = x;
+  memcpy(&cxu, &cxf, sizeof(cxu));
+  ret += (int32_t)(((cxu >> 23) & 0xff)) - 0x7e;
 
   if (x == 0 || xisnanf(x) || xisinff(x)) ret = 0;
   

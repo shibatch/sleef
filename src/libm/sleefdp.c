@@ -35,21 +35,15 @@ extern const double Sleef_rempitabdp[];
 #include "estrin.h"
 
 static INLINE CONST int64_t doubleToRawLongBits(double d) {
-  union {
-    double f;
-    int64_t i;
-  } tmp;
-  tmp.f = d;
-  return tmp.i;
+  int64_t ret;
+  memcpy(&ret, &d, sizeof(ret));
+  return ret;
 }
 
 static INLINE CONST double longBitsToDouble(int64_t i) {
-  union {
-    double f;
-    int64_t i;
-  } tmp;
-  tmp.i = i;
-  return tmp.f;
+  double ret;
+  memcpy(&ret, &i, sizeof(ret));
+  return ret;
 }
 
 static INLINE CONST double fabsk(double x) {
@@ -2334,57 +2328,59 @@ EXPORT CONST double xhypot_u35(double x, double y) {
 }
 
 EXPORT CONST double xnextafter(double x, double y) {
-  union {
-    double f;
-    int64_t i;
-  } cx;
+  double cxf;
+  int64_t cxi;
 
   x = x == 0 ? mulsign(0, y) : x;
-  cx.f = x;
-  int c = (cx.i < 0) == (y < x);
-  if (c) cx.i = -(cx.i ^ (UINT64_C(1) << 63));
+  cxf = x;
+  memcpy(&cxi, &cxf, sizeof(cxi));
 
-  if (x != y) cx.i--;
+  int c = (cxi < 0) == (y < x);
+  if (c) cxi = -(cxi ^ (UINT64_C(1) << 63));
 
-  if (c) cx.i = -(cx.i ^ (UINT64_C(1) << 63));
+  if (x != y) cxi--;
 
-  if (cx.f == 0 && x != 0) cx.f = mulsign(0, x);
-  if (x == 0 && y == 0) cx.f = y;
-  if (xisnan(x) || xisnan(y)) cx.f = SLEEF_NAN;
+  if (c) cxi = -(cxi ^ (UINT64_C(1) << 63));
+
+  memcpy(&cxf, &cxi, sizeof(cxf));
+  if (cxf == 0 && x != 0) cxf = mulsign(0, x);
+  if (x == 0 && y == 0) cxf = y;
+  if (xisnan(x) || xisnan(y)) cxf = SLEEF_NAN;
   
-  return cx.f;
+  return cxf;
 }
 
 EXPORT CONST double xfrfrexp(double x) {
-  union {
-    double f;
-    uint64_t u;
-  } cx;
+  double cxf;
+  uint64_t cxu;
 
   if (fabsk(x) < DBL_MIN) x *= (UINT64_C(1) << 63);
   
-  cx.f = x;
-  cx.u &= ~UINT64_C(0x7ff0000000000000);
-  cx.u |=  UINT64_C(0x3fe0000000000000);
+  cxf = x;
+  memcpy(&cxu, &cxf, sizeof(cxu));
 
-  if (xisinf(x)) cx.f = mulsign(SLEEF_INFINITY, x);
-  if (x == 0) cx.f = x;
+  cxu &= ~UINT64_C(0x7ff0000000000000);
+  cxu |=  UINT64_C(0x3fe0000000000000);
+
+  memcpy(&cxf, &cxu, sizeof(cxf));
+  if (xisinf(x)) cxf = mulsign(SLEEF_INFINITY, x);
+  if (x == 0) cxf = x;
   
-  return cx.f;
+  return cxf;
 }
 
 EXPORT CONST int xexpfrexp(double x) {
-  union {
-    double f;
-    uint64_t u;
-  } cx;
+  double cxf;
+  uint64_t cxu;
 
   int ret = 0;
   
   if (fabsk(x) < DBL_MIN) { x *= (UINT64_C(1) << 63); ret = -63; }
   
-  cx.f = x;
-  ret += (int32_t)(((cx.u >> 52) & 0x7ff)) - 0x3fe;
+  cxf = x;
+  memcpy(&cxu, &cxf, sizeof(cxu));
+
+  ret += (int32_t)(((cxu >> 52) & 0x7ff)) - 0x3fe;
 
   if (x == 0 || xisnan(x) || xisinf(x)) ret = 0;
   

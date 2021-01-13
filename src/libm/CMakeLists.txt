@@ -347,11 +347,6 @@ endif()
 # Original sleef sources
 set(STANDARD_SOURCES sleefdp.c sleefsp.c rempitab.c)
 
-# Check for different precision support and add sources accordingly
-if(COMPILER_SUPPORTS_LONG_DOUBLE)
-  list(APPEND STANDARD_SOURCES sleefld.c)
-endif()
-
 add_library(${TARGET_LIBSLEEF} ${STANDARD_SOURCES})
 add_dependencies(${TARGET_LIBSLEEF} ${TARGET_HEADERS})
 set_target_properties(${TARGET_LIBSLEEF} PROPERTIES
@@ -364,13 +359,6 @@ set_target_properties(${TARGET_LIBSLEEF} PROPERTIES
 target_compile_definitions(${TARGET_LIBSLEEF}
   PRIVATE DORENAME=1 ${COMMON_TARGET_DEFINITIONS}
 )
-
-if(COMPILER_SUPPORTS_FLOAT128)
-  # TODO: Not supported for LLVM bitcode gen as it has a specific compilation flags
-  target_sources(${TARGET_LIBSLEEF} PRIVATE sleefqp.c)
-  target_compile_definitions(${TARGET_LIBSLEEF}
-    PRIVATE ENABLEFLOAT128=1 ${COMMON_TARGET_DEFINITIONS})
-endif()
 
 if(COMPILER_SUPPORTS_BUILTIN_MATH)
   target_compile_definitions(${TARGET_LIBSLEEF} PRIVATE ENABLE_BUILTIN_MATH=1)

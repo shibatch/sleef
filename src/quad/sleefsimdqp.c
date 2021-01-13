@@ -3523,10 +3523,7 @@ EXPORT vargquad Sleef_strtoq(const char *str, const char **endptr) {
 static int snprintquad(char *buf, size_t bufsize, vargquad argvalue, int typespec, int width, int precision, int flags) {
   if (width > bufsize) width = bufsize;
 
-  union {
-    vquad q;
-    struct { uint64_t l, h; };
-  } c128 = { .q = cast_vq_aq(argvalue) };
+  vquad c128 = cast_vq_aq(argvalue);
 
   char *ptr = buf;
   char prefix = 0;
@@ -3534,8 +3531,8 @@ static int snprintquad(char *buf, size_t bufsize, vargquad argvalue, int typespe
 
   assert(typespec == 'e' || typespec == 'f' || typespec == 'g');
 
-  if ((c128.h & UINT64_C(0x8000000000000000)) != 0) {
-    c128.h ^= UINT64_C(0x8000000000000000);
+  if ((c128.y & UINT64_C(0x8000000000000000)) != 0) {
+    c128.y ^= UINT64_C(0x8000000000000000);
     prefix = '-';
   } else if (flags & FLAG_SIGN) {
     prefix = '+';
@@ -3543,13 +3540,13 @@ static int snprintquad(char *buf, size_t bufsize, vargquad argvalue, int typespe
     prefix = ' ';
   }
 
-  tdx value = cast_tdx_vq(c128.q);
+  tdx value = cast_tdx_vq(c128);
 
-  if (isnan_vo_vq(c128.q)) {
+  if (isnan_vo_vq(c128)) {
     if (prefix) *ptr++ = prefix;
     ptr += snprintf(ptr, buf + bufsize - ptr, (flags & FLAG_UPPER) ? "NAN" : "nan");
     flags &= ~FLAG_ZERO;
-  } else if (isinf_vo_vq(c128.q)) {
+  } else if (isinf_vo_vq(c128)) {
     if (prefix) *ptr++ = prefix;
     ptr += snprintf(ptr, buf + bufsize - ptr, (flags & FLAG_UPPER) ? "INF" : "inf");
     flags &= ~FLAG_ZERO;
@@ -3563,7 +3560,7 @@ static int snprintquad(char *buf, size_t bufsize, vargquad argvalue, int typespe
     if (typespec == 'f') value = add_tdx_tdx_tdx(value, rounder);
 
     int exp = 0, e2 = 0;
-    if (!iszero_vo_vq(c128.q)) {
+    if (!iszero_vo_vq(c128)) {
       exp = ilog10(value);
       value = mul_tdx_tdx_tdx(value, exp10i(-exp));
     }
@@ -3685,14 +3682,11 @@ static int snprintquadhex(char *buf, size_t bufsize, vargquad argvalue, int widt
   if (width > bufsize) width = bufsize;
   char *bufend = buf + bufsize, *ptr = buf;
 
-  union {
-    vquad q;
-    struct { uint64_t l, h; };
-  } c128 = { .q = cast_vq_aq(argvalue) };
+  vquad c128 = cast_vq_aq(argvalue);
 
   int mainpos = 0;
 
-  if (c128.h >> 63) {
+  if (c128.y >> 63) {
     ptr += snprintf(ptr, bufend - ptr, "-");
   } else if (flags & FLAG_SIGN) {
     ptr += snprintf(ptr, bufend - ptr, "+");
@@ -3700,27 +3694,27 @@ static int snprintquadhex(char *buf, size_t bufsize, vargquad argvalue, int widt
     ptr += snprintf(ptr, bufend - ptr, " ");
   }
 
-  if (isnan_vo_vq(c128.q)) {
+  if (isnan_vo_vq(c128)) {
     ptr += snprintf(ptr, bufend - ptr, (flags & FLAG_UPPER) ? "NAN" : "nan");
     flags &= ~FLAG_ZERO;
-  } else if (isinf_vo_vq(c128.q)) {
+  } else if (isinf_vo_vq(c128)) {
     ptr += snprintf(ptr, bufend - ptr, (flags & FLAG_UPPER) ? "INF" : "inf");
     flags &= ~FLAG_ZERO;
   } else {
-    int iszero = iszero_vo_vq(c128.q);
+    int iszero = iszero_vo_vq(c128);
     if (precision >= 0 && precision < 28) {
       int s = (28 - precision) * 4 - 1;
       if (s < 64) {
-	uint64_t u = c128.l + (((uint64_t)1) << s);
-	if (u < c128.l) c128.h++;
-	c128.l = u;
+	uint64_t u = c128.x + (((uint64_t)1) << s);
+	if (u < c128.x) c128.y++;
+	c128.x = u;
       } else {
-	c128.h += ((uint64_t)1) << (s - 64);
+	c128.y += ((uint64_t)1) << (s - 64);
       }
     }
 
-    int exp = (c128.h >> 48) & 0x7fff;
-    uint64_t h = c128.h << 16, l = c128.l;
+    int exp = (c128.y >> 48) & 0x7fff;
+    uint64_t h = c128.y << 16, l = c128.x;
 
     ptr += snprintf(ptr, bufend - ptr, (flags & FLAG_UPPER) ? "0X" :"0x");
     mainpos = ptr - buf;

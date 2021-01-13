@@ -20,6 +20,14 @@
 #pragma fp_contract (off)
 #endif
 
+#ifndef SLEEF_FP_ILOGB0
+#define SLEEF_FP_ILOGB0 ((int)-2147483648)
+#endif
+
+#ifndef SLEEF_FP_ILOGBNAN
+#define SLEEF_FP_ILOGBNAN ((int)2147483647)
+#endif
+
 #ifndef __SLEEF_REMPITAB__
 #define __SLEEF_REMPITAB__
 const double Sleef_rempitabdp[] = {

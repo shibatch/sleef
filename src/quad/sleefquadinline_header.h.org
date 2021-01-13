@@ -61,6 +61,14 @@ typedef struct { uint64_t x, y; } Sleef_quad;
 #endif
 #endif
 
+#ifndef SLEEF_FP_ILOGB0
+#define SLEEF_FP_ILOGB0 ((int)-2147483648)
+#endif
+
+#ifndef SLEEF_FP_ILOGBNAN
+#define SLEEF_FP_ILOGBNAN ((int)2147483647)
+#endif
+
 #ifndef __SLEEF_QREMPITAB__
 #define __SLEEF_QREMPITAB__
 const double Sleef_rempitabqp[] = {

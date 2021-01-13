@@ -29,13 +29,9 @@
 
 #define MAGIC_FLOAT 0x31415926
 #define MAGIC_DOUBLE 0x27182818
-#define MAGIC_LONGDOUBLE 0x14142135
-#define MAGIC_QUAD 0x33166247
 
 #define MAGIC2D_FLOAT 0x22360679
 #define MAGIC2D_DOUBLE 0x17320508
-#define MAGIC2D_LONGDOUBLE 0x26457513
-#define MAGIC2D_QUAD 0x36055512
 
 const char *configStr[] = { "ST", "ST stream", "MT", "MT stream" };
 
@@ -76,7 +72,7 @@ static int parsePathStr(char *p, int *path, int *config, int pathLenMax, int log
 }
 
 EXPORT void SleefDFT_setPath(SleefDFT *p, char *pathStr) {
-  assert(p != NULL && (p->magic == MAGIC_FLOAT || p->magic == MAGIC_DOUBLE || p->magic == MAGIC_LONGDOUBLE || p->magic == MAGIC_QUAD));
+  assert(p != NULL && (p->magic == MAGIC_FLOAT || p->magic == MAGIC_DOUBLE));
 
   int path[32], config[32];
   int pathLen = parsePathStr(pathStr, path, config, 31, p->log2len);
@@ -116,7 +112,7 @@ void freeTables(SleefDFT *p) {
 }
 
 EXPORT void SleefDFT_dispose(SleefDFT *p) {
-  if (p != NULL && (p->magic == MAGIC2D_FLOAT || p->magic == MAGIC2D_DOUBLE || p->magic == MAGIC2D_LONGDOUBLE || p->magic == MAGIC2D_QUAD)) {
+  if (p != NULL && (p->magic == MAGIC2D_FLOAT || p->magic == MAGIC2D_DOUBLE)) {
     Sleef_free(p->tBuf);
     SleefDFT_dispose(p->instH);
     if (p->hlen != p->vlen) SleefDFT_dispose(p->instV);
@@ -126,7 +122,7 @@ EXPORT void SleefDFT_dispose(SleefDFT *p) {
     return;
   }
 
-  assert(p != NULL && (p->magic == MAGIC_FLOAT || p->magic == MAGIC_DOUBLE || p->magic == MAGIC_LONGDOUBLE || p->magic == MAGIC_QUAD));
+  assert(p != NULL && (p->magic == MAGIC_FLOAT || p->magic == MAGIC_DOUBLE));
 
   if (p->log2len <= 1) {
     p->magic = 0;
@@ -322,7 +318,7 @@ static void planMap_putU64(uint64_t key, uint64_t value) {
 }
 
 int PlanManager_loadMeasurementResultsP(SleefDFT *p, int pathCat) {
-  assert(p != NULL && (p->magic == MAGIC_FLOAT || p->magic == MAGIC_DOUBLE || p->magic == MAGIC_LONGDOUBLE || p->magic == MAGIC_QUAD));
+  assert(p != NULL && (p->magic == MAGIC_FLOAT || p->magic == MAGIC_DOUBLE));
 
   initPlanMapLock();
 
@@ -357,7 +353,7 @@ int PlanManager_loadMeasurementResultsP(SleefDFT *p, int pathCat) {
 }
 
 void PlanManager_saveMeasurementResultsP(SleefDFT *p, int pathCat) {
-  assert(p != NULL && (p->magic == MAGIC_FLOAT || p->magic == MAGIC_DOUBLE || p->magic == MAGIC_LONGDOUBLE || p->magic == MAGIC_QUAD));
+  assert(p != NULL && (p->magic == MAGIC_FLOAT || p->magic == MAGIC_DOUBLE));
 
   initPlanMapLock();
 
@@ -388,7 +384,7 @@ void PlanManager_saveMeasurementResultsP(SleefDFT *p, int pathCat) {
 }
 
 int PlanManager_loadMeasurementResultsT(SleefDFT *p) {
-  assert(p != NULL && (p->magic == MAGIC2D_FLOAT || p->magic == MAGIC2D_DOUBLE || p->magic == MAGIC2D_LONGDOUBLE || p->magic == MAGIC2D_QUAD));
+  assert(p != NULL && (p->magic == MAGIC2D_FLOAT || p->magic == MAGIC2D_DOUBLE));
 
   initPlanMapLock();
 
@@ -409,7 +405,7 @@ int PlanManager_loadMeasurementResultsT(SleefDFT *p) {
 }
 
 void PlanManager_saveMeasurementResultsT(SleefDFT *p) {
-  assert(p != NULL && (p->magic == MAGIC2D_FLOAT || p->magic == MAGIC2D_DOUBLE || p->magic == MAGIC2D_LONGDOUBLE || p->magic == MAGIC2D_QUAD));
+  assert(p != NULL && (p->magic == MAGIC2D_FLOAT || p->magic == MAGIC2D_DOUBLE));
 
   initPlanMapLock();
 
