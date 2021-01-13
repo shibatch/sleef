@@ -619,6 +619,25 @@ int do_test(int argc, char **argv) {
   }
 #endif
 
+#if defined(ENABLE_PUREC_SCALAR)
+#if defined(SLEEF_QUAD_C)
+  {
+    VARGQUAD v0 = xsplatq(SLEEF_QUAD_C(3.141592653589793238462643383279502884));
+    VARGQUAD v1 = xsplatq(SLEEF_Q(+0x1921fb54442d1LL, 0x8469898cc51701b8ULL, 1));
+    if (xicmpneq(v0, v1)) {
+      fprintf(stderr, "Testing on SLEEF_QUAD_C failed\n");
+      exit(-1);
+    }
+  }
+#else
+#ifndef _MSC_VER
+#warning SLEEF_QUAD_C not defined
+#else
+#pragma message ("SLEEF_QUAD_C not defined")
+#endif
+#endif
+#endif
+
   char buf[BUFSIZE];
   fgets(buf, BUFSIZE-1, stdin);
   int sentinel = 0;

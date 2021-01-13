@@ -299,7 +299,7 @@ Sleef_quad mpfr_get_f128(mpfr_t m, mpfr_rnd_t rnd) {
   c.f = mpfr_get_float128(m, rnd);
   return c.q;
 }
-#elif defined(__SIZEOF_LONG_DOUBLE__) && defined(__aarch64__)
+#elif defined(__SIZEOF_LONG_DOUBLE__) && __SIZEOF_LONG_DOUBLE__ == 16 && defined(__aarch64__)
 void mpfr_set_f128(mpfr_t frx, Sleef_quad q, mpfr_rnd_t rnd) {
   union {
     Sleef_quad q;

@@ -9,19 +9,27 @@
 #include <signal.h>
 #include <setjmp.h>
 
+#if defined(_MSC_VER) || defined(__MINGW32__) || defined(__MINGW64__)
 static jmp_buf sigjmp;
+#define SETJMP(x) setjmp(x)
+#define LONGJMP longjmp
+#else
+static sigjmp_buf sigjmp;
+#define SETJMP(x) sigsetjmp(x, 1)
+#define LONGJMP siglongjmp
+#endif
 
 int do_test(int argc, char **argv);
 int check_featureQP();
 
 static void sighandler(int signum) {
-  longjmp(sigjmp, 1);
+  LONGJMP(sigjmp, 1);
 }
 
 int detectFeatureQP() {
   signal(SIGILL, sighandler);
 
-  if (setjmp(sigjmp) == 0) {
+  if (SETJMP(sigjmp) == 0) {
     int r = check_featureQP();
     signal(SIGILL, SIG_DFL);
     return r;

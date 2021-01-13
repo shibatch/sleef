@@ -123,7 +123,7 @@ typedef struct {
 
 #if defined(ENABLEFLOAT128) && CONFIG != 3
 typedef __float128 vargquad;
-#elif defined(__SIZEOF_LONG_DOUBLE__) && defined(__aarch64__) && CONFIG != 3
+#elif defined(__SIZEOF_LONG_DOUBLE__) && __SIZEOF_LONG_DOUBLE__ == 16 && defined(__aarch64__) && CONFIG != 3
 typedef long double vargquad;
 #else
 typedef vquad vargquad;
@@ -444,19 +444,19 @@ static INLINE vargquad cast_aq_vq(vquad vq) {
 #else
 static vquad loadu_vq_p(void *p) {
   vquad vq;
-  memcpy(&vq, p, 16);
+  memcpy(&vq, p, sizeof(vq));
   return vq;
 }
 
 static INLINE vquad cast_vq_aq(vargquad aq) {
   vquad vq;
-  memcpy(&vq, &aq, 16);
+  memcpy(&vq, &aq, sizeof(vq));
   return vq;
 }
 
 static INLINE vargquad cast_aq_vq(vquad vq) {
   vargquad aq;
-  memcpy(&aq, &vq, 16);
+  memcpy(&aq, &vq, sizeof(aq));
   return aq;
 }
 #endif

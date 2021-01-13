@@ -120,19 +120,12 @@ typedef struct {
 } Sleef_float2;
 #endif
 
-#ifndef Sleef_longdouble2_DEFINED
-#define Sleef_longdouble2_DEFINED
-typedef struct {
-  long double x, y;
-} Sleef_longdouble2;
-#endif
-
 #if !defined(Sleef_quad_DEFINED)
 #define Sleef_quad_DEFINED
 #if defined(__SIZEOF_FLOAT128__) || (defined(__linux__) && defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))) || (defined(__PPC64__) && defined(__GNUC__) && !defined(__clang__) && __GNUC__ >= 8)
 typedef __float128 Sleef_quad;
 #define SLEEF_QUAD_C(x) (x ## Q)
-#elif defined(__SIZEOF_LONG_DOUBLE__) && defined(__aarch64__)
+#elif defined(__SIZEOF_LONG_DOUBLE__) && __SIZEOF_LONG_DOUBLE__ == 16 && defined(__aarch64__)
 typedef long double Sleef_quad;
 #define SLEEF_QUAD_C(x) (x ## L)
 #else
@@ -309,11 +302,3 @@ IMPORT CONST float Sleef_lgammaf_u10(float);
 IMPORT CONST float Sleef_tgammaf_u10(float);
 IMPORT CONST float Sleef_erff_u10(float);
 IMPORT CONST float Sleef_erfcf_u15(float);
-
-IMPORT CONST Sleef_longdouble2 Sleef_sincospil_u05(long double);
-IMPORT CONST Sleef_longdouble2 Sleef_sincospil_u35(long double);
-
-#if defined(Sleef_quad2_DEFINED)
-IMPORT CONST Sleef_quad2 Sleef_sincospiq_u05(Sleef_quad);
-IMPORT CONST Sleef_quad2 Sleef_sincospiq_u35(Sleef_quad);
-#endif

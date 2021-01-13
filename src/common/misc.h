@@ -150,10 +150,6 @@
 #define stringify(s) stringify_(s)
 #define stringify_(s) #s
 
-#if !defined(SLEEF_GENHEADER)
-typedef long double longdouble;
-#endif
-
 #if !defined(Sleef_double2_DEFINED) && !defined(SLEEF_GENHEADER)
 #define Sleef_double2_DEFINED
 typedef struct {
@@ -168,68 +164,17 @@ typedef struct {
 } Sleef_float2;
 #endif
 
-#if !defined(Sleef_longdouble2_DEFINED) && !defined(SLEEF_GENHEADER)
-#define Sleef_longdouble2_DEFINED
-typedef struct {
-  long double x, y;
-} Sleef_longdouble2;
-#endif
-
 #if !defined(Sleef_quad_DEFINED) && !defined(SLEEF_GENHEADER)
 #define Sleef_quad_DEFINED
 #if defined(ENABLEFLOAT128)
 typedef __float128 Sleef_quad;
 #define SLEEF_QUAD_C(x) (x ## Q)
-#elif defined(__SIZEOF_LONG_DOUBLE__) && defined(__aarch64__)
+#elif defined(__SIZEOF_LONG_DOUBLE__) && __SIZEOF_LONG_DOUBLE__ == 16 && defined(__aarch64__)
 typedef long double Sleef_quad;
 #define SLEEF_QUAD_C(x) (x ## L)
 #else
 typedef struct { uint64_t x, y; } Sleef_quad;
 #endif
-#endif
-
-#if !defined(Sleef_quad1_DEFINED) && !defined(SLEEF_GENHEADER)
-#define Sleef_quad1_DEFINED
-typedef union {
-  struct {
-    Sleef_quad x;
-  };
-  Sleef_quad s[1];
-} Sleef_quad1;
-#endif
-
-#if !defined(Sleef_quad2_DEFINED) && !defined(SLEEF_GENHEADER)
-#define Sleef_quad2_DEFINED
-typedef union {
-  struct {
-    Sleef_quad x, y;
-  };
-  Sleef_quad s[2];
-} Sleef_quad2;
-#endif
-
-#if !defined(Sleef_quad4_DEFINED) && !defined(SLEEF_GENHEADER)
-#define Sleef_quad4_DEFINED
-typedef union {
-  struct {
-    Sleef_quad x, y, z, w;
-  };
-  Sleef_quad s[4];
-} Sleef_quad4;
-#endif
-
-#if !defined(Sleef_quad8_DEFINED) && !defined(SLEEF_GENHEADER)
-#define Sleef_quad8_DEFINED
-typedef union {
-  Sleef_quad s[8];
-} Sleef_quad8;
-#endif
-
-#if defined(__ARM_FEATURE_SVE) && !defined(Sleef_quadx_DEFINED) && !defined(SLEEF_GENHEADER)
-#define Sleef_quadx_DEFINED
-typedef union {
-  Sleef_quad s[32];
-} Sleef_quadx;
 #endif
 
 //

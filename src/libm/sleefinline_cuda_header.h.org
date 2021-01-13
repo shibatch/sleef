@@ -7,6 +7,14 @@
 // Use --fmad=false option to compile this file
 // Include cmath, cfloat and cstdint before including this file
 
+#ifndef SLEEF_FP_ILOGB0
+#define SLEEF_FP_ILOGB0 ((int)-2147483648)
+#endif
+
+#ifndef SLEEF_FP_ILOGBNAN
+#define SLEEF_FP_ILOGBNAN ((int)2147483647)
+#endif
+
 __device__ const double Sleef_rempitabdp[] = {
   0.15915494309189531785, 1.7916237278037667488e-17, 2.5454160968749269937e-33, 2.1132476107887107169e-49,
   0.03415494309189533173, 4.0384494702232122736e-18, 1.0046721413651383112e-33, 2.1132476107887107169e-49,
