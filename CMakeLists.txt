@@ -88,11 +88,6 @@ set(COSTOVERRIDE_SVENOFMA 10)
 
 cmake_minimum_required(VERSION 3.4.3)
 
-# Set to NEW when updating cmake_minimum_required to VERSION >= 3.7.2
-if(${CMAKE_VERSION} VERSION_GREATER "3.7.1")
-  cmake_policy(SET CMP0066 OLD)
-endif()
-
 if(${CMAKE_VERSION} VERSION_GREATER "3.14.99")
   cmake_policy(SET CMP0091 NEW)
 endif()
