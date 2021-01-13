@@ -373,7 +373,7 @@ int main(int argc, char **argv) {
   fflush(stdout);
 
   char buf[BUFSIZE];
-  fgets(buf, BUFSIZE-1, stdin);
+  if (fgets(buf, BUFSIZE-1, stdin)) {}
   int sentinel = 0;
 
   while(!feof(stdin) && sentinel < 2) {

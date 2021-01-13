@@ -224,8 +224,6 @@ typedef Sleef___m128_2 vfloat2;
 #if !defined(USE_INLINE_HEADER)
 #define CONFIG 1
 #include "helpersve.h"
-typedef Sleef_svfloat64_t_2 vdouble2;
-typedef Sleef_svfloat32_t_2 vfloat2;
 #endif
 #endif
 
@@ -234,8 +232,6 @@ typedef Sleef_svfloat32_t_2 vfloat2;
 #if !defined(USE_INLINE_HEADER)
 #define CONFIG 2
 #include "helpersve.h"
-typedef Sleef_svfloat64_t_2 vdouble2;
-typedef Sleef_svfloat32_t_2 vfloat2;
 #endif
 #endif
 

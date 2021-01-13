@@ -9,19 +9,19 @@
 #include <signal.h>
 #include <setjmp.h>
 
+#if defined(_MSC_VER) || defined(__MINGW32__) || defined(__MINGW64__)
 static jmp_buf sigjmp;
+#define SETJMP(x) setjmp(x)
+#define LONGJMP longjmp
+#else
+static sigjmp_buf sigjmp;
+#define SETJMP(x) sigsetjmp(x, 1)
+#define LONGJMP siglongjmp
+#endif
 
 int do_test(int argc, char **argv);
 int check_featureDP(double d);
 int check_featureSP(float d);
-
-#if defined(_MSC_VER) || defined(__MINGW32__) || defined(__MINGW64__)
-#define SETJMP(x) setjmp(x)
-#define LONGJMP longjmp
-#else
-#define SETJMP(x) sigsetjmp(x, 1)
-#define LONGJMP siglongjmp
-#endif
 
 static void sighandler(int signum) {
   LONGJMP(sigjmp, 1);
