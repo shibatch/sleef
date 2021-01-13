@@ -630,7 +630,11 @@ int do_test(int argc, char **argv) {
     }
   }
 #else
+#ifndef _MSC_VER
 #warning SLEEF_QUAD_C not defined
+#else
+#pragma message ("SLEEF_QUAD_C not defined")
+#endif
 #endif
 #endif
 
