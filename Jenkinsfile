@@ -150,7 +150,7 @@ pipeline {
 			 rm -rf build-native
  			 mkdir build-native
 			 cd build-native
-			 cmake -GNinja -DBUILD_QUAD=TRUE -DENABLE_BITCODE=FALSE ..
+			 cmake -GNinja -DBUILD_QUAD=TRUE ..
 			 ninja
 			 cd ..
 			 rm -rf build-cross
