@@ -129,13 +129,22 @@ extern int planFilePathSet;
 
 // Utility functions
 
+#if defined(_MSC_VER) || defined(__MINGW32__) || defined(__MINGW64__)
 static jmp_buf sigjmp;
-static void sighandler(int signum) { longjmp(sigjmp, 1); }
+#define SETJMP(x) setjmp(x)
+#define LONGJMP longjmp
+#else
+static sigjmp_buf sigjmp;
+#define SETJMP(x) sigsetjmp(x, 1)
+#define LONGJMP siglongjmp
+#endif
+
+static void sighandler(int signum) { LONGJMP(sigjmp, 1); }
 
 static int checkISAAvailability(int isa) {
   signal(SIGILL, sighandler);
 
-  if (setjmp(sigjmp) == 0) {
+  if (SETJMP(sigjmp) == 0) {
     int ret = GETINT[isa] != NULL && (*GETINT[isa])(BASETYPEID);
     signal(SIGILL, SIG_DFL);
     return ret;
