@@ -57,11 +57,11 @@ static int hash(uint64_t key) {
 static void String_trim(char *str) {
   char *dst = str, *src = str, *pterm = src;
 
-  while(*src != '\0' && isspace(*src)) src++;
+  while(*src != '\0' && isspace((int)*src)) src++;
 
   for(;*src != '\0';src++) {
     *dst++ = *src;
-    if (!isspace(*src)) pterm = dst;
+    if (!isspace((int)*src)) pterm = dst;
   }
 
   *pterm = '\0';

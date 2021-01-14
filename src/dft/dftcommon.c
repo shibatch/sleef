@@ -41,13 +41,13 @@ static int parsePathStr(char *p, int *path, int *config, int pathLenMax, int log
   for(;;) {
     while(*p == ' ') p++;
     if (*p == '\0') break;
-    if (!isdigit(*p)) return -1;
+    if (!isdigit((int)*p)) return -1;
 
     pathLen++;
     if (pathLen >= pathLenMax) return -2;
 
     int n = 0;
-    while(isdigit(*p)) n = n * 10 + *p++ - '0';
+    while(isdigit((int)*p)) n = n * 10 + *p++ - '0';
 
     if (n > MAXBUTWIDTH) return -6;
     path[pathLen-1] = n;

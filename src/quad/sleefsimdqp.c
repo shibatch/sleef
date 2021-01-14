@@ -3370,7 +3370,7 @@ static int xclz128(vquad m) {
 // Float128 string functions
 
 EXPORT vargquad Sleef_strtoq(const char *str, const char **endptr) {
-  while(isspace(*str)) str++;
+  while(isspace((int)*str)) str++;
   const char *p = str;
 
   int positive = 1, bp = 0, e = 0, mf = 0;
@@ -3431,7 +3431,7 @@ EXPORT vargquad Sleef_strtoq(const char *str, const char **endptr) {
     if (*p == 'p' || *p == 'P') {
       char *q;
       e = strtol(p+1, &q, 10);
-      if (p+1 == q || isspace(*(p+1))) {
+      if (p+1 == q || isspace((int)*(p+1))) {
 	e = 0;
       } else {
 	p = q;
@@ -3485,7 +3485,7 @@ EXPORT vargquad Sleef_strtoq(const char *str, const char **endptr) {
     if (*p == 'e' || *p == 'E') {
       char *q;
       e = strtol(p+1, &q, 10);
-      if (p+1 == q || isspace(*(p+1))) {
+      if (p+1 == q || isspace((int)*(p+1))) {
 	e = 0;
       } else {
 	p = q;
@@ -3598,7 +3598,7 @@ static int snprintquad(char *buf, size_t bufsize, vargquad argvalue, int typespe
       for(;e2>=0;e2--) {
 	int digit = (int)cast_vd_tdx(value);
 	if ((int)cmp_vm_tdx_tdx(value, cast_tdx_d(digit)) < 0) digit--;
-	if (ptr - buf >= bufsize-1) { *ptr = '\0'; return -1; }
+	if (ptr - buf >= (ptrdiff_t)bufsize-1) { *ptr = '\0'; return -1; }
 	*ptr++ = digit + '0';
 	value = mul_tdx_tdx_tdx(add_tdx_tdx_tdx(value, cast_tdx_d(-digit)), cast_tdx_d(10));
       }
