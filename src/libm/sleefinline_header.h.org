@@ -16,12 +16,12 @@
 #define SLEEF_CONST
 #endif
 
-#if (defined(_MSC_VER))
+#if defined(_MSC_VER) && !defined (__clang__)
 #pragma fp_contract (off)
 #endif
 
 #ifndef SLEEF_FP_ILOGB0
-#define SLEEF_FP_ILOGB0 ((int)-2147483648)
+#define SLEEF_FP_ILOGB0 ((int)0x80000000)
 #endif
 
 #ifndef SLEEF_FP_ILOGBNAN

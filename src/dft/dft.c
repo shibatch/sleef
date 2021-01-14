@@ -129,13 +129,22 @@ extern int planFilePathSet;
 
 // Utility functions
 
+#if defined(_MSC_VER) || defined(__MINGW32__) || defined(__MINGW64__)
 static jmp_buf sigjmp;
-static void sighandler(int signum) { longjmp(sigjmp, 1); }
+#define SETJMP(x) setjmp(x)
+#define LONGJMP longjmp
+#else
+static sigjmp_buf sigjmp;
+#define SETJMP(x) sigsetjmp(x, 1)
+#define LONGJMP siglongjmp
+#endif
+
+static void sighandler(int signum) { LONGJMP(sigjmp, 1); }
 
 static int checkISAAvailability(int isa) {
   signal(SIGILL, sighandler);
 
-  if (setjmp(sigjmp) == 0) {
+  if (SETJMP(sigjmp) == 0) {
     int ret = GETINT[isa] != NULL && (*GETINT[isa])(BASETYPEID);
     signal(SIGILL, SIG_DFL);
     return ret;
@@ -1140,7 +1149,7 @@ EXPORT SleefDFT *INIT(uint32_t n, const real *in, real *out, uint64_t mode) {
   p->isa = -1;
 
   for(int i=0;i<ISAMAX;i++) {
-    if (checkISAAvailability(i) && bestPriority < (*GETINT[i])(GETINT_DFTPRIORITY) && n >= (*GETINT[i])(GETINT_VECWIDTH) * (*GETINT[i])(GETINT_VECWIDTH)) {
+    if (checkISAAvailability(i) && bestPriority < (*GETINT[i])(GETINT_DFTPRIORITY) && n >= (uint32_t)((*GETINT[i])(GETINT_VECWIDTH) * (*GETINT[i])(GETINT_VECWIDTH))) {
       bestPriority = (*GETINT[i])(GETINT_DFTPRIORITY);
       p->isa = i;
     }

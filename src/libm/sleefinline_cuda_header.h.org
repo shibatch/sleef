@@ -8,7 +8,7 @@
 // Include cmath, cfloat and cstdint before including this file
 
 #ifndef SLEEF_FP_ILOGB0
-#define SLEEF_FP_ILOGB0 ((int)-2147483648)
+#define SLEEF_FP_ILOGB0 ((int)0x80000000)
 #endif
 
 #ifndef SLEEF_FP_ILOGBNAN

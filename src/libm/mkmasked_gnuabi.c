@@ -38,20 +38,21 @@ int main(int argc, char **argv) {
 
   //
   
-#define LEN 256
+#define LEN0 16
+#define LEN1 256
 
   static char *vfpname[] = { "vdouble", "vfloat" };
   static char *vintname[] = { "vint", "vint2" };
   static int sizeoffp[] = { 8, 4 };
   
   static char *ulpSuffixStr[] = { "", "_u1", "_u05", "_u35", "_u15", "_u3500" };
-  static char vparameterStr[7][LEN] = { "v", "vv", "vl8l8", "vv", "v", "vvv", "vl8" };
+  static char vparameterStr[7][LEN0] = { "v", "vv", "vl8l8", "vv", "v", "vvv", "vl8" };
   static char *typeSpecS[] = { "", "f" };
   static char *typeSpec[] = { "d", "f" };
-  static char funcname[4][LEN];
+  static char funcname[4][LEN1];
 
-  snprintf(vparameterStr[2], LEN, "vl%dl%d", sizeoffp[fptype], sizeoffp[fptype]);
-  snprintf(vparameterStr[6], LEN, "vl%d", sizeoffp[fptype]);
+  snprintf(vparameterStr[2], LEN0, "vl%dl%d", sizeoffp[fptype], sizeoffp[fptype]);
+  snprintf(vparameterStr[6], LEN0, "vl%d", sizeoffp[fptype]);
   
   //
   
@@ -59,20 +60,20 @@ int main(int argc, char **argv) {
     if ((funcList[i].flags & 1) != 0) continue;
     if (fptype == 0 && (funcList[i].flags & 2) != 0) continue;
     if (funcList[i].ulp < 20) {
-      snprintf(funcname[0], LEN, "_ZGV%sN%s%s_%s%s",
+      snprintf(funcname[0], LEN1, "_ZGV%sN%s%s_%s%s",
 	       mangledisa, cvw, vparameterStr[funcList[i].funcType], funcList[i].name, typeSpecS[fptype]);
-      snprintf(funcname[1], LEN, "_ZGV%sM%s%s_%s%s",
+      snprintf(funcname[1], LEN1, "_ZGV%sM%s%s_%s%s",
 	       mangledisa, cvw, vparameterStr[funcList[i].funcType], funcList[i].name, typeSpecS[fptype]);
     } else {
-      snprintf(funcname[0], LEN, "_ZGV%sN%s%s_%s%s_u%d",
+      snprintf(funcname[0], LEN1, "_ZGV%sN%s%s_%s%s_u%d",
 	       mangledisa, cvw, vparameterStr[funcList[i].funcType], funcList[i].name, typeSpecS[fptype], funcList[i].ulp);
-      snprintf(funcname[1], LEN, "_ZGV%sM%s%s_%s%s_u%d",
+      snprintf(funcname[1], LEN1, "_ZGV%sM%s%s_%s%s_u%d",
 	       mangledisa, cvw, vparameterStr[funcList[i].funcType], funcList[i].name, typeSpecS[fptype], funcList[i].ulp);
     }
 
-    snprintf(funcname[2], LEN, "_ZGV%sN%s%s___%s%s_finite",
+    snprintf(funcname[2], LEN1, "_ZGV%sN%s%s___%s%s_finite",
 	     mangledisa, cvw, vparameterStr[funcList[i].funcType], funcList[i].name, typeSpecS[fptype]);
-    snprintf(funcname[3], LEN, "_ZGV%sM%s%s___%s%s_finite",
+    snprintf(funcname[3], LEN1, "_ZGV%sM%s%s___%s%s_finite",
 	     mangledisa, cvw, vparameterStr[funcList[i].funcType], funcList[i].name, typeSpecS[fptype]);
 
     switch(funcList[i].funcType) {

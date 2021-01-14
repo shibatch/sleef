@@ -43,7 +43,7 @@ double check_c(int n, int m) {
   real *sy = (real *)Sleef_malloc(n*m*2 * sizeof(real));
   real *sz = (real *)Sleef_malloc(n*m*2 * sizeof(real));
 
-  for(int i=0;i<n*m*2;i++) sx[i] = 2.0 * (rand() / (double)RAND_MAX) - 1;
+  for(int i=0;i<n*m*2;i++) sx[i] = (real)(2.0 * (rand() / (double)RAND_MAX) - 1);
 
   //
 
@@ -99,7 +99,7 @@ int main(int argc, char **argv) {
   const int m = 1 << atoi(argv[2]);
   const int nloop = argc >= 4 ? atoi(argv[3]) : 1;
 
-  srand(time(NULL));
+  srand((unsigned int)time(NULL));
 
   SleefDFT_setPlanFilePath(NULL, NULL, SLEEF_PLAN_RESET | SLEEF_PLAN_READONLY);
 

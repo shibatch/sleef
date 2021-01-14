@@ -38,7 +38,7 @@
 #endif
 
 #ifndef SLEEF_FP_ILOGB0
-#define SLEEF_FP_ILOGB0 ((int)-2147483648)
+#define SLEEF_FP_ILOGB0 ((int)0x80000000)
 #endif
 
 #ifndef SLEEF_FP_ILOGBNAN
@@ -169,7 +169,7 @@ typedef struct {
 #if defined(ENABLEFLOAT128)
 typedef __float128 Sleef_quad;
 #define SLEEF_QUAD_C(x) (x ## Q)
-#elif defined(__SIZEOF_LONG_DOUBLE__) && __SIZEOF_LONG_DOUBLE__ == 16 && defined(__aarch64__)
+#elif defined(__SIZEOF_LONG_DOUBLE__) && __SIZEOF_LONG_DOUBLE__ == 16 && (defined(__aarch64__) || defined(__zarch__))
 typedef long double Sleef_quad;
 #define SLEEF_QUAD_C(x) (x ## L)
 #else

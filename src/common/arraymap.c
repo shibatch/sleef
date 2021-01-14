@@ -57,11 +57,11 @@ static int hash(uint64_t key) {
 static void String_trim(char *str) {
   char *dst = str, *src = str, *pterm = src;
 
-  while(*src != '\0' && isspace(*src)) src++;
+  while(*src != '\0' && isspace((int)*src)) src++;
 
   for(;*src != '\0';src++) {
     *dst++ = *src;
-    if (!isspace(*src)) pterm = dst;
+    if (!isspace((int)*src)) pterm = dst;
   }
 
   *pterm = '\0';
@@ -206,8 +206,8 @@ void *ArrayMap_get(ArrayMap *thiz, uint64_t key) {
 #define LINELEN (1024*1024)
 
 ArrayMap *ArrayMap_load(const char *fn, const char *prefix, const char *idstr, int doLock) {
-  const int idstrlen = strlen(idstr);
-  int prefixLen = strlen(prefix) + 3;
+  const int idstrlen = (int)strlen(idstr);
+  int prefixLen = (int)strlen(prefix) + 3;
 
   if (prefixLen >= LINELEN-10 || idstrlen >= LINELEN-10) return NULL;
  
@@ -226,7 +226,7 @@ ArrayMap *ArrayMap_load(const char *fn, const char *prefix, const char *idstr, i
     if (*p == ' ') *p = '_';
   }
   strcat(prefix2, " : ");
-  prefixLen = strlen(prefix2);
+  prefixLen = (int)strlen(prefix2);
   
   char *line = malloc(sizeof(char) * (LINELEN+10));
   line[idstrlen] = '\0';
@@ -270,8 +270,8 @@ ArrayMap *ArrayMap_load(const char *fn, const char *prefix, const char *idstr, i
 int ArrayMap_save(ArrayMap *thiz, const char *fn, const char *prefix, const char *idstr) {
   assert(thiz != NULL && thiz->magic == MAGIC_ARRAYMAP);
 
-  const int idstrlen = strlen(idstr);
-  int prefixLen = strlen(prefix) + 3;
+  const int idstrlen = (int)strlen(idstr);
+  int prefixLen = (int)strlen(prefix) + 3;
 
   if (prefixLen >= LINELEN-10 || idstrlen >= LINELEN-10) return -1;
 
@@ -285,7 +285,7 @@ int ArrayMap_save(ArrayMap *thiz, const char *fn, const char *prefix, const char
     if (*p == ' ') *p = '_';
   }
   strcat(prefix2, " : ");
-  prefixLen = strlen(prefix2);
+  prefixLen = (int)strlen(prefix2);
 
   //
 

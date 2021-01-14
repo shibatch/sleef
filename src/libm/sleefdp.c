@@ -26,7 +26,7 @@ extern const double Sleef_rempitabdp[];
 #include "rename.h"
 #endif
 
-#if (defined(_MSC_VER))
+#if defined(_MSC_VER) && !defined (__clang__)
 #pragma fp_contract (off)
 #endif
 
@@ -2336,11 +2336,11 @@ EXPORT CONST double xnextafter(double x, double y) {
   memcpy(&cxi, &cxf, sizeof(cxi));
 
   int c = (cxi < 0) == (y < x);
-  if (c) cxi = -(cxi ^ (UINT64_C(1) << 63));
+  if (c) cxi = -(cxi ^ (int64_t)(UINT64_C(1) << 63));
 
   if (x != y) cxi--;
 
-  if (c) cxi = -(cxi ^ (UINT64_C(1) << 63));
+  if (c) cxi = -(cxi ^ (int64_t)(UINT64_C(1) << 63));
 
   memcpy(&cxf, &cxi, sizeof(cxf));
   if (cxf == 0 && x != 0) cxf = mulsign(0, x);

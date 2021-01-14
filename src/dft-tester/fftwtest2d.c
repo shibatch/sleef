@@ -123,7 +123,7 @@ int main(int argc, char **argv) {
   const int n = 1 << atoi(argv[1]);
   const int m = 1 << atoi(argv[2]);
 
-  srand(time(NULL));
+  srand((unsigned int)time(NULL));
 
   SleefDFT_setPlanFilePath(NULL, NULL, SLEEF_PLAN_RESET | SLEEF_PLAN_READONLY);
 
