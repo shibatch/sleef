@@ -20,7 +20,7 @@ extern const double Sleef_rempitabqp[];
 
 #define __SLEEFSIMDQP_C__
 
-#if (defined(_MSC_VER))
+#if defined(_MSC_VER) && !defined (__clang__)
 #pragma fp_contract (off)
 #endif
 
@@ -39,7 +39,7 @@ extern const double Sleef_rempitabqp[];
 #include "qrenamepurecfma_scalar.h"
 #endif
 
-#if (defined(_MSC_VER))
+#if defined(_MSC_VER) && !defined (__clang__)
 #pragma optimize("", off)
 #endif
 #endif

@@ -1140,7 +1140,7 @@ EXPORT SleefDFT *INIT(uint32_t n, const real *in, real *out, uint64_t mode) {
   p->isa = -1;
 
   for(int i=0;i<ISAMAX;i++) {
-    if (checkISAAvailability(i) && bestPriority < (*GETINT[i])(GETINT_DFTPRIORITY) && n >= (*GETINT[i])(GETINT_VECWIDTH) * (*GETINT[i])(GETINT_VECWIDTH)) {
+    if (checkISAAvailability(i) && bestPriority < (*GETINT[i])(GETINT_DFTPRIORITY) && n >= (uint32_t)((*GETINT[i])(GETINT_VECWIDTH) * (*GETINT[i])(GETINT_VECWIDTH))) {
       bestPriority = (*GETINT[i])(GETINT_DFTPRIORITY);
       p->isa = i;
     }

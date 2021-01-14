@@ -20,7 +20,7 @@ extern const float Sleef_rempitabsp[];
 
 #define __SLEEFSIMDSP_C__
 
-#if (defined(_MSC_VER))
+#if defined(_MSC_VER) && !defined (__clang__)
 #pragma fp_contract (off)
 #endif
 

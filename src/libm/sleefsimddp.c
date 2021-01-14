@@ -20,7 +20,7 @@ extern const double Sleef_rempitabdp[];
 
 #define __SLEEFSIMDDP_C__
 
-#if (defined(_MSC_VER))
+#if defined(_MSC_VER) && !defined (__clang__)
 #pragma fp_contract (off)
 #endif
 
