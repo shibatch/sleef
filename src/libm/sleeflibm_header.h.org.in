@@ -87,7 +87,7 @@ typedef __vector unsigned long long SLEEF_VECTOR_ULONGLONG;
 //
 
 #ifndef SLEEF_FP_ILOGB0
-#define SLEEF_FP_ILOGB0 ((int)-2147483648)
+#define SLEEF_FP_ILOGB0 ((int)0x80000000)
 #endif
 
 #ifndef SLEEF_FP_ILOGBNAN
@@ -125,7 +125,7 @@ typedef struct {
 #if defined(__SIZEOF_FLOAT128__) || (defined(__linux__) && defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))) || (defined(__PPC64__) && defined(__GNUC__) && !defined(__clang__) && __GNUC__ >= 8)
 typedef __float128 Sleef_quad;
 #define SLEEF_QUAD_C(x) (x ## Q)
-#elif defined(__SIZEOF_LONG_DOUBLE__) && __SIZEOF_LONG_DOUBLE__ == 16 && defined(__aarch64__)
+#elif defined(__SIZEOF_LONG_DOUBLE__) && __SIZEOF_LONG_DOUBLE__ == 16 && (defined(__aarch64__) || defined(__zarch__))
 typedef long double Sleef_quad;
 #define SLEEF_QUAD_C(x) (x ## L)
 #else

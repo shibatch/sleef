@@ -2116,8 +2116,8 @@ static INLINE VECTOR_CC tdx modf_tdx_tdx_ptdx(tdx x, tdx *iptr) {
 }
 
 static INLINE CONST VECTOR_CC tdx trunc_tdx_tdx(tdx x) {
-  tdx fp, ip;
-  fp = modf_tdx_tdx_ptdx(x, &ip);
+  tdx ip;
+  modf_tdx_tdx_ptdx(x, &ip);
   return ip;
 }
 
@@ -3605,19 +3605,19 @@ static int snprintquad(char *buf, size_t bufsize, vargquad argvalue, int typespe
     }
 
     if (flag_dp) {
-      if (ptr - buf >= bufsize-1) { *ptr = '\0'; return -1; }
+      if (ptr - buf >= (ptrdiff_t)bufsize-1) { *ptr = '\0'; return -1; }
       *ptr++ = '.';
     }
 
     for(e2++;e2 < 0 && precision > 0;precision--, e2++) {
-      if (ptr - buf >= bufsize-1) { *ptr = '\0'; return -1; }
+      if (ptr - buf >= (ptrdiff_t)bufsize-1) { *ptr = '\0'; return -1; }
       *ptr++ = '0';
     }
 
     while (precision-- > 0) {
       int digit = (int)cast_vd_tdx(value);
       if ((int)cmp_vm_tdx_tdx(value, cast_tdx_d(digit)) < 0) digit--;
-      if (ptr - buf >= bufsize-1) { *ptr = '\0'; return -1; }
+      if (ptr - buf >= (ptrdiff_t)bufsize-1) { *ptr = '\0'; return -1; }
       *ptr++ = digit + '0';
       value = mul_tdx_tdx_tdx(add_tdx_tdx_tdx(value, cast_tdx_d(-digit)), cast_tdx_d(10));
     }
@@ -3629,7 +3629,7 @@ static int snprintquad(char *buf, size_t bufsize, vargquad argvalue, int typespe
     }
 
     if (flag_exp || (typespec == 'e' && exp)) {
-      if (ptr - buf >= bufsize-8) { *ptr = '\0'; return -1; }
+      if (ptr - buf >= (ptrdiff_t)bufsize-8) { *ptr = '\0'; return -1; }
       *ptr++ = (flags & FLAG_UPPER) ? 'E' : 'e';
       if (exp < 0){
 	*ptr++ = '-'; exp = -exp;

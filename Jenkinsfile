@@ -57,7 +57,7 @@ pipeline {
 			 ninja
 			 export OMP_WAIT_POLICY=passive
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
-		         ctest -j `nproc`
+		         ctest -j 7
 		         ninja install
 			 '''
             	     }

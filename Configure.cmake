@@ -227,7 +227,7 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
     # which have deprecation and security attributes for many
     # functions.
 
-    string(CONCAT FLAGS_WALL ${FLAGS_WALL} " -D_CRT_SECURE_NO_WARNINGS -Wno-deprecated-declarations")
+    string(CONCAT FLAGS_WALL ${FLAGS_WALL} " -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE -Wno-deprecated-declarations")
   endif()
 elseif(MSVC)
   # Intel vector extensions.
@@ -245,7 +245,7 @@ elseif(MSVC)
   set(FLAGS_ENABLE_AVX512F /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /D__AVX512F__ /arch:AVX2)
   set(FLAGS_ENABLE_AVX512FNOFMA /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /D__AVX512F__ /arch:AVX2)
   set(FLAGS_ENABLE_PURECFMA_SCALAR /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /arch:AVX2)
-  set(FLAGS_WALL "/D_CRT_SECURE_NO_WARNINGS")
+  set(FLAGS_WALL "/D_CRT_SECURE_NO_WARNINGS /D_CRT_NONSTDC_NO_DEPRECATE")
 
   set(FLAGS_NO_ERRNO "")
 

@@ -464,7 +464,7 @@ int main(int argc, char **argv) {
     } else if (startsWith(buf, "ldexpf ")) {
       uint32_t u, v;
       sscanf(buf, "ldexpf %x %x", &u, &v);
-      u = f2u(xldexpf(u2f(u), u2f(v)));
+      u = f2u(xldexpf(u2f(u), (int)u2f(v)));
       printf("%x\n", u);
     } else if (startsWith(buf, "powf ")) {
       uint32_t u, v;

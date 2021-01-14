@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <sleefquad.h>
 
+#if defined(_MSC_VER)
+#pragma warning(disable:4116) // warning C4116: unnamed type definition in parentheses
+#endif
+
 int main(int argc, char **argv) {
   if (argc == 1) {
     printf("Usage : %s <FP number>\n", argv[0]);
