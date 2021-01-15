@@ -166,7 +166,7 @@ typedef struct {
 
 #if !defined(Sleef_quad_DEFINED) && !defined(SLEEF_GENHEADER)
 #define Sleef_quad_DEFINED
-#if defined(ENABLEFLOAT128)
+#if defined(__SIZEOF_FLOAT128__) || (defined(__linux__) && defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))) || (defined(__PPC64__) && defined(__GNUC__) && !defined(__clang__) && __GNUC__ >= 8)
 typedef __float128 Sleef_quad;
 #define SLEEF_QUAD_C(x) (x ## Q)
 #elif defined(__SIZEOF_LONG_DOUBLE__) && __SIZEOF_LONG_DOUBLE__ == 16 && (defined(__aarch64__) || defined(__zarch__))

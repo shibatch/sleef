@@ -10,8 +10,12 @@
 #include <math.h>
 #include <float.h>
 #include <inttypes.h>
+#include <stdarg.h>
+#include <ctype.h>
+#include <assert.h>
 #include <cuda.h>
 
+#include "sleefquadinline_purec_scalar.h"
 #include "sleefquadinline_cuda.h"
 
 #define STDIN_FILENO 0

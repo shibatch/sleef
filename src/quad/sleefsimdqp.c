@@ -3775,7 +3775,7 @@ static int snprintquadhex(char *buf, size_t bufsize, vargquad argvalue, int widt
 #define XBUFSIZE 5000
 
 static int xvprintf(size_t (*consumer)(const char *ptr, size_t size, void *arg), void *arg, const char *fmt, va_list ap) {
-  char *xbuf = malloc(XBUFSIZE+10);
+  char *xbuf = (char *)malloc(XBUFSIZE+10);
 
   int outlen = 0, errorflag = 0;
 
@@ -3953,7 +3953,7 @@ static int xvprintf(size_t (*consumer)(const char *ptr, size_t size, void *arg),
     }
 
     if (!subfmt_processed) {
-      char *subfmt = malloc(fmt - subfmtstart + 2);
+      char *subfmt = (char *)malloc(fmt - subfmtstart + 2);
       memcpy(subfmt, subfmtstart, fmt - subfmtstart + 1);
       subfmt[fmt - subfmtstart + 1] = 0;
       int ret = vsnprintf(xbuf, XBUFSIZE, subfmt, ap2);
@@ -4066,7 +4066,7 @@ static int printf_output(FILE *fp, const struct printf_info *info, const void *c
 
   vargquad q = **(const vargquad **)args[0];
 
-  char *xbuf = malloc(XBUFSIZE+10);
+  char *xbuf = (char *)malloc(XBUFSIZE+10);
 
   int len = 0;
   if (tolower(info->spec) == 'a') {

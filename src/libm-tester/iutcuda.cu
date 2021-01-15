@@ -12,6 +12,7 @@
 #include <stdint.h>
 #include <cuda.h>
 
+#include "sleefinline_purec_scalar.h"
 #include "sleefinline_cuda.h"
 
 #define STDIN_FILENO 0

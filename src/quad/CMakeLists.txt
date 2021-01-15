@@ -232,6 +232,7 @@ if(BUILD_INLINE_HEADERS)
 
 	  COMMAND $<TARGET_FILE:addSuffix> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp6                 # addSuffix /build/src/quad/sleefSSE2.h.qtmp6
 	    ${sleef_SOURCE_DIR}/src/common/keywords.txt "_${SIMDLC}_sleefq"                                 # keywords.txt "_sse2_sleefq"
+	    Sleef_rempitabqp                                                                                # Sleef_rempitabdp Sleef_rempitabsp
             > ${PROJECT_BINARY_DIR}/include/sleefquadinline_${SIMDLC}.h                                     # > /build/include/sleefquadinline_sse2.h
 
 	  MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdqp.c ${HEADER_${SIMD}}
