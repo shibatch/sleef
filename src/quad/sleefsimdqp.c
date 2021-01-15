@@ -135,6 +135,7 @@ typedef vquad Sleef_quadx2;
 
 #include "dd.h"
 #include "commonfuncs.h"
+#include "quaddef.h"
 
 //
 
@@ -3221,7 +3222,7 @@ EXPORT2 CONST2 vargquad xsplatq(Sleef_quad p) {
   }
   return a;
 }
-#else
+#else // #ifndef ENABLE_SVE
 EXPORT CONST VECTOR_CC vargquad xloadq(Sleef_quad *p) {
   double a[VECTLENDP*2];
   for(int i=0;i<VECTLENDP;i++) {
@@ -3275,7 +3276,7 @@ EXPORT CONST VECTOR_CC vargquad xsplatq(Sleef_quad p) {
 
   return vqsetxy_vq_vm_vm(svld1_s32(ptrue, (int32_t *)&a[0]), svld1_s32(ptrue, (int32_t *)&a[VECTLENDP]));
 }
-#endif
+#endif // #ifndef ENABLE_SVE
 
 #ifdef ENABLE_PUREC_SCALAR
 #if !defined(SLEEF_GENHEADER)
