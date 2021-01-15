@@ -121,9 +121,17 @@ typedef struct {
   vmask x, y;
 } vquad;
 
-#if (defined(__SIZEOF_FLOAT128__) || (defined(__linux__) && defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))) || (defined(__PPC64__) && defined(__GNUC__) && !defined(__clang__) && __GNUC__ >= 8)) && CONFIG != 3
+#if (defined(__SIZEOF_FLOAT128__) && __SIZEOF_FLOAT128__ == 16 && !defined(__ANDROID__)) || (defined(__linux__) && defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))) || (defined(__PPC64__) && defined(__GNUC__) && !defined(__clang__) && __GNUC__ >= 8)
+#define SLEEF_FLOAT128_IS_IEEEQP
+#endif
+
+#if !defined(SLEEF_FLOAT128_IS_IEEEQP) && defined(__SIZEOF_LONG_DOUBLE__) && __SIZEOF_LONG_DOUBLE__ == 16 && (defined(__aarch64__) || defined(__zarch__))
+#define SLEEF_LONGDOUBLE_IS_IEEEQP
+#endif
+
+#if defined(SLEEF_FLOAT128_IS_IEEEQP) && CONFIG != 3
 typedef __float128 vargquad;
-#elif (defined(__SIZEOF_LONG_DOUBLE__) && __SIZEOF_LONG_DOUBLE__ == 16 && (defined(__aarch64__) || defined(__zarch__))) && CONFIG != 3
+#elif defined(SLEEF_LONGDOUBLE_IS_IEEEQP) && CONFIG != 3
 typedef long double vargquad;
 #else
 typedef vquad vargquad;
