@@ -227,12 +227,12 @@ if(BUILD_INLINE_HEADERS)
 	  # Substitute "&" at the beginning of line with "#"
 	  COMMAND ${SED_COMMAND} -e "s/^SLEEFSHARP/#/g"                                                     # sed -e "s/^SLEEFSHARP/#/g"
 	  ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp4                                                  # /build/src/libm/sleefSSE2.h.qtmp4
-	  >> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp5                                               # >> /build/src/libm/sleefSSE2.h.qtmp5
+	  > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp5                                                # > /build/src/libm/sleefSSE2.h.qtmp5
 
 	  # Remove SLEEFXXX
 	  COMMAND ${SED_COMMAND} -e "s/SLEEFXXX//g"                                                         # sed -e "s/SLEEFXXX//g"
 	  ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp5                                                  # /build/src/libm/sleefSSE2.h.qtmp5
-	  >> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp6                                               # >> /build/src/libm/sleefSSE2.h.qtmp6
+	  > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp6                                                # > /build/src/libm/sleefSSE2.h.qtmp6
 
 	  # Replace multiple empty lines with a single empty line
 	  COMMAND ${SED_COMMAND} -e "s/^[[:space:]]*$//g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp6  # sed -e "s/^[[:space:]]*$//g" /build/src/quad/sleefSSE2.h.qtmp6
@@ -305,12 +305,12 @@ if(BUILD_INLINE_HEADERS)
       # Substitute "&" at the beginning of line with "#"
       COMMAND ${SED_COMMAND} -e "s/^SLEEFSHARP/#/g"                                                     # sed -e "s/^SLEEFSHARP/#/g"
       ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp4                                                  # /build/src/libm/sleefSSE2.h.qtmp4
-      >> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp5                                               # >> /build/src/libm/sleefSSE2.h.qtmp5
+      > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp5                                                # > /build/src/libm/sleefSSE2.h.qtmp5
 
       # Remove SLEEFXXX
       COMMAND ${SED_COMMAND} -e "s/SLEEFXXX//g"                                                         # sed -e "s/SLEEFXXX//g"
       ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp5                                                  # /build/src/libm/sleefSSE2.h.qtmp5
-      >> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp6                                               # >> /build/src/libm/sleefSSE2.h.qtmp6
+      > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp6                                                # > /build/src/libm/sleefSSE2.h.qtmp6
 
       # Replace multiple empty lines with a single empty line
       COMMAND ${SED_COMMAND} -e "s/^[[:space:]]*$//g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp6  # sed -e "s/^[[:space:]]*$//g" /build/src/quad/sleefCUDA.h.qtmp6
