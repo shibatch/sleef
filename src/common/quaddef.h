@@ -29,26 +29,26 @@ typedef Sleef_uint64_2t Sleef_quad;
 
 #else // #if !defined(SLEEF_GENHEADER)
 
-%if (defined(SLEEFXXX__SIZEOF_FLOAT128__) && SLEEFXXX__SIZEOF_FLOAT128__ == 16) || (defined(SLEEFXXX__linux__) && defined(SLEEFXXX__GNUC__) && (defined(SLEEFXXX__i386__) || defined(SLEEFXXX__x86_64__))) || (defined(SLEEFXXX__PPC64__) && defined(SLEEFXXX__GNUC__) && !defined(SLEEFXXX__clang__) && SLEEFXXX__GNUC__ >= 8)
-%define SLEEFXXXSLEEF_FLOAT128_IS_IEEEQP
-%endif
+SLEEFSHARPif (defined(SLEEFXXX__SIZEOF_FLOAT128__) && SLEEFXXX__SIZEOF_FLOAT128__ == 16) || (defined(SLEEFXXX__linux__) && defined(SLEEFXXX__GNUC__) && (defined(SLEEFXXX__i386__) || defined(SLEEFXXX__x86_64__))) || (defined(SLEEFXXX__PPC64__) && defined(SLEEFXXX__GNUC__) && !defined(SLEEFXXX__clang__) && SLEEFXXX__GNUC__ >= 8)
+SLEEFSHARPdefine SLEEFXXXSLEEF_FLOAT128_IS_IEEEQP
+SLEEFSHARPendif
 
-%if !defined(SLEEFXXXSLEEF_FLOAT128_IS_IEEEQP) && defined(SLEEFXXX__SIZEOF_LONG_DOUBLE__) && SLEEFXXX__SIZEOF_LONG_DOUBLE__ == 16 && (defined(SLEEFXXX__aarch64__) || defined(SLEEFXXX__zarch__))
-%define SLEEFXXXSLEEF_LONGDOUBLE_IS_IEEEQP
-%endif
+SLEEFSHARPif !defined(SLEEFXXXSLEEF_FLOAT128_IS_IEEEQP) && defined(SLEEFXXX__SIZEOF_LONG_DOUBLE__) && SLEEFXXX__SIZEOF_LONG_DOUBLE__ == 16 && (defined(SLEEFXXX__aarch64__) || defined(SLEEFXXX__zarch__))
+SLEEFSHARPdefine SLEEFXXXSLEEF_LONGDOUBLE_IS_IEEEQP
+SLEEFSHARPendif
 
-%if !defined(SLEEFXXXSleef_quad_DEFINED)
-%define SLEEFXXXSleef_quad_DEFINED
+SLEEFSHARPif !defined(SLEEFXXXSleef_quad_DEFINED)
+SLEEFSHARPdefine SLEEFXXXSleef_quad_DEFINED
 typedef struct { uint64_t x, y; } Sleef_uint64_2t;
-%if defined(SLEEFXXXSLEEF_FLOAT128_IS_IEEEQP)
+SLEEFSHARPif defined(SLEEFXXXSLEEF_FLOAT128_IS_IEEEQP)
 typedef __float128 Sleef_quad;
-%define SLEEFXXXSLEEF_QUAD_C(x) (x ## Q)
-%elif defined(SLEEFXXXSLEEF_LONGDOUBLE_IS_IEEEQP)
+SLEEFSHARPdefine SLEEFXXXSLEEF_QUAD_C(x) (x ## Q)
+SLEEFSHARPelif defined(SLEEFXXXSLEEF_LONGDOUBLE_IS_IEEEQP)
 typedef long double Sleef_quad;
-%define SLEEFXXXSLEEF_QUAD_C(x) (x ## L)
-%else
+SLEEFSHARPdefine SLEEFXXXSLEEF_QUAD_C(x) (x ## L)
+SLEEFSHARPelse
 typedef Sleef_uint64_2t Sleef_quad;
-%endif
-%endif
+SLEEFSHARPendif
+SLEEFSHARPendif
 
 #endif // #if !defined(SLEEF_GENHEADER)

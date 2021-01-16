@@ -225,7 +225,7 @@ if(BUILD_INLINE_HEADERS)
 	  >> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp4                                               # >> /build/src/quad/sleefSSE2.h.qtmp4
 
 	  # Substitute "&" at the beginning of line with "#"
-	  COMMAND ${SED_COMMAND} -e "s/^%/#/g"                                                              # sed -e "s/^%/#/g"
+	  COMMAND ${SED_COMMAND} -e "s/^SLEEFSHARP/#/g"                                                     # sed -e "s/^SLEEFSHARP/#/g"
 	  ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp4                                                  # /build/src/libm/sleefSSE2.h.qtmp4
 	  >> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp5                                               # >> /build/src/libm/sleefSSE2.h.qtmp5
 
@@ -303,7 +303,7 @@ if(BUILD_INLINE_HEADERS)
       >> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp4                                               # >> /build/src/quad/sleefCUDA.h.qtmp4
 
       # Substitute "&" at the beginning of line with "#"
-      COMMAND ${SED_COMMAND} -e "s/^%/#/g"                                                              # sed -e "s/^%/#/g"
+      COMMAND ${SED_COMMAND} -e "s/^SLEEFSHARP/#/g"                                                     # sed -e "s/^SLEEFSHARP/#/g"
       ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp4                                                  # /build/src/libm/sleefSSE2.h.qtmp4
       >> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp5                                               # >> /build/src/libm/sleefSSE2.h.qtmp5
 
