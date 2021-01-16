@@ -12,6 +12,7 @@
 #include <float.h>
 #endif
 
+#include "quaddef.h"
 #include "misc.h"
 
 #ifndef ENABLE_CUDA
@@ -135,7 +136,6 @@ typedef vquad Sleef_quadx2;
 
 #include "dd.h"
 #include "commonfuncs.h"
-#include "quaddef.h"
 
 //
 

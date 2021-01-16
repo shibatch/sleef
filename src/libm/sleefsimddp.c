@@ -12,6 +12,7 @@
 #include <float.h>
 #endif
 
+#include "quaddef.h"
 #include "misc.h"
 
 #ifndef ENABLE_CUDA

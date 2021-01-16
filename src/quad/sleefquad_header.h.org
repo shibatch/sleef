@@ -38,6 +38,7 @@ extern "C"
 
 #if !defined(Sleef_quad_DEFINED)
 #define Sleef_quad_DEFINED
+typedef struct { uint64_t x, y; } Sleef_uint64_2t;
 #if defined(SLEEF_FLOAT128_IS_IEEEQP)
 typedef __float128 Sleef_quad;
 #define SLEEF_QUAD_C(x) (x ## Q)
@@ -45,9 +46,11 @@ typedef __float128 Sleef_quad;
 typedef long double Sleef_quad;
 #define SLEEF_QUAD_C(x) (x ## L)
 #else
-typedef struct { uint64_t x, y; } Sleef_quad;
+typedef Sleef_uint64_2t Sleef_quad;
 #endif
 #endif
+
+//
 
 #if !defined(Sleef_quadx1_DEFINED)
 #define Sleef_quadx1_DEFINED
@@ -105,7 +108,6 @@ typedef struct {
 } Sleef_quadx8;
 #endif
 #endif
-
 
 #if !defined(Sleef_svquad_DEFINED)
 #if defined(__ARM_FEATURE_SVE)

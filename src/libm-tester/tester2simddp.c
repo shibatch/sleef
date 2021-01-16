@@ -20,6 +20,7 @@
 #endif
 
 #include "sleef.h"
+#include "quaddef.h"
 #include "testerutil.h"
 
 #ifdef ENABLE_SSE2

@@ -40,7 +40,6 @@
 
 #include "misc.h"
 #include "qtesterutil.h"
-#include "quaddef.h"
 
 //
 
