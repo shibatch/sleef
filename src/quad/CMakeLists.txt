@@ -224,7 +224,7 @@ if(BUILD_INLINE_HEADERS)
 	  COMMAND ${SED_COMMAND} -e "s/^#.*//g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp3            # sed -e "s/^#.*//g" /build/src/quad/sleefSSE2.h.qtmp3
 	  >> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp4                                               # >> /build/src/quad/sleefSSE2.h.qtmp4
 
-	  # Substitute "&" at the beginning of line with "#"
+	  # Substitute "SLEEFSHARP" at the beginning of line with "#"
 	  COMMAND ${SED_COMMAND} -e "s/^SLEEFSHARP/#/g"                                                     # sed -e "s/^SLEEFSHARP/#/g"
 	  ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp4                                                  # /build/src/libm/sleefSSE2.h.qtmp4
 	  > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp5                                                # > /build/src/libm/sleefSSE2.h.qtmp5
