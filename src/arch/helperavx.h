@@ -65,9 +65,7 @@ typedef struct {
   vmask x, y;
 } vquad;
 
-typedef struct {
-  vmask x, y;
-} vargquad;
+typedef vquad vargquad;
 
 //
 

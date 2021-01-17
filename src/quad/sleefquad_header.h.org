@@ -146,6 +146,71 @@ typedef svfloat64x2_t Sleef_svquad;
 
 //
 
+#if defined(SLEEF_LIBQUADMATH_COMPATIBILITY)
+
+#define strtoflt128 Sleef_strtoq
+#define quadmath_snprintf Sleef_snprintf
+#define acosq Sleef_acosq1_u10purec
+#define acoshq Sleef_acoshq1_u10purec
+#define asinq Sleef_asinq1_u10purec
+#define asinhq Sleef_asinhq1_u10purec
+#define atanq Sleef_atanq1_u10purec
+#define atanhq Sleef_atanhq1_u10purec
+#define atan2q Sleef_atan2q1_u10purec
+#define cbrtq Sleef_cbrtq1_u10purec
+#define ceilq Sleef_ceilq1_purec
+#define copysignq Sleef_copysignq1_purec
+#define coshq Sleef_coshq1_u10purec
+#define cosq Sleef_cosq1_u10purec
+#define expq Sleef_expq1_u10purec
+#define expm1q Sleef_expm1q1_u10purec
+#define fabsq Sleef_fabsq1_purec
+#define fdimq Sleef_fdimq1_u05purec
+#define floorq Sleef_floorq1_purec
+#define fmaq Sleef_fmaq1_u05purec
+#define fmaxq Sleef_fmaxq1_purec
+#define fminq Sleef_fminq1_purec
+#define fmodq Sleef_fmodq1_purec
+#define frexpq Sleef_frexpq1_purec
+#define hypotq Sleef_hypotq1_u05purec
+#define ilogbq Sleef_ilogbq1_purec
+#define ldexpq Sleef_ldexpq1_purec
+#define logq Sleef_logq1_u10purec
+#define log10q Sleef_log10q1_u10purec
+#define log2q Sleef_log2q1_u10purec
+#define log1pq Sleef_log1pq1_u10purec
+#define modfq Sleef_modfq1_purec
+#define powq Sleef_powq1_u10purec
+#define remainderq Sleef_remainderq1_purec
+#define rintq Sleef_rintq1_purec
+#define roundq Sleef_roundq1_purec
+#define sinhq Sleef_sinhq1_u10purec
+#define sinq Sleef_sinq1_u10purec
+#define sqrtq Sleef_sqrtq1_u05purec
+#define tanq Sleef_tanq1_u10purec
+#define tanhq Sleef_tanhq1_u10purec
+#define truncq Sleef_truncq1_purec
+
+#ifdef SLEEF_QUAD_C
+#define M_Eq SLEEF_QUAD_C(+0x1.5bf0a8b1457695355fb8ac404e7ap+1)
+#define M_LOG2Eq SLEEF_QUAD_C(+0x1.71547652b82fe1777d0ffda0d23ap+0)
+#define M_LOG10Eq SLEEF_QUAD_C(+0x1.bcb7b1526e50e32a6ab7555f5a68p-2)
+#define M_LN2q SLEEF_QUAD_C(+0x1.62e42fefa39ef35793c7673007e6p-1)
+#define M_LN10q SLEEF_QUAD_C(+0x1.26bb1bbb5551582dd4adac5705a6p+1)
+#define M_PIq SLEEF_QUAD_C(+0x1.921fb54442d18469898cc51701b8p+1)
+#define M_PI_2q SLEEF_QUAD_C(+0x1.921fb54442d18469898cc51701b8p+0)
+#define M_PI_4q SLEEF_QUAD_C(+0x1.921fb54442d18469898cc51701b8p-1)
+#define M_1_PIq SLEEF_QUAD_C(+0x1.45f306dc9c882a53f84eafa3ea6ap-2)
+#define M_2_PIq SLEEF_QUAD_C(+0x1.45f306dc9c882a53f84eafa3ea6ap-1)
+#define M_2_SQRTPIq SLEEF_QUAD_C(+0x1.20dd750429b6d11ae3a914fed7fep+0)
+#define M_SQRT2q SLEEF_QUAD_C(+0x1.6a09e667f3bcc908b2fb1366ea95p+0)
+#define M_SQRT1_2q SLEEF_QUAD_C(+0x1.6a09e667f3bcc908b2fb1366ea95p-1)
+#endif
+
+#endif
+
+//
+
 #include <stdio.h>
 #include <stdarg.h>
 
