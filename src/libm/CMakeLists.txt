@@ -518,7 +518,7 @@ if(BUILD_INLINE_HEADERS)
 
 	  # Embed version number into the header
 	  COMMAND ${SED_COMMAND} -e                                                                        # sed -e
-	  "s/%VERSION%/${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}.${SLEEF_VERSION_PATCHLEVEL}/g"        # "s/%VERSION%/3.5.0/g"
+	  "s/SLEEF_VERSION_SLEEF/${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}.${SLEEF_VERSION_PATCHLEVEL}/g" # "s/SLEEF_VERSION_SLEEF/3.5.0/g"
 	  ${CMAKE_CURRENT_SOURCE_DIR}/sleefinline_header.h.org                                             # /sleef/src/libm/sleefinline_header.h.org
 	  > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp4                                                # > /build/src/libm/sleefSSE2.h.tmp4
 
@@ -605,7 +605,7 @@ if(BUILD_INLINE_HEADERS)
 
       # Embed version number into the header
       COMMAND ${SED_COMMAND} -e                                                                        # sed -e
-      "s/%VERSION%/${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}.${SLEEF_VERSION_PATCHLEVEL}/g"        # "s/%VERSION%/3.5.0/g"
+      "s/SLEEF_VERSION_SLEEF/${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}.${SLEEF_VERSION_PATCHLEVEL}/g" # "s/SLEEF_VERSION_SLEEF/3.5.0/g"
       ${CMAKE_CURRENT_SOURCE_DIR}/sleefinline_cuda_header.h.org                                        # /sleef/src/libm/sleefinline_header.h.org
       > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp4                                                # > /build/src/libm/sleefCUDA.h.tmp4
 
