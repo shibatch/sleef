@@ -117,16 +117,12 @@ typedef int64_t vint2;
 typedef int64_t vint64;
 typedef uint64_t vuint64;
 
-typedef struct {
-  vmask x, y;
-} vquad;
+typedef Sleef_uint64_2t vquad;
 
-#if defined(ENABLEFLOAT128) && CONFIG != 3
-typedef __float128 vargquad;
-#elif defined(__SIZEOF_LONG_DOUBLE__) && __SIZEOF_LONG_DOUBLE__ == 16 && defined(__aarch64__) && CONFIG != 3
-typedef long double vargquad;
+#if CONFIG != 3
+typedef Sleef_quad vargquad;
 #else
-typedef vquad vargquad;
+typedef Sleef_uint64_2t vargquad;
 #endif
 
 //

@@ -484,57 +484,68 @@ if(BUILD_INLINE_HEADERS)
 	  OUTPUT ${INLINE_HEADER_FILE} 
 
 	  COMMAND echo Generating sleefinline_${SIMDLC}.h
-  
+	  
 	  # Preprocess sleefsimddp.c with SLEEF_GENHEADER defined, comments are preserved
 	  COMMAND "${CMAKE_C_COMPILER}"  ${FLAG_PREPROCESS} ${FLAG_PRESERVE_COMMENTS}                      # gcc -E -C 
-	    ${FLAG_INCLUDE}${PROJECT_SOURCE_DIR}/src/common ${FLAG_INCLUDE}${PROJECT_SOURCE_DIR}/src/arch  # -I/sleef/src/common -I/sleef/src/arch
-	    ${FLAG_INCLUDE}${CMAKE_CURRENT_BINARY_DIR}/include/                                            # -I/build/src/libm/include
-	    ${FLAG_DEFINE}SLEEF_GENHEADER ${FLAG_DEFINE}ENABLE_${SIMD} ${FLAG_DEFINE}DORENAME              # -DSLEEF_GENHEADER -DENABLE_SSE2 -DDORENAME
-	    ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimddp.c > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp1    # /sleef/src/libm/sleefsimddp.c > /build/libm/sleefSSE2.h.tmp1
+	  ${FLAG_INCLUDE}${PROJECT_SOURCE_DIR}/src/common ${FLAG_INCLUDE}${PROJECT_SOURCE_DIR}/src/arch    # -I/sleef/src/common -I/sleef/src/arch
+	  ${FLAG_INCLUDE}${CMAKE_CURRENT_BINARY_DIR}/include/                                              # -I/build/src/libm/include
+	  ${FLAG_DEFINE}SLEEF_GENHEADER ${FLAG_DEFINE}ENABLE_${SIMD} ${FLAG_DEFINE}DORENAME                # -DSLEEF_GENHEADER -DENABLE_SSE2 -DDORENAME
+	  ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimddp.c > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp1      # /sleef/src/libm/sleefsimddp.c > /build/libm/sleefSSE2.h.tmp1
 
 	  # Remove all lines except those begin with "//@"
 	  COMMAND ${SED_COMMAND} -n -e "/^\\/\\/@#.*$/p" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp1   # sed -n -e "/^\\/\\/@#.*$/p" /build/src/libm/sleefSSE2.h.tmp1
-	    > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp2                                              # > /build/src/libm/sleefSSE2.h.tmp2
+	  > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp2                                                # > /build/src/libm/sleefSSE2.h.tmp2
 
 	  # Remove "//@"
 	  COMMAND ${SED_COMMAND} -e "s/^\\/\\/@#/#/g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp2      # sed -e "s/^\\/\\/@#/#/g" /build/src/libm/sleefSSE2.h.tmp2
-	    > ${CMAKE_CURRENT_BINARY_DIR}/include/macroonly${SIMD}.h                                       # > /build/src/libm/include/macroonlySSE2.h
+	  > ${CMAKE_CURRENT_BINARY_DIR}/include/macroonly${SIMD}.h                                         # > /build/src/libm/include/macroonlySSE2.h
 
 	  # Preprocess sleefsimdsp.c with SLEEF_GENHEADER defined. Include macroonly*.h instead of helper*.h.
 	  COMMAND "${CMAKE_C_COMPILER}" ${FLAG_PREPROCESS} ${FLAG_PRESERVE_COMMENTS}                       # gcc -E -C 
-	    ${FLAG_INCLUDE}${PROJECT_SOURCE_DIR}/src/common ${FLAG_INCLUDE}${PROJECT_SOURCE_DIR}/src/arch  # -I/sleef/src/common -I/sleef/src/arch
-	    ${FLAG_INCLUDE}${CMAKE_CURRENT_BINARY_DIR}/include/                                            # -I/build/src/libm/include
-	    ${FLAG_DEFINE}SLEEF_GENHEADER ${FLAG_DEFINE}ENABLE_${SIMD} ${FLAG_DEFINE}DORENAME              # -DSLEEF_GENHEADER -DENABLE_SSE2 -DDORENAME
-	    ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdsp.c >> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp1   # /sleef/src/libm/sleefsimdsp.c >> /build/libm/sleefSSE2.h.tmp1
+	  ${FLAG_INCLUDE}${PROJECT_SOURCE_DIR}/src/common ${FLAG_INCLUDE}${PROJECT_SOURCE_DIR}/src/arch    # -I/sleef/src/common -I/sleef/src/arch
+	  ${FLAG_INCLUDE}${CMAKE_CURRENT_BINARY_DIR}/include/                                              # -I/build/src/libm/include
+	  ${FLAG_DEFINE}SLEEF_GENHEADER ${FLAG_DEFINE}ENABLE_${SIMD} ${FLAG_DEFINE}DORENAME                # -DSLEEF_GENHEADER -DENABLE_SSE2 -DDORENAME
+	  ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdsp.c >> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp1     # /sleef/src/libm/sleefsimdsp.c >> /build/libm/sleefSSE2.h.tmp1
 
 	  # Remove lines beginning with "#" so that the resulting file can be preprocessed again.
 	  COMMAND ${SED_COMMAND} -e "s/^#.*//g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp1            # sed -e "s/^#.*//g" /build/src/libm/sleefSSE2.h.tmp1
-	    > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.c                                                 # > /build/src/libm/sleefSSE2.h.c
+	  > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.c                                                   # > /build/src/libm/sleefSSE2.h.c
 
 	  # Preprocess the intemediate file again to remove comments
 	  COMMAND "${CMAKE_C_COMPILER}" ${FLAG_PREPROCESS}                                                 # gcc -E
-	    ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.c                                                   # /build/src/libm/sleefSSE2.h.c
-	    > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp3                                              # > /build/src/libm/sleefSSE2.h.tmp3
+	  ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.c                                                     # /build/src/libm/sleefSSE2.h.c
+	  > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp3                                                # > /build/src/libm/sleefSSE2.h.tmp3
 
 	  # Embed version number into the header
 	  COMMAND ${SED_COMMAND} -e                                                                        # sed -e
-	    "s/%VERSION%/${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}.${SLEEF_VERSION_PATCHLEVEL}/g"      # "s/%VERSION%/3.5.0/g"
-	    ${CMAKE_CURRENT_SOURCE_DIR}/sleefinline_header.h.org                                           # /sleef/src/libm/sleefinline_header.h.org
-	    > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp4                                              # > /build/src/libm/sleefSSE2.h.tmp4
+	  "s/SLEEF_VERSION_SLEEF/${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}.${SLEEF_VERSION_PATCHLEVEL}/g" # "s/SLEEF_VERSION_SLEEF/3.5.0/g"
+	  ${CMAKE_CURRENT_SOURCE_DIR}/sleefinline_header.h.org                                             # /sleef/src/libm/sleefinline_header.h.org
+	  > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp4                                                # > /build/src/libm/sleefSSE2.h.tmp4
 
 	  # Remove lines beginning with "#"
 	  COMMAND ${SED_COMMAND} -e "s/^#.*//g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp3            # sed -e "s/^#.*//g" /build/src/libm/sleefSSE2.h.tmp3
-	    >> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp4                                             # >> /build/src/libm/sleefSSE2.h.tmp4
+	  >> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp4                                               # >> /build/src/libm/sleefSSE2.h.tmp4
+
+	  # Substitute "SLEEFSHARP" at the beginning of line with "#"
+	  COMMAND ${SED_COMMAND} -e "s/^SLEEFSHARP/#/g"                                                    # sed -e "s/^SLEEFSHARP/#/g"
+	  ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp4                                                  # /build/src/libm/sleefSSE2.h.tmp4
+	  > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp5                                                # > /build/src/libm/sleefSSE2.h.tmp5
+
+	  # Remove SLEEFXXX
+	  COMMAND ${SED_COMMAND} -e "s/SLEEFXXX//g"                                                        # sed -e "s/SLEEFXXX//g"
+	  ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp5                                                  # /build/src/libm/sleefSSE2.h.tmp5
+	  > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp6                                                # > /build/src/libm/sleefSSE2.h.tmp6
 
 	  # Replace multiple empty lines with a single empty line
-	  COMMAND ${SED_COMMAND} -e "s/^[[:space:]]*$//g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp4  # sed -e "s/^[[:space:]]*$//g" /build/src/libm/sleefSSE2.h.tmp4
-	    > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp5                                              # > /build/src/libm/sleefSSE2.h.tmp5
-	  COMMAND ${SED_COMMAND} "/^$/N;/^\\n$/D" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp5          # sed -e "/^$/N;/^\n$/D" /build/src/libm/sleefSSE2.h.tmp5
-	    > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp6                                              # > /build/src/libm/sleefSSE2.h.tmp6
+	  COMMAND ${SED_COMMAND} -e "s/^[[:space:]]*$//g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp6  # sed -e "s/^[[:space:]]*$//g" /build/src/libm/sleefSSE2.h.tmp6
+	  > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp7                                                # > /build/src/libm/sleefSSE2.h.tmp7
+	  COMMAND ${SED_COMMAND} "/^$/N;/^\\n$/D" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp7          # sed -e "/^$/N;/^\n$/D" /build/src/libm/sleefSSE2.h.tmp7
+	  > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp8                                                # > /build/src/libm/sleefSSE2.h.tmp8
 
-	  COMMAND $<TARGET_FILE:addSuffix> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp6                 # addSuffix /build/src/libm/sleefSSE2.h.tmp6
-	    ${sleef_SOURCE_DIR}/src/common/keywords.txt "_${SIMDLC}_sleef"                                 # keywords.txt "_sse2_sleef"
-            > ${PROJECT_BINARY_DIR}/include/sleefinline_${SIMDLC}.h                                        # > /build/include/sleefinline_sse2.h
+	  COMMAND $<TARGET_FILE:addSuffix> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp8                 # addSuffix /build/src/libm/sleefSSE2.h.tmp8
+	  ${sleef_SOURCE_DIR}/src/common/keywords.txt "_${SIMDLC}_sleef"                                   # keywords.txt "_sse2_sleef"
+	  Sleef_rempitabdp Sleef_rempitabsp                                                                # Sleef_rempitabdp Sleef_rempitabsp
+          > ${PROJECT_BINARY_DIR}/include/sleefinline_${SIMDLC}.h                                          # > /build/include/sleefinline_sse2.h
 
 	  MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimddp.c ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdsp.c ${HEADER_${SIMD}}
 	  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimddp.c ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdsp.c ${HEADER_${SIMD}} addSuffix
@@ -594,7 +605,7 @@ if(BUILD_INLINE_HEADERS)
 
       # Embed version number into the header
       COMMAND ${SED_COMMAND} -e                                                                        # sed -e
-      "s/%VERSION%/${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}.${SLEEF_VERSION_PATCHLEVEL}/g"        # "s/%VERSION%/3.5.0/g"
+      "s/SLEEF_VERSION_SLEEF/${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}.${SLEEF_VERSION_PATCHLEVEL}/g" # "s/SLEEF_VERSION_SLEEF/3.5.0/g"
       ${CMAKE_CURRENT_SOURCE_DIR}/sleefinline_cuda_header.h.org                                        # /sleef/src/libm/sleefinline_header.h.org
       > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp4                                                # > /build/src/libm/sleefCUDA.h.tmp4
 
@@ -602,18 +613,28 @@ if(BUILD_INLINE_HEADERS)
       COMMAND ${SED_COMMAND} -e "s/^#.*//g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp3            # sed -e "s/^#.*//g" /build/src/libm/sleefCUDA.h.tmp3
       >> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp4                                               # >> /build/src/libm/sleefCUDA.h.tmp4
 
+      # Substitute "SLEEFSHARP" at the beginning of line with "#"
+      COMMAND ${SED_COMMAND} -e "s/^SLEEFSHARP/#/g"                                                    # sed -e "s/^SLEEFSHARP/#/g"
+      ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp4                                                  # /build/src/libm/sleefSSE2.h.tmp4
+      > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp5                                                # > /build/src/libm/sleefSSE2.h.tmp5
+
+      # Remove SLEEFXXX
+      COMMAND ${SED_COMMAND} -e "s/SLEEFXXX//g"                                                        # sed -e "s/SLEEFXXX//g"
+      ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp5                                                  # /build/src/libm/sleefSSE2.h.tmp5
+      > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp6                                                # > /build/src/libm/sleefSSE2.h.tmp6
+
       # Replace multiple empty lines with a single empty line
-      COMMAND ${SED_COMMAND} -e "s/^[[:space:]]*$//g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp4  # sed -e "s/^[[:space:]]*$//g" /build/src/libm/sleefCUDA.h.tmp4
-      > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp5                                                # > /build/src/libm/sleefCUDA.h.tmp5
-      COMMAND ${SED_COMMAND} "/^$/N;/^\\n$/D" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp5          # sed -e "/^$/N;/^\n$/D" /build/src/libm/sleefCUDA.h.tmp5
-      > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp6                                                # > /build/src/libm/sleefCUDA.h.tmp6
+      COMMAND ${SED_COMMAND} -e "s/^[[:space:]]*$//g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp6  # sed -e "s/^[[:space:]]*$//g" /build/src/libm/sleefCUDA.h.tmp6
+      > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp7                                                # > /build/src/libm/sleefCUDA.h.tmp7
+      COMMAND ${SED_COMMAND} "/^$/N;/^\\n$/D" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp7          # sed -e "/^$/N;/^\n$/D" /build/src/libm/sleefCUDA.h.tmp7
+      > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp8                                                # > /build/src/libm/sleefCUDA.h.tmp8
 
       # Remove redundant __device__
       COMMAND ${SED_COMMAND} -e "s/__device__ __device__/__device__/g"                                 # sed -e "s/__device__ __device__/__device__/g"
-      -e "s/__device__ __device__/__device__/g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp6        # -e "s/__device__ __device__/__device__/g" /build/src/libm/sleefCUDA.h.tmp6
-      > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp7                                                # > /build/src/libm/sleefCUDA.h.tmp7
+      -e "s/__device__ __device__/__device__/g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp8        # -e "s/__device__ __device__/__device__/g" /build/src/libm/sleefCUDA.h.tmp8
+      > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp9                                                # > /build/src/libm/sleefCUDA.h.tmp9
 
-      COMMAND $<TARGET_FILE:addSuffix> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp7                 # addSuffix /build/src/libm/sleefCUDA.h.tmp7
+      COMMAND $<TARGET_FILE:addSuffix> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp9                 # addSuffix /build/src/libm/sleefCUDA.h.tmp9
       ${sleef_SOURCE_DIR}/src/common/keywords.txt "_${SIMDLC}_sleef" double2 double3 float2            # keywords.txt "_cuda_sleef" double2 double3 float2
       > ${PROJECT_BINARY_DIR}/include/sleefinline_${SIMDLC}.h                                          # > /build/include/sleefinline_cuda.h
 

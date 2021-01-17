@@ -679,3 +679,6 @@ fma_tdx_tdx_tdx_tdx
 hypot_tdx_tdx_tdx
 ilogb_vi_tdx
 ldexp_tdx_tdx_vi
+Sleef_rempitabsp
+Sleef_rempitabdp
+Sleef_rempitabqp

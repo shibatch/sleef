@@ -164,19 +164,6 @@ typedef struct {
 } Sleef_float2;
 #endif
 
-#if !defined(Sleef_quad_DEFINED) && !defined(SLEEF_GENHEADER)
-#define Sleef_quad_DEFINED
-#if defined(ENABLEFLOAT128)
-typedef __float128 Sleef_quad;
-#define SLEEF_QUAD_C(x) (x ## Q)
-#elif defined(__SIZEOF_LONG_DOUBLE__) && __SIZEOF_LONG_DOUBLE__ == 16 && (defined(__aarch64__) || defined(__zarch__))
-typedef long double Sleef_quad;
-#define SLEEF_QUAD_C(x) (x ## L)
-#else
-typedef struct { uint64_t x, y; } Sleef_quad;
-#endif
-#endif
-
 //
 
 #if (defined (__GNUC__) || defined (__clang__) || defined(__INTEL_COMPILER)) && !defined(_MSC_VER)

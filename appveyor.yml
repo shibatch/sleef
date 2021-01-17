@@ -22,7 +22,9 @@ build_script:
   - if "%DO_TEST%" == "TRUE" call p.bat
   - if "%DO_TEST%" == "TRUE" "C:\\Cygwin64\\bin\\bash" -c 'mkdir build-mingw;cd build-mingw;CC=x86_64-w64-mingw32-gcc cmake -G Ninja .. -DRUNNING_ON_APPVEYOR=TRUE -DBUILD_SHARED_LIBS=FALSE -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DENFORCE_SSE2=TRUE -DENFORCE_SSE4=TRUE;ninja'
   - if "%DO_TEST%" == "TRUE" cd "%BUILDFOLDER%"
-  - if "%DO_TEST%" == "TRUE" "C:\\Cygwin64\\bin\\bash" -c 'mkdir build-cygwin;cd build-cygwin;cmake -G Ninja -DRUNNING_ON_APPVEYOR=TRUE -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DENFORCE_SSE2=TRUE -DENFORCE_SSE2=TRUE -DENFORCE_SSE4=TRUE ..;ninja'
+  - if "%DO_TEST%" == "TRUE" "C:\\Cygwin64\\bin\\bash" -c 'mkdir build-cygwin;cd build-cygwin;cmake -G Ninja -DRUNNING_ON_APPVEYOR=TRUE -DBUILD_QUAD=TRUE -DBUILD_DFT=FALSE -DBUILD_INLINE_HEADERS=TRUE -DENFORCE_SSE2=TRUE -DENFORCE_SSE2=TRUE -DENFORCE_SSE4=TRUE ..;ninja'
+  - if "%DO_TEST%" == "TRUE" cd "%BUILDFOLDER%"
+  - if "%DO_TEST%" == "TRUE" "C:\\Cygwin64\\bin\\bash" -c 'cd build-cygwin;ctest -j `nproc`'
   - if "%DO_TEST%" == "TRUE" cd "%BUILDFOLDER%"
   - if "%DO_TEST%" == "TRUE" del /Q /F build-cygwin\bin\iut*
   - if "%DO_TEST%" == "TRUE" echo PATH %ORGPATH%;c:\Cygwin64\bin;c:\Cygwin64\usr\bin;%CD%\build-cygwin\bin;%CD%\build\bin > q.bat

@@ -21,6 +21,7 @@
 #include <signal.h>
 #endif
 
+#include "quaddef.h"
 #include "misc.h"
 
 #if !defined(USE_INLINE_HEADER)

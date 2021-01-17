@@ -12,6 +12,7 @@
 #include <float.h>
 #endif
 
+#include "quaddef.h"
 #include "misc.h"
 
 #ifndef ENABLE_CUDA
@@ -3221,7 +3222,7 @@ EXPORT2 CONST2 vargquad xsplatq(Sleef_quad p) {
   }
   return a;
 }
-#else
+#else // #ifndef ENABLE_SVE
 EXPORT CONST VECTOR_CC vargquad xloadq(Sleef_quad *p) {
   double a[VECTLENDP*2];
   for(int i=0;i<VECTLENDP;i++) {
@@ -3275,7 +3276,7 @@ EXPORT CONST VECTOR_CC vargquad xsplatq(Sleef_quad p) {
 
   return vqsetxy_vq_vm_vm(svld1_s32(ptrue, (int32_t *)&a[0]), svld1_s32(ptrue, (int32_t *)&a[VECTLENDP]));
 }
-#endif
+#endif // #ifndef ENABLE_SVE
 
 #ifdef ENABLE_PUREC_SCALAR
 #if !defined(SLEEF_GENHEADER)
@@ -3775,7 +3776,7 @@ static int snprintquadhex(char *buf, size_t bufsize, vargquad argvalue, int widt
 #define XBUFSIZE 5000
 
 static int xvprintf(size_t (*consumer)(const char *ptr, size_t size, void *arg), void *arg, const char *fmt, va_list ap) {
-  char *xbuf = malloc(XBUFSIZE+10);
+  char *xbuf = (char *)malloc(XBUFSIZE+10);
 
   int outlen = 0, errorflag = 0;
 
@@ -3953,7 +3954,7 @@ static int xvprintf(size_t (*consumer)(const char *ptr, size_t size, void *arg),
     }
 
     if (!subfmt_processed) {
-      char *subfmt = malloc(fmt - subfmtstart + 2);
+      char *subfmt = (char *)malloc(fmt - subfmtstart + 2);
       memcpy(subfmt, subfmtstart, fmt - subfmtstart + 1);
       subfmt[fmt - subfmtstart + 1] = 0;
       int ret = vsnprintf(xbuf, XBUFSIZE, subfmt, ap2);
@@ -4066,7 +4067,7 @@ static int printf_output(FILE *fp, const struct printf_info *info, const void *c
 
   vargquad q = **(const vargquad **)args[0];
 
-  char *xbuf = malloc(XBUFSIZE+10);
+  char *xbuf = (char *)malloc(XBUFSIZE+10);
 
   int len = 0;
   if (tolower(info->spec) == 'a') {

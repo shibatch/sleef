@@ -46,24 +46,6 @@ IMPORT struct SleefDFT *SleefDFT_float_init1d(uint32_t n, const float *in, float
 IMPORT struct SleefDFT *SleefDFT_float_init2d(uint32_t n, uint32_t m, const float *in, float *out, uint64_t mode);
 IMPORT void SleefDFT_float_execute(struct SleefDFT *ptr, const float *in, float *out);
 
-IMPORT struct SleefDFT *SleefDFT_longdouble_init1d(uint32_t n, const long double *in, long double *out, uint64_t mode);
-IMPORT struct SleefDFT *SleefDFT_longdouble_init2d(uint32_t n, uint32_t m, const long double *in, long double *out, uint64_t mode);
-IMPORT void SleefDFT_longdouble_execute(struct SleefDFT *ptr, const long double *in, long double *out);
-
-#if defined(ENABLEFLOAT128) && !defined(Sleef_quad2_DEFINED)
-#define Sleef_quad2_DEFINED
-typedef __float128 Sleef_quad;
-typedef struct {
-  Sleef_quad x, y;
-} Sleef_quad2;
-#endif
-
-#if defined(Sleef_quad2_DEFINED)
-IMPORT struct SleefDFT *SleefDFT_quad_init1d(uint32_t n, const Sleef_quad *in, Sleef_quad *out, uint64_t mode);
-IMPORT struct SleefDFT *SleefDFT_quad_init2d(uint32_t n, uint32_t m, const Sleef_quad *in, Sleef_quad *out, uint64_t mode);
-IMPORT void SleefDFT_quad_execute(struct SleefDFT *ptr, const Sleef_quad *in, Sleef_quad *out);
-#endif
-
 IMPORT void SleefDFT_dispose(struct SleefDFT *ptr);
 
 IMPORT void SleefDFT_setPath(struct SleefDFT *ptr, char *pathStr);

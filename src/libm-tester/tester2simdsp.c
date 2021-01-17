@@ -17,10 +17,10 @@
 #define _GNU_SOURCE
 #include <unistd.h>
 #include <sys/syscall.h>
-#include <linux/random.h>
 #endif
 
 #include "sleef.h"
+#include "quaddef.h"
 #include "testerutil.h"
 
 #ifdef ENABLE_SSE2

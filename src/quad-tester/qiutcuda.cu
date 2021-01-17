@@ -10,9 +10,13 @@
 #include <math.h>
 #include <float.h>
 #include <inttypes.h>
+#include <stdarg.h>
+#include <ctype.h>
+#include <assert.h>
 #include <cuda.h>
 
 #include "sleefquadinline_cuda.h"
+#include "sleefquadinline_purec_scalar.h"
 
 #define STDIN_FILENO 0
 
@@ -371,6 +375,22 @@ int main(int argc, char **argv) {
 
   printf("1\n");
   fflush(stdout);
+
+  //
+
+  {
+    *a0 = Sleef_setq1_cuda(*a0, 0, Sleef_strtoq("3.141592653589793238462643383279502884", NULL));
+    *a1 = Sleef_setq1_cuda(*a1, 0, Sleef_strtoq("2.718281828459045235360287471352662498", NULL));
+    xmulq_u05<<<1, 1>>>(r, a0, a1);
+    cudaDeviceSynchronize();
+    Sleef_quad v0 = Sleef_getq1_cuda(*r, 0);
+    if (Sleef_icmpneq1_purec(v0, Sleef_strtoq("8.539734222673567065463550869546573820", NULL))) {
+      fprintf(stderr, "Testing with Sleef_mulq1_u05cuda failed\n");
+      exit(-1);
+    }
+  }
+
+  //
 
   char buf[BUFSIZE];
   if (fgets(buf, BUFSIZE-1, stdin)) {}
