@@ -379,7 +379,7 @@ int main(int argc, char **argv) {
   //
 
   {
-    *a0 = Sleef_setq1_cuda(*a0, 0, Sleef_strtoq("3.141592653589793238462643383279502884", NULL));
+    *a0 = Sleef_setq1_cuda(*a0, 0, SLEEF_M_PIq);
     *a1 = Sleef_setq1_cuda(*a1, 0, Sleef_strtoq("2.718281828459045235360287471352662498", NULL));
     xmulq_u05<<<1, 1>>>(r, a0, a1);
     cudaDeviceSynchronize();
