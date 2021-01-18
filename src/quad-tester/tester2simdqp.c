@@ -259,8 +259,6 @@ int main(int argc,char **argv)
       q2 = rndf128x();
       break;
 #if defined(ENABLEFLOAT128)
-#define SLEEF_QUAD_MIN 3.36210314311209350626267781732175260e-4932Q
-#define SLEEF_QUAD_MAX 1.18973149535723176508575932662800702e+4932Q
     case 124:
       q0 = rndf128x();
       q1 = rndf128x();
