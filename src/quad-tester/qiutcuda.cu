@@ -379,12 +379,12 @@ int main(int argc, char **argv) {
   //
 
   {
-    *a0 = Sleef_setq1_cuda(*a0, 0, Sleef_strtoq("3.141592653589793238462643383279502884", NULL));
+    *a0 = Sleef_setq1_cuda(*a0, 0, SLEEF_M_PIq);
     *a1 = Sleef_setq1_cuda(*a1, 0, Sleef_strtoq("2.718281828459045235360287471352662498", NULL));
     xmulq_u05<<<1, 1>>>(r, a0, a1);
     cudaDeviceSynchronize();
     Sleef_quad v0 = Sleef_getq1_cuda(*r, 0);
-    if (Sleef_icmpneq1_purec(v0, Sleef_strtoq("8.539734222673567065463550869546573820", NULL))) {
+    if (Sleef_icmpneq1_purec(v0, sleef_q(+0x1114580b45d47LL, 0x49e6108579a2d0caULL, 3))) {
       fprintf(stderr, "Testing with Sleef_mulq1_u05cuda failed\n");
       exit(-1);
     }

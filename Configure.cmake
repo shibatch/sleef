@@ -98,9 +98,7 @@ endif()
 if(SLEEF_TARGET_PROCESSOR MATCHES "(x86|AMD64|amd64|^i.86$)")
   set(SLEEF_ARCH_X86 ON CACHE INTERNAL "True for x86 architecture.")
 
-  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mavx2;-mfma;-fno-strict-aliasing")
-  set(CLANG_FLAGS_ENABLE_PUREC_SCALAR "-fno-strict-aliasing")
-
+  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mavx2;-mfma")
 elseif(SLEEF_TARGET_PROCESSOR MATCHES "aarch64|arm64")
   set(SLEEF_ARCH_AARCH64 ON CACHE INTERNAL "True for Aarch64 architecture.")
   # Aarch64 requires support for advsimdfma4
@@ -112,20 +110,15 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
   set(COMPILER_SUPPORTS_NEON32 1)
   set(COMPILER_SUPPORTS_NEON32VFPV4 1)
 
-  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mfpu=vfpv4;-fno-strict-aliasing")
-  set(CLANG_FLAGS_ENABLE_PUREC_SCALAR "-fno-strict-aliasing")
-
+  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mfpu=vfpv4")
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
   set(SLEEF_ARCH_PPC64 ON CACHE INTERNAL "True for PPC64 architecture.")
 
-  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mvsx;-fno-strict-aliasing")
-  set(CLANG_FLAGS_ENABLE_PUREC_SCALAR "-fno-strict-aliasing")
-
+  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mvsx")
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "s390x")
   set(SLEEF_ARCH_S390X ON CACHE INTERNAL "True for IBM Z architecture.")
 
-  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-march=z14;-mzvector;-fno-strict-aliasing")
-  set(CLANG_FLAGS_ENABLE_PUREC_SCALAR "-fno-strict-aliasing")
+  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-march=z14;-mzvector")
 endif()
 
 set(COMPILER_SUPPORTS_PUREC_SCALAR 1)

@@ -129,7 +129,7 @@ static INLINE vquad vqsetxy_vq_vm_vm(vmask x, vmask y) { return svcreate2_s32(x,
 static INLINE vquad vqsetx_vq_vq_vm(vquad v, vmask x) { return svset2_s32(v, 0, x); }
 static INLINE vquad vqsety_vq_vq_vm(vquad v, vmask y) { return svset2_s32(v, 1, y); }
 
-typedef svint32x2_t vargquad;
+typedef vquad vargquad;
 
 // Auxiliary data types
 

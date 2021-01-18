@@ -245,6 +245,9 @@ if(BUILD_INLINE_HEADERS)
 	  Sleef_rempitabqp                                                                                  # Sleef_rempitabdp Sleef_rempitabsp
           > ${PROJECT_BINARY_DIR}/include/sleefquadinline_${SIMDLC}.h                                       # > /build/include/sleefquadinline_sse2.h
 
+	  COMMAND $<TARGET_FILE:addSuffix> ${CMAKE_CURRENT_SOURCE_DIR}/sleefquadinline_footer.h.org         # addSuffix /build/src/quad/sleefquadinline_footer.h.org
+          >> ${PROJECT_BINARY_DIR}/include/sleefquadinline_${SIMDLC}.h                                      # >> /build/include/sleefquadinline_sse2.h
+
 	  MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdqp.c ${HEADER_${SIMD}}
 	  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdqp.c ${HEADER_${SIMD}} addSuffix
 	  VERBATIM
@@ -326,6 +329,9 @@ if(BUILD_INLINE_HEADERS)
       COMMAND $<TARGET_FILE:addSuffix> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp9                 # addSuffix /build/src/quad/sleefCUDA.h.qtmp9
       ${sleef_SOURCE_DIR}/src/common/keywords.txt "_${SIMDLC}_sleefq" double2 double3 float2            # keywords.txt "_cuda_sleefq" double2 double3 float2
       > ${PROJECT_BINARY_DIR}/include/sleefquadinline_${SIMDLC}.h                                       # > /build/include/sleefquadinline_cuda.h
+
+      COMMAND $<TARGET_FILE:addSuffix> ${CMAKE_CURRENT_SOURCE_DIR}/sleefquadinline_footer.h.org         # addSuffix /build/src/quad/sleefquadinline_footer.h.org
+      >> ${PROJECT_BINARY_DIR}/include/sleefquadinline_${SIMDLC}.h                                      # >> /build/include/sleefquadinline_cuda.h
 
       MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdqp.c ${HEADER_${SIMD}}
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdqp.c ${HEADER_${SIMD}} addSuffix

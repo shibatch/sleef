@@ -29,11 +29,11 @@ typedef Sleef_uint64_2t Sleef_quad;
 
 #else // #if !defined(SLEEF_GENHEADER)
 
-SLEEFSHARPif (defined(SLEEFXXX__SIZEOF_FLOAT128__) && SLEEFXXX__SIZEOF_FLOAT128__ == 16) || (defined(SLEEFXXX__linux__) && defined(SLEEFXXX__GNUC__) && (defined(SLEEFXXX__i386__) || defined(SLEEFXXX__x86_64__))) || (defined(SLEEFXXX__PPC64__) && defined(SLEEFXXX__GNUC__) && !defined(SLEEFXXX__clang__) && SLEEFXXX__GNUC__ >= 8)
+SLEEFSHARPif !defined(SLEEFXXX__NVCC__) && ((defined(SLEEFXXX__SIZEOF_FLOAT128__) && SLEEFXXX__SIZEOF_FLOAT128__ == 16) || (defined(SLEEFXXX__linux__) && defined(SLEEFXXX__GNUC__) && (defined(SLEEFXXX__i386__) || defined(SLEEFXXX__x86_64__))) || (defined(SLEEFXXX__PPC64__) && defined(SLEEFXXX__GNUC__) && !defined(SLEEFXXX__clang__) && SLEEFXXX__GNUC__ >= 8))
 SLEEFSHARPdefine SLEEFXXXSLEEF_FLOAT128_IS_IEEEQP
 SLEEFSHARPendif
 
-SLEEFSHARPif !defined(SLEEFXXXSLEEF_FLOAT128_IS_IEEEQP) && defined(SLEEFXXX__SIZEOF_LONG_DOUBLE__) && SLEEFXXX__SIZEOF_LONG_DOUBLE__ == 16 && (defined(SLEEFXXX__aarch64__) || defined(SLEEFXXX__zarch__))
+SLEEFSHARPif !defined(SLEEFXXXSLEEF_FLOAT128_IS_IEEEQP) && !defined(SLEEFXXX__NVCC__) && defined(SLEEFXXX__SIZEOF_LONG_DOUBLE__) && SLEEFXXX__SIZEOF_LONG_DOUBLE__ == 16 && (defined(SLEEFXXX__aarch64__) || defined(SLEEFXXX__zarch__))
 SLEEFSHARPdefine SLEEFXXXSLEEF_LONGDOUBLE_IS_IEEEQP
 SLEEFSHARPendif
 
