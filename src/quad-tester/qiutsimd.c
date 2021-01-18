@@ -601,14 +601,14 @@ int do_test(int argc, char **argv) {
   }
 
 #if !defined(ENABLE_PUREC_SCALAR) && !defined(ENABLE_PURECFMA_SCALAR)
-  // Do simple testing on splat, select and SLEEF_Q
+  // Do simple testing on splat, select and sleef_q
   {
-    VARGQUAD v0 = xsplatq(SLEEF_Q(+0x1921fb54442d1LL, 0x8469898cc51701b8ULL, 1));
-    VARGQUAD v1 = xsplatq(SLEEF_Q(+0x0000000000000LL, 0x0000000000000000ULL, 0));
-    v1 = xsetq(v1, 1, SLEEF_Q(+0x15bf0a8b14576LL, 0x95355fb8ac404e7aULL, 1));
+    VARGQUAD v0 = xsplatq(sleef_q(+0x1921fb54442d1LL, 0x8469898cc51701b8ULL, 1));
+    VARGQUAD v1 = xsplatq(sleef_q(+0x0000000000000LL, 0x0000000000000000ULL, 0));
+    v1 = xsetq(v1, 1, sleef_q(+0x15bf0a8b14576LL, 0x95355fb8ac404e7aULL, 1));
     v1 = xmulq_u05(v0, v1);
 
-    vint vi = xicmpeqq(v1, xsplatq(SLEEF_Q(+0x1114580b45d47LL, 0x49e6108579a2d0caULL, 3)));
+    vint vi = xicmpeqq(v1, xsplatq(sleef_q(+0x1114580b45d47LL, 0x49e6108579a2d0caULL, 3)));
     int t[VECTLENDP*2];
     memset(t, 0, sizeof(t));
     vstoreu_v_p_vi(t, vi);
@@ -623,28 +623,18 @@ int do_test(int argc, char **argv) {
 #if defined(SLEEF_QUAD_C)
   {
     VARGQUAD v0 = xsplatq(SLEEF_QUAD_C(3.141592653589793238462643383279502884));
-    VARGQUAD v1 = xsplatq(SLEEF_Q(+0x1921fb54442d1LL, 0x8469898cc51701b8ULL, 1));
+    VARGQUAD v1 = xsplatq(sleef_q(+0x1921fb54442d1LL, 0x8469898cc51701b8ULL, 1));
     if (Sleef_icmpneq1_purec(xgetq(v0, 0), xgetq(v1, 0))) {
       fprintf(stderr, "Testing on SLEEF_QUAD_C failed\n");
       exit(-1);
     }
   }
 #elif defined(ENABLE_PUREC_SCALAR)
-
-#ifndef _MSC_VER
-#warning SLEEF_QUAD_C not defined
-#else
 #pragma message ("SLEEF_QUAD_C not defined")
 #endif
 
-#endif
-
   {
-#if defined(SLEEF_QUAD_C)
     VARGQUAD v0 = xsplatq(SLEEF_M_PIq);
-#else
-    VARGQUAD v0 = xsplatq(Sleef_strtoq("3.141592653589793238462643383279502884", NULL));
-#endif
     VARGQUAD v1 = xsplatq(Sleef_strtoq("2.718281828459045235360287471352662498", NULL));
     Sleef_quad q = xgetq(xmulq_u05(v0, v1), 0);
     if (Sleef_icmpneq1_purec(q, Sleef_strtoq("8.539734222673567065463550869546573820", NULL))) {

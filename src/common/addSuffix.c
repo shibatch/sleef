@@ -138,10 +138,29 @@ int main(int argc, char **argv) {
   nalloc = 1;
   keywords = malloc(sizeof(char *) * nalloc);
 
-  if (argc < 4) {
+  if (argc < 2) {
+    fprintf(stderr, "%s <input file>\n", argv[0]);
+    fprintf(stderr, "Print the file on the standard output\n");
+    fprintf(stderr, "\n");
     fprintf(stderr, "%s <input file> <keywords file> <suffix> [<keywords to ignore> ... ]\n", argv[0]);
     fprintf(stderr, "Add the suffix to keywords\n");
     exit(-1);
+  }
+
+  char buf[N];
+
+  if (argc == 2) {
+    FILE *fp = fopen(argv[1], "r");
+    if (fp == NULL) {
+      fprintf(stderr, "Cannot open %s\n", argv[2]);
+      exit(-1);
+    }
+
+    while(fgets(buf, N, fp) != NULL) {
+      fputs(buf, stdout);
+    }
+    fclose(fp);
+    exit(0);
   }
 
   FILE *fp = fopen(argv[2], "r");
@@ -149,8 +168,6 @@ int main(int argc, char **argv) {
     fprintf(stderr, "Cannot open %s\n", argv[2]);
     exit(-1);
   }
-
-  char buf[N];
 
   while(fgets(buf, N, fp) != NULL) {
     if (strlen(buf) >= 1) buf[strlen(buf)-1] = '\0';

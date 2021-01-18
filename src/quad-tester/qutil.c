@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
     int64_t h = strtoll(argv[1], NULL, 16);
     uint64_t l = strtoull(argv[2], NULL, 16);
     int e = atoi(argv[3]);
-    Sleef_quad q = SLEEF_Q(h, l, e);
+    Sleef_quad q = sleef_q(h, l, e);
     Sleef_printf("%+Pa = %.30Pg\n", &q, &q);
     exit(0);
   }
@@ -32,8 +32,9 @@ int main(int argc, char **argv) {
     Sleef_quad q;
   } cnv = { .q = Sleef_strtoq(argv[1], NULL) };
 
-  Sleef_printf("%+Pa\nSLEEF_Q(%c0x1%012llxLL, 0x%016llxULL, %d)\n",
+  Sleef_printf("%+Pa\nsleef_q(%c0x%c%012llxLL, 0x%016llxULL, %d)\n",
 	       &cnv.q, (cnv.h >> 63) ? '-' : '+',
+	       (int)((cnv.h >> 48) & 0x7fff) == 0 ? '0' : '1',
 	       (unsigned long long)(0xffffffffffffULL & cnv.h),
 	       (unsigned long long)cnv.l,
 	       (int)((cnv.h >> 48) & 0x7fff) - 16383);

@@ -37,12 +37,16 @@
 #define M_2_PIl 0.636619772367581343075535053490057448L
 #endif
 
+#if !defined(SLEEF_GENHEADER)
+
 #ifndef SLEEF_FP_ILOGB0
 #define SLEEF_FP_ILOGB0 ((int)0x80000000)
 #endif
 
 #ifndef SLEEF_FP_ILOGBNAN
 #define SLEEF_FP_ILOGBNAN ((int)2147483647)
+#endif
+
 #endif
 
 #define SLEEF_SNAN (((union { long long int i; double d; }) { .i = INT64_C(0x7ff0000000000001) }).d)
