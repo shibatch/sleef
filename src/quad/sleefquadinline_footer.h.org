@@ -1,4 +1,23 @@
 
+#if !defined(SLEEF_Q_DEFINED)
+#define SLEEF_Q_DEFINED
+static inline Sleef_quad sleef_q(int64_t H, uint64_t L, int E) {
+#if defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
+  struct { uint64_t h, l; } c;
+#else
+  struct { uint64_t l, h; } c;
+#endif
+  c.h = (((int64_t)(H) < 0 ? 1ULL : 0ULL) << 63) |
+    ((0x7fff & (uint64_t)((E) + 16383)) << 48) |
+    ((int64_t)(H) < 0 ? -(int64_t)(H) : (int64_t)(H) & 0xffffffffffffULL);
+  c.l = (uint64_t)(L);
+
+  Sleef_quad q;
+  memcpy(&q, &c, 16);
+  return q;
+}
+#endif
+
 #ifdef SLEEF_QUAD_C
 
 #define SLEEF_M_Eq SLEEF_QUAD_C(+0x1.5bf0a8b1457695355fb8ac404e7ap+1)
