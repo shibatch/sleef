@@ -50,6 +50,3 @@ build_script:
   - ninja
 test_script:
   - if "%DO_TEST%" == "TRUE" (ctest --output-on-failure -j 16 -C Release)
-artifacts:
-- path: build\install\**\*
-  name: SLEEFWindowsx64

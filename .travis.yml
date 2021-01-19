@@ -1,0 +1,100 @@
+language: c
+
+# Default linux jobs
+os: linux
+sudo: required
+dist: bionic
+
+# Include osx jobs
+matrix:
+  include:
+    # - os: osx
+    #   arch: amd64
+    #   compiler: clang # use default apple clang
+    #   env:
+    #     - LABEL="osx-clang"
+    # - os: linux
+    #   services: docker
+    #   env:
+    #     - LABEL="armhf-gcc"
+    #     - ENABLE_DOCKER="true"
+    - os: linux
+      arch: amd64
+      addons:
+        apt:
+          packages:
+            - gcc-7
+      env:
+        - LABEL="x86_64-gcc"
+    - os: linux
+      arch: amd64
+      addons:
+        apt:
+          packages:
+            - clang-8
+      env:
+        - LABEL="x86_64-clang"
+    - os: linux
+      arch: s390x
+      compiler: clang-10
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - clang-10
+      env:
+        - LABEL="s390x-clang"
+        - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
+    - arch: s390x
+      dist: bionic
+      env:
+        - LABEL="s390x-gcc"
+        - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
+    - os: linux
+      arch: arm64
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-10
+      env:
+        - LABEL="arm64-gcc-sve"
+    - os: linux
+      arch: arm64
+      addons:
+        apt:
+          packages:
+            - clang-8
+      env:
+        - LABEL="arm64-clang"
+    - arch: ppc64le
+      dist: bionic
+      env:
+        - LABEL="ppc64le-gcc"
+        - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
+    - arch: ppc64le
+      compiler: clang-9
+      dist: bionic
+      env:
+        - LABEL="ppc64le-clang"
+        - OMP_WAIT_POLICY=passive CTEST_OUTPUT_ON_FAILURE=TRUE
+
+before_install:
+     - export PATH=$PATH:/usr/bin
+     - if [[ -x /bin/true ]]; then LD_SHOW_AUXV=1 /bin/true; fi
+     - sed '/^ *$/q' /proc/cpuinfo || true
+     - cd ${TRAVIS_BUILD_DIR}
+     - chmod +x ${TRAVIS_BUILD_DIR}/travis/*.sh
+     - if [[ "${ENABLE_DOCKER}" == "true" ]]; then ${TRAVIS_BUILD_DIR}/travis/setupdocker.sh; fi
+     - if [[ "${ENABLE_DOCKER}" == "true" ]]; then docker exec bionic /build/travis/before_install.${LABEL}.sh; fi
+     - if [[ "${ENABLE_DOCKER}" != "true" ]]; then ${TRAVIS_BUILD_DIR}/travis/before_install.${LABEL}.sh; fi
+
+before_script:
+     - if [[ "${ENABLE_DOCKER}" == "true" ]]; then docker exec bionic /build/travis/before_script.${LABEL}.sh; fi
+     - if [[ "${ENABLE_DOCKER}" != "true" ]]; then ${TRAVIS_BUILD_DIR}/travis/before_script.${LABEL}.sh; fi
+
+script:
+     - if [[ "${ENABLE_DOCKER}" == "true" ]]; then docker exec bionic /build/travis/script.${LABEL}.sh; fi
+     - if [[ "${ENABLE_DOCKER}" != "true" ]]; then ${TRAVIS_BUILD_DIR}/travis/script.${LABEL}.sh; fi
