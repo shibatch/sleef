@@ -12,6 +12,9 @@
 #define N 1000
 
 FILE *cygopen(const char *path, const char *mode) {
+#if defined(_MSC_VER)
+  return fopen(path, mode);
+#else
   FILE *fp = fopen(path, mode);
   if (fp != NULL) return fp;
 
@@ -35,6 +38,7 @@ FILE *cygopen(const char *path, const char *mode) {
   free(buf);
 
   return fp;
+#endif
 }
 
 int nkeywords = 0, nalloc = 0;
