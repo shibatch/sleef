@@ -12,9 +12,7 @@
 #define N 1000
 
 FILE *cygopen(const char *path, const char *mode) {
-#if defined(_MSC_VER)
-  return fopen(path, mode);
-#else
+#if defined(__MINGW64__) || defined(__MINGW32__)
   FILE *fp = fopen(path, mode);
   if (fp != NULL) return fp;
 
@@ -24,6 +22,7 @@ FILE *cygopen(const char *path, const char *mode) {
   FILE *pfp = popen(buf, "r");
 
   if (pfp == NULL || fgets(buf, N, pfp) == NULL) {
+    if (pfp != NULL) pclose(pfp);
     free(buf);
     return NULL;
   }
@@ -38,6 +37,8 @@ FILE *cygopen(const char *path, const char *mode) {
   free(buf);
 
   return fp;
+#else
+  return fopen(path, mode);
 #endif
 }
 
