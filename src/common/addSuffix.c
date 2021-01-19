@@ -11,6 +11,37 @@
 
 #define N 1000
 
+FILE *cygopen(const char *path, const char *mode) {
+#if defined(__MINGW64__) || defined(__MINGW32__)
+  FILE *fp = fopen(path, mode);
+  if (fp != NULL) return fp;
+
+  char *buf = malloc(strlen(path) + N + 1);
+  snprintf(buf, strlen(path) + N, "cygpath -m '%s'", path);
+
+  FILE *pfp = popen(buf, "r");
+
+  if (pfp == NULL || fgets(buf, N, pfp) == NULL) {
+    if (pfp != NULL) pclose(pfp);
+    free(buf);
+    return NULL;
+  }
+
+  pclose(pfp);
+
+  int len = strlen(buf);
+  if (0 < len && len < N && buf[len-1] == '\n') buf[len-1] = '\0';
+  
+  fp = fopen(buf, mode);
+
+  free(buf);
+
+  return fp;
+#else
+  return fopen(path, mode);
+#endif
+}
+
 int nkeywords = 0, nalloc = 0;
 char **keywords = NULL, *suffix = NULL;
 
@@ -150,7 +181,7 @@ int main(int argc, char **argv) {
   char buf[N];
 
   if (argc == 2) {
-    FILE *fp = fopen(argv[1], "r");
+    FILE *fp = cygopen(argv[1], "r");
     if (fp == NULL) {
       fprintf(stderr, "Cannot open %s\n", argv[1]);
       exit(-1);
@@ -163,7 +194,7 @@ int main(int argc, char **argv) {
     exit(0);
   }
 
-  FILE *fp = fopen(argv[2], "r");
+  FILE *fp = cygopen(argv[2], "r");
   if (fp == NULL) {
     fprintf(stderr, "Cannot open %s\n", argv[2]);
     exit(-1);
@@ -187,7 +218,7 @@ int main(int argc, char **argv) {
 
   suffix = argv[3];
 
-  fp = fopen(argv[1], "r");
+  fp = cygopen(argv[1], "r");
   if (fp == NULL) {
     fprintf(stderr, "Cannot open %s\n", argv[1]);
     exit(-1);

@@ -69,19 +69,14 @@ foreach(SIMD ${SLEEF_SUPPORTED_QUAD_EXTENSIONS})
   endif()
 endforeach()
 
-if((MSVC OR MINGW AND WIN32) OR SLEEF_CLANG_ON_WINDOWS)
-  string(REPLACE "/" "\\" sleef_footer_input_file "${SLEEFQUAD_ORG_FOOTER}")
-  list(APPEND SLEEF_HEADER_COMMANDS COMMAND type ${sleef_footer_input_file} >> ${SLEEFQUAD_INCLUDE_HEADER})
-else()
-  list(APPEND SLEEF_HEADER_COMMANDS COMMAND cat ${SLEEFQUAD_ORG_FOOTER} >> ${SLEEFQUAD_INCLUDE_HEADER})
-endif()
+list(APPEND SLEEF_HEADER_COMMANDS COMMAND $<TARGET_FILE:addSuffix> ${SLEEFQUAD_ORG_FOOTER} >> ${SLEEFQUAD_INCLUDE_HEADER})
 
 add_custom_command(OUTPUT ${SLEEFQUAD_INCLUDE_HEADER}
   ${SLEEF_HEADER_COMMANDS}
   DEPENDS
     ${SLEEFQUAD_ORG_HEADER}
     ${SLEEFQUAD_ORG_FOOTER}
-    qmkrename
+    qmkrename addSuffix
 )
 
 # --------------------------------------------------------------------
