@@ -12,7 +12,7 @@
 #include "qfuncproto.h"
 
 int main(int argc, char **argv) {
-  if (argc < 3) {
+  if (argc < 2) {
     fprintf(stderr, "Generate a header for renaming functions\n");
     fprintf(stderr, "Usage : %s <width> [<isa>]\n", argv[0]);
     fprintf(stderr, "\n");

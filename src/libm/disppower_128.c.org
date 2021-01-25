@@ -156,3 +156,4 @@ static int cpuSupportsVSX3() {
   EXPORT CONST void *funcName(int arg0) { return (*pfn)(arg0); }
 
 //
+
