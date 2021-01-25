@@ -156,7 +156,17 @@ foreach(SIMD ${SLEEF_SUPPORTED_QUAD_EXTENSIONS})
   test_extension(${SIMD})
 endforeach()
 
-# Compile executable 'iutcuda'
+# Compile executable 'qiutdspscalar'
+
+add_executable(qiutdspscalar ${IUT_SRC})
+target_compile_definitions(qiutdspscalar PRIVATE ENABLE_DSPSCALAR=1 ${COMMON_TARGET_DEFINITIONS})
+target_link_libraries(qiutdspscalar sleefquad ${TARGET_LIBSLEEF} ${LIBM} ${LIBRT})
+add_dependencies(qiutdspscalar sleefquad_headers ${TARGET_HEADERS})
+add_dependencies(qiutdspscalar sleefquad ${TARGET_LIBSLEEF})
+add_test_iut(qiutdspscalar 0.5)
+list(APPEND IUT_LIST qiutdspscalar)
+
+# Compile executable 'qiutcuda'
 
 if (BUILD_INLINE_HEADERS AND SED_COMMAND AND CMAKE_CUDA_COMPILER)
   add_executable(qiutcuda qiutcuda.cu)

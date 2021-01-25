@@ -162,3 +162,4 @@ static int cpuSupportsFMA4() {
   EXPORT CONST void *funcName(int arg0) { return (*pfn)(arg0); }
 
 //
+

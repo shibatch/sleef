@@ -2,9 +2,9 @@
 # Settings
 
 set(QUAD_HEADER_PARAMS_PUREC_SCALAR    1 Sleef_quad   Sleef_quad2    double      float       uint64_t   int32_t   int64_t   uint64_t   __STDC__          purec)
-set(QUAD_HEADER_PARAMS_PURECFMA_SCALAR 1 Sleef_quad   Sleef_quad2    double      float       uint64_t   int32_t   int64_t   uint64_t   FP_FAST_FMA       purecfma)
+set(QUAD_HEADER_PARAMS_PURECFMA_SCALAR 1 Sleef_quad   Sleef_quad2    double      float       uint64_t   int32_t   int64_t   uint64_t   __STDC__          purecfma)
+set(QUAD_HEADER_PARAMS_DSPSCALAR       1 Sleef_quad   Sleef_quad2    double      float       uint64_t   int32_t   int64_t   uint64_t   __STDC__)
 set(QUAD_HEADER_PARAMS_SSE2            2 Sleef_quadx2 Sleef_quadx2_2 __m128d     __m128      __m128i    __m128i   __m128i   __m128i    __SSE2__          sse2)
-set(QUAD_HEADER_PARAMS_AVX             4 Sleef_quadx4 Sleef_quadx4_2 __m256d     __m256      __m256i    __m128i   __m256i   __m256i    __AVX__           avx)
 set(QUAD_HEADER_PARAMS_AVX2            4 Sleef_quadx4 Sleef_quadx4_2 __m256d     __m256      __m256i    __m128i   __m256i   __m256i    __AVX__           avx2)
 set(QUAD_HEADER_PARAMS_AVX512F         8 Sleef_quadx8 Sleef_quadx8_2 __m512d     __m512      __m512i    __m256i   __m512i   __m512i    __AVX512F__       avx512f)
 set(QUAD_HEADER_PARAMS_ADVSIMD         2 Sleef_quadx2 Sleef_quadx2_2 float64x2_t float32x4_t uint32x4_t int32x2_t int64x2_t uint64x2_t __ARM_NEON        advsimd)
@@ -27,6 +27,47 @@ set(QUAD_RENAME_PARAMS_VSX3            2 vsx3)
 set(QUAD_RENAME_PARAMS_VXE             2 vxe)
 set(QUAD_RENAME_PARAMS_VXE2            2 vxe2)
 set(QUAD_RENAME_PARAMS_CUDA            1 cuda)
+
+if (SLEEF_ARCH_X86)
+  set(SLEEF_HEADER_LIST
+    SSE2
+    AVX2
+    AVX512F
+    PUREC_SCALAR
+    PURECFMA_SCALAR
+    DSPSCALAR
+  )
+elseif(SLEEF_ARCH_AARCH64)
+  set(SLEEF_HEADER_LIST
+    ADVSIMD
+    SVE
+    PUREC_SCALAR
+    PURECFMA_SCALAR
+    DSPSCALAR
+  )
+elseif(SLEEF_ARCH_AARCH32)
+  set(SLEEF_HEADER_LIST
+    PUREC_SCALAR
+    PURECFMA_SCALAR
+    DSPSCALAR
+  )
+elseif(SLEEF_ARCH_PPC64)
+  set(SLEEF_HEADER_LIST
+    VSX
+    VSX3
+    PUREC_SCALAR
+    PURECFMA_SCALAR
+    DSPSCALAR
+  )
+elseif(SLEEF_ARCH_S390X)
+  set(SLEEF_HEADER_LIST
+    VXE
+    VXE2
+    PUREC_SCALAR
+    PURECFMA_SCALAR
+    DSPSCALAR
+  )
+endif()
 
 #
 
@@ -62,11 +103,9 @@ set(SLEEFQUAD_INCLUDE_HEADER ${sleef_BINARY_DIR}/include/sleefquad.h)
 
 set(SLEEF_HEADER_COMMANDS "")
 list(APPEND SLEEF_HEADER_COMMANDS COMMAND ${CMAKE_COMMAND} -E copy ${SLEEFQUAD_ORG_HEADER} ${SLEEFQUAD_INCLUDE_HEADER})
-foreach(SIMD ${SLEEF_SUPPORTED_QUAD_EXTENSIONS})
-  if(COMPILER_SUPPORTS_${SIMD})
-    list(APPEND SLEEF_HEADER_COMMANDS COMMAND echo Generating sleefquad.h: qmkrename ${QUAD_HEADER_PARAMS_${SIMD}})
-    list(APPEND SLEEF_HEADER_COMMANDS COMMAND $<TARGET_FILE:qmkrename> ${QUAD_HEADER_PARAMS_${SIMD}} >> ${SLEEFQUAD_INCLUDE_HEADER})
-  endif()
+foreach(SIMD ${SLEEF_HEADER_LIST})
+  list(APPEND SLEEF_HEADER_COMMANDS COMMAND echo Generating sleefquad.h: qmkrename ${QUAD_HEADER_PARAMS_${SIMD}})
+  list(APPEND SLEEF_HEADER_COMMANDS COMMAND $<TARGET_FILE:qmkrename> ${QUAD_HEADER_PARAMS_${SIMD}} >> ${SLEEFQUAD_INCLUDE_HEADER})
 endforeach()
 
 list(APPEND SLEEF_HEADER_COMMANDS COMMAND $<TARGET_FILE:addSuffix> ${SLEEFQUAD_ORG_FOOTER} >> ${SLEEFQUAD_INCLUDE_HEADER})
@@ -344,6 +383,42 @@ if(BUILD_INLINE_HEADERS)
     install(FILES ${INLINE_HEADER_FILES_GENERATED} DESTINATION include)
   endif(SED_COMMAND)
 endif(BUILD_INLINE_HEADERS)
+
+
+# --------------------------------------------------------------------
+# qmkdisp
+# --------------------------------------------------------------------
+add_host_executable(qmkdisp qmkdisp.c)
+set_target_properties(qmkdisp PROPERTIES ${COMMON_TARGET_PROPERTIES})
+
+# Target qdispscalar.c
+
+add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/qdispscalar.c
+  COMMENT "Generating qdispscalar.c"
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/qdispscalar.c.org ${CMAKE_CURRENT_BINARY_DIR}/qdispscalar.c
+  COMMAND $<TARGET_FILE:qmkdisp> 1 Sleef_quad double int32_t int64_t uint64_t purec purecfma >> ${CMAKE_CURRENT_BINARY_DIR}/qdispscalar.c
+  DEPENDS qmkdisp
+  )
+add_custom_target(qdispscalar.c_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/qdispscalar.c)
+
+# Target renamedspscalar.h
+
+add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/qrenamedspscalar.h
+  COMMENT "Generating qrenamedspscalar.h"
+  COMMAND $<TARGET_FILE:qmkrename> 1 > ${CMAKE_CURRENT_BINARY_DIR}/include/qrenamedspscalar.h
+  DEPENDS qmkrename
+  )
+add_custom_target(qrenamedspscalar.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/include/qrenamedspscalar.h)
+
+# Target qdispscalar_obj
+
+add_library(qdispscalar_obj OBJECT qdispscalar.c)
+set_target_properties(qdispscalar_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
+target_compile_definitions(qdispscalar_obj PRIVATE ${COMMON_TARGET_DEFINITIONS})
+target_include_directories(qdispscalar_obj PRIVATE ${CMAKE_BINARY_DIR}/include)
+add_dependencies(qdispscalar_obj qdispscalar.c_generated qrenamedspscalar.h_generated sleefquad_headers)
+target_sources(sleefquad PRIVATE $<TARGET_OBJECTS:qdispscalar_obj>)
+
 
 # --------------------------------------------------------------------
 # Install

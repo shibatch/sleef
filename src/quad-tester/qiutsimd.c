@@ -103,6 +103,13 @@
 #endif
 #endif
 
+#ifdef ENABLE_DSPSCALAR
+#include "qrenamedspscalar.h"
+#define CONFIG 1
+#include "helperpurec_scalar.h"
+#define VARGQUAD Sleef_quad
+#endif
+
 #ifdef ENABLE_SSE2
 #include "qrenamesse2.h"
 #if !defined(USE_INLINE_HEADER)
@@ -600,7 +607,7 @@ int do_test(int argc, char **argv) {
     fflush(stdout);
   }
 
-#if !defined(ENABLE_PUREC_SCALAR) && !defined(ENABLE_PURECFMA_SCALAR)
+#if !defined(ENABLE_PUREC_SCALAR) && !defined(ENABLE_PURECFMA_SCALAR) && !defined(ENABLE_DSPSCALAR)
   // Do simple testing on splat, select and sleef_q
   {
     VARGQUAD v0 = xsplatq(sleef_q(+0x1921fb54442d1LL, 0x8469898cc51701b8ULL, 1));
