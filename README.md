@@ -8,14 +8,13 @@ SLEEF is a library that implements vectorized versions of C standard math functi
 1. Check out the source code from our GitHub repository
 `git clone https://github.com/shibatch/sleef`
 
-2. Make a separate directory to create an out-of-source build.
-`cd sleef`
-`mkdir build && cd build`
+2. Make a separate directory to create an out-of-source build : 
+`cd sleef && mkdir build && cd build`
 
-3. Run cmake to configure the project.
+3. Run cmake to configure the project : 
 `cmake ..`
 
-4. Run make to build the project.
+4. Run make to build the project : 
 `make -j 1`
 
 Refer to our web page for detailed instructions : https://sleef.org/compile.xhtml
