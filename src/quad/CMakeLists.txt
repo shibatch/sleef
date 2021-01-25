@@ -415,7 +415,7 @@ add_custom_target(qrenamedspscalar.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DI
 add_library(qdispscalar_obj OBJECT qdispscalar.c)
 set_target_properties(qdispscalar_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
 target_compile_definitions(qdispscalar_obj PRIVATE ${COMMON_TARGET_DEFINITIONS})
-target_include_directories(qdispscalar_obj PRIVATE ${CMAKE_BINARY_DIR}/include)
+target_include_directories(qdispscalar_obj PRIVATE ${sleef_BINARY_DIR}/include)
 add_dependencies(qdispscalar_obj qdispscalar.c_generated qrenamedspscalar.h_generated
    sleefquad_headers ${TARGET_LIBSLEEF} ${TARGET_HEADERS})
 target_sources(sleefquad PRIVATE $<TARGET_OBJECTS:qdispscalar_obj>)
