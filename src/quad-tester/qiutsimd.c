@@ -119,6 +119,22 @@
 #endif
 #endif
 
+#ifdef ENABLE_AVX2128
+#include "qrenameavx2128.h"
+#if !defined(USE_INLINE_HEADER)
+#define CONFIG 1
+#include "helperavx2_128.h"
+#define VARGQUAD Sleef_quadx2
+#endif
+#endif
+
+#ifdef ENABLE_DSPX2_X86
+#include "qrenamedspx2.h"
+#define CONFIG 2
+#include "helpersse2.h"
+#define VARGQUAD Sleef_quadx2
+#endif
+
 #ifdef ENABLE_AVX2
 #include "qrenameavx2.h"
 #if !defined(USE_INLINE_HEADER)
@@ -144,6 +160,13 @@
 #include "helperadvsimd.h"
 #define VARGQUAD Sleef_quadx2
 #endif
+#endif
+
+#ifdef ENABLE_DSPX2_AARCH64
+#include "qrenamedspx2.h"
+#define CONFIG 2
+#include "helperadvsimd.h"
+#define VARGQUAD Sleef_quadx2
 #endif
 
 #ifdef ENABLE_SVE
@@ -174,6 +197,13 @@
 #endif
 #endif
 
+#ifdef ENABLE_DSPX2_PPC64
+#include "qrenamedspx2.h"
+#define CONFIG 1
+#include "helperpower_128.h"
+#define VARGQUAD Sleef_quadx2
+#endif
+
 #ifdef ENABLE_VXE
 #include "qrenamevxe.h"
 #if !defined(USE_INLINE_HEADER)
@@ -190,6 +220,13 @@
 #include "helpers390x_128.h"
 #define VARGQUAD Sleef_quadx2
 #endif
+#endif
+
+#ifdef ENABLE_DSPX2_S390X
+#include "qrenamedspx2.h"
+#define CONFIG 140
+#include "helpers390x_128.h"
+#define VARGQUAD Sleef_quadx2
 #endif
 
 #ifndef VARGQUAD

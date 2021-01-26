@@ -166,6 +166,50 @@ add_dependencies(qiutdspscalar sleefquad ${TARGET_LIBSLEEF})
 add_test_iut(qiutdspscalar 0.5)
 list(APPEND IUT_LIST qiutdspscalar)
 
+if (SLEEF_ARCH_X86)
+  # Compile executable 'qiutdspx2'
+  add_executable(qiutdspx2 ${IUT_SRC})
+  target_compile_definitions(qiutdspx2 PRIVATE ENABLE_DSPX2_X86=1 ${COMMON_TARGET_DEFINITIONS})
+  target_link_libraries(qiutdspx2 sleefquad ${TARGET_LIBSLEEF} ${LIBM} ${LIBRT})
+  add_dependencies(qiutdspx2 sleefquad_headers ${TARGET_HEADERS})
+  add_dependencies(qiutdspx2 sleefquad ${TARGET_LIBSLEEF})
+  add_test_iut(qiutdspx2 0.5)
+  list(APPEND IUT_LIST qiutdspx2)
+endif()
+
+if (SLEEF_ARCH_AARCH64)
+  # Compile executable 'qiutdspx2'
+  add_executable(qiutdspx2 ${IUT_SRC})
+  target_compile_definitions(qiutdspx2 PRIVATE ENABLE_DSPX2_AARCH64=1 ${COMMON_TARGET_DEFINITIONS})
+  target_link_libraries(qiutdspx2 sleefquad ${TARGET_LIBSLEEF} ${LIBM} ${LIBRT})
+  add_dependencies(qiutdspx2 sleefquad_headers ${TARGET_HEADERS})
+  add_dependencies(qiutdspx2 sleefquad ${TARGET_LIBSLEEF})
+  add_test_iut(qiutdspx2 0.5)
+  list(APPEND IUT_LIST qiutdspx2)
+endif()
+
+if (SLEEF_ARCH_PPC64)
+  # Compile executable 'qiutdspx2'
+  add_executable(qiutdspx2 ${IUT_SRC})
+  target_compile_definitions(qiutdspx2 PRIVATE ENABLE_DSPX2_PPC64=1 ${COMMON_TARGET_DEFINITIONS})
+  target_link_libraries(qiutdspx2 sleefquad ${TARGET_LIBSLEEF} ${LIBM} ${LIBRT})
+  add_dependencies(qiutdspx2 sleefquad_headers ${TARGET_HEADERS})
+  add_dependencies(qiutdspx2 sleefquad ${TARGET_LIBSLEEF})
+  add_test_iut(qiutdspx2 0.5)
+  list(APPEND IUT_LIST qiutdspx2)
+endif()
+
+if (SLEEF_ARCH_S390X)
+  # Compile executable 'qiutdspx2'
+  add_executable(qiutdspx2 ${IUT_SRC})
+  target_compile_definitions(qiutdspx2 PRIVATE ENABLE_DSPX2_S390X=1 ${COMMON_TARGET_DEFINITIONS})
+  target_link_libraries(qiutdspx2 sleefquad ${TARGET_LIBSLEEF} ${LIBM} ${LIBRT})
+  add_dependencies(qiutdspx2 sleefquad_headers ${TARGET_HEADERS})
+  add_dependencies(qiutdspx2 sleefquad ${TARGET_LIBSLEEF})
+  add_test_iut(qiutdspx2 0.5)
+  list(APPEND IUT_LIST qiutdspx2)
+endif()
+
 # Compile executable 'qiutcuda'
 
 if (BUILD_INLINE_HEADERS AND SED_COMMAND AND CMAKE_CUDA_COMPILER)

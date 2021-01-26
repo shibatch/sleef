@@ -10,149 +10,15 @@
 
 #include "misc.h"
 
-#if (defined(__GNUC__) || defined(__CLANG__)) && !defined(__INTEL_COMPILER)
-#define CONST const
-#else
-#define CONST
-#endif
-
 #define IMPORT_IS_EXPORT
 #include "sleefquad.h"
 
-#if defined(_MSC_VER) || defined(__MINGW32__) || defined(__MINGW64__)
-static jmp_buf sigjmp;
-#define SETJMP(x) setjmp(x)
-#define LONGJMP longjmp
-#else
-static sigjmp_buf sigjmp;
-#define SETJMP(x) sigsetjmp(x, 1)
-#define LONGJMP siglongjmp
-#endif
-
-static void sighandler(int signum) {
-  LONGJMP(sigjmp, 1);
-}
+#include "qdispatcher.h"
 
 Sleef_quad sleef_cpuidtmp0;
+static void tryFMA() { sleef_cpuidtmp0 = Sleef_sinq1_u10purecfma(sleef_cpuidtmp0); }
 
-static int cpuSupportsFMA() {
-  static int cache = -1;
-  if (cache != -1) return cache;
-
-  void (*org);
-  org = signal(SIGILL, sighandler);
-
-  if (SETJMP(sigjmp) == 0) {
-    sleef_cpuidtmp0 = Sleef_sinq1_u10purecfma(sleef_cpuidtmp0);
-    cache = 1;
-  } else {
-    cache = 0;
-  }
-
-  signal(SIGILL, org);
-  return cache;
-}
-
-#define SUBST_IF_FMA(funcfma) if (cpuSupportsFMA()) p = funcfma;
-
-#define DISPATCH_vq_vq(qtype, funcName, pfn, dfn, funcnofma, funcfma)	\
-  static CONST VECTOR_CC qtype (*pfn)(qtype arg0);			\
-  static CONST VECTOR_CC qtype dfn(qtype arg0) {			\
-    qtype CONST VECTOR_CC (*p)(qtype arg0) = funcnofma;			\
-    SUBST_IF_FMA(funcfma);						\
-    pfn = p;								\
-    return (*pfn)(arg0);						\
-  }									\
-  static CONST VECTOR_CC qtype (*pfn)(qtype arg0) = dfn;		\
-  EXPORT CONST VECTOR_CC qtype funcName(qtype arg0) { return (*pfn)(arg0); }
-
-#define DISPATCH_vq_vq_vq(qtype, funcName, pfn, dfn, funcnofma, funcfma) \
-  static CONST VECTOR_CC qtype (*pfn)(qtype arg0, qtype arg1);		\
-  static CONST VECTOR_CC qtype dfn(qtype arg0, qtype arg1) {		\
-    qtype CONST VECTOR_CC (*p)(qtype arg0, qtype arg1) = funcnofma;	\
-    SUBST_IF_FMA(funcfma);						\
-    pfn = p;								\
-    return (*pfn)(arg0, arg1);						\
-  }									\
-  static CONST VECTOR_CC qtype (*pfn)(qtype arg0, qtype arg1) = dfn;	\
-  EXPORT CONST VECTOR_CC qtype funcName(qtype arg0, qtype arg1) { return (*pfn)(arg0, arg1); }
-
-#define DISPATCH_vq_vq_vq_vq(qtype, funcName, pfn, dfn, funcnofma, funcfma) \
-  static CONST VECTOR_CC qtype (*pfn)(qtype arg0, qtype arg1, qtype arg2); \
-  static CONST VECTOR_CC qtype dfn(qtype arg0, qtype arg1, qtype arg2) { \
-    qtype CONST VECTOR_CC (*p)(qtype arg0, qtype arg1, qtype arg2) = funcnofma; \
-    SUBST_IF_FMA(funcfma);						\
-    pfn = p;								\
-    return (*pfn)(arg0, arg1, arg2);					\
-  }									\
-  static CONST VECTOR_CC qtype (*pfn)(qtype arg0, qtype arg1, qtype arg2) = dfn; \
-  EXPORT CONST VECTOR_CC qtype funcName(qtype arg0, qtype arg1, qtype arg2) { return (*pfn)(arg0, arg1, arg2); }
-
-#define DISPATCH_vq_vq_vx(qtype, xtype, funcName, pfn, dfn, funcnofma, funcfma) \
-  static CONST VECTOR_CC qtype (*pfn)(qtype arg0, xtype arg1);		\
-  static CONST VECTOR_CC qtype dfn(qtype arg0, xtype arg1) {		\
-    qtype CONST VECTOR_CC (*p)(qtype arg0, xtype arg1) = funcnofma;	\
-    SUBST_IF_FMA(funcfma);						\
-    pfn = p;								\
-    return (*pfn)(arg0, arg1);						\
-  }									\
-  static CONST VECTOR_CC qtype (*pfn)(qtype arg0, xtype arg1) = dfn;	\
-  EXPORT CONST VECTOR_CC qtype funcName(qtype arg0, xtype arg1) { return (*pfn)(arg0, arg1); }
-
-#define DISPATCH_vq_vq_pvx(qtype, xtype, funcName, pfn, dfn, funcnofma, funcfma) \
-  static VECTOR_CC qtype (*pfn)(qtype arg0, xtype *arg1);		\
-  static VECTOR_CC qtype dfn(qtype arg0, xtype *arg1) {		\
-    qtype VECTOR_CC (*p)(qtype arg0, xtype *arg1) = funcnofma;	\
-    SUBST_IF_FMA(funcfma);						\
-    pfn = p;								\
-    return (*pfn)(arg0, arg1);						\
-  }									\
-  static VECTOR_CC qtype (*pfn)(qtype arg0, xtype *arg1) = dfn;	\
-  EXPORT VECTOR_CC qtype funcName(qtype arg0, xtype *arg1) { return (*pfn)(arg0, arg1); }
-
-#define DISPATCH_vq_vx(qtype, xtype, funcName, pfn, dfn, funcnofma, funcfma) \
-  static CONST VECTOR_CC qtype (*pfn)(xtype arg0);			\
-  static CONST VECTOR_CC qtype dfn(xtype arg0) {			\
-    qtype CONST VECTOR_CC (*p)(xtype arg0) = funcnofma;			\
-    SUBST_IF_FMA(funcfma);						\
-    pfn = p;								\
-    return (*pfn)(arg0);						\
-  }									\
-  static CONST VECTOR_CC qtype (*pfn)(xtype arg0) = dfn;		\
-  EXPORT CONST VECTOR_CC qtype funcName(xtype arg0) { return (*pfn)(arg0); }
-
-#define DISPATCH_vx_vq(qtype, xtype, funcName, pfn, dfn, funcnofma, funcfma) \
-  static CONST VECTOR_CC xtype (*pfn)(qtype arg0);			\
-  static CONST VECTOR_CC xtype dfn(qtype arg0) {			\
-    xtype CONST VECTOR_CC (*p)(qtype arg0) = funcnofma;			\
-    SUBST_IF_FMA(funcfma);						\
-    pfn = p;								\
-    return (*pfn)(arg0);						\
-  }									\
-  static CONST VECTOR_CC xtype (*pfn)(qtype arg0) = dfn;		\
-  EXPORT CONST VECTOR_CC xtype funcName(qtype arg0) { return (*pfn)(arg0); }
-
-#define DISPATCH_vx_vq_vq(qtype, xtype, funcName, pfn, dfn, funcnofma, funcfma) \
-  static CONST VECTOR_CC xtype (*pfn)(qtype arg0, qtype arg1);		\
-  static CONST VECTOR_CC xtype dfn(qtype arg0, qtype arg1) {		\
-    xtype CONST VECTOR_CC (*p)(qtype arg0, qtype arg1) = funcnofma;	\
-    SUBST_IF_FMA(funcfma);						\
-    pfn = p;								\
-    return (*pfn)(arg0, arg1);						\
-  }									\
-  static CONST VECTOR_CC xtype (*pfn)(qtype arg0, qtype arg1) = dfn;	\
-  EXPORT CONST VECTOR_CC xtype funcName(qtype arg0, qtype arg1) { return (*pfn)(arg0, arg1); }
-
-#define DISPATCH_vq_vq_vi_q(qtype, xtype, funcName, pfn, dfn, funcnofma, funcfma) \
-  static CONST VECTOR_CC qtype (*pfn)(qtype arg0, xtype arg1, Sleef_quad arg2);	\
-  static CONST VECTOR_CC qtype dfn(qtype arg0, xtype arg1, Sleef_quad arg2) { \
-    qtype CONST VECTOR_CC (*p)(qtype arg0, xtype arg1, Sleef_quad arg2) = funcnofma; \
-    SUBST_IF_FMA(funcfma);						\
-    pfn = p;								\
-    return (*pfn)(arg0, arg1, arg2);					\
-  }									\
-  static CONST VECTOR_CC qtype (*pfn)(qtype arg0, xtype arg1, Sleef_quad arg2) = dfn; \
-  EXPORT CONST VECTOR_CC qtype funcName(qtype arg0, xtype arg1, Sleef_quad arg2) { return (*pfn)(arg0, arg1, arg2); }
+#define SUBST_IF_EXT1(funcExt1) if (cpuSupportsExt(tryFMA)) p = funcExt1;
 
 //
 

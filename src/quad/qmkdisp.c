@@ -121,7 +121,7 @@ int main(int argc, char **argv) {
       break;
 
     case 16:
-      printf("DISPATCH_vq_vq_vx(%s, %s, Sleef_%sq%d%s, pnt_%sq%d%s, disp_%sq%d%s",
+      printf("DISPATCH_q_vq_vx(%s, %s, Sleef_%sq%d%s, pnt_%sq%d%s, disp_%sq%d%s",
 	     vquadname, "int",
 	     funcList[i].name, wdp, ulpSuffix0,
 	     funcList[i].name, wdp, ulpSuffix0,

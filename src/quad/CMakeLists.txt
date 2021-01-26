@@ -5,19 +5,24 @@ set(QUAD_HEADER_PARAMS_PUREC_SCALAR    1 Sleef_quad   Sleef_quad2    double     
 set(QUAD_HEADER_PARAMS_PURECFMA_SCALAR 1 Sleef_quad   Sleef_quad2    double      float       uint64_t   int32_t   int64_t   uint64_t   __STDC__          purecfma)
 set(QUAD_HEADER_PARAMS_DSPSCALAR       1 Sleef_quad   Sleef_quad2    double      float       uint64_t   int32_t   int64_t   uint64_t   __STDC__)
 set(QUAD_HEADER_PARAMS_SSE2            2 Sleef_quadx2 Sleef_quadx2_2 __m128d     __m128      __m128i    __m128i   __m128i   __m128i    __SSE2__          sse2)
+set(QUAD_HEADER_PARAMS_AVX2128         2 Sleef_quadx2 Sleef_quadx2_2 __m128d     __m128      __m128i    __m128i   __m128i   __m128i    __SSE2__          avx2128)
+set(QUAD_HEADER_PARAMS_DSPX2_X86       2 Sleef_quadx2 Sleef_quadx2_2 __m128d     __m128      __m128i    __m128i   __m128i   __m128i    __SSE2__)
 set(QUAD_HEADER_PARAMS_AVX2            4 Sleef_quadx4 Sleef_quadx4_2 __m256d     __m256      __m256i    __m128i   __m256i   __m256i    __AVX__           avx2)
 set(QUAD_HEADER_PARAMS_AVX512F         8 Sleef_quadx8 Sleef_quadx8_2 __m512d     __m512      __m512i    __m256i   __m512i   __m512i    __AVX512F__       avx512f)
 set(QUAD_HEADER_PARAMS_ADVSIMD         2 Sleef_quadx2 Sleef_quadx2_2 float64x2_t float32x4_t uint32x4_t int32x2_t int64x2_t uint64x2_t __ARM_NEON        advsimd)
+set(QUAD_HEADER_PARAMS_DSPX2_AARCH64   2 Sleef_quadx2 Sleef_quadx2_2 float64x2_t float32x4_t uint32x4_t int32x2_t int64x2_t uint64x2_t __ARM_NEON)
 set(QUAD_HEADER_PARAMS_SVE             x Sleef_svquad Sleef_svquad_2 svfloat64_t svfloat32_t svint32_t  svint32_t svint64_t svuint64_t __ARM_FEATURE_SVE sve)
 set(QUAD_HEADER_PARAMS_VSX             2 Sleef_quadx2 Sleef_quadx2_2 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_UINT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_LONGLONG" "SLEEF_VECTOR_ULONGLONG" __VSX__ vsx)
 set(QUAD_HEADER_PARAMS_VSX3            2 Sleef_quadx2 Sleef_quadx2_2 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_UINT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_LONGLONG" "SLEEF_VECTOR_ULONGLONG" __VSX__ vsx3)
+set(QUAD_HEADER_PARAMS_DSPX2_PPC64     2 Sleef_quadx2 Sleef_quadx2_2 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_UINT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_LONGLONG" "SLEEF_VECTOR_ULONGLONG" __VSX__)
 set(QUAD_HEADER_PARAMS_VXE             2 Sleef_quadx2 Sleef_quadx2_2 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_ULONGLONG" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_LONGLONG" "SLEEF_VECTOR_ULONGLONG" __VEC__ vxe)
 set(QUAD_HEADER_PARAMS_VXE2            2 Sleef_quadx2 Sleef_quadx2_2 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_ULONGLONG" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_LONGLONG" "SLEEF_VECTOR_ULONGLONG" __VEC__ vxe2)
+set(QUAD_HEADER_PARAMS_DSPX2_S390X     2 Sleef_quadx2 Sleef_quadx2_2 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_ULONGLONG" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_LONGLONG" "SLEEF_VECTOR_ULONGLONG" __VEC__)
 
 set(QUAD_RENAME_PARAMS_PUREC_SCALAR    1 purec)
 set(QUAD_RENAME_PARAMS_PURECFMA_SCALAR 1 purecfma)
 set(QUAD_RENAME_PARAMS_SSE2            2 sse2)
-set(QUAD_RENAME_PARAMS_AVX             4 avx)
+set(QUAD_RENAME_PARAMS_AVX2128         2 avx2128)
 set(QUAD_RENAME_PARAMS_AVX2            4 avx2)
 set(QUAD_RENAME_PARAMS_AVX512F         8 avx512f)
 set(QUAD_RENAME_PARAMS_ADVSIMD         2 advsimd)
@@ -31,12 +36,15 @@ set(QUAD_RENAME_PARAMS_CUDA            1 cuda)
 if (SLEEF_ARCH_X86)
   set(SLEEF_HEADER_LIST
     SSE2
+    AVX2128
     AVX2
     AVX512F
     PUREC_SCALAR
     PURECFMA_SCALAR
     DSPSCALAR
-  )
+    DSPX2_X86
+    )
+  set(QMKDISP_PARAMS_X2 2 Sleef_quadx2 __m128d __m128i __m128i __m128i sse2 avx2128)
 elseif(SLEEF_ARCH_AARCH64)
   set(SLEEF_HEADER_LIST
     ADVSIMD
@@ -44,13 +52,15 @@ elseif(SLEEF_ARCH_AARCH64)
     PUREC_SCALAR
     PURECFMA_SCALAR
     DSPSCALAR
-  )
+    DSPX2_AARCH64
+    )
+  set(QMKDISP_PARAMS_X2 2 Sleef_quadx2 float64x2_t int32x2_t int64x2_t uint64x2_t advsimd x)
 elseif(SLEEF_ARCH_AARCH32)
   set(SLEEF_HEADER_LIST
     PUREC_SCALAR
     PURECFMA_SCALAR
     DSPSCALAR
-  )
+    )
 elseif(SLEEF_ARCH_PPC64)
   set(SLEEF_HEADER_LIST
     VSX
@@ -58,7 +68,9 @@ elseif(SLEEF_ARCH_PPC64)
     PUREC_SCALAR
     PURECFMA_SCALAR
     DSPSCALAR
-  )
+    DSPX2_PPC64
+    )
+  set(QMKDISP_PARAMS_X2 2 Sleef_quadx2 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_LONGLONG" "SLEEF_VECTOR_ULONGLONG" vsx vsx3)
 elseif(SLEEF_ARCH_S390X)
   set(SLEEF_HEADER_LIST
     VXE
@@ -66,7 +78,9 @@ elseif(SLEEF_ARCH_S390X)
     PUREC_SCALAR
     PURECFMA_SCALAR
     DSPSCALAR
-  )
+    DSPX2_S390X
+    )
+  set(QMKDISP_PARAMS_X2 2 Sleef_quadx2 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_LONGLONG" "SLEEF_VECTOR_ULONGLONG" vxe vxe2)
 endif()
 
 #
@@ -420,6 +434,48 @@ add_dependencies(qdispscalar_obj qdispscalar.c_generated qrenamedspscalar.h_gene
    sleefquad_headers ${TARGET_LIBSLEEF} ${TARGET_HEADERS})
 target_sources(sleefquad PRIVATE $<TARGET_OBJECTS:qdispscalar_obj>)
 
+if(DEFINED QMKDISP_PARAMS_X2)
+  # Target qdispx2.c
+
+  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/qdispx2.c
+    COMMENT "Generating qdispx2.c"
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/qdispx2.c.org ${CMAKE_CURRENT_BINARY_DIR}/qdispx2.c
+    COMMAND $<TARGET_FILE:qmkdisp> ${QMKDISP_PARAMS_X2} >> ${CMAKE_CURRENT_BINARY_DIR}/qdispx2.c
+    DEPENDS qmkdisp
+    )
+  add_custom_target(qdispx2.c_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/qdispx2.c)
+
+  # Target renamedspx2.h
+
+  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/qrenamedspx2.h
+    COMMENT "Generating qrenamedspx2.h"
+    COMMAND $<TARGET_FILE:qmkrename> 2 > ${CMAKE_CURRENT_BINARY_DIR}/include/qrenamedspx2.h
+    DEPENDS qmkrename
+    )
+  add_custom_target(qrenamedspx2.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/include/qrenamedspx2.h)
+
+  # Target qdispx2_obj
+
+  if (COMPILER_SUPPORTS_AVX2)
+    set(DISPATCHER_DEFINITIONS ${DISPATCHER_DEFINITIONS} ENABLE_AVX2=1)
+  endif()
+
+  if (COMPILER_SUPPORTS_VSX3)
+    set(DISPATCHER_DEFINITIONS ${DISPATCHER_DEFINITIONS} ENABLE_VSX3=1)
+  endif()
+
+  if (COMPILER_SUPPORTS_VXE2)
+    set(DISPATCHER_DEFINITIONS ${DISPATCHER_DEFINITIONS} ENABLE_VXE2=1)
+  endif()
+
+  add_library(qdispx2_obj OBJECT qdispx2.c)
+  set_target_properties(qdispx2_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
+  target_compile_definitions(qdispx2_obj PRIVATE ${COMMON_TARGET_DEFINITIONS} ${DISPATCHER_DEFINITIONS})
+  target_include_directories(qdispx2_obj PRIVATE ${sleef_BINARY_DIR}/include)
+  add_dependencies(qdispx2_obj qdispx2.c_generated qrenamedspx2.h_generated
+    sleefquad_headers ${TARGET_LIBSLEEF} ${TARGET_HEADERS})
+  target_sources(sleefquad PRIVATE $<TARGET_OBJECTS:qdispx2_obj>)
+endif(DEFINED QMKDISP_PARAMS_X2)
 
 # --------------------------------------------------------------------
 # Install

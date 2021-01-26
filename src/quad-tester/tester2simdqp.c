@@ -122,20 +122,6 @@
 #define VARGQUAD Sleef_quadx2
 #endif
 
-#ifdef ENABLE_DSP128
-#define CONFIG 2
-#include "helpersse2.h"
-#include "qrenamedsp128.h"
-#define VARGQUAD Sleef_quadx2
-#endif
-
-#ifdef ENABLE_DSP256
-#define CONFIG 1
-#include "helperavx.h"
-#include "qrenamedsp256.h"
-#define VARGQUAD Sleef_quadx4
-#endif
-
 //
 
 #define DENORMAL_DBL_MIN (4.9406564584124654418e-324)
