@@ -3,7 +3,7 @@
 Main Page   : https://sleef.org/
 GitHub Repo : https://github.com/shibatch/sleef
 
-SLEEF is a library that implements vectorized versions of C standard math functions. The library also includes DFT subroutines.
+SLEEF is a library that implements vectorized versions of C standard math functions. This library also includes DFT subroutines.
 
 ### How to build
 

@@ -141,6 +141,8 @@ static INLINE vmask vxor_vm_vo32_vm(vopmask x, vmask y) { return vreinterpret_vm
 static INLINE vopmask vcast_vo32_vo64(vopmask m) { return _mm_shuffle_epi32(m, 0x08); }
 static INLINE vopmask vcast_vo64_vo32(vopmask m) { return _mm_shuffle_epi32(m, 0x50); }
 
+static INLINE vopmask vcast_vo_i(int i) { return _mm_set1_epi64x(i ? -1 : 0); }
+
 //
 
 static INLINE vint vrint_vi_vd(vdouble vd) { return _mm_cvtpd_epi32(vd); }

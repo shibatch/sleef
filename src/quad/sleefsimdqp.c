@@ -63,6 +63,15 @@ typedef vquad Sleef_quadx1;
 typedef vquad Sleef_quadx2;
 #endif
 
+#ifdef ENABLE_AVX2128
+#define CONFIG 1
+#include "helperavx2_128.h"
+#ifdef DORENAME
+#include "qrenameavx2128.h"
+#endif
+typedef vquad Sleef_quadx2;
+#endif
+
 #ifdef ENABLE_AVX2
 #define CONFIG 1
 #include "helperavx2.h"

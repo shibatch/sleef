@@ -1,0 +1,40 @@
+//   Copyright Naoki Shibata and contributors 2010 - 2021.
+// Distributed under the Boost Software License, Version 1.0.
+//    (See accompanying file LICENSE.txt or copy at
+//          http://www.boost.org/LICENSE_1_0.txt)
+
+#include <stdint.h>
+#include <assert.h>
+#include <signal.h>
+#include <setjmp.h>
+
+#include "misc.h"
+
+#define IMPORT_IS_EXPORT
+#include "sleefquad.h"
+
+#include "qdispatcher.h"
+
+Sleef_quadx2 sleef_cpuidtmp0;
+
+#ifdef ENABLE_AVX2
+static void tryEXT1() { sleef_cpuidtmp0 = Sleef_sinq2_u10avx2128(sleef_cpuidtmp0); }
+#define SUBST_IF_EXT1(funcExt1) if (cpuSupportsExt(tryEXT1)) p = funcExt1;
+#endif
+
+#ifdef __aarch64__
+#define SUBST_IF_EXT1(funcExt1)
+#endif
+
+#ifdef ENABLE_VSX3
+static void tryEXT1() { sleef_cpuidtmp0 = Sleef_sinq2_u10vsx3(sleef_cpuidtmp0); }
+#define SUBST_IF_EXT1(funcExt1) if (cpuSupportsExt(tryEXT1)) p = funcExt1;
+#endif
+
+#ifdef ENABLE_VXE2
+static void tryEXT1() { sleef_cpuidtmp0 = Sleef_sinq2_u10vxe2(sleef_cpuidtmp0); }
+#define SUBST_IF_EXT1(funcExt1) if (cpuSupportsExt(tryEXT1)) p = funcExt1;
+#endif
+
+//
+
