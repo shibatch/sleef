@@ -5,155 +5,27 @@
 
 #include <stdint.h>
 #include <assert.h>
-
 #include <signal.h>
 #include <setjmp.h>
 
 #include "misc.h"
 
-#define CONST const
-
 #define IMPORT_IS_EXPORT
 #include "sleef.h"
 
-static jmp_buf sigjmp;
+#include "dispatcher.h"
 
 typedef __vector double vector_double;
 typedef __vector float  vector_float;
 
 #ifdef ENABLE_VSX3
 void sleef_tryVSX3();
-
-static void sighandler(int signum) {
-  longjmp(sigjmp, 1);
-}
-
-static int cpuSupportsVSX3() {
-  static int cache = -1;
-  if (cache != -1) return cache;
-
-  void (*org);
-  org = signal(SIGILL, sighandler);
-
-  if (setjmp(sigjmp) == 0) {
-    sleef_tryVSX3();
-    cache = 1;
-  } else {
-    cache = 0;
-  }
-
-  signal(SIGILL, org);
-  return cache;
-}
-
-#define SUBST_IF_VSX3(funcvsx3) if (cpuSupportsVSX3()) p = funcvsx3;
+#define SUBST_IF_EXT1(funcvsx3) if (cpuSupportsExt(sleef_tryVSX3)) p = funcvsx3;
 #else
-#define SUBST_IF_VSX3(funcvsx3)
+#define SUBST_IF_EXT1(funcvsx3)
 #endif
 
-/*
- * DISPATCH_R_X, DISPATCH_R_X_Y and DISPATCH_R_X_Y_Z are the macro for
- * defining dispatchers. R, X, Y and Z represent the data types of
- * return value, first argument, second argument and third argument,
- * respectively. vf, vi, i and p correspond to vector FP, vector
- * integer, scalar integer and scalar pointer types, respectively.
- *
- * The arguments for the macros are as follows:
- *   fptype       : FP type name
- *   funcname     : Fundamental function name
- *   pfn          : Name of pointer of the function to the dispatcher
- *   dfn          : Name of the dispatcher function
- *   funcvsx      : Name of the VSX function
- *   funcvsx3     : Name of the VSX3 function
- */
-
-#define DISPATCH_vf_vf(fptype, funcName, pfn, dfn, funcvsx, funcvsx3)	\
-  static CONST VECTOR_CC fptype (*pfn)(fptype arg0);			\
-  static CONST VECTOR_CC fptype dfn(fptype arg0) {			\
-    fptype CONST VECTOR_CC (*p)(fptype arg0) = funcvsx;			\
-    SUBST_IF_VSX3(funcvsx3);						\
-    pfn = p;								\
-    return (*pfn)(arg0);						\
-  }									\
-  static CONST VECTOR_CC fptype (*pfn)(fptype arg0) = dfn;		\
-  EXPORT CONST VECTOR_CC fptype funcName(fptype arg0) { return (*pfn)(arg0); }
-
-#define DISPATCH_vf_vf_vf(fptype, funcName, pfn, dfn, funcvsx, funcvsx3) \
-  static CONST VECTOR_CC fptype (*pfn)(fptype arg0, fptype arg1);	\
-  static CONST VECTOR_CC fptype dfn(fptype arg0, fptype arg1) {		\
-    fptype CONST VECTOR_CC (*p)(fptype arg0, fptype arg1) = funcvsx;	\
-    SUBST_IF_VSX3(funcvsx3);						\
-    pfn = p;								\
-    return (*pfn)(arg0, arg1);						\
-  }									\
-  static CONST VECTOR_CC fptype (*pfn)(fptype arg0, fptype arg1) = dfn; \
-  EXPORT CONST VECTOR_CC fptype funcName(fptype arg0, fptype arg1) { return (*pfn)(arg0, arg1); }
-
-#define DISPATCH_vf2_vf(fptype, fptype2, funcName, pfn, dfn, funcvsx, funcvsx3) \
-  static CONST VECTOR_CC fptype2 (*pfn)(fptype arg0);			\
-  static CONST VECTOR_CC fptype2 dfn(fptype arg0) {			\
-    fptype2 CONST VECTOR_CC (*p)(fptype arg0) = funcvsx;		\
-    SUBST_IF_VSX3(funcvsx3);						\
-    pfn = p;								\
-    return (*pfn)(arg0);						\
-  }									\
-  static CONST VECTOR_CC fptype2 (*pfn)(fptype arg0) = dfn;		\
-  EXPORT CONST VECTOR_CC fptype2 funcName(fptype arg0) { return (*pfn)(arg0); }
-
-#define DISPATCH_vf_vf_vi(fptype, itype, funcName, pfn, dfn, funcvsx, funcvsx3) \
-  static CONST VECTOR_CC fptype (*pfn)(fptype arg0, itype arg1);	\
-  static CONST VECTOR_CC fptype dfn(fptype arg0, itype arg1) {		\
-    fptype CONST VECTOR_CC (*p)(fptype arg0, itype arg1) = funcvsx;	\
-    SUBST_IF_VSX3(funcvsx3);						\
-    pfn = p;								\
-    return (*pfn)(arg0, arg1);						\
-  }									\
-  static CONST VECTOR_CC fptype (*pfn)(fptype arg0, itype arg1) = dfn;	\
-  EXPORT CONST VECTOR_CC fptype funcName(fptype arg0, itype arg1) { return (*pfn)(arg0, arg1); }
-
-#define DISPATCH_vi_vf(fptype, itype, funcName, pfn, dfn, funcvsx, funcvsx3) \
-  static CONST VECTOR_CC itype (*pfn)(fptype arg0);			\
-  static CONST VECTOR_CC itype dfn(fptype arg0) {			\
-    itype CONST VECTOR_CC (*p)(fptype arg0) = funcvsx;			\
-    SUBST_IF_VSX3(funcvsx3);						\
-    pfn = p;								\
-    return (*pfn)(arg0);						\
-  }									\
-  static CONST VECTOR_CC itype (*pfn)(fptype arg0) = dfn;		\
-  EXPORT CONST VECTOR_CC itype funcName(fptype arg0) { return (*pfn)(arg0); }
-
-#define DISPATCH_vf_vf_vf_vf(fptype, funcName, pfn, dfn, funcvsx, funcvsx3) \
-  static CONST VECTOR_CC fptype (*pfn)(fptype arg0, fptype arg1, fptype arg2); \
-  static CONST VECTOR_CC fptype dfn(fptype arg0, fptype arg1, fptype arg2) { \
-    fptype CONST VECTOR_CC (*p)(fptype arg0, fptype arg1, fptype arg2) = funcvsx; \
-    SUBST_IF_VSX3(funcvsx3);						\
-    pfn = p;								\
-    return (*pfn)(arg0, arg1, arg2);					\
-  }									\
-  static CONST VECTOR_CC fptype (*pfn)(fptype arg0, fptype arg1, fptype arg2) = dfn; \
-  EXPORT CONST VECTOR_CC fptype funcName(fptype arg0, fptype arg1, fptype arg2) { return (*pfn)(arg0, arg1, arg2); }
-
-#define DISPATCH_i_i(funcName, pfn, dfn, funcvsx, funcvsx3)	\
-  static CONST int (*pfn)(int arg0);				\
-  static CONST int dfn(int arg0) {				\
-    int CONST (*p)(int) = funcvsx;				\
-    SUBST_IF_VSX3(funcvsx3);					\
-    pfn = p;							\
-    return (*pfn)(arg0);					\
-  }								\
-  static CONST int (*pfn)(int arg0) = dfn;			\
-  EXPORT CONST int funcName(int arg0) { return (*pfn)(arg0); }
-
-#define DISPATCH_p_i(funcName, pfn, dfn, funcvsx, funcvsx3)		\
-  static CONST void *(*pfn)(int arg0);					\
-  static CONST void *dfn(int arg0) {					\
-    CONST void *(*p)(int) = funcvsx;					\
-    SUBST_IF_VSX3(funcvsx3);						\
-    pfn = p;								\
-    return (*pfn)(arg0);						\
-  }									\
-  static CONST void *(*pfn)(int arg0) = dfn;				\
-  EXPORT CONST void *funcName(int arg0) { return (*pfn)(arg0); }
+#define SUBST_IF_EXT2(funcExt2)
 
 //
 

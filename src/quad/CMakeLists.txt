@@ -456,19 +456,28 @@ if(DEFINED QMKDISP_PARAMS_X2)
 
   # Target qdispx2_obj
 
-  if (COMPILER_SUPPORTS_AVX2)
-    set(DISPATCHER_DEFINITIONS ${DISPATCHER_DEFINITIONS} ENABLE_AVX2=1)
-  endif()
-
-  if (COMPILER_SUPPORTS_VSX3)
-    set(DISPATCHER_DEFINITIONS ${DISPATCHER_DEFINITIONS} ENABLE_VSX3=1)
-  endif()
-
-  if (COMPILER_SUPPORTS_VXE2)
-    set(DISPATCHER_DEFINITIONS ${DISPATCHER_DEFINITIONS} ENABLE_VXE2=1)
-  endif()
-
   add_library(qdispx2_obj OBJECT qdispx2.c)
+
+  if(SLEEF_ARCH_X86)
+    if (COMPILER_SUPPORTS_AVX2)
+      set(DISPATCHER_DEFINITIONS ${DISPATCHER_DEFINITIONS} ENABLE_AVX2=1)
+    endif()
+  endif()
+
+  if(SLEEF_ARCH_PPC64)
+    target_compile_options(qdispx2_obj PRIVATE ${FLAGS_ENABLE_VSX})
+    if (COMPILER_SUPPORTS_VSX3)
+      set(DISPATCHER_DEFINITIONS ${DISPATCHER_DEFINITIONS} ENABLE_VSX3=1)
+    endif()
+  endif()
+
+  if(SLEEF_ARCH_S390X)
+    target_compile_options(qdispx2_obj PRIVATE ${FLAGS_ENABLE_VXE})
+    if (COMPILER_SUPPORTS_VXE2)
+      set(DISPATCHER_DEFINITIONS ${DISPATCHER_DEFINITIONS} ENABLE_VXE2=1)
+    endif()
+  endif()
+
   set_target_properties(qdispx2_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
   target_compile_definitions(qdispx2_obj PRIVATE ${COMMON_TARGET_DEFINITIONS} ${DISPATCHER_DEFINITIONS})
   target_include_directories(qdispx2_obj PRIVATE ${sleef_BINARY_DIR}/include)
