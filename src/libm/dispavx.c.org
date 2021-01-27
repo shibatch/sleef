@@ -5,23 +5,15 @@
 
 #include <stdint.h>
 #include <assert.h>
+#include <signal.h>
+#include <setjmp.h>
 
 #include "misc.h"
 
-#if defined(_MSC_VER)
-#include <intrin.h>
-#else
-#include <x86intrin.h>
-#endif
-
-#if (defined(__GNUC__) || defined(__CLANG__)) && !defined(__INTEL_COMPILER)
-#define CONST const
-#else
-#define CONST
-#endif
-
 #define IMPORT_IS_EXPORT
 #include "sleef.h"
+
+#include "dispatcher.h"
 
 static int cpuSupportsAVX2() {
   static int ret = -1;
@@ -54,112 +46,16 @@ static int cpuSupportsFMA4() {
 }
 
 #ifdef ENABLE_FMA4
-#define SUBST_IF_FMA4(funcfma4) if (cpuSupportsFMA4()) p = funcfma4;
+#define SUBST_IF_EXT1(funcfma4) if (cpuSupportsFMA4()) p = funcfma4;
 #else
-#define SUBST_IF_FMA4(funcfma4)
+#define SUBST_IF_EXT1(funcfma4)
 #endif
 
 #ifdef ENABLE_AVX2
-#define SUBST_IF_AVX2(funcavx2) if (cpuSupportsAVX2() && cpuSupportsFMA()) p = funcavx2;
+#define SUBST_IF_EXT2(funcavx2) if (cpuSupportsAVX2() && cpuSupportsFMA()) p = funcavx2;
 #else
-#define SUBST_IF_AVX2(funcavx2)
+#define SUBST_IF_EXT2(funcavx2)
 #endif
-
-#define DISPATCH_vf_vf(fptype, funcName, pfn, dfn, funcavx, funcfma4, funcavx2) \
-  static CONST VECTOR_CC fptype (*pfn)(fptype arg0);			\
-  static CONST VECTOR_CC fptype dfn(fptype arg0) {			\
-    fptype CONST VECTOR_CC (*p)(fptype arg0) = funcavx;		\
-    SUBST_IF_FMA4(funcfma4);						\
-    SUBST_IF_AVX2(funcavx2);						\
-    pfn = p;								\
-    return (*pfn)(arg0);						\
-  }									\
-  static CONST VECTOR_CC fptype (*pfn)(fptype arg0) = dfn;		\
-  EXPORT CONST VECTOR_CC fptype funcName(fptype arg0) { return (*pfn)(arg0); }
-
-#define DISPATCH_vf_vf_vf(fptype, funcName, pfn, dfn, funcavx, funcfma4, funcavx2) \
-  static CONST VECTOR_CC fptype (*pfn)(fptype arg0, fptype arg1);	\
-  static CONST VECTOR_CC fptype dfn(fptype arg0, fptype arg1) {	\
-    fptype CONST VECTOR_CC (*p)(fptype arg0, fptype arg1) = funcavx;	\
-    SUBST_IF_FMA4(funcfma4);						\
-    SUBST_IF_AVX2(funcavx2);						\
-    pfn = p;								\
-    return (*pfn)(arg0, arg1);						\
-  }									\
-  static CONST VECTOR_CC fptype (*pfn)(fptype arg0, fptype arg1) = dfn;	\
-  EXPORT CONST VECTOR_CC fptype funcName(fptype arg0, fptype arg1) { return (*pfn)(arg0, arg1); }
-
-#define DISPATCH_vf2_vf(fptype, fptype2, funcName, pfn, dfn, funcavx, funcfma4, funcavx2) \
-  static CONST VECTOR_CC fptype2 (*pfn)(fptype arg0);			\
-  static CONST VECTOR_CC fptype2 dfn(fptype arg0) {			\
-    fptype2 CONST VECTOR_CC (*p)(fptype arg0) = funcavx;		\
-    SUBST_IF_FMA4(funcfma4);						\
-    SUBST_IF_AVX2(funcavx2);						\
-    pfn = p;								\
-    return (*pfn)(arg0);						\
-  }									\
-  static CONST VECTOR_CC fptype2 (*pfn)(fptype arg0) = dfn;		\
-  EXPORT CONST VECTOR_CC fptype2 funcName(fptype arg0) { return (*pfn)(arg0); }
-
-#define DISPATCH_vf_vf_vi(fptype, itype, funcName, pfn, dfn, funcavx, funcfma4, funcavx2) \
-  static CONST VECTOR_CC fptype (*pfn)(fptype arg0, itype arg1);	\
-  static CONST VECTOR_CC fptype dfn(fptype arg0, itype arg1) {		\
-    fptype CONST VECTOR_CC (*p)(fptype arg0, itype arg1) = funcavx;	\
-    SUBST_IF_FMA4(funcfma4);						\
-    SUBST_IF_AVX2(funcavx2);						\
-    pfn = p;								\
-    return (*pfn)(arg0, arg1);						\
-  }									\
-  static CONST VECTOR_CC fptype (*pfn)(fptype arg0, itype arg1) = dfn;	\
-  EXPORT CONST VECTOR_CC fptype funcName(fptype arg0, itype arg1) { return (*pfn)(arg0, arg1); }
-
-#define DISPATCH_vi_vf(fptype, itype, funcName, pfn, dfn, funcavx, funcfma4, funcavx2) \
-  static CONST VECTOR_CC itype (*pfn)(fptype arg0);			\
-  static CONST VECTOR_CC itype dfn(fptype arg0) {			\
-    itype CONST VECTOR_CC (*p)(fptype arg0) = funcavx;			\
-    SUBST_IF_FMA4(funcfma4);						\
-    SUBST_IF_AVX2(funcavx2);						\
-    pfn = p;								\
-    return (*pfn)(arg0);						\
-  }									\
-  static CONST VECTOR_CC itype (*pfn)(fptype arg0) = dfn;		\
-  EXPORT CONST VECTOR_CC itype funcName(fptype arg0) { return (*pfn)(arg0); }
-
-#define DISPATCH_vf_vf_vf_vf(fptype, funcName, pfn, dfn, funcavx, funcfma4, funcavx2) \
-  static CONST VECTOR_CC fptype (*pfn)(fptype arg0, fptype arg1, fptype arg2); \
-  static CONST VECTOR_CC fptype dfn(fptype arg0, fptype arg1, fptype arg2) { \
-    fptype CONST VECTOR_CC (*p)(fptype arg0, fptype arg1, fptype arg2) = funcavx; \
-    SUBST_IF_FMA4(funcfma4);						\
-    SUBST_IF_AVX2(funcavx2);						\
-    pfn = p;								\
-    return (*pfn)(arg0, arg1, arg2);					\
-  }									\
-  static CONST VECTOR_CC fptype (*pfn)(fptype arg0, fptype arg1, fptype arg2) = dfn; \
-  EXPORT CONST VECTOR_CC fptype funcName(fptype arg0, fptype arg1, fptype arg2) { return (*pfn)(arg0, arg1, arg2); }
-
-#define DISPATCH_i_i(funcName, pfn, dfn, funcavx, funcfma4, funcavx2) \
-  static CONST int (*pfn)(int arg0);					\
-  static CONST int dfn(int arg0) {					\
-    int CONST (*p)(int) = funcavx;					\
-    SUBST_IF_FMA4(funcfma4);						\
-    SUBST_IF_AVX2(funcavx2);						\
-    pfn = p;								\
-    return (*pfn)(arg0);						\
-  }									\
-  static CONST int (*pfn)(int arg0) = dfn;				\
-  EXPORT CONST int funcName(int arg0) { return (*pfn)(arg0); }
-
-#define DISPATCH_p_i(funcName, pfn, dfn, funcavx, funcfma4, funcavx2) \
-  static CONST void *(*pfn)(int arg0);					\
-  static CONST void *dfn(int arg0) {					\
-    CONST void *(*p)(int) = funcavx;					\
-    SUBST_IF_FMA4(funcfma4);						\
-    SUBST_IF_AVX2(funcavx2);						\
-    pfn = p;								\
-    return (*pfn)(arg0);						\
-  }									\
-  static CONST void *(*pfn)(int arg0) = dfn;				\
-  EXPORT CONST void *funcName(int arg0) { return (*pfn)(arg0); }
 
 //
 

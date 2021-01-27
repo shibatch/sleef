@@ -23,7 +23,7 @@ static void sighandler(int signum) {
   LONGJMP(sigjmp, 1);
 }
 
-static int cpuSupportsExt(void (*tryExt)(void)) {
+static int cpuSupportsExt(void (*tryExt)()) {
   static int cache = -1;
   if (cache != -1) return cache;
 
