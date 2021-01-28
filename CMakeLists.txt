@@ -193,7 +193,6 @@ set(TARGET_MKRENAME_GNUABI "mkrename_gnuabi")
 set(TARGET_MKMASKED_GNUABI "mkmasked_gnuabi")
 # Generates the helper executable file mkdisp needed to write the sleef header
 set(TARGET_MKDISP "mkdisp")
-set(TARGET_MKALIAS "mkalias")
 # Generates static library common
 # Defined in src/common/CMakeLists.txt via command add_library
 set(TARGET_LIBCOMMON_OBJ "common")
