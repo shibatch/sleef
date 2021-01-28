@@ -1078,10 +1078,10 @@ static int vcast_i_vi2(vint2 v) {
 
 //
 
-static vquad loadu_vq_p(void *p) {
-  vquad vq;
-  memcpy(&vq, p, VECTLENDP * 16);
-  return vq;
+static vquad loadu_vq_p(const int32_t *ptr) {
+  int32_t a[svcntw()*2];
+  memcpy(a, ptr, svcntw()*8);
+  return svld2_s32(ptrue, a);
 }
 
 static INLINE vquad cast_vq_aq(vargquad aq) { return aq; }
