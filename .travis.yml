@@ -52,11 +52,12 @@ matrix:
       env:
         - LABEL="arm64-gcc-sve"
     - os: linux
+      dist: focal
       arch: arm64
       addons:
         apt:
           packages:
-            - clang-8
+            - clang-11
       env:
         - LABEL="arm64-clang"
     - arch: ppc64le
