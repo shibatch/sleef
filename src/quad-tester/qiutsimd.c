@@ -268,7 +268,7 @@ int check_featureQP(double d) {
   for(int i=0;i<VECTLENDP;i++) s[i] = d;
   VARGQUAD a = xcast_from_doubleq(vloadu_vd_p(s));
   a = xpowq_u10(a, a);
-  vint vi = xicmpeqq(a, xsplatq(sleef_q(+0x1114580b45d47LL, 0x49e6108579a2d0caULL, 3)));
+  vint vi = xicmpeqq(a, xsplatq(sleef_q(+0x1000000000000LL, 0x0000000000000000ULL, 0)));
   int t[VECTLENDP*2];
   memset(t, 0, sizeof(t));
   vstoreu_v_p_vi(t, vi);
