@@ -297,7 +297,7 @@ pipeline {
                 }
 
                 stage('gcc x86') {
-            	     agent { label 'x86' 'gcc-10' }
+            	     agent { label 'x86 && gcc-10' }
             	     steps {
 	    	     	 sh '''
                 	 echo "gcc x86_64 on" `hostname`
@@ -317,7 +317,7 @@ pipeline {
                 }
 
                 stage('clang x86') {
-            	     agent { label 'x86' 'clang-11' }
+            	     agent { label 'x86 && clang-11' }
             	     steps {
 	    	     	 sh '''
                 	 echo "clang x86_64 on" `hostname`
@@ -337,7 +337,7 @@ pipeline {
                 }
 
                 stage('LTO with gcc') {
-            	     agent { label 'x86' 'gcc-10' }
+            	     agent { label 'x86 && gcc-10' }
             	     steps {
 	    	     	 sh '''
                 	 echo "LTO with gcc on" `hostname`
@@ -357,7 +357,7 @@ pipeline {
                 }
 
                 stage('LTO with clang') {
-            	     agent { label 'x86' 'clang-10' }
+            	     agent { label 'x86 && clang-10' }
             	     steps {
 	    	     	 sh '''
                 	 echo "LTO with clang on" `hostname`
@@ -439,7 +439,7 @@ pipeline {
                 }
 
                 stage('gcc-4.8 and cmake-3.5.1') {
-            	     agent { label 'gcc-4' }
+            	     agent { label 'x86 && gcc-4' }
             	     steps {
 	    	     	 sh '''
                 	 echo "gcc-4.8 and cmake-3.5.1 on" `hostname`
@@ -462,7 +462,7 @@ pipeline {
                 }
 
                 stage('clang-6.0') {
-            	     agent { label 'clang-6' }
+            	     agent { label 'x86 && clang-6' }
             	     steps {
 	    	     	 sh '''
                 	 echo "clang-6.0 on" `hostname`
