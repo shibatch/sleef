@@ -117,7 +117,7 @@ pipeline {
                 }
 
                 stage('aarch64 gcc-10 and cuda') {
-            	     agent { label 'cuda' }
+            	     agent { label 'aarch64 && cuda && gcc-10' }
             	     steps {
 	    	     	 sh '''
                 	 echo "aarch64 gcc-10 and cuda on" `hostname`
@@ -126,11 +126,32 @@ pipeline {
 			 rm -rf build
  			 mkdir build
 			 cd build
-			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DBUILD_SHARED_LIBS=TRUE -DENFORCE_TESTER3=TRUE -DFORCE_AAVPCS=On -DENABLE_GNUABI=On -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DENABLE_CUDA=TRUE -DENFORCE_CUDA=TRUE -DENFORCE_SVE=TRUE -DEMULATOR=qemu-aarch64 ..
+			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DBUILD_SHARED_LIBS=TRUE -DENFORCE_TESTER3=TRUE -DENABLE_GNUABI=On -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DENABLE_CUDA=TRUE -DENFORCE_CUDA=TRUE -DENFORCE_SVE=TRUE -DEMULATOR=qemu-aarch64 ..
 			 ninja
 			 export OMP_WAIT_POLICY=passive
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
 		         ctest -j 7
+		         ninja install
+			 '''
+            	     }
+                }
+
+                stage('aarch64 clang-11') {
+            	     agent { label 'aarch64 && clang-11' }
+            	     steps {
+	    	     	 sh '''
+                	 echo "aarch64 clang-11 on" `hostname`
+			 export CC=clang-11
+			 export PATH=$PATH:/opt/clang+llvm-11.0.0-aarch64-linux-gnu/bin
+			 export QEMU_CPU=max,sve-max-vq=1
+			 rm -rf build
+ 			 mkdir build
+			 cd build
+			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DBUILD_SHARED_LIBS=TRUE -DENFORCE_TESTER3=TRUE -DENABLE_GNUABI=On -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DENFORCE_SVE=TRUE -DEMULATOR=qemu-aarch64 ..
+			 ninja
+			 export OMP_WAIT_POLICY=passive
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j `nproc`
 		         ninja install
 			 '''
             	     }
@@ -322,7 +343,7 @@ pipeline {
 	    	     	 sh '''
                 	 echo "clang x86_64 on" `hostname`
 			 export PATH=$PATH:/opt/sde-external-8.56.0-2020-07-05-lin
-		         export CC=clang-10
+		         export CC=clang-11
 			 rm -rf build
  			 mkdir build
 			 cd build
@@ -357,16 +378,16 @@ pipeline {
                 }
 
                 stage('LTO with clang') {
-            	     agent { label 'x86 && clang-10' }
+            	     agent { label 'x86 && clang-11' }
             	     steps {
 	    	     	 sh '''
                 	 echo "LTO with clang on" `hostname`
 			 export PATH=$PATH:/opt/sde-external-8.56.0-2020-07-05-lin
-		         export CC=clang-10
+		         export CC=clang-11
 			 rm -rf build
  			 mkdir build
 			 cd build
-			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DBUILD_SHARED_LIBS=FALSE -DENABLE_LTO=TRUE -DLLVM_AR_COMMAND=llvm-ar-10 -DDISABLE_FMA4=TRUE -DENFORCE_SSE2=TRUE -DENFORCE_SSE4=TRUE -DENFORCE_AVX=TRUE -DENFORCE_AVX2=TRUE -DENFORCE_AVX512F=TRUE ..
+			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DBUILD_SHARED_LIBS=FALSE -DENABLE_LTO=TRUE -DLLVM_AR_COMMAND=llvm-ar-11 -DDISABLE_FMA4=TRUE -DENFORCE_SSE2=TRUE -DENFORCE_SSE4=TRUE -DENFORCE_AVX=TRUE -DENFORCE_AVX2=TRUE -DENFORCE_AVX512F=TRUE ..
 			 ninja
 			 export OMP_WAIT_POLICY=passive
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
