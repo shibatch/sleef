@@ -358,6 +358,7 @@ pipeline {
             	     }
                 }
 
+		/*
                 stage('i386 clang') {
             	     agent { label 'docker-i386' }
             	     steps {
@@ -378,6 +379,7 @@ pipeline {
 			 '''
             	     }
                 }
+		*/
 
                 stage('gcc-4.8 and cmake-3.5.1') {
             	     agent { label 'x86 && gcc-4' }
@@ -490,7 +492,7 @@ pipeline {
 			 rm -rf build
  			 mkdir build
 			 cd build
-			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DBUILD_SHARED_LIBS=FALSE -DENABLE_LTO=TRUE -DLLVM_AR_COMMAND=llvm-ar-11 -DDISABLE_FMA4=TRUE -DENFORCE_SSE2=TRUE -DENFORCE_SSE4=TRUE -DENFORCE_AVX=TRUE -DENFORCE_AVX2=TRUE -DENFORCE_AVX512F=TRUE ..
+			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DBUILD_SHARED_LIBS=FALSE -DENABLE_LTO=TRUE -DLLVM_AR_COMMAND=llvm-ar-10 -DDISABLE_FMA4=TRUE -DENFORCE_SSE2=TRUE -DENFORCE_SSE4=TRUE -DENFORCE_AVX=TRUE -DENFORCE_AVX2=TRUE -DENFORCE_AVX512F=TRUE ..
 			 ninja
 			 export OMP_WAIT_POLICY=passive
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
