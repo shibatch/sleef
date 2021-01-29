@@ -317,46 +317,6 @@ pipeline {
             	     }
                 }
 
-                stage('gcc x86') {
-            	     agent { label 'x86 && gcc-10' }
-            	     steps {
-	    	     	 sh '''
-                	 echo "gcc x86_64 on" `hostname`
-			 export PATH=$PATH:/opt/sde-external-8.56.0-2020-07-05-lin
-		         export CC=gcc-10
-			 rm -rf build
- 			 mkdir build
-			 cd build
-			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DBUILD_SHARED_LIBS=FALSE -DDISABLE_FMA4=TRUE -DENFORCE_SSE2=TRUE -DENFORCE_SSE4=TRUE -DENFORCE_AVX=TRUE -DENFORCE_AVX2=TRUE -DENFORCE_AVX512F=TRUE ..
-			 ninja
-			 export OMP_WAIT_POLICY=passive
-		         export CTEST_OUTPUT_ON_FAILURE=TRUE
-		         ctest -j `nproc`
-		         ninja install
-			 '''
-            	     }
-                }
-
-                stage('clang x86') {
-            	     agent { label 'x86 && clang-10' }
-            	     steps {
-	    	     	 sh '''
-                	 echo "clang x86_64 on" `hostname`
-			 export PATH=$PATH:/opt/sde-external-8.56.0-2020-07-05-lin
-		         export CC=clang-10
-			 rm -rf build
- 			 mkdir build
-			 cd build
-			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DBUILD_SHARED_LIBS=FALSE -DDISABLE_FMA4=TRUE -DENFORCE_SSE2=TRUE -DENFORCE_SSE4=TRUE -DENFORCE_AVX=TRUE -DENFORCE_AVX2=TRUE -DENFORCE_AVX512F=TRUE ..
-			 ninja
-			 export OMP_WAIT_POLICY=passive
-		         export CTEST_OUTPUT_ON_FAILURE=TRUE
-		         ctest -j `nproc`
-		         ninja install
-			 '''
-            	     }
-                }
-
                 stage('Android') {
             	     agent { label 'android-ndk' }
             	     steps {
@@ -456,6 +416,46 @@ pipeline {
 			 cmake -GNinja -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DENFORCE_SSE2=TRUE -DENFORCE_SSE4=TRUE -DENFORCE_AVX=TRUE -DENFORCE_FMA4=TRUE -DENFORCE_AVX2=TRUE -DENFORCE_AVX512F=TRUE ..
 			 ninja
 		         ctest -j `nproc`
+			 '''
+            	     }
+                }
+
+                stage('gcc x86') {
+            	     agent { label 'x86 && gcc-10' }
+            	     steps {
+	    	     	 sh '''
+                	 echo "gcc x86_64 on" `hostname`
+			 export PATH=$PATH:/opt/sde-external-8.56.0-2020-07-05-lin
+		         export CC=gcc-10
+			 rm -rf build
+ 			 mkdir build
+			 cd build
+			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DBUILD_SHARED_LIBS=FALSE -DDISABLE_FMA4=TRUE -DENFORCE_SSE2=TRUE -DENFORCE_SSE4=TRUE -DENFORCE_AVX=TRUE -DENFORCE_AVX2=TRUE -DENFORCE_AVX512F=TRUE ..
+			 ninja
+			 export OMP_WAIT_POLICY=passive
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j `nproc`
+		         ninja install
+			 '''
+            	     }
+                }
+
+                stage('clang x86') {
+            	     agent { label 'x86 && clang-10' }
+            	     steps {
+	    	     	 sh '''
+                	 echo "clang x86_64 on" `hostname`
+			 export PATH=$PATH:/opt/sde-external-8.56.0-2020-07-05-lin
+		         export CC=clang-10
+			 rm -rf build
+ 			 mkdir build
+			 cd build
+			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DBUILD_SHARED_LIBS=FALSE -DDISABLE_FMA4=TRUE -DENFORCE_SSE2=TRUE -DENFORCE_SSE4=TRUE -DENFORCE_AVX=TRUE -DENFORCE_AVX2=TRUE -DENFORCE_AVX512F=TRUE ..
+			 ninja
+			 export OMP_WAIT_POLICY=passive
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j `nproc`
+		         ninja install
 			 '''
             	     }
                 }
