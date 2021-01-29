@@ -266,7 +266,7 @@
 int check_featureQP() {
   VARGQUAD a;
   memrand(&a, SIZEOF_VARGQUAD);
-  a = xsqrtq_u05(a);
+  a = xpowq_u10(a, a);
   return 1;
 }
 
