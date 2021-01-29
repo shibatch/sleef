@@ -338,12 +338,12 @@ pipeline {
                 }
 
                 stage('clang x86') {
-            	     agent { label 'x86 && clang-11' }
+            	     agent { label 'x86 && clang-10' }
             	     steps {
 	    	     	 sh '''
                 	 echo "clang x86_64 on" `hostname`
 			 export PATH=$PATH:/opt/sde-external-8.56.0-2020-07-05-lin
-		         export CC=clang-11
+		         export CC=clang-10
 			 rm -rf build
  			 mkdir build
 			 cd build
@@ -378,12 +378,12 @@ pipeline {
                 }
 
                 stage('LTO with clang') {
-            	     agent { label 'x86 && clang-11' }
+            	     agent { label 'x86 && clang-10' }
             	     steps {
 	    	     	 sh '''
                 	 echo "LTO with clang on" `hostname`
 			 export PATH=$PATH:/opt/sde-external-8.56.0-2020-07-05-lin
-		         export CC=clang-11
+		         export CC=clang-10
 			 rm -rf build
  			 mkdir build
 			 cd build

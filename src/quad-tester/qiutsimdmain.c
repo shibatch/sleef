@@ -20,7 +20,7 @@ static sigjmp_buf sigjmp;
 #endif
 
 int do_test(int argc, char **argv);
-int check_featureQP();
+int check_featureQP(double);
 
 static void sighandler(int signum) {
   LONGJMP(sigjmp, 1);
@@ -30,7 +30,7 @@ int detectFeatureQP() {
   signal(SIGILL, sighandler);
 
   if (SETJMP(sigjmp) == 0) {
-    int r = check_featureQP();
+    int r = check_featureQP(1.0);
     signal(SIGILL, SIG_DFL);
     return r;
   } else {
