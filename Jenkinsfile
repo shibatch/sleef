@@ -4,6 +4,78 @@ pipeline {
     stages {
         stage('Preamble') {
             parallel {
+                stage('ppc64le gcc') {
+            	     agent { label 'ppc64' }
+            	     steps {
+	    	     	 sh '''
+                	 echo "ppc64 gcc on" `hostname`
+			 export CC=gcc-10
+			 rm -rf build
+ 			 mkdir build
+			 cd build
+			 cmake -GNinja -DRUNNING_ON_TRAVIS=TRUE -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DENFORCE_VSX=TRUE -DENFORCE_VSX3=TRUE ..
+			 ninja
+			 export OMP_WAIT_POLICY=passive
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j `nproc`
+			 '''
+            	     }
+                }
+
+                stage('ppc64le clang') {
+            	     agent { label 'ppc64' }
+            	     steps {
+	    	     	 sh '''
+                	 echo "ppc64 clang on" `hostname`
+			 export CC=clang-10
+			 rm -rf build
+ 			 mkdir build
+			 cd build
+			 cmake -GNinja -DRUNNING_ON_TRAVIS=TRUE -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DENFORCE_VSX=TRUE -DENFORCE_VSX3=TRUE ..
+			 ninja
+			 export OMP_WAIT_POLICY=passive
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j `nproc`
+			 '''
+            	     }
+                }
+
+                stage('s390x gcc') {
+            	     agent { label 's390x' }
+            	     steps {
+	    	     	 sh '''
+                	 echo "s390x gcc on" `hostname`
+			 export CC=gcc
+			 rm -rf build
+ 			 mkdir build
+			 cd build
+			 cmake -G Ninja -DRUNNING_ON_TRAVIS=TRUE -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DENFORCE_VXE=TRUE ..
+			 ninja
+			 export OMP_WAIT_POLICY=passive
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j `nproc`
+			 '''
+            	     }
+                }
+
+                stage('s390x clang') {
+            	     agent { label 's390x' }
+            	     steps {
+	    	     	 sh '''
+                	 echo "s390x clang on" `hostname`
+			 export CC=clang-10
+			 rm -rf build
+ 			 mkdir build
+			 cd build
+			 cmake -G Ninja -DRUNNING_ON_TRAVIS=TRUE -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DENFORCE_VXE=TRUE -DENFORCE_VXE2=TRUE -DCMAKE_BUILD_TYPE=Debug ..
+			 ninja
+			 export OMP_WAIT_POLICY=passive
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j `nproc`
+			 '''
+            	     }
+                }
+
                 stage('Armclang') {
             	     agent { label 'armclang' }
             	     steps {
@@ -44,20 +116,42 @@ pipeline {
             	     }
                 }
 
-                stage('aarch64 gcc-10 static and cuda') {
-            	     agent { label 'cuda' }
+                stage('aarch64 gcc-10 and cuda') {
+            	     agent { label 'aarch64 && cuda && gcc-10' }
             	     steps {
 	    	     	 sh '''
                 	 echo "aarch64 gcc-10 and cuda on" `hostname`
 			 export CC=gcc-10.2.0
+			 export QEMU_CPU=max,sve-max-vq=1
 			 rm -rf build
  			 mkdir build
 			 cd build
-			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DBUILD_SHARED_LIBS=FALSE -DENFORCE_TESTER3=TRUE -DFORCE_AAVPCS=On -DENABLE_GNUABI=On -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DENABLE_CUDA=TRUE -DENFORCE_CUDA=TRUE -DENFORCE_SVE=TRUE ..
+			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DBUILD_SHARED_LIBS=TRUE -DENFORCE_TESTER3=TRUE -DENABLE_GNUABI=On -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DENABLE_CUDA=TRUE -DENFORCE_CUDA=TRUE -DENFORCE_SVE=TRUE -DEMULATOR=qemu-aarch64 ..
 			 ninja
 			 export OMP_WAIT_POLICY=passive
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
 		         ctest -j 7
+		         ninja install
+			 '''
+            	     }
+                }
+
+                stage('aarch64 clang-11') {
+            	     agent { label 'aarch64 && clang-11' }
+            	     steps {
+	    	     	 sh '''
+                	 echo "aarch64 clang-11 on" `hostname`
+			 export CC=clang-11
+			 export PATH=$PATH:/opt/clang+llvm-11.0.0-aarch64-linux-gnu/bin
+			 export QEMU_CPU=max,sve-max-vq=1
+			 rm -rf build
+ 			 mkdir build
+			 cd build
+			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DDISABLE_OPENMP=TRUE -DBUILD_SHARED_LIBS=TRUE -DENFORCE_TESTER3=TRUE -DENABLE_GNUABI=On -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DENFORCE_SVE=TRUE -DEMULATOR=qemu-aarch64 ..
+			 ninja
+			 export OMP_WAIT_POLICY=passive
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j `nproc`
 		         ninja install
 			 '''
             	     }
@@ -99,7 +193,7 @@ pipeline {
 			 docker exec jenkins tar xf /tmp/builddir.tgz -C /build
 			 docker exec jenkins rm -f /tmp/builddir.tgz
 			 rm -f /tmp/builddir.tgz
-			 docker exec jenkins bash -c "set -ev;export OMP_WAIT_POLICY=passive;cd /build;rm -rf build;mkdir build;cd build;export CC=clang;export PATH=/opt/bin:$PATH;cmake -GNinja -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DENFORCE_TESTER3=TRUE ..;ninja;ctest -j `nproc`"
+			 docker exec jenkins bash -c "set -ev;export OMP_WAIT_POLICY=passive;cd /build;rm -rf build;mkdir build;cd build;export CC=clang-10;export PATH=/opt/bin:$PATH;cmake -GNinja -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DENFORCE_TESTER3=TRUE ..;ninja;ctest -j `nproc`"
 			 docker stop jenkins
 			 '''
             	     }
@@ -221,46 +315,6 @@ pipeline {
             	     }
                 }
 
-                stage('LTO with gcc') {
-            	     agent { label 'gcc-10' }
-            	     steps {
-	    	     	 sh '''
-                	 echo "LTO with gcc on" `hostname`
-			 export PATH=$PATH:/opt/sde-external-8.56.0-2020-07-05-lin
-		         export CC=gcc-10
-			 rm -rf build
- 			 mkdir build
-			 cd build
-			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DBUILD_SHARED_LIBS=FALSE -DENABLE_LTO=TRUE -DDISABLE_FMA4=TRUE -DENFORCE_SSE2=TRUE -DENFORCE_SSE4=TRUE -DENFORCE_AVX=TRUE -DENFORCE_AVX2=TRUE -DENFORCE_AVX512F=TRUE ..
-			 ninja
-			 export OMP_WAIT_POLICY=passive
-		         export CTEST_OUTPUT_ON_FAILURE=TRUE
-		         ctest -j `nproc`
-		         ninja install
-			 '''
-            	     }
-                }
-
-                stage('LTO with clang') {
-            	     agent { label 'clang-10' }
-            	     steps {
-	    	     	 sh '''
-                	 echo "LTO with clang on" `hostname`
-			 export PATH=$PATH:/opt/sde-external-8.56.0-2020-07-05-lin
-		         export CC=clang-10
-			 rm -rf build
- 			 mkdir build
-			 cd build
-			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DBUILD_SHARED_LIBS=FALSE -DENABLE_LTO=TRUE -DLLVM_AR_COMMAND=llvm-ar-10 -DDISABLE_FMA4=TRUE -DENFORCE_SSE2=TRUE -DENFORCE_SSE4=TRUE -DENFORCE_AVX=TRUE -DENFORCE_AVX2=TRUE -DENFORCE_AVX512F=TRUE ..
-			 ninja
-			 export OMP_WAIT_POLICY=passive
-		         export CTEST_OUTPUT_ON_FAILURE=TRUE
-		         ctest -j `nproc`
-		         ninja install
-			 '''
-            	     }
-                }
-
                 stage('Android') {
             	     agent { label 'android-ndk' }
             	     steps {
@@ -324,7 +378,7 @@ pipeline {
                 }
 
                 stage('gcc-4.8 and cmake-3.5.1') {
-            	     agent { label 'gcc-4' }
+            	     agent { label 'x86 && gcc-4' }
             	     steps {
 	    	     	 sh '''
                 	 echo "gcc-4.8 and cmake-3.5.1 on" `hostname`
@@ -347,7 +401,7 @@ pipeline {
                 }
 
                 stage('clang-6.0') {
-            	     agent { label 'clang-6' }
+            	     agent { label 'x86 && clang-6' }
             	     steps {
 	    	     	 sh '''
                 	 echo "clang-6.0 on" `hostname`
@@ -360,6 +414,86 @@ pipeline {
 			 cmake -GNinja -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DENFORCE_SSE2=TRUE -DENFORCE_SSE4=TRUE -DENFORCE_AVX=TRUE -DENFORCE_FMA4=TRUE -DENFORCE_AVX2=TRUE -DENFORCE_AVX512F=TRUE ..
 			 ninja
 		         ctest -j `nproc`
+			 '''
+            	     }
+                }
+
+                stage('LTO with gcc') {
+            	     agent { label 'x86 && gcc-10' }
+            	     steps {
+	    	     	 sh '''
+                	 echo "LTO with gcc on" `hostname`
+			 export PATH=/usr/bin:$PATH:/opt/sde-external-8.56.0-2020-07-05-lin
+		         export CC=gcc-10
+			 rm -rf build
+ 			 mkdir build
+			 cd build
+			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DBUILD_SHARED_LIBS=FALSE -DENABLE_LTO=TRUE -DDISABLE_FMA4=TRUE -DENFORCE_SSE2=TRUE -DENFORCE_SSE4=TRUE -DENFORCE_AVX=TRUE -DENFORCE_AVX2=TRUE -DENFORCE_AVX512F=TRUE ..
+			 ninja
+			 export OMP_WAIT_POLICY=passive
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j `nproc`
+		         ninja install
+			 '''
+            	     }
+                }
+
+                stage('LTO with clang') {
+            	     agent { label 'x86 && clang-10' }
+            	     steps {
+	    	     	 sh '''
+                	 echo "LTO with clang on" `hostname`
+			 export PATH=/usr/bin:$PATH:/opt/sde-external-8.56.0-2020-07-05-lin
+		         export CC=clang-10
+			 rm -rf build
+ 			 mkdir build
+			 cd build
+			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DBUILD_SHARED_LIBS=FALSE -DENABLE_LTO=TRUE -DLLVM_AR_COMMAND=llvm-ar-10 -DDISABLE_FMA4=TRUE -DENFORCE_SSE2=TRUE -DENFORCE_SSE4=TRUE -DENFORCE_AVX=TRUE -DENFORCE_AVX2=TRUE -DENFORCE_AVX512F=TRUE ..
+			 ninja
+			 export OMP_WAIT_POLICY=passive
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j `nproc`
+		         ninja install
+			 '''
+            	     }
+                }
+
+                stage('gcc x86') {
+            	     agent { label 'x86 && gcc-10' }
+            	     steps {
+	    	     	 sh '''
+                	 echo "gcc x86_64 on" `hostname`
+			 export PATH=$PATH:/opt/sde-external-8.56.0-2020-07-05-lin
+		         export CC=gcc-10
+			 rm -rf build
+ 			 mkdir build
+			 cd build
+			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DBUILD_SHARED_LIBS=FALSE -DDISABLE_FMA4=TRUE -DENFORCE_SSE2=TRUE -DENFORCE_SSE4=TRUE -DENFORCE_AVX=TRUE -DENFORCE_AVX2=TRUE -DENFORCE_AVX512F=TRUE ..
+			 ninja
+			 export OMP_WAIT_POLICY=passive
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j `nproc`
+		         ninja install
+			 '''
+            	     }
+                }
+
+                stage('clang x86') {
+            	     agent { label 'x86 && clang-10' }
+            	     steps {
+	    	     	 sh '''
+                	 echo "clang x86_64 on" `hostname`
+			 export PATH=$PATH:/opt/sde-external-8.56.0-2020-07-05-lin
+		         export CC=clang-10
+			 rm -rf build
+ 			 mkdir build
+			 cd build
+			 cmake -GNinja -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DENFORCE_TESTER3=TRUE -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DBUILD_SHARED_LIBS=FALSE -DDISABLE_FMA4=TRUE -DENFORCE_SSE2=TRUE -DENFORCE_SSE4=TRUE -DENFORCE_AVX=TRUE -DENFORCE_AVX2=TRUE -DENFORCE_AVX512F=TRUE ..
+			 ninja
+			 export OMP_WAIT_POLICY=passive
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j `nproc`
+		         ninja install
 			 '''
             	     }
                 }

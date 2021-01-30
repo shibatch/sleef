@@ -15,20 +15,20 @@
 
 #include "qdispatcher.h"
 
-Sleef_quadx2 sleef_cpuidtmp0;
+Sleef_quadx2 sleef_cpuidtmp1;
 
 #ifdef ENABLE_AVX2
-static void tryEXT1() { sleef_cpuidtmp0 = Sleef_sinq2_u10avx2128(sleef_cpuidtmp0); }
+static void tryEXT1() { sleef_cpuidtmp1 = Sleef_sinq2_u10avx2128(sleef_cpuidtmp1); }
 #define SUBST_IF_EXT1(funcExt1) if (cpuSupportsExt(tryEXT1)) p = funcExt1;
 #endif
 
 #ifdef ENABLE_VSX3
-static void tryEXT1() { sleef_cpuidtmp0 = Sleef_sinq2_u10vsx3(sleef_cpuidtmp0); }
+static void tryEXT1() { sleef_cpuidtmp1 = Sleef_sinq2_u10vsx3(sleef_cpuidtmp1); }
 #define SUBST_IF_EXT1(funcExt1) if (cpuSupportsExt(tryEXT1)) p = funcExt1;
 #endif
 
 #ifdef ENABLE_VXE2
-static void tryEXT1() { sleef_cpuidtmp0 = Sleef_sinq2_u10vxe2(sleef_cpuidtmp0); }
+static void tryEXT1() { sleef_cpuidtmp1 = Sleef_sinq2_u10vxe2(sleef_cpuidtmp1); }
 #define SUBST_IF_EXT1(funcExt1) if (cpuSupportsExt(tryEXT1)) p = funcExt1;
 #endif
 

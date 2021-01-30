@@ -263,11 +263,16 @@
 
 //
 
-int check_featureQP() {
-  VARGQUAD a;
-  memrand(&a, SIZEOF_VARGQUAD);
-  a = xsqrtq_u05(a);
-  return 1;
+int check_featureQP(double d) {
+  double s[VECTLENDP];
+  for(int i=0;i<VECTLENDP;i++) s[i] = d;
+  VARGQUAD a = xcast_from_doubleq(vloadu_vd_p(s));
+  a = xpowq_u10(a, a);
+  vint vi = xicmpeqq(a, xsplatq(sleef_q(+0x1000000000000LL, 0x0000000000000000ULL, 0)));
+  int t[VECTLENDP*2];
+  memset(t, 0, sizeof(t));
+  vstoreu_v_p_vi(t, vi);
+  return t[0];
 }
 
 //
