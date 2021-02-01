@@ -144,46 +144,46 @@ static inline Sleef_quad sleef_q(int64_t H, uint64_t L, int E) {
 
 #define strtoflt128 Sleef_strtoq
 #define quadmath_snprintf Sleef_snprintf
-#define acosq Sleef_acosq1_u10purec
-#define acoshq Sleef_acoshq1_u10purec
-#define asinq Sleef_asinq1_u10purec
-#define asinhq Sleef_asinhq1_u10purec
-#define atanq Sleef_atanq1_u10purec
-#define atanhq Sleef_atanhq1_u10purec
-#define atan2q Sleef_atan2q1_u10purec
-#define cbrtq Sleef_cbrtq1_u10purec
-#define ceilq Sleef_ceilq1_purec
-#define copysignq Sleef_copysignq1_purec
-#define coshq Sleef_coshq1_u10purec
-#define cosq Sleef_cosq1_u10purec
-#define expq Sleef_expq1_u10purec
-#define expm1q Sleef_expm1q1_u10purec
-#define fabsq Sleef_fabsq1_purec
-#define fdimq Sleef_fdimq1_u05purec
-#define floorq Sleef_floorq1_purec
-#define fmaq Sleef_fmaq1_u05purec
-#define fmaxq Sleef_fmaxq1_purec
-#define fminq Sleef_fminq1_purec
-#define fmodq Sleef_fmodq1_purec
-#define frexpq Sleef_frexpq1_purec
-#define hypotq Sleef_hypotq1_u05purec
-#define ilogbq Sleef_ilogbq1_purec
-#define ldexpq Sleef_ldexpq1_purec
-#define logq Sleef_logq1_u10purec
-#define log10q Sleef_log10q1_u10purec
-#define log2q Sleef_log2q1_u10purec
-#define log1pq Sleef_log1pq1_u10purec
-#define modfq Sleef_modfq1_purec
-#define powq Sleef_powq1_u10purec
-#define remainderq Sleef_remainderq1_purec
-#define rintq Sleef_rintq1_purec
-#define roundq Sleef_roundq1_purec
-#define sinhq Sleef_sinhq1_u10purec
-#define sinq Sleef_sinq1_u10purec
-#define sqrtq Sleef_sqrtq1_u05purec
-#define tanq Sleef_tanq1_u10purec
-#define tanhq Sleef_tanhq1_u10purec
-#define truncq Sleef_truncq1_purec
+#define acosq Sleef_acosq1_u10
+#define acoshq Sleef_acoshq1_u10
+#define asinq Sleef_asinq1_u10
+#define asinhq Sleef_asinhq1_u10
+#define atanq Sleef_atanq1_u10
+#define atanhq Sleef_atanhq1_u10
+#define atan2q Sleef_atan2q1_u10
+#define cbrtq Sleef_cbrtq1_u10
+#define ceilq Sleef_ceilq1
+#define copysignq Sleef_copysignq1
+#define coshq Sleef_coshq1_u10
+#define cosq Sleef_cosq1_u10
+#define expq Sleef_expq1_u10
+#define expm1q Sleef_expm1q1_u10
+#define fabsq Sleef_fabsq1
+#define fdimq Sleef_fdimq1_u05
+#define floorq Sleef_floorq1
+#define fmaq Sleef_fmaq1_u05
+#define fmaxq Sleef_fmaxq1
+#define fminq Sleef_fminq1
+#define fmodq Sleef_fmodq1
+#define frexpq Sleef_frexpq1
+#define hypotq Sleef_hypotq1_u05
+#define ilogbq Sleef_ilogbq1
+#define ldexpq Sleef_ldexpq1
+#define logq Sleef_logq1_u10
+#define log10q Sleef_log10q1_u10
+#define log2q Sleef_log2q1_u10
+#define log1pq Sleef_log1pq1_u10
+#define modfq Sleef_modfq1
+#define powq Sleef_powq1_u10
+#define remainderq Sleef_remainderq1
+#define rintq Sleef_rintq1
+#define roundq Sleef_roundq1
+#define sinhq Sleef_sinhq1_u10
+#define sinq Sleef_sinq1_u10
+#define sqrtq Sleef_sqrtq1_u05
+#define tanq Sleef_tanq1_u10
+#define tanhq Sleef_tanhq1_u10
+#define truncq Sleef_truncq1
 
 #ifdef SLEEF_QUAD_C
 
@@ -234,7 +234,7 @@ static inline Sleef_quad sleef_q(int64_t H, uint64_t L, int E) {
 #define FLT128_MIN_10_EXP (-4931)
 #define FLT128_MAX_10_EXP 4932
 
-#endif
+#endif // #if defined(SLEEF_LIBQUADMATH_COMPATIBILITY)
 
 #ifdef SLEEF_QUAD_C
 

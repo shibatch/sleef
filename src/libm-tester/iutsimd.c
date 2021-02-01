@@ -364,6 +364,14 @@ typedef Sleef_float_2 vfloat2;
 #endif
 #endif
 
+#ifdef ENABLE_DSP_SCALAR
+#include "renamedspscalar.h"
+#define CONFIG 1
+#include "helperpurec_scalar.h"
+typedef Sleef_double_2 vdouble2;
+typedef Sleef_float_2 vfloat2;
+#endif
+
 #ifdef USE_INLINE_HEADER
 #define CONCAT_SIMD_SUFFIX_(keyword, suffix) keyword ## suffix
 #define CONCAT_SIMD_SUFFIX(keyword, suffix) CONCAT_SIMD_SUFFIX_(keyword, suffix)
