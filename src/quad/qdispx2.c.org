@@ -15,7 +15,7 @@
 
 #include "qdispatcher.h"
 
-Sleef_quadx2 sleef_cpuidtmp1;
+NOEXPORT Sleef_quadx2 sleef_cpuidtmp1;
 
 #ifdef ENABLE_AVX2
 static void tryEXT1() { sleef_cpuidtmp1 = Sleef_sinq2_u10avx2128(sleef_cpuidtmp1); }

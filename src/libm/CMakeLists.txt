@@ -16,6 +16,7 @@ if (SLEEF_ARCH_X86)
     AVX512FNOFMA
     PUREC_SCALAR
     PURECFMA_SCALAR
+    DSP_SCALAR
   )
 elseif(SLEEF_ARCH_AARCH64)
   set(SLEEF_HEADER_LIST
@@ -26,6 +27,7 @@ elseif(SLEEF_ARCH_AARCH64)
     SVENOFMA
     PUREC_SCALAR
     PURECFMA_SCALAR
+    DSP_SCALAR
   )
 elseif(SLEEF_ARCH_AARCH32)
   set(SLEEF_HEADER_LIST
@@ -34,6 +36,7 @@ elseif(SLEEF_ARCH_AARCH32)
     NEON32VFPV4
     PUREC_SCALAR
     PURECFMA_SCALAR
+    DSP_SCALAR
   )
 elseif(SLEEF_ARCH_PPC64)
   set(SLEEF_HEADER_LIST
@@ -44,6 +47,7 @@ elseif(SLEEF_ARCH_PPC64)
     VSX3NOFMA
     PUREC_SCALAR
     PURECFMA_SCALAR
+    DSP_SCALAR
   )
 elseif(SLEEF_ARCH_S390X)
   set(SLEEF_HEADER_LIST
@@ -54,47 +58,49 @@ elseif(SLEEF_ARCH_S390X)
     VXE2NOFMA
     PUREC_SCALAR
     PURECFMA_SCALAR
+    DSP_SCALAR
   )
 endif()
 
 # HEADER_PARAMS
 
-command_arguments(HEADER_PARAMS_SSE_            cinz_ 2 4 __m128d __m128 __m128i __m128i __SSE2__)
+command_arguments(HEADER_PARAMS_SSE_            -     2 4 __m128d __m128 __m128i __m128i __SSE2__)
 command_arguments(HEADER_PARAMS_SSE2            cinz_ 2 4 __m128d __m128 __m128i __m128i __SSE2__ sse2)
 command_arguments(HEADER_PARAMS_SSE4            cinz_ 2 4 __m128d __m128 __m128i __m128i __SSE2__ sse4)
-command_arguments(HEADER_PARAMS_AVX_            cinz_ 4 8 __m256d __m256 __m128i "struct { __m128i x, y$<SEMICOLON> }" __AVX__)
+command_arguments(HEADER_PARAMS_AVX_            -     4 8 __m256d __m256 __m128i "struct { __m128i x, y$<SEMICOLON> }" __AVX__)
 command_arguments(HEADER_PARAMS_AVX             cinz_ 4 8 __m256d __m256 __m128i "struct { __m128i x, y$<SEMICOLON> }" __AVX__ avx)
 command_arguments(HEADER_PARAMS_FMA4            finz_ 4 8 __m256d __m256 __m128i "struct { __m128i x, y$<SEMICOLON> }" __AVX__ fma4)
 command_arguments(HEADER_PARAMS_AVX2            finz_ 4 8 __m256d __m256 __m128i __m256i __AVX__ avx2)
 command_arguments(HEADER_PARAMS_AVX2128         finz_ 2 4 __m128d __m128 __m128i __m128i __SSE2__ avx2128)
-command_arguments(HEADER_PARAMS_AVX512F_        finz_ 8 16 __m512d __m512 __m256i __m512i __AVX512F__)
+command_arguments(HEADER_PARAMS_AVX512F_        -     8 16 __m512d __m512 __m256i __m512i __AVX512F__)
 command_arguments(HEADER_PARAMS_AVX512F         finz_ 8 16 __m512d __m512 __m256i __m512i __AVX512F__ avx512f)
 command_arguments(HEADER_PARAMS_AVX512FNOFMA    cinz_ 8 16 __m512d __m512 __m256i __m512i __AVX512F__ avx512fnofma)
 
-command_arguments(HEADER_PARAMS_ADVSIMD_        finz_ 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON)
+command_arguments(HEADER_PARAMS_ADVSIMD_        -     2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON)
 command_arguments(HEADER_PARAMS_ADVSIMD         finz_ 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON advsimd)
 command_arguments(HEADER_PARAMS_ADVSIMDNOFMA    cinz_ 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON advsimdnofma)
 command_arguments(HEADER_PARAMS_SVE             finz_ x x svfloat64_t svfloat32_t svint32_t svint32_t __ARM_FEATURE_SVE sve)
 command_arguments(HEADER_PARAMS_SVENOFMA        cinz_ x x svfloat64_t svfloat32_t svint32_t svint32_t __ARM_FEATURE_SVE svenofma)
 
-command_arguments(HEADER_PARAMS_NEON32_         cinz_ 2 4 - float32x4_t int32x2_t int32x4_t __ARM_NEON__)
+command_arguments(HEADER_PARAMS_NEON32_         -     2 4 - float32x4_t int32x2_t int32x4_t __ARM_NEON__)
 command_arguments(HEADER_PARAMS_NEON32          cinz_ 2 4 - float32x4_t int32x2_t int32x4_t __ARM_NEON__ neon)
 command_arguments(HEADER_PARAMS_NEON32VFPV4     finz_ 2 4 - float32x4_t int32x2_t int32x4_t __ARM_NEON__ neonvfpv4)
 
-command_arguments(HEADER_PARAMS_VSX_            finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VSX__)
+command_arguments(HEADER_PARAMS_VSX_            -     2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VSX__)
 command_arguments(HEADER_PARAMS_VSX             finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VSX__ vsx)
 command_arguments(HEADER_PARAMS_VSXNOFMA        cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VSX__ vsxnofma)
 command_arguments(HEADER_PARAMS_VSX3            finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VSX__ vsx3)
 command_arguments(HEADER_PARAMS_VSX3NOFMA       cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VSX__ vsx3nofma)
 
-command_arguments(HEADER_PARAMS_VXE_            finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__)
+command_arguments(HEADER_PARAMS_VXE_            -     2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__)
 command_arguments(HEADER_PARAMS_VXE             finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ vxe)
 command_arguments(HEADER_PARAMS_VXENOFMA        cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ vxenofma)
 command_arguments(HEADER_PARAMS_VXE2            finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ vxe2)
 command_arguments(HEADER_PARAMS_VXE2NOFMA       cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ vxe2nofma)
 
+command_arguments(HEADER_PARAMS_DSP_SCALAR      -     1 1 double float int32_t int32_t __STDC__)
 command_arguments(HEADER_PARAMS_PUREC_SCALAR    cinz_ 1 1 double float int32_t int32_t __STDC__ purec)
-command_arguments(HEADER_PARAMS_PURECFMA_SCALAR finz_ 1 1 double float int32_t int32_t FP_FAST_FMA purecfma)
+command_arguments(HEADER_PARAMS_PURECFMA_SCALAR finz_ 1 1 double float int32_t int32_t __STDC__ purecfma)
 
 # RENAME_PARAMS
 
@@ -665,6 +671,36 @@ endif()
 target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:${TARGET_LIBCOMMON_OBJ}>)
 
 # --------------------------------------------------------------------
+
+# Target dispscalar.c
+
+add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c
+  COMMENT "Generating dispscalar.c"
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/dispscalar.c.org ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c
+  COMMAND $<TARGET_FILE:${TARGET_MKDISP}> 1 1 double float int32_t purec purecfma x >> ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c
+  DEPENDS ${TARGET_MKDISP}
+  )
+add_custom_target(dispscalar.c_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c)
+
+# Target renamedspscalar.h
+
+add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/renamedspscalar.h
+  COMMENT "Generating renamedspscalar.h"
+  COMMAND $<TARGET_FILE:${TARGET_MKRENAME}> - 1 1 > ${CMAKE_CURRENT_BINARY_DIR}/include/renamedspscalar.h
+  DEPENDS ${TARGET_MKRENAME}
+  )
+add_custom_target(renamedspscalar.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/include/renamedspscalar.h)
+
+# Target dispscalar_obj
+
+add_library(dispscalar_obj OBJECT dispscalar.c)
+set_target_properties(dispscalar_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
+target_compile_definitions(dispscalar_obj PRIVATE ${COMMON_TARGET_DEFINITIONS})
+target_include_directories(dispscalar_obj PRIVATE ${sleef_BINARY_DIR}/include)
+add_dependencies(dispscalar_obj dispscalar.c_generated renamedspscalar.h_generated ${TARGET_HEADERS})
+target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:dispscalar_obj>)
+
+#
 
 if (SLEEF_ARCH_X86)
   # Target dispsse.c
