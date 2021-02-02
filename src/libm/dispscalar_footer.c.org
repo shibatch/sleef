@@ -20,13 +20,13 @@
 #define DALIAS_i_d(DFUNC, SFUNC) EXPORT CONST int DFUNC(double d) { return SFUNC (d); }
 #define DALIAS_d_d_d(DFUNC, SFUNC) EXPORT CONST double DFUNC(double x, double y) { return SFUNC (x, y); }
 #define DALIAS_d_d_d_d(DFUNC, SFUNC) EXPORT CONST double DFUNC(double x, double y, double z) { return SFUNC (x, y, z); }
-#define DALIAS_d_d_i(DFUNC, SFUNC) EXPORT CONST double DFUNC(double x, int i) { return SFUNC (x, y, z); }
+#define DALIAS_d_d_i(DFUNC, SFUNC) EXPORT CONST double DFUNC(double x, int i) { return SFUNC (x, i); }
 #define DALIAS_f_f(DFUNC, SFUNC) EXPORT CONST float DFUNC(float d) { return SFUNC (d); }
 #define DALIAS_f2_f(DFUNC, SFUNC) EXPORT CONST Sleef_float2 DFUNC(float d) { return SFUNC (d); }
 #define DALIAS_i_f(DFUNC, SFUNC) EXPORT CONST int DFUNC(float d) { return SFUNC (d); }
 #define DALIAS_f_f_f(DFUNC, SFUNC) EXPORT CONST float DFUNC(float x, float y) { return SFUNC (x, y); }
 #define DALIAS_f_f_f_f(DFUNC, SFUNC) EXPORT CONST float DFUNC(float x, float y, float z) { return SFUNC (x, y, z); }
-#define DALIAS_f_f_i(DFUNC, SFUNC) EXPORT CONST float DFUNC(float x, int i) { return SFUNC (x, y); }
+#define DALIAS_f_f_i(DFUNC, SFUNC) EXPORT CONST float DFUNC(float x, int i) { return SFUNC (x, i); }
 #endif
 
 DALIAS_d_d(Sleef_sin_u10, Sleef_sind1_u10)
