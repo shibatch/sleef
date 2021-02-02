@@ -362,14 +362,6 @@ endif(ENABLE_GNUABI)
 
 #
 
-# iutdspscalar
-add_executable(iutdspscalar ${IUT_SRC})
-target_compile_definitions(iutdspscalar PRIVATE ENABLE_DSP_SCALAR=1 ${COMMON_TARGET_DEFINITIONS})
-target_link_libraries(iutdspscalar ${TARGET_LIBSLEEF} ${LIBM} ${LIBRT})
-add_dependencies(iutdspscalar ${TARGET_HEADERS} ${TARGET_LIBSLEEF})
-add_test_iut(iutdspscalar 1.0)
-list(APPEND IUT_LIST iutdspscalar)
-
 if (SLEEF_ARCH_X86)
   # iutdsp128
   add_executable(iutdsp128 ${IUT_SRC})
@@ -409,6 +401,16 @@ if (SLEEF_ARCH_S390X)
   add_test_iut(iutdsp128 1.0)
   list(APPEND IUT_LIST iutdsp128)
 endif(SLEEF_ARCH_S390X)
+
+if(BUILD_SCALAR_LIB)
+  # Compile executable 'iutscalar'
+  add_executable(iutscalar iut.c testerutil.c)
+  target_compile_definitions(iutscalar PRIVATE ${COMMON_TARGET_DEFINITIONS})
+  target_link_libraries(iutscalar sleefscalar ${TARGET_LIBSLEEF} ${LIBM} ${LIBRT})
+  set_target_properties(iutscalar PROPERTIES ${COMMON_TARGET_PROPERTIES})
+  add_test_iut(iutscalar 1.0)
+  list(APPEND IUT_LIST iutscalar)
+endif()
 
 if(LIB_MPFR AND NOT MINGW)
   # Build tester2 scalar
