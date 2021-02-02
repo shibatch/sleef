@@ -16,7 +16,7 @@
 #define DALIAS_f_f_i(DFUNC, SFUNC) EXPORT CONST float DFUNC(float, int) __attribute__((alias( stringify( SFUNC ) )));
 #else
 #define DALIAS_d_d(DFUNC, SFUNC) EXPORT CONST double DFUNC(double d) { return SFUNC (d); }
-#define DALIAS_d2_d(DFUNC, SFUNC) EXPORT CONST double2 DFUNC(double d) { return SFUNC (d); }
+#define DALIAS_d2_d(DFUNC, SFUNC) EXPORT CONST Sleef_double2 DFUNC(double d) { return SFUNC (d); }
 #define DALIAS_i_d(DFUNC, SFUNC) EXPORT CONST int DFUNC(double d) { return SFUNC (d); }
 #define DALIAS_d_d_d(DFUNC, SFUNC) EXPORT CONST double DFUNC(double x, double y) { return SFUNC (x, y); }
 #define DALIAS_d_d_d_d(DFUNC, SFUNC) EXPORT CONST double DFUNC(double x, double y, double z) { return SFUNC (x, y, z); }

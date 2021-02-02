@@ -8,7 +8,7 @@ option(BUILD_LIBM "libsleef will be built." ON)
 option(BUILD_DFT "libsleefdft will be built." OFF)
 option(BUILD_QUAD "libsleefquad will be built." OFF)
 option(BUILD_GNUABI_LIBS "libsleefgnuabi will be built." ON)
-option(BUILD_SCALAR_LIB "libsleefscalar will be built." ON)
+option(BUILD_SCALAR_LIB "libsleefscalar will be built." OFF)
 option(BUILD_TESTS "Tests will be built." ON)
 option(BUILD_INLINE_HEADERS "Build header for inlining whole SLEEF functions" OFF)
 
