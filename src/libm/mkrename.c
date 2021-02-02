@@ -145,18 +145,27 @@ int main(int argc, char **argv) {
     printf("#ifdef %s\n", architecture);
 
     if (strcmp(vdoublename, "-") != 0) {
-      printf("\n");
-      printf("#ifndef Sleef_%s_2_DEFINED\n", vdoublename_escspace);
-      if (strcmp(architecture, "__ARM_FEATURE_SVE") == 0) {
-	printf("typedef svfloat64x2_t Sleef_%s_2;\n", vdoublename_escspace);
+      if (strcmp(vdoublename, "double") != 0) {
+	printf("\n");
+	printf("#ifndef Sleef_%s_2_DEFINED\n", vdoublename_escspace);
+	if (strcmp(architecture, "__ARM_FEATURE_SVE") == 0) {
+	  printf("typedef svfloat64x2_t Sleef_%s_2;\n", vdoublename_escspace);
+	} else {
+	  printf("typedef struct {\n");
+	  printf("  %s x, y;\n", vdoublename);
+	  printf("} Sleef_%s_2;\n", vdoublename_escspace);
+	}
+	printf("#define Sleef_%s_2_DEFINED\n", vdoublename_escspace);
+	printf("#endif\n");
+	printf("\n");
       } else {
-	printf("typedef struct {\n");
-	printf("  %s x, y;\n", vdoublename);
-	printf("} Sleef_%s_2;\n", vdoublename_escspace);
+	printf("\n");
+	printf("#ifndef Sleef_double_2_DEFINED\n");
+	printf("typedef Sleef_double2 Sleef_double_2;\n");
+	printf("#define Sleef_double_2_DEFINED\n");
+	printf("#endif\n");
+	printf("\n");
       }
-      printf("#define Sleef_%s_2_DEFINED\n", vdoublename_escspace);
-      printf("#endif\n");
-      printf("\n");
 
       for(int i=0;funcList[i].name != NULL;i++) {
 	switch(funcList[i].funcType) {
@@ -353,18 +362,27 @@ int main(int argc, char **argv) {
       }
     }
 
-    printf("\n");
-    printf("#ifndef Sleef_%s_2_DEFINED\n", vfloatname_escspace);
-    if (strcmp(architecture, "__ARM_FEATURE_SVE") == 0) {
+    if (strcmp(vfloatname, "float") != 0) {
+      printf("\n");
+      printf("#ifndef Sleef_%s_2_DEFINED\n", vfloatname_escspace);
+      if (strcmp(architecture, "__ARM_FEATURE_SVE") == 0) {
 	printf("typedef svfloat32x2_t Sleef_%s_2;\n", vfloatname_escspace);
+      } else {
+	printf("typedef struct {\n");
+	printf("  %s x, y;\n", vfloatname);
+	printf("} Sleef_%s_2;\n", vfloatname_escspace);
+      }
+      printf("#define Sleef_%s_2_DEFINED\n", vfloatname_escspace);
+      printf("#endif\n");
+      printf("\n");
     } else {
-      printf("typedef struct {\n");
-      printf("  %s x, y;\n", vfloatname);
-      printf("} Sleef_%s_2;\n", vfloatname_escspace);
+      printf("\n");
+      printf("#ifndef Sleef_float_2_DEFINED\n");
+      printf("typedef Sleef_float2 Sleef_float_2;\n");
+      printf("#define Sleef_float_2_DEFINED\n");
+      printf("#endif\n");
+      printf("\n");
     }
-    printf("#define Sleef_%s_2_DEFINED\n", vfloatname_escspace);
-    printf("#endif\n");
-    printf("\n");
 
     //printf("typedef %s vint2_%s;\n", vint2name, isaname);
     //printf("\n");
