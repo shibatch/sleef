@@ -351,7 +351,7 @@ if (ENABLE_LTO)
 endif()
 
 # Original sleef sources
-set(STANDARD_SOURCES sleefdp.c sleefsp.c rempitab.c)
+set(STANDARD_SOURCES rempitab.c)
 
 add_library(${TARGET_LIBSLEEF} ${STANDARD_SOURCES})
 add_dependencies(${TARGET_LIBSLEEF} ${TARGET_HEADERS})
@@ -678,7 +678,8 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c
   COMMENT "Generating dispscalar.c"
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/dispscalar.c.org ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c
   COMMAND $<TARGET_FILE:${TARGET_MKDISP}> 1 1 double float int32_t purec purecfma x >> ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c
-  DEPENDS ${TARGET_MKDISP}
+  COMMAND $<TARGET_FILE:addSuffix> ${CMAKE_CURRENT_SOURCE_DIR}/dispscalar_footer.c.org >> ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c
+  DEPENDS ${TARGET_MKDISP} addSuffix
   )
 add_custom_target(dispscalar.c_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c)
 
@@ -988,6 +989,36 @@ if(CLANG_EXE_PATH AND SLEEF_ENABLE_LLVM_BITCODE)
   add_dependencies(${TARGET_LLVM_BITCODE} ${TARGET_HEADERS})
 
   install(FILES ${LLVM_BITCODE_OUTPUTS} DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+endif()
+
+# --------------------------------------------------------------------
+# TARGET_LIBSLEEFSCALAR
+# --------------------------------------------------------------------
+# Build scalar-only library from sleefdp.c and sleefsp.c
+
+add_library(sleefscalar sleefdp.c sleefsp.c rempitab.c)
+add_dependencies(sleefscalar ${TARGET_HEADERS})
+set_target_properties(sleefscalar PROPERTIES
+  VERSION ${SLEEF_VERSION}
+  SOVERSION ${SLEEF_SOVERSION}
+  PUBLIC_HEADER ${SLEEF_INCLUDE_HEADER}
+  ${COMMON_TARGET_PROPERTIES}
+)
+
+target_compile_definitions(sleefscalar
+  PRIVATE DORENAME=1 ${COMMON_TARGET_DEFINITIONS}
+)
+
+if(COMPILER_SUPPORTS_BUILTIN_MATH)
+  target_compile_definitions(sleefscalar PRIVATE ENABLE_BUILTIN_MATH=1)
+endif()
+
+if(BUILD_SCALAR_LIB)
+  install(TARGETS sleefscalar
+          LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+          ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+          RUNTIME DESTINATION bin
+          )
 endif()
 
 # --------------------------------------------------------------------

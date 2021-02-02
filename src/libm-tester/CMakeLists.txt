@@ -410,6 +410,16 @@ if (SLEEF_ARCH_S390X)
   list(APPEND IUT_LIST iutdsp128)
 endif(SLEEF_ARCH_S390X)
 
+if(BUILD_SCALAR_LIB)
+  # Compile executable 'iutscalar'
+  add_executable(iutscalar iut.c testerutil.c)
+  target_compile_definitions(iutscalar PRIVATE ${COMMON_TARGET_DEFINITIONS})
+  target_link_libraries(iutscalar sleefscalar ${LIBM} ${LIBRT})
+  set_target_properties(iutscalar PROPERTIES ${COMMON_TARGET_PROPERTIES})
+  add_test_iut(iutscalar 1.0)
+  list(APPEND IUT_LIST iutscalar)
+endif()
+
 if(LIB_MPFR AND NOT MINGW)
   # Build tester2 scalar
   foreach(P dp sp)
