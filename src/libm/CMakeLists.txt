@@ -292,7 +292,6 @@ if(ENABLE_GNUABI)
 	list(APPEND HEADER_GENERATED ${HEADER_MASKED_${SIMD}_${T}_GNUABI})
 
 	add_custom_command(OUTPUT ${HEADER_MASKED_${SIMD}_${T}_GNUABI}
-          COMMAND echo Generating ${HEADER_MASKED_${SIMD}_${T}_GNUABI}
           COMMAND $<TARGET_FILE:${TARGET_MKMASKED_GNUABI}> ${MKMASKED_PARAMS_GNUABI_${SIMD}_${T}} > ${HEADER_MASKED_${SIMD}_${T}_GNUABI}
           DEPENDS ${TARGET_MKMASKED_GNUABI}
 	  )
@@ -420,7 +419,6 @@ foreach(SIMD ${SLEEF_SUPPORTED_LIBM_EXTENSIONS})
     else()
       add_custom_command(
 	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/alias_${SIMDLC}.h
-       	COMMENT "Generating alias_${SIMDLC}.h"
        	COMMAND $<TARGET_FILE:${TARGET_MKALIAS}> ${ALIAS_PARAMS_${SIMD}_SP} >  ${CMAKE_CURRENT_BINARY_DIR}/include/alias_${SIMDLC}.h
        	COMMAND $<TARGET_FILE:${TARGET_MKALIAS}> ${ALIAS_PARAMS_${SIMD}_DP} >> ${CMAKE_CURRENT_BINARY_DIR}/include/alias_${SIMDLC}.h
        	DEPENDS ${TARGET_MKALIAS}
@@ -488,8 +486,6 @@ if(BUILD_INLINE_HEADERS)
 	set(INLINE_HEADER_FILE ${PROJECT_BINARY_DIR}/include/sleefinline_${SIMDLC}.h)
 	add_custom_command(
 	  OUTPUT ${INLINE_HEADER_FILE} 
-
-	  COMMAND echo Generating sleefinline_${SIMDLC}.h
 	  
 	  # Preprocess sleefsimddp.c with SLEEF_GENHEADER defined, comments are preserved
 	  COMMAND "${CMAKE_C_COMPILER}"  ${FLAG_PREPROCESS} ${FLAG_PRESERVE_COMMENTS}                      # gcc -E -C 
@@ -571,8 +567,6 @@ if(BUILD_INLINE_HEADERS)
 
     add_custom_command(
       OUTPUT ${INLINE_HEADER_FILE} 
-
-      COMMAND echo Generating sleefinline_${SIMDLC}.h
       
       # Preprocess sleefsimddp.c with SLEEF_GENHEADER defined, comments are preserved
       COMMAND "${CMAKE_C_COMPILER}"  ${FLAG_PREPROCESS} ${FLAG_PRESERVE_COMMENTS}                      # gcc -E -C 
@@ -675,7 +669,6 @@ target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:${TARGET_LIBCOMMON_OB
 # Target dispscalar.c
 
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c
-  COMMENT "Generating dispscalar.c"
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/dispscalar.c.org ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c
   COMMAND $<TARGET_FILE:${TARGET_MKDISP}> 1 1 double float int32_t purec purecfma x >> ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c
   COMMAND $<TARGET_FILE:addSuffix> ${CMAKE_CURRENT_SOURCE_DIR}/dispscalar_footer.c.org >> ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c
@@ -686,7 +679,6 @@ add_custom_target(dispscalar.c_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/dis
 # Target renamedspscalar.h
 
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/renamedspscalar.h
-  COMMENT "Generating renamedspscalar.h"
   COMMAND $<TARGET_FILE:${TARGET_MKRENAME}> - 1 1 > ${CMAKE_CURRENT_BINARY_DIR}/include/renamedspscalar.h
   DEPENDS ${TARGET_MKRENAME}
   )
@@ -707,7 +699,6 @@ if (SLEEF_ARCH_X86)
   # Target dispsse.c
 
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c
-    COMMENT "Generating dispsse.c"
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/dispsse.c.org ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c
     COMMAND $<TARGET_FILE:${TARGET_MKDISP}> 2 4 __m128d __m128 __m128i sse2 sse4 avx2128 >> ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c
     DEPENDS ${TARGET_MKDISP}
@@ -717,7 +708,6 @@ if (SLEEF_ARCH_X86)
   # Target renamedsp128.h
 
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h
-    COMMENT "Generating renamedsp128.h"
     COMMAND $<TARGET_FILE:${TARGET_MKRENAME}> - 2 4 > ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h
     DEPENDS ${TARGET_MKRENAME}
     )
@@ -726,7 +716,6 @@ if (SLEEF_ARCH_X86)
   # Target dispavx.c
 
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c
-    COMMENT "Generating dispavx.c"
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/dispavx.c.org ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c
     COMMAND $<TARGET_FILE:${TARGET_MKDISP}> 4 8 __m256d __m256 __m128i avx fma4 avx2 >> ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c
     DEPENDS ${TARGET_MKDISP}
@@ -736,7 +725,6 @@ if (SLEEF_ARCH_X86)
   # Target renamedsp256.h
 
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp256.h
-    COMMENT "Generating renamedsp256.h"
     COMMAND $<TARGET_FILE:${TARGET_MKRENAME}> - 4 8 > ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp256.h
     DEPENDS ${TARGET_MKRENAME}
     )
@@ -779,7 +767,6 @@ if (SLEEF_ARCH_PPC64)
   # Target disppower_128.c
 
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/disppower_128.c
-    COMMENT "Generating disppower_128.c"
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/disppower_128.c.org ${CMAKE_CURRENT_BINARY_DIR}/disppower_128.c
     COMMAND $<TARGET_FILE:${TARGET_MKDISP}> 2 4 SLEEF_VECTOR_DOUBLE SLEEF_VECTOR_FLOAT SLEEF_VECTOR_INT vsx vsx3 x >> ${CMAKE_CURRENT_BINARY_DIR}/disppower_128.c
     DEPENDS ${TARGET_MKDISP}
@@ -789,7 +776,6 @@ if (SLEEF_ARCH_PPC64)
   # Target renamedsp128.h
 
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h
-    COMMENT "Generating renamedsp128.h"
     COMMAND $<TARGET_FILE:${TARGET_MKRENAME}> - 2 4 > ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h
     DEPENDS ${TARGET_MKRENAME}
     )
@@ -820,7 +806,6 @@ if (SLEEF_ARCH_S390X)
   # Target disps390x_128.c
 
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/disps390x_128.c
-    COMMENT "Generating disps390x_128.c"
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/disps390x_128.c.org ${CMAKE_CURRENT_BINARY_DIR}/disps390x_128.c
     COMMAND $<TARGET_FILE:${TARGET_MKDISP}> 2 4 SLEEF_VECTOR_DOUBLE SLEEF_VECTOR_FLOAT SLEEF_VECTOR_INT vxe vxe2 x >> ${CMAKE_CURRENT_BINARY_DIR}/disps390x_128.c
     DEPENDS ${TARGET_MKDISP}
@@ -830,7 +815,6 @@ if (SLEEF_ARCH_S390X)
   # Target renamedsp128.h
 
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h
-    COMMENT "Generating renamedsp128.h"
     COMMAND $<TARGET_FILE:${TARGET_MKRENAME}> - 2 4 > ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h
     DEPENDS ${TARGET_MKRENAME}
     )

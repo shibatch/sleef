@@ -235,8 +235,6 @@ if(BUILD_INLINE_HEADERS)
 	set(INLINE_HEADER_FILE ${PROJECT_BINARY_DIR}/include/sleefquadinline_${SIMDLC}.h)
 	add_custom_command(
 	  OUTPUT ${INLINE_HEADER_FILE} 
-
-	  COMMAND echo Generating sleefquadinline_${SIMDLC}.h
   
 	  # Preprocess sleefsimddp.c with SLEEF_GENHEADER defined, comments are preserved
 	  COMMAND "${CMAKE_C_COMPILER}" ${FLAG_PREPROCESS} ${FLAG_PRESERVE_COMMENTS}                        # gcc -E -C 
@@ -315,8 +313,6 @@ if(BUILD_INLINE_HEADERS)
     add_custom_command(
       OUTPUT ${INLINE_HEADER_FILE} 
 
-      COMMAND echo Generating sleefquadinline_${SIMDLC}.h
-      
       # Preprocess sleefsimddp.c with SLEEF_GENHEADER defined, comments are preserved
       COMMAND "${CMAKE_C_COMPILER}" ${FLAG_PREPROCESS} ${FLAG_PRESERVE_COMMENTS}                        # gcc -E -C 
       ${FLAG_INCLUDE}${PROJECT_SOURCE_DIR}/src/common ${FLAG_INCLUDE}${PROJECT_SOURCE_DIR}/src/arch     # -I/sleef/src/common -I/sleef/src/arch
@@ -408,7 +404,6 @@ set_target_properties(qmkdisp PROPERTIES ${COMMON_TARGET_PROPERTIES})
 # Target qdispscalar.c
 
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/qdispscalar.c
-  COMMENT "Generating qdispscalar.c"
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/qdispscalar.c.org ${CMAKE_CURRENT_BINARY_DIR}/qdispscalar.c
   COMMAND $<TARGET_FILE:qmkdisp> 1 Sleef_quad double int32_t int64_t uint64_t purec purecfma >> ${CMAKE_CURRENT_BINARY_DIR}/qdispscalar.c
   DEPENDS qmkdisp
@@ -418,7 +413,6 @@ add_custom_target(qdispscalar.c_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/qd
 # Target renamedspscalar.h
 
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/qrenamedspscalar.h
-  COMMENT "Generating qrenamedspscalar.h"
   COMMAND $<TARGET_FILE:qmkrename> 1 > ${CMAKE_CURRENT_BINARY_DIR}/include/qrenamedspscalar.h
   DEPENDS qmkrename
   )
@@ -438,7 +432,6 @@ if(DEFINED QMKDISP_PARAMS_X2)
   # Target qdispx2.c
 
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/qdispx2.c
-    COMMENT "Generating qdispx2.c"
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/qdispx2.c.org ${CMAKE_CURRENT_BINARY_DIR}/qdispx2.c
     COMMAND $<TARGET_FILE:qmkdisp> ${QMKDISP_PARAMS_X2} >> ${CMAKE_CURRENT_BINARY_DIR}/qdispx2.c
     DEPENDS qmkdisp
@@ -448,7 +441,6 @@ if(DEFINED QMKDISP_PARAMS_X2)
   # Target renamedspx2.h
 
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/qrenamedspx2.h
-    COMMENT "Generating qrenamedspx2.h"
     COMMAND $<TARGET_FILE:qmkrename> 2 > ${CMAKE_CURRENT_BINARY_DIR}/include/qrenamedspx2.h
     DEPENDS qmkrename
     )
