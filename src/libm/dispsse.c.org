@@ -13,8 +13,6 @@
 #define IMPORT_IS_EXPORT
 #include "sleef.h"
 
-#include "dispatcher.h"
-
 static int cpuSupportsSSE4_1() {
   static int ret = -1;
   if (ret == -1) {
@@ -52,6 +50,26 @@ static int cpuSupportsFMA() {
 #else
 #define SUBST_IF_AVX2(funcavx2)
 #endif
+
+#ifdef ENABLE_ALIAS
+#define VECALIAS_vf_vf(fptype, funcNameS, funcName, veclen)		\
+  EXPORT CONST VECTOR_CC fptype _ZGVbN ## veclen ## v_ ## funcNameS(fptype) __attribute__((alias(stringify(funcName)))); \
+  EXPORT CONST VECTOR_CC fptype _ZGVcN ## veclen ## v_ ## funcNameS(fptype) __attribute__((alias(stringify(funcName)))); \
+  EXPORT CONST VECTOR_CC fptype _ZGVdN ## veclen ## v_ ## funcNameS(fptype) __attribute__((alias(stringify(funcName)))); \
+  EXPORT CONST VECTOR_CC fptype _ZGVeN ## veclen ## v_ ## funcNameS(fptype) __attribute__((alias(stringify(funcName))));
+#define VECALIAS_vf_vf_vf(fptype, funcNameS, funcName, veclen)		\
+  EXPORT CONST VECTOR_CC fptype _ZGVbN ## veclen ## vv_ ## funcNameS(fptype, fptype) __attribute__((alias(stringify(funcName)))); \
+  EXPORT CONST VECTOR_CC fptype _ZGVcN ## veclen ## vv_ ## funcNameS(fptype, fptype) __attribute__((alias(stringify(funcName)))); \
+  EXPORT CONST VECTOR_CC fptype _ZGVdN ## veclen ## vv_ ## funcNameS(fptype, fptype) __attribute__((alias(stringify(funcName)))); \
+  EXPORT CONST VECTOR_CC fptype _ZGVeN ## veclen ## vv_ ## funcNameS(fptype, fptype) __attribute__((alias(stringify(funcName))));
+#define VECALIAS_vf_vf_vf_vf(fptype, funcNameS, funcName, veclen)	\
+  EXPORT CONST VECTOR_CC fptype _ZGVbN ## veclen ## vvv_ ## funcNameS(fptype, fptype, fptype) __attribute__((alias(stringify(funcName)))); \
+  EXPORT CONST VECTOR_CC fptype _ZGVcN ## veclen ## vvv_ ## funcNameS(fptype, fptype, fptype) __attribute__((alias(stringify(funcName)))); \
+  EXPORT CONST VECTOR_CC fptype _ZGVdN ## veclen ## vvv_ ## funcNameS(fptype, fptype, fptype) __attribute__((alias(stringify(funcName)))); \
+  EXPORT CONST VECTOR_CC fptype _ZGVeN ## veclen ## vvv_ ## funcNameS(fptype, fptype, fptype) __attribute__((alias(stringify(funcName))));
+#endif
+
+#include "dispatcher.h"
 
 //
 

@@ -31,8 +31,9 @@ int main(int argc, char **argv) {
     switch(funcList[i].funcType) {
     case 0:
       if ((funcList[i].flags & 2) == 0) {
-	printf("DISPATCH_vf_vf(%s, Sleef_%sd%d%s, pnt_%sd%d%s, disp_%sd%d%s",
+	printf("DISPATCH_vf_vf(%s, %d, Sleef_%s%s, Sleef_%sd%d%s, pnt_%sd%d%s, disp_%sd%d%s",
 	       vdoublename,
+	       wdp, funcList[i].name, ulpSuffix0,
 	       funcList[i].name, wdp, ulpSuffix0,
 	       funcList[i].name, wdp, ulpSuffix0,
 	       funcList[i].name, wdp, ulpSuffix0);
@@ -40,8 +41,9 @@ int main(int argc, char **argv) {
 	printf(")\n");
       }
 
-      printf("DISPATCH_vf_vf(%s, Sleef_%sf%d%s, pnt_%sf%d%s, disp_%sf%d%s",
+      printf("DISPATCH_vf_vf(%s, %d, Sleef_%sf%s, Sleef_%sf%d%s, pnt_%sf%d%s, disp_%sf%d%s",
 	     vfloatname,
+	     wsp, funcList[i].name, ulpSuffix0,
 	     funcList[i].name, wsp, ulpSuffix0,
 	     funcList[i].name, wsp, ulpSuffix0,
 	     funcList[i].name, wsp, ulpSuffix0);
@@ -51,8 +53,9 @@ int main(int argc, char **argv) {
       break;
     case 1:
       if ((funcList[i].flags & 2) == 0) {
-	printf("DISPATCH_vf_vf_vf(%s, Sleef_%sd%d%s, pnt_%sd%d%s, disp_%sd%d%s",
+	printf("DISPATCH_vf_vf_vf(%s, %d, Sleef_%s%s, Sleef_%sd%d%s, pnt_%sd%d%s, disp_%sd%d%s",
 	       vdoublename,
+	       wdp, funcList[i].name, ulpSuffix0,
 	       funcList[i].name, wdp, ulpSuffix0,
 	       funcList[i].name, wdp, ulpSuffix0,
 	       funcList[i].name, wdp, ulpSuffix0);
@@ -60,8 +63,9 @@ int main(int argc, char **argv) {
 	printf(")\n");
       }
 
-      printf("DISPATCH_vf_vf_vf(%s, Sleef_%sf%d%s, pnt_%sf%d%s, disp_%sf%d%s",
+      printf("DISPATCH_vf_vf_vf(%s, %d, Sleef_%sf%s, Sleef_%sf%d%s, pnt_%sf%d%s, disp_%sf%d%s",
 	     vfloatname,
+	     wsp, funcList[i].name, ulpSuffix0,
 	     funcList[i].name, wsp, ulpSuffix0,
 	     funcList[i].name, wsp, ulpSuffix0,
 	     funcList[i].name, wsp, ulpSuffix0);
@@ -72,8 +76,9 @@ int main(int argc, char **argv) {
     case 2:
     case 6:
       if ((funcList[i].flags & 2) == 0) {
-	printf("DISPATCH_vf2_vf(%s, Sleef_%s_2, Sleef_%sd%d%s, pnt_%sd%d%s, disp_%sd%d%s",
+	printf("DISPATCH_vf2_vf(%s, Sleef_%s_2, %d, Sleef_%s%s, Sleef_%sd%d%s, pnt_%sd%d%s, disp_%sd%d%s",
 	       vdoublename, vdoublename,
+	       wdp, funcList[i].name, ulpSuffix0,
 	       funcList[i].name, wdp, ulpSuffix0,
 	       funcList[i].name, wdp, ulpSuffix0,
 	       funcList[i].name, wdp, ulpSuffix0);
@@ -81,8 +86,9 @@ int main(int argc, char **argv) {
 	printf(")\n");
       }
 
-      printf("DISPATCH_vf2_vf(%s, Sleef_%s_2, Sleef_%sf%d%s, pnt_%sf%d%s, disp_%sf%d%s",
+      printf("DISPATCH_vf2_vf(%s, Sleef_%s_2, %d, Sleef_%sf%s, Sleef_%sf%d%s, pnt_%sf%d%s, disp_%sf%d%s",
 	     vfloatname, vfloatname, 
+	     wsp, funcList[i].name, ulpSuffix0,
 	     funcList[i].name, wsp, ulpSuffix0,
 	     funcList[i].name, wsp, ulpSuffix0,
 	     funcList[i].name, wsp, ulpSuffix0);
@@ -92,8 +98,9 @@ int main(int argc, char **argv) {
       break;
     case 3:
       if ((funcList[i].flags & 2) == 0) {
-	printf("DISPATCH_vf_vf_vi(%s, %s, Sleef_%sd%d%s, pnt_%sd%d%s, disp_%sd%d%s",
+	printf("DISPATCH_vf_vf_vi(%s, %s, %d, Sleef_%s%s, Sleef_%sd%d%s, pnt_%sd%d%s, disp_%sd%d%s",
 	       vdoublename, vintname,
+	       wdp, funcList[i].name, ulpSuffix0,
 	       funcList[i].name, wdp, ulpSuffix0,
 	       funcList[i].name, wdp, ulpSuffix0,
 	       funcList[i].name, wdp, ulpSuffix0);
@@ -103,8 +110,9 @@ int main(int argc, char **argv) {
       break;
     case 4:
       if ((funcList[i].flags & 2) == 0) {
-	printf("DISPATCH_vi_vf(%s, %s, Sleef_%sd%d%s, pnt_%sd%d%s, disp_%sd%d%s",
+	printf("DISPATCH_vi_vf(%s, %s, %d, Sleef_%s%s, Sleef_%sd%d%s, pnt_%sd%d%s, disp_%sd%d%s",
 	       vdoublename, vintname,
+	       wsp, funcList[i].name, ulpSuffix0,
 	       funcList[i].name, wdp, ulpSuffix0,
 	       funcList[i].name, wdp, ulpSuffix0,
 	       funcList[i].name, wdp, ulpSuffix0);
@@ -114,8 +122,9 @@ int main(int argc, char **argv) {
       break;
     case 5:
       if ((funcList[i].flags & 2) == 0) {
-	printf("DISPATCH_vf_vf_vf_vf(%s, Sleef_%sd%d%s, pnt_%sd%d%s, disp_%sd%d%s",
+	printf("DISPATCH_vf_vf_vf_vf(%s, %d, Sleef_%s%s, Sleef_%sd%d%s, pnt_%sd%d%s, disp_%sd%d%s",
 	       vdoublename,
+	       wdp, funcList[i].name, ulpSuffix0,
 	       funcList[i].name, wdp, ulpSuffix0,
 	       funcList[i].name, wdp, ulpSuffix0,
 	       funcList[i].name, wdp, ulpSuffix0);
@@ -123,8 +132,9 @@ int main(int argc, char **argv) {
 	printf(")\n");
       }
 
-      printf("DISPATCH_vf_vf_vf_vf(%s, Sleef_%sf%d%s, pnt_%sf%d%s, disp_%sf%d%s",
+      printf("DISPATCH_vf_vf_vf_vf(%s, %d, Sleef_%sf%s, Sleef_%sf%d%s, pnt_%sf%d%s, disp_%sf%d%s",
 	     vfloatname,
+	     wsp, funcList[i].name, ulpSuffix0,
 	     funcList[i].name, wsp, ulpSuffix0,
 	     funcList[i].name, wsp, ulpSuffix0,
 	     funcList[i].name, wsp, ulpSuffix0);
@@ -133,7 +143,8 @@ int main(int argc, char **argv) {
 
       break;
     case 7:
-      printf("DISPATCH_i_i(Sleef_%sf%d, pnt_%sf%d, disp_%sf%d",
+      printf("DISPATCH_i_i(%d, Sleef_%sf, Sleef_%sf%d, pnt_%sf%d, disp_%sf%d",
+	     wsp, funcList[i].name,
 	     funcList[i].name, wsp,
 	     funcList[i].name, wsp,
 	     funcList[i].name, wsp);
@@ -141,7 +152,8 @@ int main(int argc, char **argv) {
       printf(")\n");
 
       if ((funcList[i].flags & 2) == 0) {
-	printf("DISPATCH_i_i(Sleef_%sd%d, pnt_%sd%d, disp_%sd%d",
+	printf("DISPATCH_i_i(%d, Sleef_%s, Sleef_%sd%d, pnt_%sd%d, disp_%sd%d",
+	       wdp, funcList[i].name,
 	       funcList[i].name, wdp,
 	       funcList[i].name, wdp,
 	       funcList[i].name, wdp);
@@ -150,7 +162,8 @@ int main(int argc, char **argv) {
       }
       break;
     case 8:
-      printf("DISPATCH_p_i(Sleef_%sf%d, pnt_%sf%d, disp_%sf%d",
+      printf("DISPATCH_p_i(%d, Sleef_%sf, Sleef_%sf%d, pnt_%sf%d, disp_%sf%d",
+	     wsp, funcList[i].name,
 	     funcList[i].name, wsp,
 	     funcList[i].name, wsp,
 	     funcList[i].name, wsp);
@@ -158,7 +171,8 @@ int main(int argc, char **argv) {
       printf(")\n");
 
       if ((funcList[i].flags & 2) == 0) {
-	printf("DISPATCH_p_i(Sleef_%sd%d, pnt_%sd%d, disp_%sd%d",
+	printf("DISPATCH_p_i(%d, Sleef_%s, Sleef_%sd%d, pnt_%sd%d, disp_%sd%d",
+	       wdp, funcList[i].name,
 	       funcList[i].name, wdp,
 	       funcList[i].name, wdp,
 	       funcList[i].name, wdp);

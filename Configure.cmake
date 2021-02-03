@@ -643,6 +643,17 @@ if(NOT DISABLE_OPENMP)
     for(i=0;i < 10;i++) { putchar(0); }
   }"
       COMPILER_SUPPORTS_OPENMP)
+
+    CHECK_C_SOURCE_COMPILES("
+  #pragma omp declare simd notinbranch
+  double func(double x) { return x + 1; }
+  double a[1024];
+  int main() {
+  #pragma omp parallel for simd
+    for (int i = 0; i < 1024; i++) a[i] = func(a[i]);
+  }
+  "
+      COMPILER_SUPPORTS_OMP_SIMD)
   endif(OPENMP_FOUND)
 else()
   message(STATUS "Support for OpenMP disabled by CMake option")
