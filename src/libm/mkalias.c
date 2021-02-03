@@ -29,6 +29,7 @@ int main(int argc, char **argv) {
 #ifdef ENABLE_AAVPCS
   if (strcmp(isaname, "advsimd") == 0)
     vectorcc =" __attribute__((aarch64_vector_pcs))";
+  genAliasVectorABI = 0;
 #endif
 
   static char *argType2[] = {
