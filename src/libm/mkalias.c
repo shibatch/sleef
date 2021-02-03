@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
   };
   static char *typeSpecS[] = { "", "f" };
   static char *typeSpec[] = { "d", "f" };
-  static char *vparameterStr[7] = { "v", "vv", "", "vv", "v", "vvv", "" };
+  static char *vparameterStr[9] = { "v", "vv", "", "vv", "v", "vvv", "", "", "" };
 
   static char returnType[9][1000];
   static char argType0[9][1000];
