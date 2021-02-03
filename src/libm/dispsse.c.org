@@ -48,7 +48,7 @@ static int cpuSupportsFMA() {
 #ifdef ENABLE_AVX2
 #define SUBST_IF_EXT2(funcavx2) if (cpuSupportsAVX2() && cpuSupportsFMA()) p = funcavx2;
 #else
-#define SUBST_IF_AVX2(funcavx2)
+#define SUBST_IF_EXT2(funcavx2)
 #endif
 
 #ifdef ENABLE_ALIAS
