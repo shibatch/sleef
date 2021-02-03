@@ -165,6 +165,7 @@ set(CLANG_FLAGS_ENABLE_VXE2 "-march=z15;-mzvector")
 set(CLANG_FLAGS_ENABLE_VXE2NOFMA "-march=z15;-mzvector")
 
 set(FLAGS_OTHERS "")
+set(FLAGS_ARCH_NATIVE "")
 
 # All variables storing compiler flags should be prefixed with FLAGS_
 if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
@@ -176,6 +177,10 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
   if (SLEEF_ARCH_X86 AND SLEEF_ARCH_32BIT)
     string(CONCAT FLAGS_STRICTMATH ${FLAGS_STRICTMATH} " -msse2 -mfpmath=sse")
     string(CONCAT FLAGS_FASTMATH ${FLAGS_FASTMATH} " -msse2 -mfpmath=sse")
+  endif()
+
+  if (SLEEF_ARCH_X86)
+    set(FLAGS_ARCH_NATIVE "-march=native")
   endif()
   
   # Without the options below, gcc generates calls to libm

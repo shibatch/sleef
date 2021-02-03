@@ -53,23 +53,11 @@ static int cpuSupportsFMA() {
 
 #ifdef ENABLE_ALIAS
 #define VECALIAS_vf_vf(fptype, funcNameS, funcName, veclen)		\
-  EXPORT CONST VECTOR_CC fptype _ZGVbN ## veclen ## v_ ## funcNameS(fptype) __attribute__((alias(stringify(funcName)))); \
-  EXPORT CONST VECTOR_CC fptype _ZGVxN ## veclen ## v_ ## funcNameS(fptype) __attribute__((alias(stringify(funcName)))); \
-  EXPORT CONST VECTOR_CC fptype _ZGVyN ## veclen ## v_ ## funcNameS(fptype) __attribute__((alias(stringify(funcName)))); \
-  EXPORT CONST VECTOR_CC fptype _ZGVYN ## veclen ## v_ ## funcNameS(fptype) __attribute__((alias(stringify(funcName)))); \
-  EXPORT CONST VECTOR_CC fptype _ZGVZN ## veclen ## v_ ## funcNameS(fptype) __attribute__((alias(stringify(funcName))));
+  EXPORT CONST VECTOR_CC fptype _ZGVbN ## veclen ## v_ ## funcNameS(fptype) __attribute__((alias(stringify(funcName))));
 #define VECALIAS_vf_vf_vf(fptype, funcNameS, funcName, veclen)		\
-  EXPORT CONST VECTOR_CC fptype _ZGVbN ## veclen ## vv_ ## funcNameS(fptype, fptype) __attribute__((alias(stringify(funcName)))); \
-  EXPORT CONST VECTOR_CC fptype _ZGVxN ## veclen ## vv_ ## funcNameS(fptype, fptype) __attribute__((alias(stringify(funcName)))); \
-  EXPORT CONST VECTOR_CC fptype _ZGVyN ## veclen ## vv_ ## funcNameS(fptype, fptype) __attribute__((alias(stringify(funcName)))); \
-  EXPORT CONST VECTOR_CC fptype _ZGVYN ## veclen ## vv_ ## funcNameS(fptype, fptype) __attribute__((alias(stringify(funcName)))); \
-  EXPORT CONST VECTOR_CC fptype _ZGVZN ## veclen ## vv_ ## funcNameS(fptype, fptype) __attribute__((alias(stringify(funcName))));
+  EXPORT CONST VECTOR_CC fptype _ZGVbN ## veclen ## vv_ ## funcNameS(fptype, fptype) __attribute__((alias(stringify(funcName))));
 #define VECALIAS_vf_vf_vf_vf(fptype, funcNameS, funcName, veclen)	\
-  EXPORT CONST VECTOR_CC fptype _ZGVbN ## veclen ## vvv_ ## funcNameS(fptype, fptype, fptype) __attribute__((alias(stringify(funcName)))); \
-  EXPORT CONST VECTOR_CC fptype _ZGVxN ## veclen ## vvv_ ## funcNameS(fptype, fptype, fptype) __attribute__((alias(stringify(funcName)))); \
-  EXPORT CONST VECTOR_CC fptype _ZGVyN ## veclen ## vvv_ ## funcNameS(fptype, fptype, fptype) __attribute__((alias(stringify(funcName)))); \
-  EXPORT CONST VECTOR_CC fptype _ZGVYN ## veclen ## vvv_ ## funcNameS(fptype, fptype, fptype) __attribute__((alias(stringify(funcName)))); \
-  EXPORT CONST VECTOR_CC fptype _ZGVZN ## veclen ## vvv_ ## funcNameS(fptype, fptype, fptype) __attribute__((alias(stringify(funcName))));
+  EXPORT CONST VECTOR_CC fptype _ZGVbN ## veclen ## vvv_ ## funcNameS(fptype, fptype, fptype) __attribute__((alias(stringify(funcName))));
 #endif
 
 #include "dispatcher.h"

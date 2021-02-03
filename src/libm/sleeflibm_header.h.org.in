@@ -86,10 +86,20 @@ typedef __vector unsigned long long SLEEF_VECTOR_ULONGLONG;
 
 //
 
-#if defined(SLEEF_ENABLE_OMP_SIMD) && defined(__x86_64__) && (defined(__GNUC__) || defined(__CLANG__)) && defined(_OPENMP) && _OPENMP >= 201307
+#if defined(SLEEF_ENABLE_OMP_SIMD) && (defined(__GNUC__) || defined(__CLANG__)) && !defined(__INTEL_COMPILER) && defined(_OPENMP) && _OPENMP >= 201307
+#if defined(__aarch64__)
+//#define SLEEF_PRAGMA_OMP_SIMD_DP _Pragma ("omp declare simd simdlen(2) notinbranch")
+//#define SLEEF_PRAGMA_OMP_SIMD_SP _Pragma ("omp declare simd simdlen(4) notinbranch")
+#elif defined(__x86_64__) && defined(__AVX__)
+#define SLEEF_PRAGMA_OMP_SIMD_DP _Pragma ("omp declare simd simdlen(4) notinbranch")
+#define SLEEF_PRAGMA_OMP_SIMD_SP _Pragma ("omp declare simd simdlen(8) notinbranch")
+#elif defined(__x86_64__) && defined(__SSE2__)
 #define SLEEF_PRAGMA_OMP_SIMD_DP _Pragma ("omp declare simd simdlen(2) notinbranch")
 #define SLEEF_PRAGMA_OMP_SIMD_SP _Pragma ("omp declare simd simdlen(4) notinbranch")
-#else
+#endif
+#endif
+
+#ifndef SLEEF_PRAGMA_OMP_SIMD_DP
 #define SLEEF_PRAGMA_OMP_SIMD_DP
 #define SLEEF_PRAGMA_OMP_SIMD_SP
 #endif
