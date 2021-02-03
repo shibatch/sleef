@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
   int fptype = vw >= 0 ? 0 : 1;
   vw = vw < 0 ? -vw : vw;
   char *mangledisa = argv[4];
-  int genAliasVectorABI = strcmp(mangledisa, "-") != 0;
+  int genAliasVectorABI = (mangledisa[0] != '-');
   char *isaname = argc == 6 ? argv[5] : "";
 
   char * vectorcc="";
