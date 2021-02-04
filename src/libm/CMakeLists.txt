@@ -155,13 +155,6 @@ command_arguments(ALIAS_PARAMS_ADVSIMD_SP -4 float32x4_t int32x4_t n advsimd)
 command_arguments(ALIAS_PARAMS_NEON32_SP  -4 float32x4_t int32x4_t - neon)
 command_arguments(ALIAS_PARAMS_NEON32_DP   0)
 
-command_arguments(ALIAS_PARAMS_PUREC_SCALAR_DP     1 double int32_t purec cinz_)
-command_arguments(ALIAS_PARAMS_PUREC_SCALAR_SP    -1 float  int32_t purec cinz_)
-command_arguments(ALIAS_PARAMS_PURECFMA_SCALAR_DP  1 double int32_t purecfma finz_)
-command_arguments(ALIAS_PARAMS_PURECFMA_SCALAR_SP -1 float  int32_t purecfma finz_)
-
-#
-
 set(EXT_ENABLE_ALIAS AVX512F ADVSIMD NEON32)
 
 #

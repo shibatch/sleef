@@ -447,5 +447,17 @@ if(LIB_MPFR AND NOT MINGW)
   endif()
 endif(LIB_MPFR AND NOT MINGW)
 
+if(ENABLE_GNUABI AND COMPILER_SUPPORTS_OMP_SIMD AND NOT SLEEF_TARGET_PROCESSOR MATCHES "^i.86$")
+  # Build tester for vectorabi
+  add_executable(testervecabi testervecabi.c)
+  target_compile_definitions(testervecabi PRIVATE ${COMMON_TARGET_DEFINITIONS})
+  target_compile_options(testervecabi PRIVATE ${OpenMP_C_FLAGS})
+  target_compile_options(testervecabi PRIVATE ${FLAGS_ARCH_NATIVE})
+  target_link_libraries(testervecabi ${TARGET_LIBSLEEF} ${OpenMP_C_FLAGS})
+  set_target_properties(testervecabi PROPERTIES C_STANDARD 99)
+  add_test(NAME testervecabi COMMAND testervecabi
+    WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+endif()
+
 # Tests depends on the library
 add_dependencies(${TARGET_IUT} ${TARGET_HEADERS})

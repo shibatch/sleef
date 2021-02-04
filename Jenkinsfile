@@ -335,6 +335,23 @@ pipeline {
             	     }
                 }
 
+                stage('atom gcc-10') {
+            	     agent { label 'atom' }
+            	     steps {
+	    	     	 sh '''
+                	 echo "Atom with gcc-10 on" `hostname`
+			 export PATH=/usr/bin:$PATH
+		         export CC=gcc-10
+			 rm -rf build
+ 			 mkdir build
+			 cd build
+			 cmake -GNinja -DBUILD_SCALAR_LIB=TRUE -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=FALSE -DENFORCE_SSE2=TRUE -DENFORCE_SSE4=TRUE ..
+			 ninja
+		         ctest -j `nproc`
+			 '''
+            	     }
+                }
+
                 stage('i386 gcc') {
             	     agent { label 'docker-i386' }
             	     steps {
@@ -350,7 +367,7 @@ pipeline {
 			 docker exec jenkins tar xf /tmp/builddir.tgz -C /build
 			 docker exec jenkins rm -f /tmp/builddir.tgz
 			 rm -f /tmp/builddir.tgz
-			 docker exec jenkins bash -c "set -ev;export OMP_WAIT_POLICY=passive;cd /build;rm -rf build;mkdir build;cd build;export CC=gcc;cmake -GNinja -DBUILD_SCALAR_LIB=TRUE -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DENFORCE_SSE2=TRUE -DENFORCE_SSE4=TRUE -DENFORCE_AVX=TRUE -DENFORCE_FMA4=TRUE -DENFORCE_AVX2=TRUE -DENFORCE_AVX512F=TRUE ..;ninja;ctest -j `nproc`"
+			 docker exec jenkins bash -c "set -ev;export PATH=/opt/bin:$PATH;export OMP_WAIT_POLICY=passive;cd /build;rm -rf build;mkdir build;cd build;export CC=gcc;cmake -GNinja -DBUILD_SCALAR_LIB=TRUE -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DENFORCE_SSE2=TRUE -DENFORCE_SSE4=TRUE -DENFORCE_AVX=TRUE -DENFORCE_FMA4=TRUE -DENFORCE_AVX2=TRUE -DENFORCE_AVX512F=TRUE ..;ninja;ctest -j `nproc`"
 			 docker stop jenkins
 			 '''
             	     }
@@ -371,7 +388,7 @@ pipeline {
 			 docker exec jenkins tar xf /tmp/builddir.tgz -C /build
 			 docker exec jenkins rm -f /tmp/builddir.tgz
 			 rm -f /tmp/builddir.tgz
-			 docker exec jenkins bash -c "set -ev;export OMP_WAIT_POLICY=passive;cd /build;rm -rf build;mkdir build;cd build;export CC=clang;cmake -GNinja -DBUILD_SCALAR_LIB=TRUE -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DENFORCE_SSE2=TRUE -DENFORCE_SSE4=TRUE -DENFORCE_AVX=TRUE -DENFORCE_FMA4=TRUE -DENFORCE_AVX2=TRUE -DENFORCE_AVX512F=TRUE ..;ninja;ctest -j `nproc`"
+			 docker exec jenkins bash -c "set -ev;export PATH=/opt/bin:$PATH;export OMP_WAIT_POLICY=passive;cd /build;rm -rf build;mkdir build;cd build;export CC=clang;cmake -GNinja -DBUILD_SCALAR_LIB=TRUE -DBUILD_QUAD=TRUE -DBUILD_DFT=TRUE -DBUILD_INLINE_HEADERS=TRUE -DENFORCE_SSE2=TRUE -DENFORCE_SSE4=TRUE -DENFORCE_AVX=TRUE -DENFORCE_FMA4=TRUE -DENFORCE_AVX2=TRUE -DENFORCE_AVX512F=TRUE ..;ninja;ctest -j `nproc`"
 			 docker stop jenkins
 			 '''
             	     }

@@ -22,12 +22,14 @@ int main(int argc, char **argv) {
   int fptype = vw >= 0 ? 0 : 1;
   vw = vw < 0 ? -vw : vw;
   char *mangledisa = argv[4];
+  int genAliasVectorABI = (mangledisa[0] != '-');
   char *isaname = argc == 6 ? argv[5] : "";
 
   char * vectorcc="";
 #ifdef ENABLE_AAVPCS
   if (strcmp(isaname, "advsimd") == 0)
     vectorcc =" __attribute__((aarch64_vector_pcs))";
+  genAliasVectorABI = 0;
 #endif
 
   static char *argType2[] = {
@@ -36,8 +38,7 @@ int main(int argc, char **argv) {
   };
   static char *typeSpecS[] = { "", "f" };
   static char *typeSpec[] = { "d", "f" };
-  static char *ulpSuffixStr[] = { "", "_u1", "_u05", "_u35", "_u15", "_u3500" };
-  static char *vparameterStr[7] = { "v", "vv", "", "vv", "v", "vvv", "" };
+  static char *vparameterStr[9] = { "v", "vv", "", "vv", "v", "vvv", "", "", "" };
 
   static char returnType[9][1000];
   static char argType0[9][1000];
@@ -92,6 +93,14 @@ int main(int argc, char **argv) {
 	       argType0[funcList[i].funcType],
 	       funcList[i].name, typeSpec[fptype], vw, funcList[i].ulp, isaname, vectorcc
 	       );
+	if (genAliasVectorABI && vparameterStr[funcList[i].funcType] != NULL) {
+	  printf("EXPORT CONST VECTOR_CC %s _ZGV%sN%d%s_Sleef_%s%s_u%02d(%s) __attribute__((alias(\"Sleef_%s%s%d_u%02d%s\")))%s;\n",
+		 returnType[funcList[i].funcType],
+		 mangledisa, vw, vparameterStr[funcList[i].funcType], funcList[i].name, typeSpecS[fptype], funcList[i].ulp,
+		 argType0[funcList[i].funcType],
+		 funcList[i].name, typeSpec[fptype], vw, funcList[i].ulp, isaname, vectorcc
+		 );
+	}
       } else {
 	printf("EXPORT CONST %s Sleef_%s%s%d(%s) __attribute__((alias(\"Sleef_%s%s%d_%s\"))) %s;\n",
 	       returnType[funcList[i].funcType],
@@ -99,6 +108,14 @@ int main(int argc, char **argv) {
 	       argType0[funcList[i].funcType],
 	       funcList[i].name, typeSpec[fptype], vw, isaname, vectorcc
 	       );
+	if (genAliasVectorABI && vparameterStr[funcList[i].funcType] != NULL) {
+	  printf("EXPORT CONST VECTOR_CC %s _ZGV%sN%d%s_Sleef_%s%s(%s) __attribute__((alias(\"Sleef_%s%s%d_%s\")))%s;\n",
+		 returnType[funcList[i].funcType],
+		 mangledisa, vw, vparameterStr[funcList[i].funcType], funcList[i].name, typeSpecS[fptype],
+		 argType0[funcList[i].funcType],
+		 funcList[i].name, typeSpec[fptype], vw, isaname, vectorcc
+		 );
+	}
       }
     }
 
