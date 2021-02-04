@@ -192,7 +192,7 @@ typedef struct {
 #else // #if defined(SLEEF_GENHEADER)
 
 #ifndef __INTEL_COMPILER
-#define CONST const
+#define CONST __attribute__((const))
 #else
 #define CONST
 #endif
