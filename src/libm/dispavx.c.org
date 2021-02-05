@@ -10,7 +10,7 @@
 
 #include "misc.h"
 
-#define IMPORT_IS_EXPORT
+#define SLEEF_IMPORT_IS_EXPORT
 #include "sleef.h"
 
 static int cpuSupportsAVX2() {

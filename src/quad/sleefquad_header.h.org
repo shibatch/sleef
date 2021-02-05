@@ -15,17 +15,27 @@ extern "C"
 #endif
 
 #if (defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)) && !defined(SLEEF_STATIC_LIBS)
-#ifdef IMPORT_IS_EXPORT
-#define IMPORT __declspec(dllexport)
-#else // #ifdef IMPORT_IS_EXPORT
-#define IMPORT __declspec(dllimport)
+#ifdef SLEEF_IMPORT_IS_EXPORT
+#define SLEEF_IMPORT __declspec(dllexport)
+#else // #ifdef SLEEF_IMPORT_IS_EXPORT
+#define SLEEF_IMPORT __declspec(dllimport)
 #if (defined(_MSC_VER))
 #pragma comment(lib,"sleefquad.lib")
 #endif // #if (defined(_MSC_VER))
-#endif // #ifdef IMPORT_IS_EXPORT
+#endif // #ifdef SLEEF_IMPORT_IS_EXPORT
 #else // #if (defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)) && !defined(SLEEF_STATIC_LIBS)
-#define IMPORT
+#define SLEEF_IMPORT
 #endif // #if (defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)) && !defined(SLEEF_STATIC_LIBS)
+
+//
+
+#if defined (__GNUC__) || defined (__clang__) || defined(__INTEL_COMPILER)
+#define SLEEF_CONST __attribute__((const))
+#define SLEEF_INLINE __attribute__((always_inline))
+#elif defined(_MSC_VER)
+#define SLEEF_CONST
+#define SLEEF_INLINE __forceinline
+#endif
 
 //
 
@@ -140,102 +150,6 @@ static inline Sleef_quad sleef_q(int64_t H, uint64_t L, int E) {
 
 //
 
-#if defined(SLEEF_LIBQUADMATH_COMPATIBILITY)
-
-#define strtoflt128 Sleef_strtoq
-#define quadmath_snprintf Sleef_snprintf
-#define acosq Sleef_acosq1_u10
-#define acoshq Sleef_acoshq1_u10
-#define asinq Sleef_asinq1_u10
-#define asinhq Sleef_asinhq1_u10
-#define atanq Sleef_atanq1_u10
-#define atanhq Sleef_atanhq1_u10
-#define atan2q Sleef_atan2q1_u10
-#define cbrtq Sleef_cbrtq1_u10
-#define ceilq Sleef_ceilq1
-#define copysignq Sleef_copysignq1
-#define coshq Sleef_coshq1_u10
-#define cosq Sleef_cosq1_u10
-#define expq Sleef_expq1_u10
-#define expm1q Sleef_expm1q1_u10
-#define fabsq Sleef_fabsq1
-#define fdimq Sleef_fdimq1_u05
-#define floorq Sleef_floorq1
-#define fmaq Sleef_fmaq1_u05
-#define fmaxq Sleef_fmaxq1
-#define fminq Sleef_fminq1
-#define fmodq Sleef_fmodq1
-#define frexpq Sleef_frexpq1
-#define hypotq Sleef_hypotq1_u05
-#define ilogbq Sleef_ilogbq1
-#define ldexpq Sleef_ldexpq1
-#define logq Sleef_logq1_u10
-#define log10q Sleef_log10q1_u10
-#define log2q Sleef_log2q1_u10
-#define log1pq Sleef_log1pq1_u10
-#define modfq Sleef_modfq1
-#define powq Sleef_powq1_u10
-#define remainderq Sleef_remainderq1
-#define rintq Sleef_rintq1
-#define roundq Sleef_roundq1
-#define sinhq Sleef_sinhq1_u10
-#define sinq Sleef_sinq1_u10
-#define sqrtq Sleef_sqrtq1_u05
-#define tanq Sleef_tanq1_u10
-#define tanhq Sleef_tanhq1_u10
-#define truncq Sleef_truncq1
-
-#ifdef SLEEF_QUAD_C
-
-#define M_Eq SLEEF_QUAD_C(+0x1.5bf0a8b1457695355fb8ac404e7ap+1)
-#define M_LOG2Eq SLEEF_QUAD_C(+0x1.71547652b82fe1777d0ffda0d23ap+0)
-#define M_LOG10Eq SLEEF_QUAD_C(+0x1.bcb7b1526e50e32a6ab7555f5a68p-2)
-#define M_LN2q SLEEF_QUAD_C(+0x1.62e42fefa39ef35793c7673007e6p-1)
-#define M_LN10q SLEEF_QUAD_C(+0x1.26bb1bbb5551582dd4adac5705a6p+1)
-#define M_PIq SLEEF_QUAD_C(+0x1.921fb54442d18469898cc51701b8p+1)
-#define M_PI_2q SLEEF_QUAD_C(+0x1.921fb54442d18469898cc51701b8p+0)
-#define M_PI_4q SLEEF_QUAD_C(+0x1.921fb54442d18469898cc51701b8p-1)
-#define M_1_PIq SLEEF_QUAD_C(+0x1.45f306dc9c882a53f84eafa3ea6ap-2)
-#define M_2_PIq SLEEF_QUAD_C(+0x1.45f306dc9c882a53f84eafa3ea6ap-1)
-#define M_2_SQRTPIq SLEEF_QUAD_C(+0x1.20dd750429b6d11ae3a914fed7fep+0)
-#define M_SQRT2q SLEEF_QUAD_C(+0x1.6a09e667f3bcc908b2fb1366ea95p+0)
-#define M_SQRT1_2q SLEEF_QUAD_C(+0x1.6a09e667f3bcc908b2fb1366ea95p-1)
-#define FLT128_MAX SLEEF_QUAD_C(+0x1.ffffffffffffffffffffffffffffp+16383)
-#define FLT128_MIN SLEEF_QUAD_C(+0x1p-16382)
-#define FLT128_EPSILON SLEEF_QUAD_C(+0x1p-112)
-#define FLT128_DENORM_MIN SLEEF_QUAD_C(+0x0.0000000000000000000000000001p-16382)
-
-#else // #ifdef SLEEF_QUAD_C
-
-#define M_Eq sleef_q(+0x15bf0a8b14576LL, 0x95355fb8ac404e7aULL, 1)
-#define M_LOG2Eq sleef_q(+0x171547652b82fLL, 0xe1777d0ffda0d23aULL, 0)
-#define M_LOG10Eq sleef_q(+0x1bcb7b1526e50LL, 0xe32a6ab7555f5a68ULL, -2)
-#define M_LN2q sleef_q(+0x162e42fefa39eLL, 0xf35793c7673007e6ULL, -1)
-#define M_LN10q sleef_q(+0x126bb1bbb5551LL, 0x582dd4adac5705a6ULL, 1)
-#define M_PIq sleef_q(+0x1921fb54442d1LL, 0x8469898cc51701b8ULL, 1)
-#define M_PI_2q sleef_q(+0x1921fb54442d1LL, 0x8469898cc51701b8ULL, 0)
-#define M_PI_4q sleef_q(+0x1921fb54442d1LL, 0x8469898cc51701b8ULL, -1)
-#define M_1_PIq sleef_q(+0x145f306dc9c88LL, 0x2a53f84eafa3ea6aULL, -2)
-#define M_2_PIq sleef_q(+0x145f306dc9c88LL, 0x2a53f84eafa3ea6aULL, -1)
-#define M_2_SQRTPIq sleef_q(+0x120dd750429b6LL, 0xd11ae3a914fed7feULL, 0)
-#define M_SQRT2q sleef_q(+0x16a09e667f3bcLL, 0xc908b2fb1366ea95ULL, 0)
-#define M_SQRT1_2q sleef_q(+0x16a09e667f3bcLL, 0xc908b2fb1366ea95ULL, -1)
-#define FLT128_MAX sleef_q(+0x1ffffffffffffLL, 0xffffffffffffffffULL, 16383)
-#define FLT128_MIN sleef_q(+0x1000000000000LL, 0x0000000000000000ULL, -16382)
-#define FLT128_EPSILON sleef_q(+0x1000000000000LL, 0x0000000000000000ULL, -112)
-#define FLT128_DENORM_MIN sleef_q(+0x0000000000000LL, 0x0000000000000001ULL, -16382)
-
-#endif // #ifdef SLEEF_QUAD_C
-
-#define FLT128_MANT_DIG 113
-#define FLT128_MIN_EXP (-16381)
-#define FLT128_MAX_EXP 16384
-#define FLT128_DIG 33
-#define FLT128_MIN_10_EXP (-4931)
-#define FLT128_MAX_10_EXP 4932
-
-#endif // #if defined(SLEEF_LIBQUADMATH_COMPATIBILITY)
-
 #ifdef SLEEF_QUAD_C
 
 #define SLEEF_M_Eq SLEEF_QUAD_C(+0x1.5bf0a8b1457695355fb8ac404e7ap+1)
@@ -300,17 +214,17 @@ static inline Sleef_quad sleef_q(int64_t H, uint64_t L, int E) {
 #include <stdio.h>
 #include <stdarg.h>
 
-IMPORT Sleef_quad Sleef_strtoq(const char *str, char **endptr);
+SLEEF_IMPORT Sleef_quad Sleef_strtoq(const char *str, char **endptr);
 
-IMPORT int Sleef_fprintf(FILE *fp, const char *fmt, ...);
-IMPORT int Sleef_vfprintf(FILE *fp, const char *fmt, va_list ap);
-IMPORT int Sleef_printf(const char *fmt, ...);
-IMPORT int Sleef_vprintf(const char *fmt, va_list ap);
-IMPORT int Sleef_snprintf(char *str, size_t size, const char *fmt, ...);
-IMPORT int Sleef_vsnprintf(char *str, size_t size, const char *fmt, va_list ap);
+SLEEF_IMPORT int Sleef_fprintf(FILE *fp, const char *fmt, ...);
+SLEEF_IMPORT int Sleef_vfprintf(FILE *fp, const char *fmt, va_list ap);
+SLEEF_IMPORT int Sleef_printf(const char *fmt, ...);
+SLEEF_IMPORT int Sleef_vprintf(const char *fmt, va_list ap);
+SLEEF_IMPORT int Sleef_snprintf(char *str, size_t size, const char *fmt, ...);
+SLEEF_IMPORT int Sleef_vsnprintf(char *str, size_t size, const char *fmt, va_list ap);
 
-IMPORT int Sleef_registerPrintfHook();
-IMPORT void Sleef_unregisterPrintfHook();
+SLEEF_IMPORT int Sleef_registerPrintfHook();
+SLEEF_IMPORT void Sleef_unregisterPrintfHook();
 
 //
 

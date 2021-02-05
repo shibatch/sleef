@@ -13,10 +13,12 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#if (defined(__GNUC__) || defined(__CLANG__)) && !defined(__INTEL_COMPILER)
-#define CONST const
-#else
-#define CONST
+#if defined (__GNUC__) || defined (__clang__) || defined(__INTEL_COMPILER)
+#define SLEEF_CONST __attribute__((const))
+#define SLEEF_INLINE __attribute__((always_inline))
+#elif defined(_MSC_VER)
+#define SLEEF_CONST
+#define SLEEF_INLINE __forceinline
 #endif
 
 #if defined(__AVX2__) || defined(__aarch64__) || defined(__arm__) || defined(__powerpc64__) || defined(__zarch__)
@@ -33,16 +35,16 @@
 #endif
 
 #if (defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)) && !defined(SLEEF_STATIC_LIBS)
-#ifdef IMPORT_IS_EXPORT
-#define IMPORT __declspec(dllexport)
-#else // #ifdef IMPORT_IS_EXPORT
-#define IMPORT __declspec(dllimport)
+#ifdef SLEEF_IMPORT_IS_EXPORT
+#define SLEEF_IMPORT __declspec(dllexport)
+#else // #ifdef SLEEF_IMPORT_IS_EXPORT
+#define SLEEF_IMPORT __declspec(dllimport)
 #if (defined(_MSC_VER))
 #pragma comment(lib,"sleef.lib")
 #endif // #if (defined(_MSC_VER))
-#endif // #ifdef IMPORT_IS_EXPORT
+#endif // #ifdef SLEEF_IMPORT_IS_EXPORT
 #else // #if (defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)) && !defined(SLEEF_STATIC_LIBS)
-#define IMPORT
+#define SLEEF_IMPORT
 #endif // #if (defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)) && !defined(SLEEF_STATIC_LIBS)
 
 #if (defined(__GNUC__) || defined(__CLANG__)) && (defined(__i386__) || defined(__x86_64__))
@@ -116,12 +118,12 @@ typedef __vector unsigned long long SLEEF_VECTOR_ULONGLONG;
 
 //
 
-IMPORT void *Sleef_malloc(size_t z);
-IMPORT void Sleef_free(void *ptr);
-IMPORT uint64_t Sleef_currentTimeMicros();
+SLEEF_IMPORT void *Sleef_malloc(size_t z);
+SLEEF_IMPORT void Sleef_free(void *ptr);
+SLEEF_IMPORT uint64_t Sleef_currentTimeMicros();
 
 #if defined(__i386__) || defined(__x86_64__) || defined(_MSC_VER)
-IMPORT void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
+SLEEF_IMPORT void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
 #endif
 
 //
@@ -145,157 +147,157 @@ extern "C"
 {
 #endif
 
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_sin_u35(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_cos_u35(double);
-IMPORT CONST Sleef_double2 Sleef_sincos_u35(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_tan_u35(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_asin_u35(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_acos_u35(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_atan_u35(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_atan2_u35(double, double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_log_u35(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_cbrt_u35(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_sin_u10(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_cos_u10(double);
-IMPORT CONST Sleef_double2 Sleef_sincos_u10(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_tan_u10(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_asin_u10(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_acos_u10(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_atan_u10(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_atan2_u10(double, double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_log_u10(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_cbrt_u10(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_exp_u10(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_pow_u10(double, double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_sinh_u10(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_cosh_u10(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_tanh_u10(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_sinh_u35(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_cosh_u35(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_tanh_u35(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_asinh_u10(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_acosh_u10(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_atanh_u10(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_exp2_u10(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_exp10_u10(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_exp2_u35(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_exp10_u35(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_expm1_u10(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_log10_u10(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_log2_u10(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_log2_u35(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_log1p_u10(double);
-IMPORT CONST Sleef_double2 Sleef_sincospi_u05(double);
-IMPORT CONST Sleef_double2 Sleef_sincospi_u35(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_sinpi_u05(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_cospi_u05(double);
-IMPORT CONST double Sleef_ldexp(double, int);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST int Sleef_ilogb(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_fma(double, double, double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_sqrt(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_sqrt_u05(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_sqrt_u35(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_sin_u35(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_cos_u35(double);
+SLEEF_IMPORT SLEEF_CONST Sleef_double2 Sleef_sincos_u35(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_tan_u35(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_asin_u35(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_acos_u35(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_atan_u35(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_atan2_u35(double, double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_log_u35(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_cbrt_u35(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_sin_u10(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_cos_u10(double);
+SLEEF_IMPORT SLEEF_CONST Sleef_double2 Sleef_sincos_u10(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_tan_u10(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_asin_u10(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_acos_u10(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_atan_u10(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_atan2_u10(double, double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_log_u10(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_cbrt_u10(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_exp_u10(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_pow_u10(double, double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_sinh_u10(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_cosh_u10(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_tanh_u10(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_sinh_u35(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_cosh_u35(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_tanh_u35(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_asinh_u10(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_acosh_u10(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_atanh_u10(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_exp2_u10(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_exp10_u10(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_exp2_u35(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_exp10_u35(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_expm1_u10(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_log10_u10(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_log2_u10(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_log2_u35(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_log1p_u10(double);
+SLEEF_IMPORT SLEEF_CONST Sleef_double2 Sleef_sincospi_u05(double);
+SLEEF_IMPORT SLEEF_CONST Sleef_double2 Sleef_sincospi_u35(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_sinpi_u05(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_cospi_u05(double);
+SLEEF_IMPORT SLEEF_CONST double Sleef_ldexp(double, int);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST int Sleef_ilogb(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_fma(double, double, double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_sqrt(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_sqrt_u05(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_sqrt_u35(double);
 
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_hypot_u05(double, double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_hypot_u35(double, double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_hypot_u05(double, double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_hypot_u35(double, double);
 
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_fabs(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_copysign(double, double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_fmax(double, double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_fmin(double, double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_fdim(double, double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_trunc(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_floor(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_ceil(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_round(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_rint(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_nextafter(double, double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_frfrexp(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST int Sleef_expfrexp(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_fmod(double, double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_remainder(double, double);
-IMPORT CONST Sleef_double2 Sleef_modf(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_fabs(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_copysign(double, double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_fmax(double, double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_fmin(double, double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_fdim(double, double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_trunc(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_floor(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_ceil(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_round(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_rint(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_nextafter(double, double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_frfrexp(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST int Sleef_expfrexp(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_fmod(double, double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_remainder(double, double);
+SLEEF_IMPORT SLEEF_CONST Sleef_double2 Sleef_modf(double);
 
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_lgamma_u10(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_tgamma_u10(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_erf_u10(double);
-SLEEF_PRAGMA_OMP_SIMD_DP IMPORT CONST double Sleef_erfc_u15(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_lgamma_u10(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_tgamma_u10(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_erf_u10(double);
+SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_erfc_u15(double);
 
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_sinf_u35(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_cosf_u35(float);
-IMPORT CONST Sleef_float2 Sleef_sincosf_u35(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_tanf_u35(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_asinf_u35(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_acosf_u35(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_atanf_u35(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_atan2f_u35(float, float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_logf_u35(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_cbrtf_u35(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_sinf_u10(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_cosf_u10(float);
-IMPORT CONST Sleef_float2 Sleef_sincosf_u10(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_fastsinf_u3500(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_fastcosf_u3500(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_tanf_u10(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_asinf_u10(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_acosf_u10(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_atanf_u10(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_atan2f_u10(float, float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_logf_u10(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_cbrtf_u10(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_expf_u10(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_powf_u10(float, float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_fastpowf_u3500(float, float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_sinhf_u10(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_coshf_u10(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_tanhf_u10(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_sinhf_u35(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_coshf_u35(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_tanhf_u35(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_asinhf_u10(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_acoshf_u10(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_atanhf_u10(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_exp2f_u10(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_exp10f_u10(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_exp2f_u35(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_exp10f_u35(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_expm1f_u10(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_log10f_u10(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_log2f_u10(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_log2f_u35(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_log1pf_u10(float);
-IMPORT CONST Sleef_float2 Sleef_sincospif_u05(float);
-IMPORT CONST Sleef_float2 Sleef_sincospif_u35(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_sinpif_u05(float d);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_cospif_u05(float d);
-IMPORT CONST float Sleef_ldexpf(float, int);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST int Sleef_ilogbf(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_fmaf(float, float, float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_sqrtf(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_sqrtf_u05(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_sqrtf_u35(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_sinf_u35(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_cosf_u35(float);
+SLEEF_IMPORT SLEEF_CONST Sleef_float2 Sleef_sincosf_u35(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_tanf_u35(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_asinf_u35(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_acosf_u35(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_atanf_u35(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_atan2f_u35(float, float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_logf_u35(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_cbrtf_u35(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_sinf_u10(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_cosf_u10(float);
+SLEEF_IMPORT SLEEF_CONST Sleef_float2 Sleef_sincosf_u10(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_fastsinf_u3500(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_fastcosf_u3500(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_tanf_u10(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_asinf_u10(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_acosf_u10(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_atanf_u10(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_atan2f_u10(float, float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_logf_u10(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_cbrtf_u10(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_expf_u10(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_powf_u10(float, float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_fastpowf_u3500(float, float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_sinhf_u10(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_coshf_u10(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_tanhf_u10(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_sinhf_u35(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_coshf_u35(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_tanhf_u35(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_asinhf_u10(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_acoshf_u10(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_atanhf_u10(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_exp2f_u10(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_exp10f_u10(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_exp2f_u35(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_exp10f_u35(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_expm1f_u10(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_log10f_u10(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_log2f_u10(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_log2f_u35(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_log1pf_u10(float);
+SLEEF_IMPORT SLEEF_CONST Sleef_float2 Sleef_sincospif_u05(float);
+SLEEF_IMPORT SLEEF_CONST Sleef_float2 Sleef_sincospif_u35(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_sinpif_u05(float d);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_cospif_u05(float d);
+SLEEF_IMPORT SLEEF_CONST float Sleef_ldexpf(float, int);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST int Sleef_ilogbf(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_fmaf(float, float, float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_sqrtf(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_sqrtf_u05(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_sqrtf_u35(float);
 
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_hypotf_u05(float, float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_hypotf_u35(float, float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_hypotf_u05(float, float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_hypotf_u35(float, float);
 
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_fabsf(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_copysignf(float, float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_fmaxf(float, float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_fminf(float, float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_fdimf(float, float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_truncf(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_floorf(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_ceilf(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_roundf(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_rintf(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_nextafterf(float, float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_frfrexpf(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST int Sleef_expfrexpf(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_fmodf(float, float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_remainderf(float, float);
-IMPORT CONST Sleef_float2 Sleef_modff(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_fabsf(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_copysignf(float, float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_fmaxf(float, float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_fminf(float, float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_fdimf(float, float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_truncf(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_floorf(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_ceilf(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_roundf(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_rintf(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_nextafterf(float, float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_frfrexpf(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST int Sleef_expfrexpf(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_fmodf(float, float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_remainderf(float, float);
+SLEEF_IMPORT SLEEF_CONST Sleef_float2 Sleef_modff(float);
 
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_lgammaf_u10(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_tgammaf_u10(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_erff_u10(float);
-SLEEF_PRAGMA_OMP_SIMD_SP IMPORT CONST float Sleef_erfcf_u15(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_lgammaf_u10(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_tgammaf_u10(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_erff_u10(float);
+SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_erfcf_u15(float);

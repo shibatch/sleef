@@ -27,6 +27,7 @@ option(DISABLE_MPFR "Disable testing with the MPFR library" OFF)
 option(DISABLE_SSL "Disable testing with the SSL library" OFF)
 
 option(ENABLE_CUDA "Enable CUDA" OFF)
+option(ENABLE_CXX "Enable C++" OFF)
 
 # Function used to generate safe command arguments for add_custom_command
 function(command_arguments PROPNAME)
@@ -101,15 +102,17 @@ set(SLEEF_VERSION_PATCHLEVEL 0)
 set(SLEEF_VERSION ${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}.${SLEEF_VERSION_PATCHLEVEL})
 set(SLEEF_SOVERSION ${SLEEF_VERSION_MAJOR})
 
+set(LANGLIST C)
+
 if (ENABLE_CUDA)
-  project(SLEEF
-    VERSION ${SLEEF_VERSION}
-    LANGUAGES C CUDA)
-else()
-  project(SLEEF
-    VERSION ${SLEEF_VERSION}
-    LANGUAGES C)
+  set(LANGLIST ${LANGLIST} CUDA)
 endif()
+
+if (ENABLE_CXX)
+  set(LANGLIST ${LANGLIST} CXX)
+endif()
+
+project(SLEEF VERSION ${SLEEF_VERSION} LANGUAGES ${LANGLIST})
 
 # For specifying installation directories
 include(GNUInstallDirs)

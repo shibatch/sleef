@@ -25,6 +25,8 @@ extern const double Sleef_rempitabqp[];
 #pragma fp_contract (off)
 #endif
 
+#pragma STDC FP_CONTRACT OFF
+
 #ifdef ENABLE_PUREC_SCALAR
 #define CONFIG 1
 #include "helperpurec_scalar.h"
