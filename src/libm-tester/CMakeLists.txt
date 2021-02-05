@@ -459,5 +459,16 @@ if(ENABLE_GNUABI AND COMPILER_SUPPORTS_OMP_SIMD AND NOT SLEEF_TARGET_PROCESSOR M
     WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 endif()
 
+find_program(FILECHECK_COMMAND NAMES FileCheck FileCheck-9 FileCheck-10 FileCheck-11)
+
+if (FILECHECK_COMMAND AND COMPILER_SUPPORTS_OPENMP AND CMAKE_C_COMPILER_ID MATCHES "GNU" AND CMAKE_C_COMPILER_VERSION VERSION_GREATER 6.99)
+  add_test(NAME autovec COMMAND sh -c "${CMAKE_C_COMPILER} -Wno-attributes -fopenmp -mavx2 -O3 ${CMAKE_CURRENT_SOURCE_DIR}/autovec.c -I${sleef_BINARY_DIR}/include -S -o- | ${FILECHECK_COMMAND} ${CMAKE_CURRENT_SOURCE_DIR}/autovec.c")
+  add_test(NAME autovec-fastmath COMMAND sh -c "${CMAKE_C_COMPILER} -ffast-math -Wno-attributes -fopenmp -mavx2 -O3 ${CMAKE_CURRENT_SOURCE_DIR}/autovec-fastmath.c -I${sleef_BINARY_DIR}/include -S -o- | ${FILECHECK_COMMAND} ${CMAKE_CURRENT_SOURCE_DIR}/autovec-fastmath.c")
+  if(ENABLE_CXX)
+    add_test(NAME autovec++ COMMAND sh -c "${CMAKE_CXX_COMPILER} -Wno-attributes -fopenmp -mavx2 -O3 ${CMAKE_CURRENT_SOURCE_DIR}/autovec.c -I${sleef_BINARY_DIR}/include -S -o- | ${FILECHECK_COMMAND} ${CMAKE_CURRENT_SOURCE_DIR}/autovec.c")
+    add_test(NAME autovec++-fastmath COMMAND sh -c "${CMAKE_CXX_COMPILER} -ffast-math -Wno-attributes -fopenmp -mavx2 -O3 ${CMAKE_CURRENT_SOURCE_DIR}/autovec-fastmath.c -I${sleef_BINARY_DIR}/include -S -o- | ${FILECHECK_COMMAND} ${CMAKE_CURRENT_SOURCE_DIR}/autovec-fastmath.c")
+  endif()
+endif()
+
 # Tests depends on the library
 add_dependencies(${TARGET_IUT} ${TARGET_HEADERS})

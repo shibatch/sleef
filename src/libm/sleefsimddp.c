@@ -25,6 +25,8 @@ extern const double Sleef_rempitabdp[];
 #pragma fp_contract (off)
 #endif
 
+#pragma STDC FP_CONTRACT off
+
 // Intel
 
 #ifdef ENABLE_SSE2

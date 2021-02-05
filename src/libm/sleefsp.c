@@ -30,6 +30,8 @@ extern const float Sleef_rempitabsp[];
 #pragma fp_contract (off)
 #endif
 
+#pragma STDC FP_CONTRACT off
+
 #define MLA mlaf
 #define C2V(x) (x)
 #include "estrin.h"

@@ -170,7 +170,7 @@ typedef struct {
 
 //
 
-#if (defined (__GNUC__) || defined (__clang__) || defined(__INTEL_COMPILER)) && !defined(_MSC_VER)
+#if defined (__GNUC__) || defined (__clang__) || defined(__INTEL_COMPILER)
 
 #define LIKELY(condition) __builtin_expect(!!(condition), 1)
 #define UNLIKELY(condition) __builtin_expect(!!(condition), 0)
@@ -191,11 +191,7 @@ typedef struct {
 
 #else // #if defined(SLEEF_GENHEADER)
 
-#ifndef __INTEL_COMPILER
 #define CONST __attribute__((const))
-#else
-#define CONST
-#endif
 #define INLINE __attribute__((always_inline))
 
 #if defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__)
@@ -228,7 +224,7 @@ typedef struct {
 #define SLEEF_NANq (SLEEF_INFINITYq - SLEEF_INFINITYq)
 #endif
 
-#elif defined(_MSC_VER) // #if (defined (__GNUC__) || defined (__clang__) || defined(__INTEL_COMPILER)) && !defined(_MSC_VER)
+#elif defined(_MSC_VER) // #if defined (__GNUC__) || defined (__clang__) || defined(__INTEL_COMPILER)
 
 #if defined(SLEEF_GENHEADER)
 
@@ -285,7 +281,7 @@ typedef struct {
 #endif
 #endif
 
-#endif // #elif defined(_MSC_VER) // #if (defined (__GNUC__) || defined (__clang__) || defined(__INTEL_COMPILER)) && !defined(_MSC_VER)
+#endif // #elif defined(_MSC_VER) // #if defined (__GNUC__) || defined (__clang__) || defined(__INTEL_COMPILER)
 
 #if !defined(__linux__)
 #define isinff(x) ((x) == SLEEF_INFINITYf || (x) == -SLEEF_INFINITYf)

@@ -20,6 +20,8 @@
 #pragma fp_contract (off)
 #endif
 
+#pragma STDC FP_CONTRACT off
+
 #ifndef SLEEF_FP_ILOGB0
 #define SLEEF_FP_ILOGB0 ((int)0x80000000)
 #endif

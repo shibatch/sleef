@@ -66,13 +66,13 @@ int main(int argc, char **argv) {
 	switch(funcList[i].funcType) {
 	case 0:
 	  if (funcList[i].ulp >= 0) {
-	    printf("IMPORT CONST %s Sleef_%sq%s_u%02d%s(%s);\n",
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sq%s_u%02d%s(%s);\n",
 		   vargquadname,
 		   funcList[i].name, wqp,
 		   funcList[i].ulp, isaname,
 		   vargquadname);
 	  } else {
-	    printf("IMPORT CONST %s Sleef_%sq%s%s%s(%s);\n",
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sq%s%s%s(%s);\n",
 		   vargquadname,
 		   funcList[i].name, wqp,
 		   isaub, isaname,
@@ -81,13 +81,13 @@ int main(int argc, char **argv) {
 	  break;
 	case 1:
 	  if (funcList[i].ulp >= 0) {
-	    printf("IMPORT CONST %s Sleef_%sq%s_u%02d%s(%s, %s);\n",
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sq%s_u%02d%s(%s, %s);\n",
 		   vargquadname,
 		   funcList[i].name, wqp,
 		   funcList[i].ulp, isaname,
 		   vargquadname, vargquadname);
 	  } else {
-	    printf("IMPORT CONST %s Sleef_%sq%s%s%s(%s, %s);\n",
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sq%s%s%s(%s, %s);\n",
 		   vargquadname,
 		   funcList[i].name, wqp,
 		   isaub, isaname,
@@ -97,13 +97,13 @@ int main(int argc, char **argv) {
 	case 2:
 	case 6:
 	  if (funcList[i].ulp >= 0) {
-	    printf("IMPORT CONST %s Sleef_%sq%s_u%02d%s(%s);\n",
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sq%s_u%02d%s(%s);\n",
 		   vargquad2name,
 		   funcList[i].name, wqp,
 		   funcList[i].ulp, isaname,
 		   vargquadname);
 	  } else {
-	    printf("IMPORT CONST %s Sleef_%sq%s%s%s(%s);\n",
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sq%s%s%s(%s);\n",
 		   vargquad2name,
 		   funcList[i].name, wqp,
 		   isaub, isaname,
@@ -112,13 +112,13 @@ int main(int argc, char **argv) {
 	  break;
 	case 3:
 	  if (funcList[i].ulp >= 0) {
-	    printf("IMPORT CONST %s Sleef_%sq%s_u%02d%s(%s, %s);\n",
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sq%s_u%02d%s(%s, %s);\n",
 		   vargquadname,
 		   funcList[i].name, wqp,
 		   funcList[i].ulp, isaname,
 		   vargquadname, vintname);
 	  } else {
-	    printf("IMPORT CONST %s Sleef_%sq%s%s%s(%s, %s);\n",
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sq%s%s%s(%s, %s);\n",
 		   vargquadname,
 		   funcList[i].name, wqp,
 		   isaub, isaname,
@@ -127,13 +127,13 @@ int main(int argc, char **argv) {
 	  break;
 	case 4:
 	  if (funcList[i].ulp >= 0) {
-	    printf("IMPORT CONST %s Sleef_%sq%s_u%02d%s(%s);\n",
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sq%s_u%02d%s(%s);\n",
 		   vintname,
 		   funcList[i].name, wqp,
 		   funcList[i].ulp, isaname,
 		   vargquadname);
 	  } else {
-	    printf("IMPORT CONST %s Sleef_%sq%s%s%s(%s);\n",
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sq%s%s%s(%s);\n",
 		   vintname,
 		   funcList[i].name, wqp,
 		   isaub, isaname,
@@ -142,13 +142,13 @@ int main(int argc, char **argv) {
 	  break;
 	case 5:
 	  if (funcList[i].ulp >= 0) {
-	    printf("IMPORT CONST %s Sleef_%sq%s_u%02d%s(%s, %s, %s);\n",
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sq%s_u%02d%s(%s, %s, %s);\n",
 		   vargquadname,
 		   funcList[i].name, wqp,
 		   funcList[i].ulp, isaname,
 		   vargquadname, vargquadname, vargquadname);
 	  } else {
-	    printf("IMPORT CONST %s Sleef_%sq%s%s%s(%s, %s, %s);\n",
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sq%s%s%s(%s, %s, %s);\n",
 		   vargquadname,
 		   funcList[i].name, wqp,
 		   isaub, isaname,
@@ -156,20 +156,20 @@ int main(int argc, char **argv) {
 	  }
 	  break;
 	case 7:
-	  printf("IMPORT CONST int Sleef_%sq%s%s%s(int);\n", funcList[i].name, wqp, isaub, isaname);
+	  printf("SLEEF_IMPORT SLEEF_CONST int Sleef_%sq%s%s%s(int);\n", funcList[i].name, wqp, isaub, isaname);
 	  break;
 	case 8:
-	  printf("IMPORT CONST void *Sleef_%sq%s%s%s(int);\n", funcList[i].name, wqp, isaub, isaname);
+	  printf("SLEEF_IMPORT SLEEF_CONST void *Sleef_%sq%s%s%s(int);\n", funcList[i].name, wqp, isaub, isaname);
 	  break;
 	case 9:
 	  if (funcList[i].ulp >= 0) {
-	    printf("IMPORT CONST %s Sleef_%sq%s_u%02d%s(%s, %s);\n",
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sq%s_u%02d%s(%s, %s);\n",
 		   vintname,
 		   funcList[i].name, wqp,
 		   funcList[i].ulp, isaname,
 		   vargquadname, vargquadname);
 	  } else {
-	    printf("IMPORT CONST %s Sleef_%sq%s%s%s(%s, %s);\n",
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sq%s%s%s(%s, %s);\n",
 		   vintname,
 		   funcList[i].name, wqp,
 		   isaub, isaname,
@@ -178,13 +178,13 @@ int main(int argc, char **argv) {
 	  break;
 	case 10:
 	  if (funcList[i].ulp >= 0) {
-	    printf("IMPORT CONST %s Sleef_%sq%s_u%02d%s(%s);\n",
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sq%s_u%02d%s(%s);\n",
 		   vdoublename,
 		   funcList[i].name, wqp,
 		   funcList[i].ulp, isaname,
 		   vargquadname);
 	  } else {
-	    printf("IMPORT CONST %s Sleef_%sq%s%s%s(%s);\n",
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sq%s%s%s(%s);\n",
 		   vdoublename,
 		   funcList[i].name, wqp,
 		   isaub, isaname,
@@ -193,13 +193,13 @@ int main(int argc, char **argv) {
 	  break;
 	case 11:
 	  if (funcList[i].ulp >= 0) {
-	    printf("IMPORT CONST %s Sleef_%sq%s_u%02d%s(%s);\n",
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sq%s_u%02d%s(%s);\n",
 		   vargquadname,
 		   funcList[i].name, wqp,
 		   funcList[i].ulp, isaname,
 		   vdoublename);
 	  } else {
-	    printf("IMPORT CONST %s Sleef_%sq%s%s%s(%s);\n",
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sq%s%s%s(%s);\n",
 		   vargquadname,
 		   funcList[i].name, wqp,
 		   isaub, isaname,
@@ -208,14 +208,14 @@ int main(int argc, char **argv) {
 	  break;
 	case 12:
 	  assert(funcList[i].ulp == -1);
-	  printf("IMPORT CONST %s Sleef_%sq%s%s%s(Sleef_quad);\n",
+	  printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sq%s%s%s(Sleef_quad);\n",
 		 vargquadname,
 		 funcList[i].name, wqp,
 		 isaub, isaname);
 	  break;
 	case 13:
 	  assert(funcList[i].ulp == -1);
-	  printf("IMPORT CONST %s Sleef_%sq%s%s%s(%s, Sleef_quad, Sleef_quad);\n",
+	  printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sq%s%s%s(%s, Sleef_quad, Sleef_quad);\n",
 		 vargquadname,
 		 funcList[i].name, wqp,
 		 isaub, isaname,
@@ -224,28 +224,28 @@ int main(int argc, char **argv) {
 
 	case 14:
 	  assert(funcList[i].ulp == -1);
-	  printf("IMPORT CONST %s Sleef_%sq%s%s%s(Sleef_quad *);\n",
+	  printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sq%s%s%s(Sleef_quad *);\n",
 		 vargquadname,
 		 funcList[i].name, wqp,
 		 isaub, isaname);
 	  break;
 	case 15:
 	  assert(funcList[i].ulp == -1);
-	  printf("IMPORT CONST void Sleef_%sq%s%s%s(Sleef_quad *, %s);\n",
+	  printf("SLEEF_IMPORT SLEEF_CONST void Sleef_%sq%s%s%s(Sleef_quad *, %s);\n",
 		 funcList[i].name, wqp,
 		 isaub, isaname,
 		 vargquadname);
 	  break;
 	case 16:
 	  assert(funcList[i].ulp == -1);
-	  printf("IMPORT CONST Sleef_quad Sleef_%sq%s%s%s(%s, int);\n",
+	  printf("SLEEF_IMPORT SLEEF_CONST Sleef_quad Sleef_%sq%s%s%s(%s, int);\n",
 		 funcList[i].name, wqp,
 		 isaub, isaname,
 		 vargquadname);
 	  break;
 	case 17:
 	  assert(funcList[i].ulp == -1);
-	  printf("IMPORT CONST %s Sleef_%sq%s%s%s(%s, int, Sleef_quad);\n",
+	  printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sq%s%s%s(%s, int, Sleef_quad);\n",
 		 vargquadname,
 		 funcList[i].name, wqp,
 		 isaub, isaname,
@@ -253,13 +253,13 @@ int main(int argc, char **argv) {
 	  break;
 	case 18:
 	  if (funcList[i].ulp >= 0) {
-	    printf("IMPORT CONST %s Sleef_%sq%s_u%02d%s(%s);\n",
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sq%s_u%02d%s(%s);\n",
 		   vint64name,
 		   funcList[i].name, wqp,
 		   funcList[i].ulp, isaname,
 		   vargquadname);
 	  } else {
-	    printf("IMPORT CONST %s Sleef_%sq%s%s%s(%s);\n",
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sq%s%s%s(%s);\n",
 		   vint64name,
 		   funcList[i].name, wqp,
 		   isaub, isaname,
@@ -268,13 +268,13 @@ int main(int argc, char **argv) {
 	  break;
 	case 19:
 	  if (funcList[i].ulp >= 0) {
-	    printf("IMPORT CONST %s Sleef_%sq%s_u%02d%s(%s);\n",
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sq%s_u%02d%s(%s);\n",
 		   vargquadname,
 		   funcList[i].name, wqp,
 		   funcList[i].ulp, isaname,
 		   vint64name);
 	  } else {
-	    printf("IMPORT CONST %s Sleef_%sq%s%s%s(%s);\n",
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sq%s%s%s(%s);\n",
 		   vargquadname,
 		   funcList[i].name, wqp,
 		   isaub, isaname,
@@ -283,13 +283,13 @@ int main(int argc, char **argv) {
 	  break;
 	case 20:
 	  if (funcList[i].ulp >= 0) {
-	    printf("IMPORT CONST %s Sleef_%sq%s_u%02d%s(%s);\n",
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sq%s_u%02d%s(%s);\n",
 		   vuint64name,
 		   funcList[i].name, wqp,
 		   funcList[i].ulp, isaname,
 		   vargquadname);
 	  } else {
-	    printf("IMPORT CONST %s Sleef_%sq%s%s%s(%s);\n",
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sq%s%s%s(%s);\n",
 		   vuint64name,
 		   funcList[i].name, wqp,
 		   isaub, isaname,
@@ -298,13 +298,13 @@ int main(int argc, char **argv) {
 	  break;
 	case 21:
 	  if (funcList[i].ulp >= 0) {
-	    printf("IMPORT CONST %s Sleef_%sq%s_u%02d%s(%s);\n",
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sq%s_u%02d%s(%s);\n",
 		   vargquadname,
 		   funcList[i].name, wqp,
 		   funcList[i].ulp, isaname,
 		   vuint64name);
 	  } else {
-	    printf("IMPORT CONST %s Sleef_%sq%s%s%s(%s);\n",
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sq%s%s%s(%s);\n",
 		   vargquadname,
 		   funcList[i].name, wqp,
 		   isaub, isaname,
@@ -313,7 +313,7 @@ int main(int argc, char **argv) {
 	  break;
 	case 22:
 	  {
-	    printf("IMPORT %s Sleef_%sq%s%s%s(%s, %s *);\n",
+	    printf("SLEEF_IMPORT %s Sleef_%sq%s%s%s(%s, %s *);\n",
 		   vargquadname,
 		   funcList[i].name, wqp,
 		   isaub, isaname,
@@ -322,7 +322,7 @@ int main(int argc, char **argv) {
 	  break;
 	case 23:
 	  {
-	    printf("IMPORT %s Sleef_%sq%s%s%s(%s, %s *);\n",
+	    printf("SLEEF_IMPORT %s Sleef_%sq%s%s%s(%s, %s *);\n",
 		   vargquadname,
 		   funcList[i].name, wqp,
 		   isaub, isaname,

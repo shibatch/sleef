@@ -30,6 +30,8 @@ extern const double Sleef_rempitabdp[];
 #pragma fp_contract (off)
 #endif
 
+#pragma STDC FP_CONTRACT off
+
 #define MLA mla
 #define C2V(x) (x)
 #include "estrin.h"
