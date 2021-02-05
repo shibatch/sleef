@@ -25,7 +25,7 @@ extern const double Sleef_rempitabdp[];
 #pragma fp_contract (off)
 #endif
 
-#pragma STDC FP_CONTRACT off
+#pragma STDC FP_CONTRACT OFF
 
 // Intel
 
