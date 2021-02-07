@@ -1,240 +1,112 @@
 
 //
 
-#if defined(SLEEF_REPLACE_LIBM_FUNCS)
-
-#ifndef __FAST_MATH__
-#define sin Sleef_sin_u10
-#define sinf Sleef_sinf_u10
-#define cos Sleef_cos_u10
-#define cosf Sleef_cosf_u10
-#define tan Sleef_tan_u10
-#define tanf Sleef_tanf_u10
-#define asin Sleef_asin_u10
-#define asinf Sleef_asinf_u10
-#define acos Sleef_acos_u10
-#define acosf Sleef_acosf_u10
-#define atan Sleef_atan_u10
-#define atanf Sleef_atanf_u10
-#define atan2 Sleef_atan2_u10
-#define atan2f Sleef_atan2f_u10
-#define sinh Sleef_sinh_u10
-#define sinhf Sleef_sinhf_u10
-#define cosh Sleef_cosh_u10
-#define coshf Sleef_coshf_u10
-#define tanh Sleef_tanh_u10
-#define tanhf Sleef_tanhf_u10
-#define asinh Sleef_asinh_u10
-#define asinhf Sleef_asinhf_u10
-#define acosh Sleef_acosh_u10
-#define acoshf Sleef_acoshf_u10
-#define atanh Sleef_atanh_u10
-#define atanhf Sleef_atanhf_u10
-#define log Sleef_log_u10
-#define logf Sleef_logf_u10
-#define log2 Sleef_log2_u10
-#define log2f Sleef_log2f_u10
-#define log10 Sleef_log10_u10
-#define log10f Sleef_log10f_u10
-#define log1p Sleef_log1p_u10
-#define log1pf Sleef_log1pf_u10
-#define exp Sleef_exp_u10
-#define expf Sleef_expf_u10
-#define exp2 Sleef_exp2_u10
-#define exp2f Sleef_exp2f_u10
-#define exp10 Sleef_exp10_u10
-#define exp10f Sleef_exp10f_u10
-#define expm1 Sleef_expm1_u10
-#define expm1f Sleef_expm1f_u10
-#define pow Sleef_pow_u10
-#define powf Sleef_powf_u10
-#define cbrt Sleef_cbrt_u10
-#define cbrtf Sleef_cbrtf_u10
-#define hypot Sleef_hypot_u05
-#define hypotf Sleef_hypotf_u05
-#define erf Sleef_erf_u10
-#define erff Sleef_erff_u10
-#define fmod Sleef_fmod
-#define fmodf Sleef_fmodf
-#define remainder Sleef_remainder
-#define remainderf Sleef_remainderf
-#else // #ifndef __FAST_MATH__
-#define sin Sleef_sin_u35
-#define sinf Sleef_sinf_u35
-#define cos Sleef_cos_u35
-#define cosf Sleef_cosf_u35
-#define tan Sleef_tan_u35
-#define tanf Sleef_tanf_u35
-#define asin Sleef_asin_u35
-#define asinf Sleef_asinf_u35
-#define acos Sleef_acos_u35
-#define acosf Sleef_acosf_u35
-#define atan Sleef_atan_u35
-#define atanf Sleef_atanf_u35
-#define atan2 Sleef_atan2_u35
-#define atan2f Sleef_atan2f_u35
-#define sinh Sleef_sinh_u35
-#define sinhf Sleef_sinhf_u35
-#define cosh Sleef_cosh_u35
-#define coshf Sleef_coshf_u35
-#define tanh Sleef_tanh_u35
-#define tanhf Sleef_tanhf_u35
-#define asinh Sleef_asinh_u10
-#define asinhf Sleef_asinhf_u10
-#define acosh Sleef_acosh_u10
-#define acoshf Sleef_acoshf_u10
-#define atanh Sleef_atanh_u10
-#define atanhf Sleef_atanhf_u10
-#define log Sleef_log_u35
-#define logf Sleef_logf_u35
-#define log2 Sleef_log2_u10
-#define log2f Sleef_log2f_u10
-#define log10 Sleef_log10_u10
-#define log10f Sleef_log10f_u10
-#define log1p Sleef_log1p_u10
-#define log1pf Sleef_log1pf_u10
-#define exp Sleef_exp_u10
-#define expf Sleef_expf_u10
-#define exp2 Sleef_exp2_u10
-#define exp2f Sleef_exp2f_u10
-#define exp10 Sleef_exp10_u10
-#define exp10f Sleef_exp10f_u10
-#define expm1 Sleef_expm1_u10
-#define expm1f Sleef_expm1f_u10
-#define pow Sleef_pow_u10
-#define powf Sleef_powf_u10
-#define cbrt Sleef_cbrt_u35
-#define cbrtf Sleef_cbrtf_u35
-#define hypot Sleef_hypot_u35
-#define hypotf Sleef_hypotf_u35
-#define erf Sleef_erf_u10
-#define erff Sleef_erff_u10
-#define fmod Sleef_fmod
-#define fmodf Sleef_fmodf
-#define remainder Sleef_remainder
-#define remainderf Sleef_remainderf
-#endif // #ifndef __FAST_MATH__
-
-#endif // #if defined(SLEEF_REPLACE_LIBM_FUNCS)
-
-//
-
 #ifdef __cplusplus
 } // extern "C"
-
-namespace sleef {
-#ifndef __FAST_MATH__
-static SLEEF_INLINE SLEEF_CONST double sin(double x) { return Sleef_sin_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float sinf(float x) { return Sleef_sinf_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double cos(double x) { return Sleef_cos_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float cosf(float x) { return Sleef_cosf_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double tan(double x) { return Sleef_tan_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float tanf(float x) { return Sleef_tanf_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double asin(double x) { return Sleef_asin_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float asinf(float x) { return Sleef_asinf_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double acos(double x) { return Sleef_acos_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float acosf(float x) { return Sleef_acosf_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double atan(double x) { return Sleef_atan_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float atanf(float x) { return Sleef_atanf_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double atan2(double y, double x) { return Sleef_atan2_u10(y, x); }
-static SLEEF_INLINE SLEEF_CONST float atan2f(float y, float x) { return Sleef_atan2f_u10(y, x); }
-static SLEEF_INLINE SLEEF_CONST double sinh(double x) { return Sleef_sinh_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float sinhf(float x) { return Sleef_sinhf_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double cosh(double x) { return Sleef_cosh_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float coshf(float x) { return Sleef_coshf_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double tanh(double x) { return Sleef_tanh_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float tanhf(float x) { return Sleef_tanhf_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double asinh(double x) { return Sleef_asinh_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float asinhf(float x) { return Sleef_asinhf_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double acosh(double x) { return Sleef_acosh_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float acoshf(float x) { return Sleef_acoshf_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double atanh(double x) { return Sleef_atanh_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float atanhf(float x) { return Sleef_atanhf_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double log(double x) { return Sleef_log_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float logf(float x) { return Sleef_logf_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double log2(double x) { return Sleef_log2_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float log2f(float x) { return Sleef_log2f_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double log10(double x) { return Sleef_log10_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float log10f(float x) { return Sleef_log10f_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double log1p(double x) { return Sleef_log1p_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float log1pf(float x) { return Sleef_log1pf_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double exp(double x) { return Sleef_exp_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float expf(float x) { return Sleef_expf_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double exp2(double x) { return Sleef_exp2_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float exp2f(float x) { return Sleef_exp2f_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double exp10(double x) { return Sleef_exp10_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float exp10f(float x) { return Sleef_exp10f_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double expm1(double x) { return Sleef_expm1_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float expm1f(float x) { return Sleef_expm1f_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double pow(double x, double y) { return Sleef_pow_u10(x, y); }
-static SLEEF_INLINE SLEEF_CONST float powf(float x, float y) { return Sleef_powf_u10(x, y); }
-static SLEEF_INLINE SLEEF_CONST double cbrt(double x) { return Sleef_cbrt_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float cbrtf(float x) { return Sleef_cbrtf_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double hypot(double x, double y) { return Sleef_hypot_u05(x, y); }
-static SLEEF_INLINE SLEEF_CONST float hypotf(float x, float y) { return Sleef_hypotf_u05(x, y); }
-static SLEEF_INLINE SLEEF_CONST double erf(double x) { return Sleef_erf_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float erff(float x) { return Sleef_erff_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double fmod(double x, double y) { return Sleef_fmod(x, y); }
-static SLEEF_INLINE SLEEF_CONST float fmodf(float x, float y) { return Sleef_fmodf(x, y); }
-static SLEEF_INLINE SLEEF_CONST double remainder(double x, double y) { return Sleef_remainder(x, y); }
-static SLEEF_INLINE SLEEF_CONST float remainderf(float x, float y) { return Sleef_remainderf(x, y); }
-#else // #ifndef __FAST_MATH__
-static SLEEF_INLINE SLEEF_CONST double sin(double x) { return Sleef_sin_u35(x); }
-static SLEEF_INLINE SLEEF_CONST float sinf(float x) { return Sleef_sinf_u35(x); }
-static SLEEF_INLINE SLEEF_CONST double cos(double x) { return Sleef_cos_u35(x); }
-static SLEEF_INLINE SLEEF_CONST float cosf(float x) { return Sleef_cosf_u35(x); }
-static SLEEF_INLINE SLEEF_CONST double tan(double x) { return Sleef_tan_u35(x); }
-static SLEEF_INLINE SLEEF_CONST float tanf(float x) { return Sleef_tanf_u35(x); }
-static SLEEF_INLINE SLEEF_CONST double asin(double x) { return Sleef_asin_u35(x); }
-static SLEEF_INLINE SLEEF_CONST float asinf(float x) { return Sleef_asinf_u35(x); }
-static SLEEF_INLINE SLEEF_CONST double acos(double x) { return Sleef_acos_u35(x); }
-static SLEEF_INLINE SLEEF_CONST float acosf(float x) { return Sleef_acosf_u35(x); }
-static SLEEF_INLINE SLEEF_CONST double atan(double x) { return Sleef_atan_u35(x); }
-static SLEEF_INLINE SLEEF_CONST float atanf(float x) { return Sleef_atanf_u35(x); }
-static SLEEF_INLINE SLEEF_CONST double atan2(double y, double x) { return Sleef_atan2_u35(y, x); }
-static SLEEF_INLINE SLEEF_CONST float atan2f(float y, float x) { return Sleef_atan2f_u35(y, x); }
-static SLEEF_INLINE SLEEF_CONST double sinh(double x) { return Sleef_sinh_u35(x); }
-static SLEEF_INLINE SLEEF_CONST float sinhf(float x) { return Sleef_sinhf_u35(x); }
-static SLEEF_INLINE SLEEF_CONST double cosh(double x) { return Sleef_cosh_u35(x); }
-static SLEEF_INLINE SLEEF_CONST float coshf(float x) { return Sleef_coshf_u35(x); }
-static SLEEF_INLINE SLEEF_CONST double tanh(double x) { return Sleef_tanh_u35(x); }
-static SLEEF_INLINE SLEEF_CONST float tanhf(float x) { return Sleef_tanhf_u35(x); }
-static SLEEF_INLINE SLEEF_CONST double asinh(double x) { return Sleef_asinh_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float asinhf(float x) { return Sleef_asinhf_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double acosh(double x) { return Sleef_acosh_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float acoshf(float x) { return Sleef_acoshf_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double atanh(double x) { return Sleef_atanh_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float atanhf(float x) { return Sleef_atanhf_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double log(double x) { return Sleef_log_u35(x); }
-static SLEEF_INLINE SLEEF_CONST float logf(float x) { return Sleef_logf_u35(x); }
-static SLEEF_INLINE SLEEF_CONST double log2(double x) { return Sleef_log2_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float log2f(float x) { return Sleef_log2f_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double log10(double x) { return Sleef_log10_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float log10f(float x) { return Sleef_log10f_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double log1p(double x) { return Sleef_log1p_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float log1pf(float x) { return Sleef_log1pf_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double exp(double x) { return Sleef_exp_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float expf(float x) { return Sleef_expf_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double exp2(double x) { return Sleef_exp2_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float exp2f(float x) { return Sleef_exp2f_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double exp10(double x) { return Sleef_exp10_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float exp10f(float x) { return Sleef_exp10f_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double expm1(double x) { return Sleef_expm1_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float expm1f(float x) { return Sleef_expm1f_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double pow(double x, double y) { return Sleef_pow_u10(x, y); }
-static SLEEF_INLINE SLEEF_CONST float powf(float x, float y) { return Sleef_powf_u10(x, y); }
-static SLEEF_INLINE SLEEF_CONST double cbrt(double x) { return Sleef_cbrt_u35(x); }
-static SLEEF_INLINE SLEEF_CONST float cbrtf(float x) { return Sleef_cbrtf_u35(x); }
-static SLEEF_INLINE SLEEF_CONST double hypot(double x, double y) { return Sleef_hypot_u35(x, y); }
-static SLEEF_INLINE SLEEF_CONST float hypotf(float x, float y) { return Sleef_hypotf_u35(x, y); }
-static SLEEF_INLINE SLEEF_CONST double erf(double x) { return Sleef_erf_u10(x); }
-static SLEEF_INLINE SLEEF_CONST float erff(float x) { return Sleef_erff_u10(x); }
-static SLEEF_INLINE SLEEF_CONST double fmod(double x, double y) { return Sleef_fmod(x, y); }
-static SLEEF_INLINE SLEEF_CONST float fmodf(float x, float y) { return Sleef_fmodf(x, y); }
-static SLEEF_INLINE SLEEF_CONST double remainder(double x, double y) { return Sleef_remainder(x, y); }
-static SLEEF_INLINE SLEEF_CONST float remainderf(float x, float y) { return Sleef_remainderf(x, y); }
-#endif // #ifndef __FAST_MATH__
-} // namespace sleef
 #endif
+
+#ifndef __FAST_MATH__
+static SLEEF_CONST double Sleef_sin(double x) { return Sleef_sin_u10(x); }
+static SLEEF_CONST float Sleef_sinf(float x) { return Sleef_sinf_u10(x); }
+static SLEEF_CONST double Sleef_cos(double x) { return Sleef_cos_u10(x); }
+static SLEEF_CONST float Sleef_cosf(float x) { return Sleef_cosf_u10(x); }
+static SLEEF_CONST double Sleef_tan(double x) { return Sleef_tan_u10(x); }
+static SLEEF_CONST float Sleef_tanf(float x) { return Sleef_tanf_u10(x); }
+static SLEEF_CONST double Sleef_asin(double x) { return Sleef_asin_u10(x); }
+static SLEEF_CONST float Sleef_asinf(float x) { return Sleef_asinf_u10(x); }
+static SLEEF_CONST double Sleef_acos(double x) { return Sleef_acos_u10(x); }
+static SLEEF_CONST float Sleef_acosf(float x) { return Sleef_acosf_u10(x); }
+static SLEEF_CONST double Sleef_atan(double x) { return Sleef_atan_u10(x); }
+static SLEEF_CONST float Sleef_atanf(float x) { return Sleef_atanf_u10(x); }
+static SLEEF_CONST double Sleef_atan2(double y, double x) { return Sleef_atan2_u10(y, x); }
+static SLEEF_CONST float Sleef_atan2f(float y, float x) { return Sleef_atan2f_u10(y, x); }
+static SLEEF_CONST double Sleef_sinh(double x) { return Sleef_sinh_u10(x); }
+static SLEEF_CONST float Sleef_sinhf(float x) { return Sleef_sinhf_u10(x); }
+static SLEEF_CONST double Sleef_cosh(double x) { return Sleef_cosh_u10(x); }
+static SLEEF_CONST float Sleef_coshf(float x) { return Sleef_coshf_u10(x); }
+static SLEEF_CONST double Sleef_tanh(double x) { return Sleef_tanh_u10(x); }
+static SLEEF_CONST float Sleef_tanhf(float x) { return Sleef_tanhf_u10(x); }
+static SLEEF_CONST double Sleef_asinh(double x) { return Sleef_asinh_u10(x); }
+static SLEEF_CONST float Sleef_asinhf(float x) { return Sleef_asinhf_u10(x); }
+static SLEEF_CONST double Sleef_acosh(double x) { return Sleef_acosh_u10(x); }
+static SLEEF_CONST float Sleef_acoshf(float x) { return Sleef_acoshf_u10(x); }
+static SLEEF_CONST double Sleef_atanh(double x) { return Sleef_atanh_u10(x); }
+static SLEEF_CONST float Sleef_atanhf(float x) { return Sleef_atanhf_u10(x); }
+static SLEEF_CONST double Sleef_log(double x) { return Sleef_log_u10(x); }
+static SLEEF_CONST float Sleef_logf(float x) { return Sleef_logf_u10(x); }
+static SLEEF_CONST double Sleef_log2(double x) { return Sleef_log2_u10(x); }
+static SLEEF_CONST float Sleef_log2f(float x) { return Sleef_log2f_u10(x); }
+static SLEEF_CONST double Sleef_log10(double x) { return Sleef_log10_u10(x); }
+static SLEEF_CONST float Sleef_log10f(float x) { return Sleef_log10f_u10(x); }
+static SLEEF_CONST double Sleef_log1p(double x) { return Sleef_log1p_u10(x); }
+static SLEEF_CONST float Sleef_log1pf(float x) { return Sleef_log1pf_u10(x); }
+static SLEEF_CONST double Sleef_exp(double x) { return Sleef_exp_u10(x); }
+static SLEEF_CONST float Sleef_expf(float x) { return Sleef_expf_u10(x); }
+static SLEEF_CONST double Sleef_exp2(double x) { return Sleef_exp2_u10(x); }
+static SLEEF_CONST float Sleef_exp2f(float x) { return Sleef_exp2f_u10(x); }
+static SLEEF_CONST double Sleef_exp10(double x) { return Sleef_exp10_u10(x); }
+static SLEEF_CONST float Sleef_exp10f(float x) { return Sleef_exp10f_u10(x); }
+static SLEEF_CONST double Sleef_expm1(double x) { return Sleef_expm1_u10(x); }
+static SLEEF_CONST float Sleef_expm1f(float x) { return Sleef_expm1f_u10(x); }
+static SLEEF_CONST double Sleef_pow(double x, double y) { return Sleef_pow_u10(x, y); }
+static SLEEF_CONST float Sleef_powf(float x, float y) { return Sleef_powf_u10(x, y); }
+static SLEEF_CONST double Sleef_cbrt(double x) { return Sleef_cbrt_u10(x); }
+static SLEEF_CONST float Sleef_cbrtf(float x) { return Sleef_cbrtf_u10(x); }
+static SLEEF_CONST double Sleef_hypot(double x, double y) { return Sleef_hypot_u05(x, y); }
+static SLEEF_CONST float Sleef_hypotf(float x, float y) { return Sleef_hypotf_u05(x, y); }
+static SLEEF_CONST double Sleef_erf(double x) { return Sleef_erf_u10(x); }
+static SLEEF_CONST float Sleef_erff(float x) { return Sleef_erff_u10(x); }
+#else // #ifndef __FAST_MATH__
+static SLEEF_CONST double Sleef_sin(double x) { return Sleef_sin_u35(x); }
+static SLEEF_CONST float Sleef_sinf(float x) { return Sleef_sinf_u35(x); }
+static SLEEF_CONST double Sleef_cos(double x) { return Sleef_cos_u35(x); }
+static SLEEF_CONST float Sleef_cosf(float x) { return Sleef_cosf_u35(x); }
+static SLEEF_CONST double Sleef_tan(double x) { return Sleef_tan_u35(x); }
+static SLEEF_CONST float Sleef_tanf(float x) { return Sleef_tanf_u35(x); }
+static SLEEF_CONST double Sleef_asin(double x) { return Sleef_asin_u35(x); }
+static SLEEF_CONST float Sleef_asinf(float x) { return Sleef_asinf_u35(x); }
+static SLEEF_CONST double Sleef_acos(double x) { return Sleef_acos_u35(x); }
+static SLEEF_CONST float Sleef_acosf(float x) { return Sleef_acosf_u35(x); }
+static SLEEF_CONST double Sleef_atan(double x) { return Sleef_atan_u35(x); }
+static SLEEF_CONST float Sleef_atanf(float x) { return Sleef_atanf_u35(x); }
+static SLEEF_CONST double Sleef_atan2(double y, double x) { return Sleef_atan2_u35(y, x); }
+static SLEEF_CONST float Sleef_atan2f(float y, float x) { return Sleef_atan2f_u35(y, x); }
+static SLEEF_CONST double Sleef_sinh(double x) { return Sleef_sinh_u35(x); }
+static SLEEF_CONST float Sleef_sinhf(float x) { return Sleef_sinhf_u35(x); }
+static SLEEF_CONST double Sleef_cosh(double x) { return Sleef_cosh_u35(x); }
+static SLEEF_CONST float Sleef_coshf(float x) { return Sleef_coshf_u35(x); }
+static SLEEF_CONST double Sleef_tanh(double x) { return Sleef_tanh_u35(x); }
+static SLEEF_CONST float Sleef_tanhf(float x) { return Sleef_tanhf_u35(x); }
+static SLEEF_CONST double Sleef_asinh(double x) { return Sleef_asinh_u10(x); }
+static SLEEF_CONST float Sleef_asinhf(float x) { return Sleef_asinhf_u10(x); }
+static SLEEF_CONST double Sleef_acosh(double x) { return Sleef_acosh_u10(x); }
+static SLEEF_CONST float Sleef_acoshf(float x) { return Sleef_acoshf_u10(x); }
+static SLEEF_CONST double Sleef_atanh(double x) { return Sleef_atanh_u10(x); }
+static SLEEF_CONST float Sleef_atanhf(float x) { return Sleef_atanhf_u10(x); }
+static SLEEF_CONST double Sleef_log(double x) { return Sleef_log_u35(x); }
+static SLEEF_CONST float Sleef_logf(float x) { return Sleef_logf_u35(x); }
+static SLEEF_CONST double Sleef_log2(double x) { return Sleef_log2_u10(x); }
+static SLEEF_CONST float Sleef_log2f(float x) { return Sleef_log2f_u10(x); }
+static SLEEF_CONST double Sleef_log10(double x) { return Sleef_log10_u10(x); }
+static SLEEF_CONST float Sleef_log10f(float x) { return Sleef_log10f_u10(x); }
+static SLEEF_CONST double Sleef_log1p(double x) { return Sleef_log1p_u10(x); }
+static SLEEF_CONST float Sleef_log1pf(float x) { return Sleef_log1pf_u10(x); }
+static SLEEF_CONST double Sleef_exp(double x) { return Sleef_exp_u10(x); }
+static SLEEF_CONST float Sleef_expf(float x) { return Sleef_expf_u10(x); }
+static SLEEF_CONST double Sleef_exp2(double x) { return Sleef_exp2_u10(x); }
+static SLEEF_CONST float Sleef_exp2f(float x) { return Sleef_exp2f_u10(x); }
+static SLEEF_CONST double Sleef_exp10(double x) { return Sleef_exp10_u10(x); }
+static SLEEF_CONST float Sleef_exp10f(float x) { return Sleef_exp10f_u10(x); }
+static SLEEF_CONST double Sleef_expm1(double x) { return Sleef_expm1_u10(x); }
+static SLEEF_CONST float Sleef_expm1f(float x) { return Sleef_expm1f_u10(x); }
+static SLEEF_CONST double Sleef_pow(double x, double y) { return Sleef_pow_u10(x, y); }
+static SLEEF_CONST float Sleef_powf(float x, float y) { return Sleef_powf_u10(x, y); }
+static SLEEF_CONST double Sleef_cbrt(double x) { return Sleef_cbrt_u35(x); }
+static SLEEF_CONST float Sleef_cbrtf(float x) { return Sleef_cbrtf_u35(x); }
+static SLEEF_CONST double Sleef_hypot(double x, double y) { return Sleef_hypot_u35(x, y); }
+static SLEEF_CONST float Sleef_hypotf(float x, float y) { return Sleef_hypotf_u35(x, y); }
+static SLEEF_CONST double Sleef_erf(double x) { return Sleef_erf_u10(x); }
+static SLEEF_CONST float Sleef_erff(float x) { return Sleef_erff_u10(x); }
+#endif // #ifndef __FAST_MATH__
 
 #endif // #ifndef __SLEEF_H__

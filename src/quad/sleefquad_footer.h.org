@@ -61,48 +61,48 @@ namespace sleef {
 #endif
 
 #if defined(SLEEF_REPLACE_LIBQUADMATH_FUNCS) || defined(__cplusplus)
-static SLEEF_INLINE SLEEF_CONST Sleef_quad strtoflt128(const char *str, char **endptr) { return Sleef_strtoq(str, endptr); }
-static SLEEF_INLINE SLEEF_CONST int quadmath_snprintf(char *str, size_t size, const char *fmt) { return Sleef_snprintf(str, size, fmt); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad acosq(Sleef_quad x) { return Sleef_acosq1_u10(x); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad acoshq(Sleef_quad x) { return Sleef_acoshq1_u10(x); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad asinq(Sleef_quad x) { return Sleef_asinq1_u10(x); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad asinhq(Sleef_quad x) { return Sleef_asinhq1_u10(x); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad atanq(Sleef_quad x) { return Sleef_atanq1_u10(x); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad atanhq(Sleef_quad x) { return Sleef_atanhq1_u10(x); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad atan2q(Sleef_quad y, Sleef_quad x) { return Sleef_atan2q1_u10(y, x); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad cbrtq(Sleef_quad x) { return Sleef_cbrtq1_u10(x); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad ceilq(Sleef_quad x) { return Sleef_ceilq1(x); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad copysignq(Sleef_quad x, Sleef_quad y) { return Sleef_copysignq1(x, y); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad coshq(Sleef_quad x) { return Sleef_coshq1_u10(x); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad cosq(Sleef_quad x) { return Sleef_cosq1_u10(x); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad expq(Sleef_quad x) { return Sleef_expq1_u10(x); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad expm1q(Sleef_quad x) { return Sleef_expm1q1_u10(x); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad fabsq(Sleef_quad x) { return Sleef_fabsq1(x); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad fdimq(Sleef_quad x, Sleef_quad y) { return Sleef_fdimq1_u05(x, y); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad floorq(Sleef_quad x) { return Sleef_floorq1(x); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad fmaq(Sleef_quad x, Sleef_quad y, Sleef_quad z) { return Sleef_fmaq1_u05(x, y, z); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad fmaxq(Sleef_quad x, Sleef_quad y) { return Sleef_fmaxq1(x, y); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad fminq(Sleef_quad x, Sleef_quad y) { return Sleef_fminq1(x, y); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad fmodq(Sleef_quad x, Sleef_quad y) { return Sleef_fmodq1(x, y); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad frexpq(Sleef_quad x, int *ptr) { return Sleef_frexpq1(x, ptr); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad hypotq(Sleef_quad x, Sleef_quad y) { return Sleef_hypotq1_u05(x, y); }
-static SLEEF_INLINE SLEEF_CONST int ilogbq(Sleef_quad x) { return Sleef_ilogbq1(x); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad ldexpq(Sleef_quad x, int e) { return Sleef_ldexpq1(x, e); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad logq(Sleef_quad x) { return Sleef_logq1_u10(x); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad log10q(Sleef_quad x) { return Sleef_log10q1_u10(x); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad log2q(Sleef_quad x) { return Sleef_log2q1_u10(x); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad log1pq(Sleef_quad x) { return Sleef_log1pq1_u10(x); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad modfq(Sleef_quad x, Sleef_quad *ptr) { return Sleef_modfq1(x, ptr); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad powq(Sleef_quad x, Sleef_quad y) { return Sleef_powq1_u10(x, y); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad remainderq(Sleef_quad x, Sleef_quad y) { return Sleef_remainderq1(x, y); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad rintq(Sleef_quad x) { return Sleef_rintq1(x); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad roundq(Sleef_quad x) { return Sleef_roundq1(x); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad sinhq(Sleef_quad x) { return Sleef_sinhq1_u10(x); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad sinq(Sleef_quad x) { return Sleef_sinq1_u10(x); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad sqrtq(Sleef_quad x) { return Sleef_sqrtq1_u05(x); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad tanq(Sleef_quad x) { return Sleef_tanq1_u10(x); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad tanhq(Sleef_quad x) { return Sleef_tanhq1_u10(x); }
-static SLEEF_INLINE SLEEF_CONST Sleef_quad truncq(Sleef_quad x) { return Sleef_truncq1(x); }
+static SLEEF_CONST Sleef_quad strtoflt128(const char *str, char **endptr) { return Sleef_strtoq(str, endptr); }
+static SLEEF_CONST int quadmath_snprintf(char *str, size_t size, const char *fmt) { return Sleef_snprintf(str, size, fmt); }
+static SLEEF_CONST Sleef_quad acosq(Sleef_quad x) { return Sleef_acosq1_u10(x); }
+static SLEEF_CONST Sleef_quad acoshq(Sleef_quad x) { return Sleef_acoshq1_u10(x); }
+static SLEEF_CONST Sleef_quad asinq(Sleef_quad x) { return Sleef_asinq1_u10(x); }
+static SLEEF_CONST Sleef_quad asinhq(Sleef_quad x) { return Sleef_asinhq1_u10(x); }
+static SLEEF_CONST Sleef_quad atanq(Sleef_quad x) { return Sleef_atanq1_u10(x); }
+static SLEEF_CONST Sleef_quad atanhq(Sleef_quad x) { return Sleef_atanhq1_u10(x); }
+static SLEEF_CONST Sleef_quad atan2q(Sleef_quad y, Sleef_quad x) { return Sleef_atan2q1_u10(y, x); }
+static SLEEF_CONST Sleef_quad cbrtq(Sleef_quad x) { return Sleef_cbrtq1_u10(x); }
+static SLEEF_CONST Sleef_quad ceilq(Sleef_quad x) { return Sleef_ceilq1(x); }
+static SLEEF_CONST Sleef_quad copysignq(Sleef_quad x, Sleef_quad y) { return Sleef_copysignq1(x, y); }
+static SLEEF_CONST Sleef_quad coshq(Sleef_quad x) { return Sleef_coshq1_u10(x); }
+static SLEEF_CONST Sleef_quad cosq(Sleef_quad x) { return Sleef_cosq1_u10(x); }
+static SLEEF_CONST Sleef_quad expq(Sleef_quad x) { return Sleef_expq1_u10(x); }
+static SLEEF_CONST Sleef_quad expm1q(Sleef_quad x) { return Sleef_expm1q1_u10(x); }
+static SLEEF_CONST Sleef_quad fabsq(Sleef_quad x) { return Sleef_fabsq1(x); }
+static SLEEF_CONST Sleef_quad fdimq(Sleef_quad x, Sleef_quad y) { return Sleef_fdimq1_u05(x, y); }
+static SLEEF_CONST Sleef_quad floorq(Sleef_quad x) { return Sleef_floorq1(x); }
+static SLEEF_CONST Sleef_quad fmaq(Sleef_quad x, Sleef_quad y, Sleef_quad z) { return Sleef_fmaq1_u05(x, y, z); }
+static SLEEF_CONST Sleef_quad fmaxq(Sleef_quad x, Sleef_quad y) { return Sleef_fmaxq1(x, y); }
+static SLEEF_CONST Sleef_quad fminq(Sleef_quad x, Sleef_quad y) { return Sleef_fminq1(x, y); }
+static SLEEF_CONST Sleef_quad fmodq(Sleef_quad x, Sleef_quad y) { return Sleef_fmodq1(x, y); }
+static SLEEF_CONST Sleef_quad frexpq(Sleef_quad x, int *ptr) { return Sleef_frexpq1(x, ptr); }
+static SLEEF_CONST Sleef_quad hypotq(Sleef_quad x, Sleef_quad y) { return Sleef_hypotq1_u05(x, y); }
+static SLEEF_CONST int ilogbq(Sleef_quad x) { return Sleef_ilogbq1(x); }
+static SLEEF_CONST Sleef_quad ldexpq(Sleef_quad x, int e) { return Sleef_ldexpq1(x, e); }
+static SLEEF_CONST Sleef_quad logq(Sleef_quad x) { return Sleef_logq1_u10(x); }
+static SLEEF_CONST Sleef_quad log10q(Sleef_quad x) { return Sleef_log10q1_u10(x); }
+static SLEEF_CONST Sleef_quad log2q(Sleef_quad x) { return Sleef_log2q1_u10(x); }
+static SLEEF_CONST Sleef_quad log1pq(Sleef_quad x) { return Sleef_log1pq1_u10(x); }
+static SLEEF_CONST Sleef_quad modfq(Sleef_quad x, Sleef_quad *ptr) { return Sleef_modfq1(x, ptr); }
+static SLEEF_CONST Sleef_quad powq(Sleef_quad x, Sleef_quad y) { return Sleef_powq1_u10(x, y); }
+static SLEEF_CONST Sleef_quad remainderq(Sleef_quad x, Sleef_quad y) { return Sleef_remainderq1(x, y); }
+static SLEEF_CONST Sleef_quad rintq(Sleef_quad x) { return Sleef_rintq1(x); }
+static SLEEF_CONST Sleef_quad roundq(Sleef_quad x) { return Sleef_roundq1(x); }
+static SLEEF_CONST Sleef_quad sinhq(Sleef_quad x) { return Sleef_sinhq1_u10(x); }
+static SLEEF_CONST Sleef_quad sinq(Sleef_quad x) { return Sleef_sinq1_u10(x); }
+static SLEEF_CONST Sleef_quad sqrtq(Sleef_quad x) { return Sleef_sqrtq1_u05(x); }
+static SLEEF_CONST Sleef_quad tanq(Sleef_quad x) { return Sleef_tanq1_u10(x); }
+static SLEEF_CONST Sleef_quad tanhq(Sleef_quad x) { return Sleef_tanhq1_u10(x); }
+static SLEEF_CONST Sleef_quad truncq(Sleef_quad x) { return Sleef_truncq1(x); }
 
 #ifdef __cplusplus
 } // namespace sleef

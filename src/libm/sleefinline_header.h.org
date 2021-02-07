@@ -30,6 +30,8 @@
 #define SLEEF_FP_ILOGBNAN ((int)2147483647)
 #endif
 
+#define SLEEFINLINE_SLEEF_SIMD_SLEEF_H_INCLUDED
+
 #ifndef __SLEEF_REMPITAB__
 #define __SLEEF_REMPITAB__
 const double Sleef_rempitabdp[] = {

@@ -36,7 +36,7 @@
 #endif /* ENABLE_AVX2 */
 
 #ifdef ENABLE_AVX512F
-#define ISA_TOKEN e
+#define ISA_TOKEN d
 #define VLEN_SP 16
 #define VLEN_DP 8
 #define VECTOR_CC

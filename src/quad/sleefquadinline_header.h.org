@@ -30,6 +30,8 @@
 #define SLEEF_FP_ILOGBNAN ((int)2147483647)
 #endif
 
+#define SLEEFQUADINLINE_SLEEF_SIMD_SLEEF_H_INCLUDED
+
 #ifndef __SLEEF_QREMPITAB__
 #define __SLEEF_QREMPITAB__
 const double Sleef_rempitabqp[] = {
