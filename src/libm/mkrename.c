@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
   static char *ulpSuffixStr[] = { "", "_u1", "_u05", "_u35", "_u15", "_u3500" };
   
   if (argc == 4 || argc == 5) {
-    char *atrPrefix = strcmp(argv[1], "-") == 0 ? "" : argv[1];
+    char *atrPrefix = strcmp(argv[1], "-") == 0 ? NULL : argv[1];
     char *wdp = argv[2];
     char *wsp = argv[3];
     char *isaname = argc == 4 ? "" : argv[4];
@@ -51,17 +51,21 @@ int main(int argc, char **argv) {
 	       funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
 	       "", funcList[i].name, wdp,
 	       funcList[i].ulp, isaname);
-	printf("#define y%s%s Sleef_%s%sd%s_u%02d%s\n",
-	       funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
-	       atrPrefix, funcList[i].name, wdp,
-	       funcList[i].ulp, isaname);
+	if (atrPrefix != NULL) {
+	  printf("#define y%s%s Sleef_%s%sd%s_u%02d%s\n",
+		 funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
+		 atrPrefix, funcList[i].name, wdp,
+		 funcList[i].ulp, isaname);
+	}
       } else {
 	printf("#define x%s Sleef_%s%sd%s%s%s\n",
 	       funcList[i].name,
 	       "", funcList[i].name, wdp, isaub, isaname);
-	printf("#define y%s Sleef_%s%sd%s%s%s\n",
-	       funcList[i].name,
-	       atrPrefix, funcList[i].name, wdp, isaub, isaname);
+	if (atrPrefix != NULL) {
+	  printf("#define y%s Sleef_%s%sd%s%s%s\n",
+		 funcList[i].name,
+		 atrPrefix, funcList[i].name, wdp, isaub, isaname);
+	}
       }
     }
 
@@ -73,56 +77,62 @@ int main(int argc, char **argv) {
 	       funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
 	       "", funcList[i].name, wsp,
 	       funcList[i].ulp, isaname);
-	printf("#define y%sf%s Sleef_%s%sf%s_u%02d%s\n",
-	       funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
-	       atrPrefix, funcList[i].name, wsp,
-	       funcList[i].ulp, isaname);
+	if (atrPrefix != NULL) {
+	  printf("#define y%sf%s Sleef_%s%sf%s_u%02d%s\n",
+		 funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
+		 atrPrefix, funcList[i].name, wsp,
+		 funcList[i].ulp, isaname);
+	}
       } else {
 	printf("#define x%sf Sleef_%s%sf%s%s%s\n",
 	       funcList[i].name,
 	       "", funcList[i].name, wsp, isaub, isaname);
-	printf("#define y%sf Sleef_%s%sf%s%s%s\n",
-	       funcList[i].name,
-	       atrPrefix, funcList[i].name, wsp, isaub, isaname);
+	if (atrPrefix != NULL) {
+	  printf("#define y%sf Sleef_%s%sf%s%s%s\n",
+		 funcList[i].name,
+		 atrPrefix, funcList[i].name, wsp, isaub, isaname);
+	}
       }
     }
 
     //
 
-    printf("\n#else //#ifndef DETERMINISTIC\n\n");
+    if (atrPrefix != NULL) {
+      printf("\n#else //#ifndef DETERMINISTIC\n\n");
 
-    for(int i=0;funcList[i].name != NULL;i++) {
-      if (funcList[i].ulp >= 0) {
-	printf("#define x%s%s Sleef_%s%sd%s_u%02d%s\n",
-	       funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
-	       atrPrefix, funcList[i].name, wdp,
-	       funcList[i].ulp, isaname);
-      } else {
-	printf("#define x%s Sleef_%s%sd%s%s%s\n",
-	       funcList[i].name,
-	       atrPrefix, funcList[i].name, wdp, isaub, isaname);
+      for(int i=0;funcList[i].name != NULL;i++) {
+	if (funcList[i].ulp >= 0) {
+	  printf("#define x%s%s Sleef_%s%sd%s_u%02d%s\n",
+		 funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
+		 atrPrefix, funcList[i].name, wdp,
+		 funcList[i].ulp, isaname);
+	} else {
+	  printf("#define x%s Sleef_%s%sd%s%s%s\n",
+		 funcList[i].name,
+		 atrPrefix, funcList[i].name, wdp, isaub, isaname);
+	}
       }
-    }
 
-    printf("\n");
+      printf("\n");
   
-    for(int i=0;funcList[i].name != NULL;i++) {
-      if (funcList[i].ulp >= 0) {
-	printf("#define x%sf%s Sleef_%s%sf%s_u%02d%s\n",
-	       funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
-	       atrPrefix, funcList[i].name, wsp,
-	       funcList[i].ulp, isaname);
-      } else {
-	printf("#define x%sf Sleef_%s%sf%s%s%s\n",
-	       funcList[i].name,
-	       atrPrefix, funcList[i].name, wsp, isaub, isaname);
+      for(int i=0;funcList[i].name != NULL;i++) {
+	if (funcList[i].ulp >= 0) {
+	  printf("#define x%sf%s Sleef_%s%sf%s_u%02d%s\n",
+		 funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
+		 atrPrefix, funcList[i].name, wsp,
+		 funcList[i].ulp, isaname);
+	} else {
+	  printf("#define x%sf Sleef_%s%sf%s%s%s\n",
+		 funcList[i].name,
+		 atrPrefix, funcList[i].name, wsp, isaub, isaname);
+	}
       }
     }
 
     printf("\n#endif // #ifndef DETERMINISTIC\n");
   }
   else {
-    char *atrPrefix = strcmp(argv[1], "-") == 0 ? "" : argv[1];
+    char *atrPrefix = strcmp(argv[1], "-") == 0 ? NULL : argv[1];
     char *wdp = argv[2];
     char *wsp = argv[3];
     char *vdoublename = argv[4], *vdoublename_escspace = escapeSpace(vdoublename);
@@ -132,15 +142,17 @@ int main(int argc, char **argv) {
     char *architecture = argv[8];
     char *isaname = argc == 10 ? argv[9] : "";
     char *isaub = argc == 10 ? "_" : "";
+    char *str_omp_simd_dp = (argc < 10 && strcmp(wdp, "1") == 0) ? "SLEEF_PRAGMA_OMP_SIMD_DP " : "";
+    char *str_omp_simd_sp = (argc < 10 && strcmp(wsp, "1") == 0) ? "SLEEF_PRAGMA_OMP_SIMD_SP " : "";
 
     if (strcmp(isaname, "sve") == 0)
       wdp = wsp = "x";
 
     char * vectorcc = "";
-    #ifdef ENABLE_AAVPCS
+#ifdef ENABLE_AAVPCS
     if (strcmp(isaname, "advsimd") == 0)
       vectorcc =" __attribute__((aarch64_vector_pcs))";
-    #endif
+#endif
 
     printf("#ifdef %s\n", architecture);
 
@@ -171,62 +183,74 @@ int main(int argc, char **argv) {
 	switch(funcList[i].funcType) {
 	case 0:
 	  if (funcList[i].ulp >= 0) {
-	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sd%s_u%02d%s(%s)%s;\n",
+	    printf("%sSLEEF_IMPORT SLEEF_CONST %s Sleef_%sd%s_u%02d%s(%s)%s;\n",
+		   str_omp_simd_dp,
 		   vdoublename,
 		   funcList[i].name, wdp,
 		   funcList[i].ulp, isaname,
 		   vdoublename,
                    vectorcc);
-	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sd%s_u%02d%s(%s)%s;\n",
-		   vdoublename,
-		   atrPrefix,
-		   funcList[i].name, wdp,
-		   funcList[i].ulp, isaname,
-		   vdoublename,
-                   vectorcc);
+	    if (atrPrefix != NULL) {
+	      printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sd%s_u%02d%s(%s)%s;\n",
+		     vdoublename,
+		     atrPrefix,
+		     funcList[i].name, wdp,
+		     funcList[i].ulp, isaname,
+		     vdoublename,
+		     vectorcc);
+	    }
 	  } else {
-	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sd%s%s%s(%s)%s;\n",
+	    printf("%sSLEEF_IMPORT SLEEF_CONST %s Sleef_%sd%s%s%s(%s)%s;\n",
+		   str_omp_simd_dp,
 		   vdoublename,
 		   funcList[i].name, wdp,
 		   isaub, isaname,
 		   vdoublename,
                    vectorcc);
-	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sd%s%s%s(%s)%s;\n",
-		   vdoublename,
-		   atrPrefix,
-		   funcList[i].name, wdp,
-		   isaub, isaname,
-		   vdoublename,
-                   vectorcc);
+	    if (atrPrefix != NULL) {
+	      printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sd%s%s%s(%s)%s;\n",
+		     vdoublename,
+		     atrPrefix,
+		     funcList[i].name, wdp,
+		     isaub, isaname,
+		     vdoublename,
+		     vectorcc);
+	    }
 	  }
 	  break;
 	case 1:
 	  if (funcList[i].ulp >= 0) {
-	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sd%s_u%02d%s(%s, %s)%s;\n",
+	    printf("%sSLEEF_IMPORT SLEEF_CONST %s Sleef_%sd%s_u%02d%s(%s, %s)%s;\n",
+		   str_omp_simd_dp,
 		   vdoublename,
 		   funcList[i].name, wdp,
 		   funcList[i].ulp, isaname,
 		   vdoublename, vdoublename,
                    vectorcc);
-	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sd%s_u%02d%s(%s, %s)%s;\n",
-		   vdoublename,
-		   atrPrefix, funcList[i].name, wdp,
-		   funcList[i].ulp, isaname,
-		   vdoublename, vdoublename,
-                   vectorcc);
+	    if (atrPrefix != NULL) {
+	      printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sd%s_u%02d%s(%s, %s)%s;\n",
+		     vdoublename,
+		     atrPrefix, funcList[i].name, wdp,
+		     funcList[i].ulp, isaname,
+		     vdoublename, vdoublename,
+		     vectorcc);
+	    }
 	  } else {
-	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sd%s%s%s(%s, %s)%s;\n",
+	    printf("%sSLEEF_IMPORT SLEEF_CONST %s Sleef_%sd%s%s%s(%s, %s)%s;\n",
+		   str_omp_simd_dp,
 		   vdoublename,
 		   funcList[i].name, wdp,
 		   isaub, isaname,
 		   vdoublename, vdoublename,
                    vectorcc);
-	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sd%s%s%s(%s, %s)%s;\n",
-		   vdoublename,
-		   atrPrefix, funcList[i].name, wdp,
-		   isaub, isaname,
-		   vdoublename, vdoublename,
-                   vectorcc);
+	    if (atrPrefix != NULL) {
+	      printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sd%s%s%s(%s, %s)%s;\n",
+		     vdoublename,
+		     atrPrefix, funcList[i].name, wdp,
+		     isaub, isaname,
+		     vdoublename, vdoublename,
+		     vectorcc);
+	    }
 	  }
 	  break;
 	case 2:
@@ -238,12 +262,14 @@ int main(int argc, char **argv) {
 		   funcList[i].ulp, isaname,
 		   vdoublename,
                    vectorcc);
-	    printf("SLEEF_IMPORT SLEEF_CONST Sleef_%s_2 Sleef_%s%sd%s_u%02d%s(%s)%s;\n",
-		   vdoublename_escspace,
-		   atrPrefix, funcList[i].name, wdp,
-		   funcList[i].ulp, isaname,
-		   vdoublename,
-                   vectorcc);
+	    if (atrPrefix != NULL) {
+	      printf("SLEEF_IMPORT SLEEF_CONST Sleef_%s_2 Sleef_%s%sd%s_u%02d%s(%s)%s;\n",
+		     vdoublename_escspace,
+		     atrPrefix, funcList[i].name, wdp,
+		     funcList[i].ulp, isaname,
+		     vdoublename,
+		     vectorcc);
+	    }
 	  } else {
 	    printf("SLEEF_IMPORT SLEEF_CONST Sleef_%s_2 Sleef_%sd%s%s%s(%s)%s;\n",
 		   vdoublename_escspace,
@@ -251,12 +277,14 @@ int main(int argc, char **argv) {
 		   isaub, isaname,
 		   vdoublename,
                    vectorcc);
-	    printf("SLEEF_IMPORT SLEEF_CONST Sleef_%s_2 Sleef_%s%sd%s%s%s(%s)%s;\n",
-		   vdoublename_escspace,
-		   atrPrefix, funcList[i].name, wdp,
-		   isaub, isaname,
-		   vdoublename,
-                   vectorcc);
+	    if (atrPrefix != NULL) {
+	      printf("SLEEF_IMPORT SLEEF_CONST Sleef_%s_2 Sleef_%s%sd%s%s%s(%s)%s;\n",
+		     vdoublename_escspace,
+		     atrPrefix, funcList[i].name, wdp,
+		     isaub, isaname,
+		     vdoublename,
+		     vectorcc);
+	    }
 	  }
 	  break;
 	case 3:
@@ -267,12 +295,14 @@ int main(int argc, char **argv) {
 		   funcList[i].ulp, isaname,
 		   vdoublename, vintname,
                    vectorcc);
-	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sd%s_u%02d%s(%s, %s)%s;\n",
-		   vdoublename,
-		   atrPrefix, funcList[i].name, wdp,
-		   funcList[i].ulp, isaname,
-		   vdoublename, vintname,
-                   vectorcc);
+	    if (atrPrefix != NULL) {
+	      printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sd%s_u%02d%s(%s, %s)%s;\n",
+		     vdoublename,
+		     atrPrefix, funcList[i].name, wdp,
+		     funcList[i].ulp, isaname,
+		     vdoublename, vintname,
+		     vectorcc);
+	    }
 	  } else {
 	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sd%s%s%s(%s, %s)%s;\n",
 		   vdoublename,
@@ -280,12 +310,14 @@ int main(int argc, char **argv) {
 		   isaub, isaname,
 		   vdoublename, vintname,
                    vectorcc);
-	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sd%s%s%s(%s, %s)%s;\n",
-		   vdoublename,
-		   atrPrefix, funcList[i].name, wdp,
-		   isaub, isaname,
-		   vdoublename, vintname,
-                   vectorcc);
+	    if (atrPrefix != NULL) {
+	      printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sd%s%s%s(%s, %s)%s;\n",
+		     vdoublename,
+		     atrPrefix, funcList[i].name, wdp,
+		     isaub, isaname,
+		     vdoublename, vintname,
+		     vectorcc);
+	    }
 	  }
 	  break;
 	case 4:
@@ -296,12 +328,14 @@ int main(int argc, char **argv) {
 		   funcList[i].ulp, isaname,
 		   vdoublename,
                    vectorcc);
-	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sd%s_u%02d%s(%s)%s;\n",
-		   vintname,
-		   atrPrefix, funcList[i].name, wdp,
-		   funcList[i].ulp, isaname,
-		   vdoublename,
-                   vectorcc);
+	    if (atrPrefix != NULL) {
+	      printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sd%s_u%02d%s(%s)%s;\n",
+		     vintname,
+		     atrPrefix, funcList[i].name, wdp,
+		     funcList[i].ulp, isaname,
+		     vdoublename,
+		     vectorcc);
+	    }
 	  } else {
 	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sd%s%s%s(%s)%s;\n",
 		   vintname,
@@ -309,28 +343,33 @@ int main(int argc, char **argv) {
 		   isaub, isaname,
 		   vdoublename,
                    vectorcc);
-	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sd%s%s%s(%s)%s;\n",
-		   vintname,
-		   atrPrefix, funcList[i].name, wdp,
-		   isaub, isaname,
-		   vdoublename,
-                   vectorcc);
+	    if (atrPrefix != NULL) {
+	      printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sd%s%s%s(%s)%s;\n",
+		     vintname,
+		     atrPrefix, funcList[i].name, wdp,
+		     isaub, isaname,
+		     vdoublename,
+		     vectorcc);
+	    }
 	  }
 	  break;
 	case 5:
 	  if (funcList[i].ulp >= 0) {
-	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sd%s_u%02d%s(%s, %s, %s)%s;\n",
+	    printf("%sSLEEF_IMPORT SLEEF_CONST %s Sleef_%sd%s_u%02d%s(%s, %s, %s)%s;\n",
+		   str_omp_simd_dp,
 		   vdoublename,
 		   funcList[i].name, wdp,
 		   funcList[i].ulp, isaname,
 		   vdoublename, vdoublename, vdoublename,
                    vectorcc);
-	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sd%s_u%02d%s(%s, %s, %s)%s;\n",
-		   vdoublename,
-		   atrPrefix, funcList[i].name, wdp,
-		   funcList[i].ulp, isaname,
-		   vdoublename, vdoublename, vdoublename,
-                   vectorcc);
+	    if (atrPrefix != NULL) {
+	      printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sd%s_u%02d%s(%s, %s, %s)%s;\n",
+		     vdoublename,
+		     atrPrefix, funcList[i].name, wdp,
+		     funcList[i].ulp, isaname,
+		     vdoublename, vdoublename, vdoublename,
+		     vectorcc);
+	    }
 	  } else {
 	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sd%s%s%s(%s, %s, %s)%s;\n",
 		   vdoublename,
@@ -338,12 +377,14 @@ int main(int argc, char **argv) {
 		   isaub, isaname,
 		   vdoublename, vdoublename, vdoublename,
                    vectorcc);
-	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sd%s%s%s(%s, %s, %s)%s;\n",
-		   vdoublename,
-		   atrPrefix, funcList[i].name, wdp,
-		   isaub, isaname,
-		   vdoublename, vdoublename, vdoublename,
-                   vectorcc);
+	    if (atrPrefix != NULL) {
+	      printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sd%s%s%s(%s, %s, %s)%s;\n",
+		     vdoublename,
+		     atrPrefix, funcList[i].name, wdp,
+		     isaub, isaname,
+		     vdoublename, vdoublename, vdoublename,
+		     vectorcc);
+	    }
 	  }
 	  break;
 	  // The two cases below should not use vector calling convention.
@@ -391,59 +432,71 @@ int main(int argc, char **argv) {
       switch(funcList[i].funcType) {
       case 0:
 	if (funcList[i].ulp >= 0) {
-	  printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sf%s_u%02d%s(%s)%s;\n",
+	  printf("%sSLEEF_IMPORT SLEEF_CONST %s Sleef_%sf%s_u%02d%s(%s)%s;\n",
+		 str_omp_simd_sp,
 		 vfloatname,
 		 funcList[i].name, wsp,
 		 funcList[i].ulp, isaname,
 		 vfloatname,
                  vectorcc);
-	  printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sf%s_u%02d%s(%s)%s;\n",
-		 vfloatname,
-		 atrPrefix, funcList[i].name, wsp,
-		 funcList[i].ulp, isaname,
-		 vfloatname,
-                 vectorcc);
+	  if (atrPrefix != NULL) {
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sf%s_u%02d%s(%s)%s;\n",
+		   vfloatname,
+		   atrPrefix, funcList[i].name, wsp,
+		   funcList[i].ulp, isaname,
+		   vfloatname,
+		   vectorcc);
+	  }
 	} else {
-	  printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sf%s%s%s(%s)%s;\n",
+	  printf("%sSLEEF_IMPORT SLEEF_CONST %s Sleef_%sf%s%s%s(%s)%s;\n",
+		 str_omp_simd_sp,
 		 vfloatname,
 		 funcList[i].name, wsp,
 		 isaub, isaname,
 		 vfloatname,
                  vectorcc);
-	  printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sf%s%s%s(%s)%s;\n",
-		 vfloatname,
-		 atrPrefix, funcList[i].name, wsp,
-		 isaub, isaname,
-		 vfloatname,
-                 vectorcc);
+	  if (atrPrefix != NULL) {
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sf%s%s%s(%s)%s;\n",
+		   vfloatname,
+		   atrPrefix, funcList[i].name, wsp,
+		   isaub, isaname,
+		   vfloatname,
+		   vectorcc);
+	  }
 	}
 	break;
       case 1:
 	if (funcList[i].ulp >= 0) {
-	  printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sf%s_u%02d%s(%s, %s)%s;\n",
+	  printf("%sSLEEF_IMPORT SLEEF_CONST %s Sleef_%sf%s_u%02d%s(%s, %s)%s;\n",
+		 str_omp_simd_sp,
 		 vfloatname,
 		 funcList[i].name, wsp,
 		 funcList[i].ulp, isaname,
 		 vfloatname, vfloatname, vectorcc);
-	  printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sf%s_u%02d%s(%s, %s)%s;\n",
-		 vfloatname,
-		 atrPrefix, funcList[i].name, wsp,
-		 funcList[i].ulp, isaname,
-		 vfloatname, vfloatname,
-                 vectorcc);
+	  if (atrPrefix != NULL) {
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sf%s_u%02d%s(%s, %s)%s;\n",
+		   vfloatname,
+		   atrPrefix, funcList[i].name, wsp,
+		   funcList[i].ulp, isaname,
+		   vfloatname, vfloatname,
+		   vectorcc);
+	  }
 	} else {
-	  printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sf%s%s%s(%s, %s)%s;\n",
+	  printf("%sSLEEF_IMPORT SLEEF_CONST %s Sleef_%sf%s%s%s(%s, %s)%s;\n",
+		 str_omp_simd_sp,
 		 vfloatname,
 		 funcList[i].name, wsp,
 		 isaub, isaname,
 		 vfloatname, vfloatname,
                  vectorcc);
-	  printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sf%s%s%s(%s, %s)%s;\n",
-		 vfloatname,
-		 atrPrefix, funcList[i].name, wsp,
-		 isaub, isaname,
-		 vfloatname, vfloatname,
-                 vectorcc);
+	  if (atrPrefix != NULL) {
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sf%s%s%s(%s, %s)%s;\n",
+		   vfloatname,
+		   atrPrefix, funcList[i].name, wsp,
+		   isaub, isaname,
+		   vfloatname, vfloatname,
+		   vectorcc);
+	  }
 	}
 	break;
       case 2:
@@ -455,12 +508,14 @@ int main(int argc, char **argv) {
 		 funcList[i].ulp, isaname,
 		 vfloatname,
                  vectorcc);
-	  printf("SLEEF_IMPORT SLEEF_CONST Sleef_%s_2 Sleef_%s%sf%s_u%02d%s(%s)%s;\n",
-		 vfloatname_escspace,
-		 atrPrefix, funcList[i].name, wsp,
-		 funcList[i].ulp, isaname,
-		 vfloatname,
-                 vectorcc);
+	  if (atrPrefix != NULL) {
+	    printf("SLEEF_IMPORT SLEEF_CONST Sleef_%s_2 Sleef_%s%sf%s_u%02d%s(%s)%s;\n",
+		   vfloatname_escspace,
+		   atrPrefix, funcList[i].name, wsp,
+		   funcList[i].ulp, isaname,
+		   vfloatname,
+		   vectorcc);
+	  }
 	} else {
 	  printf("SLEEF_IMPORT SLEEF_CONST Sleef_%s_2 Sleef_%sf%s%s%s(%s)%s;\n",
 		 vfloatname_escspace,
@@ -468,12 +523,14 @@ int main(int argc, char **argv) {
 		 isaub, isaname,
 		 vfloatname,
                  vectorcc);
-	  printf("SLEEF_IMPORT SLEEF_CONST Sleef_%s_2 Sleef_%s%sf%s%s%s(%s)%s;\n",
-		 vfloatname_escspace,
-		 atrPrefix, funcList[i].name, wsp,
-		 isaub, isaname,
-		 vfloatname,
-                 vectorcc);
+	  if (atrPrefix != NULL) {
+	    printf("SLEEF_IMPORT SLEEF_CONST Sleef_%s_2 Sleef_%s%sf%s%s%s(%s)%s;\n",
+		   vfloatname_escspace,
+		   atrPrefix, funcList[i].name, wsp,
+		   isaub, isaname,
+		   vfloatname,
+		   vectorcc);
+	  }
 	}
 	break;
 	/*
@@ -494,31 +551,37 @@ int main(int argc, char **argv) {
 	*/
       case 5:
 	if (funcList[i].ulp >= 0) {
-	  printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sf%s_u%02d%s(%s, %s, %s)%s;\n",
+	  printf("%sSLEEF_IMPORT SLEEF_CONST %s Sleef_%sf%s_u%02d%s(%s, %s, %s)%s;\n",
+		 str_omp_simd_sp,
 		 vfloatname,
 		 funcList[i].name, wsp,
 		 funcList[i].ulp, isaname,
 		 vfloatname, vfloatname, vfloatname,
                  vectorcc);
-	  printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sf%s_u%02d%s(%s, %s, %s)%s;\n",
-		 vfloatname,
-		 atrPrefix, funcList[i].name, wsp,
-		 funcList[i].ulp, isaname,
-		 vfloatname, vfloatname, vfloatname,
-                 vectorcc);
+	  if (atrPrefix != NULL) {
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sf%s_u%02d%s(%s, %s, %s)%s;\n",
+		   vfloatname,
+		   atrPrefix, funcList[i].name, wsp,
+		   funcList[i].ulp, isaname,
+		   vfloatname, vfloatname, vfloatname,
+		   vectorcc);
+	  }
 	} else {
-	  printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%sf%s%s%s(%s, %s, %s)%s;\n",
+	  printf("%sSLEEF_IMPORT SLEEF_CONST %s Sleef_%sf%s%s%s(%s, %s, %s)%s;\n",
+		 str_omp_simd_sp,
 		 vfloatname,
 		 funcList[i].name, wsp,
 		 isaub, isaname,
 		 vfloatname, vfloatname, vfloatname,
                  vectorcc);
-	  printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sf%s%s%s(%s, %s, %s)%s;\n",
-		 vfloatname,
-		 atrPrefix, funcList[i].name, wsp,
-		 isaub, isaname,
-		 vfloatname, vfloatname, vfloatname,
-                 vectorcc);
+	  if (atrPrefix != NULL) {
+	    printf("SLEEF_IMPORT SLEEF_CONST %s Sleef_%s%sf%s%s%s(%s, %s, %s)%s;\n",
+		   vfloatname,
+		   atrPrefix, funcList[i].name, wsp,
+		   isaub, isaname,
+		   vfloatname, vfloatname, vfloatname,
+		   vectorcc);
+	  }
 	}
 	break;
 	// The two cases below should not use vector calling convention.
@@ -526,14 +589,18 @@ int main(int argc, char **argv) {
       case 7:
 	printf("SLEEF_IMPORT SLEEF_CONST int Sleef_%sf%s%s%s(int);\n",
 	       funcList[i].name, wsp, isaub, isaname);
-	printf("SLEEF_IMPORT SLEEF_CONST int Sleef_%s%sf%s%s%s(int);\n",
-	       atrPrefix, funcList[i].name, wsp, isaub, isaname);
+	if (atrPrefix != NULL) {
+	  printf("SLEEF_IMPORT SLEEF_CONST int Sleef_%s%sf%s%s%s(int);\n",
+		 atrPrefix, funcList[i].name, wsp, isaub, isaname);
+	}
 	break;
       case 8:
 	printf("SLEEF_IMPORT SLEEF_CONST void *Sleef_%sf%s%s%s(int);\n",
 	       funcList[i].name, wsp, isaub, isaname);
-	printf("SLEEF_IMPORT SLEEF_CONST void *Sleef_%s%sf%s%s%s(int);\n",
-	       atrPrefix, funcList[i].name, wsp, isaub, isaname);
+	if (atrPrefix != NULL) {
+	  printf("SLEEF_IMPORT SLEEF_CONST void *Sleef_%s%sf%s%s%s(int);\n",
+		 atrPrefix, funcList[i].name, wsp, isaub, isaname);
+	}
 	break;
       }
     }
