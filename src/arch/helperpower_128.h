@@ -617,6 +617,8 @@ static INLINE vint2 vsra_vi2_vi2_i(vint2 x, int c)
 
 ////////////// Reverse //////////////
 // Reverse elements order inside the lower and higher parts
+static INLINE vint2 vrev21_vi2_vi2(vint2 vi)
+{ return vec_mergee(vec_mergeo(vi, vi), vi); }
 static INLINE vfloat vrev21_vf_vf(vfloat vf)
 { return (vfloat)vrev21_vi2_vi2((vint2)vf); }
 
