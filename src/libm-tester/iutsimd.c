@@ -431,7 +431,7 @@ static vdouble vd2getx_vd_vd2(vdouble2 v) { return v.x; }
 static vdouble vd2gety_vd_vd2(vdouble2 v) { return v.y; }
 #endif
 
-#if defined(ENABLE_DP) && !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA) || defined(USE_INLINE_HEADER))
+#if defined(ENABLE_SP) && !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA) || defined(USE_INLINE_HEADER))
 static vfloat vf2getx_vf_vf2(vfloat2 v) { return v.x; }
 static vfloat vf2gety_vf_vf2(vfloat2 v) { return v.y; }
 #endif

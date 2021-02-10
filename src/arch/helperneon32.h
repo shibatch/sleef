@@ -144,7 +144,7 @@ static INLINE vfloat vsqrt_vf_vf(vfloat d) {
 }
 
 static INLINE vfloat vrec_vf_vf(vfloat y) {
-  float32x4_t t = vrecpeq_f32(y), u;
+  float32x4_t t = vrecpeq_f32(y);
   t = vmulq_f32(t, vrecpsq_f32(y, t));
   t = vfmaq_f32(t, vfmsq_f32(vdupq_n_f32(1.0f), y, t), t);
   return vfmaq_f32(t, vfmsq_f32(vdupq_n_f32(1.0f), y, t), t);
