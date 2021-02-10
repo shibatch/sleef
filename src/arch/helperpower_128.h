@@ -272,10 +272,6 @@ static INLINE vmask vreinterpret_vm_vd(vdouble vd)
 { return (vmask)vd; }
 static INLINE vdouble vreinterpret_vd_vm(vmask vm)
 { return (vdouble)vm; }
-static INLINE vint2 vreinterpret_vi2_vd(vdouble vd)
-{ return (vint2)vd; }
-static INLINE vdouble vreinterpret_vd_vi2(vint2 vi)
-{ return (vdouble)vi; }
 
 static INLINE vmask vreinterpret_vm_vf(vfloat vf)
 { return (vmask)vf; }
@@ -340,6 +336,9 @@ static INLINE vopmask vcast_vo32_vo64(vopmask m)
 // clip 64-bit lanes to lower 32-bit
 static INLINE vint vcastu_vi_vi2(vint2 vi2)
 { return vec_mergeo(vi2, vec_splat(vi2, 3)); }
+static INLINE vint vcastu_vi_vm(vmask vi2)
+{ return vec_mergeo((vint2)vi2, vec_splat((vint2)vi2, 3)); }
+
 
 // expand lower 32-bit mask
 static INLINE vopmask vcast_vo64_vo32(vopmask m)
@@ -347,6 +346,8 @@ static INLINE vopmask vcast_vo64_vo32(vopmask m)
 // unsigned expand lower 32-bit integer
 static INLINE vint2 vcastu_vi2_vi(vint vi)
 { return vec_mergeh(vzero__vi(), vi); }
+static INLINE vmask vcastu_vm_vi(vint vi)
+{ return (vmask)vec_mergeh(vzero__vi(), vi); }
 
 static INLINE vopmask vcast_vo_i(int i) {
   i = i ? -1 : 0;
@@ -616,8 +617,6 @@ static INLINE vint2 vsra_vi2_vi2_i(vint2 x, int c)
 
 ////////////// Reverse //////////////
 // Reverse elements order inside the lower and higher parts
-static INLINE vint2 vrev21_vi2_vi2(vint2 vi)
-{ return vec_mergee(vec_mergeo(vi, vi), vi); }
 static INLINE vfloat vrev21_vf_vf(vfloat vf)
 { return (vfloat)vrev21_vi2_vi2((vint2)vf); }
 

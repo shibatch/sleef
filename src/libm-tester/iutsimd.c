@@ -18,7 +18,6 @@
 #else
 #include <unistd.h>
 #include <sys/types.h>
-#include <signal.h>
 #endif
 
 #include "quaddef.h"
@@ -397,46 +396,44 @@ typedef Sleef_float_2 vfloat2;
 
 //
 
+int check_feature(double d, float f) {
 #ifdef ENABLE_DP
-int check_featureDP(double d) {
-  double s[VECTLENDP];
-  int i;
-  for(i=0;i<VECTLENDP;i++) {
-    s[i] = d;
+  {
+    double s[VECTLENDP];
+    int i;
+    for(i=0;i<VECTLENDP;i++) {
+      s[i] = d;
+    }
+    vdouble a = vloadu_vd_p(s);
+    a = xpow(a, a);
+    vstoreu_v_p_vd(s, a);
+    if (s[0] == s[0]) return 1;
   }
-  vdouble a = vloadu_vd_p(s);
-  a = xpow(a, a);
-  vstoreu_v_p_vd(s, a);
-  return s[0] == s[0];
+#endif
+#ifdef ENABLE_SP
+  {
+    float s[VECTLENSP];
+    int i;
+    for(i=0;i<VECTLENSP;i++) {
+      s[i] = d;
+    }
+    vfloat a = vloadu_vf_p(s);
+    a = xpowf(a, a);
+    vstoreu_v_p_vf(s, a);
+    if (s[0] == s[0]) return 1;
+  }
+#endif
+  return 0;
 }
 
-#if !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA) || defined(USE_INLINE_HEADER))
+#if defined(ENABLE_DP) && !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA) || defined(USE_INLINE_HEADER))
 static vdouble vd2getx_vd_vd2(vdouble2 v) { return v.x; }
 static vdouble vd2gety_vd_vd2(vdouble2 v) { return v.y; }
 #endif
-#else // #ifdef ENABLE_DP
-int check_featureDP() { return 0; }
-#endif // #ifdef ENABLE_DP
 
-#ifdef ENABLE_SP
-int check_featureSP(float d) {
-  float s[VECTLENSP];
-  int i;
-  for(i=0;i<VECTLENSP;i++) {
-    s[i] = d;
-  }
-  vfloat a = vloadu_vf_p(s);
-  a = xpowf(a, a);
-  vstoreu_v_p_vf(s, a);
-  return s[0] == s[0];
-}
-
-#if !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA) || defined(USE_INLINE_HEADER))
+#if defined(ENABLE_DP) && !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA) || defined(USE_INLINE_HEADER))
 static vfloat vf2getx_vf_vf2(vfloat2 v) { return v.x; }
 static vfloat vf2gety_vf_vf2(vfloat2 v) { return v.y; }
-#endif
-#else // #ifdef ENABLE_DP
-int check_featureSP() { return 0; }
 #endif
 
 //
@@ -613,7 +610,7 @@ int check_featureSP() { return 0; }
 
 #define BUFSIZE 1024
 
-int do_test(int argc, char **argv) {
+int main2(int argc, char **argv) {
   xsrand(time(NULL));
 
   {

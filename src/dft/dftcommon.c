@@ -388,8 +388,6 @@ int PlanManager_loadMeasurementResultsT(SleefDFT *p) {
 
   initPlanMapLock();
 
-  int ret = 0;
-  
 #ifdef _OPENMP
   omp_set_lock(&planMapLock);
 #endif
@@ -409,8 +407,6 @@ void PlanManager_saveMeasurementResultsT(SleefDFT *p) {
 
   initPlanMapLock();
 
-  int ret = 0;
-  
 #ifdef _OPENMP
   omp_set_lock(&planMapLock);
 #endif

@@ -24,7 +24,6 @@
 #include <unistd.h>
 #include <assert.h>
 #include <sys/types.h>
-#include <signal.h>
 
 #include "misc.h"
 #include "testerutil.h"
@@ -55,7 +54,6 @@ void startChild(const char *path, char *const argv[]) {
   if (pid == 0) {
     // child process
     char buf0[1], buf1[1];
-    int i;
 
     close(ptoc[1]);
     close(ctop[0]);
@@ -63,11 +61,8 @@ void startChild(const char *path, char *const argv[]) {
     fflush(stdin);
     fflush(stdout);
     
-    i = dup2(ptoc[0], fileno(stdin));
-    assert(i != -1);
-
-    i = dup2(ctop[1], fileno(stdout));
-    assert(i != -1);
+    if (dup2(ptoc[0], fileno(stdin)) == -1) exit(-1);
+    if (dup2(ctop[1], fileno(stdout)) == -1) exit(-1);
 
     setvbuf(stdin, buf0, _IONBF,0);
     setvbuf(stdout, buf1, _IONBF,0);
@@ -2582,7 +2577,7 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "ilogb denormal/nonnumber test : ");
+      fprintf(stderr, "ilogb test : ");
 
       double xa[] = { POSITIVE_INFINITY, NEGATIVE_INFINITY, -1, };
 
@@ -2602,6 +2597,25 @@ void do_test() {
       {
 	int t = child_ilogb(0);
 	if (t != INT_MIN && t != -INT_MAX) success = 0;
+      }
+    
+      showResult(success);
+    }
+
+    {
+      fprintf(stderr, "nextafter test : ");
+
+      double xa[] = { NEGATIVE_INFINITY, -DBL_MAX, -1, -DBL_MIN, -SLEEF_DBL_DENORM_MIN, -0, +0, SLEEF_DBL_DENORM_MIN, DBL_MIN, 1 , DBL_MAX, POSITIVE_INFINITY, NAN };
+
+      for(i=0;i<sizeof(xa)/sizeof(double) && success;i++) {
+	for(j=0;j<sizeof(xa)/sizeof(double) && success;j++) {
+	  double t = child_nextafter(xa[i], xa[j]), c = nextafter(xa[i], xa[j]);
+	  if (!((t != 0 && !isnan(t) && !isnan(c) && t == c) || (t == 0 && c == 0 && signbit(t) == signbit(c)) || (isnan(t) && isnan(c)))) {
+	    fprintf(stderr, "arg = %.20g, %.20g, correct = %.20g, test = %.20g\n", xa[i], xa[j], c, t);
+	    success = 0;
+	    break;
+	  }
+	}
       }
     
       showResult(success);
@@ -3237,6 +3251,25 @@ void do_test() {
       showResult(success);
     }
 
+    {
+      fprintf(stderr, "nextafterf test : ");
+
+      float xa[] = { NEGATIVE_INFINITY, -FLT_MAX, -1, -FLT_MIN, -SLEEF_FLT_DENORM_MIN, -0, +0, SLEEF_FLT_DENORM_MIN, FLT_MIN, 1 , FLT_MAX, POSITIVE_INFINITY, NAN };
+
+      for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) {
+	for(j=0;j<sizeof(xa)/sizeof(float) && success;j++) {
+	  float t = child_nextafterf(xa[i], xa[j]), c = nextafterf(xa[i], xa[j]);
+	  if (!((t != 0 && !isnan(t) && !isnan(c) && t == c) || (t == 0 && c == 0 && signbit(t) == signbit(c)) || (isnan(t) && isnan(c)))) {
+	    fprintf(stderr, "arg = %.20g, %.20g, correct = %.20g, test = %.20g\n", xa[i], xa[j], c, t);
+	    success = 0;
+	    break;
+	  }
+	}
+      }
+    
+      showResult(success);
+    }
+  
     {
       fprintf(stderr, "fmaxf denormal/nonnumber test : ");
 

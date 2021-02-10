@@ -45,10 +45,8 @@ int main(int argc, char **argv) {
   static char *vintname[] = { "vint", "vint2" };
   static int sizeoffp[] = { 8, 4 };
   
-  static char *ulpSuffixStr[] = { "", "_u1", "_u05", "_u35", "_u15", "_u3500" };
   static char vparameterStr[7][LEN0] = { "v", "vv", "vl8l8", "vv", "v", "vvv", "vl8" };
   static char *typeSpecS[] = { "", "f" };
-  static char *typeSpec[] = { "d", "f" };
   static char funcname[4][LEN1];
 
   snprintf(vparameterStr[2], LEN0, "vl%dl%d", sizeoffp[fptype], sizeoffp[fptype]);
@@ -82,11 +80,11 @@ int main(int argc, char **argv) {
              vfpname[fptype], funcname[1], vfpname[fptype], funcname[0]);
 
       if (funcList[i].ulp < 20)
-        printf("EXPORT CONST %s %s(%s) __attribute__((weak, alias(\"%s\")));\n",
-               vfpname[fptype], funcname[3], vfpname[fptype], funcname[0]);
+        printf("EXPORT CONST %s %s(%s, vopmask) __attribute__((weak, alias(\"%s\")));\n",
+               vfpname[fptype], funcname[3], vfpname[fptype], funcname[1]);
       else
-        printf("EXPORT CONST %s %s_u%d(%s) __attribute__((weak, alias(\"%s\")));\n",
-               vfpname[fptype], funcname[3],funcList[i].ulp, vfpname[fptype], funcname[0]);
+        printf("EXPORT CONST %s %s_u%d(%s, vopmask) __attribute__((weak, alias(\"%s\")));\n",
+               vfpname[fptype], funcname[3],funcList[i].ulp, vfpname[fptype], funcname[1]);
       break;
     }
     case 1: {
@@ -94,10 +92,10 @@ int main(int argc, char **argv) {
 	     vfpname[fptype], funcname[1], vfpname[fptype], vfpname[fptype], funcname[0]);
       if (funcList[i].ulp < 20)
         printf("EXPORT CONST %s %s(%s, %s, vopmask) __attribute__((weak, alias(\"%s\")));\n",
-               vfpname[fptype], funcname[3], vfpname[fptype], vfpname[fptype], funcname[0]);
+               vfpname[fptype], funcname[3], vfpname[fptype], vfpname[fptype], funcname[1]);
       else
         printf("EXPORT CONST %s %s_u%d(%s, %s, vopmask) __attribute__((weak, alias(\"%s\")));\n",
-               vfpname[fptype], funcname[3],funcList[i].ulp, vfpname[fptype], vfpname[fptype], funcname[0]);
+               vfpname[fptype], funcname[3],funcList[i].ulp, vfpname[fptype], vfpname[fptype], funcname[1]);
       break;
     }
     case 2:
@@ -165,10 +163,10 @@ int main(int argc, char **argv) {
 
       if (funcList[i].ulp < 20)
         printf("EXPORT CONST %s %s(%s, %s, vopmask) __attribute__((weak, alias(\"%s\")));\n",
-               vfpname[fptype], funcname[3], vfpname[fptype], ptr_type, funcname[0]);
+               vfpname[fptype], funcname[3], vfpname[fptype], ptr_type, funcname[1]);
       else
         printf("EXPORT CONST %s %s_u%d(%s, %s, vopmask) __attribute__((weak, alias(\"%s\")));\n",
-               vfpname[fptype], funcname[3],funcList[i].ulp, vfpname[fptype], ptr_type, funcname[0]);
+               vfpname[fptype], funcname[3],funcList[i].ulp, vfpname[fptype], ptr_type, funcname[1]);
     }
       break;
     }

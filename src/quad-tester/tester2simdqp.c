@@ -210,7 +210,7 @@ int main(int argc,char **argv)
 
   int cnt, ecnt = 0;
   VARGQUAD a0, a1, a2, a3;
-  vdouble vd0 = vcast_vd_d(0), vd1, vd2, vd3;
+  vdouble vd0 = vcast_vd_d(0);
   Sleef_quad q0, q1, q2, q3, t;
   mpfr_t frw, frx, fry, frz;
   mpfr_inits(frw, frx, fry, frz, NULL);

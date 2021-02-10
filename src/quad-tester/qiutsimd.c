@@ -18,7 +18,6 @@
 #else
 #include <unistd.h>
 #include <sys/types.h>
-#include <signal.h>
 #endif
 
 #include "quaddef.h"
@@ -263,7 +262,7 @@
 
 //
 
-int check_featureQP(double d) {
+int check_feature(double d, float f) {
   double s[VECTLENDP];
   for(int i=0;i<VECTLENDP;i++) s[i] = d;
   VARGQUAD a = xcast_from_doubleq(vloadu_vd_p(s));
@@ -636,7 +635,7 @@ typedef union {
   }
 #endif
 
-int do_test(int argc, char **argv) {
+int main2(int argc, char **argv) {
   xsrand(time(NULL));
 
   {

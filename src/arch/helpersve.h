@@ -700,17 +700,11 @@ static INLINE vdouble vreinterpret_vd_vm(vmask vm) {
 static INLINE vmask vreinterpret_vm_vd(vdouble vd) {
   return svreinterpret_s32_f64(vd);
 }
-static INLINE vdouble vreinterpret_vd_vi2(vint2 x) {
-  return svreinterpret_f64_s32(x);
-}
-static INLINE vint2 vreinterpret_vi2_vd(vdouble x) {
-  return svreinterpret_s32_f64(x);
-}
-static INLINE vint2 vcastu_vi2_vi(vint x) {
+static INLINE vint2 vcastu_vm_vi(vint x) {
   return svreinterpret_s32_s64(
       svlsl_n_s64_x(ptrue, svreinterpret_s64_s32(x), 32));
 }
-static INLINE vint vcastu_vi_vi2(vint2 x) {
+static INLINE vint vcastu_vi_vm(vint2 x) {
   return svreinterpret_s32_u64(
       svlsr_n_u64_x(ptrue, svreinterpret_u64_s32(x), 32));
 }
@@ -977,8 +971,6 @@ static INLINE vmask vor_vm_vo64_vm(vopmask x, vmask y) {
 static INLINE vfloat vrev21_vf_vf(vfloat vf) {
   return svreinterpret_f32_u64(svrevw_u64_x(ptrue, svreinterpret_u64_f32(vf)));
 }
-
-static INLINE vint2 vrev21_vi2_vi2(vint2 i) { return vreinterpret_vi2_vf(vrev21_vf_vf(vreinterpret_vf_vi2(i))); }
 
 // Comparison returning integer
 static INLINE vint2 veq_vi2_vi2_vi2(vint2 x, vint2 y) {

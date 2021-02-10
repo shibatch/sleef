@@ -48,8 +48,6 @@ int main(int argc, char **argv) {
 
   const char *baseType = argv[1];
   const int isastart = 2;
-  const int isamax = argc - isastart;
-  const int maxbutwidth = 6;
 
   for(int config=0;config<CONFIGMAX;config++) {
 #if ENABLE_STREAM == 0

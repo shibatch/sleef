@@ -620,7 +620,7 @@ static Sleef_double2 atan2k_u1(Sleef_double2 y, Sleef_double2 x) {
   t = ddsqu_d2_d2(s);
   t = ddnormalize_d2_d2(t);
 
-  double t2 = t.x * t.x, t4 = t2 * t2, t8 = t4 * t4, t16 = t8 * t8;
+  double t2 = t.x * t.x, t4 = t2 * t2, t8 = t4 * t4;
   u = POLY16(t.x, t2, t4, t8,
 	     1.06298484191448746607415e-05,
 	     -0.000125620649967286867384336,
@@ -697,7 +697,7 @@ EXPORT CONST double xasin_u1(double d) {
 EXPORT CONST double xacos_u1(double d) {
   int o = fabsk(d) < 0.5;
   double x2 = o ? (d*d) : ((1-fabsk(d))*0.5), u;
-  Sleef_double2 x = o ? dd(fabsk(d), 0) : ddsqrt_d2_d(x2), w;
+  Sleef_double2 x = o ? dd(fabsk(d), 0) : ddsqrt_d2_d(x2);
   x = fabsk(d) == 1.0 ? dd(0, 0) : x;
 
   double x4 = x2 * x2, x8 = x4 * x4, x16 = x8 * x8;
@@ -761,9 +761,8 @@ static CONST di_t rempisub(double x) {
 
 // Payne-Hanek like argument reduction
 static CONST ddi_t rempi(double a) {
-  Sleef_double2 x, y, z;
+  Sleef_double2 x, y;
   di_t di;
-  double t;
   int ex = ilogb2k(a) - 55, q = ex > (700-55) ? -64 : 0;
   a = ldexp3k(a, q);
   if (ex < 0) ex = 0;
@@ -2469,7 +2468,7 @@ typedef struct {
 } dd2;
 
 static CONST dd2 gammak(double a) {
-  Sleef_double2 clc = dd(0, 0), clln = dd(1, 0), clld = dd(1, 0), v = dd(1, 0), x, y, z;
+  Sleef_double2 clc = dd(0, 0), clln = dd(1, 0), clld = dd(1, 0), x, y, z;
   double t, u;
 
   int otiny = fabsk(a) < 1e-306, oref = a < 0.5;

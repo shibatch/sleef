@@ -1089,7 +1089,6 @@ int main(int argc,char **argv)
       mpfr_hypot(frx, frx, fry, GMP_RNDN);
 
       double u0 = countULP2sp(t = vget(xhypotf_u05(vd, vd2), e), frx);
-      double c = mpfr_get_d(frx, GMP_RNDN);
 
       if (u0 > 0.5001) {
 	printf(ISANAME " hypotf_u05 arg=%.20g, %.20g  ulp=%.20g\n", d, d2, u0);
@@ -1104,7 +1103,6 @@ int main(int argc,char **argv)
       mpfr_hypot(frx, frx, fry, GMP_RNDN);
 
       double u0 = countULP2sp(t = vget(xhypotf_u35(vd, vd2), e), frx);
-      double c = mpfr_get_d(frx, GMP_RNDN);
 
       if (u0 >= 3.5) {
 	printf(ISANAME " hypotf_u35 arg=%.20g, %.20g  ulp=%.20g\n", d, d2, u0);
@@ -1119,7 +1117,6 @@ int main(int argc,char **argv)
       mpfr_fmod(frx, frx, fry, GMP_RNDN);
 
       double u0 = countULPsp(t = vget(xfmodf(vd, vd2), e), frx);
-      long double c = mpfr_get_ld(frx, GMP_RNDN);
 
       if (fabs((double)d / d2) < 1e+38 && u0 > 0.5) {
 	printf(ISANAME " fmodf arg=%.20g, %.20g  ulp=%.20g\n", d, d2, u0);
@@ -1134,7 +1131,6 @@ int main(int argc,char **argv)
       mpfr_remainder(frx, frx, fry, GMP_RNDN);
 
       double u0 = countULPsp(t = vget(xremainderf(vd, vd2), e), frx);
-      long double c = mpfr_get_ld(frx, GMP_RNDN);
 
       if (fabs((double)d / d2) < 1e+38 && u0 > 0.5) {
 	printf(ISANAME " remainderf arg=%.20g, %.20g  ulp=%.20g\n", d, d2, u0);

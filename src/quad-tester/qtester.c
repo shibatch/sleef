@@ -24,7 +24,6 @@
 #include <unistd.h>
 #include <assert.h>
 #include <sys/types.h>
-#include <signal.h>
 
 #include "misc.h"
 #include "qtesterutil.h"
@@ -51,7 +50,6 @@ void startChild(const char *path, char *const argv[]) {
   if (pid == 0) {
     // child process
     char buf0[1], buf1[1];
-    int i;
 
     close(ptoc[1]);
     close(ctop[0]);
@@ -59,11 +57,8 @@ void startChild(const char *path, char *const argv[]) {
     fflush(stdin);
     fflush(stdout);
     
-    i = dup2(ptoc[0], fileno(stdin));
-    assert(i != -1);
-
-    i = dup2(ctop[1], fileno(stdout));
-    assert(i != -1);
+    if (dup2(ptoc[0], fileno(stdin)) == -1) exit(-1);
+    if (dup2(ctop[1], fileno(stdout)) == -1) exit(-1);
 
     setvbuf(stdin, buf0, _IONBF,0);
     setvbuf(stdout, buf1, _IONBF,0);

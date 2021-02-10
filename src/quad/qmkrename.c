@@ -48,8 +48,8 @@ int main(int argc, char **argv) {
     char *vargquadname = argv[2];
     char *vargquad2name = argv[3];
     char *vdoublename = argv[4];
-    char *vfloatname = argv[5];
-    char *vmaskname = argv[6];
+    //char *vfloatname = argv[5];
+    //char *vmaskname = argv[6];
     char *vintname = argv[7];
     char *vint64name = argv[8];
     char *vuint64name = argv[9];

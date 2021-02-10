@@ -79,7 +79,7 @@ function(add_test_iut IUT C)
 endfunction()
 
 # Add vector extension `iut`s
-set(IUT_SRC qiutsimd.c qiutsimdmain.c qtesterutil.c)
+set(IUT_SRC qiutsimd.c ${sleef_SOURCE_DIR}/src/common/main_checkfeature.c qtesterutil.c)
 
 macro(test_extension SIMD)
   if(COMPILER_SUPPORTS_${SIMD})

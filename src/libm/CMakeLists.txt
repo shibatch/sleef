@@ -137,7 +137,7 @@ command_arguments(RENAME_PARAMS_SVENOFMA        cinz_ x x svenofma)
 command_arguments(RENAME_PARAMS_GNUABI_SSE2     sse2 b 2 4 _mm128d _mm128 _mm128i _mm128i __SSE2__)
 command_arguments(RENAME_PARAMS_GNUABI_AVX      avx c 4 8 __m256d __m256 __m128i "struct { __m128i x, y$<SEMICOLON> }" __AVX__)
 command_arguments(RENAME_PARAMS_GNUABI_AVX2     avx2 d 4 8 __m256d __m256 __m128i __m256i __AVX2__)
-command_arguments(RENAME_PARAMS_GNUABI_AVX512F  avx512f d 8 16 __m512d __m512 __m256i __m512i __AVX512F__)
+command_arguments(RENAME_PARAMS_GNUABI_AVX512F  avx512f e 8 16 __m512d __m512 __m256i __m512i __AVX512F__)
 command_arguments(RENAME_PARAMS_GNUABI_ADVSIMD  advsimd n 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON)
 # The vector length parameters in SVE, for SP and DP, are chosen for
 # the smallest SVE vector size (128-bit). The name is generated using
@@ -146,8 +146,8 @@ command_arguments(RENAME_PARAMS_GNUABI_SVE sve s x x svfloat64_t svfloat32_t svi
 
 # ALIAS_PARAMS
 
-command_arguments(ALIAS_PARAMS_AVX512F_DP   8 __m512d __m256i d avx512f)
-command_arguments(ALIAS_PARAMS_AVX512F_SP -16 __m512  __m512i d avx512f)
+command_arguments(ALIAS_PARAMS_AVX512F_DP   8 __m512d __m256i e avx512f)
+command_arguments(ALIAS_PARAMS_AVX512F_SP -16 __m512  __m512i e avx512f)
 
 command_arguments(ALIAS_PARAMS_ADVSIMD_DP  2 float64x2_t int32x2_t n advsimd)
 command_arguments(ALIAS_PARAMS_ADVSIMD_SP -4 float32x4_t int32x4_t n advsimd)
