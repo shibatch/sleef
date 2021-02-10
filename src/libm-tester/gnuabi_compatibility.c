@@ -541,7 +541,9 @@ volatile char outbuf[1024];
 int check_feature(double d, float f) {
 #ifdef ENABLE_SVE
   vdouble vd0 = svdup_n_f64(d), vd1 = svdup_n_f64(d);
+#ifdef MASKED_GNUABI
   vopmask mask = svcmpne_s32(svptrue_b8(), svdup_n_s32(f), svdup_n_s32(0));
+#endif
 #endif
 
   CALL_DP_vd_vd(__acos_finite, v);
@@ -555,8 +557,8 @@ int main2(int argc, char **argv) {
 #ifdef ENABLE_SVE
   vdouble vd0 = svdup_n_f64(argc), vd1 = svdup_n_f64(argc), vd2 = svdup_n_f64(argc), vd3 = svdup_n_f64(argc);
   vfloat vf0 = svdup_n_f32(argc), vf1 = svdup_n_f32(argc), vf2 = svdup_n_f32(argc), vf3 = svdup_n_f32(argc);
-  vint vi0 = svdup_n_s32(argc), vi1 = svdup_n_s32(argc), vi2 = svdup_n_s32(argc), vi3 = svdup_n_s32(argc);
-  vint2 vi20 = svdup_n_s32(argc), vi21 = svdup_n_s32(argc), vi22 = svdup_n_s32(argc), vi23 = svdup_n_s32(argc);
+  vint vi0 = svdup_n_s32(argc), vi2 = svdup_n_s32(argc);
+  vint2 vi20 = svdup_n_s32(argc), vi22 = svdup_n_s32(argc);
   vopmask mask = svcmpne_s32(svptrue_b8(), svdup_n_s32(argc), svdup_n_s32(0));
 #endif
 

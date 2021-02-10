@@ -204,7 +204,9 @@ int main(int argc,char **argv)
   const Sleef_quad quadMin = cast_q_str("3.36210314311209350626267781732175260e-4932");
   const Sleef_quad quadMax = cast_q_str("1.18973149535723176508575932662800702e+4932");
   const Sleef_quad quadDenormMin = cast_q_str("6.475175119438025110924438958227646552e-4966");
+#if defined(ENABLEFLOAT128)
   const Sleef_quad M_PI_2Q  = cast_q_str("1.5707963267948966192313216916397514");
+#endif
 
   //
 

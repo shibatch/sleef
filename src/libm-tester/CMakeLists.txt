@@ -461,7 +461,7 @@ endif()
 
 # mveclibtest
 
-if (SLEEF_ARCH_X86 AND CMAKE_C_COMPILER_ID MATCHES "GNU" AND CMAKE_C_COMPILER_VERSION VERSION_GREATER 7.99)
+if (ENABLE_GNUABI AND SLEEF_ARCH_X86 AND CMAKE_C_COMPILER_ID MATCHES "GNU" AND CMAKE_C_COMPILER_VERSION VERSION_GREATER 7.99)
   add_executable(mveclibtest-sse2 mveclibtest.c ${sleef_SOURCE_DIR}/src/common/main_checkfeature.c)
   set_target_properties(mveclibtest-sse2 PROPERTIES C_STANDARD 99)
   target_compile_options(mveclibtest-sse2 PRIVATE ${FLAGS_FASTMATH} "-O3")
