@@ -69,8 +69,8 @@ set(SLEEF_SUPPORTED_QUAD_EXTENSIONS
 
 # MKMASKED_PARAMS
 
-command_arguments(MKMASKED_PARAMS_GNUABI_AVX512F_dp avx512f d 8)
-command_arguments(MKMASKED_PARAMS_GNUABI_AVX512F_sp avx512f d -16)
+command_arguments(MKMASKED_PARAMS_GNUABI_AVX512F_dp avx512f e 8)
+command_arguments(MKMASKED_PARAMS_GNUABI_AVX512F_sp avx512f e -16)
 
 command_arguments(MKMASKED_PARAMS_GNUABI_SVE_dp sve s 2)
 command_arguments(MKMASKED_PARAMS_GNUABI_SVE_sp sve s -4)

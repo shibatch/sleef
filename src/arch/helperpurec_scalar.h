@@ -103,7 +103,7 @@ typedef uint32_t vopmask;
 typedef double vdouble;
 typedef int32_t vint;
 typedef float vfloat;
-typedef int64_t vint2;
+typedef int32_t vint2;
 
 typedef int64_t vint64;
 typedef uint64_t vuint64;
@@ -141,10 +141,8 @@ static INLINE vmask vcast_vm_i_i(int h, int l) { return (((uint64_t)h) << 32) | 
 static INLINE vmask vcast_vm_i64(int64_t i) { return (int64_t)i; }
 static INLINE vmask vcast_vm_u64(uint64_t i) { return i; }
 
-static INLINE vint2 vcastu_vi2_vi(vint vi) { return ((int64_t)vi) << 32; }
-static INLINE vint vcastu_vi_vi2(vint2 vi2) { return vi2 >> 32; }
-
-static INLINE vint2 vrev21_vi2_vi2(vint2 vi2) { return (((uint64_t)vi2) << 32) | (((uint64_t)vi2) >> 32); }
+static INLINE vmask vcastu_vm_vi(vint vi) { return ((uint64_t)vi) << 32; }
+static INLINE vint vcastu_vi_vm(vmask vm) { return (int32_t)(vm >> 32); }
 
 static INLINE vdouble vcast_vd_d(double d) { return d; }
 
@@ -215,8 +213,6 @@ static INLINE vmask vadd64_vm_vm_vm(vmask x, vmask y) { return x + y; }
 //
 
 static INLINE vmask vreinterpret_vm_vd(vdouble vd) { vmask vm; memcpy(&vm, &vd, sizeof(vm)); return vm; }
-static INLINE vint2 vreinterpret_vi2_vd(vdouble vd) { vint2 vi2; memcpy(&vi2, &vd, sizeof(vi2)); return vi2; }
-static INLINE vdouble vreinterpret_vd_vi2(vint2 vi) { vdouble vd; memcpy(&vd, &vi, sizeof(vd)); return vd; }
 static INLINE vdouble vreinterpret_vd_vm(vmask vm) { vdouble vd; memcpy(&vd, &vm, sizeof(vd)); return vd; }
 
 static INLINE vdouble vadd_vd_vd_vd(vdouble x, vdouble y) { return x + y; }
@@ -300,8 +296,8 @@ static INLINE void vstream_v_p_vd(double *ptr, vdouble v) { *ptr = v; }
 
 //
 
-static INLINE vint2 vcast_vi2_vm(vmask vm) { vint2 vi2; memcpy(&vi2, &vm, sizeof(vi2)); return vi2; }
-static INLINE vmask vcast_vm_vi2(vint2 vi) { vmask vm; memcpy(&vm, &vi, sizeof(vm)); return vm; }
+static INLINE vint2 vcast_vi2_vm(vmask vm) { return (int32_t)vm; }
+static INLINE vmask vcast_vm_vi2(vint2 vi) { return (uint32_t)vi; }
 
 static INLINE vfloat vcast_vf_vi2(vint2 vi) { return (int32_t)vi; }
 static INLINE vint2 vcast_vi2_i(int j) { return j; }
@@ -328,13 +324,8 @@ static INLINE vfloat vtruncate_vf_vf(vfloat vd) { return vcast_vf_vi2(vtruncate_
 static INLINE vfloat vcast_vf_f(float f) { return f; }
 static INLINE vmask vreinterpret_vm_vf(vfloat f) { vfloat vf[2] = { f, 0 }; vmask vm; memcpy(&vm, &vf, sizeof(vm)); return vm; }
 static INLINE vfloat vreinterpret_vf_vm(vmask vm) { vfloat vf[2]; memcpy(&vf, &vm, sizeof(vf)); return vf[0]; }
-#if defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
-static INLINE vfloat vreinterpret_vf_vi2(vint2 vi) { vfloat vf[2]; memcpy(vf, &vi, sizeof(vf)); return vf[1]; }
-static INLINE vint2 vreinterpret_vi2_vf(vfloat f) { vfloat vf[2] = { 0, f }; vint2 vi2; memcpy(&vi2, vf, sizeof(vi2)); return vi2; }
-#else
-static INLINE vfloat vreinterpret_vf_vi2(vint2 vi) { vfloat vf[2]; memcpy(vf, &vi, sizeof(vf)); return vf[0]; }
-static INLINE vint2 vreinterpret_vi2_vf(vfloat f) { vfloat vf[2] = { f, 0 }; vint2 vi2; memcpy(&vi2, vf, sizeof(vi2)); return vi2; }
-#endif
+static INLINE vfloat vreinterpret_vf_vi2(vint2 vi) { vfloat vf; memcpy(&vf, &vi, sizeof(vf)); return vf; }
+static INLINE vint2 vreinterpret_vi2_vf(vfloat f) { vint2 vi2; memcpy(&vi2, &f, sizeof(vi2)); return vi2; }
 
 static INLINE vfloat vadd_vf_vf_vf(vfloat x, vfloat y) { return x + y; }
 static INLINE vfloat vsub_vf_vf_vf(vfloat x, vfloat y) { return x - y; }
@@ -376,32 +367,9 @@ static INLINE vopmask vle_vo_vf_vf(vfloat x, vfloat y)  { return x <= y ? ~(uint
 static INLINE vopmask vgt_vo_vf_vf(vfloat x, vfloat y)  { return x >  y ? ~(uint32_t)0 : 0; }
 static INLINE vopmask vge_vo_vf_vf(vfloat x, vfloat y)  { return x >= y ? ~(uint32_t)0 : 0; }
 
-static INLINE vint2 vadd_vi2_vi2_vi2(vint2 x, vint2 y) {
-  int32_t vi[2], wi[2];
-  memcpy(vi, &x, sizeof(vi));
-  memcpy(wi, &y, sizeof(wi));
-  vi[0] += wi[0];
-  vi[1] += wi[1];
-  memcpy(&x, vi, sizeof(x));
-  return x;
-}
-static INLINE vint2 vsub_vi2_vi2_vi2(vint2 x, vint2 y) {
-  int32_t vi[2], wi[2];
-  memcpy(vi, &x, sizeof(vi));
-  memcpy(wi, &y, sizeof(wi));
-  vi[0] -= wi[0];
-  vi[1] -= wi[1];
-  memcpy(&x, vi, sizeof(x));
-  return x;
-}
-static INLINE vint2 vneg_vi2_vi2(vint2 x) {
-  int32_t vi[2];
-  memcpy(vi, &x, sizeof(vi));
-  vi[0] = -vi[0];
-  vi[1] = -vi[1];
-  memcpy(&x, vi, sizeof(x));
-  return x;
-}
+static INLINE vint2 vadd_vi2_vi2_vi2(vint2 x, vint2 y) { return x + y; }
+static INLINE vint2 vsub_vi2_vi2_vi2(vint2 x, vint2 y) { return x - y; }
+static INLINE vint2 vneg_vi2_vi2(vint2 x) { return -x; }
 
 static INLINE vint2 vand_vi2_vi2_vi2(vint2 x, vint2 y)    { return x & y; }
 static INLINE vint2 vandnot_vi2_vi2_vi2(vint2 x, vint2 y) { return y & ~x; }
@@ -423,28 +391,13 @@ static INLINE vint2 vand_vi2_vo_vi2(vopmask x, vint2 y) { return vcast_vm_vo(x) 
 static INLINE vint2 vandnot_vi2_vo_vi2(vopmask x, vint2 y) { return y & ~vcast_vm_vo(x); }
 
 static INLINE vint2 vsll_vi2_vi2_i(vint2 x, int c) {
-  uint32_t vu[2];
-  memcpy(vu, &x, sizeof(vu));
-  vu[0] <<= c;
-  vu[1] <<= c;
-  memcpy(&x, vu, sizeof(x));
-  return x;
+  return x << c;
 }
 static INLINE vint2 vsrl_vi2_vi2_i(vint2 x, int c) {
-  uint32_t vu[2];
-  memcpy(vu, &x, sizeof(vu));
-  vu[0] >>= c;
-  vu[1] >>= c;
-  memcpy(&x, vu, sizeof(x));
-  return x;
+  return ((uint32_t)x) >> c;
 }
 static INLINE vint2 vsra_vi2_vi2_i(vint2 x, int c) {
-  int32_t vi[2];
-  memcpy(vi, &x, sizeof(vi));
-  vi[0] >>= c;
-  vi[1] >>= c;
-  memcpy(&x, vi, sizeof(x));
-  return x;
+  return x >> c;
 }
 
 static INLINE vopmask visinf_vo_vf (vfloat d) { return (d == SLEEF_INFINITYf || d == -SLEEF_INFINITYf) ? ~(uint32_t)0 : 0; }

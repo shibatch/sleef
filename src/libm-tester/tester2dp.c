@@ -811,7 +811,6 @@ int main(int argc,char **argv)
       mpfr_hypot(frx, frx, fry, GMP_RNDN);
 
       double u0 = countULP2dp(t = xhypot_u05(d, d2), frx);
-      double c = mpfr_get_d(frx, GMP_RNDN);
 
       if (u0 > 0.5) {
 	printf("Pure C hypot arg=%.20g, %.20g  ulp=%.20g\n", d, d2, u0);
@@ -878,7 +877,6 @@ int main(int argc,char **argv)
       mpfr_fmod(frx, frx, fry, GMP_RNDN);
 
       double u0 = countULPdp(t = xfmod(d, d2), frx);
-      long double c = mpfr_get_ld(frx, GMP_RNDN);
 
       if (fabsl((long double)d / d2) < 1e+300 && u0 > 0.5) {
 	printf("Pure C fmod arg=%.20g, %.20g  ulp=%.20g\n", d, d2, u0);
@@ -893,7 +891,6 @@ int main(int argc,char **argv)
       mpfr_remainder(frx, frx, fry, GMP_RNDN);
 
       double u0 = countULPdp(t = xremainder(d, d2), frx);
-      long double c = mpfr_get_ld(frx, GMP_RNDN);
 
       if (fabsl((long double)d / d2) < 1e+300 && u0 > 0.5) {
 	printf("Pure C remainder arg=%.20g, %.20g  ulp=%.20g\n", d, d2, u0);

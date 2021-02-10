@@ -436,9 +436,8 @@ static CONST fi_t rempisubf(float x) {
 }
 
 static CONST dfi_t rempif(float a) {
-  Sleef_float2 x, y, z;
+  Sleef_float2 x, y;
   fi_t di;
-  float t;
   int ex = ilogb2kf(a) - 25, q = ex > (90 - 25) ? -64 : 0;
   a = ldexp3kf(a, q);
   if (ex < 0) ex = 0;
@@ -2243,7 +2242,7 @@ typedef struct {
 } df2;
 
 static CONST df2 gammafk(float a) {
-  Sleef_float2 clc = df(0, 0), clln = df(1, 0), clld = df(1, 0), v = df(1, 0), x, y, z;
+  Sleef_float2 clc = df(0, 0), clln = df(1, 0), clld = df(1, 0), x, y, z;
   float t, u;
 
   int otiny = fabsfk(a) < 1e-30f, oref = a < 0.5f;

@@ -286,7 +286,7 @@ static INLINE CONST VECTOR_CC vopmask visodd_vo_vd(vdouble d) {
 static INLINE CONST VECTOR_CC vint vilogbk_vi_vd(vdouble d) {
   vopmask o = vlt_vo_vd_vd(d, vcast_vd_d(4.9090934652977266E-91));
   d = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(vcast_vd_d(2.037035976334486E90), d), d);
-  vint q = vcastu_vi_vi2(vreinterpret_vi2_vd(d));
+  vint q = vcastu_vi_vm(vreinterpret_vm_vd(d));
   q = vand_vi_vi_vi(q, vcast_vi_i((int)(((1U << 12) - 1) << 20)));
   q = vsrl_vi_vi_i(q, 20);
   q = vsub_vi_vi_vi(q, vsel_vi_vo_vi_vi(vcast_vo32_vo64(o), vcast_vi_i(300 + 0x3ff), vcast_vi_i(0x3ff)));
@@ -294,7 +294,7 @@ static INLINE CONST VECTOR_CC vint vilogbk_vi_vd(vdouble d) {
 }
 
 static INLINE CONST VECTOR_CC vint vilogb2k_vi_vd(vdouble d) {
-  vint q = vcastu_vi_vi2(vreinterpret_vi2_vd(d));
+  vint q = vcastu_vi_vm(vreinterpret_vm_vd(d));
   q = vsrl_vi_vi_i(q, 20);
   q = vand_vi_vi_vi(q, vcast_vi_i(0x7ff));
   q = vsub_vi_vi_vi(q, vcast_vi_i(0x3ff));
@@ -321,8 +321,8 @@ static INLINE CONST vmask vilogb3k_vm_vd(vdouble d) {
 
 static INLINE CONST VECTOR_CC vdouble vpow2i_vd_vi(vint q) {
   q = vadd_vi_vi_vi(vcast_vi_i(0x3ff), q);
-  vint2 r = vcastu_vi2_vi(q);
-  return vreinterpret_vd_vi2(vsll_vi2_vi2_i(r, 20));
+  vmask r = vcastu_vm_vi(vsll_vi_vi_i(q, 20));
+  return vreinterpret_vd_vm(r);
 }
 
 static INLINE CONST VECTOR_CC vdouble vpow2i_vd_vm(vmask q) {
@@ -337,8 +337,8 @@ static INLINE CONST VECTOR_CC vdouble vldexp_vd_vd_vi(vdouble x, vint q) {
   m = vadd_vi_vi_vi(vcast_vi_i(0x3ff), m);
   m = vandnot_vi_vo_vi(vgt_vo_vi_vi(vcast_vi_i(0), m), m);
   m = vsel_vi_vo_vi_vi(vgt_vo_vi_vi(m, vcast_vi_i(0x7ff)), vcast_vi_i(0x7ff), m);
-  vint2 r = vcastu_vi2_vi(m);
-  vdouble y = vreinterpret_vd_vi2(vsll_vi2_vi2_i(r, 20));
+  vmask r = vcastu_vm_vi(vsll_vi_vi_i(m, 20));
+  vdouble y = vreinterpret_vd_vm(r);
   return vmul_vd_vd_vd(vmul_vd_vd_vd(vmul_vd_vd_vd(vmul_vd_vd_vd(vmul_vd_vd_vd(x, y), y), y), y), vpow2i_vd_vi(q));
 }
 
@@ -347,7 +347,7 @@ static INLINE CONST VECTOR_CC vdouble vldexp2_vd_vd_vi(vdouble d, vint e) {
 }
 
 static INLINE CONST VECTOR_CC vdouble vldexp3_vd_vd_vi(vdouble d, vint q) {
-  return vreinterpret_vd_vi2(vadd_vi2_vi2_vi2(vreinterpret_vi2_vd(d), vsll_vi2_vi2_i(vcastu_vi2_vi(q), 20)));
+  return vreinterpret_vd_vm(vadd64_vm_vm_vm(vreinterpret_vm_vd(d), vcastu_vm_vi(vsll_vi_vi_i(q, 20))));
 }
 
 static INLINE CONST vdouble vldexp1_vd_vd_vm(vdouble d, vmask e) {

@@ -268,7 +268,6 @@ static SPTYPE vf2gety_vf_vf2(TYPE2(SPTYPE) v) { return v.y; }
 
 //
 
-
 #define exec_f_f_f(ATR, NAME, ULP, TYPE, TSX, EXT, argu, argv) do {	\
     int r = xrand() & 0xffff;						\
     SPTYPE vx = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (argu, r), SET(TYPE) (argv, r)); \
@@ -290,9 +289,19 @@ static SPTYPE vf2gety_vf_vf2(TYPE2(SPTYPE) v) { return v.y; }
 
 //
 
+#define try_feature(TYPE, ATR_, TSX, EXT, arg)				\
+  GET(TYPE) (FUNC(ATR_, pow, TSX, u10, EXT) (SET(TYPE) (arg, 0), SET(TYPE) (arg, 0)), 0)
+
+int check_feature(double d, float f) {
+  d = try_feature(DPTYPE, ATR, DPTYPESPEC, EXTSPEC, d);
+  return d == d;
+}
+
+//
+
 int success = 1;
 
-int do_test(int argc, char **argv)
+int main2(int argc, char **argv)
 {
   FILE *fp = NULL;
 

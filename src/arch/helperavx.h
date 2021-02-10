@@ -89,12 +89,9 @@ static INLINE int cpuSupportsFMA4() {
 
 #if CONFIG == 4 && defined(__AVX__) && defined(__FMA4__)
 static INLINE int vavailability_i(int name) {
-  //int d = __builtin_cpu_supports("avx") && __builtin_cpu_supports("fma4");
   int d = cpuSupportsAVX() && cpuSupportsFMA4();
   return d ? 3 : 0;
 }
-
-//typedef vint2 vint2_fma4;
 
 #define ENABLE_FMA_DP
 #define ENABLE_FMA_SP
@@ -106,7 +103,6 @@ static INLINE int vavailability_i(int name) {
   int d = cpuSupportsAVX();
   return d ? 3 : 0;
 }
-//typedef vint2 vint2_avx;
 
 #define ISANAME "AVX"
 #define DFTPRIORITY 20
@@ -129,17 +125,6 @@ static INLINE int vtestallones_i_vo64(vopmask g) {
 static INLINE vdouble vcast_vd_d(double d) { return _mm256_set1_pd(d); }
 static INLINE vmask vreinterpret_vm_vd(vdouble vd) { return _mm256_castpd_si256(vd); }
 static INLINE vdouble vreinterpret_vd_vm(vmask vm) { return _mm256_castsi256_pd(vm);  }
-static INLINE vint2 vreinterpret_vi2_vd(vdouble vd) {
-  vint2 r;
-  r.x = _mm256_castsi256_si128(vreinterpret_vm_vd(vd));
-  r.y = _mm256_extractf128_si256(vreinterpret_vm_vd(vd), 1);
-  return r;
-}
-static INLINE vdouble vreinterpret_vd_vi2(vint2 vi) {
-  vmask m = _mm256_castsi128_si256(vi.x);
-  m = _mm256_insertf128_si256(m, vi.y, 1);
-  return vreinterpret_vd_vm(m);
-}
 
 //
 
@@ -200,16 +185,15 @@ static INLINE vfloat vrint_vf_vf(vfloat vd) { return _mm256_round_ps(vd, _MM_FRO
 static INLINE vfloat vtruncate_vf_vf(vfloat vf) { return _mm256_round_ps(vf, _MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC); }
 static INLINE vdouble vcast_vd_vi(vint vi) { return _mm256_cvtepi32_pd(vi); }
 static INLINE vint vcast_vi_i(int i) { return _mm_set1_epi32(i); }
-static INLINE vint2 vcastu_vi2_vi(vint vi) {
-  vint2 r;
-  r.x = _mm_and_si128(_mm_shuffle_epi32(vi, 0x40), _mm_set_epi32(-1, 0, -1, 0));
-  r.y = _mm_and_si128(_mm_shuffle_epi32(vi, 0xc8), _mm_set_epi32(-1, 0, -1, 0));
-  return r;
+
+static INLINE vmask vcastu_vm_vi(vint vi) {
+  __m256i m = _mm256_castsi128_si256(_mm_and_si128(_mm_shuffle_epi32(vi, 0x40), _mm_set_epi32(-1, 0, -1, 0)));
+  return _mm256_insertf128_si256(m,  _mm_and_si128(_mm_shuffle_epi32(vi, 0xc8), _mm_set_epi32(-1, 0, -1, 0)), 1);
 }
 
-static INLINE vint vcastu_vi_vi2(vint2 vi) {
-  return _mm_or_si128(_mm_and_si128(_mm_shuffle_epi32(vi.x, 0x0d), _mm_set_epi32( 0,  0, -1, -1)),
-		      _mm_and_si128(_mm_shuffle_epi32(vi.y, 0xd0), _mm_set_epi32(-1, -1,  0,  0)));
+static INLINE vint vcastu_vi_vm(vmask vi) {
+  return _mm_or_si128(_mm_and_si128(_mm_shuffle_epi32(_mm256_castsi256_si128(vi)     , 0x0d), _mm_set_epi32( 0,  0, -1, -1)),
+		      _mm_and_si128(_mm_shuffle_epi32(_mm256_extractf128_si256(vi, 1), 0xd0), _mm_set_epi32(-1, -1,  0,  0)));
 }
 
 static INLINE vmask vcast_vm_i_i(int i0, int i1) {
@@ -572,7 +556,6 @@ static INLINE void vsscatter2_v_p_i_i_vd(double *ptr, int offset, int step, vdou
 
 static INLINE vfloat vrev21_vf_vf(vfloat d0) { return _mm256_shuffle_ps(d0, d0, (2 << 6) | (3 << 4) | (0 << 2) | (1 << 0)); }
 static INLINE vfloat vreva2_vf_vf(vfloat d0) { d0 = _mm256_permute2f128_ps(d0, d0, 1); return _mm256_shuffle_ps(d0, d0, (1 << 6) | (0 << 4) | (3 << 2) | (2 << 0)); }
-static INLINE vint2 vrev21_vi2_vi2(vint2 i) { return vreinterpret_vi2_vf(vrev21_vf_vf(vreinterpret_vf_vi2(i))); }
 
 static INLINE void vstream_v_p_vf(float *ptr, vfloat v) { _mm256_stream_ps(ptr, v); }
 
@@ -642,7 +625,7 @@ static INLINE vmask vcast_vm_vi(vint vi) {
   vint vi0 = _mm_and_si128(_mm_shuffle_epi32(vi, (1 << 4) | (1 << 6)), _mm_set_epi32(0, -1, 0, -1));
   vint vi1 = _mm_and_si128(_mm_shuffle_epi32(vi, (2 << 0) | (2 << 2) | (3 << 4) | (3 << 6)), _mm_set_epi32(0, -1, 0, -1));
   vmask m = _mm256_insertf128_si256(_mm256_castsi128_si256(vi0), vi1, 1);
-  return vor_vm_vm_vm(vcast_vm_vi2(vcastu_vi2_vi(vand_vi_vo_vi(vgt_vo_vi_vi(vcast_vi_i(0), vi), vcast_vi_i(-1)))), m);
+  return vor_vm_vm_vm(vcastu_vm_vi(vand_vi_vo_vi(vgt_vo_vi_vi(vcast_vi_i(0), vi), vcast_vi_i(-1))), m);
 }
 static INLINE vint vcast_vi_vm(vmask vm) {
   return _mm_or_si128(_mm_castps_si128(_mm_shuffle_ps(_mm_castsi128_ps(_mm256_castsi256_si128(vm)), _mm_set1_ps(0), 0x08)),

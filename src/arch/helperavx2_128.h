@@ -106,8 +106,6 @@ static INLINE int vtestallones_i_vo64(vopmask g) { return _mm_movemask_epi8(g) =
 static INLINE vdouble vcast_vd_d(double d) { return _mm_set1_pd(d); }
 static INLINE vmask vreinterpret_vm_vd(vdouble vd) { return _mm_castpd_si128(vd); }
 static INLINE vdouble vreinterpret_vd_vm(vmask vm) { return _mm_castsi128_pd(vm);  }
-static INLINE vint2 vreinterpret_vi2_vd(vdouble vd) { return _mm_castpd_si128(vd); }
-static INLINE vdouble vreinterpret_vd_vi2(vint2 vi) { return _mm_castsi128_pd(vi); }
 
 //
 
@@ -154,9 +152,8 @@ static INLINE vfloat vtruncate_vf_vf(vfloat vf) { return _mm_round_ps(vf, _MM_FR
 static INLINE vdouble vcast_vd_vi(vint vi) { return _mm_cvtepi32_pd(vi); }
 static INLINE vint vcast_vi_i(int i) { return _mm_set1_epi32(i); }
 
-static INLINE vint2 vcastu_vi2_vi(vint vi) { return _mm_and_si128(_mm_shuffle_epi32(vi, 0x73), _mm_set_epi32(-1, 0, -1, 0)); }
-
-static INLINE vint vcastu_vi_vi2(vint2 vi) { return _mm_shuffle_epi32(vi, 0x0d); }
+static INLINE vmask vcastu_vm_vi(vint vi) { return _mm_and_si128(_mm_shuffle_epi32(vi, 0x73), _mm_set_epi32(-1, 0, -1, 0)); }
+static INLINE vint vcastu_vi_vm(vmask vi) { return _mm_shuffle_epi32(vi, 0x0d); }
 
 static INLINE vmask vcast_vm_i_i(int i0, int i1) { return _mm_set_epi32(i0, i1, i0, i1); }
 
@@ -401,7 +398,6 @@ static INLINE void vsscatter2_v_p_i_i_vd(double *ptr, int offset, int step, vdou
 
 static INLINE vfloat vrev21_vf_vf(vfloat d0) { return _mm_shuffle_ps(d0, d0, (2 << 6) | (3 << 4) | (0 << 2) | (1 << 0)); }
 static INLINE vfloat vreva2_vf_vf(vfloat d0) { return _mm_shuffle_ps(d0, d0, (1 << 6) | (0 << 4) | (3 << 2) | (2 << 0)); }
-static INLINE vint2 vrev21_vi2_vi2(vint2 i) { return vreinterpret_vi2_vf(vrev21_vf_vf(vreinterpret_vf_vi2(i))); }
 
 static INLINE void vstream_v_p_vf(float *ptr, vfloat v) { _mm_stream_ps(ptr, v); }
 
@@ -457,7 +453,7 @@ static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) { return _mm_cmpgt_epi64(
 
 static INLINE vmask vcast_vm_vi(vint vi) {
   vmask m = _mm_and_si128(_mm_shuffle_epi32(vi, (0 << 6) | (1 << 4) | (0 << 2) | (0 << 0)), _mm_set_epi32(0, -1, 0, -1));
-  return vor_vm_vm_vm(vcastu_vi2_vi(vgt_vo_vi_vi(vcast_vi_i(0), vi)), m);
+  return vor_vm_vm_vm(vcastu_vm_vi(vgt_vo_vi_vi(vcast_vi_i(0), vi)), m);
 }
 static INLINE vint vcast_vi_vm(vmask vm) { return _mm_shuffle_epi32(vm, 0x08); }
 

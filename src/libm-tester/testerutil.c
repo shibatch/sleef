@@ -18,7 +18,6 @@
 #else
 #include <unistd.h>
 #include <sys/types.h>
-#include <signal.h>
 #endif
 
 #if defined(__MINGW32__) || defined(__MINGW64__)

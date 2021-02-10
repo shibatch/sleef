@@ -240,8 +240,6 @@ ArrayMap *ArrayMap_load(const char *fn, const char *prefix, const char *idstr, i
     return NULL;
   }
   
-  int found = 0;
-
   for(;;) {
     line[LINELEN] = '\0';
     if (fgets(line, LINELEN, fp) == NULL) break;
@@ -251,7 +249,6 @@ ArrayMap *ArrayMap_load(const char *fn, const char *prefix, const char *idstr, i
     char *value = malloc(sizeof(char) * LINELEN);
     
     if (sscanf(line + prefixLen, "%" SCNx64 " : %s\n", &key, value) == 2) {
-      found = 1;
       ArrayMap_put(thiz, (uint64_t)key, (void *)value);
     } else {
       free(value);

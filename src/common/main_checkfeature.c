@@ -19,32 +19,18 @@ static sigjmp_buf sigjmp;
 #define LONGJMP siglongjmp
 #endif
 
-int do_test(int argc, char **argv);
-int check_featureDP(double d);
-int check_featureSP(float d);
+int main2(int argc, char **argv);
+int check_feature(double, float);
 
 static void sighandler(int signum) {
   LONGJMP(sigjmp, 1);
 }
 
-int detectFeatureDP() {
+int detectFeature() {
   signal(SIGILL, sighandler);
 
   if (SETJMP(sigjmp) == 0) {
-    int r = check_featureDP(1.0);
-    signal(SIGILL, SIG_DFL);
-    return r;
-  } else {
-    signal(SIGILL, SIG_DFL);
-    return 0;
-  }
-}
-
-int detectFeatureSP() {
-  signal(SIGILL, sighandler);
-
-  if (SETJMP(sigjmp) == 0) {
-    int r = check_featureSP(1.0);
+    int r = check_feature(1.0, 1.0f);
     signal(SIGILL, SIG_DFL);
     return r;
   } else {
@@ -54,12 +40,11 @@ int detectFeatureSP() {
 }
 
 int main(int argc, char **argv) {
-  if (!detectFeatureDP() && !detectFeatureSP()) {
-    fprintf(stderr, "\n\n***** This host does not support the necessary CPU features to execute this program *****\n\n\n");
+  if (!detectFeature()) {
     printf("0\n");
     fclose(stdout);
-    exit(-1);
+    exit(0);
   }
 
-  return do_test(argc, argv);
+  return main2(argc, argv);
 }

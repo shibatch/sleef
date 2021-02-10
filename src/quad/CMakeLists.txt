@@ -111,9 +111,11 @@ set(CMAKE_C_FLAGS "${ORG_CMAKE_C_FLAGS} ${SLEEF_C_FLAGS}")
 # --------------------------------------------------------------------
 # sleefquad.h
 # --------------------------------------------------------------------
-set(SLEEFQUAD_ORG_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/sleefquad_header.h.org)
+set(SLEEFQUAD_ORG_HEADER ${CMAKE_CURRENT_BINARY_DIR}/sleefquad_header.h.org)
 set(SLEEFQUAD_ORG_FOOTER ${CMAKE_CURRENT_SOURCE_DIR}/sleefquad_footer.h.org)
 set(SLEEFQUAD_INCLUDE_HEADER ${sleef_BINARY_DIR}/include/sleefquad.h)
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/sleefquad_header.h.org.in ${SLEEFQUAD_ORG_HEADER})
 
 set(SLEEF_HEADER_COMMANDS "")
 list(APPEND SLEEF_HEADER_COMMANDS COMMAND ${CMAKE_COMMAND} -E copy ${SLEEFQUAD_ORG_HEADER} ${SLEEFQUAD_INCLUDE_HEADER})

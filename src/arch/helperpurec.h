@@ -348,8 +348,6 @@ static INLINE vfloat vreinterpret_vf_vm(vmask vm) { union { vfloat vf; vmask vm;
 static INLINE vfloat vreinterpret_vf_vi2(vint2 vi) { union { vfloat vf; vint2 vi2; } cnv; cnv.vi2 = vi; return cnv.vf; }
 static INLINE vint2 vreinterpret_vi2_vf(vfloat vf) { union { vfloat vf; vint2 vi2; } cnv; cnv.vf = vf; return cnv.vi2; }
 
-static INLINE vint2 vrev21_vi2_vi2(vint2 i) { return vreinterpret_vi2_vf(vrev21_vf_vf(vreinterpret_vf_vi2(i))); }
-
 static INLINE vfloat vadd_vf_vf_vf(vfloat x, vfloat y) { vfloat ret; for(int i=0;i<VECTLENSP;i++) ret.f[i] = x.f[i] + y.f[i]; return ret; }
 static INLINE vfloat vsub_vf_vf_vf(vfloat x, vfloat y) { vfloat ret; for(int i=0;i<VECTLENSP;i++) ret.f[i] = x.f[i] - y.f[i]; return ret; }
 static INLINE vfloat vmul_vf_vf_vf(vfloat x, vfloat y) { vfloat ret; for(int i=0;i<VECTLENSP;i++) ret.f[i] = x.f[i] * y.f[i]; return ret; }

@@ -133,7 +133,7 @@ if(NOT CLANG_EXE_PATH)
     set(CLANG_EXE_PATH ${CMAKE_C_COMPILER})
   else()
     # Else we may find clang on the path?
-    find_program(CLANG_EXE_PATH NAMES clang "clang-10" "clang-9" "clang-8" "clang-7" "clang-6.0" "clang-5.0" "clang-4.0" "clang-3.9")
+    find_program(CLANG_EXE_PATH NAMES clang "clang-11" "clang-10" "clang-9" "clang-8" "clang-7" "clang-6.0" "clang-5.0" "clang-4.0" "clang-3.9")
   endif()
 endif()
 
@@ -192,7 +192,7 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
   endforeach()
 
   # Warning flags.
-  set(FLAGS_WALL "-Wall -Wno-unused -Wno-attributes -Wno-unused-result")
+  set(FLAGS_WALL "-Wall -Wno-unused-function -Wno-attributes -Wno-unused-result")
   if(CMAKE_C_COMPILER_ID MATCHES "GNU")
     # The following compiler option is needed to suppress the warning
     # "AVX vector return without AVX enabled changes the ABI" at
@@ -738,6 +738,10 @@ find_program(ARMIE_COMMAND armie)
 if (NOT SVE_VECTOR_BITS)
   set(SVE_VECTOR_BITS 128)
 endif()
+
+#
+
+find_program(FILECHECK_COMMAND NAMES FileCheck FileCheck-11 FileCheck-10 FileCheck-9)
 
 #
 

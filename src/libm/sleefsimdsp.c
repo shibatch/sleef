@@ -2932,10 +2932,6 @@ EXPORT CONST VECTOR_CC vfloat xfmaf(vfloat x, vfloat y, vfloat z) {
 }
 #endif // #if !defined(DETERMINISTIC)
 
-#if !defined(SLEEF_GENHEADER)
-static INLINE CONST VECTOR_CC vint2 vcast_vi2_i_i(int i0, int i1) { return vcast_vi2_vm(vcast_vm_i_i(i0, i1)); }
-#endif
-
 SQRTFU05_FUNCATR VECTOR_CC vfloat xsqrtf_u05(vfloat d) {
 #if defined(ENABLE_FMA_SP)
   vfloat q, w, x, y, z;
@@ -3310,7 +3306,7 @@ static vfloat2 df2getb_vf2_df2(df2 d) { return d.b; }
 /* TODO AArch64: potential optimization by using `vfmad_lane_f64` */
 static CONST df2 gammafk(vfloat a) {
   vfloat2 clc = vcast_vf2_f_f(0, 0), clln = vcast_vf2_f_f(1, 0), clld = vcast_vf2_f_f(1, 0);
-  vfloat2 v = vcast_vf2_f_f(1, 0), x, y, z;
+  vfloat2 x, y, z;
   vfloat t, u;
 
   vopmask otiny = vlt_vo_vf_vf(vabs_vf_vf(a), vcast_vf_f(1e-30f)), oref = vlt_vo_vf_vf(a, vcast_vf_f(0.5));

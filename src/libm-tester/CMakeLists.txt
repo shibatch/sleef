@@ -137,7 +137,7 @@ if (BUILD_INLINE_HEADERS AND SED_COMMAND AND CMAKE_CUDA_COMPILER)
   list(APPEND IUT_LIST iutcuda)
 endif()
 
-set(IUT_SRC iutsimd.c iutsimdmain.c testerutil.c)
+set(IUT_SRC iutsimd.c ${sleef_SOURCE_DIR}/src/common/main_checkfeature.c testerutil.c)
 
 # Add vector extension `iut`s
 macro(test_extension SIMD)
@@ -255,7 +255,7 @@ macro(test_extension SIMD)
       # Build tester3
       string(TOLOWER ${SIMD} SCSIMD)
       set(T "tester3${SCSIMD}")
-      add_executable(${T} tester3.c tester3main.c testerutil.c)
+      add_executable(${T} tester3.c ${sleef_SOURCE_DIR}/src/common/main_checkfeature.c testerutil.c)
       target_compile_options(${T} PRIVATE ${FLAGS_ENABLE_${SIMD}})
       target_compile_definitions(${T} PRIVATE ${COMMON_TARGET_DEFINITIONS} ${TESTER3_DEFINITIONS_${SIMD}})
       set_target_properties(${T} PROPERTIES ${COMMON_TARGET_PROPERTIES})
@@ -316,7 +316,7 @@ function(add_gnuabi_compatibility_test SIMD MASKED)
   else(MASKED)
     set(GNUABI_COMPATIBILITY_TEST gnuabi_compatibility_${SIMD})
   endif(MASKED)
-  add_executable(${GNUABI_COMPATIBILITY_TEST} gnuabi_compatibility.c)
+  add_executable(${GNUABI_COMPATIBILITY_TEST} gnuabi_compatibility.c ${sleef_SOURCE_DIR}/src/common/main_checkfeature.c)
   set_target_properties(${GNUABI_COMPATIBILITY_TEST} PROPERTIES ${COMMON_TARGET_PROPERTIES})
   target_compile_options(${GNUABI_COMPATIBILITY_TEST}
     PRIVATE ${FLAGS_ENABLE_${SIMD}})
@@ -459,17 +459,45 @@ if(ENABLE_GNUABI AND COMPILER_SUPPORTS_OMP_SIMD AND NOT SLEEF_TARGET_PROCESSOR M
     WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 endif()
 
-find_program(FILECHECK_COMMAND NAMES FileCheck FileCheck-9 FileCheck-10 FileCheck-11)
+# mveclibtest
 
-if (FILECHECK_COMMAND AND COMPILER_SUPPORTS_OPENMP AND SLEEF_ARCH_X86 AND CMAKE_C_COMPILER_ID MATCHES "GNU" AND CMAKE_C_COMPILER_VERSION VERSION_GREATER 6.99)
+if (ENABLE_GNUABI AND SLEEF_ARCH_X86 AND CMAKE_C_COMPILER_ID MATCHES "GNU" AND CMAKE_C_COMPILER_VERSION VERSION_GREATER 7.99)
+  add_executable(mveclibtest-sse2 mveclibtest.c ${sleef_SOURCE_DIR}/src/common/main_checkfeature.c)
+  set_target_properties(mveclibtest-sse2 PROPERTIES C_STANDARD 99)
+  target_compile_options(mveclibtest-sse2 PRIVATE ${FLAGS_FASTMATH} "-O3")
+  target_link_libraries(mveclibtest-sse2 ${TARGET_LIBSLEEF} ${TARGET_LIBSLEEFGNUABI})
+  add_dependencies(mveclibtest-sse2 ${TARGET_HEADERS})
+  add_test(NAME mveclibtest-sse2 COMMAND mveclibtest-sse2)
+
+  add_executable(mveclibtest-avx mveclibtest.c ${sleef_SOURCE_DIR}/src/common/main_checkfeature.c)
+  set_target_properties(mveclibtest-avx PROPERTIES C_STANDARD 99)
+  target_compile_options(mveclibtest-avx PRIVATE ${FLAGS_FASTMATH} ${FLAGS_ENABLE_AVX} "-O3")
+  target_link_libraries(mveclibtest-avx ${TARGET_LIBSLEEF} ${TARGET_LIBSLEEFGNUABI})
+  add_dependencies(mveclibtest-avx ${TARGET_HEADERS})
+  add_test(NAME mveclibtest-avx COMMAND mveclibtest-avx)
+
+  add_executable(mveclibtest-avx2 mveclibtest.c ${sleef_SOURCE_DIR}/src/common/main_checkfeature.c)
+  set_target_properties(mveclibtest-avx2 PROPERTIES C_STANDARD 99)
+  target_compile_options(mveclibtest-avx2 PRIVATE ${FLAGS_FASTMATH} ${FLAGS_ENABLE_AVX2} "-O3")
+  target_link_libraries(mveclibtest-avx2 ${TARGET_LIBSLEEF} ${TARGET_LIBSLEEFGNUABI})
+  add_dependencies(mveclibtest-avx2 ${TARGET_HEADERS})
+  add_test(NAME mveclibtest-avx2 COMMAND mveclibtest-avx2)
+
+  add_executable(mveclibtest-avx512f mveclibtest.c ${sleef_SOURCE_DIR}/src/common/main_checkfeature.c)
+  set_target_properties(mveclibtest-avx512f PROPERTIES C_STANDARD 99)
+  target_compile_options(mveclibtest-avx512f PRIVATE ${FLAGS_FASTMATH} ${FLAGS_ENABLE_AVX512F} "-O3")
+  target_link_libraries(mveclibtest-avx512f ${TARGET_LIBSLEEF} ${TARGET_LIBSLEEFGNUABI})
+  add_dependencies(mveclibtest-avx512f ${TARGET_HEADERS})
+  add_test(NAME mveclibtest-avx512f COMMAND mveclibtest-avx512f)
+endif()
+
+#
+
+if (FILECHECK_COMMAND AND COMPILER_SUPPORTS_OPENMP AND SLEEF_ARCH_X86 AND CMAKE_C_COMPILER_ID MATCHES "GNU" AND CMAKE_C_COMPILER_VERSION VERSION_GREATER 7.99)
   add_test(NAME autovec-avx2 COMMAND sh -c "${CMAKE_C_COMPILER} -Wno-attributes -fopenmp -mavx2 -O3 ${CMAKE_CURRENT_SOURCE_DIR}/autovec.c -I${sleef_BINARY_DIR}/include -S -o- | ${FILECHECK_COMMAND} ${CMAKE_CURRENT_SOURCE_DIR}/autovec.c -check-prefix=CHECK-AVX2")
   add_test(NAME autovec-sse2 COMMAND sh -c "${CMAKE_C_COMPILER} -Wno-attributes -fopenmp -msse2 -O3 ${CMAKE_CURRENT_SOURCE_DIR}/autovec.c -I${sleef_BINARY_DIR}/include -S -o- | ${FILECHECK_COMMAND} ${CMAKE_CURRENT_SOURCE_DIR}/autovec.c -check-prefix=CHECK-SSE2")
-  add_test(NAME autovec-avx2-fastmath COMMAND sh -c "${CMAKE_C_COMPILER} -Wno-attributes -ffast-math -fopenmp -mavx2 -O3 ${CMAKE_CURRENT_SOURCE_DIR}/autovec.c -I${sleef_BINARY_DIR}/include -S -o- | ${FILECHECK_COMMAND} ${CMAKE_CURRENT_SOURCE_DIR}/autovec.c -check-prefix=CHECK-AVX2-FAST")
-  add_test(NAME autovec-sse2-fastmath COMMAND sh -c "${CMAKE_C_COMPILER} -Wno-attributes -ffast-math -fopenmp -msse2 -O3 ${CMAKE_CURRENT_SOURCE_DIR}/autovec.c -I${sleef_BINARY_DIR}/include -S -o- | ${FILECHECK_COMMAND} ${CMAKE_CURRENT_SOURCE_DIR}/autovec.c -check-prefix=CHECK-SSE2-FAST")
   add_test(NAME testervecabi-sse2 COMMAND sh -c "${CMAKE_C_COMPILER} -Wno-attributes -fopenmp -msse2 -O3 ${CMAKE_CURRENT_SOURCE_DIR}/testervecabi.c -I${sleef_BINARY_DIR}/include -S -o- | ${FILECHECK_COMMAND} ${CMAKE_CURRENT_SOURCE_DIR}/testervecabi.c -check-prefix=CHECK-SSE2")
   add_test(NAME testervecabi-avx2 COMMAND sh -c "${CMAKE_C_COMPILER} -Wno-attributes -fopenmp -mavx2 -O3 ${CMAKE_CURRENT_SOURCE_DIR}/testervecabi.c -I${sleef_BINARY_DIR}/include -S -o- | ${FILECHECK_COMMAND} ${CMAKE_CURRENT_SOURCE_DIR}/testervecabi.c -check-prefix=CHECK-AVX2")
-  add_test(NAME testervecabi-knl COMMAND sh -c "${CMAKE_C_COMPILER} -Wno-attributes -fopenmp -march=knl -O3 ${CMAKE_CURRENT_SOURCE_DIR}/testervecabi.c -I${sleef_BINARY_DIR}/include -S -o- | ${FILECHECK_COMMAND} ${CMAKE_CURRENT_SOURCE_DIR}/testervecabi.c -check-prefix=CHECK-KNL")
-  add_test(NAME knl-build-testervecabi COMMAND sh -c "${CMAKE_C_COMPILER} -Wno-attributes -fopenmp -march=knl -O3 ${CMAKE_CURRENT_SOURCE_DIR}/testervecabi.c -I${sleef_BINARY_DIR}/include -L${CMAKE_LIBRARY_OUTPUT_DIRECTORY} -lsleef")
 endif()
 
 # Tests depends on the library

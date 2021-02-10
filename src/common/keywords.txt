@@ -207,8 +207,6 @@ vcast_vo_i
 vcast_vo32_vo64
 vcast_vo64_vo32
 cast_vq_aq
-vcastu_vi2_vi
-vcastu_vi_vi2
 vclearlsb_vd_vd_i
 vcopysign_vd_vd_vd
 vcopysign_vf_vf_vf
@@ -373,12 +371,10 @@ vquad
 vrec_vd_vd
 vrec_vf_vf
 vreinterpret_vd_vf
-vreinterpret_vd_vi2
 vreinterpret_vd_vm
 vreinterpret_vf_vd
 vreinterpret_vf_vi2
 vreinterpret_vf_vm
-vreinterpret_vi2_vd
 vreinterpret_vi2_vf
 vreinterpret_vi64_vm
 vreinterpret_vm_vd
@@ -388,7 +384,6 @@ vreinterpret_vm_vu64
 vreinterpret_vu64_vm
 vrev21_vd_vd
 vrev21_vf_vf
-vrev21_vi2_vi2
 vreva2_vd_vd
 vreva2_vf_vf
 vrint_vd_vd
@@ -682,3 +677,5 @@ ldexp_tdx_tdx_vi
 Sleef_rempitabsp
 Sleef_rempitabdp
 Sleef_rempitabqp
+vcastu_vm_vi
+vcastu_vi_vm

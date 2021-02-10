@@ -165,11 +165,11 @@ static INLINE vdouble vrint_vd_vd(vdouble vd) {
   return _mm512_roundscale_pd(vd, _MM_FROUND_TO_NEAREST_INT |_MM_FROUND_NO_EXC);
 }
 
-static INLINE vint2 vcastu_vi2_vi(vint vi) {
+static INLINE vmask vcastu_vm_vi(vint vi) {
   return _mm512_maskz_permutexvar_epi32(0xaaaa, _mm512_set_epi32(7, 7, 6, 6, 5, 5, 4, 4, 3, 3, 2, 2, 1, 1, 0, 0), _mm512_castsi256_si512(vi));
 }
 
-static INLINE vint vcastu_vi_vi2(vint2 vi) {
+static INLINE vint vcastu_vi_vm(vmask vi) {
   return _mm512_castsi512_si256(_mm512_maskz_permutexvar_epi32(0x00ff, _mm512_set_epi32(0, 0, 0, 0, 0, 0, 0, 0, 15, 13, 11, 9, 7, 5, 3, 1), vi));
 }
 
@@ -186,8 +186,6 @@ static INLINE vmask vadd64_vm_vm_vm(vmask x, vmask y) { return _mm512_add_epi64(
 static INLINE vdouble vcast_vd_d(double d) { return _mm512_set1_pd(d); }
 static INLINE vmask vreinterpret_vm_vd(vdouble vd) { return _mm512_castpd_si512(vd); }
 static INLINE vdouble vreinterpret_vd_vm(vmask vm) { return _mm512_castsi512_pd(vm); }
-static INLINE vint2 vreinterpret_vi2_vd(vdouble vd) { return _mm512_castpd_si512(vd); }
-static INLINE vdouble vreinterpret_vd_vi2(vint2 vi) { return _mm512_castsi512_pd(vi); }
 
 static INLINE vdouble vadd_vd_vd_vd(vdouble x, vdouble y) { return _mm512_add_pd(x, y); }
 static INLINE vdouble vsub_vd_vd_vd(vdouble x, vdouble y) { return _mm512_sub_pd(x, y); }
@@ -532,7 +530,6 @@ static INLINE void vsscatter2_v_p_i_i_vd(double *ptr, int offset, int step, vdou
 //
 
 static INLINE vfloat vrev21_vf_vf(vfloat vf) { return _mm512_permute_ps(vf, 0xb1); }
-static INLINE vint2 vrev21_vi2_vi2(vint2 i) { return vreinterpret_vi2_vf(vrev21_vf_vf(vreinterpret_vf_vi2(i))); }
 
 static INLINE vfloat vreva2_vf_vf(vfloat vf) {
   return vreinterpret_vf_vm(_mm512_permutexvar_epi32(_mm512_set_epi32(1, 0, 3, 2, 5, 4, 7, 6, 9, 8, 11, 10, 13, 12, 15, 14), vreinterpret_vm_vf(vf)));

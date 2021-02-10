@@ -140,9 +140,6 @@ static INLINE VECTOR_CC vfloat vreinterpret_vf_vi2(vint2 vm) {
 static INLINE VECTOR_CC vint2 vreinterpret_vi2_vf(vfloat vf) {
   return vreinterpretq_s32_f32(vf);
 }
-static INLINE VECTOR_CC vint2 vreinterpret_vi2_vd(vdouble vd) {
-  return vreinterpretq_s32_f64(vd);
-}
 
 /****************************************/
 /* Single precision FP operations */
@@ -736,14 +733,11 @@ static INLINE VECTOR_CC vint vand_vi_vo_vi(vopmask x, vint y) {
   return vand_s32(vreinterpret_s32_u32(vget_low_u32(x)), y);
 }
 
-static INLINE VECTOR_CC vint2 vcastu_vi2_vi(vint vi) {
-  return vreinterpretq_s32_u32(vrev64q_u32(vreinterpretq_u32_u64(vmovl_u32(vreinterpret_u32_s32(vi)))));
+static INLINE VECTOR_CC vmask vcastu_vm_vi(vint vi) {
+  return vrev64q_u32(vreinterpretq_u32_u64(vmovl_u32(vreinterpret_u32_s32(vi))));
 }
-static INLINE VECTOR_CC vint vcastu_vi_vi2(vint2 vi2) {
-  return vreinterpret_s32_u32(vmovn_u64(vreinterpretq_u64_u32(vrev64q_u32(vreinterpretq_u32_s32(vi2)))));
-}
-static INLINE VECTOR_CC vdouble vreinterpret_vd_vi2(vint2 vi) {
-  return vreinterpretq_f64_s32(vi);
+static INLINE VECTOR_CC vint vcastu_vi_vm(vmask vi2) {
+  return vreinterpret_s32_u32(vmovn_u64(vreinterpretq_u64_u32(vrev64q_u32(vi2))));
 }
 static INLINE VECTOR_CC vdouble vtruncate_vd_vd(vdouble vd) { return vrndq_f64(vd); }
 
@@ -773,7 +767,6 @@ static INLINE VECTOR_CC void vsscatter2_v_p_i_i_vd(double *ptr, int offset, int 
 
 static INLINE VECTOR_CC vfloat vrev21_vf_vf(vfloat d0) { return vrev64q_f32(d0); }
 static INLINE VECTOR_CC vfloat vreva2_vf_vf(vfloat d0) { return vcombine_f32(vget_high_f32(d0), vget_low_f32(d0)); }
-static INLINE VECTOR_CC vint2 vrev21_vi2_vi2(vint2 i) { return vreinterpret_vi2_vf(vrev21_vf_vf(vreinterpret_vf_vi2(i))); }
 
 static INLINE VECTOR_CC void vstream_v_p_vf(float *ptr, vfloat v) { vstore_v_p_vf(ptr, v); }
 
@@ -834,7 +827,7 @@ static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) {
 
 static INLINE vmask vcast_vm_vi(vint vi) {
   vmask m = vreinterpretq_u32_u64(vmovl_u32(vreinterpret_u32_s32(vi)));
-  return vor_vm_vm_vm(vcast_vm_vi2(vcastu_vi2_vi(vreinterpret_s32_u32(vget_low_u32(vgt_vo_vi_vi(vcast_vi_i(0), vi))))), m);
+  return vor_vm_vm_vm(vcastu_vm_vi(vreinterpret_s32_u32(vget_low_u32(vgt_vo_vi_vi(vcast_vi_i(0), vi)))), m);
 }
 static INLINE vint vcast_vi_vm(vmask vm) { return vreinterpret_s32_u32(vmovn_u64(vreinterpretq_u64_u32(vm))); }
 
