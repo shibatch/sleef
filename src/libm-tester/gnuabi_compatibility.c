@@ -369,7 +369,7 @@ typedef svint32_t vint2;
 #define CALL_SP_vf_vf_pvf(name, p) __CALL_vf_vf_pvf(name, ISA_TOKEN, VLA_TOKEN, p); svst1_f32(svptrue_b8(), (float *)outbuf, vf2)
 
 #define DECLARE_SP_vi_vf(name, p) __DECLARE_vi_vf(name, ISA_TOKEN, VLA_TOKEN, p)
-#define CALL_SP_vi_vf(name, p) __CALL_vi_vf(name, ISA_TOKEN, VLA_TOKEN, p); svst1_s32(svptrue_b8(), (int *)outbuf, vi0)
+#define CALL_SP_vi_vf(name, p) __CALL_vi_vf(name, ISA_TOKEN, VLA_TOKEN, p); svst1_s32(svptrue_b8(), (int *)outbuf, vi20)
 
 #define DECLARE_SP_vf_vf_vi(name, p) __DECLARE_vf_vf_vi(name, ISA_TOKEN, VLA_TOKEN, p)
 #define CALL_SP_vf_vf_vi(name, p) __CALL_vf_vf_vi(name, ISA_TOKEN, VLA_TOKEN, p); svst1_f32(svptrue_b8(), (float *)outbuf, vf0)
@@ -559,7 +559,9 @@ int main2(int argc, char **argv) {
   vfloat vf0 = svdup_n_f32(argc), vf1 = svdup_n_f32(argc), vf2 = svdup_n_f32(argc), vf3 = svdup_n_f32(argc);
   vint vi0 = svdup_n_s32(argc), vi2 = svdup_n_s32(argc);
   vint2 vi20 = svdup_n_s32(argc), vi22 = svdup_n_s32(argc);
+#ifdef MASKED_GNUABI
   vopmask mask = svcmpne_s32(svptrue_b8(), svdup_n_s32(argc), svdup_n_s32(0));
+#endif
 #endif
 
   // Double precision function call.
