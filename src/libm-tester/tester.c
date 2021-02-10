@@ -3251,7 +3251,7 @@ void do_test() {
       showResult(success);
     }
 
-    {
+    if (!enableFlushToZero) {
       fprintf(stderr, "nextafterf test : ");
 
       float xa[] = { NEGATIVE_INFINITY, -FLT_MAX, -1, -FLT_MIN, -SLEEF_FLT_DENORM_MIN, -0, +0, SLEEF_FLT_DENORM_MIN, FLT_MIN, 1 , FLT_MAX, POSITIVE_INFINITY, NAN };
