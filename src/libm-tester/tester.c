@@ -2895,14 +2895,14 @@ void do_test() {
     }
 
     {
-      fprintf(stderr, "cosf in sincospi_u05 denormal/nonnumber test : ");
+      fprintf(stderr, "cosf in sincospif_u05 denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenormY_f(mpfr_cospi, child_sincospif_u05, xa[i]);
       showResult(success);
     }
 
     {
-      fprintf(stderr, "cosf in sincospi_u35 denormal/nonnumber test : ");
+      fprintf(stderr, "cosf in sincospif_u35 denormal/nonnumber test : ");
       float xa[] = { +0.0, -0.0, POSITIVE_INFINITYf, NEGATIVE_INFINITYf, NAN };
       for(i=0;i<sizeof(xa)/sizeof(float) && success;i++) cmpDenormY_f(mpfr_cospi, child_sincospif_u35, xa[i]);
       showResult(success);
