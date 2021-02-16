@@ -369,6 +369,8 @@ install(
     RUNTIME #
     DESTINATION "${CMAKE_INSTALL_BINDIR}"
     COMPONENT sleef_Runtime
+    INCLUDES #
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
 )
 
 install(
