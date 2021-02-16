@@ -491,6 +491,7 @@ endif(DEFINED QMKDISP_PARAMS_X2)
 # Install libsleef and sleef.h
 install(
     TARGETS sleefquad
+    EXPORT sleefTargets
     PUBLIC_HEADER #
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
     COMPONENT sleef_Development

@@ -1002,6 +1002,7 @@ endif()
 if(BUILD_SCALAR_LIB)
   install(
       TARGETS sleefscalar
+      EXPORT sleefTargets
       LIBRARY #
       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
       COMPONENT sleef_Runtime
@@ -1029,6 +1030,7 @@ endif()
 # Install libsleef and sleef.h
 install(
     TARGETS ${TARGET_LIBSLEEF}
+    EXPORT sleefTargets
     PUBLIC_HEADER #
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
     COMPONENT sleef_Development
@@ -1062,6 +1064,7 @@ install(
 if(ENABLE_GNUABI)
   install(
       TARGETS ${TARGET_LIBSLEEFGNUABI}
+      EXPORT sleefTargets
       LIBRARY #
       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
       COMPONENT sleef_Runtime

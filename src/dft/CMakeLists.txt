@@ -356,6 +356,7 @@ set_target_properties(${TARGET_LIBDFT} PROPERTIES
 # Install
 install(
     TARGETS ${TARGET_LIBDFT}
+    EXPORT sleefTargets
     PUBLIC_HEADER #
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
     COMPONENT sleef_Development
