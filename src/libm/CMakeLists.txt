@@ -641,14 +641,30 @@ if(BUILD_INLINE_HEADERS)
 
     #
 
-    add_custom_target(${TARGET_INLINE_HEADERS} ALL
+    add_custom_target(${TARGET_INLINE_HEADERS}_util ALL
       DEPENDS
       ${INLINE_HEADER_FILES_GENERATED}
       )
+
+    add_library("${TARGET_INLINE_HEADERS}" INTERFACE)
+    add_dependencies("${TARGET_INLINE_HEADERS}" "${TARGET_INLINE_HEADERS}_util")
+    target_include_directories(
+        "${TARGET_INLINE_HEADERS}"
+        INTERFACE
+        "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>"
+    )
+
+    # CMake 3.4 can't have PUBLIC_HEADER property on INTERFACE libraries
     install(
         FILES ${INLINE_HEADER_FILES_GENERATED}
         DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
         COMPONENT sleef_Development
+    )
+
+    install(
+        TARGETS "${TARGET_INLINE_HEADERS}"
+        EXPORT sleefTargets
+        INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
     )
   endif(SED_COMMAND)
 endif(BUILD_INLINE_HEADERS)
