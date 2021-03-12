@@ -231,6 +231,36 @@ set(TARGET_LIBDFT "sleefdft")
 # Check subdirectories
 add_subdirectory("src")
 
+# Install the CMake package config
+include(CMakePackageConfigHelpers)
+
+write_basic_package_version_file(
+    sleefConfigVersion.cmake
+    COMPATIBILITY SameMajorVersion
+)
+
+set(
+    SLEEF_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake/sleef"
+    CACHE STRING "CMake package config location relative to the install prefix"
+)
+
+mark_as_advanced(SLEEF_INSTALL_CMAKEDIR)
+
+install(
+    FILES
+    "${PROJECT_SOURCE_DIR}/sleefConfig.cmake"
+    "${PROJECT_BINARY_DIR}/sleefConfigVersion.cmake"
+    DESTINATION "${SLEEF_INSTALL_CMAKEDIR}"
+    COMPONENT sleef_Development
+)
+
+install(
+    EXPORT sleefTargets
+    NAMESPACE sleef::
+    DESTINATION "${SLEEF_INSTALL_CMAKEDIR}"
+    COMPONENT sleef_Development
+)
+
 # Extra messages at configuration time. By default is active, it can be
 # turned off by invoking cmake with "-DSLEEF_SHOW_CONFIG=OFF".
 if(SLEEF_SHOW_CONFIG)

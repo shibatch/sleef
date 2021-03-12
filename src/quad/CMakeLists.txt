@@ -393,7 +393,11 @@ if(BUILD_INLINE_HEADERS)
       DEPENDS
       ${INLINE_HEADER_FILES_GENERATED}
       )
-    install(FILES ${INLINE_HEADER_FILES_GENERATED} DESTINATION include)
+    install(
+        FILES ${INLINE_HEADER_FILES_GENERATED}
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+        COMPONENT sleef_Development
+    )
   endif(SED_COMMAND)
 endif(BUILD_INLINE_HEADERS)
 
@@ -485,9 +489,30 @@ endif(DEFINED QMKDISP_PARAMS_X2)
 # Install
 # --------------------------------------------------------------------
 # Install libsleef and sleef.h
-install(TARGETS sleefquad
-        PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        RUNTIME DESTINATION bin
+install(
+    TARGETS sleefquad
+    EXPORT sleefTargets
+    PUBLIC_HEADER #
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+    COMPONENT sleef_Development
+    LIBRARY #
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    COMPONENT sleef_Runtime
+    NAMELINK_SKIP
+    ARCHIVE #
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    COMPONENT sleef_Development
+    RUNTIME #
+    DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    COMPONENT sleef_Runtime
+    INCLUDES #
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+)
+
+install(
+    TARGETS sleefquad
+    LIBRARY #
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    COMPONENT sleef_Development
+    NAMELINK_ONLY
 )

@@ -641,11 +641,31 @@ if(BUILD_INLINE_HEADERS)
 
     #
 
-    add_custom_target(${TARGET_INLINE_HEADERS} ALL
+    add_custom_target(${TARGET_INLINE_HEADERS}_util ALL
       DEPENDS
       ${INLINE_HEADER_FILES_GENERATED}
       )
-    install(FILES ${INLINE_HEADER_FILES_GENERATED} DESTINATION include)
+
+    add_library("${TARGET_INLINE_HEADERS}" INTERFACE)
+    add_dependencies("${TARGET_INLINE_HEADERS}" "${TARGET_INLINE_HEADERS}_util")
+    target_include_directories(
+        "${TARGET_INLINE_HEADERS}"
+        INTERFACE
+        "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>"
+    )
+
+    # CMake 3.4 can't have PUBLIC_HEADER property on INTERFACE libraries
+    install(
+        FILES ${INLINE_HEADER_FILES_GENERATED}
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+        COMPONENT sleef_Development
+    )
+
+    install(
+        TARGETS "${TARGET_INLINE_HEADERS}"
+        EXPORT sleefTargets
+        INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+    )
   endif(SED_COMMAND)
 endif(BUILD_INLINE_HEADERS)
 
@@ -966,7 +986,11 @@ if(CLANG_EXE_PATH AND SLEEF_ENABLE_LLVM_BITCODE)
   )
   add_dependencies(${TARGET_LLVM_BITCODE} ${TARGET_HEADERS})
 
-  install(FILES ${LLVM_BITCODE_OUTPUTS} DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+  install(
+      FILES ${LLVM_BITCODE_OUTPUTS}
+      DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+      COMPONENT sleef_Development
+  )
 endif()
 
 # --------------------------------------------------------------------
@@ -992,31 +1016,88 @@ if(COMPILER_SUPPORTS_BUILTIN_MATH)
 endif()
 
 if(BUILD_SCALAR_LIB)
-  install(TARGETS sleefscalar
-          LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-          ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-          RUNTIME DESTINATION bin
-          )
+  install(
+      TARGETS sleefscalar
+      EXPORT sleefTargets
+      LIBRARY #
+      DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+      COMPONENT sleef_Runtime
+      NAMELINK_SKIP
+      ARCHIVE #
+      DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+      COMPONENT sleef_Development
+      RUNTIME #
+      DESTINATION "${CMAKE_INSTALL_BINDIR}"
+      COMPONENT sleef_Runtime
+  )
+
+  install(
+      TARGETS sleefscalar
+      LIBRARY #
+      DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+      COMPONENT sleef_Development
+      NAMELINK_ONLY
+  )
 endif()
 
 # --------------------------------------------------------------------
 # Install
 # --------------------------------------------------------------------
 # Install libsleef and sleef.h
-install(TARGETS ${TARGET_LIBSLEEF}
-        PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-        RUNTIME DESTINATION bin
+install(
+    TARGETS ${TARGET_LIBSLEEF}
+    EXPORT sleefTargets
+    PUBLIC_HEADER #
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+    COMPONENT sleef_Development
+    LIBRARY #
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    COMPONENT sleef_Runtime
+    NAMELINK_SKIP
+    ARCHIVE #
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    COMPONENT sleef_Development
+    RUNTIME #
+    DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    COMPONENT sleef_Runtime
+    INCLUDES #
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+)
+install(
+    TARGETS ${TARGET_LIBSLEEF}
+    LIBRARY #
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    COMPONENT sleef_Development
+    NAMELINK_ONLY
 )
 configure_file("sleef.pc.in" "${CMAKE_CURRENT_BINARY_DIR}/sleef.pc" @ONLY)
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/sleef.pc"
-        DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+install(
+    FILES "${CMAKE_CURRENT_BINARY_DIR}/sleef.pc"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
+    COMPONENT sleef_Development
+)
 
 if(ENABLE_GNUABI)
-  install(TARGETS ${TARGET_LIBSLEEFGNUABI}
-          LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-          ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-          RUNTIME DESTINATION bin
-          )
+  install(
+      TARGETS ${TARGET_LIBSLEEFGNUABI}
+      EXPORT sleefTargets
+      LIBRARY #
+      DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+      COMPONENT sleef_Runtime
+      NAMELINK_SKIP
+      ARCHIVE #
+      DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+      COMPONENT sleef_Development
+      RUNTIME #
+      DESTINATION "${CMAKE_INSTALL_BINDIR}"
+      COMPONENT sleef_Runtime
+  )
+
+  install(
+      TARGETS ${TARGET_LIBSLEEF}
+      LIBRARY #
+      DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+      COMPONENT sleef_Development
+      NAMELINK_ONLY
+  )
 endif()
