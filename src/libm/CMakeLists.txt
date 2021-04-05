@@ -1033,6 +1033,7 @@ if(BUILD_SCALAR_LIB)
 
   install(
       TARGETS sleefscalar
+      DESTINATION dummy # provided above already
       LIBRARY #
       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
       COMPONENT sleef_Development
@@ -1065,6 +1066,7 @@ install(
 )
 install(
     TARGETS ${TARGET_LIBSLEEF}
+    DESTINATION dummy # provided above already
     LIBRARY #
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     COMPONENT sleef_Development
@@ -1095,6 +1097,7 @@ if(ENABLE_GNUABI)
 
   install(
       TARGETS ${TARGET_LIBSLEEF}
+      DESTINATION dummy # provided above already
       LIBRARY #
       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
       COMPONENT sleef_Development
