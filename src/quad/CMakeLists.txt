@@ -509,10 +509,23 @@ install(
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
 )
 
-install(
+if(BUILD_SHARED_LIBS)
+  install(
     TARGETS sleefquad
     LIBRARY #
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     COMPONENT sleef_Development
     NAMELINK_ONLY
-)
+    )
+else()
+  install(
+    TARGETS sleefquad
+    PUBLIC_HEADER #
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+    LIBRARY #
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    ARCHIVE #
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    COMPONENT sleef_Development
+    )
+endif()

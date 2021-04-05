@@ -1063,13 +1063,26 @@ install(
     INCLUDES #
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
 )
-install(
+if(BUILD_SHARED_LIBS)
+  install(
     TARGETS ${TARGET_LIBSLEEF}
     LIBRARY #
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     COMPONENT sleef_Development
     NAMELINK_ONLY
-)
+    )
+else()
+  install(
+    TARGETS ${TARGET_LIBSLEEF}
+    PUBLIC_HEADER #
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+    LIBRARY #
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    ARCHIVE #
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    COMPONENT sleef_Development
+    )
+endif()
 configure_file("sleef.pc.in" "${CMAKE_CURRENT_BINARY_DIR}/sleef.pc" @ONLY)
 install(
     FILES "${CMAKE_CURRENT_BINARY_DIR}/sleef.pc"
@@ -1093,11 +1106,24 @@ if(ENABLE_GNUABI)
       COMPONENT sleef_Runtime
   )
 
+if(BUILD_SHARED_LIBS)
   install(
-      TARGETS ${TARGET_LIBSLEEF}
-      LIBRARY #
-      DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-      COMPONENT sleef_Development
-      NAMELINK_ONLY
-  )
+    TARGETS ${TARGET_LIBSLEEF}
+    LIBRARY #
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    COMPONENT sleef_Development
+    NAMELINK_ONLY
+    )
+else()
+  install(
+    TARGETS ${TARGET_LIBSLEEF}
+    PUBLIC_HEADER #
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+    LIBRARY #
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    ARCHIVE #
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    COMPONENT sleef_Development
+    )
+endif()
 endif()
