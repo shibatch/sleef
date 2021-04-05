@@ -76,6 +76,7 @@ pipeline {
             	     }
                 }
 
+		/*
                 stage('Armclang') {
             	     agent { label 'armclang' }
             	     steps {
@@ -115,6 +116,7 @@ pipeline {
 			 '''
             	     }
                 }
+		*/
 
                 stage('aarch64 gcc-10 and cuda') {
             	     agent { label 'aarch64 && cuda && gcc-10' }
