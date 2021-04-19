@@ -165,6 +165,17 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 set(CMAKE_C_FLAGS "${ORG_CMAKE_C_FLAGS} ${SLEEF_C_FLAGS}")
 
+set(PRINT_GENERATION ON)
+
+if (DEFINED CMAKE_MESSAGE_LOG_LEVEL)
+  if(${CMAKE_MESSAGE_LOG_LEVEL} STREQUAL "ERROR")
+    set(PRINT_GENERATION OFF)
+  endif()
+  if(${CMAKE_MESSAGE_LOG_LEVEL} STREQUAL "WARNING")
+    set(PRINT_GENERATION OFF)
+  endif()
+endif()
+
 # --------------------------------------------------------------------
 # sleef.h
 # --------------------------------------------------------------------
@@ -178,7 +189,9 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/sleeflibm_header.h.org.in ${SLEEF_ORG
 set(SLEEF_HEADER_COMMANDS "")
 list(APPEND SLEEF_HEADER_COMMANDS COMMAND ${CMAKE_COMMAND} -E copy ${SLEEF_ORG_HEADER} ${SLEEF_INCLUDE_HEADER})
 foreach(SIMD ${SLEEF_HEADER_LIST})
-  list(APPEND SLEEF_HEADER_COMMANDS COMMAND echo Generating sleef.h: ${TARGET_MKRENAME} ${HEADER_PARAMS_${SIMD}})
+  if(PRINT_GENERATION)
+    list(APPEND SLEEF_HEADER_COMMANDS COMMAND echo Generating sleef.h: ${TARGET_MKRENAME} ${HEADER_PARAMS_${SIMD}})
+  endif()
   list(APPEND SLEEF_HEADER_COMMANDS COMMAND $<TARGET_FILE:${TARGET_MKRENAME}> ${HEADER_PARAMS_${SIMD}} >> ${SLEEF_INCLUDE_HEADER})
 endforeach()
 
@@ -220,8 +233,11 @@ foreach(SIMD ${SLEEF_SUPPORTED_LIBM_EXTENSIONS})
     list(APPEND HEADER_FILES_GENERATED ${HEADER_${SIMD}})
 
     # Generate mkrename commands
+    if(PRINT_GENERATION)
+      set(ECHO_VECARCH echo Generating rename${vecarch}.h: ${TARGET_MKRENAME} ${RENAME_PARAMS_${SIMD}})
+    endif()
     add_custom_command(OUTPUT ${HEADER_${SIMD}}
-      COMMAND echo Generating rename${vecarch}.h: ${TARGET_MKRENAME} ${RENAME_PARAMS_${SIMD}}
+      COMMAND ${ECHO_VECARCH}
       COMMAND $<TARGET_FILE:${TARGET_MKRENAME}> ${RENAME_PARAMS_${SIMD}} > ${HEADER_${SIMD}}
       DEPENDS ${TARGET_MKRENAME}
     )
@@ -233,8 +249,11 @@ endforeach()
 
 set(HEADER_CUDA ${CMAKE_CURRENT_BINARY_DIR}/include/renamecuda.h)
 list(APPEND HEADER_FILES_GENERATED ${HEADER_CUDA})
+if(PRINT_GENERATION)
+  set(ECHO_RENAME_CUDA echo Generating renamecuda.h: ${TARGET_MKRENAME} ${RENAME_PARAMS_CUDA})
+endif()
 add_custom_command(OUTPUT ${HEADER_CUDA}
-  COMMAND echo Generating renamecuda.h: ${TARGET_MKRENAME} ${RENAME_PARAMS_CUDA}
+  COMMAND ${ECHO_RENAME_CUDA}
   COMMAND $<TARGET_FILE:${TARGET_MKRENAME}> ${RENAME_PARAMS_CUDA} > ${HEADER_CUDA}
   DEPENDS ${TARGET_MKRENAME}
   )
@@ -257,9 +276,13 @@ if(ENABLE_GNUABI)
       set(HEADER_${SIMD}_GNUABI ${CMAKE_CURRENT_BINARY_DIR}/include/rename${vecarch}_gnuabi.h)
       list(APPEND HEADER_GNUABI_FILES_GENERATED ${HEADER_${SIMD}_GNUABI})
 
+
+      if (PRINT_GENERATION)
+        set(ECHO_RENAME_VECARCH echo Generating rename${vecarch}_gnuabi.h: ${TARGET_MKRENAME_GNUABI} ${RENAME_PARAMS_GNUABI_${SIMD}})
+      endif()
       # Generate mkrename_gnuabi commands
       add_custom_command(OUTPUT ${HEADER_${SIMD}_GNUABI}
-        COMMAND echo Generating rename${vecarch}_gnuabi.h: ${TARGET_MKRENAME_GNUABI} ${RENAME_PARAMS_GNUABI_${SIMD}}
+        COMMAND ${ECHO_RENAME_VECARCH}
         COMMAND $<TARGET_FILE:${TARGET_MKRENAME_GNUABI}> ${RENAME_PARAMS_GNUABI_${SIMD}} > ${HEADER_${SIMD}_GNUABI}
         DEPENDS ${TARGET_MKRENAME_GNUABI}
       )
@@ -479,7 +502,7 @@ if(BUILD_INLINE_HEADERS)
 	set(INLINE_HEADER_FILE ${PROJECT_BINARY_DIR}/include/sleefinline_${SIMDLC}.h)
 	add_custom_command(
 	  OUTPUT ${INLINE_HEADER_FILE} 
-	  
+
 	  # Preprocess sleefsimddp.c with SLEEF_GENHEADER defined, comments are preserved
 	  COMMAND "${CMAKE_C_COMPILER}"  ${FLAG_PREPROCESS} ${FLAG_PRESERVE_COMMENTS}                      # gcc -E -C 
 	  ${FLAG_INCLUDE}${PROJECT_SOURCE_DIR}/src/common ${FLAG_INCLUDE}${PROJECT_SOURCE_DIR}/src/arch    # -I/sleef/src/common -I/sleef/src/arch
@@ -561,7 +584,7 @@ if(BUILD_INLINE_HEADERS)
 
     add_custom_command(
       OUTPUT ${INLINE_HEADER_FILE} 
-      
+
       # Preprocess sleefsimddp.c with SLEEF_GENHEADER defined, comments are preserved
       COMMAND "${CMAKE_C_COMPILER}"  ${FLAG_PREPROCESS} ${FLAG_PRESERVE_COMMENTS}                      # gcc -E -C 
       ${FLAG_INCLUDE}${PROJECT_SOURCE_DIR}/src/common ${FLAG_INCLUDE}${PROJECT_SOURCE_DIR}/src/arch    # -I/sleef/src/common -I/sleef/src/arch
