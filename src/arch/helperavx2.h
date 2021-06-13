@@ -114,10 +114,10 @@ static INLINE vdouble vreinterpret_vd_vm(vmask vm) { return _mm256_castsi256_pd(
 
 //
 
-static vint2 vloadu_vi2_p(int32_t *p) { return _mm256_loadu_si256((__m256i const *)p); }
-static void vstoreu_v_p_vi2(int32_t *p, vint2 v) { _mm256_storeu_si256((__m256i *)p, v); }
-static vint vloadu_vi_p(int32_t *p) { return _mm_loadu_si128((__m128i *)p); }
-static void vstoreu_v_p_vi(int32_t *p, vint v) { _mm_storeu_si128((__m128i *)p, v); }
+static INLINE vint2 vloadu_vi2_p(int32_t *p) { return _mm256_loadu_si256((__m256i const *)p); }
+static INLINE void vstoreu_v_p_vi2(int32_t *p, vint2 v) { _mm256_storeu_si256((__m256i *)p, v); }
+static INLINE vint vloadu_vi_p(int32_t *p) { return _mm_loadu_si128((__m128i *)p); }
+static INLINE void vstoreu_v_p_vi(int32_t *p, vint v) { _mm_storeu_si128((__m128i *)p, v); }
 
 //
 
@@ -440,7 +440,7 @@ static INLINE void vsscatter2_v_p_i_i_vf(float *ptr, int offset, int step, vfloa
 
 //
 
-static vquad loadu_vq_p(void *p) {
+static INLINE vquad loadu_vq_p(void *p) {
   vquad vq;
   memcpy(&vq, p, VECTLENDP * 16);
   return vq;

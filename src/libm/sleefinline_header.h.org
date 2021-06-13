@@ -20,7 +20,9 @@
 #pragma fp_contract (off)
 #endif
 
+#if !(defined(__GNUC__) && !defined (__clang__))
 #pragma STDC FP_CONTRACT OFF
+#endif
 
 #ifndef SLEEF_FP_ILOGB0
 #define SLEEF_FP_ILOGB0 ((int)0x80000000)
