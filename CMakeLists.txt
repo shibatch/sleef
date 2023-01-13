@@ -46,6 +46,7 @@ set(SLEEF_ALL_SUPPORTED_EXTENSIONS
   NEON32 NEON32VFPV4                                    # Aarch32
   VSX VSXNOFMA VSX3 VSX3NOFMA                           # PPC64
   VXE VXENOFMA VXE2 VXE2NOFMA	                        # IBM Z
+  RVVM1 RVVM2                                           # RISC-V Vectors
   PUREC_SCALAR PURECFMA_SCALAR                          # Generic type
   CACHE STRING "List of SIMD architectures supported by libsleef."
   )
@@ -56,6 +57,7 @@ set(SLEEF_SUPPORTED_LIBM_EXTENSIONS
   NEON32 NEON32VFPV4                                    # Aarch32
   VSX VSXNOFMA VSX3 VSX3NOFMA                           # PPC64
   VXE VXENOFMA VXE2 VXE2NOFMA	                        # IBM Z
+  RVVM1 RVVM2                                           # RISC-V Vectors
   PUREC_SCALAR PURECFMA_SCALAR                          # Generic type
   CACHE STRING "List of SIMD architectures supported by libsleef."
   )

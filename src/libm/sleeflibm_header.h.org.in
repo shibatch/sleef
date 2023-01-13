@@ -131,6 +131,18 @@ SLEEF_IMPORT void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
 
 //
 
+#if defined(__riscv_v)
+#include <riscv_vector.h>
+typedef vfloat64m2_t Sleef_vfloat64m1_t_2;
+typedef vfloat32m2_t Sleef_vfloat32m1_t_2;
+typedef vfloat64m4_t Sleef_vfloat64m2_t_2;
+typedef vfloat32m4_t Sleef_vfloat32m2_t_2;
+#define Sleef_vfloat64m1_t_2_DEFINED
+#define Sleef_vfloat32m1_t_2_DEFINED
+#define Sleef_vfloat64m2_t_2_DEFINED
+#define Sleef_vfloat32m2_t_2_DEFINED
+#endif
+
 #ifndef Sleef_double2_DEFINED
 #define Sleef_double2_DEFINED
 typedef struct {

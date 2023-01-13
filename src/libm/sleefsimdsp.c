@@ -321,6 +321,33 @@ extern const float Sleef_rempitabsp[];
 #endif
 #endif
 
+// RISC-V
+#ifdef ENABLE_RVVM1
+#define CONFIG 1
+#if !defined(SLEEF_GENHEADER)
+#define ENABLE_RVV_SP
+#include "helperrvv.h"
+#else
+#include "macroonlyRVVM1.h"
+#endif
+#ifdef DORENAME
+#include "renamervvm1.h"
+#endif
+#endif
+
+#ifdef ENABLE_RVVM2
+#define CONFIG 1
+#if !defined(SLEEF_GENHEADER)
+#define ENABLE_RVV_SP
+#include "helperrvv.h"
+#else
+#include "macroonlyRVVM2.h"
+#endif
+#ifdef DORENAME
+#include "renamervvm2.h"
+#endif
+#endif
+
 // Generic
 
 #ifdef ENABLE_VECEXT
@@ -401,6 +428,7 @@ static INLINE CONST VECTOR_CC vmask vsignbit_vm_vf(vfloat f) {
   return vand_vm_vm_vm(vreinterpret_vm_vf(f), vreinterpret_vm_vf(vcast_vf_f(-0.0f)));
 }
 
+#if !(defined(ENABLE_RVVM1) || defined(ENABLE_RVVM2))
 static INLINE CONST VECTOR_CC vfloat vmulsign_vf_vf_vf(vfloat x, vfloat y) {
   return vreinterpret_vf_vm(vxor_vm_vm_vm(vreinterpret_vm_vf(x), vsignbit_vm_vf(y)));
 }
@@ -413,6 +441,7 @@ static INLINE CONST VECTOR_CC vfloat vcopysign_vf_vf_vf(vfloat x, vfloat y) {
 static INLINE CONST VECTOR_CC vfloat vsign_vf_vf(vfloat f) {
   return vreinterpret_vf_vm(vor_vm_vm_vm(vreinterpret_vm_vf(vcast_vf_f(1.0f)), vand_vm_vm_vm(vreinterpret_vm_vf(vcast_vf_f(-0.0f)), vreinterpret_vm_vf(f))));
 }
+#endif
 
 static INLINE CONST VECTOR_CC vopmask vsignbit_vo_vf(vfloat d) {
   return veq_vo_vi2_vi2(vand_vi2_vi2_vi2(vreinterpret_vi2_vf(d), vcast_vi2_i(0x80000000)), vcast_vi2_i(0x80000000));
@@ -487,7 +516,7 @@ static INLINE CONST VECTOR_CC vfloat vldexp3_vf_vf_vi2(vfloat d, vint2 q) {
 
 EXPORT CONST VECTOR_CC vfloat xldexpf(vfloat x, vint2 q) { return vldexp_vf_vf_vi2(x, q); }
 
-#if !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA))
+#if !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA) || defined(ENABLE_RVVM1) || defined(ENABLE_RVVM2))
 typedef struct {
   vfloat d;
   vint2 i;
@@ -517,9 +546,11 @@ static dfi_t dfisetdf_dfi_dfi_vf2(dfi_t dfi, vfloat2 v) {
 }
 #endif
 
+#if !(defined(ENABLE_RVVM1) || defined(ENABLE_RVVM2))
 static INLINE CONST VECTOR_CC vfloat vorsign_vf_vf_vf(vfloat x, vfloat y) {
   return vreinterpret_vf_vm(vor_vm_vm_vm(vreinterpret_vm_vf(x), vsignbit_vm_vf(y)));
 }
+#endif
 
 static INLINE CONST fi_t rempisubf(vfloat x) {
 #ifdef FULL_FP_ROUNDING
@@ -3290,7 +3321,7 @@ EXPORT CONST VECTOR_CC vfloat xcospif_u05(vfloat d) {
 }
 #endif // #if !defined(DETERMINISTIC)
 
-#if !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA))
+#if !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA) || defined(ENABLE_RVVM1) || defined(ENABLE_RVVM2))
   typedef struct {
     vfloat2 a, b;
   } df2;
