@@ -119,6 +119,10 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "s390x")
   set(SLEEF_ARCH_S390X ON CACHE INTERNAL "True for IBM Z architecture.")
 
   set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-march=z14;-mzvector")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "riscv64")
+  set(SLEEF_ARCH_RISCV64 ON CACHE INTERNAL "True for RISCV64 architecture.")
+  set(COMPILER_SUPPORTS_RVVM1 1)
+  set(COMPILER_SUPPORTS_RVVM2 1)
 endif()
 
 set(COMPILER_SUPPORTS_PUREC_SCALAR 1)
@@ -163,6 +167,9 @@ set(CLANG_FLAGS_ENABLE_VXE "-march=z14;-mzvector")
 set(CLANG_FLAGS_ENABLE_VXENOFMA "-march=z14;-mzvector")
 set(CLANG_FLAGS_ENABLE_VXE2 "-march=z15;-mzvector")
 set(CLANG_FLAGS_ENABLE_VXE2NOFMA "-march=z15;-mzvector")
+# RISC-V
+set(CLANG_FLAGS_ENABLE_RVVM1 "-march=rv64gcv")
+set(CLANG_FLAGS_ENABLE_RVVM2 "-march=rv64gcv")
 
 set(FLAGS_OTHERS "")
 set(FLAGS_ARCH_NATIVE "")
@@ -182,7 +189,7 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
   if (SLEEF_ARCH_X86)
     set(FLAGS_ARCH_NATIVE "-march=native")
   endif()
-  
+
   # Without the options below, gcc generates calls to libm
   string(CONCAT FLAGS_OTHERS "-fno-math-errno -fno-trapping-math")
   
