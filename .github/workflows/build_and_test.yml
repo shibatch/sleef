@@ -1,0 +1,117 @@
+
+name: "Build & Test"
+
+on:
+  # allow direct trigger
+  workflow_dispatch:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.1.1
+        with:
+          persist-credentials: false
+
+      - name: Install dependencies
+        run: sudo apt-get update -y -qq && sudo apt-get install -y -qq build-essential clang curl ninja-build libgmp-dev libmpfr-dev cpuinfo
+
+      - name: CPU Info
+        run: isa-info
+
+      - name: Build native
+        run: |
+          cmake -S . -B _build-native -GNinja \
+            -DCMAKE_INSTALL_PREFIX=$(pwd)/_install-native \
+            -DBUILD_STATIC_TEST_BINS=ON
+          cmake --build _build-native
+          cmake --install _build-native
+
+      - name: Test native
+        run: |
+          cd _build-native
+          ctest -j$(nproc)
+
+  build-and-test-cross:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # AArch64
+          - arch: aarch64
+            qemu_cpu: "max,sve=off"
+          - arch: aarch64
+            qemu_cpu: "max,sve=on,sve128=on"
+          - arch: aarch64
+            qemu_cpu: "max,sve=on,sve256=on"
+          - arch: aarch64
+            qemu_cpu: "max,sve=on,sve512=on"
+          # Aarch32
+          - arch: armhf
+            binfmt: arm
+            package: -arm-linux-gnueabihf
+          # PPC64
+          - arch: ppc64el
+            binfmt: ppc64le
+            package: -powerpc64le-linux-gnu
+          # IBM Z
+          - arch: s390x
+
+    steps:
+      - uses: actions/checkout@v4.1.1
+        with:
+          persist-credentials: false
+
+      - uses: docker/setup-qemu-action@v3.0.0
+        with:
+          platforms: ${{ matrix.binfmt || matrix.arch }}
+
+      - name: Install dependencies
+        run: sudo apt-get update -y -qq && sudo apt-get install -y -qq build-essential clang curl ninja-build libgmp-dev libmpfr-dev gcc${{ matrix.package || format('-{0}-linux-gnu', matrix.arch) }}
+
+      - name: Print host CPU info
+        run: |
+          cat /proc/cpuinfo
+
+      - name: Build native
+        run: |
+          cmake -S . -B _build-native -GNinja \
+            -DCMAKE_INSTALL_PREFIX=$(pwd)/_install-native \
+            -DBUILD_STATIC_TEST_BINS=ON \
+            -DENFORCE_TESTER=ON
+          cmake --build _build-native
+          cmake --install _build-native
+
+      - name: Build ${{ matrix.arch }}
+        env:
+          CTEST_OUTPUT_ON_FAILURE: "TRUE"
+          QEMU_CPU: ${{ matrix.qemu_cpu }}
+        run: |
+          cmake -S . -B _build-${{ matrix.arch }} -GNinja \
+            -DCMAKE_TOOLCHAIN_FILE=$(pwd)/travis/toolchain-${{ matrix.arch }}.cmake \
+            -DCMAKE_INSTALL_PREFIX="$(pwd)/_install-${{ matrix.arch }}" \
+            -DNATIVE_BUILD_DIR="$(pwd)/_build-native" \
+            -DSLEEF_SHOW_CONFIG=1 \
+            -DDISABLE_SSL=ON \
+            -DBUILD_DFT=OFF \
+            -DBUILD_GNUABI_LIBS=OFF \
+            -DBUILD_INLINE_HEADERS=OFF \
+            -DBUILD_QUAD=OFF \
+            -DBUILD_SCALAR_LIB=ON \
+            -DBUILD_STATIC_TEST_BINS=ON \
+            ${EXTRA_CMAKE_FLAGS}
+          cmake --build _build-${{ matrix.arch }}
+          cmake --install _build-${{ matrix.arch }}
+
+      - name: Test ${{ matrix.arch }}
+        env:
+          QEMU_CPU: ${{ matrix.qemu_cpu }}
+        run: |
+          cd _build-${{ matrix.arch }}
+          ctest -j$(nproc)
