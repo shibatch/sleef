@@ -221,6 +221,33 @@ extern const double Sleef_rempitabdp[];
 #endif
 #endif
 
+// RISC-V
+#ifdef ENABLE_RVVM1
+#define CONFIG 1
+#if !defined(SLEEF_GENHEADER)
+#define ENABLE_RVV_DP
+#include "helperrvv.h"
+#else
+#include "macroonlyRVVM1.h"
+#endif
+#ifdef DORENAME
+#include "renamervvm1.h"
+#endif
+#endif
+
+#ifdef ENABLE_RVVM2
+#define CONFIG 1
+#if !defined(SLEEF_GENHEADER)
+#define ENABLE_RVV_DP
+#include "helperrvv.h"
+#else
+#include "macroonlyRVVM2.h"
+#endif
+#ifdef DORENAME
+#include "renamervvm2.h"
+#endif
+#endif
+
 // Generic
 
 #ifdef ENABLE_VECEXT
