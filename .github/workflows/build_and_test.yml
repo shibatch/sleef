@@ -33,8 +33,8 @@ jobs:
         run: sudo apt-get update -y -qq && sudo apt-get install -y -qq build-essential clang curl ninja-build libgmp-dev libmpfr-dev
 
       - name: Build native
+        shell: bash -ex -o pipefail {0}
         run: |
-          set -x
           EXTRA_CMAKE_FLAGS="-DENFORCE_SSE2=ON -DENFORCE_SSE4=ON -DENFORCE_AVX=ON -DENFORCE_AVX=ON -DENFORCE_AVX2=ON -DENFORCE_AVX512F=ON -DENFORCE_FMA4=ON"
           cmake -S . -B _build-native -GNinja \
             -DCMAKE_INSTALL_PREFIX=$(pwd)/_install-native \
@@ -108,6 +108,8 @@ jobs:
             package: -powerpc64le-linux-gnu
           # IBM Z
           - arch: s390x
+          # RISC-V
+          - arch: riscv64
 
     name: build-${{ matrix.arch }}
     steps:
@@ -120,6 +122,14 @@ jobs:
           sudo apt-get update -y -qq
           sudo apt-get install -y -qq build-essential clang curl ninja-build libgmp-dev libmpfr-dev gcc${{ matrix.package || format('-{0}-linux-gnu', matrix.arch) }}
 
+      - name: Download riscv-gnu-toolchain's LLVM build
+        env:
+          RISCV_GNU_TOOLCHAIN_TAG: "2023.10.18"
+        run: |
+          curl -L https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/${RISCV_GNU_TOOLCHAIN_TAG}/riscv64-glibc-ubuntu-20.04-llvm-nightly-${RISCV_GNU_TOOLCHAIN_TAG}-nightly.tar.gz |
+            tar xzf - -C /opt
+        if: ${{ matrix.arch == 'riscv64' }}
+
       - name: Download build-native artifacts
         uses: actions/download-artifact@v3
         with:
@@ -130,8 +140,13 @@ jobs:
           chmod +x _build-native/bin/*
 
       - name: Build ${{ matrix.arch }}
+        shell: bash -ex -o pipefail {0}
         run: |
-          set -x
+          # Add riscv-gnu-toolchain to PATH
+          if [[ ${{ matrix.arch }} = "riscv64" ]]; then
+            export PATH="/opt/riscv/bin:$PATH"
+          fi
+
           EXTRA_CMAKE_FLAGS=""
           if [[ ${{ matrix.arch }} = "aarch64" ]]; then
             EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DENFORCE_SVE=ON"
@@ -144,6 +159,14 @@ jobs:
             EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DENFORCE_VXE=ON"
             # Disable VXE2 support, QEMU doesn't support it
             EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DDISABLE_VXE2=ON"
+          elif [[ ${{ matrix.arch }} = "riscv64" ]]; then
+            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DENFORCE_RVVM1=ON -DENFORCE_RVVM2=ON"
+            # Disable inline headers, they just don't compile on riscv64
+            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DBUILD_INLINE_HEADERS=OFF"
+            # Disable dft, it fails with linker error to `cexp`
+            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DBUILD_DFT=OFF"
+            # Disable quad, it's missing the `Sleef_quad` function
+            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DBUILD_QUAD=OFF"
           fi
           cmake -S . -B _build-${{ matrix.arch }} -GNinja \
             -DCMAKE_INSTALL_PREFIX="$(pwd)/_install-${{ matrix.arch }}" \
@@ -190,6 +213,15 @@ jobs:
           # IBM Z
           # TODO: figure out qemu_cpu variable to make tests pass on QEMU
           - arch: s390x
+          # RISC-V
+          - arch: riscv64
+            qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=false"
+          - arch: riscv64
+            qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=true,vlen=128,elen=64,vext_spec=v1.0"
+          - arch: riscv64
+            qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=true,vlen=256,elen=64,vext_spec=v1.0"
+          - arch: riscv64
+            qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=true,vlen=512,elen=64,vext_spec=v1.0"
 
     name: "test-${{ matrix.arch }} (qemu_cpu: \"${{ matrix.qemu_cpu }}\")"
     steps:
