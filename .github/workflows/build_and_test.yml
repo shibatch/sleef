@@ -37,6 +37,15 @@ jobs:
           cd _build-native
           ctest -j$(nproc)
 
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-native
+          path: |
+            _build-*
+            _install-*
+        if: always()
+
   build-and-test-cross:
     runs-on: ubuntu-latest
     strategy:
@@ -56,12 +65,15 @@ jobs:
           - arch: armhf
             binfmt: arm
             package: -arm-linux-gnueabihf
+            qemu_cpu: "max"
           # PPC64
           - arch: ppc64el
             binfmt: ppc64le
             package: -powerpc64le-linux-gnu
+            qemu_cpu: "power10"
           # IBM Z
           - arch: s390x
+            #TODO: figure out qemu_cpu variable to make tests pass on QEMU
 
     steps:
       - uses: actions/checkout@v4.1.1
@@ -115,3 +127,12 @@ jobs:
         run: |
           cd _build-${{ matrix.arch }}
           ctest -j$(nproc)
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-${{ matrix.arch }}-${{ strategy.job-index }}
+          path: |
+            _build-*
+            _install-*
+        if: always()
