@@ -10,6 +10,17 @@ on:
 permissions:
   contents: read
 
+env:
+  COMMON_CMAKE_FLAGS: |
+    -DSLEEF_SHOW_CONFIG=1
+    -DDISABLE_SSL=ON
+    -DBUILD_GNUABI_LIBS=ON
+    -DBUILD_INLINE_HEADERS=ON
+    -DBUILD_DFT=ON
+    -DBUILD_QUAD=ON
+    -DBUILD_SCALAR_LIB=ON
+    -DBUILD_STATIC_TEST_BINS=ON
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -26,9 +37,19 @@ jobs:
 
       - name: Build native
         run: |
+          set -x
+          EXTRA_CMAKE_FLAGS=" \
+            -DENFORCE_SSE2=ON \
+            -DENFORCE_SSE4=ON \
+            -DENFORCE_AVX=ON \
+            -DENFORCE_AVX=ON \
+            -DENFORCE_FMA4=ON \
+            -DENFORCE_AVX2=ON \
+            -DENFORCE_AVX512F=ON"
           cmake -S . -B _build-native -GNinja \
             -DCMAKE_INSTALL_PREFIX=$(pwd)/_install-native \
-            -DBUILD_STATIC_TEST_BINS=ON
+            ${COMMON_CMAKE_FLAGS} \
+            ${EXTRA_CMAKE_FLAGS}
           cmake --build _build-native
           cmake --install _build-native
 
@@ -95,7 +116,7 @@ jobs:
         run: |
           cmake -S . -B _build-native -GNinja \
             -DCMAKE_INSTALL_PREFIX=$(pwd)/_install-native \
-            -DBUILD_STATIC_TEST_BINS=ON \
+            ${COMMON_CMAKE_FLAGS} \
             -DENFORCE_TESTER=ON
           cmake --build _build-native
           cmake --install _build-native
@@ -105,18 +126,21 @@ jobs:
           CTEST_OUTPUT_ON_FAILURE: "TRUE"
           QEMU_CPU: ${{ matrix.qemu_cpu }}
         run: |
+          set -x
+          if [[ ${{ matrix.arch }} = "aarch64" ]]; then
+            EXTRA_CMAKE_FLAGS="-DENFORCE_SVE=ON"
+          elif [[ ${{ matrix.arch }} = "armhf" ]]; then
+            EXTRA_CMAKE_FLAGS=""
+          elif [[ ${{ matrix.arch }} = "ppc64el" ]]; then
+            EXTRA_CMAKE_FLAGS="-DENFORCE_VSX=ON -DENFORCE_VSX3=ON"
+          elif [[ ${{ matrix.arch }} = "s390x" ]]; then
+            EXTRA_CMAKE_FLAGS="-DENFORCE_VXE=ON -DENFORCE_VXE2=ON"
+          fi
           cmake -S . -B _build-${{ matrix.arch }} -GNinja \
-            -DCMAKE_TOOLCHAIN_FILE=$(pwd)/travis/toolchain-${{ matrix.arch }}.cmake \
             -DCMAKE_INSTALL_PREFIX="$(pwd)/_install-${{ matrix.arch }}" \
+            -DCMAKE_TOOLCHAIN_FILE=$(pwd)/travis/toolchain-${{ matrix.arch }}.cmake \
             -DNATIVE_BUILD_DIR="$(pwd)/_build-native" \
-            -DSLEEF_SHOW_CONFIG=1 \
-            -DDISABLE_SSL=ON \
-            -DBUILD_DFT=OFF \
-            -DBUILD_GNUABI_LIBS=OFF \
-            -DBUILD_INLINE_HEADERS=OFF \
-            -DBUILD_QUAD=OFF \
-            -DBUILD_SCALAR_LIB=ON \
-            -DBUILD_STATIC_TEST_BINS=ON \
+            ${COMMON_CMAKE_FLAGS} \
             ${EXTRA_CMAKE_FLAGS}
           cmake --build _build-${{ matrix.arch }}
           cmake --install _build-${{ matrix.arch }}
