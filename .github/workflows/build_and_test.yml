@@ -97,11 +97,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # arch: [aarch64, armhf, ppc64el, s390x]
-        arch: [aarch64, ppc64el, s390x]
+        arch: [aarch64, armhf, ppc64el, s390x]
         include:
-          # - arch: armhf
-          #   package: -arm-linux-gnueabihf
+          - arch: armhf
+            package: -arm-linux-gnueabihf
           - arch: ppc64el
             package: -powerpc64le-linux-gnu
 
@@ -132,7 +131,8 @@ jobs:
           if [[ ${{ matrix.arch }} = "aarch64" ]]; then
             EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DENFORCE_SVE=ON"
           elif [[ ${{ matrix.arch }} = "armhf" ]]; then
-            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} "
+            # Disable inline headers, they just don't compile on armhf
+            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DBUILD_INLINE_HEADERS=OFF"
           elif [[ ${{ matrix.arch }} = "ppc64el" ]]; then
             EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DENFORCE_VSX=ON -DENFORCE_VSX3=ON"
           elif [[ ${{ matrix.arch }} = "s390x" ]]; then
@@ -162,16 +162,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # arch: [aarch64, armhf, ppc64el, s390x]
-        arch: [aarch64, ppc64el, s390x]
+        arch: [aarch64, armhf, ppc64el, s390x]
         include:
           # AArch64
           - arch: aarch64
             qemu_cpu: "max,sve-max-vq=1"
           # Aarch32
-          # - arch: armhf
-          #   binfmt: arm
-          #   qemu_cpu: "max"
+          - arch: armhf
+            binfmt: arm
+            qemu_cpu: "max"
           # PPC64
           - arch: ppc64el
             binfmt: ppc64le
