@@ -97,10 +97,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [aarch64, armhf, ppc64el, s390x]
+        # arch: [aarch64, armhf, ppc64el, s390x]
+        arch: [aarch64, ppc64el, s390x]
         include:
-          - arch: armhf
-            package: -arm-linux-gnueabihf
+          # - arch: armhf
+          #   package: -arm-linux-gnueabihf
           - arch: ppc64el
             package: -powerpc64le-linux-gnu
 
@@ -161,14 +162,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # arch: [aarch64, armhf, ppc64el, s390x]
+        arch: [aarch64, ppc64el, s390x]
         include:
           # AArch64
           - arch: aarch64
             qemu_cpu: "max,sve-max-vq=1"
           # Aarch32
-          - arch: armhf
-            binfmt: arm
-            qemu_cpu: "max"
+          # - arch: armhf
+          #   binfmt: arm
+          #   qemu_cpu: "max"
           # PPC64
           - arch: ppc64el
             binfmt: ppc64le
