@@ -72,7 +72,7 @@ jobs:
         with:
           name: build-native
 
-      - name: Fix build-native persmissions
+      - name: Fix build-native permissions
         run: |
           chmod +x _build-native/bin/*
 
@@ -120,7 +120,7 @@ jobs:
         with:
           name: build-native
 
-      - name: Fix build-native persmissions
+      - name: Fix build-native permissions
         run: |
           chmod +x _build-native/bin/*
 
@@ -203,6 +203,11 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: build-${{ matrix.arch }}
+
+      - name: Fix build-native and _build-${{ matrix.arch }} permissions
+        run: |
+          chmod +x _build-native/bin/*
+          chmod +x _build-${{ matrix.arch }}/bin/*
 
       - name: Test ${{ matrix.arch }}
         env:
