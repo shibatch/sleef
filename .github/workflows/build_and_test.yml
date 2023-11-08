@@ -136,7 +136,9 @@ jobs:
           elif [[ ${{ matrix.arch }} = "ppc64el" ]]; then
             EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DENFORCE_VSX=ON -DENFORCE_VSX3=ON"
           elif [[ ${{ matrix.arch }} = "s390x" ]]; then
-            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DENFORCE_VXE=ON -DDISABLE_VXE2=ON"
+            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DENFORCE_VXE=ON"
+            # Disable VXE2 support, QEMU doesn't support it
+            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DDISABLE_VXE2=ON"
           fi
           cmake -S . -B _build-${{ matrix.arch }} -GNinja \
             -DCMAKE_INSTALL_PREFIX="$(pwd)/_install-${{ matrix.arch }}" \
