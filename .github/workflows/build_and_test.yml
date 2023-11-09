@@ -179,10 +179,6 @@ jobs:
             qemu_cpu: "max,sve=on,sve256=on"
           - arch: aarch64
             qemu_cpu: "max,sve=on,sve512=on"
-          - arch: aarch64
-            qemu_cpu: "max,sve=on,sve1024=on"
-          - arch: aarch64
-            qemu_cpu: "max,sve=on,sve2048=on"
           # Aarch32
           - arch: armhf
             binfmt: arm
