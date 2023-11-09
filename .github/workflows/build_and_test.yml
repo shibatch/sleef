@@ -97,12 +97,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [aarch64, armhf, ppc64el, s390x]
         include:
+          # AArch64
+          - arch: aarch64
+          # Aarch32
           - arch: armhf
             package: -arm-linux-gnueabihf
+          # PPC64
           - arch: ppc64el
             package: -powerpc64le-linux-gnu
+          # IBM Z
+          - arch: s390x
 
     name: build-${{ matrix.arch }}
     steps:
@@ -164,11 +169,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [aarch64, armhf, ppc64el, s390x]
         include:
           # AArch64
           - arch: aarch64
-            qemu_cpu: "max,sve-max-vq=1"
+            qemu_cpu: "max,sve=off"
+          - arch: aarch64
+            qemu_cpu: "max,sve=on,sve128=on"
+          - arch: aarch64
+            qemu_cpu: "max,sve=on,sve256=on"
+          - arch: aarch64
+            qemu_cpu: "max,sve=on,sve512=on"
+          - arch: aarch64
+            qemu_cpu: "max,sve=on,sve1024=on"
+          - arch: aarch64
+            qemu_cpu: "max,sve=on,sve2048=on"
           # Aarch32
           - arch: armhf
             binfmt: arm
