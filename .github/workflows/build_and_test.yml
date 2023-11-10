@@ -1,0 +1,242 @@
+
+name: "Build & Test"
+
+on:
+  # allow direct trigger
+  workflow_dispatch:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  COMMON_CMAKE_FLAGS: |
+    -DSLEEF_SHOW_CONFIG=1
+    -DDISABLE_SSL=ON
+    -DBUILD_GNUABI_LIBS=ON
+    -DBUILD_INLINE_HEADERS=ON
+    -DBUILD_DFT=ON
+    -DBUILD_QUAD=ON
+    -DBUILD_SCALAR_LIB=ON
+    -DBUILD_STATIC_TEST_BINS=ON
+
+jobs:
+  build-native:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.1.1
+        with:
+          persist-credentials: false
+
+      - name: Install dependencies
+        run: sudo apt-get update -y -qq && sudo apt-get install -y -qq build-essential clang curl ninja-build libgmp-dev libmpfr-dev
+
+      - name: Build native
+        run: |
+          set -x
+          EXTRA_CMAKE_FLAGS="-DENFORCE_SSE2=ON -DENFORCE_SSE4=ON -DENFORCE_AVX=ON -DENFORCE_AVX=ON -DENFORCE_AVX2=ON -DENFORCE_AVX512F=ON -DENFORCE_FMA4=ON"
+          cmake -S . -B _build-native -GNinja \
+            -DCMAKE_INSTALL_PREFIX=$(pwd)/_install-native \
+            ${COMMON_CMAKE_FLAGS} \
+            ${EXTRA_CMAKE_FLAGS}
+          cmake --build _build-native
+          cmake --install _build-native
+
+      - name: Upload build-native artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-native
+          path: |
+            _build-*
+            _install-*
+        if: always()
+
+  test-native:
+    runs-on: ubuntu-latest
+    needs: [build-native]
+    steps:
+      - uses: actions/checkout@v4.1.1
+        with:
+          persist-credentials: false
+
+      - name: Install dependencies
+        run: sudo apt-get update -y -qq && sudo apt-get install -y -qq libgmp-dev libmpfr-dev
+
+      - name: Print host CPU info
+        run: |
+          cat /proc/cpuinfo
+
+      - name: Download build-native artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-native
+
+      - name: Fix build-native permissions
+        run: |
+          chmod +x _build-native/bin/*
+
+      - name: Test native
+        env:
+          CTEST_OUTPUT_ON_FAILURE: "TRUE"
+        run: |
+          cd _build-native
+          ctest -j$(nproc)
+
+      - name: Upload test-native artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-native
+          path: |
+            _build-native/Testing
+        if: always()
+
+  build-cross:
+    runs-on: ubuntu-latest
+    needs: [build-native]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # AArch64
+          - arch: aarch64
+          # Aarch32
+          - arch: armhf
+            package: -arm-linux-gnueabihf
+          # PPC64
+          - arch: ppc64el
+            package: -powerpc64le-linux-gnu
+          # IBM Z
+          - arch: s390x
+
+    name: build-${{ matrix.arch }}
+    steps:
+      - uses: actions/checkout@v4.1.1
+        with:
+          persist-credentials: false
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -y -qq
+          sudo apt-get install -y -qq build-essential clang curl ninja-build libgmp-dev libmpfr-dev gcc${{ matrix.package || format('-{0}-linux-gnu', matrix.arch) }}
+
+      - name: Download build-native artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-native
+
+      - name: Fix build-native permissions
+        run: |
+          chmod +x _build-native/bin/*
+
+      - name: Build ${{ matrix.arch }}
+        run: |
+          set -x
+          EXTRA_CMAKE_FLAGS=""
+          if [[ ${{ matrix.arch }} = "aarch64" ]]; then
+            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DENFORCE_SVE=ON"
+          elif [[ ${{ matrix.arch }} = "armhf" ]]; then
+            # Disable inline headers, they just don't compile on armhf
+            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DBUILD_INLINE_HEADERS=OFF"
+          elif [[ ${{ matrix.arch }} = "ppc64el" ]]; then
+            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DENFORCE_VSX=ON -DENFORCE_VSX3=ON"
+          elif [[ ${{ matrix.arch }} = "s390x" ]]; then
+            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DENFORCE_VXE=ON"
+            # Disable VXE2 support, QEMU doesn't support it
+            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DDISABLE_VXE2=ON"
+          fi
+          cmake -S . -B _build-${{ matrix.arch }} -GNinja \
+            -DCMAKE_INSTALL_PREFIX="$(pwd)/_install-${{ matrix.arch }}" \
+            -DCMAKE_TOOLCHAIN_FILE=$(pwd)/travis/toolchain-${{ matrix.arch }}.cmake \
+            -DNATIVE_BUILD_DIR="$(pwd)/_build-native" \
+            ${COMMON_CMAKE_FLAGS} \
+            ${EXTRA_CMAKE_FLAGS}
+          cmake --build _build-${{ matrix.arch }}
+          cmake --install _build-${{ matrix.arch }}
+
+      - name: Upload build-${{ matrix.arch }} artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-${{ matrix.arch }}
+          path: |
+            _build-${{ matrix.arch }}
+            _install-${{ matrix.arch }}
+        if: always()
+
+  test-cross:
+    runs-on: ubuntu-latest
+    needs: [build-native, build-cross]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # AArch64
+          - arch: aarch64
+            qemu_cpu: "max,sve=off"
+          - arch: aarch64
+            qemu_cpu: "max,sve=on,sve128=on"
+          - arch: aarch64
+            qemu_cpu: "max,sve=on,sve256=on"
+          - arch: aarch64
+            qemu_cpu: "max,sve=on,sve512=on"
+          # Aarch32
+          - arch: armhf
+            binfmt: arm
+            qemu_cpu: "max"
+          # PPC64
+          - arch: ppc64el
+            binfmt: ppc64le
+            qemu_cpu: "power10"
+          # IBM Z
+          # TODO: figure out qemu_cpu variable to make tests pass on QEMU
+          - arch: s390x
+
+    name: "test-${{ matrix.arch }} (qemu_cpu: \"${{ matrix.qemu_cpu }}\")"
+    steps:
+      - uses: actions/checkout@v4.1.1
+        with:
+          persist-credentials: false
+
+      - uses: docker/setup-qemu-action@v3.0.0
+        with:
+          platforms: ${{ matrix.binfmt || matrix.arch }}
+
+      - name: Install dependencies
+        run: sudo apt-get update -y -qq && sudo apt-get install -y -qq libgmp-dev libmpfr-dev
+
+      - name: Print host CPU info
+        run: |
+          cat /proc/cpuinfo
+
+      - name: Download build-native artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-native
+
+      - name: Download build-${{ matrix.arch }} artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-${{ matrix.arch }}
+
+      - name: Fix build-native and _build-${{ matrix.arch }} permissions
+        run: |
+          chmod +x _build-native/bin/*
+          chmod +x _build-${{ matrix.arch }}/bin/*
+
+      - name: Test ${{ matrix.arch }}
+        env:
+          CTEST_OUTPUT_ON_FAILURE: "TRUE"
+        run: |
+          if [[ -n "${{ matrix.qemu_cpu }}" ]]; then
+            export QEMU_CPU="${{ matrix.qemu_cpu }}"
+          fi
+          cd _build-${{ matrix.arch }}
+          ctest -j$(nproc)
+
+      - name: Upload test-${{ matrix.arch }}-${{ strategy.job-index }} artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-${{ matrix.arch }}-${{ strategy.job-index }}
+          path: |
+            _build-${{ matrix.arch }}/Testing
+        if: always()
