@@ -116,8 +116,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        compiler: [gcc, llvm]
         arch: [aarch64, armhf, ppc64el, s390x, riscv64]
+        compiler: [gcc, llvm]
         include:
           - arch: armhf
             gnupkg: -arm-linux-gnueabihf
