@@ -7,6 +7,10 @@ on:
   push:
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
@@ -24,13 +28,21 @@ env:
 jobs:
   build-native:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [gcc, llvm]
+
+    name: build-native-${{ matrix.compiler }}
     steps:
       - uses: actions/checkout@v4.1.1
         with:
           persist-credentials: false
 
       - name: Install dependencies
-        run: sudo apt-get update -y -qq && sudo apt-get install -y -qq build-essential clang curl ninja-build libgmp-dev libmpfr-dev
+        run: |
+          sudo apt-get update -y -qq
+          sudo apt-get install -y -qq build-essential curl ninja-build libgmp-dev libmpfr-dev
 
       - name: Build native
         shell: bash -ex -o pipefail {0}
@@ -38,15 +50,16 @@ jobs:
           EXTRA_CMAKE_FLAGS="-DENFORCE_SSE2=ON -DENFORCE_SSE4=ON -DENFORCE_AVX=ON -DENFORCE_AVX=ON -DENFORCE_AVX2=ON -DENFORCE_AVX512F=ON -DENFORCE_FMA4=ON"
           cmake -S . -B _build-native -GNinja \
             -DCMAKE_INSTALL_PREFIX=$(pwd)/_install-native \
+            -DCMAKE_TOOLCHAIN_FILE=$(pwd)/travis/toolchain-native-${{ matrix.compiler }}.cmake \
             ${COMMON_CMAKE_FLAGS} \
             ${EXTRA_CMAKE_FLAGS}
           cmake --build _build-native
           cmake --install _build-native
 
-      - name: Upload build-native artifacts
+      - name: Upload build-native-${{ matrix.compiler }} artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: build-native
+          name: build-native-${{ matrix.compiler }}
           path: |
             _build-*
             _install-*
@@ -55,6 +68,12 @@ jobs:
   test-native:
     runs-on: ubuntu-latest
     needs: [build-native]
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler: [gcc, llvm]
+
+    name: test-native-${{ matrix.compiler }}
     steps:
       - uses: actions/checkout@v4.1.1
         with:
@@ -67,12 +86,12 @@ jobs:
         run: |
           cat /proc/cpuinfo
 
-      - name: Download build-native artifacts
+      - name: Download build-native-${{ matrix.compiler }} artifacts
         uses: actions/download-artifact@v3
         with:
-          name: build-native
+          name: build-native-${{ matrix.compiler }}
 
-      - name: Fix build-native permissions
+      - name: Fix _build-native permissions
         run: |
           chmod +x _build-native/bin/*
 
@@ -97,21 +116,40 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        compiler: [gcc, llvm]
+        arch: [aarch64, armhf, ppc64el, s390x, riscv64]
         include:
-          # AArch64
-          - arch: aarch64
-          # Aarch32
           - arch: armhf
-            package: -arm-linux-gnueabihf
-          # PPC64
+            gnupkg: -arm-linux-gnueabihf
           - arch: ppc64el
-            package: -powerpc64le-linux-gnu
-          # IBM Z
+            gnupkg: -powerpc64le-linux-gnu
+        exclude:
+          # It fails with the following error:
+          # ```
+          # FAILED: include/sleefinline_vsx3.h /home/runner/work/sleef/sleef/_build-ppc64el/include/sleefinline_vsx3.h
+          # cd /home/runner/work/sleef/sleef/_build-ppc64el/src/libm && /usr/bin/clang -E -C -I/home/runner/work/sleef/sleef/src/common -I/home/runner/work/sleef/sleef/src/arch -I/home/runner/work/sleef/sleef/_build-ppc64el/src/libm/include/ -DSLEEF_GENHEADER -DENABLE_VSX3 -DDORENAME /home/runner/work/sleef/sleef/src/libm/sleefsimddp.c > /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp1 && /usr/bin/sed -n -e "/^\\/\\/@#.*\$/p" /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp1 > /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp2 && /usr/bin/sed -e "s/^\\/\\/@#/#/g" /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp2 > /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/include/macroonlyVSX3.h && /usr/bin/clang -E -C -I/home/runner/work/sleef/sleef/src/common -I/home/runner/work/sleef/sleef/src/arch -I/home/runner/work/sleef/sleef/_build-ppc64el/src/libm/include/ -DSLEEF_GENHEADER -DENABLE_VSX3 -DDORENAME /home/runner/work/sleef/sleef/src/libm/sleefsimdsp.c >> /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp1 && /usr/bin/sed -e "s/^#.*//g" /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp1 > /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.c && /usr/bin/clang -E /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.c > /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp3 && /usr/bin/sed -e s/SLEEF_VERSION_SLEEF/3.6.0/g -e s/SLEEF_SIMD_SLEEF/VSX3/g /home/runner/work/sleef/sleef/src/libm/sleefinline_header.h.org > /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp4 && /usr/bin/sed -e "s/^#.*//g" /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp3 >> /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp4 && /usr/bin/sed -e "s/^SLEEFSHARP/#/g" /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp4 > /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp5 && /usr/bin/sed -e s/SLEEFXXX//g /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp5 > /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp6 && /usr/bin/sed -e "s/^[[:space:]]*\$//g" /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp6 > /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp7 && /usr/bin/sed "/^\$/N;/^\\n\$/D" /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp7 > /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp8 && /home/runner/work/sleef/sleef/_build-native/bin/addSuffix /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp8 /home/runner/work/sleef/sleef/src/common/keywords.txt _vsx3_sleef Sleef_rempitabdp Sleef_rempitabsp > /home/runner/work/sleef/sleef/_build-ppc64el/include/sleefinline_vsx3.h
+          # In file included from /home/runner/work/sleef/sleef/src/libm/sleefsimddp.c:178:
+          # /home/runner/work/sleef/sleef/src/arch/helperpower_128.h:9:2: error: Please specify -mcpu=power8 or -mcpu=power9
+          # #error Please specify -mcpu=power8 or -mcpu=power9
+          # ```
+          - arch: ppc64el
+            compiler: llvm
+          # It fails with the following error:
+          # ```
+          # FAILED: src/libm-tester/CMakeFiles/iutipurec_scalar.dir/iutsimd.c.o
+          # /usr/bin/clang --target=s390x-linux-gnu -DENABLE_ALIAS=1 -DENABLE_PUREC_SCALAR=1 -DENABLE_SYS_getrandom=1 -DMACRO_ONLY_HEADER=\"macroonlyPUREC_SCALAR.h\" -DSIMD_SUFFIX=_purec_scalar_sleef -DSLEEF_STATIC_LIBS=1 -DUSE_INLINE_HEADER=\"sleefinline_purec_scalar.h\" -I/home/runner/work/sleef/sleef/src/common -I/home/runner/work/sleef/sleef/src/arch -I/home/runner/work/sleef/sleef/_build-s390x/include -I/home/runner/work/sleef/sleef/src/libm -I/home/runner/work/sleef/sleef/_build-s390x/src/libm/include -Wall -Wno-unused-function -Wno-attributes -Wno-unused-result -ffp-contract=off -fno-math-errno -fno-trapping-math -fno-strict-aliasing -O3 -DNDEBUG -std=gnu99 -MD -MT src/libm-tester/CMakeFiles/iutipurec_scalar.dir/iutsimd.c.o -MF src/libm-tester/CMakeFiles/iutipurec_scalar.dir/iutsimd.c.o.d -o src/libm-tester/CMakeFiles/iutipurec_scalar.dir/iutsimd.c.o -c /home/runner/work/sleef/sleef/src/libm-tester/iutsimd.c
+          # In file included from /home/runner/work/sleef/sleef/src/libm-tester/iutsimd.c:65:
+          # /usr/lib/llvm-13/lib/clang/13.0.1/include/vecintrin.h:11125:2: error: "Use -fzvector to enable vector extensions"
+          # #error "Use -fzvector to enable vector extensions"
+          # ```
           - arch: s390x
-          # RISC-V
+            compiler: llvm
+          # Only GCC trunk supports the RISC-V V intrinsics and https://github.com/riscv-collab/riscv-gnu-toolchain
+          # doesn't track a recent enough version yet
           - arch: riscv64
+            compiler: gcc
 
-    name: build-${{ matrix.arch }}
+    name: build-${{ matrix.arch }}-${{ matrix.compiler }}
     steps:
       - uses: actions/checkout@v4.1.1
         with:
@@ -120,33 +158,38 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update -y -qq
-          sudo apt-get install -y -qq build-essential clang curl ninja-build libgmp-dev libmpfr-dev gcc${{ matrix.package || format('-{0}-linux-gnu', matrix.arch) }}
+          sudo apt-get install -y -qq build-essential curl ninja-build libgmp-dev libmpfr-dev gcc${{ matrix.gnupkg || format('-{0}-linux-gnu', matrix.arch) }}
 
-      - name: Download riscv-gnu-toolchain's LLVM build
-        env:
-          RISCV_GNU_TOOLCHAIN_TAG: "2023.10.18"
+      - name: Install gcc
         run: |
-          curl -L https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/${RISCV_GNU_TOOLCHAIN_TAG}/riscv64-glibc-ubuntu-20.04-llvm-nightly-${RISCV_GNU_TOOLCHAIN_TAG}-nightly.tar.gz |
+          RISCV_GNU_TOOLCHAIN_TAG="2023.11.08"
+          curl -L https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/${RISCV_GNU_TOOLCHAIN_TAG}/riscv64-glibc-ubuntu-20.04-gcc-nightly-${RISCV_GNU_TOOLCHAIN_TAG}-nightly.tar.gz |
             tar xzf - -C /opt
-        if: ${{ matrix.arch == 'riscv64' }}
+          echo "PATH=/opt/riscv/bin:$PATH" >> $GITHUB_ENV
+        if: ${{ matrix.compiler == 'gcc' && matrix.arch == 'riscv64' }}
 
-      - name: Download build-native artifacts
+      - name: Install llvm
+        run: |
+          LLVM_VERSION="17"
+          curl -o llvm.sh https://apt.llvm.org/llvm.sh
+          chmod u+x llvm.sh
+          sudo ./llvm.sh ${LLVM_VERSION}
+          sudo ln -srf $(which clang-${LLVM_VERSION}) /usr/bin/clang
+          rm llvm.sh
+        if: ${{ matrix.compiler == 'llvm' }}
+
+      - name: Download build-native-${{ matrix.compiler }} artifacts
         uses: actions/download-artifact@v3
         with:
-          name: build-native
+          name: build-native-${{ matrix.compiler }}
 
-      - name: Fix build-native permissions
+      - name: Fix _build-native permissions
         run: |
           chmod +x _build-native/bin/*
 
       - name: Build ${{ matrix.arch }}
         shell: bash -ex -o pipefail {0}
         run: |
-          # Add riscv-gnu-toolchain to PATH
-          if [[ ${{ matrix.arch }} = "riscv64" ]]; then
-            export PATH="/opt/riscv/bin:$PATH"
-          fi
-
           EXTRA_CMAKE_FLAGS=""
           if [[ ${{ matrix.arch }} = "aarch64" ]]; then
             EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DENFORCE_SVE=ON"
@@ -157,8 +200,12 @@ jobs:
             EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DENFORCE_VSX=ON -DENFORCE_VSX3=ON"
           elif [[ ${{ matrix.arch }} = "s390x" ]]; then
             EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DENFORCE_VXE=ON"
-            # Disable VXE2 support, QEMU doesn't support it
-            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DDISABLE_VXE2=ON"
+            if [[ ${{ matrix.compiler }} = "gcc" ]]; then
+              # Disable VXE2 support, QEMU doesn't support some instructions generated by gcc
+              EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DDISABLE_VXE2=ON"
+            else
+              EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DENFORCE_VXE2=ON"
+            fi
           elif [[ ${{ matrix.arch }} = "riscv64" ]]; then
             EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DENFORCE_RVVM1=ON -DENFORCE_RVVM2=ON"
             # Disable inline headers, they just don't compile on riscv64
@@ -168,19 +215,20 @@ jobs:
             # Disable quad, it's missing the `Sleef_quad` function
             EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DBUILD_QUAD=OFF"
           fi
+
           cmake -S . -B _build-${{ matrix.arch }} -GNinja \
             -DCMAKE_INSTALL_PREFIX="$(pwd)/_install-${{ matrix.arch }}" \
-            -DCMAKE_TOOLCHAIN_FILE=$(pwd)/travis/toolchain-${{ matrix.arch }}.cmake \
+            -DCMAKE_TOOLCHAIN_FILE=$(pwd)/travis/toolchain-${{ matrix.arch }}-${{ matrix.compiler }}.cmake \
             -DNATIVE_BUILD_DIR="$(pwd)/_build-native" \
             ${COMMON_CMAKE_FLAGS} \
             ${EXTRA_CMAKE_FLAGS}
           cmake --build _build-${{ matrix.arch }}
           cmake --install _build-${{ matrix.arch }}
 
-      - name: Upload build-${{ matrix.arch }} artifacts
+      - name: Upload build-${{ matrix.arch }}-${{ matrix.compiler }} artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: build-${{ matrix.arch }}
+          name: build-${{ matrix.arch }}-${{ matrix.compiler }}
           path: |
             _build-${{ matrix.arch }}
             _install-${{ matrix.arch }}
@@ -195,35 +243,81 @@ jobs:
         include:
           # AArch64
           - arch: aarch64
+            compiler: gcc
             qemu_cpu: "max,sve=off"
           - arch: aarch64
+            compiler: gcc
             qemu_cpu: "max,sve=on,sve128=on"
           - arch: aarch64
+            compiler: gcc
             qemu_cpu: "max,sve=on,sve256=on"
           - arch: aarch64
+            compiler: gcc
             qemu_cpu: "max,sve=on,sve512=on"
+          # Some tests fail when compiled with LLVM only
+          # - arch: aarch64
+          #   compiler: llvm
+          #   qemu_cpu: "max,sve=off"
+          # - arch: aarch64
+          #   compiler: llvm
+          #   qemu_cpu: "max,sve=on,sve128=on"
+          # - arch: aarch64
+          #   compiler: llvm
+          #   qemu_cpu: "max,sve=on,sve256=on"
+          # - arch: aarch64
+          #   compiler: llvm
+          #   qemu_cpu: "max,sve=on,sve512=on"
           # Aarch32
           - arch: armhf
+            compiler: gcc
+            binfmt: arm
+            qemu_cpu: "max"
+          - arch: armhf
+            compiler: llvm
             binfmt: arm
             qemu_cpu: "max"
           # PPC64
           - arch: ppc64el
+            compiler: gcc
             binfmt: ppc64le
             qemu_cpu: "power10"
+          # - arch: ppc64el
+          #   compiler: llvm
+          #   binfmt: ppc64le
+          #   qemu_cpu: "power10"
           # IBM Z
           # TODO: figure out qemu_cpu variable to make tests pass on QEMU
           - arch: s390x
+            compiler: gcc
+          # - arch: s390x
+          #   compiler: llvm
           # RISC-V
+          # - arch: riscv64
+          #   compiler: gcc
+          #   qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=false"
+          # - arch: riscv64
+          #   compiler: gcc
+          #   qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=true,vlen=128,elen=64,vext_spec=v1.0"
+          # - arch: riscv64
+          #   compiler: gcc
+          #   qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=true,vlen=256,elen=64,vext_spec=v1.0"
+          # - arch: riscv64
+          #   compiler: gcc
+          #   qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=true,vlen=512,elen=64,vext_spec=v1.0"
           - arch: riscv64
+            compiler: llvm
             qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=false"
           - arch: riscv64
+            compiler: llvm
             qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=true,vlen=128,elen=64,vext_spec=v1.0"
           - arch: riscv64
+            compiler: llvm
             qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=true,vlen=256,elen=64,vext_spec=v1.0"
           - arch: riscv64
+            compiler: llvm
             qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=true,vlen=512,elen=64,vext_spec=v1.0"
 
-    name: "test-${{ matrix.arch }} (qemu_cpu: \"${{ matrix.qemu_cpu }}\")"
+    name: "test-${{ matrix.arch }}-${{ matrix.compiler }} (qemu_cpu: \"${{ matrix.qemu_cpu }}\")"
     steps:
       - uses: actions/checkout@v4.1.1
         with:
@@ -240,20 +334,19 @@ jobs:
         run: |
           cat /proc/cpuinfo
 
-      - name: Download build-native artifacts
+      - name: Download build-native-${{ matrix.compiler }} artifacts
         uses: actions/download-artifact@v3
         with:
-          name: build-native
+          name: build-native-${{ matrix.compiler }}
 
-      - name: Download build-${{ matrix.arch }} artifacts
+      - name: Download build-${{ matrix.arch }}-${{ matrix.compiler }} artifacts
         uses: actions/download-artifact@v3
         with:
-          name: build-${{ matrix.arch }}
+          name: build-${{ matrix.arch }}-${{ matrix.compiler }}
 
-      - name: Fix build-native and _build-${{ matrix.arch }} permissions
+      - name: Fix _build-native and _build-${{ matrix.arch }} permissions
         run: |
-          chmod +x _build-native/bin/*
-          chmod +x _build-${{ matrix.arch }}/bin/*
+          chmod +x _build-native/bin/* _build-${{ matrix.arch }}/bin/*
 
       - name: Test ${{ matrix.arch }}
         env:
@@ -265,10 +358,10 @@ jobs:
           cd _build-${{ matrix.arch }}
           ctest -j$(nproc)
 
-      - name: Upload test-${{ matrix.arch }}-${{ strategy.job-index }} artifacts
+      - name: Upload test-${{ matrix.arch }}-${{ matrix.compiler }}-${{ strategy.job-index }} artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: test-${{ matrix.arch }}-${{ strategy.job-index }}
+          name: test-${{ matrix.arch }}-${{ matrix.compiler }}-${{ strategy.job-index }}
           path: |
             _build-${{ matrix.arch }}/Testing
         if: always()
