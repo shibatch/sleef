@@ -234,12 +234,17 @@ if(BUILD_INLINE_HEADERS)
       if(COMPILER_SUPPORTS_${SIMD})
 	string(TOLOWER ${SIMD} SIMDLC)
 
+        if(CMAKE_CROSSCOMPILING AND CMAKE_C_COMPILER_ID MATCHES "Clang" AND CMAKE_C_COMPILER_TARGET)
+          set(FLAG_TARGET --target=${CMAKE_C_COMPILER_TARGET})
+        endif()
+
 	set(INLINE_HEADER_FILE ${PROJECT_BINARY_DIR}/include/sleefquadinline_${SIMDLC}.h)
 	add_custom_command(
 	  OUTPUT ${INLINE_HEADER_FILE} 
   
 	  # Preprocess sleefsimddp.c with SLEEF_GENHEADER defined, comments are preserved
 	  COMMAND "${CMAKE_C_COMPILER}" ${FLAG_PREPROCESS} ${FLAG_PRESERVE_COMMENTS}                        # gcc -E -C 
+	  ${FLAG_TARGET} ${FLAGS_ENABLE_${SIMD}}                                                            # -msse2
 	  ${FLAG_INCLUDE}${PROJECT_SOURCE_DIR}/src/common ${FLAG_INCLUDE}${PROJECT_SOURCE_DIR}/src/arch     # -I/sleef/src/common -I/sleef/src/arch
 	  ${FLAG_INCLUDE}${CMAKE_CURRENT_BINARY_DIR}/include/                                               # -I/build/src/quad/include
 	  ${FLAG_DEFINE}SLEEF_GENHEADER ${FLAG_DEFINE}ENABLE_${SIMD} ${FLAG_DEFINE}DORENAME                 # -DSLEEF_GENHEADER -DENABLE_SSE2 -DDORENAME

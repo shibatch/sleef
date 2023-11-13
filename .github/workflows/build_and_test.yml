@@ -124,26 +124,6 @@ jobs:
           - arch: ppc64el
             gnupkg: -powerpc64le-linux-gnu
         exclude:
-          # It fails with the following error:
-          # ```
-          # FAILED: include/sleefinline_vsx3.h /home/runner/work/sleef/sleef/_build-ppc64el/include/sleefinline_vsx3.h
-          # cd /home/runner/work/sleef/sleef/_build-ppc64el/src/libm && /usr/bin/clang -E -C -I/home/runner/work/sleef/sleef/src/common -I/home/runner/work/sleef/sleef/src/arch -I/home/runner/work/sleef/sleef/_build-ppc64el/src/libm/include/ -DSLEEF_GENHEADER -DENABLE_VSX3 -DDORENAME /home/runner/work/sleef/sleef/src/libm/sleefsimddp.c > /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp1 && /usr/bin/sed -n -e "/^\\/\\/@#.*\$/p" /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp1 > /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp2 && /usr/bin/sed -e "s/^\\/\\/@#/#/g" /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp2 > /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/include/macroonlyVSX3.h && /usr/bin/clang -E -C -I/home/runner/work/sleef/sleef/src/common -I/home/runner/work/sleef/sleef/src/arch -I/home/runner/work/sleef/sleef/_build-ppc64el/src/libm/include/ -DSLEEF_GENHEADER -DENABLE_VSX3 -DDORENAME /home/runner/work/sleef/sleef/src/libm/sleefsimdsp.c >> /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp1 && /usr/bin/sed -e "s/^#.*//g" /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp1 > /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.c && /usr/bin/clang -E /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.c > /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp3 && /usr/bin/sed -e s/SLEEF_VERSION_SLEEF/3.6.0/g -e s/SLEEF_SIMD_SLEEF/VSX3/g /home/runner/work/sleef/sleef/src/libm/sleefinline_header.h.org > /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp4 && /usr/bin/sed -e "s/^#.*//g" /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp3 >> /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp4 && /usr/bin/sed -e "s/^SLEEFSHARP/#/g" /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp4 > /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp5 && /usr/bin/sed -e s/SLEEFXXX//g /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp5 > /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp6 && /usr/bin/sed -e "s/^[[:space:]]*\$//g" /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp6 > /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp7 && /usr/bin/sed "/^\$/N;/^\\n\$/D" /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp7 > /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp8 && /home/runner/work/sleef/sleef/_build-native/bin/addSuffix /home/runner/work/sleef/sleef/_build-ppc64el/src/libm/sleefVSX3.h.tmp8 /home/runner/work/sleef/sleef/src/common/keywords.txt _vsx3_sleef Sleef_rempitabdp Sleef_rempitabsp > /home/runner/work/sleef/sleef/_build-ppc64el/include/sleefinline_vsx3.h
-          # In file included from /home/runner/work/sleef/sleef/src/libm/sleefsimddp.c:178:
-          # /home/runner/work/sleef/sleef/src/arch/helperpower_128.h:9:2: error: Please specify -mcpu=power8 or -mcpu=power9
-          # #error Please specify -mcpu=power8 or -mcpu=power9
-          # ```
-          - arch: ppc64el
-            compiler: llvm
-          # It fails with the following error:
-          # ```
-          # FAILED: src/libm-tester/CMakeFiles/iutipurec_scalar.dir/iutsimd.c.o
-          # /usr/bin/clang --target=s390x-linux-gnu -DENABLE_ALIAS=1 -DENABLE_PUREC_SCALAR=1 -DENABLE_SYS_getrandom=1 -DMACRO_ONLY_HEADER=\"macroonlyPUREC_SCALAR.h\" -DSIMD_SUFFIX=_purec_scalar_sleef -DSLEEF_STATIC_LIBS=1 -DUSE_INLINE_HEADER=\"sleefinline_purec_scalar.h\" -I/home/runner/work/sleef/sleef/src/common -I/home/runner/work/sleef/sleef/src/arch -I/home/runner/work/sleef/sleef/_build-s390x/include -I/home/runner/work/sleef/sleef/src/libm -I/home/runner/work/sleef/sleef/_build-s390x/src/libm/include -Wall -Wno-unused-function -Wno-attributes -Wno-unused-result -ffp-contract=off -fno-math-errno -fno-trapping-math -fno-strict-aliasing -O3 -DNDEBUG -std=gnu99 -MD -MT src/libm-tester/CMakeFiles/iutipurec_scalar.dir/iutsimd.c.o -MF src/libm-tester/CMakeFiles/iutipurec_scalar.dir/iutsimd.c.o.d -o src/libm-tester/CMakeFiles/iutipurec_scalar.dir/iutsimd.c.o -c /home/runner/work/sleef/sleef/src/libm-tester/iutsimd.c
-          # In file included from /home/runner/work/sleef/sleef/src/libm-tester/iutsimd.c:65:
-          # /usr/lib/llvm-13/lib/clang/13.0.1/include/vecintrin.h:11125:2: error: "Use -fzvector to enable vector extensions"
-          # #error "Use -fzvector to enable vector extensions"
-          # ```
-          - arch: s390x
-            compiler: llvm
           # Only GCC trunk supports the RISC-V V intrinsics and https://github.com/riscv-collab/riscv-gnu-toolchain
           # doesn't track a recent enough version yet
           - arch: riscv64
@@ -200,12 +180,8 @@ jobs:
             EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DENFORCE_VSX=ON -DENFORCE_VSX3=ON"
           elif [[ ${{ matrix.arch }} = "s390x" ]]; then
             EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DENFORCE_VXE=ON"
-            if [[ ${{ matrix.compiler }} = "gcc" ]]; then
-              # Disable VXE2 support, QEMU doesn't support some instructions generated by gcc
-              EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DDISABLE_VXE2=ON"
-            else
-              EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DENFORCE_VXE2=ON"
-            fi
+            # Disable VXE2 support, QEMU doesn't support some instructions generated by gcc or llvm
+            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DDISABLE_VXE2=ON"
           elif [[ ${{ matrix.arch }} = "riscv64" ]]; then
             EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DENFORCE_RVVM1=ON -DENFORCE_RVVM2=ON"
             # Disable inline headers, they just don't compile on riscv64
@@ -281,16 +257,16 @@ jobs:
             compiler: gcc
             binfmt: ppc64le
             qemu_cpu: "power10"
-          # - arch: ppc64el
-          #   compiler: llvm
-          #   binfmt: ppc64le
-          #   qemu_cpu: "power10"
+          - arch: ppc64el
+            compiler: llvm
+            binfmt: ppc64le
+            qemu_cpu: "power10"
           # IBM Z
           # TODO: figure out qemu_cpu variable to make tests pass on QEMU
           - arch: s390x
             compiler: gcc
-          # - arch: s390x
-          #   compiler: llvm
+          - arch: s390x
+            compiler: llvm
           # RISC-V
           # - arch: riscv64
           #   compiler: gcc
