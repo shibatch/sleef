@@ -166,8 +166,8 @@ set(CLANG_FLAGS_ENABLE_VXENOFMA "-march=z14;-mzvector")
 set(CLANG_FLAGS_ENABLE_VXE2 "-march=z15;-mzvector")
 set(CLANG_FLAGS_ENABLE_VXE2NOFMA "-march=z15;-mzvector")
 # RISC-V
-set(CLANG_FLAGS_ENABLE_RVVM1 "-march=rv64gcv")
-set(CLANG_FLAGS_ENABLE_RVVM2 "-march=rv64gcv")
+set(CLANG_FLAGS_ENABLE_RVVM1 "-march=rv64gcv_zba_zbb_zbs")
+set(CLANG_FLAGS_ENABLE_RVVM2 "-march=rv64gcv_zba_zbb_zbs")
 
 set(FLAGS_OTHERS "")
 
