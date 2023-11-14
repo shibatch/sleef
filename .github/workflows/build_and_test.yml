@@ -140,14 +140,6 @@ jobs:
           sudo apt-get update -y -qq
           sudo apt-get install -y -qq build-essential curl ninja-build libgmp-dev libmpfr-dev gcc${{ matrix.gnupkg || format('-{0}-linux-gnu', matrix.arch) }}
 
-      - name: Install gcc
-        run: |
-          RISCV_GNU_TOOLCHAIN_TAG="2023.11.08"
-          curl -L https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/${RISCV_GNU_TOOLCHAIN_TAG}/riscv64-glibc-ubuntu-20.04-gcc-nightly-${RISCV_GNU_TOOLCHAIN_TAG}-nightly.tar.gz |
-            tar xzf - -C /opt
-          echo "PATH=/opt/riscv/bin:$PATH" >> $GITHUB_ENV
-        if: ${{ matrix.compiler == 'gcc' && matrix.arch == 'riscv64' }}
-
       - name: Install llvm
         run: |
           LLVM_VERSION="17"
