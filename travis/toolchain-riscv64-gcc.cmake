@@ -1,9 +1,11 @@
-set(CMAKE_CROSSCOMPILING    TRUE)
-set(CMAKE_SYSTEM_NAME       "Linux")
-set(CMAKE_SYSTEM_PROCESSOR  "riscv64")
+SET (CMAKE_CROSSCOMPILING   TRUE)
+SET (CMAKE_SYSTEM_NAME      "Linux")
+SET (CMAKE_SYSTEM_PROCESSOR "riscv64")
 
-find_program(CMAKE_C_COMPILER NAMES riscv64-unknown-linux-gnu-gcc-12 riscv64-unknown-linux-gnu-gcc-11 riscv64-unknown-linux-gnu-gcc)
+SET(CMAKE_FIND_ROOT_PATH  /usr/riscv64-linux-gnu /usr/include/riscv64-linux-gnu /usr/lib/riscv64-linux-gnu /lib/riscv64-linux-gnu)
 
-set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
-set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY BOTH)
-set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+find_program(CMAKE_C_COMPILER NAMES riscv64-linux-gnu-gcc-14 riscv64-linux-gnu-gcc)
+
+SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY BOTH)
+SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
