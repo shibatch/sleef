@@ -15,6 +15,8 @@ permissions:
   contents: read
 
 env:
+  GCC_VERSION: "12"
+  LLVM_VERSION: "17"
   COMMON_CMAKE_FLAGS: |
     -DSLEEF_SHOW_CONFIG=1
     -DDISABLE_SSL=ON
@@ -43,6 +45,20 @@ jobs:
         run: |
           sudo apt-get update -y -qq
           sudo apt-get install -y -qq build-essential curl ninja-build libgmp-dev libmpfr-dev
+
+      # Needed for llvm builds as well for target libraries
+      - name: Install gcc
+        run: |
+          sudo apt-get install -y -qq gcc-${GCC_VERSION}
+
+      - name: Install llvm
+        run: |
+          curl -o llvm.sh https://apt.llvm.org/llvm.sh
+          chmod u+x llvm.sh
+          sudo ./llvm.sh ${LLVM_VERSION}
+          sudo ln -srf $(which clang-${LLVM_VERSION}) /usr/bin/clang
+          rm llvm.sh
+        if: ${{ matrix.compiler == 'llvm' }}
 
       - name: Build native
         shell: bash -ex -o pipefail {0}
@@ -138,11 +154,15 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update -y -qq
-          sudo apt-get install -y -qq build-essential curl ninja-build libgmp-dev libmpfr-dev gcc${{ matrix.gnupkg || format('-{0}-linux-gnu', matrix.arch) }}
+          sudo apt-get install -y -qq build-essential curl ninja-build libgmp-dev libmpfr-dev
+
+      # Needed for llvm builds as well for target libraries
+      - name: Install gcc
+        run: |
+          sudo apt-get install -y -qq gcc-${GCC_VERSION}${{ matrix.gnupkg || format('-{0}-linux-gnu', matrix.arch) }}
 
       - name: Install llvm
         run: |
-          LLVM_VERSION="17"
           curl -o llvm.sh https://apt.llvm.org/llvm.sh
           chmod u+x llvm.sh
           sudo ./llvm.sh ${LLVM_VERSION}
