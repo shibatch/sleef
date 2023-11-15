@@ -13,18 +13,33 @@
 #if CONFIG == 1 || CONFIG == 2
 #define ISANAME "RISC-V Vector Extension with Min. VLEN"
 #define SLEEF_RVV_VLEN __riscv_v_min_vlen
+#elif CONFIG == 8
+// 256-bit vector length
+#define ISANAME "RISC-V Vector Extension 256-bit"
+#define SLEEF_RVV_VLEN (1 << 8)
+#elif CONFIG == 9
+// 512-bit vector length
+#define ISANAME "RISC-V Vector Extension 512-bit"
+#define SLEEF_RVV_VLEN (1 << 9)
+#elif CONFIG == 10
+// 1024-bit vector length
+#define ISANAME "RISC-V Vector Extension 1024-bit"
+#define SLEEF_RVV_VLEN (1 << 0)
+#elif CONFIG == 11
+// 2048-bit vector length
+#define ISANAME "RISC-V Vector Extension 2048-bit"
+#define SLEEF_RVV_VLEN (1 << 1)
 #else
-#define ISANAME "RISC-V Vector Extension VLEN=2^"#CONFIG
-#define SLEEF_RVV_VLEN (1 << CONFIG)
-#endif
-
-#ifndef CONFIG
-#error CONFIG macro not defined
+#error CONFIG macro invalid or not defined
 #endif
 
 #define ENABLE_SP
-#define ENABLE_FMA_DP
 #define ENABLE_DP
+
+#if CONFIG != 2
+#define ENABLE_FMA_SP
+#define ENABLE_FMA_DP
+#endif
 
 static INLINE int vavailability_i(int name) { return -1; }
 
@@ -405,12 +420,32 @@ static INLINE vfloat vrec_vf_vf(vfloat d) {
 static INLINE vfloat vsqrt_vf_vf(vfloat d) {
   return __riscv_vfsqrt(d, VECTLENSP);
 }
-// fused multiply-add/subtract
+#if defined(ENABLE_FMA_SP)
+// Multiply accumulate: z = z + x * y
 static INLINE vfloat vmla_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) {
   return __riscv_vfmadd(x, y, z, VECTLENSP);
 }
+// Multiply subtract: z = z - x * y
 static INLINE vfloat vmlanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) {
   return __riscv_vfnmsub(x, y, z, VECTLENSP);
+}
+static INLINE vfloat vmlapn_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) {
+  return __riscv_vfmsub(x, y, z, VECTLENSP);
+}
+#else
+static INLINE vfloat vmla_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vadd_vf_vf_vf(vmul_vf_vf_vf(x, y), z); }
+static INLINE vfloat vmlanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vsub_vf_vf_vf(z, vmul_vf_vf_vf(x, y)); }
+static INLINE vfloat vmlapn_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vsub_vf_vf_vf(vmul_vf_vf_vf(x, y), z); }
+#endif
+// fused multiply add / sub
+static INLINE vfloat vfma_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { // (x * y) + z
+  return __riscv_vfmadd(x, y, z, VECTLENSP);
+}
+static INLINE vfloat vfmanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { // -(x * y) + z
+  return __riscv_vfnmsub(x, y, z, VECTLENSP);
+}
+static INLINE vfloat vfmapn_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { // (x * y) - z
+  return __riscv_vfmsub(x, y, z, VECTLENSP);
 }
 // sign manipulation
 static INLINE vfloat vmulsign_vf_vf_vf(vfloat x, vfloat y) {
@@ -782,13 +817,20 @@ static INLINE vdouble vmax_vd_vd_vd(vdouble x, vdouble y) {
 static INLINE vdouble vmin_vd_vd_vd(vdouble x, vdouble y) {
   return __riscv_vfmin(x, y, VECTLENDP);
 }
-// fused multiply add / sub
+#if defined(ENABLE_FMA_DP)
+// Multiply accumulate: z = z + x * y
 static INLINE vdouble vmla_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) {
   return __riscv_vfmadd(x, y, z, VECTLENDP);
 }
+// Multiply subtract: z = z - x * y
 static INLINE vdouble vmlapn_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) {
   return __riscv_vfmsub(x, y, z, VECTLENDP);
 }
+#else
+static INLINE vdouble vmla_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return vadd_vd_vd_vd(vmul_vd_vd_vd(x, y), z); }
+static INLINE vdouble vmlapn_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return vsub_vd_vd_vd(vmul_vd_vd_vd(x, y), z); }
+#endif
+// fused multiply add / sub
 static INLINE vdouble vfma_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) {
   return __riscv_vfmadd(x, y, z, VECTLENDP);
 }
