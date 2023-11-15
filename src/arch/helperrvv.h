@@ -13,6 +13,10 @@
 #if CONFIG == 1 || CONFIG == 2
 #define ISANAME "RISC-V Vector Extension with Min. VLEN"
 #define SLEEF_RVV_VLEN __riscv_v_min_vlen
+#elif CONFIG == 7
+// 128-bit vector length
+#define ISANAME "RISC-V Vector Extension 128-bit"
+#define SLEEF_RVV_VLEN (1 << 7)
 #elif CONFIG == 8
 // 256-bit vector length
 #define ISANAME "RISC-V Vector Extension 256-bit"
