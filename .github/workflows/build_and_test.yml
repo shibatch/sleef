@@ -15,7 +15,7 @@ permissions:
   contents: read
 
 env:
-  GCC_VERSION: "12"
+  GCC_VERSION: "11"
   LLVM_VERSION: "17"
   COMMON_CMAKE_FLAGS: |
     -DSLEEF_SHOW_CONFIG=1
