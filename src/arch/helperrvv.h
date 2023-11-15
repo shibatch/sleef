@@ -24,11 +24,11 @@
 #elif CONFIG == 10
 // 1024-bit vector length
 #define ISANAME "RISC-V Vector Extension 1024-bit"
-#define SLEEF_RVV_VLEN (1 << 0)
+#define SLEEF_RVV_VLEN (1 << 10)
 #elif CONFIG == 11
 // 2048-bit vector length
 #define ISANAME "RISC-V Vector Extension 2048-bit"
-#define SLEEF_RVV_VLEN (1 << 1)
+#define SLEEF_RVV_VLEN (1 << 11)
 #else
 #error CONFIG macro invalid or not defined
 #endif
