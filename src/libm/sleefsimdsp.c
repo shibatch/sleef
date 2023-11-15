@@ -335,6 +335,19 @@ extern const float Sleef_rempitabsp[];
 #endif
 #endif
 
+#ifdef ENABLE_RVVM1NOFMA
+#define CONFIG 2
+#if !defined(SLEEF_GENHEADER)
+#define ENABLE_RVV_SP
+#include "helperrvv.h"
+#else
+#include "macroonlyRVVM1NOFMA.h"
+#endif
+#ifdef DORENAME
+#include "renamervvm1nofma.h"
+#endif
+#endif
+
 #ifdef ENABLE_RVVM2
 #define CONFIG 1
 #if !defined(SLEEF_GENHEADER)
@@ -345,6 +358,19 @@ extern const float Sleef_rempitabsp[];
 #endif
 #ifdef DORENAME
 #include "renamervvm2.h"
+#endif
+#endif
+
+#ifdef ENABLE_RVVM2NOFMA
+#define CONFIG 2
+#if !defined(SLEEF_GENHEADER)
+#define ENABLE_RVV_SP
+#include "helperrvv.h"
+#else
+#include "macroonlyRVVM2NOFMA.h"
+#endif
+#ifdef DORENAME
+#include "renamervvm2nofma.h"
 #endif
 #endif
 
@@ -428,7 +454,7 @@ static INLINE CONST VECTOR_CC vmask vsignbit_vm_vf(vfloat f) {
   return vand_vm_vm_vm(vreinterpret_vm_vf(f), vreinterpret_vm_vf(vcast_vf_f(-0.0f)));
 }
 
-#if !(defined(ENABLE_RVVM1) || defined(ENABLE_RVVM2))
+#if !(defined(ENABLE_RVVM1) || defined(ENABLE_RVVM1NOFMA) || defined(ENABLE_RVVM2) || defined(ENABLE_RVVM2NOFMA))
 static INLINE CONST VECTOR_CC vfloat vmulsign_vf_vf_vf(vfloat x, vfloat y) {
   return vreinterpret_vf_vm(vxor_vm_vm_vm(vreinterpret_vm_vf(x), vsignbit_vm_vf(y)));
 }
@@ -516,7 +542,7 @@ static INLINE CONST VECTOR_CC vfloat vldexp3_vf_vf_vi2(vfloat d, vint2 q) {
 
 EXPORT CONST VECTOR_CC vfloat xldexpf(vfloat x, vint2 q) { return vldexp_vf_vf_vi2(x, q); }
 
-#if !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA) || defined(ENABLE_RVVM1) || defined(ENABLE_RVVM2))
+#if !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA) || defined(ENABLE_RVVM1) || defined(ENABLE_RVVM1NOFMA) || defined(ENABLE_RVVM2) || defined(ENABLE_RVVM2NOFMA))
 typedef struct {
   vfloat d;
   vint2 i;
@@ -546,7 +572,7 @@ static dfi_t dfisetdf_dfi_dfi_vf2(dfi_t dfi, vfloat2 v) {
 }
 #endif
 
-#if !(defined(ENABLE_RVVM1) || defined(ENABLE_RVVM2))
+#if !(defined(ENABLE_RVVM1) || defined(ENABLE_RVVM1NOFMA) || defined(ENABLE_RVVM2) || defined(ENABLE_RVVM2NOFMA))
 static INLINE CONST VECTOR_CC vfloat vorsign_vf_vf_vf(vfloat x, vfloat y) {
   return vreinterpret_vf_vm(vor_vm_vm_vm(vreinterpret_vm_vf(x), vsignbit_vm_vf(y)));
 }
@@ -3321,7 +3347,7 @@ EXPORT CONST VECTOR_CC vfloat xcospif_u05(vfloat d) {
 }
 #endif // #if !defined(DETERMINISTIC)
 
-#if !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA) || defined(ENABLE_RVVM1) || defined(ENABLE_RVVM2))
+#if !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA) || defined(ENABLE_RVVM1) || defined(ENABLE_RVVM1NOFMA) || defined(ENABLE_RVVM2) || defined(ENABLE_RVVM2NOFMA))
   typedef struct {
     vfloat2 a, b;
   } df2;

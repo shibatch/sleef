@@ -235,6 +235,19 @@ extern const double Sleef_rempitabdp[];
 #endif
 #endif
 
+#ifdef ENABLE_RVVM1NOFMA
+#define CONFIG 2
+#if !defined(SLEEF_GENHEADER)
+#define ENABLE_RVV_DP
+#include "helperrvv.h"
+#else
+#include "macroonlyRVVM1NOFMA.h"
+#endif
+#ifdef DORENAME
+#include "renamervvm1nofma.h"
+#endif
+#endif /* ENABLE_RVVM1NOFMA */
+
 #ifdef ENABLE_RVVM2
 #define CONFIG 1
 #if !defined(SLEEF_GENHEADER)
@@ -247,6 +260,19 @@ extern const double Sleef_rempitabdp[];
 #include "renamervvm2.h"
 #endif
 #endif
+
+#ifdef ENABLE_RVVM2NOFMA
+#define CONFIG 2
+#if !defined(SLEEF_GENHEADER)
+#define ENABLE_RVV_DP
+#include "helperrvv.h"
+#else
+#include "macroonlyRVVM2NOFMA.h"
+#endif
+#ifdef DORENAME
+#include "renamervvm2nofma.h"
+#endif
+#endif /* ENABLE_RVVM2NOFMA */
 
 // Generic
 

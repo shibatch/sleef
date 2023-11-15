@@ -349,10 +349,22 @@ typedef Sleef_SLEEF_VECTOR_FLOAT_2 vfloat2;
 #include "renamervvm1.h"
 #endif
 
+#ifdef ENABLE_RVVM1NOFMA
+#define CONFIG 2
+#include "helperrvv.h"
+#include "renamervvm1nofma.h"
+#endif
+
 #ifdef ENABLE_RVVM2
 #define CONFIG 1
 #include "helperrvv.h"
 #include "renamervvm2.h"
+#endif
+
+#ifdef ENABLE_RVVM2NOFMA
+#define CONFIG 2
+#include "helperrvv.h"
+#include "renamervvm2nofma.h"
 #endif
 
 #ifdef ENABLE_PUREC_SCALAR
@@ -438,12 +450,12 @@ int check_feature(double d, float f) {
   return 0;
 }
 
-#if defined(ENABLE_DP) && !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA) || defined(ENABLE_RVVM1) || defined(ENABLE_RVVM2) || defined(USE_INLINE_HEADER))
+#if defined(ENABLE_DP) && !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA) || defined(ENABLE_RVVM1) || defined(ENABLE_RVVM1NOFMA) || defined(ENABLE_RVVM2) || defined(ENABLE_RVVM2NOFMA) || defined(USE_INLINE_HEADER))
 static vdouble vd2getx_vd_vd2(vdouble2 v) { return v.x; }
 static vdouble vd2gety_vd_vd2(vdouble2 v) { return v.y; }
 #endif
 
-#if defined(ENABLE_SP) && !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA) || defined(ENABLE_RVVM1) || defined(ENABLE_RVVM2) || defined(USE_INLINE_HEADER))
+#if defined(ENABLE_SP) && !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA) || defined(ENABLE_RVVM1) || defined(ENABLE_RVVM1NOFMA) || defined(ENABLE_RVVM2) || defined(ENABLE_RVVM2NOFMA) || defined(USE_INLINE_HEADER))
 static vfloat vf2getx_vf_vf2(vfloat2 v) { return v.x; }
 static vfloat vf2gety_vf_vf2(vfloat2 v) { return v.y; }
 #endif

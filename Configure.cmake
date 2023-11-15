@@ -168,7 +168,9 @@ set(CLANG_FLAGS_ENABLE_VXE2 "-march=z15;-mzvector")
 set(CLANG_FLAGS_ENABLE_VXE2NOFMA "-march=z15;-mzvector")
 # RISC-V
 set(CLANG_FLAGS_ENABLE_RVVM1 "-march=rv64gcv_zba_zbb_zbs")
+set(CLANG_FLAGS_ENABLE_RVVM1NOFMA "-march=rv64gcv_zba_zbb_zbs")
 set(CLANG_FLAGS_ENABLE_RVVM2 "-march=rv64gcv_zba_zbb_zbs")
+set(CLANG_FLAGS_ENABLE_RVVM2NOFMA "-march=rv64gcv_zba_zbb_zbs")
 
 set(FLAGS_OTHERS "")
 
@@ -634,6 +636,10 @@ if(SLEEF_ARCH_RISCV64 AND NOT DISABLE_RVVM1)
   int main() {
     vint32m1_t r = __riscv_vmv_v_x_i32m1(1, __riscv_v_min_vlen / 32); }"
     COMPILER_SUPPORTS_RVVM1)
+
+  if(COMPILER_SUPPORTS_RVVM1)
+    set(COMPILER_SUPPORTS_RVVM1NOFMA 1)
+  endif()
 endif()
 
 if (ENFORCE_RVVM1 AND NOT COMPILER_SUPPORTS_RVVM1)
@@ -652,6 +658,10 @@ if(SLEEF_ARCH_RISCV64 AND NOT DISABLE_RVVM2)
   int main() {
     vint32m2_t r = __riscv_vmv_v_x_i32m2(1, __riscv_v_min_vlen / 32); }"
     COMPILER_SUPPORTS_RVVM2)
+
+  if(COMPILER_SUPPORTS_RVVM2)
+    set(COMPILER_SUPPORTS_RVVM2NOFMA 1)
+  endif()
 endif()
 
 if (ENFORCE_RVVM2 AND NOT COMPILER_SUPPORTS_RVVM2)

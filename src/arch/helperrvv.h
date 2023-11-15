@@ -10,7 +10,7 @@
 #endif
 #endif // #if !defined(SLEEF_GENHEADER)
 
-#if CONFIG == 1
+#if CONFIG == 1 || CONFIG == 2
 #define ISANAME "RISC-V Vector Extension with Min. VLEN"
 #define SLEEF_RVV_VLEN __riscv_v_min_vlen
 #else
@@ -45,23 +45,27 @@ static INLINE int vavailability_i(int name) { return -1; }
 
 #ifdef ENABLE_RVV_SP
 // Types that conflict with ENABLE_RVV_DP
-#ifdef ENABLE_RVVM1
+#if defined(ENABLE_RVVM1) || defined(ENABLE_RVVM1NOFMA)
 typedef vuint64m2_t vmask;
 typedef vbool32_t vopmask;
-#else
+#elif defined(ENABLE_RVVM2) || defined(ENABLE_RVVM2NOFMA)
 typedef vuint64m4_t vmask;
 typedef vbool16_t vopmask;
+#else
+#error "unknown rvv lmul"
 #endif
 #endif
 
 #ifdef ENABLE_RVV_DP
 // Types that conflict with ENABLE_RVV_SP
-#ifdef ENABLE_RVVM1
+#if defined(ENABLE_RVVM1) || defined(ENABLE_RVVM1NOFMA)
 typedef vuint64m1_t vmask;
 typedef vbool64_t vopmask;
-#else
+#elif defined(ENABLE_RVVM2) || defined(ENABLE_RVVM2NOFMA)
 typedef vuint64m2_t vmask;
 typedef vbool32_t vopmask;
+#else
+#error "unknown rvv lmul"
 #endif
 #endif
 
@@ -73,7 +77,7 @@ typedef vbool32_t vopmask;
 // wide-LMUL register group. In the largest cases (ddi_t and ddf_t), this
 // requires LMUL=8 if the base type (vfloat or vdouble) has LMUL=2, meaning
 // LMUL=2 is currently the widest option for SLEEF function argument types.
-#ifdef ENABLE_RVVM1
+#if defined(ENABLE_RVVM1) || defined(ENABLE_RVVM1NOFMA)
 
 typedef vint32mf2_t vint;
 typedef vfloat64m1_t vdouble;
@@ -156,7 +160,7 @@ typedef vint32m4_t dfi_t;
 #define SLEEF_RVV_DP_LOAD_VD __riscv_vle64_v_f64m1
 #define SLEEF_RVV_DP_LOAD_VI __riscv_vle32_v_i32mf2
 
-#else
+#elif defined(ENABLE_RVVM2) || defined(ENABLE_RVVM2NOFMA)
 
 typedef vint32m1_t vint;
 typedef vfloat64m2_t vdouble;
@@ -239,6 +243,8 @@ typedef vint32m8_t dfi_t;
 #define SLEEF_RVV_DP_LOAD_VD __riscv_vle64_v_f64m2
 #define SLEEF_RVV_DP_LOAD_VI __riscv_vle32_v_i32m1
 
+#else
+#error "unknown rvv lmul"
 #endif // ENABLE_RVVM1
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -635,19 +641,23 @@ static INLINE vdouble digetd_vd_di(di_t d) {
   return SLEEF_RVV_DP_VGET_VD(SLEEF_RVV_DP_VREINTERPRET_VD2_4VI(d), 0);
 }
 static INLINE vint digeti_vi_di(di_t d) {
-#ifdef ENABLE_RVVM1
+#if defined(ENABLE_RVVM1) || defined(ENABLE_RVVM1NOFMA)
   return __riscv_vlmul_trunc_i32mf2(SLEEF_RVV_DP_VGET_VI(d, 1));
-#else
+#elif defined(ENABLE_RVVM2) || defined(ENABLE_RVVM2NOFMA)
   return SLEEF_RVV_DP_VGET_VI(d, 2);
+#else
+#error "unknown rvv lmul"
 #endif
 }
 static INLINE di_t disetdi_di_vd_vi(vdouble d, vint i) {
   di_t res;
   res = SLEEF_RVV_DP_VREINTERPRET_4VI_VD2(__riscv_vset(SLEEF_RVV_DP_VREINTERPRET_VD2_4VI(res), 0, d));
-#ifdef ENABLE_RVVM1
+#if defined(ENABLE_RVVM1) || defined(ENABLE_RVVM1NOFMA)
   res = __riscv_vset(res, 1, __riscv_vlmul_ext_i32m1(i));
-#else
+#elif defined(ENABLE_RVVM2) || defined(ENABLE_RVVM2NOFMA)
   res = __riscv_vset(res, 2, i);
+#else
+#error "unknown rvv lmul"
 #endif
   return res;
 }
@@ -656,19 +666,23 @@ static INLINE vdouble2 ddigetdd_vd2_ddi(ddi_t d) {
   return SLEEF_RVV_DP_VGET_VD2(SLEEF_RVV_DP_VREINTERPRET_4VD_8VI(d), 0);
 }
 static INLINE vint ddigeti_vi_ddi(ddi_t d) {
-#ifdef ENABLE_RVVM1
+#if defined(ENABLE_RVVM1) || defined(ENABLE_RVVM1NOFMA)
   return __riscv_vlmul_trunc_i32mf2(SLEEF_RVV_DP_VGET_VI(d, 2));
-#else
+#elif defined(ENABLE_RVVM2) || defined(ENABLE_RVVM2NOFMA)
   return SLEEF_RVV_DP_VGET_VI(d, 4);
+#else
+#error "unknown rvv lmul"
 #endif
 }
 static INLINE ddi_t ddisetddi_ddi_vd2_vi(vdouble2 v, vint i) {
   ddi_t res;
   res = SLEEF_RVV_DP_VREINTERPRET_8VI_4VD(__riscv_vset(SLEEF_RVV_DP_VREINTERPRET_4VD_8VI(res), 0, v));
-#ifdef ENABLE_RVVM1
+#if defined(ENABLE_RVVM1) || defined(ENABLE_RVVM1NOFMA)
   res = __riscv_vset(res, 2, __riscv_vlmul_ext_i32m1(i));
-#else
+#elif defined(ENABLE_RVVM2) || defined(ENABLE_RVVM2NOFMA)
   res = __riscv_vset(res, 4, i);
+#else
+#error "unknown rvv lmul"
 #endif
   return res;
 }
