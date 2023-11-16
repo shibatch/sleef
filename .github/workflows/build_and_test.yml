@@ -137,9 +137,13 @@ jobs:
         compiler: [gcc, llvm]
         include:
           - arch: armhf
+            binfmt: arm
             gnupkg: -arm-linux-gnueabihf
           - arch: ppc64el
+            binfmt: ppc64le
             gnupkg: -powerpc64le-linux-gnu
+          - arch: aarch64
+            debarch: arm64
         exclude:
           # Only GCC trunk supports the RISC-V V intrinsics and https://github.com/riscv-collab/riscv-gnu-toolchain
           # doesn't track a recent enough version yet
@@ -155,7 +159,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update -y -qq
-          sudo apt-get install -y -qq build-essential curl ninja-build libgmp-dev libmpfr-dev
+          sudo apt-get install -y -qq build-essential curl ninja-build libgmp-dev libmpfr-dev debootstrap
 
       # Needed for llvm builds as well for target libraries
       - name: Install gcc
@@ -170,6 +174,30 @@ jobs:
           sudo ln -srf $(which clang-${LLVM_VERSION}) /usr/bin/clang
           rm llvm.sh
         if: ${{ matrix.compiler == 'llvm' }}
+
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v3.0.0
+        with:
+          platforms: ${{ matrix.binfmt || matrix.arch }}
+
+      - name: Check sysroot cache
+        id: check-sysroot-cache
+        uses: actions/cache@v3
+        with:
+          path: sysroot
+          key: sysroot-${{ matrix.arch }}-${{ hashFiles('./.github/workflows/build_and_test.yml') }}
+
+      - name: Create sysroot
+        run: |
+          sudo debootstrap --arch=${{ matrix.debarch || matrix.arch }} --verbose --include=fakeroot,symlinks,libmpfr-dev,libssl-dev --resolve-deps --variant=minbase --components=main,universe focal sysroot
+          # Remove unused files to minimize cache
+          sudo chroot sysroot symlinks -cr .
+          sudo chown ${USER} -R sysroot
+          rm -rf sysroot/{dev,proc,run,sys,var}
+          rm -rf sysroot/usr/{sbin,bin,share}
+          rm -rf sysroot/usr/lib/{apt,gcc,udev,systemd}
+          rm -rf sysroot/usr/libexec/gcc
+        if: steps.check-sysroot-cache.outputs.cache-hit != 'true'
 
       - name: Download build-native-${{ matrix.compiler }} artifacts
         uses: actions/download-artifact@v3
@@ -208,6 +236,7 @@ jobs:
           cmake -S . -B _build-${{ matrix.arch }} -GNinja \
             -DCMAKE_INSTALL_PREFIX="$(pwd)/_install-${{ matrix.arch }}" \
             -DCMAKE_TOOLCHAIN_FILE=$(pwd)/travis/toolchain-${{ matrix.arch }}-${{ matrix.compiler }}.cmake \
+            -DCMAKE_SYSROOT=$(pwd)/sysroot \
             -DNATIVE_BUILD_DIR="$(pwd)/_build-native" \
             ${COMMON_CMAKE_FLAGS} \
             ${EXTRA_CMAKE_FLAGS}
@@ -312,7 +341,8 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: docker/setup-qemu-action@v3.0.0
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v3.0.0
         with:
           platforms: ${{ matrix.binfmt || matrix.arch }}
 
