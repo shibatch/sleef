@@ -107,10 +107,10 @@ command_arguments(HEADER_PARAMS_VXENOFMA        cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" 
 command_arguments(HEADER_PARAMS_VXE2            finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ vxe2)
 command_arguments(HEADER_PARAMS_VXE2NOFMA       cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ vxe2nofma)
 
-command_arguments(HEADER_PARAMS_RVVM1           finz_ x x vfloat64m1_t vfloat32m1_t vint32mf2_t vint32m1_t __riscv_v m1)
-command_arguments(HEADER_PARAMS_RVVM1NOFMA      cinz_ x x vfloat64m1_t vfloat32m1_t vint32mf2_t vint32m1_t __riscv_v m1nofma)
-command_arguments(HEADER_PARAMS_RVVM2           finz_ x x vfloat64m2_t vfloat32m2_t vint32m1_t vint32m2_t __riscv_v m2)
-command_arguments(HEADER_PARAMS_RVVM2NOFMA      cinz_ x x vfloat64m2_t vfloat32m2_t vint32m1_t vint32m2_t __riscv_v m2nofma)
+command_arguments(HEADER_PARAMS_RVVM1           finz_ x x vfloat64m1_t vfloat32m1_t vint32mf2_t vint32m1_t __riscv_v rvvm1)
+command_arguments(HEADER_PARAMS_RVVM1NOFMA      cinz_ x x vfloat64m1_t vfloat32m1_t vint32mf2_t vint32m1_t __riscv_v rvvm1nofma)
+command_arguments(HEADER_PARAMS_RVVM2           finz_ x x vfloat64m2_t vfloat32m2_t vint32m1_t vint32m2_t __riscv_v rvvm2)
+command_arguments(HEADER_PARAMS_RVVM2NOFMA      cinz_ x x vfloat64m2_t vfloat32m2_t vint32m1_t vint32m2_t __riscv_v rvvm2nofma)
 
 command_arguments(HEADER_PARAMS_DSP_SCALAR      -     1 1 double float int32_t int32_t __STDC__)
 command_arguments(HEADER_PARAMS_PUREC_SCALAR    cinz_ 1 1 double float int32_t int32_t __STDC__ purec)
@@ -158,10 +158,10 @@ command_arguments(RENAME_PARAMS_GNUABI_ADVSIMD  advsimd n 2 4 float64x2_t float3
 # the "x" token of VLA SVE vector functions.
 command_arguments(RENAME_PARAMS_GNUABI_SVE sve s x x svfloat64_t svfloat32_t svint32_t svint32_t __ARM_SVE)
 
-command_arguments(RENAME_PARAMS_RVVM1           finz_ x x m1)
-command_arguments(RENAME_PARAMS_RVVM1NOFMA      cinz_ x x m1nofma)
-command_arguments(RENAME_PARAMS_RVVM2           finz_ x x m2)
-command_arguments(RENAME_PARAMS_RVVM2NOFMA      cinz_ x x m2nofma)
+command_arguments(RENAME_PARAMS_RVVM1           finz_ x x rvvm1)
+command_arguments(RENAME_PARAMS_RVVM1NOFMA      cinz_ x x rvvm1nofma)
+command_arguments(RENAME_PARAMS_RVVM2           finz_ x x rvvm2)
+command_arguments(RENAME_PARAMS_RVVM2NOFMA      cinz_ x x rvvm2nofma)
 
 # ALIAS_PARAMS
 
