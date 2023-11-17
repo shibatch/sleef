@@ -140,6 +140,9 @@ typedef vint32m4_t dfi_t;
 #define SLEEF_RVV_SP_VREINTERPRET_VI64 __riscv_vreinterpret_i64m2
 #define SLEEF_RVV_SP_VREINTERPRET_VU __riscv_vreinterpret_u32m1
 #define SLEEF_RVV_SP_LOAD_VI __riscv_vle32_v_i32m1
+#define SLEEF_RVV_SP_VFNCVT_X_F_VI __riscv_vfcvt_x_f_v_i32m1_rm
+#define SLEEF_RVV_SP_VFCVT_F_X_VF __riscv_vfcvt_f_x_v_f32m1
+#define SLEEF_RVV_SP_VFCVT_X_F_VF_RM __riscv_vfcvt_x_f_v_i32m1_rm
 #define SLEEF_RVV_DP_VCAST_VD_D __riscv_vfmv_v_f_f64m1
 #define SLEEF_RVV_DP_VCAST_VD_VI(x) __riscv_vfwcvt_f(x, VECTLENDP)
 #define SLEEF_RVV_DP_VCAST_VI_I __riscv_vmv_v_x_i32mf2
@@ -178,6 +181,9 @@ typedef vint32m4_t dfi_t;
 #define SLEEF_RVV_DP_VGET_VU __riscv_vget_u32m1
 #define SLEEF_RVV_DP_LOAD_VD __riscv_vle64_v_f64m1
 #define SLEEF_RVV_DP_LOAD_VI __riscv_vle32_v_i32mf2
+#define SLEEF_RVV_DP_VFNCVT_X_F_VI __riscv_vfncvt_x_f_w_i32mf2_rm
+#define SLEEF_RVV_DP_VFCVT_F_X_VD __riscv_vfcvt_f_x_v_f64m1
+#define SLEEF_RVV_DP_VFCVT_X_F_VD_RM __riscv_vfcvt_x_f_v_i64m1_rm
 
 #elif defined(ENABLE_RVVM2) || defined(ENABLE_RVVM2NOFMA)
 
@@ -223,6 +229,9 @@ typedef vint32m8_t dfi_t;
 #define SLEEF_RVV_SP_VREINTERPRET_VI64 __riscv_vreinterpret_i64m4
 #define SLEEF_RVV_SP_VREINTERPRET_VU __riscv_vreinterpret_u32m2
 #define SLEEF_RVV_SP_LOAD_VI __riscv_vle32_v_i32m2
+#define SLEEF_RVV_SP_VFNCVT_X_F_VI __riscv_vfcvt_x_f_v_i32m2_rm
+#define SLEEF_RVV_SP_VFCVT_F_X_VF __riscv_vfcvt_f_x_v_f32m2
+#define SLEEF_RVV_SP_VFCVT_X_F_VF_RM __riscv_vfcvt_x_f_v_i32m2_rm
 #define SLEEF_RVV_DP_VCAST_VD_D __riscv_vfmv_v_f_f64m2
 #define SLEEF_RVV_DP_VCAST_VD_VI(x) __riscv_vfwcvt_f(x, VECTLENDP)
 #define SLEEF_RVV_DP_VCAST_VI_I __riscv_vmv_v_x_i32m1
@@ -261,6 +270,9 @@ typedef vint32m8_t dfi_t;
 #define SLEEF_RVV_DP_VGET_VU __riscv_vget_u32m1
 #define SLEEF_RVV_DP_LOAD_VD __riscv_vle64_v_f64m2
 #define SLEEF_RVV_DP_LOAD_VI __riscv_vle32_v_i32m1
+#define SLEEF_RVV_DP_VFNCVT_X_F_VI __riscv_vfncvt_x_f_w_i32m1_rm
+#define SLEEF_RVV_DP_VFCVT_F_X_VD __riscv_vfcvt_f_x_v_f64m2
+#define SLEEF_RVV_DP_VFCVT_X_F_VD_RM __riscv_vfcvt_x_f_v_i64m2_rm
 
 #else
 #error "unknown rvv lmul"
@@ -344,13 +356,7 @@ static INLINE vfloat vcast_vf_f(float f) {
   return SLEEF_RVV_SP_VCAST_VF_F(f, VECTLENSP);
 }
 static INLINE vfloat vrint_vf_vf(vfloat vd) {
-  // It is not currently possible to safely set frm for intrinsics,
-  // so emulate round-to-nearest behavior
-  vfloat half = SLEEF_RVV_SP_VCAST_VF_F(0.5, VECTLENSP);
-  half = __riscv_vfsgnj(half, vd, VECTLENSP);
-  vfloat res = __riscv_vfadd(vd, half, VECTLENSP);
-  vint2 i = __riscv_vfcvt_rtz_x(res, VECTLENSP);
-  return __riscv_vfcvt_f(i, VECTLENSP);
+  return SLEEF_RVV_SP_VFCVT_F_X_VF(SLEEF_RVV_SP_VFCVT_X_F_VF_RM(vd, __RISCV_VXRM_RNU, VECTLENSP), VECTLENSP);
 }
 static INLINE vfloat vcast_vf_vi2(vint2 vi) {
   return __riscv_vfcvt_f(vi, VECTLENSP);
@@ -359,12 +365,7 @@ static INLINE vint2 vcast_vi2_i(int i) {
   return SLEEF_RVV_SP_VCAST_VI2_I(i, VECTLENSP);
 }
 static INLINE vint2 vrint_vi2_vf(vfloat vf) {
-  // It is not currently possible to safely set frm for intrinsics,
-  // so emulate round-to-nearest behavior
-  vfloat half = SLEEF_RVV_SP_VCAST_VF_F(0.5, VECTLENSP);
-  half = __riscv_vfsgnj(half, vf, VECTLENSP);
-  vfloat res = __riscv_vfadd(vf, half, VECTLENSP);
-  return __riscv_vfcvt_rtz_x(res, VECTLENSP);
+  return SLEEF_RVV_SP_VFNCVT_X_F_VI(vf, __RISCV_VXRM_RNU, VECTLENSP);
 }
 static INLINE vint2 vtruncate_vi2_vf(vfloat vf) {
   return __riscv_vfcvt_rtz_x(vf, VECTLENSP);
@@ -742,20 +743,10 @@ static INLINE vint vcast_vi_i(int32_t i) {
   return SLEEF_RVV_DP_VCAST_VI_I(i, VECTLENDP);
 }
 static INLINE vint vrint_vi_vd(vdouble vd) {
-  // It is not currently possible to safely set frm for intrinsics,
-  // so emulate round-to-nearest behavior
-  vdouble half = SLEEF_RVV_DP_VCAST_VD_D(0.5, VECTLENDP);
-  half = __riscv_vfsgnj(half, vd, VECTLENDP);
-  vdouble res = __riscv_vfadd(vd, half, VECTLENDP);
-  return __riscv_vfncvt_rtz_x(res, VECTLENDP);
+  return SLEEF_RVV_DP_VFNCVT_X_F_VI(vd, __RISCV_VXRM_RNU, VECTLENDP);
 }
 static INLINE vdouble vrint_vd_vd(vdouble vd) {
-  // It is not currently possible to safely set frm for intrinsics,
-  // so emulate round-to-nearest behavior
-  vdouble half = SLEEF_RVV_DP_VCAST_VD_D(0.5, VECTLENDP);
-  half = __riscv_vfsgnj(half, vd, VECTLENDP);
-  vdouble res = __riscv_vfadd(vd, half, VECTLENDP);
-  return __riscv_vfwcvt_f(__riscv_vfncvt_rtz_x(res, VECTLENDP), VECTLENDP);
+  return SLEEF_RVV_DP_VFCVT_F_X_VD(SLEEF_RVV_DP_VFCVT_X_F_VD_RM(vd, __RISCV_VXRM_RNU, VECTLENDP), VECTLENDP);
 }
 static INLINE vint vtruncate_vi_vd(vdouble vd) {
   return __riscv_vfncvt_rtz_x(vd, VECTLENDP);
