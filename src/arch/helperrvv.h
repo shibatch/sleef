@@ -356,7 +356,7 @@ static INLINE vfloat vcast_vf_f(float f) {
   return SLEEF_RVV_SP_VCAST_VF_F(f, VECTLENSP);
 }
 static INLINE vfloat vrint_vf_vf(vfloat vd) {
-  return SLEEF_RVV_SP_VFCVT_F_X_VF(SLEEF_RVV_SP_VFCVT_X_F_VF_RM(vd, __RISCV_VXRM_RNU, VECTLENSP), VECTLENSP);
+  return SLEEF_RVV_SP_VFCVT_F_X_VF(SLEEF_RVV_SP_VFCVT_X_F_VF_RM(vd, __RISCV_FRM_RNE, VECTLENSP), VECTLENSP);
 }
 static INLINE vfloat vcast_vf_vi2(vint2 vi) {
   return __riscv_vfcvt_f(vi, VECTLENSP);
@@ -365,7 +365,7 @@ static INLINE vint2 vcast_vi2_i(int i) {
   return SLEEF_RVV_SP_VCAST_VI2_I(i, VECTLENSP);
 }
 static INLINE vint2 vrint_vi2_vf(vfloat vf) {
-  return SLEEF_RVV_SP_VFNCVT_X_F_VI(vf, __RISCV_VXRM_RNU, VECTLENSP);
+  return SLEEF_RVV_SP_VFNCVT_X_F_VI(vf, __RISCV_FRM_RNE, VECTLENSP);
 }
 static INLINE vint2 vtruncate_vi2_vf(vfloat vf) {
   return __riscv_vfcvt_rtz_x(vf, VECTLENSP);
@@ -743,10 +743,10 @@ static INLINE vint vcast_vi_i(int32_t i) {
   return SLEEF_RVV_DP_VCAST_VI_I(i, VECTLENDP);
 }
 static INLINE vint vrint_vi_vd(vdouble vd) {
-  return SLEEF_RVV_DP_VFNCVT_X_F_VI(vd, __RISCV_VXRM_RNU, VECTLENDP);
+  return SLEEF_RVV_DP_VFNCVT_X_F_VI(vd, __RISCV_FRM_RNE, VECTLENDP);
 }
 static INLINE vdouble vrint_vd_vd(vdouble vd) {
-  return SLEEF_RVV_DP_VFCVT_F_X_VD(SLEEF_RVV_DP_VFCVT_X_F_VD_RM(vd, __RISCV_VXRM_RNU, VECTLENDP), VECTLENDP);
+  return SLEEF_RVV_DP_VFCVT_F_X_VD(SLEEF_RVV_DP_VFCVT_X_F_VD_RM(vd, __RISCV_FRM_RNE, VECTLENDP), VECTLENDP);
 }
 static INLINE vint vtruncate_vi_vd(vdouble vd) {
   return __riscv_vfncvt_rtz_x(vd, VECTLENDP);
