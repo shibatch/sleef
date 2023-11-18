@@ -12,27 +12,27 @@
 
 #if CONFIG == 1 || CONFIG == 2
 #define ISANAME "RISC-V Vector Extension with Min. VLEN"
-#define SLEEF_RVV_VLEN __riscv_v_min_vlen
+#define SLEEF_RVV_VLEN __riscv_vlenb()
 #elif CONFIG == 7
 // 128-bit vector length
 #define ISANAME "RISC-V Vector Extension 128-bit"
-#define SLEEF_RVV_VLEN (1 << 7)
+#define SLEEF_RVV_VLEN ((1 << 7) / 8)
 #elif CONFIG == 8
 // 256-bit vector length
 #define ISANAME "RISC-V Vector Extension 256-bit"
-#define SLEEF_RVV_VLEN (1 << 8)
+#define SLEEF_RVV_VLEN ((1 << 8) / 8)
 #elif CONFIG == 9
 // 512-bit vector length
 #define ISANAME "RISC-V Vector Extension 512-bit"
-#define SLEEF_RVV_VLEN (1 << 9)
+#define SLEEF_RVV_VLEN ((1 << 9) / 8)
 #elif CONFIG == 10
 // 1024-bit vector length
 #define ISANAME "RISC-V Vector Extension 1024-bit"
-#define SLEEF_RVV_VLEN (1 << 10)
+#define SLEEF_RVV_VLEN ((1 << 10) / 8)
 #elif CONFIG == 11
 // 2048-bit vector length
 #define ISANAME "RISC-V Vector Extension 2048-bit"
-#define SLEEF_RVV_VLEN (1 << 11)
+#define SLEEF_RVV_VLEN ((1 << 11) / 8)
 #else
 #error CONFIG macro invalid or not defined
 #endif
@@ -114,8 +114,8 @@ typedef vint32m2_t fi_t;
 typedef vint32m4_t dfi_t;
 #define SLEEF_RVV_SP_LMUL 1
 #define SLEEF_RVV_DP_LMUL 1
-#define VECTLENSP (SLEEF_RVV_SP_LMUL * SLEEF_RVV_VLEN / 32)
-#define VECTLENDP (SLEEF_RVV_DP_LMUL * SLEEF_RVV_VLEN / 64)
+#define VECTLENSP (SLEEF_RVV_SP_LMUL * SLEEF_RVV_VLEN / sizeof(float))
+#define VECTLENDP (SLEEF_RVV_DP_LMUL * SLEEF_RVV_VLEN / sizeof(double))
 #define SLEEF_RVV_SP_VCAST_VF_F __riscv_vfmv_v_f_f32m1
 #define SLEEF_RVV_SP_VCAST_VI2_I __riscv_vmv_v_x_i32m1
 #define SLEEF_RVV_SP_VCAST_VU2_U __riscv_vmv_v_x_u32m1
@@ -203,8 +203,8 @@ typedef vint32m4_t fi_t;
 typedef vint32m8_t dfi_t;
 #define SLEEF_RVV_SP_LMUL 2
 #define SLEEF_RVV_DP_LMUL 2
-#define VECTLENSP (SLEEF_RVV_SP_LMUL * SLEEF_RVV_VLEN / 32)
-#define VECTLENDP (SLEEF_RVV_DP_LMUL * SLEEF_RVV_VLEN / 64)
+#define VECTLENSP (SLEEF_RVV_SP_LMUL * SLEEF_RVV_VLEN / sizeof(float))
+#define VECTLENDP (SLEEF_RVV_DP_LMUL * SLEEF_RVV_VLEN / sizeof(double))
 #define SLEEF_RVV_SP_VCAST_VF_F __riscv_vfmv_v_f_f32m2
 #define SLEEF_RVV_SP_VCAST_VI2_I __riscv_vmv_v_x_i32m2
 #define SLEEF_RVV_SP_VCAST_VU2_U __riscv_vmv_v_x_u32m2

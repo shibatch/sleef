@@ -104,8 +104,8 @@ static INLINE float getSLEEF_VECTOR_FLOAT(__attribute__((vector_size(16))) float
 #if __riscv && __riscv_v
 
 #if defined(ENABLE_RVVM1)
-#define VECTLENSP (1 * __riscv_v_min_vlen / 32)
-#define VECTLENDP (1 * __riscv_v_min_vlen / 64)
+#define VECTLENSP (1 * __riscv_vlenb() / sizeof(float))
+#define VECTLENDP (1 * __riscv_vlenb() / sizeof(double))
 
 static INLINE vfloat32m1_t setvfloat32m1_t(float d, int r)  { float  a[VECTLENSP]; memrand(a, sizeof(a)); a[r & (VECTLENSP-1)] = d; return __riscv_vle32_v_f32m1(a, VECTLENSP); }
 static INLINE float getvfloat32m1_t(vfloat32m1_t v, int r)  { float  a[VECTLENSP]; __riscv_vse32(a, v, VECTLENSP); return unifyValuef(a[r & (VECTLENSP-1)]); }
@@ -118,8 +118,8 @@ static vfloat64m1_t vd2getx_vd_vd2(vfloat64m2_t v) { return __riscv_vget_f64m1(v
 static vfloat64m1_t vd2gety_vd_vd2(vfloat64m2_t v) { return __riscv_vget_f64m1(v, 1); }
 
 #elif defined(ENABLE_RVVM2)
-#define VECTLENSP (2 * __riscv_v_min_vlen / 32)
-#define VECTLENDP (2 * __riscv_v_min_vlen / 64)
+#define VECTLENSP (2 * __riscv_vlenb() / sizeof(float))
+#define VECTLENDP (2 * __riscv_vlenb() / sizeof(double))
 
 static INLINE vfloat32m2_t setvfloat32m2_t(float d, int r)  { float  a[VECTLENSP]; memrand(a, sizeof(a)); a[r & (VECTLENSP-1)] = d; return __riscv_vle32_v_f32m2(a, VECTLENSP); }
 static INLINE float getvfloat32m2_t(vfloat32m2_t v, int r)  { float  a[VECTLENSP]; __riscv_vse32(a, v, VECTLENSP); return unifyValuef(a[r & (VECTLENSP-1)]); }
