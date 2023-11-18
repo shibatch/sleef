@@ -634,7 +634,7 @@ if(SLEEF_ARCH_RISCV64 AND NOT DISABLE_RVVM1)
   CHECK_C_SOURCE_COMPILES("
   #include <riscv_vector.h>
   int main() {
-    vint32m1_t r = __riscv_vmv_v_x_i32m1(1, __riscv_v_min_vlen / 32); }"
+    vint32m1_t r = __riscv_vmv_v_x_i32m1(1, __riscv_vlenb() * 8 / 32); }"
     COMPILER_SUPPORTS_RVVM1)
 
   if(COMPILER_SUPPORTS_RVVM1)
@@ -656,7 +656,7 @@ if(SLEEF_ARCH_RISCV64 AND NOT DISABLE_RVVM2)
   CHECK_C_SOURCE_COMPILES("
   #include <riscv_vector.h>
   int main() {
-    vint32m2_t r = __riscv_vmv_v_x_i32m2(1, __riscv_v_min_vlen / 32); }"
+    vint32m2_t r = __riscv_vmv_v_x_i32m2(1, 2 * __riscv_vlenb() * 8 / 32); }"
     COMPILER_SUPPORTS_RVVM2)
 
   if(COMPILER_SUPPORTS_RVVM2)
