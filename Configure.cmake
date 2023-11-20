@@ -118,7 +118,10 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "s390x")
   set(SLEEF_ARCH_S390X ON CACHE INTERNAL "True for IBM Z architecture.")
 
+  set(CLANG_FLAGS_ENABLE_PUREC_SCALAR "-march=z14;-mzvector")
   set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-march=z14;-mzvector")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "riscv64")
+  set(SLEEF_ARCH_RISCV64 ON CACHE INTERNAL "True for RISCV64 architecture.")
 endif()
 
 set(COMPILER_SUPPORTS_PUREC_SCALAR 1)
@@ -163,6 +166,11 @@ set(CLANG_FLAGS_ENABLE_VXE "-march=z14;-mzvector")
 set(CLANG_FLAGS_ENABLE_VXENOFMA "-march=z14;-mzvector")
 set(CLANG_FLAGS_ENABLE_VXE2 "-march=z15;-mzvector")
 set(CLANG_FLAGS_ENABLE_VXE2NOFMA "-march=z15;-mzvector")
+# RISC-V
+set(CLANG_FLAGS_ENABLE_RVVM1 "-march=rv64gcv_zba_zbb_zbs")
+set(CLANG_FLAGS_ENABLE_RVVM1NOFMA "-march=rv64gcv_zba_zbb_zbs")
+set(CLANG_FLAGS_ENABLE_RVVM2 "-march=rv64gcv_zba_zbb_zbs")
+set(CLANG_FLAGS_ENABLE_RVVM2NOFMA "-march=rv64gcv_zba_zbb_zbs")
 
 set(FLAGS_OTHERS "")
 
@@ -614,6 +622,50 @@ endif()
 
 if (ENFORCE_VXE2 AND NOT COMPILER_SUPPORTS_VXE2)
   message(FATAL_ERROR "ENFORCE_VXE2 is specified and that feature is disabled or not supported by the compiler")
+endif()
+
+# RVVM1
+
+option(DISABLE_RVVM1 "Disable RVVM1" OFF)
+option(ENFORCE_RVVM1 "Build fails if RVVM1 is not supported by the compiler" OFF)
+
+if(SLEEF_ARCH_RISCV64 AND NOT DISABLE_RVVM1)
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_RVVM1}")
+  CHECK_C_SOURCE_COMPILES("
+  #include <riscv_vector.h>
+  int main() {
+    vint32m1_t r = __riscv_vmv_v_x_i32m1(1, __riscv_vlenb() * 8 / 32); }"
+    COMPILER_SUPPORTS_RVVM1)
+
+  if(COMPILER_SUPPORTS_RVVM1)
+    set(COMPILER_SUPPORTS_RVVM1NOFMA 1)
+  endif()
+endif()
+
+if (ENFORCE_RVVM1 AND NOT COMPILER_SUPPORTS_RVVM1)
+  message(FATAL_ERROR "ENFORCE_RVVM1 is specified and that feature is disabled or not supported by the compiler")
+endif()
+
+# RVVM2
+
+option(DISABLE_RVVM2 "Disable RVVM2" OFF)
+option(ENFORCE_RVVM2 "Build fails if RVVM2 is not supported by the compiler" OFF)
+
+if(SLEEF_ARCH_RISCV64 AND NOT DISABLE_RVVM2)
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_RVVM2}")
+  CHECK_C_SOURCE_COMPILES("
+  #include <riscv_vector.h>
+  int main() {
+    vint32m2_t r = __riscv_vmv_v_x_i32m2(1, 2 * __riscv_vlenb() * 8 / 32); }"
+    COMPILER_SUPPORTS_RVVM2)
+
+  if(COMPILER_SUPPORTS_RVVM2)
+    set(COMPILER_SUPPORTS_RVVM2NOFMA 1)
+  endif()
+endif()
+
+if (ENFORCE_RVVM2 AND NOT COMPILER_SUPPORTS_RVVM2)
+  message(FATAL_ERROR "ENFORCE_RVVM2 is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # CUDA

@@ -101,6 +101,44 @@ static INLINE __attribute__((vector_size(16))) float setSLEEF_VECTOR_FLOAT(float
 static INLINE float getSLEEF_VECTOR_FLOAT(__attribute__((vector_size(16))) float v, int r) { return unifyValuef(v[r & 3]); }
 #endif
 
+#if __riscv && __riscv_v
+
+#if defined(ENABLE_RVVM1)
+#define VECTLENSP (1 * __riscv_vlenb() / sizeof(float))
+#define VECTLENDP (1 * __riscv_vlenb() / sizeof(double))
+
+static INLINE vfloat32m1_t setvfloat32m1_t(float d, int r)  { float  a[VECTLENSP]; memrand(a, sizeof(a)); a[r & (VECTLENSP-1)] = d; return __riscv_vle32_v_f32m1(a, VECTLENSP); }
+static INLINE float getvfloat32m1_t(vfloat32m1_t v, int r)  { float  a[VECTLENSP]; __riscv_vse32(a, v, VECTLENSP); return unifyValuef(a[r & (VECTLENSP-1)]); }
+static INLINE vfloat64m1_t setvfloat64m1_t(double d, int r) { double a[VECTLENDP]; memrand(a, sizeof(a)); a[r & (VECTLENDP-1)] = d; return __riscv_vle64_v_f64m1(a, VECTLENDP); }
+static INLINE double getvfloat64m1_t(vfloat64m1_t v, int r) { double a[VECTLENDP]; __riscv_vse64(a, v, VECTLENDP); return unifyValue(a[r & (VECTLENDP-1)]); }
+
+static vfloat32m1_t vf2getx_vf_vf2(vfloat32m2_t v) { return __riscv_vget_f32m1(v, 0); }
+static vfloat32m1_t vf2gety_vf_vf2(vfloat32m2_t v) { return __riscv_vget_f32m1(v, 1); }
+static vfloat64m1_t vd2getx_vd_vd2(vfloat64m2_t v) { return __riscv_vget_f64m1(v, 0); }
+static vfloat64m1_t vd2gety_vd_vd2(vfloat64m2_t v) { return __riscv_vget_f64m1(v, 1); }
+
+#elif defined(ENABLE_RVVM2)
+#define VECTLENSP (2 * __riscv_vlenb() / sizeof(float))
+#define VECTLENDP (2 * __riscv_vlenb() / sizeof(double))
+
+static INLINE vfloat32m2_t setvfloat32m2_t(float d, int r)  { float  a[VECTLENSP]; memrand(a, sizeof(a)); a[r & (VECTLENSP-1)] = d; return __riscv_vle32_v_f32m2(a, VECTLENSP); }
+static INLINE float getvfloat32m2_t(vfloat32m2_t v, int r)  { float  a[VECTLENSP]; __riscv_vse32(a, v, VECTLENSP); return unifyValuef(a[r & (VECTLENSP-1)]); }
+static INLINE vfloat64m2_t setvfloat64m2_t(double d, int r) { double a[VECTLENDP]; memrand(a, sizeof(a)); a[r & (VECTLENDP-1)] = d; return __riscv_vle64_v_f64m2(a, VECTLENDP); }
+static INLINE double getvfloat64m2_t(vfloat64m2_t v, int r) { double a[VECTLENDP]; __riscv_vse64(a, v, VECTLENDP); return unifyValue(a[r & (VECTLENDP-1)]); }
+
+static vfloat32m2_t vf2getx_vf_vf2(vfloat32m4_t v) { return __riscv_vget_f32m2(v, 0); }
+static vfloat32m2_t vf2gety_vf_vf2(vfloat32m4_t v) { return __riscv_vget_f32m2(v, 1); }
+static vfloat64m2_t vd2getx_vd_vd2(vfloat64m4_t v) { return __riscv_vget_f64m2(v, 0); }
+static vfloat64m2_t vd2gety_vd_vd2(vfloat64m4_t v) { return __riscv_vget_f64m2(v, 1); }
+
+#else
+#error "unknown RVV"
+#endif
+
+#undef VECTLENSP
+#undef VECTLENDP
+#endif
+
 //
 
 // ATR = cinz_, NAME = sin, TYPE = d2, ULP = u35, EXT = sse2
@@ -110,7 +148,7 @@ static INLINE float getSLEEF_VECTOR_FLOAT(__attribute__((vector_size(16))) float
 #define SET(TYPE) set ## TYPE
 #define GET(TYPE) get ## TYPE
 
-#ifndef __ARM_FEATURE_SVE
+#if !defined(__ARM_FEATURE_SVE) && !(defined(__riscv) && defined(__riscv_v))
 static DPTYPE vd2getx_vd_vd2(TYPE2(DPTYPE) v) { return v.x; }
 static DPTYPE vd2gety_vd_vd2(TYPE2(DPTYPE) v) { return v.y; }
 static SPTYPE vf2getx_vf_vf2(TYPE2(SPTYPE) v) { return v.x; }

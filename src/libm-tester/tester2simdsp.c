@@ -191,6 +191,38 @@ typedef Sleef_SLEEF_VECTOR_DOUBLE_2 vdouble2;
 typedef Sleef_SLEEF_VECTOR_FLOAT_2 vfloat2;
 #endif
 
+#ifdef ENABLE_RVVM1
+#define CONFIG 1
+#define ENABLE_RVV_SP
+#include "helperrvv.h"
+#include "renamervvm1.h"
+#include "sleef.h"
+#endif
+
+#ifdef ENABLE_RVVM1NOFMA
+#define CONFIG 2
+#define ENABLE_RVV_DP
+#include "helperrvv.h"
+#include "renamervvm1nofma.h"
+#include "sleef.h"
+#endif
+
+#ifdef ENABLE_RVVM2
+#define CONFIG 1
+#define ENABLE_RVV_SP
+#include "helperrvv.h"
+#include "renamervvm2.h"
+#include "sleef.h"
+#endif
+
+#ifdef ENABLE_RVVM2NOFMA
+#define CONFIG 2
+#define ENABLE_RVV_DP
+#include "helperrvv.h"
+#include "renamervvm2nofma.h"
+#include "sleef.h"
+#endif
+
 #ifdef ENABLE_PUREC_SCALAR
 #define CONFIG 1
 #include "helperpurec_scalar.h"
@@ -209,7 +241,7 @@ typedef Sleef_float_2 vfloat2;
 
 //
 
-#if !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA))
+#if !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA) || defined(ENABLE_RVVM1) || defined(ENABLE_RVVM1NOFMA) || defined(ENABLE_RVVM2) || defined(ENABLE_RVVM2NOFMA))
 static vfloat vf2getx_vf_vf2(vfloat2 v) { return v.x; }
 static vfloat vf2gety_vf_vf2(vfloat2 v) { return v.y; }
 #endif
