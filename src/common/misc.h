@@ -137,7 +137,9 @@
 #define L2Lf 1.428606765330187045e-06f
 
 #define R_LN2f 1.442695040888963407359924681001892137426645954152985934135449406931f
-#define M_PIf ((float)M_PI)
+#ifndef M_PIf
+# define M_PIf ((float)M_PI)
+#endif
 
 //
 
