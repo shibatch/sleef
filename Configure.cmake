@@ -16,6 +16,9 @@ if (NOT CMAKE_CROSSCOMPILING AND NOT SLEEF_FORCE_FIND_PACKAGE_SSL)
   if (OPENSSL_FOUND)
     set(SLEEF_OPENSSL_FOUND TRUE)
     set(SLEEF_OPENSSL_LIBRARIES ${OPENSSL_LIBRARIES})
+    # Work around for tester3 sig segv, when linking versions of openssl (1.1.1) statically.
+    # This is a known issue https://github.com/openssl/openssl/issues/13872.
+    string(REGEX REPLACE "-lpthread" "-Wl,--whole-archive -lpthread -Wl,--no-whole-archive" SLEEF_OPENSSL_LIBRARIES "${OPENSSL_LIBRARIES}")
     set(SLEEF_OPENSSL_VERSION ${OPENSSL_VERSION})
     set(SLEEF_OPENSSL_INCLUDE_DIR ${OPENSSL_INCLUDE_DIR})
   endif()
