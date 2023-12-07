@@ -793,6 +793,7 @@ find_program(FILECHECK_COMMAND NAMES FileCheck FileCheck-11 FileCheck-10 FileChe
 #
 
 find_program(SED_COMMAND sed)
+find_program(CAT_COMMAND cat)
 
 ##
 
