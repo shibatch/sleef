@@ -428,10 +428,20 @@ foreach(SIMD ${SLEEF_SUPPORTED_LIBM_EXTENSIONS})
 	)
     else()
       add_custom_command(
+	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/alias_${SIMD}_dp.h.tmp
+	COMMAND $<TARGET_FILE:${TARGET_MKALIAS}> ${ALIAS_PARAMS_${SIMD}_DP} > ${CMAKE_CURRENT_BINARY_DIR}/alias_${SIMD}_dp.h.tmp
+	DEPENDS ${TARGET_MKALIAS}
+	)
+      add_custom_command(
+	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/alias_${SIMD}_sp.h.tmp
+	COMMAND $<TARGET_FILE:${TARGET_MKALIAS}> ${ALIAS_PARAMS_${SIMD}_SP} > ${CMAKE_CURRENT_BINARY_DIR}/alias_${SIMD}_sp.h.tmp
+	DEPENDS ${TARGET_MKALIAS}
+	)
+      add_custom_command(
 	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/alias_${SIMDLC}.h
-       	COMMAND $<TARGET_FILE:${TARGET_MKALIAS}> ${ALIAS_PARAMS_${SIMD}_SP} >  ${CMAKE_CURRENT_BINARY_DIR}/include/alias_${SIMDLC}.h
-       	COMMAND $<TARGET_FILE:${TARGET_MKALIAS}> ${ALIAS_PARAMS_${SIMD}_DP} >> ${CMAKE_CURRENT_BINARY_DIR}/include/alias_${SIMDLC}.h
-       	DEPENDS ${TARGET_MKALIAS}
+	COMMAND ${CMAKE_COMMAND} -E cat ${CMAKE_CURRENT_BINARY_DIR}/alias_${SIMD}_sp.h.tmp ${CMAKE_CURRENT_BINARY_DIR}/alias_${SIMD}_dp.h.tmp
+	> ${CMAKE_CURRENT_BINARY_DIR}/include/alias_${SIMDLC}.h
+	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/alias_${SIMD}_sp.h.tmp ${CMAKE_CURRENT_BINARY_DIR}/alias_${SIMD}_dp.h.tmp
        	)
       add_custom_target(alias_${SIMDLC}.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/include/alias_${SIMDLC}.h)
       add_dependencies(${OBJECT_${SIMD}} alias_${SIMDLC}.h_generated)
