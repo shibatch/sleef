@@ -245,8 +245,8 @@ if(BUILD_INLINE_HEADERS)
 
 	set(INLINE_HEADER_FILE ${PROJECT_BINARY_DIR}/include/sleefquadinline_${SIMDLC}.h)
 	add_custom_command(
-	  OUTPUT ${INLINE_HEADER_FILE} 
-  
+	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp1
+
 	  # Preprocess sleefsimddp.c with SLEEF_GENHEADER defined, comments are preserved
 	  COMMAND "${CMAKE_C_COMPILER}" ${FLAG_PREPROCESS} ${FLAG_PRESERVE_COMMENTS}                        # gcc -E -C 
 	  ${FLAG_TARGET} ${FLAGS_ENABLE_${SIMD}}                                                            # -msse2
@@ -255,61 +255,95 @@ if(BUILD_INLINE_HEADERS)
 	  ${FLAG_DEFINE}SLEEF_GENHEADER ${FLAG_DEFINE}ENABLE_${SIMD} ${FLAG_DEFINE}DORENAME                 # -DSLEEF_GENHEADER -DENABLE_SSE2 -DDORENAME
 	  ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdqp.c > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp1      # /sleef/src/quad/sleefsimdqp.c > /build/quad/sleefSSE2.h.qtmp1
 
-	  # Remove all lines except those begin with "//@"
-	  COMMAND ${SED_COMMAND} -n -e "/^\\/\\/@#.*$/p" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp1   # sed -n -e "/^\\/\\/@#.*$/p" /build/src/quad/sleefSSE2.h.qtmp1
-	  > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp2                                                # > /build/src/quad/sleefSSE2.h.qtmp2
+	  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdqp.c
+	  )
 
-	  # Remove "//@"
-	  COMMAND ${SED_COMMAND} -e "s/^\\/\\/@#/#/g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp2      # sed -e "s/^\\/\\/@#/#/g" /build/src/common/sleefSSE2.h.qtmp2
-	  > ${CMAKE_CURRENT_BINARY_DIR}/include/qmacroonly${SIMD}.h                                         # > /build/src/common/include/qmacroonlySSE2.h
+	add_custom_command(
+	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/qmacroonly${SIMD}.h
+
+	  # Remove all lines except those begin with "//@", then remove "//@"
+	  COMMAND ${SED_COMMAND} -e "/^\\/\\/@#.*$/!d" -e "s/^\\/\\/@#/#/g"
+	  ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp1
+	  > ${CMAKE_CURRENT_BINARY_DIR}/include/qmacroonly${SIMD}.h
+
+	  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp1
+	  VERBATIM
+	  )
+
+	add_custom_command(
+	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/sleefquad${SIMD}.h.c
 
 	  # Remove lines beginning with "#" so that the resulting file can be preprocessed again.
 	  COMMAND ${SED_COMMAND} -e "s/^#.*//g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp1            # sed -e "s/^#.*//g" /build/src/quad/sleefSSE2.h.qtmp1
 	  > ${CMAKE_CURRENT_BINARY_DIR}/sleefquad${SIMD}.h.c                                                # > /build/src/quad/sleefquadSSE2.h.c
 
+	  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp1
+	  VERBATIM
+	  )
+
+	add_custom_command(
+	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp2
+
 	  # Preprocess the intemediate file again to remove comments
 	  COMMAND "${CMAKE_C_COMPILER}" ${FLAG_PREPROCESS}                                                  # gcc -E
 	  ${CMAKE_CURRENT_BINARY_DIR}/sleefquad${SIMD}.h.c                                                  # /build/src/quad/sleefquadSSE2.h.c
-	  > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp3                                                # > /build/src/quad/sleefSSE2.h.qtmp3
-
-	  # Embed version number into the header
-	  COMMAND ${SED_COMMAND} -e                                                                         # sed -e
-	  "s/SLEEF_VERSION_SLEEF/${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}.${SLEEF_VERSION_PATCHLEVEL}/g" # "s/SLEEF_VERSION_SLEEF/3.5.0/g"
-	  -e "s/SLEEF_SIMD_SLEEF/${SIMD}/g"                                                                 # -e "s/SLEEF_SIMD_SLEEF/SSE2/g"
-	  ${CMAKE_CURRENT_SOURCE_DIR}/sleefquadinline_header.h.org                                          # /sleef/src/quad/sleefquadinline_header.h.org
-	  > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp4                                                # > /build/src/quad/sleefSSE2.h.qtmp4
-
 	  # Remove lines beginning with "#"
-	  COMMAND ${SED_COMMAND} -e "s/^#.*//g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp3            # sed -e "s/^#.*//g" /build/src/quad/sleefSSE2.h.qtmp3
-	  >> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp4                                               # >> /build/src/quad/sleefSSE2.h.qtmp4
+	  | ${SED_COMMAND} -e "s/^#.*//g"
+	  > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp2                                                # > /build/src/quad/sleefSSE2.h.qtmp2
 
-	  # Substitute "SLEEFSHARP" at the beginning of line with "#"
-	  COMMAND ${SED_COMMAND} -e "s/^SLEEFSHARP/#/g"                                                     # sed -e "s/^SLEEFSHARP/#/g"
-	  ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp4                                                  # /build/src/libm/sleefSSE2.h.qtmp4
-	  > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp5                                                # > /build/src/libm/sleefSSE2.h.qtmp5
+	  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/sleefquad${SIMD}.h.c ${CMAKE_CURRENT_BINARY_DIR}/include/qmacroonly${SIMD}.h
+	  VERBATIM
+	  )
 
-	  # Remove SLEEFXXX
-	  COMMAND ${SED_COMMAND} -e "s/SLEEFXXX//g"                                                         # sed -e "s/SLEEFXXX//g"
-	  ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp5                                                  # /build/src/libm/sleefSSE2.h.qtmp5
-	  > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp6                                                # > /build/src/libm/sleefSSE2.h.qtmp6
+	add_custom_command(
+	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp4
+
+	  COMMAND ${CMAKE_COMMAND} -E cat
+	      ${CMAKE_CURRENT_SOURCE_DIR}/sleefquadinline_header.h.org
+	      ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp2
+	    | ${SED_COMMAND}
+	      # Embed version number into the header
+	      -e "s/SLEEF_VERSION_SLEEF/${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}.${SLEEF_VERSION_PATCHLEVEL}/g" # "s/SLEEF_VERSION_SLEEF/3.5.0/g"
+	      -e "s/SLEEF_SIMD_SLEEF/${SIMD}/g"                                                                      # -e "s/SLEEF_SIMD_SLEEF/SSE2/g"
+	      # Substitute "SLEEFSHARP" at the beginning of line with "#"
+	      -e "s/^SLEEFSHARP/#/g"
+	      # Remove SLEEFXXX
+	      -e "s/SLEEFXXX//g"
+	      # Replace multiple empty lines with a single empty line (part 1)
+	      -e "s/^[[:space:]]*$//g"
+	    > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp4
+
+	  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/sleefquadinline_header.h.org ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp2
+	  VERBATIM
+	  )
+
+	add_custom_command(
+	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp8
 
 	  # Replace multiple empty lines with a single empty line
-	  COMMAND ${SED_COMMAND} -e "s/^[[:space:]]*$//g" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp6  # sed -e "s/^[[:space:]]*$//g" /build/src/quad/sleefSSE2.h.qtmp6
-	  > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp7                                                # > /build/src/quad/sleefSSE2.h.qtmp7
-	  COMMAND ${SED_COMMAND} "/^$/N;/^\\n$/D" ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp7          # sed -e "/^$/N;/^\n$/D" /build/src/quad/sleefSSE2.h.qtmp7
-	  > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp8                                                # > /build/src/quad/sleefSSE2.h.qtmp8
+	  # (part 2 - cannot occur in same command as part 1)
+	  COMMAND ${SED_COMMAND} -e "/^$/N" -e "/^\\n$/D"
+	  ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp4
+	  > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp8
+
+	  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp4
+	  VERBATIM
+	  )
+
+	add_custom_command(
+	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp9
 
 	  COMMAND $<TARGET_FILE:addSuffix> ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp8                 # addSuffix /build/src/quad/sleefSSE2.h.qtmp8
 	  ${sleef_SOURCE_DIR}/src/common/keywords.txt "_${SIMDLC}_sleefq"                                   # keywords.txt "_sse2_sleefq"
 	  Sleef_rempitabqp                                                                                  # Sleef_rempitabdp Sleef_rempitabsp
-          > ${PROJECT_BINARY_DIR}/include/sleefquadinline_${SIMDLC}.h                                       # > /build/include/sleefquadinline_sse2.h
+	  > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp9
 
-	  COMMAND $<TARGET_FILE:addSuffix> ${CMAKE_CURRENT_SOURCE_DIR}/sleefquadinline_footer.h.org         # addSuffix /build/src/quad/sleefquadinline_footer.h.org
-          >> ${PROJECT_BINARY_DIR}/include/sleefquadinline_${SIMDLC}.h                                      # >> /build/include/sleefquadinline_sse2.h
+	  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp8 ${sleef_SOURCE_DIR} addSuffix
+	  )
 
-	  MAIN_DEPENDENCY ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdqp.c ${HEADER_${SIMD}}
-	  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdqp.c ${HEADER_${SIMD}} addSuffix
-	  VERBATIM
+	sleef_concat_files(
+	  OUTPUT ${INLINE_HEADER_FILE}
+	  SOURCES ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp9 ${CMAKE_CURRENT_SOURCE_DIR}/sleefquadinline_footer.h.org
 	  )
 
 	list(APPEND INLINE_HEADER_FILES_GENERATED ${INLINE_HEADER_FILE})
