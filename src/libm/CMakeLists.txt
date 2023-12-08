@@ -786,43 +786,41 @@ target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:dispscalar_obj>)
 
 #
 
+function(sleef_generate_disp_simd simd)
+  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/disp${simd}.c.tmp
+    COMMAND $<TARGET_FILE:${TARGET_MKDISP}> "${ARGN}" > ${CMAKE_CURRENT_BINARY_DIR}/disp${simd}.c.tmp
+    DEPENDS ${TARGET_MKDISP}
+    COMMAND_EXPAND_LISTS
+    )
+  sleef_concat_files(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/disp${simd}.c
+    SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/disp${simd}.c.org ${CMAKE_CURRENT_BINARY_DIR}/disp${simd}.c.tmp
+    )
+  add_custom_target(disp${simd}.c_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/disp${simd}.c)
+endfunction()
+
+function(sleef_generate_rename_simd simd)
+  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/renamed${simd}.h
+    COMMAND $<TARGET_FILE:${TARGET_MKRENAME}> "${ARGN}" > ${CMAKE_CURRENT_BINARY_DIR}/include/renamed${simd}.h
+    DEPENDS ${TARGET_MKRENAME}
+    COMMAND_EXPAND_LISTS
+    )
+  add_custom_target(renamed${simd}.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/include/renamed${simd}.h)
+  endfunction()
+
 if (SLEEF_ARCH_X86)
   # Target dispsse.c
-
-  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/dispsse.c.org ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c
-    COMMAND $<TARGET_FILE:${TARGET_MKDISP}> 2 4 __m128d __m128 __m128i sse2 sse4 avx2128 >> ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c
-    DEPENDS ${TARGET_MKDISP}
-    )
-  add_custom_target(dispsse.c_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/dispsse.c)
+  sleef_generate_disp_simd(sse 2 4 __m128d __m128 __m128i sse2 sse4 avx2128)
 
   # Target renamedsp128.h
-
-  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h
-    COMMAND $<TARGET_FILE:${TARGET_MKRENAME}> - 2 4 > ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h
-    DEPENDS ${TARGET_MKRENAME}
-    )
-  add_custom_target(renamedsp128.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h)
+  sleef_generate_rename_simd(sp128 - 2 4)
 
   # Target dispavx.c
-
-  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/dispavx.c.org ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c
-    COMMAND $<TARGET_FILE:${TARGET_MKDISP}> 4 8 __m256d __m256 __m128i avx fma4 avx2 >> ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c
-    DEPENDS ${TARGET_MKDISP}
-    )
-  add_custom_target(dispavx.c_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/dispavx.c)
+  sleef_generate_disp_simd(avx 4 8 __m256d __m256 __m128i avx fma4 avx2)
 
   # Target renamedsp256.h
-
-  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp256.h
-    COMMAND $<TARGET_FILE:${TARGET_MKRENAME}> - 4 8 > ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp256.h
-    DEPENDS ${TARGET_MKRENAME}
-    )
-  add_custom_target(renamedsp256.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp256.h)
+  sleef_generate_rename_simd(sp256 - 4 8)
 
   # Target dispsse_obj
-
   if (COMPILER_SUPPORTS_FMA4)
     set(DISPATCHER_DEFINITIONS ${DISPATCHER_DEFINITIONS} ENABLE_FMA4=1)
   endif()
@@ -856,24 +854,12 @@ endif(SLEEF_ARCH_X86)
 
 if (SLEEF_ARCH_PPC64)
   # Target disppower_128.c
-
-  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/disppower_128.c
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/disppower_128.c.org ${CMAKE_CURRENT_BINARY_DIR}/disppower_128.c
-    COMMAND $<TARGET_FILE:${TARGET_MKDISP}> 2 4 SLEEF_VECTOR_DOUBLE SLEEF_VECTOR_FLOAT SLEEF_VECTOR_INT vsx vsx3 x >> ${CMAKE_CURRENT_BINARY_DIR}/disppower_128.c
-    DEPENDS ${TARGET_MKDISP}
-    )
-  add_custom_target(disppower_128.c_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/disppower_128.c)
+  sleef_generate_disp_simd(power_128 2 4 SLEEF_VECTOR_DOUBLE SLEEF_VECTOR_FLOAT SLEEF_VECTOR_INT vsx vsx3 x)
 
   # Target renamedsp128.h
-
-  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h
-    COMMAND $<TARGET_FILE:${TARGET_MKRENAME}> - 2 4 > ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h
-    DEPENDS ${TARGET_MKRENAME}
-    )
-  add_custom_target(renamedsp128.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h)
+  sleef_generate_rename_simd(sp128 - 2 4)
 
   # Target disppower_128_obj
-
   add_library(disppower_128_obj OBJECT disppower_128.c)
   target_compile_options(disppower_128_obj PRIVATE ${FLAGS_ENABLE_VSX})
   if(COMPILER_SUPPORTS_VSX3)
@@ -895,24 +881,12 @@ endif(SLEEF_ARCH_PPC64)
 
 if (SLEEF_ARCH_S390X)
   # Target disps390x_128.c
-
-  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/disps390x_128.c
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/disps390x_128.c.org ${CMAKE_CURRENT_BINARY_DIR}/disps390x_128.c
-    COMMAND $<TARGET_FILE:${TARGET_MKDISP}> 2 4 SLEEF_VECTOR_DOUBLE SLEEF_VECTOR_FLOAT SLEEF_VECTOR_INT vxe vxe2 x >> ${CMAKE_CURRENT_BINARY_DIR}/disps390x_128.c
-    DEPENDS ${TARGET_MKDISP}
-    )
-  add_custom_target(disps390x_128.c_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/disps390x_128.c)
+  sleef_generate_disp_simd(s390x_128 2 4 SLEEF_VECTOR_DOUBLE SLEEF_VECTOR_FLOAT SLEEF_VECTOR_INT vxe vxe2 x)
 
   # Target renamedsp128.h
-
-  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h
-    COMMAND $<TARGET_FILE:${TARGET_MKRENAME}> - 2 4 > ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h
-    DEPENDS ${TARGET_MKRENAME}
-    )
-  add_custom_target(renamedsp128.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/include/renamedsp128.h)
+  sleef_generate_rename_simd(sp128 - 2 4)
 
   # Target disps390x_128_obj
-
   add_library(disps390x_128_obj OBJECT disps390x_128.c)
   target_compile_options(disps390x_128_obj PRIVATE ${FLAGS_ENABLE_VXE})
   if(COMPILER_SUPPORTS_VXE2)
