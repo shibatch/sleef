@@ -201,12 +201,7 @@ foreach(SIMD ${SLEEF_HEADER_LIST})
   list(APPEND SLEEF_HEADER_COMMANDS COMMAND $<TARGET_FILE:${TARGET_MKRENAME}> ${HEADER_PARAMS_${SIMD}} >> ${SLEEF_INCLUDE_HEADER})
 endforeach()
 
-if((MSVC OR MINGW AND WIN32) OR SLEEF_CLANG_ON_WINDOWS)
-  string(REPLACE "/" "\\" sleef_footer_input_file "${SLEEF_ORG_FOOTER}")
-  list(APPEND SLEEF_HEADER_COMMANDS COMMAND type ${sleef_footer_input_file} >> ${SLEEF_INCLUDE_HEADER})
-else()
-  list(APPEND SLEEF_HEADER_COMMANDS COMMAND cat ${SLEEF_ORG_FOOTER} >> ${SLEEF_INCLUDE_HEADER})
-endif()
+list(APPEND SLEEF_HEADER_COMMANDS COMMAND ${CMAKE_COMMAND} -E cat ${SLEEF_ORG_FOOTER} >> ${SLEEF_INCLUDE_HEADER})
 
 add_custom_command(OUTPUT ${SLEEF_INCLUDE_HEADER}
   ${SLEEF_HEADER_COMMANDS}
@@ -545,8 +540,8 @@ if(BUILD_INLINE_HEADERS)
 	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.c
 
 	  # Remove lines beginning with "#" so that the resulting file can be preprocessed again.
-	  COMMAND ${CAT_COMMAND} ${CMAKE_CURRENT_BINARY_DIR}/sleefsimddp${SIMD}.h.tmp
-	                         ${CMAKE_CURRENT_BINARY_DIR}/sleefsimdsp${SIMD}.h.tmp
+	  COMMAND ${CMAKE_COMMAND} -E cat ${CMAKE_CURRENT_BINARY_DIR}/sleefsimddp${SIMD}.h.tmp
+	                                  ${CMAKE_CURRENT_BINARY_DIR}/sleefsimdsp${SIMD}.h.tmp
                 | ${SED_COMMAND} -e "s/^#.*//g" > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.c
 
 	  DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/sleefsimdsp${SIMD}.h.tmp ${CMAKE_CURRENT_BINARY_DIR}/sleefsimddp${SIMD}.h.tmp
@@ -569,7 +564,7 @@ if(BUILD_INLINE_HEADERS)
 	add_custom_command(
 	  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp4
 
-	  COMMAND ${CAT_COMMAND}
+	  COMMAND ${CMAKE_COMMAND} -E cat
 	      ${CMAKE_CURRENT_SOURCE_DIR}/sleefinline_header.h.org
 	      ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.tmp3
 	    | ${SED_COMMAND}

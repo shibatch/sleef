@@ -17,14 +17,14 @@ Before using CMake you will need to install/build the binaries on your system.
 Most systems have cmake already installed or provided by the standard package
 manager. If that is not the case for you, please
 [download](https://cmake.org/download/) and install now.
-For building SLEEF, version 3.4.3 is the minimum required.
+For building SLEEF, version 3.18 is the minimum required.
 
 # Quick start
 
 1. Make sure cmake is available on the command-line.
 ```
 $ cmake --version
-(should display a version number greater than or equal to 3.4.3)
+(should display a version number greater than or equal to 3.18)
 ```
 
 2. Download the tar from the
