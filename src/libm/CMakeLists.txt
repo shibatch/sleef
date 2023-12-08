@@ -205,13 +205,9 @@ foreach(SIMD ${SLEEF_HEADER_LIST})
   )
 endforeach()
 
-add_custom_command(OUTPUT ${SLEEF_INCLUDE_HEADER}
-  COMMAND
-    ${CMAKE_COMMAND} -E cat
-    ${SLEEF_ORG_HEADER} ${SLEEF_HEADER_SIMD_SECTIONS} ${SLEEF_ORG_FOOTER}
-    > ${SLEEF_INCLUDE_HEADER}
-  DEPENDS
-    ${SLEEF_ORG_HEADER} ${SLEEF_ORG_FOOTER} ${SLEEF_HEADER_SIMD_SECTIONS}
+sleef_concat_files(
+  OUTPUT ${SLEEF_INCLUDE_HEADER}
+  SOURCES ${SLEEF_ORG_HEADER} ${SLEEF_HEADER_SIMD_SECTIONS} ${SLEEF_ORG_FOOTER}
 )
 
 # --------------------------------------------------------------------
@@ -437,11 +433,9 @@ foreach(SIMD ${SLEEF_SUPPORTED_LIBM_EXTENSIONS})
 	COMMAND $<TARGET_FILE:${TARGET_MKALIAS}> ${ALIAS_PARAMS_${SIMD}_SP} > ${CMAKE_CURRENT_BINARY_DIR}/alias_${SIMD}_sp.h.tmp
 	DEPENDS ${TARGET_MKALIAS}
 	)
-      add_custom_command(
+      sleef_concat_files(
 	OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/include/alias_${SIMDLC}.h
-	COMMAND ${CMAKE_COMMAND} -E cat ${CMAKE_CURRENT_BINARY_DIR}/alias_${SIMD}_sp.h.tmp ${CMAKE_CURRENT_BINARY_DIR}/alias_${SIMD}_dp.h.tmp
-	> ${CMAKE_CURRENT_BINARY_DIR}/include/alias_${SIMDLC}.h
-	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/alias_${SIMD}_sp.h.tmp ${CMAKE_CURRENT_BINARY_DIR}/alias_${SIMD}_dp.h.tmp
+	SOURCES ${CMAKE_CURRENT_BINARY_DIR}/alias_${SIMD}_sp.h.tmp ${CMAKE_CURRENT_BINARY_DIR}/alias_${SIMD}_dp.h.tmp
        	)
       add_custom_target(alias_${SIMDLC}.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/include/alias_${SIMDLC}.h)
       add_dependencies(${OBJECT_${SIMD}} alias_${SIMDLC}.h_generated)
@@ -754,12 +748,23 @@ target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:${TARGET_LIBCOMMON_OB
 
 # Target dispscalar.c
 
-add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c
-  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/dispscalar.c.org ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c
-  COMMAND $<TARGET_FILE:${TARGET_MKDISP}> 1 1 double float int32_t purec purecfma x >> ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c
-  COMMAND $<TARGET_FILE:addSuffix> ${CMAKE_CURRENT_SOURCE_DIR}/dispscalar_footer.c.org >> ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c
-  DEPENDS ${TARGET_MKDISP} addSuffix
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c.body
+  COMMAND $<TARGET_FILE:${TARGET_MKDISP}> 1 1 double float int32_t purec purecfma x > ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c.body
+  DEPENDS ${TARGET_MKDISP}
   )
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c.footer
+  COMMAND $<TARGET_FILE:addSuffix> ${CMAKE_CURRENT_SOURCE_DIR}/dispscalar_footer.c.org > ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c.footer
+  DEPENDS addSuffix
+  )
+
+sleef_concat_files(
+  OUTPUT  ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c
+  SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/dispscalar.c.org
+          ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c.body
+	  ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c.footer
+)
 add_custom_target(dispscalar.c_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c)
 
 # Target renamedspscalar.h
