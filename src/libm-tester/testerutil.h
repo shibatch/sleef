@@ -11,7 +11,9 @@
 #define POSITIVE_INFINITYf ((float)INFINITY)
 #define NEGATIVE_INFINITYf (-(float)INFINITY)
 
-#define M_PIf ((float)M_PI)
+#ifndef M_PIf
+# define M_PIf ((float)M_PI)
+#endif
 
 extern int enableFlushToZero;
 double flushToZero(double y);
