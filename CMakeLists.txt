@@ -336,8 +336,3 @@ if(SLEEF_SHOW_CONFIG)
   endif()
 endif(SLEEF_SHOW_CONFIG)
 
-if (NOT CMAKE_MAKE_PROGRAM MATCHES "ninja")
-  message("")
-  message("*** Note: Parallel build is only supported with Ninja ***")
-  message("")
-endif()
