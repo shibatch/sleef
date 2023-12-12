@@ -11,7 +11,7 @@
 #include <string.h>
 #include <time.h>
 
-#include <openssl/md5.h>
+#include <openssl/evp.h>
 
 #include "sleef.h"
 #include "misc.h"
@@ -157,20 +157,43 @@ static SPTYPE vf2gety_vf_vf2(TYPE2(SPTYPE) v) { return v.y; }
 
 //
 
-#define checkDigest(NAME, ULP) do {					\
-    unsigned char d[16], mes[64], buf[64];				\
-    MD5_Final(d, &ctx);							\
-    snprintf((char *)mes, 60, "%s %02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",	\
-	    #NAME " " #ULP, d[0],d[1],d[2],d[3],d[4],d[5],d[6],d[7],	\
-	    d[8],d[9],d[10],d[11],d[12],d[13],d[14],d[15]);		\
-    if (fp != NULL) {							\
-      fgets((char *)buf, 60, fp);					\
+#define initDigest 					\
+    EVP_MD_CTX *ctx; ctx = EVP_MD_CTX_new();		\
+    if (!ctx) {						\
+        fprintf(stderr, "Error creating context.\n");	\
+        return 0;					\
+    }							\
+    if (!EVP_DigestInit_ex(ctx, EVP_md5(), NULL)) {	\
+        fprintf(stderr, "Error initializing context.\n"); \
+        return 0;					\
+    }
+
+#define checkDigest(NAME, ULP) do {				\
+    unsigned int md5_digest_len = EVP_MD_size(EVP_md5());	\
+    unsigned char *md5_digest;					\
+    md5_digest = (unsigned char *)malloc(md5_digest_len);	\
+    if (!EVP_DigestFinal_ex(ctx, md5_digest, &md5_digest_len)) { \
+      fprintf(stderr, "Error finalizing digest.\n");		\
+      return 0;							\
+    }								\
+    EVP_MD_CTX_free(ctx);					\
+    unsigned char mes[64], buf[64];				\
+    memset(mes, 0, 64);						\
+    sprintf((char *)mes, "%s ", #NAME " " #ULP);		\
+    char tmp[3] = { 0 };					\
+    for (int i = 0; i < md5_digest_len; i++) {			\
+        sprintf(tmp, "%02x", md5_digest[i]);			\
+        strcat((char *)mes, tmp);				\
+    }								\
+    free(md5_digest);						\
+    if (fp != NULL) {						\
+      fgets((char *)buf, 60, fp);				\
       if (strncmp((char *)mes, (char *)buf, strlen((char *)mes)) != 0) { \
-	puts((char *)mes);						\
-	puts((char *)buf);						\
-	success = 0;							\
-      }									\
-    } else puts((char *)mes);						\
+	puts((char *)mes);					\
+	puts((char *)buf);					\
+	success = 0;						\
+      }								\
+    } else puts((char *)mes);					\
   } while(0)
 
 #if defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
@@ -190,13 +213,11 @@ static SPTYPE vf2gety_vf_vf2(TYPE2(SPTYPE) v) { return v.y; }
     DPTYPE vx = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (arg, r));	\
     double fx = GET(TYPE)(vx, r);					\
     convertEndianness(&fx, sizeof(double));				\
-    MD5_Update(&ctx, &fx, sizeof(double));				\
+    EVP_DigestUpdate(ctx, &fx, sizeof(double));				\
   } while(0)
 
 #define test_d_d(NAME, ULP, START, END, NSTEP) do {		\
-    static MD5_CTX ctx;						\
-    memset(&ctx, 0, sizeof(MD5_CTX));				\
-    MD5_Init(&ctx);						\
+    initDigest							\
     double step = ((double)(END) - (double)(START))/NSTEP;	\
     for(double d = (START);d < (END);d += step)			\
       exec_d_d(ATR, NAME, ULP, DPTYPE, DPTYPESPEC, EXTSPEC, d);	\
@@ -204,9 +225,7 @@ static SPTYPE vf2gety_vf_vf2(TYPE2(SPTYPE) v) { return v.y; }
   } while(0)
 
 #define testu_d_d(NAME, ULP, START, END, NSTEP) do {			\
-    static MD5_CTX ctx;							\
-    memset(&ctx, 0, sizeof(MD5_CTX));					\
-    MD5_Init(&ctx);							\
+    initDigest								\
     uint64_t step = (d2u(END) - d2u(START))/NSTEP;			\
     for(uint64_t u = d2u(START);u < d2u(END);u += step)			\
       exec_d_d(ATR, NAME, ULP, DPTYPE, DPTYPESPEC, EXTSPEC, u2d(u));	\
@@ -220,14 +239,13 @@ static SPTYPE vf2gety_vf_vf2(TYPE2(SPTYPE) v) { return v.y; }
     TYPE2(TYPE) vx2 = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE)(arg, r)); \
     double fxx = GET(TYPE)(vd2getx_vd_vd2(vx2), r), fxy = GET(TYPE)(vd2gety_vd_vd2(vx2), r); \
     convertEndianness(&fxx, sizeof(double));				\
-    MD5_Update(&ctx, &fxx, sizeof(double));				\
+    EVP_DigestUpdate(ctx, &fxx, sizeof(double));			\
     convertEndianness(&fxy, sizeof(double));				\
-    MD5_Update(&ctx, &fxy, sizeof(double));				\
+    EVP_DigestUpdate(ctx, &fxy, sizeof(double));			\
   } while(0)
 
 #define test_d2_d(NAME, ULP, START, END, NSTEP) do {			\
-    static MD5_CTX ctx;							\
-    MD5_Init(&ctx);							\
+    initDigest								\
     double step = ((double)(END) - (double)(START))/NSTEP;		\
     for(double d = (START);d < (END);d += step)				\
       exec_d2_d(ATR, NAME, ULP, DPTYPE, DPTYPESPEC, EXTSPEC, d);	\
@@ -241,12 +259,11 @@ static SPTYPE vf2gety_vf_vf2(TYPE2(SPTYPE) v) { return v.y; }
     DPTYPE vx = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (argu, r), SET(TYPE) (argv, r)); \
     double fx = GET(TYPE)(vx, r);					\
     convertEndianness(&fx, sizeof(double));				\
-    MD5_Update(&ctx, &fx, sizeof(double));				\
+    EVP_DigestUpdate(ctx, &fx, sizeof(double));				\
   } while(0)
 
 #define test_d_d_d(NAME, ULP, STARTU, ENDU, NSTEPU, STARTV, ENDV, NSTEPV) do { \
-    static MD5_CTX ctx;							\
-    MD5_Init(&ctx);							\
+    initDigest								\
     double stepu = ((double)(ENDU) - (double)(STARTU))/NSTEPU;		\
     double stepv = ((double)(ENDV) - (double)(STARTV))/NSTEPV;		\
     for(double u = (STARTU);u < (ENDU);u += stepu)			\
@@ -262,12 +279,11 @@ static SPTYPE vf2gety_vf_vf2(TYPE2(SPTYPE) v) { return v.y; }
     SPTYPE vx = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (arg, r));	\
     float fx = GET(TYPE)(vx, r);					\
     convertEndianness(&fx, sizeof(float));				\
-    MD5_Update(&ctx, &fx, sizeof(float));				\
+    EVP_DigestUpdate(ctx, &fx, sizeof(float));				\
   } while(0)
 
 #define test_f_f(NAME, ULP, START, END, NSTEP) do {		\
-    static MD5_CTX ctx;						\
-    MD5_Init(&ctx);						\
+    initDigest							\
     float step = ((double)(END) - (double)(START))/NSTEP;	\
     for(float d = (START);d < (END);d += step)			\
       exec_f_f(ATR, NAME, ULP, SPTYPE, SPTYPESPEC, EXTSPEC, d);	\
@@ -275,8 +291,7 @@ static SPTYPE vf2gety_vf_vf2(TYPE2(SPTYPE) v) { return v.y; }
   } while(0)
 
 #define testu_f_f(NAME, ULP, START, END, NSTEP) do {			\
-    static MD5_CTX ctx;							\
-    MD5_Init(&ctx);							\
+    initDigest								\
     uint32_t step = (f2u(END) - f2u(START))/NSTEP;			\
     for(uint32_t u = f2u(START);u < f2u(END);u += step)			\
       exec_f_f(ATR, NAME, ULP, SPTYPE, SPTYPESPEC, EXTSPEC, u2f(u));	\
@@ -290,14 +305,13 @@ static SPTYPE vf2gety_vf_vf2(TYPE2(SPTYPE) v) { return v.y; }
     TYPE2(TYPE) vx2 = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (arg, r)); \
     float fxx = GET(TYPE)(vf2getx_vf_vf2(vx2), r), fxy = GET(TYPE)(vf2gety_vf_vf2(vx2), r); \
     convertEndianness(&fxx, sizeof(float));				\
-    MD5_Update(&ctx, &fxx, sizeof(float));				\
+    EVP_DigestUpdate(ctx, &fxx, sizeof(float));				\
     convertEndianness(&fxy, sizeof(float));				\
-    MD5_Update(&ctx, &fxy, sizeof(float));				\
+    EVP_DigestUpdate(ctx, &fxy, sizeof(float));				\
   } while(0)
 
 #define test_f2_f(NAME, ULP, START, END, NSTEP) do {			\
-    static MD5_CTX ctx;							\
-    MD5_Init(&ctx);							\
+    initDigest								\
     float step = ((float)(END) - (float)(START))/NSTEP;			\
     for(float d = (START);d < (END);d += step)				\
       exec_f2_f(ATR, NAME, ULP, SPTYPE, SPTYPESPEC, EXTSPEC, d);	\
@@ -311,12 +325,11 @@ static SPTYPE vf2gety_vf_vf2(TYPE2(SPTYPE) v) { return v.y; }
     SPTYPE vx = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (argu, r), SET(TYPE) (argv, r)); \
     float fx = GET(TYPE)(vx, r);					\
     convertEndianness(&fx, sizeof(float));				\
-    MD5_Update(&ctx, &fx, sizeof(float));				\
+    EVP_DigestUpdate(ctx, &fx, sizeof(float));				\
   } while(0)
 
 #define test_f_f_f(NAME, ULP, STARTU, ENDU, NSTEPU, STARTV, ENDV, NSTEPV) do { \
-    static MD5_CTX ctx;							\
-    MD5_Init(&ctx);							\
+    initDigest								\
     float stepu = ((float)(ENDU) - (float)(STARTU))/NSTEPU;		\
     float stepv = ((float)(ENDV) - (float)(STARTV))/NSTEPV;		\
     for(float u = (STARTU);u < (ENDU);u += stepu)			\
