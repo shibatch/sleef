@@ -128,15 +128,9 @@ foreach(SIMD ${SLEEF_HEADER_LIST})
     )
 endforeach()
 
-add_custom_command(
-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/sleefquad.h.foot
-  COMMAND $<TARGET_FILE:addSuffix> ${SLEEFQUAD_ORG_FOOTER} > ${CMAKE_CURRENT_BINARY_DIR}/sleefquad.h.foot
-  DEPENDS addSuffix ${SLEEFQUAD_ORG_FOOTER}
-)
-
 sleef_concat_files(
   OUTPUT ${SLEEFQUAD_INCLUDE_HEADER}
-  SOURCES ${SLEEFQUAD_ORG_HEADER} ${SLEEF_HEADER_SIMD_SECTIONS} ${CMAKE_CURRENT_BINARY_DIR}/sleefquad.h.foot
+  SOURCES ${SLEEFQUAD_ORG_HEADER} ${SLEEF_HEADER_SIMD_SECTIONS} ${SLEEFQUAD_ORG_FOOTER}
 )
 
 # --------------------------------------------------------------------

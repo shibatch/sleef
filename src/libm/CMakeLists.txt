@@ -680,17 +680,12 @@ add_custom_command(
   COMMAND $<TARGET_FILE:${TARGET_MKDISP}> 1 1 double float int32_t purec purecfma x > ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c.body
   DEPENDS ${TARGET_MKDISP}
   )
-add_custom_command(
-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c.footer
-  COMMAND $<TARGET_FILE:addSuffix> ${CMAKE_CURRENT_SOURCE_DIR}/dispscalar_footer.c.org > ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c.footer
-  DEPENDS addSuffix
-  )
 
 sleef_concat_files(
   OUTPUT  ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c
   SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/dispscalar.c.org
           ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c.body
-	  ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c.footer
+	  ${CMAKE_CURRENT_SOURCE_DIR}/dispscalar_footer.c.org
 )
 add_custom_target(dispscalar.c_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/dispscalar.c)
 
