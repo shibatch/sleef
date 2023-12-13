@@ -201,12 +201,7 @@ foreach(SIMD ${SLEEF_HEADER_LIST})
   list(APPEND SLEEF_HEADER_COMMANDS COMMAND $<TARGET_FILE:${TARGET_MKRENAME}> ${HEADER_PARAMS_${SIMD}} >> ${SLEEF_INCLUDE_HEADER})
 endforeach()
 
-if((MSVC OR MINGW AND WIN32) OR SLEEF_CLANG_ON_WINDOWS)
-  string(REPLACE "/" "\\" sleef_footer_input_file "${SLEEF_ORG_FOOTER}")
-  list(APPEND SLEEF_HEADER_COMMANDS COMMAND type ${sleef_footer_input_file} >> ${SLEEF_INCLUDE_HEADER})
-else()
-  list(APPEND SLEEF_HEADER_COMMANDS COMMAND cat ${SLEEF_ORG_FOOTER} >> ${SLEEF_INCLUDE_HEADER})
-endif()
+list(APPEND SLEEF_HEADER_COMMANDS COMMAND $<TARGET_FILE:addSuffix> ${SLEEF_ORG_FOOTER} >> ${SLEEF_INCLUDE_HEADER})
 
 add_custom_command(OUTPUT ${SLEEF_INCLUDE_HEADER}
   ${SLEEF_HEADER_COMMANDS}
@@ -214,6 +209,7 @@ add_custom_command(OUTPUT ${SLEEF_INCLUDE_HEADER}
     ${SLEEF_ORG_HEADER}
     ${SLEEF_ORG_FOOTER}
     ${TARGET_MKRENAME}
+    addSuffix
 )
 
 # --------------------------------------------------------------------
