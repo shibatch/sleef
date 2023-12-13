@@ -528,6 +528,7 @@ if(BUILD_INLINE_HEADERS)
 	  ${TARGET_PP_FLAGS}
 	  ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimddp.c > ${CMAKE_CURRENT_BINARY_DIR}/sleefsimddp${SIMD}.h.tmp # /sleef/src/libm/sleefsimddp.c > /build/libm/sleefsimddpSSE2.h.tmp
 
+	  # ${HEADER_${SIMD}} listed here as sleefsimddp.c includes it for renaming
 	  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimddp.c ${HEADER_${SIMD}}
 	  )
 

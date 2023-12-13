@@ -265,7 +265,8 @@ if(BUILD_INLINE_HEADERS)
 	  ${TARGET_PP_FLAGS}
 	  ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdqp.c > ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp1      # /sleef/src/quad/sleefsimdqp.c > /build/quad/sleefSSE2.h.qtmp1
 
-	  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdqp.c
+	  # ${HEADER_${SIMD}} listed here as sleefsimdqp.c includes it for renaming
+	  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/sleefsimdqp.c ${HEADER_${SIMD}}
 	  )
 
 	add_custom_command(
