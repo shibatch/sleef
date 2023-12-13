@@ -38,6 +38,24 @@ function(command_arguments PROPNAME)
   set(${PROPNAME} ${quoted_args} PARENT_SCOPE)
 endfunction()
 
+# Helper function for concatenating several files
+function(sleef_concat_files)
+  cmake_parse_arguments(concat_required "" "OUTPUT" "SOURCES" ${ARGN})
+  if("${concat_required_OUTPUT}" STREQUAL "")
+    message(FATAL_ERROR "Must pass OUTPUT to sleef_concat_files")
+  endif()
+
+  if(NOT concat_required_SOURCES)
+    message(FATAL_ERROR "sleef_concat_files not passed any SOURCES")
+  endif()
+
+  add_custom_command(
+    OUTPUT ${concat_required_OUTPUT}
+    COMMAND ${CMAKE_COMMAND} -E cat ${concat_required_SOURCES} > ${concat_required_OUTPUT}
+    DEPENDS ${concat_required_SOURCES}
+    COMMAND_EXPAND_LISTS)
+endfunction()
+
 # Settings
 
 set(SLEEF_ALL_SUPPORTED_EXTENSIONS
@@ -94,7 +112,7 @@ set(COSTOVERRIDE_RVVM2NOFMA 20)
 
 #
 
-cmake_minimum_required(VERSION 3.4.3)
+cmake_minimum_required(VERSION 3.18)
 
 if(${CMAKE_VERSION} VERSION_GREATER "3.14.99")
   cmake_policy(SET CMP0091 NEW)
@@ -318,8 +336,3 @@ if(SLEEF_SHOW_CONFIG)
   endif()
 endif(SLEEF_SHOW_CONFIG)
 
-if (NOT CMAKE_MAKE_PROGRAM MATCHES "ninja")
-  message("")
-  message("*** Note: Parallel build is only supported with Ninja ***")
-  message("")
-endif()
