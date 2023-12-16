@@ -122,6 +122,22 @@
 #define VARGQUAD Sleef_quadx2
 #endif
 
+#ifdef ENABLE_RVVM1
+#define CONFIG 1
+#define ENABLE_RVV_DP
+#include "helperrvv.h"
+#include "qrenamervvm1.h"
+#define VARGQUAD Sleef_rvvm1quad
+#endif
+
+#ifdef ENABLE_RVVM2
+#define CONFIG 1
+#define ENABLE_RVV_DP
+#include "helperrvv.h"
+#include "qrenamervvm2.h"
+#define VARGQUAD Sleef_rvvm2quad
+#endif
+
 //
 
 #define DENORMAL_DBL_MIN (4.9406564584124654418e-324)
@@ -217,7 +233,7 @@ int main(int argc,char **argv)
   mpfr_t frw, frx, fry, frz;
   mpfr_inits(frw, frx, fry, frz, NULL);
 
-#ifndef ENABLE_SVE
+#if !(defined ENABLE_SVE || defined ENABLE_RVVM1 || defined ENABLE_RVVM2)
   memset(&a0, 0, sizeof(a0));
   memset(&a1, 0, sizeof(a1));
   memset(&a2, 0, sizeof(a2));

@@ -228,6 +228,29 @@
 #define VARGQUAD Sleef_quadx2
 #endif
 
+#ifdef ENABLE_RVVM1
+#include "qrenamervvm1.h"
+#if !defined(USE_INLINE_HEADER)
+#define CONFIG 1
+#define ENABLE_RVV_DP
+#include "helperrvv.h"
+#define VARGQUAD Sleef_rvvm1quad
+#endif
+#define SIZEOF_VARGQUAD (__riscv_vsetvlmax_e64m1()*8)
+#endif
+
+#ifdef ENABLE_RVVM2
+#include "qrenamervvm2.h"
+#if !defined(USE_INLINE_HEADER)
+#define CONFIG 1
+#define ENABLE_RVV_DP
+#include "helperrvv.h"
+#define VARGQUAD Sleef_rvvm2quad
+#endif
+#define SIZEOF_VARGQUAD (__riscv_vsetvlmax_e64m2()*8)
+#endif
+
+
 #ifndef VARGQUAD
 #define VARGQUAD vargquad
 #endif
