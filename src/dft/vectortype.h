@@ -37,6 +37,14 @@
 #include "helpersve.h"
 #endif
 
+#ifdef ENABLE_RVVM1
+#include "helperrvv.h"
+#endif
+
+#ifdef ENABLE_RVVM2
+#include "helperrvv.h"
+#endif
+
 #ifdef ENABLE_VSX
 #include "helperpower_128.h"
 #endif

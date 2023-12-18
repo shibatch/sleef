@@ -16,22 +16,27 @@
 #elif CONFIG == 7
 // 128-bit vector length
 #define ISANAME "RISC-V Vector Extension 128-bit"
+#define LOG2VECTLENDP 1
 #define SLEEF_RVV_VLEN ((1 << 7) / 8)
 #elif CONFIG == 8
 // 256-bit vector length
 #define ISANAME "RISC-V Vector Extension 256-bit"
+#define LOG2VECTLENDP 2
 #define SLEEF_RVV_VLEN ((1 << 8) / 8)
 #elif CONFIG == 9
 // 512-bit vector length
 #define ISANAME "RISC-V Vector Extension 512-bit"
+#define LOG2VECTLENDP 3
 #define SLEEF_RVV_VLEN ((1 << 9) / 8)
 #elif CONFIG == 10
 // 1024-bit vector length
 #define ISANAME "RISC-V Vector Extension 1024-bit"
+#define LOG2VECTLENDP 4
 #define SLEEF_RVV_VLEN ((1 << 10) / 8)
 #elif CONFIG == 11
 // 2048-bit vector length
 #define ISANAME "RISC-V Vector Extension 2048-bit"
+#define LOG2VECTLENDP 5
 #define SLEEF_RVV_VLEN ((1 << 11) / 8)
 #else
 #error CONFIG macro invalid or not defined
@@ -277,6 +282,8 @@ typedef vint32m8_t dfi_t;
 #else
 #error "unknown rvv lmul"
 #endif // ENABLE_RVVM1
+
+typedef vquad vargquad;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Single-Precision Functions
@@ -1063,5 +1070,13 @@ static INLINE vint vand_vi_vo_vi(vopmask x, vint y) {
   return __riscv_vmerge(y, 0, __riscv_vmnot(x, VECTLENDP), VECTLENDP);
 }
 #endif // ENABLE_RVV_DP
+
+/****************************************/
+/* DFT Operations                       */
+/****************************************/
+
+static INLINE vdouble vposneg_vd_vd(vdouble d) {
+  // not implemented
+}
 
 #endif // HELPERRVV_H
