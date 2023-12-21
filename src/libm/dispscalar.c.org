@@ -15,8 +15,8 @@
 
 #include "dispatcher.h"
 
-NOEXPORT double sleef_cpuidtmp2;
-static void tryFMA() { sleef_cpuidtmp2 = Sleef_sind1_u10purecfma(sleef_cpuidtmp2); }
+NOEXPORT double sleef_cpuid_SCALFMA;
+static void tryFMA() { sleef_cpuid_SCALFMA = Sleef_sind1_u10purecfma(sleef_cpuid_SCALFMA); }
 
 #define SUBST_IF_EXT1(funcExt1) if (cpuSupportsExt(tryFMA)) p = funcExt1;
 #define SUBST_IF_EXT2(funcExt2)
