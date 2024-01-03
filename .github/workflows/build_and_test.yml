@@ -67,7 +67,7 @@ jobs:
           EXTRA_CMAKE_FLAGS="-DENFORCE_SSE2=ON -DENFORCE_SSE4=ON -DENFORCE_AVX=ON -DENFORCE_AVX=ON -DENFORCE_AVX2=ON -DENFORCE_AVX512F=ON -DENFORCE_FMA4=ON"
           cmake -S . -B _build-native -GNinja \
             -DCMAKE_INSTALL_PREFIX=$(pwd)/_install-native \
-            -DCMAKE_TOOLCHAIN_FILE=$(pwd)/travis/toolchain-native-${{ matrix.compiler }}.cmake \
+            -DCMAKE_TOOLCHAIN_FILE=$(pwd)/toolchains/native-${{ matrix.compiler }}.cmake \
             ${COMMON_CMAKE_FLAGS} \
             ${EXTRA_CMAKE_FLAGS}
           cmake --build _build-native
@@ -235,7 +235,7 @@ jobs:
 
           cmake -S . -B _build-${{ matrix.arch }} -GNinja \
             -DCMAKE_INSTALL_PREFIX="$(pwd)/_install-${{ matrix.arch }}" \
-            -DCMAKE_TOOLCHAIN_FILE=$(pwd)/travis/toolchain-${{ matrix.arch }}-${{ matrix.compiler }}.cmake \
+            -DCMAKE_TOOLCHAIN_FILE=$(pwd)/toolchains/${{ matrix.arch }}-${{ matrix.compiler }}.cmake \
             -DCMAKE_SYSROOT=$(pwd)/sysroot \
             -DNATIVE_BUILD_DIR="$(pwd)/_build-native" \
             ${COMMON_CMAKE_FLAGS} \
