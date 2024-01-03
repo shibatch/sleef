@@ -41,38 +41,32 @@ if (ENFORCE_TESTER3 AND NOT SLEEF_OPENSSL_FOUND)
   message(FATAL_ERROR "ENFORCE_TESTER3 is specified and OpenSSL not found")
 endif()
 
-if (NOT (RUNNING_ON_APPVEYOR AND SLEEF_CLANG_ON_WINDOWS))
-  # We rely on Cygwin tools in order to test the builds on
-  # appveyor. However, if we try to link these libraries, cmake finds
-  # the Cygwin version of libraries, which causes errors.
-  
-  # Some toolchains require explicit linking of the libraries following.
-  find_library(LIB_MPFR mpfr)
-  find_library(LIBM m)
-  find_library(LIBGMP gmp)
-  find_library(LIBRT rt)
-  find_library(LIBFFTW3 fftw3)
+# Some toolchains require explicit linking of the libraries following.
+find_library(LIB_MPFR mpfr)
+find_library(LIBM m)
+find_library(LIBGMP gmp)
+find_library(LIBRT rt)
+find_library(LIBFFTW3 fftw3)
 
-  if (LIB_MPFR)
-    find_path(MPFR_INCLUDE_DIR
-      NAMES mpfr.h
-      ONLY_CMAKE_FIND_ROOT_PATH)
-  endif(LIB_MPFR)
+if (LIB_MPFR)
+  find_path(MPFR_INCLUDE_DIR
+    NAMES mpfr.h
+    ONLY_CMAKE_FIND_ROOT_PATH)
+endif(LIB_MPFR)
 
-  if (LIBFFTW3)
-    find_path(FFTW3_INCLUDE_DIR
-      NAMES fftw3.h
-      ONLY_CMAKE_FIND_ROOT_PATH)
-  endif(LIBFFTW3)
+if (LIBFFTW3)
+  find_path(FFTW3_INCLUDE_DIR
+    NAMES fftw3.h
+    ONLY_CMAKE_FIND_ROOT_PATH)
+endif(LIBFFTW3)
 
-  if (NOT LIBM)
-    set(LIBM "")
-  endif()
+if (NOT LIBM)
+  set(LIBM "")
+endif()
 
-  if (NOT LIBRT)
-    set(LIBRT "")
-  endif()
-endif(NOT (RUNNING_ON_APPVEYOR AND SLEEF_CLANG_ON_WINDOWS))
+if (NOT LIBRT)
+  set(LIBRT "")
+endif()
 
 if (DISABLE_MPFR)
   set(LIB_MPFR "")
@@ -696,7 +690,7 @@ option(ENFORCE_OPENMP "Build fails if OPENMP is not supported by the compiler" O
 if(NOT DISABLE_OPENMP)
   find_package(OpenMP)
   # Check if compilation with OpenMP really succeeds
-  # It does not succeed on Travis even though find_package(OpenMP) succeeds.
+  # It might not succeed even though find_package(OpenMP) succeeds.
   if(OPENMP_FOUND)
     set (CMAKE_REQUIRED_FLAGS "${OpenMP_C_FLAGS}")
     CHECK_C_SOURCE_COMPILES("
@@ -822,12 +816,6 @@ if(SLEEF_SHOW_ERROR_LOG)
     message("")
   endif()
 endif(SLEEF_SHOW_ERROR_LOG)
-
-if (RUNNING_ON_TRAVIS AND CMAKE_C_COMPILER_ID MATCHES "Clang")
-  message(STATUS "Travis bug workaround turned on")
-  set(COMPILER_SUPPORTS_OPENMP FALSE)   # Workaround for https://github.com/travis-ci/travis-ci/issues/8613
-  set(COMPILER_SUPPORTS_FLOAT128 FALSE) # Compilation on unroll_0_vecextqp.c does not finish on Travis
-endif()
 
 if (MSVC OR SLEEF_CLANG_ON_WINDOWS)
   set(COMPILER_SUPPORTS_OPENMP FALSE)   # At this time, OpenMP is not supported on MSVC

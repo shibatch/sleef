@@ -1,4 +1,3 @@
-[![Travis Build Status](https://travis-ci.org/shibatch/sleef.svg?branch=master)](https://travis-ci.org/shibatch/sleef)
 
 Main Page   : https://sleef.org/
 GitHub Repo : https://github.com/shibatch/sleef
