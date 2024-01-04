@@ -1,3 +1,7 @@
+## 3.5.1 - 2020-09-15
+### Changed
+- Fixed a bug in handling compiler options
+
 ## 3.5 - 2020-09-01
 - IBM System/390 support is added.
 - The library can be built with Clang on Windows.
