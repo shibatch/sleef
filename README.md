@@ -146,7 +146,7 @@ cmake --build build -j --clean-first
 ctest --test-dir build -j
 ```
 
-Refer to our web page for [detailed build instructions][build_info_url].
+For more detailed build instructions please refer to the [dedicated section on CMake](./doc/build-with-cmake.md) or to [our web page][build_info_url].
 
 ## Install SLEEF
 
