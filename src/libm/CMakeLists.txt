@@ -205,6 +205,7 @@ foreach(SIMD ${SLEEF_HEADER_LIST})
   )
 endforeach()
 
+file(MAKE_DIRECTORY ${sleef_BINARY_DIR}/include)
 sleef_concat_files(
   OUTPUT ${SLEEF_INCLUDE_HEADER}
   SOURCES ${SLEEF_ORG_HEADER} ${SLEEF_HEADER_SIMD_SECTIONS} ${SLEEF_ORG_FOOTER}
