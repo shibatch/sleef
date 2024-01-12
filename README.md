@@ -5,6 +5,7 @@
 [![License](https://img.shields.io/badge/License-Boost_1.0-lightblue.svg)](https://www.boost.org/LICENSE_1_0.txt)
 ![CMake](https://img.shields.io/badge/cmake-v3.18+-yellow.svg)
 [![Spack](https://img.shields.io/spack/v/sleef)](https://spack.readthedocs.io/en/v0.16.2/package_list.html#sleef)
+[![SourceForge Downloads](https://img.shields.io/sourceforge/dt/sleef)](https://sourceforge.net/projects/sleef/)
 
 SLEEF is a library that implements vectorized versions of C standard math functions. This library also includes DFT subroutines.
 
@@ -76,12 +77,23 @@ The following table summarises currently supported vector extensions, compilers 
   <td colspan="2">N/A</td>
   <td colspan="3">N/A</td>
 </tr>
-<tr align="center"><th>Risc-V<br>(riscv64)</th><th>RVV1, RVV2</th>
+<tr align="center"><th>RISC-V<br>(riscv64)</th><th>RVV1, RVV2</th>
   <td>N/A (14+)</td><td>:green_circle:</td><td>N/A</td>
   <td colspan="2">N/A</td>
   <td colspan="3">N/A</td>
 </tr>
 </table>
+
+### Component support
+
+The above table is valid for libm in single, double and quadruple precision, as well as fast Discrete Fourier Transform (DFT).
+
+Generation of inline headers is also supported for most vector extensions.
+
+#### Work in progress
+
+- DFT, Quad. and inline headers generations are not supported with RISC-V yet.
+- LTO is not tested in CI yet.
 
 ### Compiler support
 
@@ -93,7 +105,7 @@ Older versions should be supported too, while newer ones are either not tested o
 
 Only Linux distributions are currently tested in CI and thus officially supported.
 
-Building SLEEF for MacOS and Windows on x86 machines was officially supported (:white_circle:), as of 3.5.1, however it is not currently tested.
+Building SLEEF for MacOS and Windows on x86 machines was officially supported ( :white_circle: ), as of 3.5.1, however it is not currently tested.
 
 ### More on supported environment
 
@@ -114,7 +126,7 @@ These tests can be disabled if necessary.
 ## How to build SLEEF
 
 We recommend relying on CMake as much as possible in the build process to ensure portability.
-CMake 3.18+ is the minimum required currently.
+**CMake 3.18+** is the minimum required.
 
 1. Check out the source code from our GitHub repository
 
@@ -171,7 +183,7 @@ spack install sleef@master
 ## License
 
 The software is distributed under the Boost Software License, Version 1.0.
-See accompanying file LICENSE.txt or copy at [http://www.boost.org/LICENSE_1_0.txt][license_url].
+See accompanying file [LICENSE.txt](./LICENSE.txt) or copy at [http://www.boost.org/LICENSE_1_0.txt][license_url].
 Contributions to this project are accepted under the same license.
 
 Copyright Naoki Shibata and contributors 2010 - 2024.
