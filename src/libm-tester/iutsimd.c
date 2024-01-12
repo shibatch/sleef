@@ -57,6 +57,10 @@
 #include <arm_sve.h>
 #endif
 
+#if defined(__riscv) && defined(__riscv_v)
+#include <riscv_vector.h>
+#endif
+
 #if defined(__VSX__)
 #include <altivec.h>
 #endif
@@ -344,27 +348,35 @@ typedef Sleef_SLEEF_VECTOR_FLOAT_2 vfloat2;
 #endif
 
 #ifdef ENABLE_RVVM1
+#include "renamervvm1.h"
+#if !defined(USE_INLINE_HEADER)
 #define CONFIG 1
 #include "helperrvv.h"
-#include "renamervvm1.h"
+#endif
 #endif
 
 #ifdef ENABLE_RVVM1NOFMA
+#include "renamervvm1nofma.h"
+#if !defined(USE_INLINE_HEADER)
 #define CONFIG 2
 #include "helperrvv.h"
-#include "renamervvm1nofma.h"
+#endif
 #endif
 
 #ifdef ENABLE_RVVM2
+#include "renamervvm2.h"
+#if !defined(USE_INLINE_HEADER)
 #define CONFIG 1
 #include "helperrvv.h"
-#include "renamervvm2.h"
+#endif
 #endif
 
 #ifdef ENABLE_RVVM2NOFMA
+#include "renamervvm2nofma.h"
+#if !defined(USE_INLINE_HEADER)
 #define CONFIG 2
 #include "helperrvv.h"
-#include "renamervvm2nofma.h"
+#endif
 #endif
 
 #ifdef ENABLE_PUREC_SCALAR
