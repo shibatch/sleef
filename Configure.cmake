@@ -85,6 +85,13 @@ if(NOT CMAKE_BUILD_TYPE)
     "Debug" "Release" "RelWithDebInfo" "MinSizeRel")
 endif()
 
+# Sanitizers
+if(SLEEF_ASAN)
+  # Add address sanitizing to all targets
+  add_compile_options(-fno-omit-frame-pointer -fsanitize=address)
+  add_link_options(-fno-omit-frame-pointer -fsanitize=address)
+endif()
+
 # TARGET PROCESSOR DETECTION
 set(SLEEF_TARGET_PROCESSOR "${CMAKE_SYSTEM_PROCESSOR}")
 if(CMAKE_SYSTEM_NAME STREQUAL "Darwin" AND CMAKE_OSX_ARCHITECTURES MATCHES "^(x86_64|arm64)$")
