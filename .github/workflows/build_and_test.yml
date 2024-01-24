@@ -272,19 +272,18 @@ jobs:
           - arch: aarch64
             compiler: gcc
             qemu_cpu: "max,sve=on,sve512=on"
-          # Some tests fail when compiled with LLVM only
-          # - arch: aarch64
-          #   compiler: llvm
-          #   qemu_cpu: "max,sve=off"
-          # - arch: aarch64
-          #   compiler: llvm
-          #   qemu_cpu: "max,sve=on,sve128=on"
-          # - arch: aarch64
-          #   compiler: llvm
-          #   qemu_cpu: "max,sve=on,sve256=on"
-          # - arch: aarch64
-          #   compiler: llvm
-          #   qemu_cpu: "max,sve=on,sve512=on"
+          - arch: aarch64
+            compiler: llvm
+            qemu_cpu: "max,sve=off"
+          - arch: aarch64
+            compiler: llvm
+            qemu_cpu: "max,sve=on,sve128=on"
+          - arch: aarch64
+            compiler: llvm
+            qemu_cpu: "max,sve=on,sve256=on"
+          - arch: aarch64
+            compiler: llvm
+            qemu_cpu: "max,sve=on,sve512=on"
           # Aarch32
           - arch: armhf
             compiler: gcc
