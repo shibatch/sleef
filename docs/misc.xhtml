@@ -12,7 +12,7 @@
 <title>SLEEF - Other tools included in the package</title>
 </head>
 <body translate="no" class="notranslate">
-<h1>SLEEF Documentation - Other tools included in the package</h1>
+<h1>SLEEF - Other tools included in the package</h1>
 
 <h2>Table of contents</h2>
 
@@ -20,6 +20,7 @@
   <li><a class="underlined" href="index.xhtml">Introduction</a></li>
   <li><a class="underlined" href="compile.xhtml">Compiling and installing the library</a></li>
   <li><a class="underlined" href="purec.xhtml">Math library reference</a></li>
+  <li><a class="underlined" href="quad.xhtml"> Quad-precision math library reference</a></li>
   <li><a class="underlined" href="dft.xhtml">DFT library reference</a></li>
   <li>&nbsp;</li>
   <li><a class="underlined" href="misc.xhtml">Other tools included in the package</a></li>
@@ -45,12 +46,15 @@
   The first kind of testers consists of a tester and an IUT (which
   stands for Implementation Under Test.) The role for this tester is
   to perform a perfunctory set of tests to check if the build is
-  correct. It also performs regression tests. The tester and IUT are
-  built as separate executables, and communicate with each other using
-  a pipe. Since these two are separate, the IUT can be implemented
-  with an exotic languages or on an operating system that does not
-  support libraries required for testing. It is also possible to
-  perform a test over the network.
+  correct. In this test, the functions in the library are tested if
+  the evaluation error is within the designed limit by comparing the
+  returned values against high-precision evaluation
+  using <a class="underlined" href="http://www.mpfr.org/">the GNU MPFR
+  Library</a>. The tester and IUT are built as separate executables,
+  and communicate with each other using a pipe. Since these two are
+  separate, the IUT can be implemented with an exotic languages or on
+  an operating system that does not support libraries required for
+  testing. It is also possible to perform a test over the network.
 </p>
 
 <p>
@@ -58,7 +62,10 @@
   repeats randomly generating arguments for each function, and
   comparing the results of each function to the results calculated
   with the corresponding function in the MPFR library. This tester is
-  expected to find bugs if it is run for sufficiently long time.
+  expected to find bugs if it is run for sufficiently long time. In
+  these tests, we especially carefully check the error of the
+  trigonometric functions with arguments close to an integral multiple
+  of <i class="math">&pi;</i>/2.
 </p>
 
 <p>
@@ -218,11 +225,19 @@ $ &block;</pre>
 </p>
 
 <p class="footer">
-  Copyright &copy; <!--YEAR--> SLEEF Project.<br/>
+  Copyright &copy; 2021 SLEEF Project.<br/>
   SLEEF is open-source software and is distributed under the Boost Software License, Version 1.0.
 </p>
 
-<!--TEST-->
+<script type="text/javascript">
+//<![CDATA[
+var sc_project=11391936;
+var sc_invisible=1;
+var sc_security="fa400da8";
+//]]>
+</script>
+<script type="text/javascript" src="https://www.statcounter.com/counter/counter_xhtml.js"></script>
+
 
 </body>
 </html>

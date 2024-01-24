@@ -13,7 +13,7 @@
 <title>SLEEF - Math library reference (AArch32)</title>
 </head>
 <body translate="no" class="notranslate">
-<h1>SLEEF Documentation - Math library reference (AArch32)</h1>
+<h1>SLEEF - Math library reference (AArch32)</h1>
 
 <h2>Table of contents</h2>
 
@@ -28,20 +28,22 @@
     <li><a class="underlined" href="aarch64.xhtml">Data types and functions for AArch64 architecture</a></li>
     <li><a class="underlined" href="aarch32.xhtml">Data types and functions for AArch32 architecture</a></li>
     <ul class="circle">
-      <li><a href="aarch32.xhtml#datatypes">Data types</a></li>
-      <li><a href="aarch32.xhtml#trig">Trigonometric functions</a></li>
-      <li><a href="aarch32.xhtml#pow">Power, exponential, and logarithmic functions</a></li>
-      <li><a href="aarch32.xhtml#invtrig">Inverse trigonometric functions</a></li>
-      <li><a href="aarch32.xhtml#hyp">Hyperbolic functions and inverse hyperbolic functions</a></li>
-      <li><a href="aarch32.xhtml#eg">Error and gamma functions</a></li>
-      <li><a href="aarch32.xhtml#nearint">Nearest integer functions</a></li>
-      <li><a href="aarch32.xhtml#other">Other functions</a></li>
+      <li><a href="#datatypes">Data types</a></li>
+      <li><a href="#trig">Trigonometric functions</a></li>
+      <li><a href="#pow">Power, exponential, and logarithmic functions</a></li>
+      <li><a href="#invtrig">Inverse trigonometric functions</a></li>
+      <li><a href="#hyp">Hyperbolic functions and inverse hyperbolic functions</a></li>
+      <li><a href="#eg">Error and gamma functions</a></li>
+      <li><a href="#nearint">Nearest integer functions</a></li>
+      <li><a href="#other">Other functions</a></li>
     </ul>
     <li><a class="underlined" href="ppc64.xhtml">Data types and functions for PPC64 architecture</a></li>
     <li><a class="underlined" href="s390x.xhtml">Data types and functions for System/390 architecture</a></li>
+    <li><a class="underlined" href="cuda.xhtml">Data types and functions for CUDA</a></li>
   </ul>
   </li>
   <li>&nbsp;</li>
+  <li><a class="underlined" href="quad.xhtml"> Quad-precision math library reference</a></li>
   <li><a class="underlined" href="dft.xhtml">DFT library reference</a>
   <li><a class="underlined" href="misc.xhtml">Other tools included in the package</a></li>
   <li><a class="underlined" href="benchmark.xhtml">Benchmark results</a></li>
@@ -84,7 +86,7 @@ which is defined in sleef.h as follows:
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_sinf_u10"><b class="func">Sleef_sinf_u10</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_sinf_u10"><b class="func">Sleef_sinf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -104,7 +106,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_sinf_u10"><b class
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_sinf_u35"><b class="func">Sleef_sinf_u35</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_sinf_u35"><b class="func">Sleef_sinf_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -124,7 +126,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_sinf_u35"><b class
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_cosf_u10"><b class="func">Sleef_cosf_u10</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_cosf_u10"><b class="func">Sleef_cosf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -144,7 +146,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_cosf_u10"><b class
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_cosf_u35"><b class="func">Sleef_cosf_u35</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_cosf_u35"><b class="func">Sleef_cosf_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -164,7 +166,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_cosf_u35"><b class
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_sincosf_u10"><b class="func">Sleef_sincosf_u10</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_sincosf_u10"><b class="func">Sleef_sincosf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -184,7 +186,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_sincosf_u10"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_sincosf_u35"><b class="func">Sleef_sincosf_u35</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_sincosf_u35"><b class="func">Sleef_sincosf_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -204,7 +206,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_sincosf_u35"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_sinpif_u05"><b class="func">Sleef_sinpif_u05</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_sinpif_u05"><b class="func">Sleef_sinpif_u05</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -224,7 +226,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_sinpif_u05"><b cla
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_cospif_u05"><b class="func">Sleef_cospif_u05</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_cospif_u05"><b class="func">Sleef_cospif_u05</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -244,7 +246,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_cospif_u05"><b cla
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_sincospif_u05"><b class="func">Sleef_sincospif_u05</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_sincospif_u05"><b class="func">Sleef_sincospif_u05</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -264,7 +266,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_sincospif_u05"><b 
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_sincospif_u35"><b class="func">Sleef_sincospif_u35</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_sincospif_u35"><b class="func">Sleef_sincospif_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -284,7 +286,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_sincospif_u35"><b 
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_tanf_u10"><b class="func">Sleef_tanf_u10</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_tanf_u10"><b class="func">Sleef_tanf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -304,7 +306,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_tanf_u10"><b class
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_tanf_u35"><b class="func">Sleef_tanf_u35</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_tanf_u35"><b class="func">Sleef_tanf_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <h2 id="pow">Power, exponential, and logarithmic function</h2>
@@ -325,7 +327,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_tanf_u35"><b class
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_powf_u10"><b class="func">Sleef_powf_u10</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_powf_u10"><b class="func">Sleef_powf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -345,7 +347,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_powf_u10"><b class
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_logf_u10"><b class="func">Sleef_logf_u10</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_logf_u10"><b class="func">Sleef_logf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -365,7 +367,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_logf_u10"><b class
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_logf_u35"><b class="func">Sleef_logf_u35</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_logf_u35"><b class="func">Sleef_logf_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -385,7 +387,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_logf_u35"><b class
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_log10f_u10"><b class="func">Sleef_log10f_u10</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_log10f_u10"><b class="func">Sleef_log10f_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -405,7 +407,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_log10f_u10"><b cla
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_log2f_u10"><b class="func">Sleef_log2f_u10</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_log2f_u10"><b class="func">Sleef_log2f_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -425,7 +427,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_log2f_u10"><b clas
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_log1pf_u10"><b class="func">Sleef_log1pf_u10</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_log1pf_u10"><b class="func">Sleef_log1pf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -445,7 +447,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_log1pf_u10"><b cla
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_expf_u10"><b class="func">Sleef_expf_u10</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_expf_u10"><b class="func">Sleef_expf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -465,7 +467,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_expf_u10"><b class
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_exp2f_u10"><b class="func">Sleef_exp2f_u10</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_exp2f_u10"><b class="func">Sleef_exp2f_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -485,7 +487,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_exp2f_u10"><b clas
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_exp10f_u10"><b class="func">Sleef_exp10f_u10</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_exp10f_u10"><b class="func">Sleef_exp10f_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -505,7 +507,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_exp10f_u10"><b cla
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_expm1f_u10"><b class="func">Sleef_expm1f_u10</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_expm1f_u10"><b class="func">Sleef_expm1f_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -525,7 +527,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_expm1f_u10"><b cla
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_sqrtf_u05"><b class="func">Sleef_sqrtf_u05</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_sqrtf_u05"><b class="func">Sleef_sqrtf_u05</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -545,7 +547,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_sqrtf_u05"><b clas
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_sqrtf_u35"><b class="func">Sleef_sqrtf_u35</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_sqrtf_u35"><b class="func">Sleef_sqrtf_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -565,7 +567,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_sqrtf_u35"><b clas
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_cbrtf_u10"><b class="func">Sleef_cbrtf_u10</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_cbrtf_u10"><b class="func">Sleef_cbrtf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -585,7 +587,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_cbrtf_u10"><b clas
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_cbrtf_u35"><b class="func">Sleef_cbrtf_u35</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_cbrtf_u35"><b class="func">Sleef_cbrtf_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -605,7 +607,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_cbrtf_u35"><b clas
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_hypotf_u05"><b class="func">Sleef_hypotf_u05</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_hypotf_u05"><b class="func">Sleef_hypotf_u05</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -625,7 +627,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_hypotf_u05"><b cla
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_hypotf_u35"><b class="func">Sleef_hypotf_u35</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_hypotf_u35"><b class="func">Sleef_hypotf_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 
@@ -647,7 +649,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_hypotf_u35"><b cla
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_asinf_u10"><b class="func">Sleef_asinf_u10</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_asinf_u10"><b class="func">Sleef_asinf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -667,7 +669,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_asinf_u10"><b clas
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_asinf_u35"><b class="func">Sleef_asinf_u35</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_asinf_u35"><b class="func">Sleef_asinf_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -687,7 +689,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_asinf_u35"><b clas
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_acosf_u10"><b class="func">Sleef_acosf_u10</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_acosf_u10"><b class="func">Sleef_acosf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -707,7 +709,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_acosf_u10"><b clas
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_acosf_u35"><b class="func">Sleef_acosf_u35</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_acosf_u35"><b class="func">Sleef_acosf_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -727,7 +729,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_acosf_u35"><b clas
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_atanf_u10"><b class="func">Sleef_atanf_u10</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_atanf_u10"><b class="func">Sleef_atanf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -747,7 +749,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_atanf_u10"><b clas
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_atanf_u35"><b class="func">Sleef_atanf_u35</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_atanf_u35"><b class="func">Sleef_atanf_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -767,7 +769,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_atanf_u35"><b clas
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_atan2f_u10"><b class="func">Sleef_atan2f_u10</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_atan2f_u10"><b class="func">Sleef_atan2f_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -787,7 +789,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_atan2f_u10"><b cla
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_atan2f_u35"><b class="func">Sleef_atan2f_u35</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_atan2f_u35"><b class="func">Sleef_atan2f_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 
@@ -810,7 +812,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_atan2f_u35"><b cla
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_sinhf_u10"><b class="func">Sleef_sinhf_u10</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_sinhf_u10"><b class="func">Sleef_sinhf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -830,7 +832,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_sinhf_u10"><b clas
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_sinhf_u35"><b class="func">Sleef_sinhf_u35</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_sinhf_u35"><b class="func">Sleef_sinhf_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -850,7 +852,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_sinhf_u35"><b clas
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_coshf_u10"><b class="func">Sleef_coshf_u10</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_coshf_u10"><b class="func">Sleef_coshf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -870,7 +872,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_coshf_u10"><b clas
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_coshf_u35"><b class="func">Sleef_coshf_u35</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_coshf_u35"><b class="func">Sleef_coshf_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -890,7 +892,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_coshf_u35"><b clas
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_tanhf_u10"><b class="func">Sleef_tanhf_u10</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_tanhf_u10"><b class="func">Sleef_tanhf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -910,7 +912,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_tanhf_u10"><b clas
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_tanhf_u35"><b class="func">Sleef_tanhf_u35</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_tanhf_u35"><b class="func">Sleef_tanhf_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -930,7 +932,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_tanhf_u35"><b clas
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_asinhf_u10"><b class="func">Sleef_asinhf_u10</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_asinhf_u10"><b class="func">Sleef_asinhf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -950,7 +952,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_asinhf_u10"><b cla
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_acoshf_u10"><b class="func">Sleef_acoshf_u10</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_acoshf_u10"><b class="func">Sleef_acoshf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -970,7 +972,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_acoshf_u10"><b cla
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_atanhf_u10"><b class="func">Sleef_atanhf_u10</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_atanhf_u10"><b class="func">Sleef_atanhf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 
@@ -992,7 +994,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_atanhf_u10"><b cla
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_erff_u10"><b class="func">Sleef_erff_u10</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_erff_u10"><b class="func">Sleef_erff_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -1012,7 +1014,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_erff_u10"><b class
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_erfcf_u15"><b class="func">Sleef_erfcf_u15</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_erfcf_u15"><b class="func">Sleef_erfcf_u15</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -1032,7 +1034,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_erfcf_u15"><b clas
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_tgammaf_u10"><b class="func">Sleef_tgammaf_u10</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_tgammaf_u10"><b class="func">Sleef_tgammaf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -1052,7 +1054,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_tgammaf_u10"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_lgammaf_u10"><b class="func">Sleef_lgammaf_u10</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_lgammaf_u10"><b class="func">Sleef_lgammaf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 
@@ -1074,7 +1076,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_lgammaf_u10"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_truncf"><b class="func">Sleef_truncf</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_truncf"><b class="func">Sleef_truncf</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -1094,7 +1096,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_truncf"><b class="
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_floorf"><b class="func">Sleef_floorf</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_floorf"><b class="func">Sleef_floorf</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -1114,7 +1116,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_floorf"><b class="
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_ceilf"><b class="func">Sleef_ceilf</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_ceilf"><b class="func">Sleef_ceilf</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -1134,7 +1136,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_ceilf"><b class="f
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_roundf"><b class="func">Sleef_roundf</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_roundf"><b class="func">Sleef_roundf</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -1154,7 +1156,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_roundf"><b class="
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_rintf"><b class="func">Sleef_rintf</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_rintf"><b class="func">Sleef_rintf</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 
@@ -1176,7 +1178,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_rintf"><b class="f
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_fmaf"><b class="func">Sleef_fmaf</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_fmaf"><b class="func">Sleef_fmaf</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -1197,7 +1199,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_fmaf"><b class="fu
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_fmodf"><b class="func">Sleef_fmodf</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_fmodf"><b class="func">Sleef_fmodf</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -1218,7 +1220,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_fmodf"><b class="f
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_remainderf"><b class="func">Sleef_remainderf</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_remainderf"><b class="func">Sleef_remainderf</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -1238,7 +1240,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_remainderf"><b cla
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_frfrexpf"><b class="func">Sleef_frfrexpf</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_frfrexpf"><b class="func">Sleef_frfrexpf</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -1259,7 +1261,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_frfrexpf"><b class
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_modff"><b class="func">Sleef_modff</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_modff"><b class="func">Sleef_modff</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -1279,7 +1281,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_modff"><b class="f
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_fabsf"><b class="func">Sleef_fabsf</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_fabsf"><b class="func">Sleef_fabsf</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -1299,7 +1301,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_fabsf"><b class="f
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_copysignf"><b class="func">Sleef_copysignf</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_copysignf"><b class="func">Sleef_copysignf</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -1319,7 +1321,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_copysignf"><b clas
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_fmaxf"><b class="func">Sleef_fmaxf</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_fmaxf"><b class="func">Sleef_fmaxf</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -1339,7 +1341,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_fmaxf"><b class="f
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_fminf"><b class="func">Sleef_fminf</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_fminf"><b class="func">Sleef_fminf</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -1359,7 +1361,7 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_fminf"><b class="f
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_fdimf"><b class="func">Sleef_fdimf</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_fdimf"><b class="func">Sleef_fdimf</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <hr/>
@@ -1379,15 +1381,23 @@ This is the vectorized function of <a href="purec.xhtml#Sleef_fdimf"><b class="f
 <p class="header">Description</p>
 
 <p class="noindent">
-This is the vectorized function of <a href="purec.xhtml#Sleef_nextafterf"><b class="func">Sleef_nextafterf</b></a>. This function may less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+These are the vectorized functions of <a href="purec.xhtml#Sleef_nextafterf"><b class="func">Sleef_nextafterf</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 </p>
 
 <p class="footer">
-  Copyright &copy; <!--YEAR--> SLEEF Project.<br/>
+  Copyright &copy; 2021 SLEEF Project.<br/>
   SLEEF is open-source software and is distributed under the Boost Software License, Version 1.0.
 </p>
 
-<!--TEST-->
+<script type="text/javascript">
+//<![CDATA[
+var sc_project=11391936;
+var sc_invisible=1;
+var sc_security="fa400da8";
+//]]>
+</script>
+<script type="text/javascript" src="https://www.statcounter.com/counter/counter_xhtml.js"></script>
+
 
 </body>
 </html>

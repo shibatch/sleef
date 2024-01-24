@@ -13,7 +13,7 @@
 <title>SLEEF - DFT library reference</title>
 </head>
 <body translate="no" class="notranslate">
-<h1>SLEEF Documentation - DFT library reference</h1>
+<h1>SLEEF - DFT library reference</h1>
 
 <h2>Table of contents</h2>
 
@@ -302,7 +302,7 @@ by the <i class="var">mode</i> parameter, as shown below.
 
 <hr/>
 
-<p class="funcname"><b class="func">SleefDFT_double_init1d</b>, <b class="func">SleefDFT_float_init1d</b>, <b class="func">SleefDFT_longdouble_init1d</b> - initialize the tables for 1D transform</p>
+<p class="funcname"><b class="func">SleefDFT_double_init1d</b>, <b class="func">SleefDFT_float_init1d</b> - initialize the tables for 1D transform</p>
 
 <p class="header">Synopsis</p>
 
@@ -312,7 +312,6 @@ by the <i class="var">mode</i> parameter, as shown below.
 <br/>
 <b class="type">struct SleefDFT *</b> <b class="func">SleefDFT_double_init1d</b>(<b class="type">uint32_t</b> <i class="var">n</i>, <b class="type">const double *</b><i class="var">in</i>, <b class="type">double *</b><i class="var">out</i>, <b class="type">uint64_t</b> <i class="var">mode</i>);<br/>
 <b class="type">struct SleefDFT *</b> <b class="func">SleefDFT_float_init1d</b>(<b class="type">uint32_t</b> <i class="var">n</i>, <b class="type">const float *</b><i class="var">in</i>, <b class="type">float *</b><i class="var">out</i>, <b class="type">uint64_t</b> <i class="var">mode</i>);<br/>
-<b class="type">struct SleefDFT *</b> <b class="func">SleefDFT_longdouble_init1d</b>(<b class="type">uint32_t</b> <i class="var">n</i>, <b class="type">const long double *</b><i class="var">in</i>, <b class="type">long double *</b><i class="var">out</i>, <b class="type">uint64_t</b> <i class="var">mode</i>);<br/>
 <br/>
 Link with -lsleefdft -lsleef.
 </p>
@@ -398,7 +397,7 @@ Link with -lsleefdft -lsleef.
 
 <hr/>
 
-<p class="funcname"><b class="func">SleefDFT_double_init2d</b>, <b class="func">SleefDFT_float_init2d</b>, <b class="func">SleefDFT_longdouble_init2d</b> - initialize the tables for 2D transform</p>
+<p class="funcname"><b class="func">SleefDFT_double_init2d</b>, <b class="func">SleefDFT_float_init2d</b> - initialize the tables for 2D transform</p>
 
 <p class="header">Synopsis</p>
 
@@ -408,7 +407,6 @@ Link with -lsleefdft -lsleef.
 <br/>
 <b class="type">struct SleefDFT *</b> <b class="func">SleefDFT_double_init2d</b>(<b class="type">uint32_t</b> <i class="var">n</i>, <b class="type">uint32_t</b> <i class="var">m</i>, <b class="type">const double *</b><i class="var">in</i>, <b class="type">double *</b><i class="var">out</i>, <b class="type">uint64_t</b> <i class="var">mode</i>);<br/>
 <b class="type">struct SleefDFT *</b> <b class="func">SleefDFT_float_init2d</b>(<b class="type">uint32_t</b> <i class="var">n</i>, <b class="type">uint32_t</b> <i class="var">m</i>, <b class="type">const float *</b><i class="var">in</i>, <b class="type">float *</b><i class="var">out</i>, <b class="type">uint64_t</b> <i class="var">mode</i>);<br/>
-<b class="type">struct SleefDFT *</b> <b class="func">SleefDFT_longdouble_init2d</b>(<b class="type">uint32_t</b> <i class="var">n</i>, <b class="type">uint32_t</b> <i class="var">m</i>, <b class="type">const long double *</b><i class="var">in</i>, <b class="type">long double *</b><i class="var">out</i>, <b class="type">uint64_t</b> <i class="var">mode</i>);<br/>
 <br/>
 Link with -lsleefdft -lsleef.
 </p>
@@ -432,7 +430,7 @@ Link with -lsleefdft -lsleef.
 
 <hr/>
 
-<p class="funcname"><b class="func">SleefDFT_double_execute</b>, <b class="func">SleefDFT_float_execute</b>, <b class="func">SleefDFT_longdouble_execute</b> - execute a transform</p>
+<p class="funcname"><b class="func">SleefDFT_double_execute</b>, <b class="func">SleefDFT_float_execute</b> - execute a transform</p>
 
 <p class="header">Synopsis</p>
 
@@ -442,7 +440,6 @@ Link with -lsleefdft -lsleef.
 <br/>
 <b class="type">void</b> <b class="func">SleefDFT_double_execute</b>(<b class="type">struct SleefDFT *</b><i class="var">ptr</i>, <b class="type">const double *</b><i class="var">in</i>, <b class="type">double *</b><i class="var">out</i>);<br/>
 <b class="type">void</b> <b class="func">SleefDFT_float_execute</b>(<b class="type">struct SleefDFT *</b><i class="var">ptr</i>, <b class="type">const float *</b><i class="var">in</i>, <b class="type">float *</b><i class="var">out</i>);<br/>
-<b class="type">void</b> <b class="func">SleefDFT_longdouble_execute</b>(<b class="type">struct SleefDFT *</b><i class="var">ptr</i>, <b class="type">const long double *</b><i class="var">in</i>, <b class="type">long double *</b><i class="var">out</i>);<br/>
 <br/>
 Link with -lsleefdft -lsleef.
 </p>
@@ -475,16 +472,23 @@ Link with -lsleefdft -lsleef.
 
 <p class="noindent">
   This function frees a plan returned
-  by <b class="func">SleefDFT_double_init1d</b>, <b class="func">SleefDFT_float_init1d</b>, <b class="func">SleefDFT_longdouble_init1d</b>, <b class="func">SleefDFT_double_init2d</b>, <b class="func">SleefDFT_float_init2d</b>,
-  or <b class="func">SleefDFT_longdouble_init2d</b> functions.
+  by <b class="func">SleefDFT_double_init1d</b>, <b class="func">SleefDFT_float_init1d</b>, <b class="func">SleefDFT_double_init2d</b>, or <b class="func">SleefDFT_float_init2d</b> functions.
 </p>
 
 <p class="footer">
-  Copyright &copy; <!--YEAR--> SLEEF Project.<br/>
+  Copyright &copy; 2021 SLEEF Project.<br/>
   SLEEF is open-source software and is distributed under the Boost Software License, Version 1.0.
 </p>
 
-<!--TEST-->
+<script type="text/javascript">
+//<![CDATA[
+var sc_project=11391936;
+var sc_invisible=1;
+var sc_security="fa400da8";
+//]]>
+</script>
+<script type="text/javascript" src="https://www.statcounter.com/counter/counter_xhtml.js"></script>
+
 
 </body>
 </html>

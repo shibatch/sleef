@@ -10,10 +10,10 @@
 <link rel="stylesheet" type="text/css" href="texlike.css"/>
 <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Ubuntu" />
 <link rel="stylesheet" type="text/css" href="sleef.css"/>
-<title>SLEEF - Math library reference(x86)</title>
+<title>SLEEF - Math library reference (x86)</title>
 </head>
 <body translate="no" class="notranslate">
-<h1>SLEEF Documentation - Math library reference(x86)</h1>
+<h1>SLEEF - Math library reference (x86)</h1>
 
 <h2>Table of contents</h2>
 
@@ -26,24 +26,26 @@
     <li><a class="underlined" href="purec.xhtml">Data types and functions for all architecture</a></li>
     <li><a class="underlined" href="x86.xhtml">Data types and functions for x86 architecture</a></li>
     <ul class="circle">
-      <li><a href="x86.xhtml#naming">Function naming convention</a></li>
-      <li><a href="x86.xhtml#datatypes">Data types</a></li>
-      <li><a href="x86.xhtml#trig">Trigonometric functions</a></li>
-      <li><a href="x86.xhtml#pow">Power, exponential, and logarithmic functions</a></li>
-      <li><a href="x86.xhtml#invtrig">Inverse trigonometric functions</a></li>
-      <li><a href="x86.xhtml#hyp">Hyperbolic functions and inverse hyperbolic functions</a></li>
-      <li><a href="x86.xhtml#eg">Error and gamma functions</a></li>
-      <li><a href="x86.xhtml#nearint">Nearest integer functions</a></li>
-      <li><a href="x86.xhtml#other">Other functions</a></li>
-      <li><a href="x86.xhtml#supplementary">Supplementary functions</a></li>
+      <li><a href="#naming">Function naming convention</a></li>
+      <li><a href="#datatypes">Data types</a></li>
+      <li><a href="#trig">Trigonometric functions</a></li>
+      <li><a href="#pow">Power, exponential, and logarithmic functions</a></li>
+      <li><a href="#invtrig">Inverse trigonometric functions</a></li>
+      <li><a href="#hyp">Hyperbolic functions and inverse hyperbolic functions</a></li>
+      <li><a href="#eg">Error and gamma functions</a></li>
+      <li><a href="#nearint">Nearest integer functions</a></li>
+      <li><a href="#other">Other functions</a></li>
+      <li><a href="#supplementary">Supplementary functions</a></li>
     </ul>
     <li><a class="underlined" href="aarch64.xhtml">Data types and functions for AArch64 architecture</a></li>
     <li><a class="underlined" href="aarch32.xhtml">Data types and functions for AArch32 architecture</a></li>
     <li><a class="underlined" href="ppc64.xhtml">Data types and functions for PPC64 architecture</a></li>
     <li><a class="underlined" href="s390x.xhtml">Data types and functions for System/390 architecture</a></li>
+    <li><a class="underlined" href="cuda.xhtml">Data types and functions for CUDA</a></li>
   </ul>
   </li>
   <li>&nbsp;</li>
+  <li><a class="underlined" href="quad.xhtml"> Quad-precision math library reference</a></li>
   <li><a class="underlined" href="dft.xhtml">DFT library reference</a>
   <li><a class="underlined" href="misc.xhtml">Other tools included in the package</a></li>
   <li><a class="underlined" href="benchmark.xhtml">Benchmark results</a></li>
@@ -62,30 +64,34 @@ following items, in this order.
 <br/>
 
 <ul class="disc">
-  <li>String "Sleef_".</li>
-  <li>Name of the corresponding double precision function in math.h.</li>
-  <li>Data type specifier of a vector element, "d" and "f" for double and single precision functions, respectively.</li>
-  <li>The number of elements in a vector.</li>
-  <li>Accuracy specifier, a concatenation of string "_u" and 10 times
-    the maximum error for typical input domain in ULP(two digits).
-    There is no field in the name, if the function is expected to
-    always return the correctly rounded value.</li>
-  <li>Vector extension specifier.</li>
+  <li>String "Sleef_"</li>
+  <li>Name of the corresponding double precision function in math.h</li>
+  <li>Data type specifier of a vector element, "d" and "f" for double and single precision functions, respectively</li>
+  <li>The number of elements in a vector</li>
+  <li>Accuracy specifier, which is a concatenation of "_u" and 10
+    times the maximum error for typical input domain
+    in <a class="underlined" href="additional.xhtml#ulp">ULP</a> (two
+    digits). If the function is expected to always return the
+    correctly rounded value, its name has no accuracy specifier.</li>
+  <li>Vector extension specifier</li>
   <ul class="circle">
-    <li>(Nothing) : <a href="additional.xhtml#dispatcher">Dispatcher</a>
-    automatically chooses the fastest available vector extension</li>
+    <li>(Nothing) : <a class="underlined"
+    href="additional.xhtml#dispatcher">Dispatcher</a> automatically
+    chooses the fastest available vector extension</li>
     <li>sse2 : SSE2</li>
     <li>sse4 : SSE4.1</li>
     <li>avx2128 : AVX2+FMA3 instructions utilized for 128 bit computation</li>
     <li>avx : AVX</li>
-    <li>fma4 : AMD FMA4</li>
     <li>avx2 : AVX2+FMA3</li>
     <li>avx512f : AVX512F</li>
   </ul>
-  <li>Attributes.</li>
+  <li>Attributes</li>
   <ul class="circle">
     <li>c : The function gives bit-wise consistent results across all platforms</li>
-    <li>f : The function requires FMA support and gives bit-wise consistent results across all platforms</li>
+    <li>f : The function requires <a class="underlined"
+href="https://en.wikipedia.org/wiki/Multiply%E2%80%93accumulate_operation#Fused_multiply%E2%80%93add">FMA</a>
+support and gives bit-wise consistent results across all
+platforms</li>
     <li>i : Infinity is correctly handled</li>
     <li>n : NaN is correctly handled</li>
     <li>z : Negative zero is correctly handled</li>
@@ -211,11 +217,6 @@ which is defined in sleef.h as follows:
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">double</b> <b class="func">Sleef_sind1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_sind1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_sind1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_sind1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_sind2_u10</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_sind2_u10sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_sind2_u10sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -234,7 +235,6 @@ which is defined in sleef.h as follows:
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_sind8_u10</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_sind8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_sind8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_sind8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_sind8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -255,11 +255,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sin_u10"><b cla
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_sinf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_sinf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_sinf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_sinf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_sinf4_u10</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_sinf4_u10sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_sinf4_u10sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -278,7 +273,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sin_u10"><b cla
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_sinf16_u10</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_sinf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_sinf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_sinf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_sinf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -299,12 +293,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sinf_u10"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">double</b> <b class="func">Sleef_sind1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_sind1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_sind1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_sind1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_sind2_u35</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_sind2_u35sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_sind2_u35sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -323,7 +311,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sinf_u10"><b cl
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_sind8_u35</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_sind8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_sind8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_sind8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_sind8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -344,12 +331,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sin_u35"><b cla
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">float</b> <b class="func">Sleef_sinf1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_sinf1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_sinf1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_sinf1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_sinf4_u35</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_sinf4_u35sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_sinf4_u35sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -368,7 +349,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sin_u35"><b cla
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_sinf16_u35</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_sinf16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_sinf16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_sinf16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_sinf16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -389,11 +369,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sinf_u35"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">double</b> <b class="func">Sleef_cosd1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cosd1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_cosd1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_cosd1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_cosd2_u10</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_cosd2_u10sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_cosd2_u10sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -412,7 +387,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sinf_u35"><b cl
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cosd8_u10</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cosd8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_cosd8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_cosd8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_cosd8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -433,11 +407,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cos_u10"><b cla
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_cosf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cosf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_cosf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_cosf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_cosf4_u10</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_cosf4_u10sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_cosf4_u10sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -456,7 +425,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cos_u10"><b cla
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_cosf16_u10</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cosf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_cosf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_cosf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_cosf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -477,12 +445,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cosf_u10"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">double</b> <b class="func">Sleef_cosd1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cosd1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_cosd1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_cosd1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_cosd2_u35</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_cosd2_u35sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_cosd2_u35sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -501,7 +463,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cosf_u10"><b cl
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cosd8_u35</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cosd8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_cosd8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_cosd8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_cosd8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -522,12 +483,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cos_u35"><b cla
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">float</b> <b class="func">Sleef_cosf1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cosf1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_cosf1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_cosf1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_cosf4_u35</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_cosf4_u35sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_cosf4_u35sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -546,7 +501,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cos_u35"><b cla
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_cosf16_u35</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cosf16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_cosf16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_cosf16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_cosf16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -567,11 +521,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cosf_u35"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">Sleef_double2</b> <b class="func">Sleef_sincosd1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef_double2</b> <b class="func">Sleef_sincosd1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef_double2</b> <b class="func">Sleef_cinz_sincosd1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef_double2</b> <b class="func">Sleef_finz_sincosd1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">Sleef___m128d_2</b> <b class="func">Sleef_sincosd2_u10</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m128d_2</b> <b class="func">Sleef_sincosd2_u10sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m128d_2</b> <b class="func">Sleef_sincosd2_u10sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -590,7 +539,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cosf_u35"><b cl
 <br/>
 <b class="type">Sleef___m512d_2</b> <b class="func">Sleef_sincosd8_u10</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m512d_2</b> <b class="func">Sleef_sincosd8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef___m512d_2</b> <b class="func">Sleef_sincosd8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m512d_2</b> <b class="func">Sleef_cinz_sincosd8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m512d_2</b> <b class="func">Sleef_finz_sincosd8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -611,11 +559,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sincos_u10"><b 
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">Sleef_float2</b> <b class="func">Sleef_sincosf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef_float2</b> <b class="func">Sleef_sincosf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef_float2</b> <b class="func">Sleef_cinz_sincosf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef_float2</b> <b class="func">Sleef_finz_sincosf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">Sleef___m128_2</b> <b class="func">Sleef_sincosf4_u10</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m128_2</b> <b class="func">Sleef_sincosf4_u10sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m128_2</b> <b class="func">Sleef_sincosf4_u10sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -634,7 +577,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sincos_u10"><b 
 <br/>
 <b class="type">Sleef___m512_2</b> <b class="func">Sleef_sincosf16_u10</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m512_2</b> <b class="func">Sleef_sincosf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef___m512_2</b> <b class="func">Sleef_sincosf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m512_2</b> <b class="func">Sleef_cinz_sincosf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m512_2</b> <b class="func">Sleef_finz_sincosf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -655,12 +597,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sincosf_u10"><b
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">Sleef_double2</b> <b class="func">Sleef_sincosd1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef_double2</b> <b class="func">Sleef_sincosd1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef_double2</b> <b class="func">Sleef_cinz_sincosd1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef_double2</b> <b class="func">Sleef_finz_sincosd1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">Sleef___m128d_2</b> <b class="func">Sleef_sincosd2_u35</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m128d_2</b> <b class="func">Sleef_sincosd2_u35sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m128d_2</b> <b class="func">Sleef_sincosd2_u35sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -679,7 +615,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sincosf_u10"><b
 <br/>
 <b class="type">Sleef___m512d_2</b> <b class="func">Sleef_sincosd8_u35</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m512d_2</b> <b class="func">Sleef_sincosd8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef___m512d_2</b> <b class="func">Sleef_sincosd8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m512d_2</b> <b class="func">Sleef_cinz_sincosd8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m512d_2</b> <b class="func">Sleef_finz_sincosd8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -700,12 +635,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sincos_u35"><b 
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">Sleef_float2</b> <b class="func">Sleef_sincosf1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef_float2</b> <b class="func">Sleef_sincosf1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef_float2</b> <b class="func">Sleef_cinz_sincosf1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef_float2</b> <b class="func">Sleef_finz_sincosf1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">Sleef___m128_2</b> <b class="func">Sleef_sincosf4_u35</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m128_2</b> <b class="func">Sleef_sincosf4_u35sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m128_2</b> <b class="func">Sleef_sincosf4_u35sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -724,7 +653,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sincos_u35"><b 
 <br/>
 <b class="type">Sleef___m512_2</b> <b class="func">Sleef_sincosf16_u35</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m512_2</b> <b class="func">Sleef_sincosf16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef___m512_2</b> <b class="func">Sleef_sincosf16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m512_2</b> <b class="func">Sleef_cinz_sincosf16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m512_2</b> <b class="func">Sleef_finz_sincosf16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -745,11 +673,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sincosf_u35"><b
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">double</b> <b class="func">Sleef_sinpid1_u05purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_sinpid1_u05purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_sinpid1_u05purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_sinpid1_u05purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_sinpid2_u05</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_sinpid2_u05sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_sinpid2_u05sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -768,7 +691,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sincosf_u35"><b
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_sinpid8_u05</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_sinpid8_u05avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_sinpid8_u05avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_sinpid8_u05avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_sinpid8_u05avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -789,11 +711,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sinpi_u05"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_sinpif1_u05purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_sinpif1_u05purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_sinpif1_u05purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_sinpif1_u05purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_sinpif4_u05</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_sinpif4_u05sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_sinpif4_u05sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -812,7 +729,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sinpi_u05"><b c
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_sinpif16_u05</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_sinpif16_u05avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_sinpif16_u05avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_sinpif16_u05avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_sinpif16_u05avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -833,11 +749,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sinpif_u05"><b 
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">double</b> <b class="func">Sleef_cospid1_u05purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cospid1_u05purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_cospid1_u05purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_cospid1_u05purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_cospid2_u05</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_cospid2_u05sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_cospid2_u05sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -856,7 +767,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sinpif_u05"><b 
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cospid8_u05</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cospid8_u05avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_cospid8_u05avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_cospid8_u05avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_cospid8_u05avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -877,11 +787,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cospi_u05"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_cospif1_u05purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cospif1_u05purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_cospif1_u05purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_cospif1_u05purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_cospif4_u05</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_cospif4_u05sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_cospif4_u05sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -900,7 +805,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cospi_u05"><b c
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_cospif16_u05</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cospif16_u05avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_cospif16_u05avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_cospif16_u05avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_cospif16_u05avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -921,11 +825,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cospif_u05"><b 
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">Sleef_double2</b> <b class="func">Sleef_sincospid1_u05purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef_double2</b> <b class="func">Sleef_sincospid1_u05purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef_double2</b> <b class="func">Sleef_cinz_sincospid1_u05purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef_double2</b> <b class="func">Sleef_finz_sincospid1_u05purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">Sleef___m128d_2</b> <b class="func">Sleef_sincospid2_u05</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m128d_2</b> <b class="func">Sleef_sincospid2_u05sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m128d_2</b> <b class="func">Sleef_sincospid2_u05sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -944,7 +843,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cospif_u05"><b 
 <br/>
 <b class="type">Sleef___m512d_2</b> <b class="func">Sleef_sincospid8_u05</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m512d_2</b> <b class="func">Sleef_sincospid8_u05avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef___m512d_2</b> <b class="func">Sleef_sincospid8_u05avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m512d_2</b> <b class="func">Sleef_cinz_sincospid8_u05avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m512d_2</b> <b class="func">Sleef_finz_sincospid8_u05avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -965,11 +863,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sincospi_u05"><
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">Sleef_float2</b> <b class="func">Sleef_sincospif1_u05purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef_float2</b> <b class="func">Sleef_sincospif1_u05purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef_float2</b> <b class="func">Sleef_cinz_sincospif1_u05purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef_float2</b> <b class="func">Sleef_finz_sincospif1_u05purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">Sleef___m128_2</b> <b class="func">Sleef_sincospif4_u05</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m128_2</b> <b class="func">Sleef_sincospif4_u05sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m128_2</b> <b class="func">Sleef_sincospif4_u05sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -988,7 +881,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sincospi_u05"><
 <br/>
 <b class="type">Sleef___m512_2</b> <b class="func">Sleef_sincospif16_u05</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m512_2</b> <b class="func">Sleef_sincospif16_u05avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef___m512_2</b> <b class="func">Sleef_sincospif16_u05avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m512_2</b> <b class="func">Sleef_cinz_sincospif16_u05avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m512_2</b> <b class="func">Sleef_finz_sincospif16_u05avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -1009,12 +901,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sincospif_u05">
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">Sleef_double2</b> <b class="func">Sleef_sincospid1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef_double2</b> <b class="func">Sleef_sincospid1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef_double2</b> <b class="func">Sleef_cinz_sincospid1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef_double2</b> <b class="func">Sleef_finz_sincospid1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">Sleef___m128d_2</b> <b class="func">Sleef_sincospid2_u35</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m128d_2</b> <b class="func">Sleef_sincospid2_u35sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m128d_2</b> <b class="func">Sleef_sincospid2_u35sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -1033,7 +919,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sincospif_u05">
 <br/>
 <b class="type">Sleef___m512d_2</b> <b class="func">Sleef_sincospid8_u35</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m512d_2</b> <b class="func">Sleef_sincospid8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef___m512d_2</b> <b class="func">Sleef_sincospid8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m512d_2</b> <b class="func">Sleef_cinz_sincospid8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m512d_2</b> <b class="func">Sleef_finz_sincospid8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -1054,12 +939,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sincospi_u35"><
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">Sleef_float2</b> <b class="func">Sleef_sincospif1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef_float2</b> <b class="func">Sleef_sincospif1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef_float2</b> <b class="func">Sleef_cinz_sincospif1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef_float2</b> <b class="func">Sleef_finz_sincospif1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">Sleef___m128_2</b> <b class="func">Sleef_sincospif4_u35</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m128_2</b> <b class="func">Sleef_sincospif4_u35sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m128_2</b> <b class="func">Sleef_sincospif4_u35sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -1078,7 +957,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sincospi_u35"><
 <br/>
 <b class="type">Sleef___m512_2</b> <b class="func">Sleef_sincospif16_u35</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m512_2</b> <b class="func">Sleef_sincospif16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef___m512_2</b> <b class="func">Sleef_sincospif16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m512_2</b> <b class="func">Sleef_cinz_sincospif16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">Sleef___m512_2</b> <b class="func">Sleef_finz_sincospif16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -1099,11 +977,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sincospif_u35">
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">double</b> <b class="func">Sleef_tand1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_tand1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_tand1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_tand1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_tand2_u10</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_tand2_u10sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_tand2_u10sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -1122,7 +995,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sincospif_u35">
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_tand8_u10</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_tand8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_tand8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_tand8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_tand8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -1143,11 +1015,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_tan_u10"><b cla
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_tanf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_tanf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_tanf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_tanf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_tanf4_u10</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_tanf4_u10sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_tanf4_u10sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -1166,7 +1033,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_tan_u10"><b cla
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_tanf16_u10</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_tanf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_tanf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_tanf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_tanf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -1187,12 +1053,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_tanf_u10"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">double</b> <b class="func">Sleef_tand1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_tand1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_tand1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_tand1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_tand2_u35</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_tand2_u35sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_tand2_u35sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -1211,7 +1071,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_tanf_u10"><b cl
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_tand8_u35</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_tand8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_tand8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_tand8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_tand8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -1232,12 +1091,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_tan_u35"><b cla
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">float</b> <b class="func">Sleef_tanf1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_tanf1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_tanf1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_tanf1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_tanf4_u35</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_tanf4_u35sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_tanf4_u35sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -1256,7 +1109,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_tan_u35"><b cla
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_tanf16_u35</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_tanf16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_tanf16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_tanf16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_tanf16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -1278,11 +1130,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_tanf_u35"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">double</b> <b class="func">Sleef_powd1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>, <b class="type">double</b> <i class="var">b</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_powd1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>, <b class="type">double</b> <i class="var">b</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_powd1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>, <b class="type">double</b> <i class="var">b</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_powd1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>, <b class="type">double</b> <i class="var">b</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_powd2_u10</b>(<b class="type">__m128d</b> <i class="var">a</i>, <b class="type">__m128d</b> <i class="var">b</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_powd2_u10sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>, <b class="type">__m128d</b> <i class="var">b</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_powd2_u10sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>, <b class="type">__m128d</b> <i class="var">b</i>);<br/>
@@ -1301,7 +1148,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_tanf_u35"><b cl
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_powd8_u10</b>(<b class="type">__m512d</b> <i class="var">a</i>, <b class="type">__m512d</b> <i class="var">b</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_powd8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>, <b class="type">__m512d</b> <i class="var">b</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_powd8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>, <b class="type">__m512d</b> <i class="var">b</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_powd8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>, <b class="type">__m512d</b> <i class="var">b</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_powd8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>, <b class="type">__m512d</b> <i class="var">b</i>);<br/>
 <span class="normal">Link with</span> -lsleef.
@@ -1321,11 +1167,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_pow_u10"><b cla
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_powf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>, <b class="type">float</b> <i class="var">b</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_powf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>, <b class="type">float</b> <i class="var">b</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_powf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>, <b class="type">float</b> <i class="var">b</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_powf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>, <b class="type">float</b> <i class="var">b</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_powf4_u10</b>(<b class="type">__m128</b> <i class="var">a</i>, <b class="type">__m128</b> <i class="var">b</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_powf4_u10sse2</b>(<b class="type">__m128</b> <i class="var">a</i>, <b class="type">__m128</b> <i class="var">b</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_powf4_u10sse4</b>(<b class="type">__m128</b> <i class="var">a</i>, <b class="type">__m128</b> <i class="var">b</i>);<br/>
@@ -1344,7 +1185,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_pow_u10"><b cla
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_powf16_u10</b>(<b class="type">__m512</b> <i class="var">a</i>, <b class="type">__m512</b> <i class="var">b</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_powf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>, <b class="type">__m512</b> <i class="var">b</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_powf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>, <b class="type">__m512</b> <i class="var">b</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_powf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>, <b class="type">__m512</b> <i class="var">b</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_powf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>, <b class="type">__m512</b> <i class="var">b</i>);<br/>
 <br/>
@@ -1365,11 +1205,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_powf_u10"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">double</b> <b class="func">Sleef_logd1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_logd1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_logd1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_logd1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_logd2_u10</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_logd2_u10sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_logd2_u10sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -1388,7 +1223,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_powf_u10"><b cl
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_logd8_u10</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_logd8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_logd8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_logd8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_logd8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -1409,11 +1243,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_log_u10"><b cla
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_logf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_logf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_logf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_logf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_logf4_u10</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_logf4_u10sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_logf4_u10sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -1432,7 +1261,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_log_u10"><b cla
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_logf16_u10</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_logf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_logf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_logf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_logf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -1453,12 +1281,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_logf_u10"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">double</b> <b class="func">Sleef_logd1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_logd1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_logd1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_logd1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_logd2_u35</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_logd2_u35sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_logd2_u35sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -1477,7 +1299,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_logf_u10"><b cl
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_logd8_u35</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_logd8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_logd8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_logd8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_logd8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -1498,12 +1319,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_log_u35"><b cla
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">float</b> <b class="func">Sleef_logf1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_logf1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_logf1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_logf1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_logf4_u35</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_logf4_u35sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_logf4_u35sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -1522,7 +1337,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_log_u35"><b cla
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_logf16_u35</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_logf16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_logf16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_logf16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_logf16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -1543,11 +1357,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_logf_u35"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">double</b> <b class="func">Sleef_log10d1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_log10d1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_log10d1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_log10d1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_log10d2_u10</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_log10d2_u10sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_log10d2_u10sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -1566,7 +1375,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_logf_u35"><b cl
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_log10d8_u10</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_log10d8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_log10d8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_log10d8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_log10d8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -1587,11 +1395,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_log10_u10"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_log10f1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_log10f1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_log10f1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_log10f1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_log10f4_u10</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_log10f4_u10sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_log10f4_u10sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -1610,7 +1413,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_log10_u10"><b c
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_log10f16_u10</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_log10f16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_log10f16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_log10f16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_log10f16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -1631,11 +1433,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_log10f_u10"><b 
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">double</b> <b class="func">Sleef_log2d1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_log2d1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_log2d1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_log2d1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_log2d2_u10</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_log2d2_u10sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_log2d2_u10sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -1654,7 +1451,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_log10f_u10"><b 
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_log2d8_u10</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_log2d8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_log2d8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_log2d8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_log2d8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -1675,11 +1471,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_log2_u10"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_log2f1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_log2f1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_log2f1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_log2f1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_log2f4_u10</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_log2f4_u10sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_log2f4_u10sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -1698,7 +1489,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_log2_u10"><b cl
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_log2f16_u10</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_log2f16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_log2f16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_log2f16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_log2f16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -1719,11 +1509,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_log2f_u10"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">double</b> <b class="func">Sleef_log1pd1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_log1pd1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_log1pd1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_log1pd1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_log1pd2_u10</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_log1pd2_u10sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_log1pd2_u10sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -1742,7 +1527,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_log2f_u10"><b c
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_log1pd8_u10</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_log1pd8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_log1pd8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_log1pd8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_log1pd8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -1763,11 +1547,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_log1p_u10"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_log1pf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_log1pf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_log1pf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_log1pf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_log1pf4_u10</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_log1pf4_u10sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_log1pf4_u10sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -1786,7 +1565,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_log1p_u10"><b c
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_log1pf16_u10</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_log1pf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_log1pf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_log1pf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_log1pf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -1807,11 +1585,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_log1pf_u10"><b 
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">double</b> <b class="func">Sleef_expd1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_expd1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_expd1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_expd1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_expd2_u10</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_expd2_u10sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_expd2_u10sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -1830,7 +1603,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_log1pf_u10"><b 
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_expd8_u10</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_expd8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_expd8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_expd8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_expd8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -1851,11 +1623,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_exp_u10"><b cla
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_expf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_expf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_expf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_expf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_expf4_u10</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_expf4_u10sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_expf4_u10sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -1874,7 +1641,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_exp_u10"><b cla
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_expf16_u10</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_expf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_expf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_expf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_expf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -1895,11 +1661,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_expf_u10"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">double</b> <b class="func">Sleef_exp2d1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_exp2d1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_exp2d1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_exp2d1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_exp2d2_u10</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_exp2d2_u10sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_exp2d2_u10sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -1918,7 +1679,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_expf_u10"><b cl
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_exp2d8_u10</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_exp2d8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_exp2d8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_exp2d8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_exp2d8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -1939,11 +1699,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_exp2_u10"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_exp2f1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_exp2f1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_exp2f1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_exp2f1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_exp2f4_u10</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_exp2f4_u10sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_exp2f4_u10sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -1962,7 +1717,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_exp2_u10"><b cl
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_exp2f16_u10</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_exp2f16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_exp2f16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_exp2f16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_exp2f16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -1983,11 +1737,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_exp2f_u10"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">double</b> <b class="func">Sleef_exp10d1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_exp10d1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_exp10d1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_exp10d1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_exp10d2_u10</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_exp10d2_u10sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_exp10d2_u10sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -2006,7 +1755,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_exp2f_u10"><b c
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_exp10d8_u10</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_exp10d8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_exp10d8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_exp10d8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_exp10d8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -2027,11 +1775,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_exp10_u10"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_exp10f1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_exp10f1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_exp10f1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_exp10f1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_exp10f4_u10</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_exp10f4_u10sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_exp10f4_u10sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -2050,7 +1793,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_exp10_u10"><b c
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_exp10f16_u10</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_exp10f16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_exp10f16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_exp10f16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_exp10f16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -2071,11 +1813,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_exp10f_u10"><b 
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">double</b> <b class="func">Sleef_expm1d1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_expm1d1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_expm1d1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_expm1d1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_expm1d2_u10</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_expm1d2_u10sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_expm1d2_u10sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -2094,7 +1831,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_exp10f_u10"><b 
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_expm1d8_u10</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_expm1d8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_expm1d8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_expm1d8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_expm1d8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <span class="normal">Link with</span> -lsleef.
@@ -2114,11 +1850,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_expm1_u10"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_expm1f1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_expm1f1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_expm1f1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_expm1f1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_expm1f4_u10</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_expm1f4_u10sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_expm1f4_u10sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -2137,7 +1868,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_expm1_u10"><b c
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_expm1f16_u10</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_expm1f16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_expm1f16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_expm1f16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_expm1f16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -2158,12 +1888,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_expm1f_u10"><b 
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">double</b> <b class="func">Sleef_sqrtd1_u05purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_sqrtd1_u05purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_sqrtd1_u05purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_sqrtd1_u05purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_sqrtd2_u05</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_sqrtd2_u05sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_sqrtd2_u05sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -2182,7 +1906,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_expm1f_u10"><b 
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_sqrtd8_u05</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_sqrtd8_u05avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_sqrtd8_u05avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_sqrtd8_u05avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_sqrtd8_u05avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -2203,12 +1926,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sqrt_u05"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">float</b> <b class="func">Sleef_sqrtf1_u05purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_sqrtf1_u05purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_sqrtf1_u05purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_sqrtf1_u05purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_sqrtf4_u05</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_sqrtf4_u05sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_sqrtf4_u05sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -2227,7 +1944,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sqrt_u05"><b cl
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_sqrtf16_u05</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_sqrtf16_u05avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_sqrtf16_u05avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_sqrtf16_u05avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_sqrtf16_u05avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -2248,12 +1964,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sqrtf_u05"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">double</b> <b class="func">Sleef_sqrtd1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_sqrtd1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_sqrtd1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_sqrtd1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_sqrtd2_u35</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_sqrtd2_u35sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_sqrtd2_u35sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -2272,7 +1982,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sqrtf_u05"><b c
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_sqrtd8_u35</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_sqrtd8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_sqrtd8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_sqrtd8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_sqrtd8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -2293,12 +2002,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sqrt_u35"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">float</b> <b class="func">Sleef_sqrtf1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_sqrtf1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_sqrtf1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_sqrtf1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_sqrtf4_u35</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_sqrtf4_u35sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_sqrtf4_u35sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -2317,7 +2020,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sqrt_u35"><b cl
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_sqrtf16_u35</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_sqrtf16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_sqrtf16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_sqrtf16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_sqrtf16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -2338,11 +2040,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sqrtf_u35"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">double</b> <b class="func">Sleef_cbrtd1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cbrtd1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_cbrtd1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_cbrtd1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_cbrtd2_u10</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_cbrtd2_u10sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_cbrtd2_u10sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -2361,7 +2058,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sqrtf_u35"><b c
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cbrtd8_u10</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cbrtd8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_cbrtd8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_cbrtd8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_cbrtd8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -2382,11 +2078,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cbrt_u10"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_cbrtf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cbrtf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_cbrtf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_cbrtf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_cbrtf4_u10</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_cbrtf4_u10sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_cbrtf4_u10sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -2405,7 +2096,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cbrt_u10"><b cl
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_cbrtf16_u10</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cbrtf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_cbrtf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_cbrtf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_cbrtf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -2426,12 +2116,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cbrtf_u10"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">double</b> <b class="func">Sleef_cbrtd1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cbrtd1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_cbrtd1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_cbrtd1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_cbrtd2_u35</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_cbrtd2_u35sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_cbrtd2_u35sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -2450,7 +2134,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cbrtf_u10"><b c
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cbrtd8_u35</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cbrtd8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_cbrtd8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_cbrtd8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_cbrtd8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -2471,12 +2154,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cbrt_u35"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">float</b> <b class="func">Sleef_cbrtf1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cbrtf1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_cbrtf1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_cbrtf1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_cbrtf4_u35</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_cbrtf4_u35sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_cbrtf4_u35sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -2495,7 +2172,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cbrt_u35"><b cl
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_cbrtf16_u35</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cbrtf16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_cbrtf16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_cbrtf16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_cbrtf16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -2516,11 +2192,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cbrtf_u35"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">double</b> <b class="func">Sleef_hypotd1_u05purec</b>(<b class="type">double</b> <i class="var">a</i>, <b class="type">double</b> <i class="var">b</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_hypotd1_u05purecfma</b>(<b class="type">double</b> <i class="var">a</i>, <b class="type">double</b> <i class="var">b</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_hypotd1_u05purec</b>(<b class="type">double</b> <i class="var">a</i>, <b class="type">double</b> <i class="var">b</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_hypotd1_u05purecfma</b>(<b class="type">double</b> <i class="var">a</i>, <b class="type">double</b> <i class="var">b</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_hypotd2_u05</b>(<b class="type">__m128d</b> <i class="var">a</i>, <b class="type">__m128d</b> <i class="var">b</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_hypotd2_u05sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>, <b class="type">__m128d</b> <i class="var">b</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_hypotd2_u05sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>, <b class="type">__m128d</b> <i class="var">b</i>);<br/>
@@ -2539,7 +2210,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cbrtf_u35"><b c
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_hypotd8_u05</b>(<b class="type">__m512d</b> <i class="var">a</i>, <b class="type">__m512d</b> <i class="var">b</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_hypotd8_u05avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>, <b class="type">__m512d</b> <i class="var">b</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_hypotd8_u05avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>, <b class="type">__m512d</b> <i class="var">b</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_hypotd8_u05avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>, <b class="type">__m512d</b> <i class="var">b</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_hypotd8_u05avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>, <b class="type">__m512d</b> <i class="var">b</i>);<br/>
 <span class="normal">Link with</span> -lsleef.
@@ -2559,11 +2229,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_hypot_u05"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_hypotf1_u05purec</b>(<b class="type">float</b> <i class="var">a</i>, <b class="type">float</b> <i class="var">b</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_hypotf1_u05purecfma</b>(<b class="type">float</b> <i class="var">a</i>, <b class="type">float</b> <i class="var">b</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_hypotf1_u05purec</b>(<b class="type">float</b> <i class="var">a</i>, <b class="type">float</b> <i class="var">b</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_hypotf1_u05purecfma</b>(<b class="type">float</b> <i class="var">a</i>, <b class="type">float</b> <i class="var">b</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_hypotf4_u05</b>(<b class="type">__m128</b> <i class="var">a</i>, <b class="type">__m128</b> <i class="var">b</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_hypotf4_u05sse2</b>(<b class="type">__m128</b> <i class="var">a</i>, <b class="type">__m128</b> <i class="var">b</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_hypotf4_u05sse4</b>(<b class="type">__m128</b> <i class="var">a</i>, <b class="type">__m128</b> <i class="var">b</i>);<br/>
@@ -2582,7 +2247,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_hypot_u05"><b c
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_hypotf16_u05</b>(<b class="type">__m512</b> <i class="var">a</i>, <b class="type">__m512</b> <i class="var">b</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_hypotf16_u05avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>, <b class="type">__m512</b> <i class="var">b</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_hypotf16_u05avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>, <b class="type">__m512</b> <i class="var">b</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_hypotf16_u05avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>, <b class="type">__m512</b> <i class="var">b</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_hypotf16_u05avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>, <b class="type">__m512</b> <i class="var">b</i>);<br/>
 <br/>
@@ -2603,12 +2267,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_hypotf_u05"><b 
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">double</b> <b class="func">Sleef_hypotd1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>, <b class="type">double</b> <i class="var">b</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_hypotd1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>, <b class="type">double</b> <i class="var">b</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_hypotd1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>, <b class="type">double</b> <i class="var">b</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_hypotd1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>, <b class="type">double</b> <i class="var">b</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_hypotd2_u35</b>(<b class="type">__m128d</b> <i class="var">a</i>, <b class="type">__m128d</b> <i class="var">b</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_hypotd2_u35sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>, <b class="type">__m128d</b> <i class="var">b</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_hypotd2_u35sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>, <b class="type">__m128d</b> <i class="var">b</i>);<br/>
@@ -2627,7 +2285,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_hypotf_u05"><b 
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_hypotd8_u35</b>(<b class="type">__m512d</b> <i class="var">a</i>, <b class="type">__m512d</b> <i class="var">b</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_hypotd8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>, <b class="type">__m512d</b> <i class="var">b</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_hypotd8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>, <b class="type">__m512d</b> <i class="var">b</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_hypotd8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>, <b class="type">__m512d</b> <i class="var">b</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_hypotd8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>, <b class="type">__m512d</b> <i class="var">b</i>);<br/>
 <br/>
@@ -2648,12 +2305,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_hypot_u35"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">float</b> <b class="func">Sleef_hypotf1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>, <b class="type">float</b> <i class="var">b</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_hypotf1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>, <b class="type">float</b> <i class="var">b</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_hypotf1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>, <b class="type">float</b> <i class="var">b</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_hypotf1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>, <b class="type">float</b> <i class="var">b</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_hypotf4_u35</b>(<b class="type">__m128</b> <i class="var">a</i>, <b class="type">__m128</b> <i class="var">b</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_hypotf4_u35sse2</b>(<b class="type">__m128</b> <i class="var">a</i>, <b class="type">__m128</b> <i class="var">b</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_hypotf4_u35sse4</b>(<b class="type">__m128</b> <i class="var">a</i>, <b class="type">__m128</b> <i class="var">b</i>);<br/>
@@ -2672,7 +2323,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_hypot_u35"><b c
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_hypotf16_u35</b>(<b class="type">__m512</b> <i class="var">a</i>, <b class="type">__m512</b> <i class="var">b</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_hypotf16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>, <b class="type">__m512</b> <i class="var">b</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_hypotf16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>, <b class="type">__m512</b> <i class="var">b</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_hypotf16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>, <b class="type">__m512</b> <i class="var">b</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_hypotf16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>, <b class="type">__m512</b> <i class="var">b</i>);<br/>
 <br/>
@@ -2695,11 +2345,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_hypotf_u35"><b 
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">double</b> <b class="func">Sleef_asind1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_asind1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_asind1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_asind1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_asind2_u10</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_asind2_u10sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_asind2_u10sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -2718,7 +2363,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_hypotf_u35"><b 
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_asind8_u10</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_asind8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_asind8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_asind8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_asind8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -2739,11 +2383,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_asin_u10"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_asinf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_asinf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_asinf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_asinf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_asinf4_u10</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_asinf4_u10sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_asinf4_u10sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -2762,7 +2401,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_asin_u10"><b cl
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_asinf16_u10</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_asinf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_asinf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_asinf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_asinf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -2783,12 +2421,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_asinf_u10"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">double</b> <b class="func">Sleef_asind1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_asind1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_asind1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_asind1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_asind2_u35</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_asind2_u35sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_asind2_u35sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -2807,7 +2439,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_asinf_u10"><b c
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_asind8_u35</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_asind8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_asind8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_asind8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_asind8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -2828,12 +2459,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_asin_u35"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">float</b> <b class="func">Sleef_asinf1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_asinf1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_asinf1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_asinf1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_asinf4_u35</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_asinf4_u35sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_asinf4_u35sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -2852,7 +2477,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_asin_u35"><b cl
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_asinf16_u35</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_asinf16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_asinf16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_asinf16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_asinf16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -2873,11 +2497,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_asinf_u35"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">double</b> <b class="func">Sleef_acosd1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_acosd1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_acosd1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_acosd1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_acosd2_u10</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_acosd2_u10sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_acosd2_u10sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -2896,7 +2515,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_asinf_u35"><b c
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_acosd8_u10</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_acosd8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_acosd8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_acosd8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_acosd8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -2917,11 +2535,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_acos_u10"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_acosf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_acosf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_acosf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_acosf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_acosf4_u10</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_acosf4_u10sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_acosf4_u10sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -2940,7 +2553,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_acos_u10"><b cl
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_acosf16_u10</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_acosf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_acosf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_acosf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_acosf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -2961,12 +2573,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_acosf_u10"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">double</b> <b class="func">Sleef_acosd1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_acosd1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_acosd1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_acosd1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_acosd2_u35</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_acosd2_u35sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_acosd2_u35sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -2985,7 +2591,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_acosf_u10"><b c
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_acosd8_u35</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_acosd8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_acosd8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_acosd8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_acosd8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -3006,12 +2611,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_acos_u35"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">float</b> <b class="func">Sleef_acosf1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_acosf1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_acosf1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_acosf1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_acosf4_u35</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_acosf4_u35sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_acosf4_u35sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -3030,7 +2629,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_acos_u35"><b cl
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_acosf16_u35</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_acosf16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_acosf16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_acosf16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_acosf16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -3051,11 +2649,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_acosf_u35"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">double</b> <b class="func">Sleef_atand1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_atand1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_atand1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_atand1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_atand2_u10</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_atand2_u10sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_atand2_u10sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -3074,7 +2667,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_acosf_u35"><b c
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_atand8_u10</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_atand8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_atand8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_atand8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_atand8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -3095,11 +2687,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_atan_u10"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_atanf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_atanf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_atanf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_atanf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_atanf4_u10</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_atanf4_u10sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_atanf4_u10sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -3118,7 +2705,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_atan_u10"><b cl
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_atanf16_u10</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_atanf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_atanf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_atanf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_atanf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -3139,12 +2725,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_atanf_u10"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">double</b> <b class="func">Sleef_atand1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_atand1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_atand1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_atand1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_atand2_u35</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_atand2_u35sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_atand2_u35sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -3163,7 +2743,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_atanf_u10"><b c
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_atand8_u35</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_atand8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_atand8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_atand8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_atand8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -3184,12 +2763,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_atan_u35"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">float</b> <b class="func">Sleef_atanf1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_atanf1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_atanf1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_atanf1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_atanf4_u35</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_atanf4_u35sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_atanf4_u35sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -3208,7 +2781,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_atan_u35"><b cl
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_atanf16_u35</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_atanf16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_atanf16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_atanf16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_atanf16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -3229,11 +2801,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_atanf_u35"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">double</b> <b class="func">Sleef_atan2d1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>, <b class="type">double</b> <i class="var">b</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_atan2d1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>, <b class="type">double</b> <i class="var">b</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_atan2d1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>, <b class="type">double</b> <i class="var">b</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_atan2d1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>, <b class="type">double</b> <i class="var">b</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_atan2d2_u10</b>(<b class="type">__m128d</b> <i class="var">a</i>, <b class="type">__m128d</b> <i class="var">b</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_atan2d2_u10sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>, <b class="type">__m128d</b> <i class="var">b</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_atan2d2_u10sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>, <b class="type">__m128d</b> <i class="var">b</i>);<br/>
@@ -3252,7 +2819,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_atanf_u35"><b c
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_atan2d8_u10</b>(<b class="type">__m512d</b> <i class="var">a</i>, <b class="type">__m512d</b> <i class="var">b</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_atan2d8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>, <b class="type">__m512d</b> <i class="var">b</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_atan2d8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>, <b class="type">__m512d</b> <i class="var">b</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_atan2d8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>, <b class="type">__m512d</b> <i class="var">b</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_atan2d8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>, <b class="type">__m512d</b> <i class="var">b</i>);<br/>
 <br/>
@@ -3273,11 +2839,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_atan2_u10"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_atan2f1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>, <b class="type">float</b> <i class="var">b</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_atan2f1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>, <b class="type">float</b> <i class="var">b</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_atan2f1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>, <b class="type">float</b> <i class="var">b</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_atan2f1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>, <b class="type">float</b> <i class="var">b</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_atan2f4_u10</b>(<b class="type">__m128</b> <i class="var">a</i>, <b class="type">__m128</b> <i class="var">b</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_atan2f4_u10sse2</b>(<b class="type">__m128</b> <i class="var">a</i>, <b class="type">__m128</b> <i class="var">b</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_atan2f4_u10sse4</b>(<b class="type">__m128</b> <i class="var">a</i>, <b class="type">__m128</b> <i class="var">b</i>);<br/>
@@ -3296,7 +2857,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_atan2_u10"><b c
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_atan2f16_u10</b>(<b class="type">__m512</b> <i class="var">a</i>, <b class="type">__m512</b> <i class="var">b</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_atan2f16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>, <b class="type">__m512</b> <i class="var">b</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_atan2f16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>, <b class="type">__m512</b> <i class="var">b</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_atan2f16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>, <b class="type">__m512</b> <i class="var">b</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_atan2f16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>, <b class="type">__m512</b> <i class="var">b</i>);<br/>
 <br/>
@@ -3317,12 +2877,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_atan2f_u10"><b 
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">double</b> <b class="func">Sleef_atan2d1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>, <b class="type">double</b> <i class="var">b</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_atan2d1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>, <b class="type">double</b> <i class="var">b</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_atan2d1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>, <b class="type">double</b> <i class="var">b</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_atan2d1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>, <b class="type">double</b> <i class="var">b</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_atan2d2_u35</b>(<b class="type">__m128d</b> <i class="var">a</i>, <b class="type">__m128d</b> <i class="var">b</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_atan2d2_u35sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>, <b class="type">__m128d</b> <i class="var">b</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_atan2d2_u35sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>, <b class="type">__m128d</b> <i class="var">b</i>);<br/>
@@ -3341,7 +2895,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_atan2f_u10"><b 
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_atan2d8_u35</b>(<b class="type">__m512d</b> <i class="var">a</i>, <b class="type">__m512d</b> <i class="var">b</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_atan2d8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>, <b class="type">__m512d</b> <i class="var">b</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_atan2d8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>, <b class="type">__m512d</b> <i class="var">b</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_atan2d8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>, <b class="type">__m512d</b> <i class="var">b</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_atan2d8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>, <b class="type">__m512d</b> <i class="var">b</i>);<br/>
 <br/>
@@ -3362,12 +2915,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_atan2_u35"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">float</b> <b class="func">Sleef_atan2f1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>, <b class="type">float</b> <i class="var">b</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_atan2f1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>, <b class="type">float</b> <i class="var">b</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_atan2f1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>, <b class="type">float</b> <i class="var">b</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_atan2f1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>, <b class="type">float</b> <i class="var">b</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_atan2f4_u35</b>(<b class="type">__m128</b> <i class="var">a</i>, <b class="type">__m128</b> <i class="var">b</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_atan2f4_u35sse2</b>(<b class="type">__m128</b> <i class="var">a</i>, <b class="type">__m128</b> <i class="var">b</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_atan2f4_u35sse4</b>(<b class="type">__m128</b> <i class="var">a</i>, <b class="type">__m128</b> <i class="var">b</i>);<br/>
@@ -3386,7 +2933,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_atan2_u35"><b c
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_atan2f16_u35</b>(<b class="type">__m512</b> <i class="var">a</i>, <b class="type">__m512</b> <i class="var">b</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_atan2f16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>, <b class="type">__m512</b> <i class="var">b</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_atan2f16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>, <b class="type">__m512</b> <i class="var">b</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_atan2f16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>, <b class="type">__m512</b> <i class="var">b</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_atan2f16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>, <b class="type">__m512</b> <i class="var">b</i>);<br/>
 <br/>
@@ -3410,11 +2956,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_atan2f_u35"><b 
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">double</b> <b class="func">Sleef_sinhd1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_sinhd1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_sinhd1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_sinhd1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_sinhd2_u10</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_sinhd2_u10sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_sinhd2_u10sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -3433,7 +2974,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_atan2f_u35"><b 
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_sinhd8_u10</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_sinhd8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_sinhd8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_sinhd8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_sinhd8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -3454,11 +2994,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sinh_u10"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_sinhf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_sinhf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_sinhf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_sinhf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_sinhf4_u10</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_sinhf4_u10sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_sinhf4_u10sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -3477,7 +3012,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sinh_u10"><b cl
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_sinhf16_u10</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_sinhf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_sinhf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_sinhf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_sinhf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -3498,12 +3032,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sinhf_u10"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">double</b> <b class="func">Sleef_sinhd1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_sinhd1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_sinhd1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_sinhd1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_sinhd2_u35</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_sinhd2_u35sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_sinhd2_u35sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -3522,7 +3050,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sinhf_u10"><b c
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_sinhd8_u35</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_sinhd8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_sinhd8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_sinhd8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_sinhd8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -3543,12 +3070,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sinh_u35"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">float</b> <b class="func">Sleef_sinhf1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_sinhf1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_sinhf1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_sinhf1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_sinhf4_u35</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_sinhf4_u35sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_sinhf4_u35sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -3567,7 +3088,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sinh_u35"><b cl
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_sinhf16_u35</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_sinhf16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_sinhf16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_sinhf16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_sinhf16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -3588,11 +3108,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sinhf_u35"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">double</b> <b class="func">Sleef_coshd1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_coshd1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_coshd1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_coshd1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_coshd2_u10</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_coshd2_u10sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_coshd2_u10sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -3611,7 +3126,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sinhf_u35"><b c
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_coshd8_u10</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_coshd8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_coshd8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_coshd8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_coshd8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -3632,11 +3146,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cosh_u10"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_coshf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_coshf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_coshf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_coshf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_coshf4_u10</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_coshf4_u10sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_coshf4_u10sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -3655,7 +3164,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cosh_u10"><b cl
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_coshf16_u10</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_coshf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_coshf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_coshf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_coshf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -3676,12 +3184,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_coshf_u10"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">double</b> <b class="func">Sleef_coshd1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_coshd1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_coshd1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_coshd1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_coshd2_u35</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_coshd2_u35sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_coshd2_u35sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -3700,7 +3202,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_coshf_u10"><b c
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_coshd8_u35</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_coshd8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_coshd8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_coshd8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_coshd8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -3721,12 +3222,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cosh_u35"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">float</b> <b class="func">Sleef_coshf1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_coshf1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_coshf1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_coshf1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_coshf4_u35</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_coshf4_u35sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_coshf4_u35sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -3745,7 +3240,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cosh_u35"><b cl
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_coshf16_u35</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_coshf16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_coshf16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_coshf16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_coshf16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -3766,11 +3260,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_coshf_u35"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">double</b> <b class="func">Sleef_tanhd1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_tanhd1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_tanhd1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_tanhd1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_tanhd2_u10</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_tanhd2_u10sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_tanhd2_u10sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -3789,7 +3278,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_coshf_u35"><b c
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_tanhd8_u10</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_tanhd8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_tanhd8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_tanhd8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_tanhd8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -3810,11 +3298,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_tanh_u10"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_tanhf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_tanhf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_tanhf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_tanhf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_tanhf4_u10</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_tanhf4_u10sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_tanhf4_u10sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -3833,7 +3316,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_tanh_u10"><b cl
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_tanhf16_u10</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_tanhf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_tanhf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_tanhf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_tanhf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -3854,12 +3336,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_tanhf_u10"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">double</b> <b class="func">Sleef_tanhd1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_tanhd1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_tanhd1_u35purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_tanhd1_u35purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_tanhd2_u35</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_tanhd2_u35sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_tanhd2_u35sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -3878,7 +3354,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_tanhf_u10"><b c
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_tanhd8_u35</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_tanhd8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_tanhd8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_tanhd8_u35avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_tanhd8_u35avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -3899,12 +3374,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_tanh_u35"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<br/>
-<b class="type">float</b> <b class="func">Sleef_tanhf1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_tanhf1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_tanhf1_u35purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_tanhf1_u35purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_tanhf4_u35</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_tanhf4_u35sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_tanhf4_u35sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -3923,7 +3392,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_tanh_u35"><b cl
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_tanhf16_u35</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_tanhf16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_tanhf16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_tanhf16_u35avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_tanhf16_u35avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -3944,11 +3412,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_tanhf_u35"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">double</b> <b class="func">Sleef_asinhd1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_asinhd1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_asinhd1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_asinhd1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_asinhd2_u10</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_asinhd2_u10sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_asinhd2_u10sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -3967,7 +3430,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_tanhf_u35"><b c
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_asinhd8_u10</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_asinhd8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_asinhd8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_asinhd8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_asinhd8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -3988,11 +3450,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_asinh_u10"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_asinhf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_asinhf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_asinhf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_asinhf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_asinhf4_u10</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_asinhf4_u10sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_asinhf4_u10sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -4011,7 +3468,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_asinh_u10"><b c
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_asinhf16_u10</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_asinhf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_asinhf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_asinhf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_asinhf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -4032,11 +3488,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_asinhf_u10"><b 
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">double</b> <b class="func">Sleef_acoshd1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_acoshd1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_acoshd1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_acoshd1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_acoshd2_u10</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_acoshd2_u10sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_acoshd2_u10sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -4055,7 +3506,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_asinhf_u10"><b 
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_acoshd8_u10</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_acoshd8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_acoshd8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_acoshd8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_acoshd8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -4076,11 +3526,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_acosh_u10"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_acoshf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_acoshf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_acoshf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_acoshf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_acoshf4_u10</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_acoshf4_u10sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_acoshf4_u10sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -4099,7 +3544,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_acosh_u10"><b c
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_acoshf16_u10</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_acoshf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_acoshf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_acoshf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_acoshf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -4120,11 +3564,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_acoshf_u10"><b 
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">double</b> <b class="func">Sleef_atanhd1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_atanhd1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_atanhd1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_atanhd1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_atanhd2_u10</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_atanhd2_u10sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_atanhd2_u10sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -4143,7 +3582,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_acoshf_u10"><b 
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_atanhd8_u10</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_atanhd8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_atanhd8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_atanhd8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_atanhd8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -4164,11 +3602,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_atanh_u10"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_atanhf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_atanhf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_atanhf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_atanhf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_atanhf4_u10</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_atanhf4_u10sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_atanhf4_u10sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -4187,7 +3620,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_atanh_u10"><b c
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_atanhf16_u10</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_atanhf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_atanhf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_atanhf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_atanhf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -4210,11 +3642,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_atanhf_u10"><b 
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_erfd1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_erfd1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_erfd1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_erfd1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_erfd2_u10</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_erfd2_u10sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_erfd2_u10sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -4233,7 +3660,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_atanhf_u10"><b 
 <br/>
 <b class="type">__m256</b> <b class="func">Sleef_erfd8_u10</b>(<b class="type">__m256</b> <i class="var">a</i>);<br/>
 <b class="type">__m256</b> <b class="func">Sleef_erfd8_u10avx512f</b>(<b class="type">__m256</b> <i class="var">a</i>);<br/>
-<b class="type">__m256</b> <b class="func">Sleef_erfd8_u10avx512fnofma</b>(<b class="type">__m256</b> <i class="var">a</i>);<br/>
 <b class="type">__m256</b> <b class="func">Sleef_cinz_erfd8_u10avx512fnofma</b>(<b class="type">__m256</b> <i class="var">a</i>);<br/>
 <b class="type">__m256</b> <b class="func">Sleef_finz_erfd8_u10avx512f</b>(<b class="type">__m256</b> <i class="var">a</i>);<br/>
 <br/>
@@ -4254,11 +3680,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_erf_u10"><b cla
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_erff1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_erff1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_erff1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_erff1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_erff4_u10</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_erff4_u10sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_erff4_u10sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -4277,7 +3698,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_erf_u10"><b cla
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_erff16_u10</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_erff16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_erff16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_erff16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_erff16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -4298,11 +3718,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_erff_u10"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">double</b> <b class="func">Sleef_erfcd1_u15purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_erfcd1_u15purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_erfcd1_u15purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_erfcd1_u15purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_erfcd2_u15</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_erfcd2_u15sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_erfcd2_u15sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -4321,7 +3736,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_erff_u10"><b cl
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_erfcd8_u15</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_erfcd8_u15avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_erfcd8_u15avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_erfcd8_u15avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_erfcd8_u15avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -4342,11 +3756,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_erfc_u15"><b cl
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_erfcf1_u15purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_erfcf1_u15purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_erfcf1_u15purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_erfcf1_u15purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_erfcf4_u15</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_erfcf4_u15sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_erfcf4_u15sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -4365,7 +3774,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_erfc_u15"><b cl
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_erfcf16_u15</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_erfcf16_u15avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_erfcf16_u15avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_erfcf16_u15avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_erfcf16_u15avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -4386,11 +3794,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_erfcf_u15"><b c
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">double</b> <b class="func">Sleef_tgammad1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_tgammad1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_tgammad1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_tgammad1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_tgammad2_u10</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_tgammad2_u10sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_tgammad2_u10sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -4409,7 +3812,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_erfcf_u15"><b c
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_tgammad8_u10</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_tgammad8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_tgammad8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_tgammad8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_tgammad8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -4430,11 +3832,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_tgamma_u10"><b 
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_tgammaf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_tgammaf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_tgammaf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_tgammaf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_tgammaf4_u10</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_tgammaf4_u10sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_tgammaf4_u10sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -4453,7 +3850,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_tgamma_u10"><b 
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_tgammaf16_u10</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_tgammaf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_tgammaf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_tgammaf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_tgammaf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -4474,11 +3870,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_tgammaf_u10"><b
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">double</b> <b class="func">Sleef_lgammad1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_lgammad1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_cinz_lgammad1_u10purec</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<b class="type">double</b> <b class="func">Sleef_finz_lgammad1_u10purecfma</b>(<b class="type">double</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_lgammad2_u10</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_lgammad2_u10sse2</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
 <b class="type">__m128d</b> <b class="func">Sleef_lgammad2_u10sse4</b>(<b class="type">__m128d</b> <i class="var">a</i>);<br/>
@@ -4497,7 +3888,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_tgammaf_u10"><b
 <br/>
 <b class="type">__m512d</b> <b class="func">Sleef_lgammad8_u10</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_lgammad8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
-<b class="type">__m512d</b> <b class="func">Sleef_lgammad8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cinz_lgammad8_u10avx512fnofma</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_finz_lgammad8_u10avx512f</b>(<b class="type">__m512d</b> <i class="var">a</i>);<br/>
 <br/>
@@ -4518,11 +3908,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_lgamma_u10"><b 
 <p class="synopsis">
 #include &lt;sleef.h&gt;<br/>
 <br/>
-<b class="type">float</b> <b class="func">Sleef_lgammaf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_lgammaf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_cinz_lgammaf1_u10purec</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<b class="type">float</b> <b class="func">Sleef_finz_lgammaf1_u10purecfma</b>(<b class="type">float</b> <i class="var">a</i>);<br/>
-<br/>
 <b class="type">__m128</b> <b class="func">Sleef_lgammaf4_u10</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_lgammaf4_u10sse2</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
 <b class="type">__m128</b> <b class="func">Sleef_lgammaf4_u10sse4</b>(<b class="type">__m128</b> <i class="var">a</i>);<br/>
@@ -4541,7 +3926,6 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_lgamma_u10"><b 
 <br/>
 <b class="type">__m512</b> <b class="func">Sleef_lgammaf16_u10</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_lgammaf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
-<b class="type">__m512</b> <b class="func">Sleef_lgammaf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_cinz_lgammaf16_u10avx512fnofma</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <b class="type">__m512</b> <b class="func">Sleef_finz_lgammaf16_u10avx512f</b>(<b class="type">__m512</b> <i class="var">a</i>);<br/>
 <br/>
@@ -5633,11 +5017,19 @@ This is a function for obtaining CPU features by the cpuid instruction available
 
 
 <p class="footer">
-  Copyright &copy; <!--YEAR--> SLEEF Project.<br/>
+  Copyright &copy; 2021 SLEEF Project.<br/>
   SLEEF is open-source software and is distributed under the Boost Software License, Version 1.0.
 </p>
 
-<!--TEST-->
+<script type="text/javascript">
+//<![CDATA[
+var sc_project=11391936;
+var sc_invisible=1;
+var sc_security="fa400da8";
+//]]>
+</script>
+<script type="text/javascript" src="https://www.statcounter.com/counter/counter_xhtml.js"></script>
+
 
 </body>
 </html>
