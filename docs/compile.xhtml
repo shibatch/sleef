@@ -12,7 +12,7 @@
 <title>SLEEF - Compiling and installing the library</title>
 </head>
 <body translate="no" class="notranslate">
-<h1>SLEEF Documentation - Compiling and installing the library</h1>
+<h1>SLEEF - Compiling and installing the library</h1>
 
 <h2>Table of contents</h2>
 
@@ -21,16 +21,17 @@
   <li>&nbsp;</li>
   <li><a class="underlined" href="compile.xhtml">Compiling and installing the library</a></li>
     <ul class="disc">
-      <li><a href="compile.xhtml#preliminaries">Preliminaries</a></li>
-      <li><a href="compile.xhtml#cmakevars">Common CMake variables</a></li>
-      <li><a href="compile.xhtml#linux">Compiling and installing the library on Linux</a></li>
-      <li><a href="compile.xhtml#debian">Installing the library on Debian and Ubuntu</a></li>
-      <li><a href="compile.xhtml#MSVC">Compiling the library with Microsoft Visual C++</a></li>
-      <li><a href="compile.xhtml#hello">Compiling and running "Hello SLEEF"</a></li>
-      <li><a href="compile.xhtml#import">Importing SLEEF into your project</a></li>
+      <li><a href="#preliminaries">Preliminaries</a></li>
+      <li><a href="#cmakevars">Common CMake variables</a></li>
+      <li><a href="#linux">Compiling and installing the library on Linux</a></li>
+      <li><a href="#MSVC">Compiling the library with Microsoft Visual C++</a></li>
+      <li><a href="#hello">Compiling and running "Hello SLEEF"</a></li>
+      <li><a href="#import">Importing SLEEF into your project</a></li>
+      <li><a href="#cross">Cross compilation for iOS and Android</a></li>
     </ul>
   <li>&nbsp;</li>
   <li><a class="underlined" href="purec.xhtml">Math library reference</a></li>
+  <li><a class="underlined" href="quad.xhtml"> Quad-precision math library reference</a></li>
   <li><a class="underlined" href="dft.xhtml">DFT library reference</a></li>
   <li><a class="underlined" href="misc.xhtml">Other tools included in the package</a></li>
   <li><a class="underlined" href="benchmark.xhtml">Benchmark results</a></li>
@@ -97,7 +98,8 @@ $ sudo make install</pre>
 <h3 id="lto">Building the library with LTO support</h3>
 
 <p>
-  You can build the library with link time opimization(LTO) support
+  You can build the library with <a class="underlined"
+  href="additional.xhtml#lto">link time opimization(LTO)</a> support
   with the following commands. Note that you can only build static
   libraries with LTO support. You also have to use the same compiler
   with the same version to build the library and other source codes.
@@ -117,25 +119,15 @@ $ sudo make install</pre>
 <h3 id="inline">Building the header files for inlining the whole SLEEF functions</h3>
 
 <p>
-  Header files for inlining the whole SLEEF functions can be built
-  with the following commands. With these header files, it may be
-  easier to inline the whole SLEEF functions than using LTO. You have
-  to specify "-ffp-contract=off" compiler option when compiling a
-  source code that includes one of these header files.
+  <a class="underlined" href="additional.xhtml#inline">Header files
+  for inlining the whole SLEEF functions</a> can be built with the
+  following commands. With these header files, it may be easier to
+  inline the whole SLEEF functions than using LTO. You have to specify
+  "-ffp-contract=off" compiler option when compiling a source code
+  that includes one of these header files.
 </p>
 
 <pre class="command">$ cmake -DBUILD_INLINE_HEADERS=TRUE ..</pre>
-
-<h2 id="debian">Installing the library on Debian and Ubuntu</h2>
-
-<p class="noindent">
-  If you are using Debian 10(Buster), Ubuntu 18.04(Bionic) or later,
-  then you can install the library through apt-get. The DFT library
-  will not be installed.
-
-  <pre class="command">$ sudo apt-get update
-$ sudo apt-get install libsleef-dev</pre>
-</p>
 
 <h2 id="MSVC">Compiling the library with Microsoft Visual C++</h2>
 
@@ -267,12 +259,64 @@ $ &block;</pre>
   Fig. 2.3: <a href="CMakeLists.txt">Example CMakeLists.txt</a>
 </p>
 
+
+<h2 id="cross">Cross compilation for iOS and Android</h2>
+
+<p class="noindent">
+  SLEEF has preliminary support for iOS and Android. Here,
+  "preliminary" means that the library is only tested to be built, but
+  not tested to work correctly on the real devices. In order to cross
+  compile the library, you need a cmake tool chain file for the
+  corresponding OS. The tool chain file for iOS can be downloaded
+  from <a class="underlined"
+  href="https://github.com/leetal/ios-cmake">https://github.com/leetal/ios-cmake</a>.
+  The tool chain file for Android is included in the SDK. You first
+  need to build the library for the host computer, then for the target
+  OS. Below is an example sequence of commands for cross compiling the
+  library for iOS.
+</p>
+
+<pre class="command" style="margin-top: 2.0em; margin-bottom: 0.5cm;">$ mkdir build-native
+$ cd build-native
+$ cmake -GNinja ..
+$ ninja
+$ cd ..
+$ mkdir build-cross
+$ cd build-cross
+$ cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=../ios.toolchain.cmake -DNATIVE_BUILD_DIR=`pwd`/../build-native -DDISABLE_MPFR=TRUE -DDISABLE_SSL=TRUE ..
+$ ninja
+</pre>
+
+<p>
+Below is an example sequence of commands for cross compiling the library for Android.
+</p>
+
+<pre class="command" style="margin-top: 2.0em; margin-bottom: 0.5cm;">$ mkdir build-native
+$ cd build-native
+$ cmake -GNinja ..
+$ ninja
+$ cd ..
+$ mkdir build-cross
+$ cd build-cross
+$ cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=/opt/android-ndk-r21d/build/cmake/android.toolchain.cmake -DNATIVE_BUILD_DIR=`pwd`/../build-native -DANDROID_ABI=arm64-v8a ..
+$ ninja
+</pre>
+
+
 <p class="footer">
-  Copyright &copy; <!--YEAR--> SLEEF Project.<br/>
+  Copyright &copy; 2021 SLEEF Project.<br/>
   SLEEF is open-source software and is distributed under the Boost Software License, Version 1.0.
 </p>
 
-<!--TEST-->
+<script type="text/javascript">
+//<![CDATA[
+var sc_project=11391936;
+var sc_invisible=1;
+var sc_security="fa400da8";
+//]]>
+</script>
+<script type="text/javascript" src="https://www.statcounter.com/counter/counter_xhtml.js"></script>
+
 
 </body>
 </html>

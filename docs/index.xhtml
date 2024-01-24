@@ -19,8 +19,7 @@
   <li><a class="underlined" style="color:#a00000;" href="https://github.com/shibatch/sleef/releases">Download the latest version</a></li>
   <li><a class="underlined" href="https://sleef.org/">Latest documentation on the web</a></li>
   <li><a class="underlined" href="https://github.com/shibatch/sleef">GitHub repository</a></li>
-  <li><a class="underlined" href="https://sourceforge.net/p/sleef/mailman/">Mailing list</a></li>
-  <li><a class="underlined" href="https://sourceforge.net/p/sleef/discussion/general/">Discussion forum</a></li>
+  <li><a class="underlined" href="https://github.com/shibatch/sleef/discussions">Discussions</a></li>
   <li><a class="underlined" href="https://github.com/shibatch/sleef/wiki">Wiki pages</a></li>
 </ul>
 
@@ -42,6 +41,7 @@
   <li>&nbsp;</li>
   <li><a class="underlined" href="compile.xhtml">Compiling and installing the library</a></li>
   <li><a class="underlined" href="purec.xhtml">Math library reference</a></li>
+  <li><a class="underlined" href="quad.xhtml"> Quad-precision math library reference</a></li>
   <li><a class="underlined" href="dft.xhtml">DFT library reference</a></li>
   <li><a class="underlined" href="misc.xhtml">Other tools included in the package</a></li>
   <li><a class="underlined" href="benchmark.xhtml">Benchmark results</a></li>
@@ -52,53 +52,80 @@
 
 <p class="noindent">
   SLEEF stands for SIMD Library for Evaluating Elementary
-  Functions. It implements vectorized versions of all C99 real
-  floating point math functions. It can utilize SIMD instructions that
-  are available on modern processors. SLEEF is designed to effciently
-  perform computation with SIMD instruction by reducing the use of
-  conditional branches and scatter/gather memory
-  access. Our <a class="underlined"
+  Functions. It implements manually <a class="underlined"
+  href="https://en.wikipedia.org/wiki/Automatic_vectorization">vectorized</a>
+  versions of all C99 real floating point math functions. It can
+  utilize SIMD instructions that are available on modern
+  processors. SLEEF is designed to effciently perform computation with
+  SIMD instructions by reducing the use of conditional branches and
+  scatter/gather memory access. Our <a class="underlined"
   href="benchmark.xhtml">benchmarks</a> show that the performance of
-  SLEEF is comparable to that of the best commercial library. Unlike
-  vendor-tuned assembly-optimized libraries, SLEEF can be easily
-  ported to other architectures by writing a helper file, which is a
-  thin abstraction layer of SIMD intrinsics. SLEEF is also designed to
-  work with various operating systems and compilers. Link time
-  optimization can be used to reduce the overhead of calling
-  functions.
+  SLEEF is comparable to that of the best commercial library.
+</p>
+
+<p>
+  Unlike closed-source commercial libraries, SLEEF is designed to work
+  with various architectures, operating systems and compilers. It is
+  distributed under <a class="underlined"
+  href="http://www.boost.org/users/license.html">the Boost Software
+  License</a>, which is a permissive open source license. SLEEF can be
+  easily ported to other architectures by writing a helper file, which
+  is a thin abstraction layer of SIMD intrinsics. SLEEF also
+  provides <a class="underlined"
+  href="additional.xhtml#dispatcher">dispatchers</a> that
+  automatically choose the best subroutines for the computer on which
+  the library is executed. In order to further optimize the
+  application code that calls SLEEF functions,
+  <a class="underlined" href="additional.xhtml#lto">link time
+  optimization(LTO)</a> can be used to reduce the overhead of
+  functions calls, and the build system of SLEEF supports usage of
+  LTO. The library also has a functionality to generate
+  <a class="underlined" href="additional.xhtml#inline">header
+  files</a> in which the library functions are all defined as inline
+  functions. SLEEF can be used for <a class="underlined"
+  href="cuda.xhtml">GPGPU</a> and <a class="underlined"
+  href="additional.xhtml#wasm">WebAssembly</a> with these header
+  files. In addition to the vectorized functions, SLEEF provides
+  scalar functions. Calls to these scalar SLEEF functions can be
+  <a class="underlined"
+  href="additional.xhtml#vectorizing">auto-vectorized</a> by GCC.
 </p>
 
 <p>
   The library contains implementations of all C99 real FP math
   functions in double precision and single precision. Different
   accuracy of the results can be chosen for a subset of the elementary
-  functions; for this subset there are versions with up to 1 ULP error
+  functions; for this subset there are versions with up to
+  1 <a class="underlined" href="additional.xhtml#ulp">ULP</a> error
   (which is the maximum error, not the average) and even faster
   versions with a few ULPs of error. For non-finite inputs and
   outputs, the functions return correct results as specified in the
-  C99 standard. All the functions in the library are thoroughly tested
-  and confirmed that the evaluation error is within the designed
-  limit, by comparing the returned values against high-precision
-  evaluation using <a class="underlined"
-  href="http://www.mpfr.org/">the GNU MPFR Library</a>. Especially, we
-  carefully checked the error of the trigonometric functions with
-  arguments close to an integral multiple
-  of <i class="math">&pi;</i>/2.
+  C99 standard. All the functions in the library
+  are <a class="underlined" href="misc.xhtml#testerlibm">thoroughly
+  tested</a> and confirmed that the evaluation error is within the
+  designed limit by comparing the returned values against
+  high-precision evaluation using the GNU MPFR Library.
 </p>
 
 <p>
-  SLEEF also includes subroutines for discrete Fourier
-  transform(DFT). These subroutines are fully vectorized, heavily
-  unrolled, and parallelized in such a way that modern SIMD
-  instructions and multiple cores can be utilized for efficient
-  computation. It has an API similar to that of FFTW for easy
-  migration, and distributed under
-  <a class="underlined"
-  href="http://www.boost.org/users/license.html">BSL</a>, which is a
-  permissive open source license. The subroutines can utilize long
-  vectors up to 2048 bits. The helper files for abstracting SIMD
-  intrinsics are shared with SLEEF libm, and thus it is easy to port
-  DFT subroutines to other architectures. <a class="underlined"
+  As of version 3.6, SLEEF also includes a <a class="underlined"
+  href="quad.xhtml">quad-precision math library</a>. This library
+  includes fully vectorized IEEE 754 quadruple-precision (QP)
+  functions that correspond to the standard C math functions. It also
+  includes I/O functions for converting between QP numbers and
+  strings.
+</p>
+
+<p>
+  SLEEF also includes a library of <a class="underlined"
+  href="dft.xhtml">discrete Fourier transform(DFT)</a>. These
+  subroutines are fully vectorized, heavily unrolled, and parallelized
+  in such a way that modern SIMD instructions and multiple cores can
+  be utilized for efficient computation. It has an API similar to that
+  of FFTW for easy migration. The subroutines can utilize long vectors
+  up to 2048 bits. The helper files for abstracting SIMD intrinsics
+  are shared with SLEEF libm, and thus it is easy to port the DFT
+  subroutines to other architectures. <a class="underlined"
   href="https://github.com/shibatch/sleef/wiki/DFT-Performance">Preliminary
   results of benchmark</a> are now available.
 </p>
@@ -106,27 +133,27 @@
 <h2 id="environment">Supported environments</h2>
 
 <p class="noindent">
-  This library currently supports several SIMD architectures :
+  This library supports the following architectures :
 </p>
 
 <div><br/></div>
 
 <ul class="disc">
-  <li><a href="x86.xhtml">x86 - SSE2, SSE4.1, AVX, AVX2+FMA3, AVX512F</a></li>
-  <li><a href="aarch64.xhtml">AArch64 - Advanced SIMD, SVE</a></li>
-  <li><a href="aarch32.xhtml">AArch32 - NEON</a></li>
-  <li><a href="ppc64.xhtml">PowerPC64 - VSX</a></li>
-  <li><a href="s390x.xhtml">System/390 - ZVECTOR2</a></li>
+  <li><a class="underlined" href="x86.xhtml">x86</a> - SSE2, SSE4.1,
+  AVX, AVX2+FMA3, AVX512F</li>
+  <li><a class="underlined" href="aarch64.xhtml">AArch64</a> - Advanced SIMD, SVE</li>
+  <li><a class="underlined" href="aarch32.xhtml">AArch32</a> - NEON</li>
+  <li><a class="underlined" href="ppc64.xhtml">PowerPC64</a> - VSX (POWER8), VSX-3 (POWER9)</li>
+  <li><a class="underlined" href="s390x.xhtml">System/390</a> - VXE (z14), VXE2 (z15)</li>
+  <li><a class="underlined" href="cuda.xhtml">CUDA</a></li>
+  <li><a class="underlined" href="additional.xhtml#wasm">WebAssembly</a> - SSE2</li>
 </ul>
 
 <div><br/></div>
 
 <p>
-  In addition to the SIMD implementation, Pure C (scalar) version is
-  provided. The library provides dispatchers that automatically choose
-  the best subroutines for the computer the library is executed
-  on. The supported combinations of the architecture, operating system
-  and compiler are shown in Table 1.1.
+  The supported combinations of the architecture, operating system and
+  compiler are shown in Table 1.1.
 </p>
 
 <div style="margin-top: 1.0cm;"></div>
@@ -179,6 +206,22 @@
 	  <td class="lt-" align="center">N/A</td>
 	</tr>
 	<tr>
+	  <td class="lt-r" align="left">x86_64, macOS</td>
+	  <td></td>
+	  <td class="lt-lr" align="center">Supported(*2)</td>
+	  <td class="lt-r" align="center">Supported(*2)</td>
+	  <td class="lt-r" align="center"></td>
+	  <td class="lt-" align="center">N/A</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">x86_64, Windows</td>
+	  <td></td>
+	  <td class="lt-lr" align="center">Supported(Cygwin)(*3)</td>
+	  <td class="lt-r" align="center"><a class="underlined" href="compile.xhtml#cow">Supported</a></td>
+	  <td class="lt-r" align="center"></td>
+	  <td class="lt-" align="center"><a class="underlined" href="compile.xhtml#MSVC">Supported</a></td>
+	</tr>
+	<tr>
 	  <td class="lt-r" align="left">AArch32, Linux</td>
 	  <td></td>
 	  <td class="lt-lr" align="center">Supported(*1)</td>
@@ -187,7 +230,7 @@
 	  <td class="lt-" align="center">N/A</td>
 	</tr>
 	<tr>
-	  <td class="lt-r" align="left">PowerPC, Linux</td>
+	  <td class="lt-r" align="left">PowerPC (64 bit), Linux</td>
 	  <td></td>
 	  <td class="lt-lr" align="center">Supported</td>
 	  <td class="lt-r" align="center">Supported</td>
@@ -195,7 +238,7 @@
 	  <td class="lt-" align="center">N/A</td>
 	</tr>
 	<tr>
-	  <td class="lt-r" align="left">System/390, Linux</td>
+	  <td class="lt-r" align="left">System/390 (64 bit), Linux</td>
 	  <td></td>
 	  <td class="lt-lr" align="center">Supported</td>
 	  <td class="lt-r" align="center">Supported</td>
@@ -211,20 +254,36 @@
 	  <td class="lt-" align="center">N/A</td>
 	</tr>
 	<tr>
-	  <td class="lt-r" align="left">x86_64, OS X</td>
+	  <td class="lt-r" align="left">x86 (32 bit), Linux</td>
 	  <td></td>
-	  <td class="lt-lr" align="center">Supported(*2)</td>
-	  <td class="lt-r" align="center">Supported(*2)</td>
+	  <td class="lt-lr" align="center">Supported</td>
+	  <td class="lt-r" align="center">Supported</td>
 	  <td class="lt-r" align="center"></td>
 	  <td class="lt-" align="center">N/A</td>
 	</tr>
 	<tr>
-	  <td class="lt-br" align="left">x86_64, Windows</td>
+	  <td class="lt-r" align="left">AArch64, macOS</td>
+	  <td></td>
+	  <td class="lt-lr" align="center"></td>
+	  <td class="lt-r" align="center">Preliminary</td>
+	  <td class="lt-r" align="center">N/A</td>
+	  <td class="lt-" align="center">N/A</td>
+	</tr>
+	<tr>
+	  <td class="lt-r" align="left">AArch64, Android</td>
+	  <td></td>
+	  <td class="lt-lr" align="center"></td>
+	  <td class="lt-r" align="center"><a class="underlined" href="compile.xhtml#cross">Preliminary</a></td>
+	  <td class="lt-r" align="center">N/A</td>
+	  <td class="lt-" align="center">N/A</td>
+	</tr>
+	<tr>
+	  <td class="lt-br" align="left">AArch64, iOS</td>
 	  <td class="lt-hl"></td>
-	  <td class="lt-blr" align="center">Supported(Cygwin)(*3)</td>
-	  <td class="lt-br" align="center">Supported(*3)</td>
-	  <td class="lt-br" align="center"></td>
-	  <td class="lt-b" align="center">Supported</td>
+	  <td class="lt-blr" align="center"></td>
+	  <td class="lt-br" align="center"><a class="underlined" href="compile.xhtml#cross">Preliminary</a></td>
+	  <td class="lt-br" align="center">N/A</td>
+	  <td class="lt-b" align="center">N/A</td>
 	</tr>
       </table>
     </td>
@@ -276,7 +335,6 @@
   href="https://github.com/shibatch">Naoki Shibata</a>
   ( <a href="mailto:shibatch@users.sourceforge.net">shibatch@users.sourceforge.net</a> )
   at Nara Institute of Science and Technology.</li>
-  <li><a class="underlined"
   href="https://github.com/blapie">Pierre Blanchard</a>,
   at Arm Ltd. is the current global maintainer for SLEEF, alongside
   <li><a class="underlined"
@@ -328,6 +386,20 @@
       <p class="noindent" style="margin-left:2em;">
 Division of Information Science of Nara Institute
 of Science and Technology participates through Naoki Shibata.
+      </p>
+    </td>
+  </tr>
+  <tr><td>&nbsp;</td></tr>
+  <tr><td>&nbsp;</td></tr>
+  <tr><td>&nbsp;</td></tr>
+  <tr>
+    <td style="text-align:center;"><a href="https://ibm.com/"><img src="https://sleef.org/IBM_logo.svg" alt="IBM logo" 
+    height="68px" /></a></td>
+    <td style="vertical-align: top;">
+      <p class="noindent" style="margin-left:2em;">
+As the leading company in a wide range of information technologies, 
+<a class="underlined" href="https://ibm.com/">IBM</a>
+participates through David Edelsohn.
       </p>
     </td>
   </tr>
@@ -399,31 +471,22 @@ for a full history of changes to SLEEF.</p>
   <li>SLEEF is now included in <a class="underlined"
   href="https://developer.arm.com/documentation/101458/1930/Vector-math-routines/Vector-math-routines-in-Arm-C-C---Compiler">
   Arm Compiler for HPC</a>.</li>
-  <li>Work for making SLEEF usable from the vectorizer
-  in <a class="underlined" href="http://llvm.org/">LLVM</a> is now
-  carried out(<a class="underlined"
-  href="https://reviews.llvm.org/D53927">D53927</a>, <a class="underlined"
-  href="https://reviews.llvm.org/D53928">D53928</a>,
-  <a class="underlined"
-  href="https://reviews.llvm.org/D54412">D54412</a>).</li>
-  <li>Mustafa A. Mohamad is developing <a class="underlined"
-  href="https://github.com/musm/SLEEF.jl">a pure Julia port of the
-  SLEEF math library</a>.</li>
-  <li>Hal Finkel has <a class="underlined"
-  href="https://github.com/hfinkel/sleef-bgq">adapted SLEEF to
-  PowerPC/QPX</a>. SLEEF is running on Mira IBM BG/Q supercomputer at
-  Argonne National Laboratory.</li>
-  <li><a class="underlined" href="https://github.com/gnzlbg">Gonzalo
-  Brito Gadeschi</a> is developing <a class="underlined"
-  href="https://docs.rs/crate/sleef-sys/">a Rust FFI bindings to
-  SLEEF</a>.</li>
+  <li>SLEEF is adopted in <a class="underlined"
+  href="https://github.com/pytorch/pytorch/pull/6725">PyTorch</a>.</li>
+  <li>SLEEF is adopted in <a class="underlined"
+  href="https://docs.nvidia.com/cuda/cublas/index.html#appendix-acknowledgements">NVIDIA cuBLAS</a>.</li>
+  <br/>
+
   <li>SLEEF is adopted in the following projects.
     <ul class="circle">
+      <li><a href="https://github.com/musm/SLEEF.jl">A pure Julia port
+	  of the SLEEF math library</a></li>
+      <li><a href="https://docs.rs/crate/sleef-sys/">A Rust FFI
+	  bindings to SLEEF</a></li>
       <li><a href="http://www.menuetos.net/sc151.html">MenuetOS</a></li>
       <li><a href="https://github.com/Beep6581/RawTherapee/tree/dev/rtengine">RawTherapee</a></li>
       <li><a href="http://buraphakit.sourceforge.net/BASIC.shtml">John's ECMA-55 Minimal BASIC Compiler</a></li>
       <li><a href="https://github.com/pocl/pocl/tree/master/lib/kernel/sleef">Portable Computing Language(pocl)</a></li>
-      <li><a href="https://github.com/pytorch/pytorch/pull/6725">PyTorch</a></li>
       <li><a href="https://github.com/cdl-saarland/rv">The Region Vectorizer(Compiler Design Lab at Saarland University)</a></li>
       <li><a href="https://agenium-scale.github.io/nsimd">Agenium Scale NSIMD</a></li>
       <li><a href="https://code.jsoftware.com/wiki/System/ReleaseNotes/J902">J Language</a></li>
@@ -443,11 +506,19 @@ for a full history of changes to SLEEF.</p>
 </ul>
 
 <p class="footer">
-  Copyright &copy; <!--YEAR--> SLEEF Project.<br/>
+  Copyright &copy; 2021 SLEEF Project.<br/>
   SLEEF is open-source software and is distributed under the Boost Software License, Version 1.0.
 </p>
 
-<!--TEST-->
+<script type="text/javascript">
+//<![CDATA[
+var sc_project=11391936;
+var sc_invisible=1;
+var sc_security="fa400da8";
+//]]>
+</script>
+<script type="text/javascript" src="https://www.statcounter.com/counter/counter_xhtml.js"></script>
+
 
 </body>
 </html>
