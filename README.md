@@ -58,7 +58,7 @@ The following table summarises currently supported vector extensions, compilers 
   <td>:white_circle:</td><td>:white_circle:</td><td>:white_circle:</td>
 </tr>
 <tr align="center"><th>AArch64<br>(arm)</th><th>Neon, SVE</th>
-  <td>:green_circle:</td><td>:x:</td><td>N/A</td>
+  <td>:green_circle:</td><td>:green_circle:</td><td>N/A</td>
   <td colspan="2">Preliminary</td>
   <td colspan="3">N/A</td>
 </tr>
