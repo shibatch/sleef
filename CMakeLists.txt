@@ -15,6 +15,7 @@ option(BUILD_INLINE_HEADERS "Build header for inlining whole SLEEF functions" OF
 option(SLEEF_TEST_ALL_IUT "Perform tests on implementations with all vector extensions" OFF)
 option(SLEEF_SHOW_CONFIG "Show SLEEF configuration status messages." ON)
 option(SLEEF_SHOW_ERROR_LOG "Show cmake error log." OFF)
+option(SLEEF_ASAN "Enable address sanitizing on all targets." OFF)
 
 option(ENFORCE_TESTER "Build fails if tester is not available" OFF)
 option(ENFORCE_TESTER3 "Build fails if tester3 is not built" OFF)
