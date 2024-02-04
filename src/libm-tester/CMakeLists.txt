@@ -69,9 +69,9 @@ if(NOT LIB_MPFR)
   find_program(TESTER_COMMAND tester)
 endif(NOT LIB_MPFR)
 
-if (ENFORCE_TESTER AND NOT LIB_MPFR AND NOT TESTER_COMMAND)
-  message(FATAL_ERROR "ENFORCE_TESTER is specified and tester is not available")
-endif(ENFORCE_TESTER AND NOT LIB_MPFR AND NOT TESTER_COMMAND)
+if (SLEEF_ENFORCE_TESTER AND NOT LIB_MPFR AND NOT TESTER_COMMAND)
+  message(FATAL_ERROR "SLEEF_ENFORCE_TESTER is specified and tester is not available")
+endif(SLEEF_ENFORCE_TESTER AND NOT LIB_MPFR AND NOT TESTER_COMMAND)
 
 find_library(LIBRT rt)
 if (NOT LIBRT)
@@ -136,7 +136,7 @@ add_test_iut(${TARGET_IUT} 1.0)
 set(IUT_LIST ${TARGET_IUT})
 
 # Compile executable 'iutcuda'
-if (BUILD_INLINE_HEADERS AND SED_COMMAND AND CMAKE_CUDA_COMPILER)
+if (BUILD_SLEEF_INLINE_HEADERS AND SED_COMMAND AND CMAKE_CUDA_COMPILER)
   add_executable(iutcuda iutcuda.cu)
   set_target_properties(iutcuda PROPERTIES LINKER_LANGUAGE CUDA)
   target_compile_options(iutcuda PRIVATE "--fmad=false;-Xcompiler;-ffp-contract=off")
@@ -201,7 +201,7 @@ macro(test_extension SIMD)
     # The iut programs whose names begin with "iuti" are the iut for the
     # inline version of functions.
 
-    if (BUILD_INLINE_HEADERS AND SED_COMMAND)
+    if (BUILD_SLEEF_INLINE_HEADERS AND SED_COMMAND)
       string(CONCAT IUTINAME "iuti" ${LCSIMD})
       add_executable(${IUTINAME} ${IUT_SRC})
       target_compile_options(${IUTINAME} PRIVATE ${FLAGS_ENABLE_${SIMD}})
@@ -221,7 +221,7 @@ macro(test_extension SIMD)
 	add_test_iut(${IUTINAME} 1.0)
       endif()
       list(APPEND IUT_LIST ${IUTINAME})
-    endif(BUILD_INLINE_HEADERS AND SED_COMMAND)
+    endif(BUILD_SLEEF_INLINE_HEADERS AND SED_COMMAND)
 
     if(LIB_MPFR AND NOT ${SIMD} STREQUAL NEON32 AND NOT ${SIMD} STREQUAL NEON32VFPV4 AND NOT MINGW)
       # Build tester2 SIMD
@@ -410,7 +410,7 @@ if (SLEEF_ARCH_S390X)
   list(APPEND IUT_LIST iutdsp128)
 endif(SLEEF_ARCH_S390X)
 
-if(BUILD_SCALAR_LIB)
+if(BUILD_SLEEF_SCALAR_LIB)
   # Compile executable 'iutscalar'
   add_executable(iutscalar iut.c testerutil.c)
   target_compile_definitions(iutscalar PRIVATE ${COMMON_TARGET_DEFINITIONS})

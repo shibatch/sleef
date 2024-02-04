@@ -442,7 +442,7 @@ static INLINE vfloat vsel_vf_vo_vf_vf(vopmask mask, vfloat x, vfloat y) {
 
 // Reciprocal 1/x, Division, Square root
 static INLINE vfloat vdiv_vf_vf_vf(vfloat n, vfloat d) {
-#ifndef ENABLE_ALTDIV
+#ifndef SLEEF_ENABLE_ALTDIV
   return svdiv_f32_x(ptrue, n, d);
 #else
   // Finite numbers (including denormal) only, gives mostly correctly rounded result
@@ -463,7 +463,7 @@ static INLINE vfloat vdiv_vf_vf_vf(vfloat n, vfloat d) {
 #endif
 }
 static INLINE vfloat vrec_vf_vf(vfloat d) {
-#ifndef ENABLE_ALTDIV
+#ifndef SLEEF_ENABLE_ALTDIV
   return svdivr_n_f32_x(ptrue, d, 1.0f);
 #else
   return vsel_vf_vo_vf_vf(svcmpeq_f32(ptrue, vabs_vf_vf(d), vcast_vf_f(SLEEF_INFINITYf)),
@@ -471,7 +471,7 @@ static INLINE vfloat vrec_vf_vf(vfloat d) {
 #endif
 }
 static INLINE vfloat vsqrt_vf_vf(vfloat d) {
-#ifndef ENABLE_ALTSQRT
+#ifndef SLEEF_ENABLE_ALTSQRT
   return svsqrt_f32_x(ptrue, d);
 #else
   // Gives correctly rounded result for all input range
@@ -801,7 +801,7 @@ static INLINE vdouble vfmapn_vd_vd_vd_vd(vdouble x, vdouble y,
 
 // Reciprocal 1/x, Division, Square root
 static INLINE vdouble vdiv_vd_vd_vd(vdouble n, vdouble d) {
-#ifndef ENABLE_ALTDIV
+#ifndef SLEEF_ENABLE_ALTDIV
   return svdiv_f64_x(ptrue, n, d);
 #else
   // Finite numbers (including denormal) only, gives mostly correctly rounded result
@@ -823,7 +823,7 @@ static INLINE vdouble vdiv_vd_vd_vd(vdouble n, vdouble d) {
 #endif
 }
 static INLINE vdouble vrec_vd_vd(vdouble d) {
-#ifndef ENABLE_ALTDIV
+#ifndef SLEEF_ENABLE_ALTDIV
   return svdivr_n_f64_x(ptrue, d, 1.0);
 #else
   return vsel_vd_vo_vd_vd(svcmpeq_f64(ptrue, vabs_vd_vd(d), vcast_vd_d(SLEEF_INFINITY)),
@@ -831,7 +831,7 @@ static INLINE vdouble vrec_vd_vd(vdouble d) {
 #endif
 }
 static INLINE vdouble vsqrt_vd_vd(vdouble d) {
-#ifndef ENABLE_ALTSQRT
+#ifndef SLEEF_ENABLE_ALTSQRT
   return svsqrt_f64_x(ptrue, d);
 #else
   // Gives correctly rounded result for all input range

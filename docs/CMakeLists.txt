@@ -16,8 +16,8 @@ target_link_libraries(hellox86 sleef)
 
 #
 
-option(BUILD_DFT_TUTORIAL "Build DFT tutorial" OFF)
-if (BUILD_DFT_TUTORIAL)
+option(BUILD_SLEEF_DFT_TUTORIAL "Build DFT tutorial" OFF)
+if (BUILD_SLEEF_DFT_TUTORIAL)
   add_executable(dfttutorial tutorial.c)
   add_dependencies(dfttutorial libsleef)
   find_library(LIBM m)

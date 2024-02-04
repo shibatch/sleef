@@ -106,7 +106,7 @@ $ sudo make install</pre>
   with the same version to build the library and other source codes.
 </p>
 
-<pre class="command">$ CC=gcc cmake -DBUILD_SHARED_LIBS=FALSE -DENABLE_LTO=TRUE ..</pre>
+<pre class="command">$ CC=gcc cmake -DBUILD_SLEEF_SHARED_LIBS=FALSE -DENABLE_LTO=TRUE ..</pre>
 
 <p>
   In order to build the library with thinLTO support with clang, you
@@ -114,7 +114,7 @@ $ sudo make install</pre>
   clang compiler.
 </p>
 
-<pre class="command">$ CC=clang-9 cmake -DBUILD_SHARED_LIBS=FALSE -DENABLE_LTO=TRUE -DLLVM_AR_COMMAND=llvm-ar-9 ..</pre>
+<pre class="command">$ CC=clang-9 cmake -DBUILD_SLEEF_SHARED_LIBS=FALSE -DENABLE_LTO=TRUE -DLLVM_AR_COMMAND=llvm-ar-9 ..</pre>
 
 
 <h3 id="inline">Building the header files for inlining the whole SLEEF functions</h3>
@@ -128,7 +128,7 @@ $ sudo make install</pre>
   that includes one of these header files.
 </p>
 
-<pre class="command">$ cmake -DBUILD_INLINE_HEADERS=TRUE ..</pre>
+<pre class="command">$ cmake -DBUILD_SLEEF_INLINE_HEADERS=TRUE ..</pre>
 
 <h2 id="MSVC">Compiling the library with Microsoft Visual C++</h2>
 
@@ -284,7 +284,7 @@ $ ninja
 $ cd ..
 $ mkdir build-cross
 $ cd build-cross
-$ cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=../ios.toolchain.cmake -DNATIVE_BUILD_DIR=`pwd`/../build-native -DDISABLE_MPFR=TRUE -DDISABLE_SSL=TRUE ..
+$ cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=../ios.toolchain.cmake -DNATIVE_BUILD_DIR=`pwd`/../build-native -DSLEEF_DISABLE_MPFR=TRUE -DSLEEF_DISABLE_SSL=TRUE ..
 $ ninja
 </pre>
 

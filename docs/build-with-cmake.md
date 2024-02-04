@@ -133,9 +133,9 @@ optimized, or any other special set of flags.
 - `SLEEF_SHOW_CONFIG` : Show relevant CMake variables upon configuring a build
 - `SLEEF_SHOW_ERROR_LOG` : Show the content of CMakeError.log
 
-- `BUILD_SHARED_LIBS` : Static libs are built if set to FALSE
-- `BUILD_GNUABI_LIBS` : Avoid building libraries with GNU ABI if set to FALSE
-- `BUILD_INLINE_HEADERS` : Generate header files for inlining whole SLEEF functions
+- `BUILD_SLEEF_SHARED_LIBS` : Static libs are built if set to FALSE
+- `BUILD_SLEEF_GNUABI_LIBS` : Avoid building libraries with GNU ABI if set to FALSE
+- `BUILD_SLEEF_INLINE_HEADERS` : Generate header files for inlining whole SLEEF functions
 
 - `DISABLE_OPENMP` : Disable support for OpenMP
 - `ENFORCE_OPENMP` : Build fails if OpenMP is not supported by the compiler
@@ -146,20 +146,20 @@ optimized, or any other special set of flags.
 
 ### Tests
 
-- `BUILD_TESTS` : Avoid building testing tools if set to FALSE
-- `ENFORCE_TESTER3` : Build fails if tester3 cannot be built
+- `BUILD_SLEEF_TESTS` : Avoid building testing tools if set to FALSE
+- `SLEEF_ENFORCE_TESTER3` : Build fails if tester3 cannot be built
 
 ### Quad and DFT
 
-- `BUILD_QUAD` : Build quad-precision libraries if set to TRUE
-- `BUILD_DFT` : Build DFT libraries if set to TRUE
+- `BUILD_SLEEF_QUAD` : Build quad-precision libraries if set to TRUE
+- `BUILD_SLEEF_DFT` : Build DFT libraries if set to TRUE
 - `SLEEFDFT_MAXBUTWIDTH` : This variable specifies the maximum length of combined butterfly block used in the DFT. Setting this value to 7 makes DFT faster but compilation takes more time and the library size will be larger.
-- `DISABLE_FFTW` : Disable FFTW-based testing of the DFT library.
+- `SLEEF_DISABLE_FFTW` : Disable FFTW-based testing of the DFT library.
 
 ### Vector extensions and instructions
 
-- `ENABLE_ALTDIV` : Enable alternative division method (aarch64 only)
-- `ENABLE_ALTSQRT` : Enable alternative sqrt method (aarch64 only)
+- `SLEEF_ENABLE_ALTDIV` : Enable alternative division method (aarch64 only)
+- `SLEEF_ENABLE_ALTSQRT` : Enable alternative sqrt method (aarch64 only)
 - `DISABLE_LONG_DOUBLE` : Disable support for long double data type
 - `ENFORCE_LONG_DOUBLE` : Build fails if long double data type is not supported by the compiler
 - `DISABLE_FLOAT128` : Disable support for float128 data type

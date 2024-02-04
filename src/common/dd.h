@@ -4,7 +4,7 @@
 //          http://www.boost.org/LICENSE_1_0.txt)
 
 #if !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA) || defined(ENABLE_RVVM1) || defined(ENABLE_RVVM1NOFMA) || defined(ENABLE_RVVM2) || defined(ENABLE_RVVM2NOFMA))
-#if !defined(ENABLE_CUDA)
+#if !defined(SLEEF_ENABLE_CUDA)
 typedef struct {
   vdouble x, y;
 } vdouble2;
@@ -19,7 +19,7 @@ static INLINE CONST VECTOR_CC vdouble2 vd2setx_vd2_vd2_vd(vdouble2 v, vdouble d)
 static INLINE CONST VECTOR_CC vdouble2 vd2sety_vd2_vd2_vd(vdouble2 v, vdouble d) { v.y = d; return v; }
 #endif
 
-#if !defined(ENABLE_CUDA)
+#if !defined(SLEEF_ENABLE_CUDA)
 typedef struct {
   double x, y;
 } double2;

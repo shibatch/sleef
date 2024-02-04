@@ -260,7 +260,7 @@ can generate header files in which the library functions are all
 defined as inline functions. This can be compiled with old compilers.
 In theory, inline functions should give similar performance to LTO,
 but in reality, inline functions are better. In order to generate
-those header files, specify <b>-DBUILD_INLINE_HEADERS=TRUE</b> cmake
+those header files, specify <b>-DBUILD_SLEEF_INLINE_HEADERS=TRUE</b> cmake
 option. Below is an example code utilizing the generated header files
 for SSE2 and AVX2. You cannot use a dispatcher with these header
 files.

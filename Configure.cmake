@@ -5,9 +5,9 @@ include(CheckLanguage)
 
 #
 
-if (BUILD_STATIC_TEST_BINS)
+if (BUILD_SLEEF_STATIC_TEST_BINS)
   set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-  set(BUILD_SHARED_LIBS OFF)
+  set(BUILD_SLEEF_SHARED_LIBS OFF)
   set(CMAKE_EXE_LINKER_FLAGS "-static")
 endif()
 
@@ -18,7 +18,7 @@ if (NOT CMAKE_CROSSCOMPILING AND NOT SLEEF_FORCE_FIND_PACKAGE_SSL)
     set(SLEEF_OPENSSL_LIBRARIES ${OPENSSL_LIBRARIES})
     # Work around for tester3 sig segv, when linking versions of openssl (1.1.1) statically.
     # This is a known issue https://github.com/openssl/openssl/issues/13872.
-    if (BUILD_STATIC_TEST_BINS)
+    if (BUILD_SLEEF_STATIC_TEST_BINS)
       string(REGEX REPLACE
              "-lpthread" "-Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
              SLEEF_OPENSSL_LIBRARIES "${OPENSSL_LIBRARIES}")
@@ -37,8 +37,8 @@ else()
   endif()
 endif()
 
-if (ENFORCE_TESTER3 AND NOT SLEEF_OPENSSL_FOUND)
-  message(FATAL_ERROR "ENFORCE_TESTER3 is specified and OpenSSL not found")
+if (SLEEF_ENFORCE_TESTER3 AND NOT SLEEF_OPENSSL_FOUND)
+  message(FATAL_ERROR "SLEEF_ENFORCE_TESTER3 is specified and OpenSSL not found")
 endif()
 
 # Some toolchains require explicit linking of the libraries following.
@@ -68,11 +68,11 @@ if (NOT LIBRT)
   set(LIBRT "")
 endif()
 
-if (DISABLE_MPFR)
+if (SLEEF_DISABLE_MPFR)
   set(LIB_MPFR "")
 endif()
 
-if (DISABLE_SSL)
+if (SLEEF_DISABLE_SSL)
   set(SLEEF_OPENSSL_FOUND FALSE)
 endif()
 
@@ -748,7 +748,7 @@ if (COMPILER_SUPPORTS_WEAK_ALIASES AND
     NOT CMAKE_SYSTEM_PROCESSOR MATCHES "arm" AND
     NOT CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64" AND
     NOT SLEEF_CLANG_ON_WINDOWS AND
-    NOT MINGW AND BUILD_GNUABI_LIBS)
+    NOT MINGW AND BUILD_SLEEF_GNUABI_LIBS)
   set(ENABLE_GNUABI ${COMPILER_SUPPORTS_WEAK_ALIASES})
 endif()
 
@@ -832,7 +832,7 @@ endif()
 
 # Set common definitions
 
-if (NOT BUILD_SHARED_LIBS)
+if (NOT BUILD_SLEEF_SHARED_LIBS)
   set(COMMON_TARGET_DEFINITIONS SLEEF_STATIC_LIBS=1)
   set(SLEEF_STATIC_LIBS 1)
 endif()

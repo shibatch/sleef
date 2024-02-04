@@ -348,7 +348,7 @@ set(COMMON_TARGET_PROPERTIES
   C_STANDARD 99                  # -std=gnu99
   )
 
-if (BUILD_SHARED_LIBS)
+if (BUILD_SLEEF_SHARED_LIBS)
   list(APPEND COMMON_TARGET_PROPERTIES POSITION_INDEPENDENT_CODE ON)   # -fPIC
 endif()
 
@@ -402,14 +402,14 @@ foreach(SIMD ${SLEEF_SUPPORTED_LIBM_EXTENSIONS})
       target_compile_definitions(${OBJECTDET_${SIMD}} PRIVATE ENABLE_BUILTIN_MATH=1)
     endif()
 
-    if(ENABLE_ALTDIV)
-      target_compile_definitions(${OBJECT_${SIMD}} PRIVATE ENABLE_ALTDIV=1)
-      target_compile_definitions(${OBJECTDET_${SIMD}} PRIVATE ENABLE_ALTDIV=1)
+    if(SLEEF_ENABLE_ALTDIV)
+      target_compile_definitions(${OBJECT_${SIMD}} PRIVATE SLEEF_ENABLE_ALTDIV=1)
+      target_compile_definitions(${OBJECTDET_${SIMD}} PRIVATE SLEEF_ENABLE_ALTDIV=1)
     endif()
 
-    if(ENABLE_ALTSQRT)
-      target_compile_definitions(${OBJECT_${SIMD}} PRIVATE ENABLE_ALTSQRT=1)
-      target_compile_definitions(${OBJECTDET_${SIMD}} PRIVATE ENABLE_ALTSQRT=1)
+    if(SLEEF_ENABLE_ALTSQRT)
+      target_compile_definitions(${OBJECT_${SIMD}} PRIVATE SLEEF_ENABLE_ALTSQRT=1)
+      target_compile_definitions(${OBJECTDET_${SIMD}} PRIVATE SLEEF_ENABLE_ALTSQRT=1)
     endif()
 
     if (INDEX_ALIAS EQUAL -1)
@@ -485,9 +485,9 @@ endforeach()
 
 #
 
-if(BUILD_INLINE_HEADERS)
+if(BUILD_SLEEF_INLINE_HEADERS)
   if(CMAKE_C_COMPILER_ID MATCHES "Intel")
-    message(FATAL_ERROR "BUILD_INLINE_HEADERS is not supported with Intel Compiler")
+    message(FATAL_ERROR "BUILD_SLEEF_INLINE_HEADERS is not supported with Intel Compiler")
   endif()
 
   file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/include/)
@@ -662,7 +662,7 @@ if(BUILD_INLINE_HEADERS)
         INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
     )
   endif(SED_COMMAND)
-endif(BUILD_INLINE_HEADERS)
+endif(BUILD_SLEEF_INLINE_HEADERS)
 
 # On some systems we need to explicitly link libsleef against libm to
 # use some of the math functions used in the scalar code (for example
@@ -856,12 +856,12 @@ if(ENABLE_GNUABI)
           )
         endif()
 
-	if(ENABLE_ALTDIV)
-	  target_compile_definitions(${OBJECT_${SIMD}_${T}_GNUABI} PRIVATE ENABLE_ALTDIV=1)
+	if(SLEEF_ENABLE_ALTDIV)
+	  target_compile_definitions(${OBJECT_${SIMD}_${T}_GNUABI} PRIVATE SLEEF_ENABLE_ALTDIV=1)
 	endif()
 
-	if(ENABLE_ALTSQRT)
-	  target_compile_definitions(${OBJECT_${SIMD}_${T}_GNUABI} PRIVATE ENABLE_ALTSQRT=1)
+	if(SLEEF_ENABLE_ALTSQRT)
+	  target_compile_definitions(${OBJECT_${SIMD}_${T}_GNUABI} PRIVATE SLEEF_ENABLE_ALTSQRT=1)
 	endif()
 
 	set_target_properties(${OBJECT_${SIMD}_${T}_GNUABI} PROPERTIES
@@ -990,7 +990,7 @@ if(COMPILER_SUPPORTS_BUILTIN_MATH)
   target_compile_definitions(sleefscalar PRIVATE ENABLE_BUILTIN_MATH=1)
 endif()
 
-if(BUILD_SCALAR_LIB)
+if(BUILD_SLEEF_SCALAR_LIB)
   install(
       TARGETS sleefscalar
       EXPORT sleefTargets
