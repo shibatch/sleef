@@ -19,12 +19,12 @@ env:
   LLVM_VERSION: "17"
   COMMON_CMAKE_FLAGS: |
     -DSLEEF_SHOW_CONFIG=1
-    -DBUILD_SLEEF_GNUABI_LIBS=ON
-    -DBUILD_SLEEF_INLINE_HEADERS=ON
-    -DBUILD_SLEEF_DFT=ON
-    -DBUILD_SLEEF_QUAD=ON
-    -DBUILD_SLEEF_SCALAR_LIB=ON
-    -DBUILD_SLEEF_STATIC_TEST_BINS=ON
+    -DSLEEF_BUILD_GNUABI_LIBS=ON
+    -DSLEEF_BUILD_INLINE_HEADERS=ON
+    -DSLEEF_BUILD_DFT=ON
+    -DSLEEF_BUILD_QUAD=ON
+    -DSLEEF_BUILD_SCALAR_LIB=ON
+    -DSLEEF_BUILD_STATIC_TEST_BINS=ON
     -DSLEEF_ENFORCE_TESTER=ON
     -DSLEEF_ENFORCE_TESTER3=ON
 
@@ -216,7 +216,7 @@ jobs:
             EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DENFORCE_SVE=ON"
           elif [[ ${{ matrix.arch }} = "armhf" ]]; then
             # Disable inline headers, they just don't compile on armhf
-            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DBUILD_SLEEF_INLINE_HEADERS=OFF"
+            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DSLEEF_BUILD_INLINE_HEADERS=OFF"
           elif [[ ${{ matrix.arch }} = "ppc64el" ]]; then
             EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DENFORCE_VSX=ON -DENFORCE_VSX3=ON"
           elif [[ ${{ matrix.arch }} = "s390x" ]]; then
@@ -226,11 +226,11 @@ jobs:
           elif [[ ${{ matrix.arch }} = "riscv64" ]]; then
             EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DENFORCE_RVVM1=ON -DENFORCE_RVVM2=ON"
             # Disable inline headers, they just don't compile on riscv64
-            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DBUILD_SLEEF_INLINE_HEADERS=OFF"
+            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DSLEEF_BUILD_INLINE_HEADERS=OFF"
             # Disable dft, it fails with linker error to `cexp`
-            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DBUILD_SLEEF_DFT=OFF"
+            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DSLEEF_BUILD_DFT=OFF"
             # Disable quad, it's missing the `Sleef_quad` function
-            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DBUILD_SLEEF_QUAD=OFF"
+            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DSLEEF_BUILD_QUAD=OFF"
           fi
 
           cmake -S . -B _build-${{ matrix.arch }} -GNinja \

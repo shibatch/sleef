@@ -84,7 +84,7 @@ set(COMMON_TARGET_PROPERTIES
   C_STANDARD 99                  # -std=gnu99
   )
 
-if (ENABLE_LTO)
+if (SLEEF_ENABLE_LTO)
   list(APPEND COMMON_TARGET_PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)  # -flto
 endif()
 
@@ -136,7 +136,7 @@ add_test_iut(${TARGET_IUT} 1.0)
 set(IUT_LIST ${TARGET_IUT})
 
 # Compile executable 'iutcuda'
-if (BUILD_SLEEF_INLINE_HEADERS AND SED_COMMAND AND CMAKE_CUDA_COMPILER)
+if (SLEEF_BUILD_INLINE_HEADERS AND SED_COMMAND AND CMAKE_CUDA_COMPILER)
   add_executable(iutcuda iutcuda.cu)
   set_target_properties(iutcuda PROPERTIES LINKER_LANGUAGE CUDA)
   target_compile_options(iutcuda PRIVATE "--fmad=false;-Xcompiler;-ffp-contract=off")
@@ -201,7 +201,7 @@ macro(test_extension SIMD)
     # The iut programs whose names begin with "iuti" are the iut for the
     # inline version of functions.
 
-    if (BUILD_SLEEF_INLINE_HEADERS AND SED_COMMAND)
+    if (SLEEF_BUILD_INLINE_HEADERS AND SED_COMMAND)
       string(CONCAT IUTINAME "iuti" ${LCSIMD})
       add_executable(${IUTINAME} ${IUT_SRC})
       target_compile_options(${IUTINAME} PRIVATE ${FLAGS_ENABLE_${SIMD}})
@@ -221,7 +221,7 @@ macro(test_extension SIMD)
 	add_test_iut(${IUTINAME} 1.0)
       endif()
       list(APPEND IUT_LIST ${IUTINAME})
-    endif(BUILD_SLEEF_INLINE_HEADERS AND SED_COMMAND)
+    endif(SLEEF_BUILD_INLINE_HEADERS AND SED_COMMAND)
 
     if(LIB_MPFR AND NOT ${SIMD} STREQUAL NEON32 AND NOT ${SIMD} STREQUAL NEON32VFPV4 AND NOT MINGW)
       # Build tester2 SIMD
@@ -410,7 +410,7 @@ if (SLEEF_ARCH_S390X)
   list(APPEND IUT_LIST iutdsp128)
 endif(SLEEF_ARCH_S390X)
 
-if(BUILD_SLEEF_SCALAR_LIB)
+if(SLEEF_BUILD_SCALAR_LIB)
   # Compile executable 'iutscalar'
   add_executable(iutscalar iut.c testerutil.c)
   target_compile_definitions(iutscalar PRIVATE ${COMMON_TARGET_DEFINITIONS})

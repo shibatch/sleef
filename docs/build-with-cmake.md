@@ -133,26 +133,26 @@ optimized, or any other special set of flags.
 - `SLEEF_SHOW_CONFIG` : Show relevant CMake variables upon configuring a build
 - `SLEEF_SHOW_ERROR_LOG` : Show the content of CMakeError.log
 
-- `BUILD_SLEEF_SHARED_LIBS` : Static libs are built if set to FALSE
-- `BUILD_SLEEF_GNUABI_LIBS` : Avoid building libraries with GNU ABI if set to FALSE
-- `BUILD_SLEEF_INLINE_HEADERS` : Generate header files for inlining whole SLEEF functions
+- `SLEEF_BUILD_SHARED_LIBS` : Static libs are built if set to FALSE
+- `SLEEF_BUILD_GNUABI_LIBS` : Avoid building libraries with GNU ABI if set to FALSE
+- `SLEEF_BUILD_INLINE_HEADERS` : Generate header files for inlining whole SLEEF functions
 
 - `DISABLE_OPENMP` : Disable support for OpenMP
 - `ENFORCE_OPENMP` : Build fails if OpenMP is not supported by the compiler
 
-- `ENABLE_LTO` : Enable support for LTO with gcc, or thinLTO with llvm
+- `SLEEF_ENABLE_LTO` : Enable support for LTO with gcc, or thinLTO with llvm
 - `LLVM_AR_COMMAND` : Specify LLVM AR command when you build the library with thinLTO support with clang.
 - `SLEEF_ENABLE_LLVM_BITCODE` : Generate LLVM bitcode
 
 ### Tests
 
-- `BUILD_SLEEF_TESTS` : Avoid building testing tools if set to FALSE
+- `SLEEF_BUILD_TESTS` : Avoid building testing tools if set to FALSE
 - `SLEEF_ENFORCE_TESTER3` : Build fails if tester3 cannot be built
 
 ### Quad and DFT
 
-- `BUILD_SLEEF_QUAD` : Build quad-precision libraries if set to TRUE
-- `BUILD_SLEEF_DFT` : Build DFT libraries if set to TRUE
+- `SLEEF_BUILD_QUAD` : Build quad-precision libraries if set to TRUE
+- `SLEEF_BUILD_DFT` : Build DFT libraries if set to TRUE
 - `SLEEFDFT_MAXBUTWIDTH` : This variable specifies the maximum length of combined butterfly block used in the DFT. Setting this value to 7 makes DFT faster but compilation takes more time and the library size will be larger.
 - `SLEEF_DISABLE_FFTW` : Disable FFTW-based testing of the DFT library.
 

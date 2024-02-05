@@ -100,7 +100,7 @@ if(COMPILER_SUPPORTS_BUILTIN_MATH)
   list(APPEND COMMON_TARGET_DEFINITIONS ENABLE_BUILTIN_MATH=1)
 endif()
 
-if (BUILD_SLEEF_SHARED_LIBS)
+if (SLEEF_BUILD_SHARED_LIBS)
   list(APPEND COMMON_TARGET_PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif()
 
@@ -221,9 +221,9 @@ endif()
 # Inline headers
 # --------------------------------------------------------------------
 
-if(BUILD_SLEEF_INLINE_HEADERS)
+if(SLEEF_BUILD_INLINE_HEADERS)
   if(CMAKE_C_COMPILER_ID MATCHES "Intel")
-    message(FATAL_ERROR "BUILD_SLEEF_INLINE_HEADERS is not supported with Intel Compiler")
+    message(FATAL_ERROR "SLEEF_BUILD_INLINE_HEADERS is not supported with Intel Compiler")
   endif()
 
   file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/include/)
@@ -372,7 +372,7 @@ if(BUILD_SLEEF_INLINE_HEADERS)
         COMPONENT sleef_Development
     )
   endif(SED_COMMAND)
-endif(BUILD_SLEEF_INLINE_HEADERS)
+endif(SLEEF_BUILD_INLINE_HEADERS)
 
 
 # --------------------------------------------------------------------

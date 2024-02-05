@@ -348,11 +348,11 @@ set(COMMON_TARGET_PROPERTIES
   C_STANDARD 99                  # -std=gnu99
   )
 
-if (BUILD_SLEEF_SHARED_LIBS)
+if (SLEEF_BUILD_SHARED_LIBS)
   list(APPEND COMMON_TARGET_PROPERTIES POSITION_INDEPENDENT_CODE ON)   # -fPIC
 endif()
 
-if (ENABLE_LTO)
+if (SLEEF_ENABLE_LTO)
   list(APPEND COMMON_TARGET_PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)  # -flto
 endif()
 
@@ -485,9 +485,9 @@ endforeach()
 
 #
 
-if(BUILD_SLEEF_INLINE_HEADERS)
+if(SLEEF_BUILD_INLINE_HEADERS)
   if(CMAKE_C_COMPILER_ID MATCHES "Intel")
-    message(FATAL_ERROR "BUILD_SLEEF_INLINE_HEADERS is not supported with Intel Compiler")
+    message(FATAL_ERROR "SLEEF_BUILD_INLINE_HEADERS is not supported with Intel Compiler")
   endif()
 
   file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/include/)
@@ -662,7 +662,7 @@ if(BUILD_SLEEF_INLINE_HEADERS)
         INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
     )
   endif(SED_COMMAND)
-endif(BUILD_SLEEF_INLINE_HEADERS)
+endif(SLEEF_BUILD_INLINE_HEADERS)
 
 # On some systems we need to explicitly link libsleef against libm to
 # use some of the math functions used in the scalar code (for example
@@ -990,7 +990,7 @@ if(COMPILER_SUPPORTS_BUILTIN_MATH)
   target_compile_definitions(sleefscalar PRIVATE ENABLE_BUILTIN_MATH=1)
 endif()
 
-if(BUILD_SLEEF_SCALAR_LIB)
+if(SLEEF_BUILD_SCALAR_LIB)
   install(
       TARGETS sleefscalar
       EXPORT sleefTargets

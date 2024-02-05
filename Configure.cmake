@@ -5,9 +5,9 @@ include(CheckLanguage)
 
 #
 
-if (BUILD_SLEEF_STATIC_TEST_BINS)
+if (SLEEF_BUILD_STATIC_TEST_BINS)
   set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-  set(BUILD_SLEEF_SHARED_LIBS OFF)
+  set(SLEEF_BUILD_SHARED_LIBS OFF)
   set(CMAKE_EXE_LINKER_FLAGS "-static")
 endif()
 
@@ -18,7 +18,7 @@ if (NOT CMAKE_CROSSCOMPILING AND NOT SLEEF_FORCE_FIND_PACKAGE_SSL)
     set(SLEEF_OPENSSL_LIBRARIES ${OPENSSL_LIBRARIES})
     # Work around for tester3 sig segv, when linking versions of openssl (1.1.1) statically.
     # This is a known issue https://github.com/openssl/openssl/issues/13872.
-    if (BUILD_SLEEF_STATIC_TEST_BINS)
+    if (SLEEF_BUILD_STATIC_TEST_BINS)
       string(REGEX REPLACE
              "-lpthread" "-Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
              SLEEF_OPENSSL_LIBRARIES "${OPENSSL_LIBRARIES}")
@@ -212,7 +212,7 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
     set(FLAGS_ENABLE_NEON32 "-mfpu=neon")
   endif(CMAKE_C_COMPILER_ID MATCHES "GNU")
 
-  if(CMAKE_C_COMPILER_ID MATCHES "Clang" AND ENABLE_LTO)
+  if(CMAKE_C_COMPILER_ID MATCHES "Clang" AND SLEEF_ENABLE_LTO)
     if (NOT LLVM_AR_COMMAND)
       find_program(LLVM_AR_COMMAND "llvm-ar")
     endif()
@@ -222,7 +222,7 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
       SET(CMAKE_C_ARCHIVE_FINISH "true")
     endif(LLVM_AR_COMMAND)
     string(CONCAT FLAGS_OTHERS "-flto=thin")
-  endif(CMAKE_C_COMPILER_ID MATCHES "Clang" AND ENABLE_LTO)
+  endif(CMAKE_C_COMPILER_ID MATCHES "Clang" AND SLEEF_ENABLE_LTO)
 
   # Flags for generating inline headers
   set(FLAG_PREPROCESS "-E")
@@ -748,7 +748,7 @@ if (COMPILER_SUPPORTS_WEAK_ALIASES AND
     NOT CMAKE_SYSTEM_PROCESSOR MATCHES "arm" AND
     NOT CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64" AND
     NOT SLEEF_CLANG_ON_WINDOWS AND
-    NOT MINGW AND BUILD_SLEEF_GNUABI_LIBS)
+    NOT MINGW AND SLEEF_BUILD_GNUABI_LIBS)
   set(ENABLE_GNUABI ${COMPILER_SUPPORTS_WEAK_ALIASES})
 endif()
 
@@ -832,7 +832,7 @@ endif()
 
 # Set common definitions
 
-if (NOT BUILD_SLEEF_SHARED_LIBS)
+if (NOT SLEEF_BUILD_SHARED_LIBS)
   set(COMMON_TARGET_DEFINITIONS SLEEF_STATIC_LIBS=1)
   set(SLEEF_STATIC_LIBS 1)
 endif()
