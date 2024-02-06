@@ -133,7 +133,7 @@ optimized, or any other special set of flags.
 - `SLEEF_SHOW_CONFIG` : Show relevant CMake variables upon configuring a build
 - `SLEEF_SHOW_ERROR_LOG` : Show the content of CMakeError.log
 
-- `SLEEF_BUILD_SHARED_LIBS` : Static libs are built if set to FALSE
+- `BUILD_SHARED_LIBS` : Static libs are built if set to FALSE
 - `SLEEF_BUILD_GNUABI_LIBS` : Avoid building libraries with GNU ABI if set to FALSE
 - `SLEEF_BUILD_INLINE_HEADERS` : Generate header files for inlining whole SLEEF functions
 
