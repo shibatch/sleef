@@ -134,58 +134,58 @@ optimized, or any other special set of flags.
 - `SLEEF_SHOW_ERROR_LOG` : Show the content of CMakeError.log
 
 - `BUILD_SHARED_LIBS` : Static libs are built if set to FALSE
-- `BUILD_GNUABI_LIBS` : Avoid building libraries with GNU ABI if set to FALSE
-- `BUILD_INLINE_HEADERS` : Generate header files for inlining whole SLEEF functions
+- `SLEEF_BUILD_GNUABI_LIBS` : Avoid building libraries with GNU ABI if set to FALSE
+- `SLEEF_BUILD_INLINE_HEADERS` : Generate header files for inlining whole SLEEF functions
 
-- `DISABLE_OPENMP` : Disable support for OpenMP
-- `ENFORCE_OPENMP` : Build fails if OpenMP is not supported by the compiler
+- `SLEEF_DISABLE_OPENMP` : Disable support for OpenMP
+- `SLEEF_ENFORCE_OPENMP` : Build fails if OpenMP is not supported by the compiler
 
-- `ENABLE_LTO` : Enable support for LTO with gcc, or thinLTO with llvm
-- `LLVM_AR_COMMAND` : Specify LLVM AR command when you build the library with thinLTO support with clang.
+- `SLEEF_ENABLE_LTO` : Enable support for LTO with gcc, or thinLTO with llvm
+- `SLEEF_LLVM_AR_COMMAND` : Specify LLVM AR command when you build the library with thinLTO support with clang.
 - `SLEEF_ENABLE_LLVM_BITCODE` : Generate LLVM bitcode
 
 ### Tests
 
-- `BUILD_TESTS` : Avoid building testing tools if set to FALSE
-- `ENFORCE_TESTER3` : Build fails if tester3 cannot be built
+- `SLEEF_BUILD_TESTS` : Avoid building testing tools if set to FALSE
+- `SLEEF_ENFORCE_TESTER3` : Build fails if tester3 cannot be built
 
 ### Quad and DFT
 
-- `BUILD_QUAD` : Build quad-precision libraries if set to TRUE
-- `BUILD_DFT` : Build DFT libraries if set to TRUE
+- `SLEEF_BUILD_QUAD` : Build quad-precision libraries if set to TRUE
+- `SLEEF_BUILD_DFT` : Build DFT libraries if set to TRUE
 - `SLEEFDFT_MAXBUTWIDTH` : This variable specifies the maximum length of combined butterfly block used in the DFT. Setting this value to 7 makes DFT faster but compilation takes more time and the library size will be larger.
-- `DISABLE_FFTW` : Disable FFTW-based testing of the DFT library.
+- `SLEEF_DISABLE_FFTW` : Disable FFTW-based testing of the DFT library.
 
 ### Vector extensions and instructions
 
-- `ENABLE_ALTDIV` : Enable alternative division method (aarch64 only)
-- `ENABLE_ALTSQRT` : Enable alternative sqrt method (aarch64 only)
-- `DISABLE_LONG_DOUBLE` : Disable support for long double data type
-- `ENFORCE_LONG_DOUBLE` : Build fails if long double data type is not supported by the compiler
-- `DISABLE_FLOAT128` : Disable support for float128 data type
-- `ENFORCE_FLOAT128` : Build fails if float128 data type is not supported by the compiler
-- `DISABLE_SSE2` : Disable support for x86 SSE2
-- `ENFORCE_SSE2` : Build fails if SSE2 is not supported by the compiler
-- `DISABLE_SSE4` : Disable support for x86 SSE4
-- `ENFORCE_SSE4` : Build fails if SSE4 is not supported by the compiler
-- `DISABLE_AVX` : Disable support for x86 AVX
-- `ENFORCE_AVX` : Build fails if AVX is not supported by the compiler
-- `DISABLE_FMA4` : Disable support for x86 FMA4
-- `ENFORCE_FMA4` : Build fails if FMA4 is not supported by the compiler
-- `DISABLE_AVX2` : Disable support for x86 AVX2
-- `ENFORCE_AVX2` : Build fails if AVX2 is not supported by the compiler
-- `DISABLE_AVX512F` : Disable support for x86 AVX512F
-- `ENFORCE_AVX512F` : Build fails if AVX512F is not supported by the compiler
-- `DISABLE_SVE` : Disable support for AArch64 SVE
-- `ENFORCE_SVE` : Build fails if SVE is not supported by the compiler
-- `DISABLE_VSX` : Disable support for PowerPC VSX
-- `ENFORCE_VSX` : Build fails if VSX is not supported by the compiler
-- `DISABLE_VSX3` : Disable support for PowerPC VSX-3
-- `ENFORCE_VSX3` : Build fails if VSX-3 is not supported by the compiler
-- `DISABLE_VXE` : Disable support for System/390 VXE
-- `ENFORCE_VXE` : Build fails if System/390 VXE is not supported by the compiler
-- `DISABLE_VXE2` : Disable support for System/390 VXE2
-- `ENFORCE_VXE2` : Build fails if System/390 VXE2 is not supported by the compiler
+- `SLEEF_ENABLE_ALTDIV` : Enable alternative division method (aarch64 only)
+- `SLEEF_ENABLE_ALTSQRT` : Enable alternative sqrt method (aarch64 only)
+- `SLEEF_DISABLE_LONG_DOUBLE` : Disable support for long double data type
+- `SLEEF_ENFORCE_LONG_DOUBLE` : Build fails if long double data type is not supported by the compiler
+- `SLEEF_DISABLE_FLOAT128` : Disable support for float128 data type
+- `SLEEF_ENFORCE_FLOAT128` : Build fails if float128 data type is not supported by the compiler
+- `SLEEF_DISABLE_SSE2` : Disable support for x86 SSE2
+- `SLEEF_ENFORCE_SSE2` : Build fails if SSE2 is not supported by the compiler
+- `SLEEF_DISABLE_SSE4` : Disable support for x86 SSE4
+- `SLEEF_ENFORCE_SSE4` : Build fails if SSE4 is not supported by the compiler
+- `SLEEF_DISABLE_AVX` : Disable support for x86 AVX
+- `SLEEF_ENFORCE_AVX` : Build fails if AVX is not supported by the compiler
+- `SLEEF_DISABLE_FMA4` : Disable support for x86 FMA4
+- `SLEEF_ENFORCE_FMA4` : Build fails if FMA4 is not supported by the compiler
+- `SLEEF_DISABLE_AVX2` : Disable support for x86 AVX2
+- `SLEEF_ENFORCE_AVX2` : Build fails if AVX2 is not supported by the compiler
+- `SLEEF_DISABLE_AVX512F` : Disable support for x86 AVX512F
+- `SLEEF_ENFORCE_AVX512F` : Build fails if AVX512F is not supported by the compiler
+- `SLEEF_DISABLE_SVE` : Disable support for AArch64 SVE
+- `SLEEF_ENFORCE_SVE` : Build fails if SVE is not supported by the compiler
+- `SLEEF_DISABLE_VSX` : Disable support for PowerPC VSX
+- `SLEEF_ENFORCE_VSX` : Build fails if VSX is not supported by the compiler
+- `SLEEF_DISABLE_VSX3` : Disable support for PowerPC VSX-3
+- `SLEEF_ENFORCE_VSX3` : Build fails if VSX-3 is not supported by the compiler
+- `SLEEF_DISABLE_VXE` : Disable support for System/390 VXE
+- `SLEEF_ENFORCE_VXE` : Build fails if System/390 VXE is not supported by the compiler
+- `SLEEF_DISABLE_VXE2` : Disable support for System/390 VXE2
+- `SLEEF_ENFORCE_VXE2` : Build fails if System/390 VXE2 is not supported by the compiler
 
 <!-- Repository links -->
 

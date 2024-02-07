@@ -107,7 +107,7 @@ macro(test_extension SIMD)
     # The iut programs whose names begin with "qiuti" are the iut for the
     # inline version of quad functions.
 
-    if (BUILD_INLINE_HEADERS AND SED_COMMAND)
+    if (SLEEF_BUILD_INLINE_HEADERS AND SED_COMMAND)
       if (MSVC AND NOT SLEEF_CLANG_ON_WINDOWS)
 	message(STATUS "Quad inline headers are not tested with MSVC")
       else()
@@ -133,7 +133,7 @@ macro(test_extension SIMD)
 	endif()
 	list(APPEND IUT_LIST ${IUTINAME})
       endif()
-    endif(BUILD_INLINE_HEADERS AND SED_COMMAND)
+    endif(SLEEF_BUILD_INLINE_HEADERS AND SED_COMMAND)
 
     if(LIB_MPFR AND NOT MINGW)
       # Build qtester2 SIMD
@@ -219,7 +219,7 @@ endif()
 
 # Compile executable 'qiutcuda'
 
-if (BUILD_INLINE_HEADERS AND SED_COMMAND AND CMAKE_CUDA_COMPILER)
+if (SLEEF_BUILD_INLINE_HEADERS AND SED_COMMAND AND CMAKE_CUDA_COMPILER)
   add_executable(qiutcuda qiutcuda.cu)
   set_target_properties(qiutcuda PROPERTIES LINKER_LANGUAGE CUDA)
   target_compile_options(qiutcuda PRIVATE "--fmad=false;-Xcompiler;-ffp-contract=off")

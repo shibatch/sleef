@@ -5,7 +5,7 @@ include(CheckLanguage)
 
 #
 
-if (BUILD_STATIC_TEST_BINS)
+if (SLEEF_BUILD_STATIC_TEST_BINS)
   set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
   set(BUILD_SHARED_LIBS OFF)
   set(CMAKE_EXE_LINKER_FLAGS "-static")
@@ -18,7 +18,7 @@ if (NOT CMAKE_CROSSCOMPILING AND NOT SLEEF_FORCE_FIND_PACKAGE_SSL)
     set(SLEEF_OPENSSL_LIBRARIES ${OPENSSL_LIBRARIES})
     # Work around for tester3 sig segv, when linking versions of openssl (1.1.1) statically.
     # This is a known issue https://github.com/openssl/openssl/issues/13872.
-    if (BUILD_STATIC_TEST_BINS)
+    if (SLEEF_BUILD_STATIC_TEST_BINS)
       string(REGEX REPLACE
              "-lpthread" "-Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
              SLEEF_OPENSSL_LIBRARIES "${OPENSSL_LIBRARIES}")
@@ -37,8 +37,8 @@ else()
   endif()
 endif()
 
-if (ENFORCE_TESTER3 AND NOT SLEEF_OPENSSL_FOUND)
-  message(FATAL_ERROR "ENFORCE_TESTER3 is specified and OpenSSL not found")
+if (SLEEF_ENFORCE_TESTER3 AND NOT SLEEF_OPENSSL_FOUND)
+  message(FATAL_ERROR "SLEEF_ENFORCE_TESTER3 is specified and OpenSSL not found")
 endif()
 
 # Some toolchains require explicit linking of the libraries following.
@@ -68,11 +68,11 @@ if (NOT LIBRT)
   set(LIBRT "")
 endif()
 
-if (DISABLE_MPFR)
+if (SLEEF_DISABLE_MPFR)
   set(LIB_MPFR "")
 endif()
 
-if (DISABLE_SSL)
+if (SLEEF_DISABLE_SSL)
   set(SLEEF_OPENSSL_FOUND FALSE)
 endif()
 
@@ -212,17 +212,17 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
     set(FLAGS_ENABLE_NEON32 "-mfpu=neon")
   endif(CMAKE_C_COMPILER_ID MATCHES "GNU")
 
-  if(CMAKE_C_COMPILER_ID MATCHES "Clang" AND ENABLE_LTO)
-    if (NOT LLVM_AR_COMMAND)
-      find_program(LLVM_AR_COMMAND "llvm-ar")
+  if(CMAKE_C_COMPILER_ID MATCHES "Clang" AND SLEEF_ENABLE_LTO)
+    if (NOT SLEEF_LLVM_AR_COMMAND)
+      find_program(SLEEF_LLVM_AR_COMMAND "llvm-ar")
     endif()
-    if (LLVM_AR_COMMAND)
-      SET(CMAKE_AR ${LLVM_AR_COMMAND})
+    if (SLEEF_LLVM_AR_COMMAND)
+      SET(CMAKE_AR ${SLEEF_LLVM_AR_COMMAND})
       SET(CMAKE_C_ARCHIVE_CREATE "<CMAKE_AR> rcs <TARGET> <LINK_FLAGS> <OBJECTS>")
       SET(CMAKE_C_ARCHIVE_FINISH "true")
-    endif(LLVM_AR_COMMAND)
+    endif(SLEEF_LLVM_AR_COMMAND)
     string(CONCAT FLAGS_OTHERS "-flto=thin")
-  endif(CMAKE_C_COMPILER_ID MATCHES "Clang" AND ENABLE_LTO)
+  endif(CMAKE_C_COMPILER_ID MATCHES "Clang" AND SLEEF_ENABLE_LTO)
 
   # Flags for generating inline headers
   set(FLAG_PREPROCESS "-E")
@@ -323,10 +323,10 @@ endif()
 
 # Long double
 
-option(DISABLE_LONG_DOUBLE "Disable long double" OFF)
-option(ENFORCE_LONG_DOUBLE "Build fails if long double is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_LONG_DOUBLE "Disable long double" OFF)
+option(SLEEF_ENFORCE_LONG_DOUBLE "Build fails if long double is not supported by the compiler" OFF)
 
-if(NOT DISABLE_LONG_DOUBLE)
+if(NOT SLEEF_DISABLE_LONG_DOUBLE)
   CHECK_TYPE_SIZE("long double" LD_SIZE)
   if(LD_SIZE GREATER "9")
     # This is needed to check since internal compiler error occurs with gcc 4.x
@@ -340,16 +340,16 @@ else()
   message(STATUS "Support for long double disabled by CMake option")
 endif()
 
-if (ENFORCE_LONG_DOUBLE AND NOT COMPILER_SUPPORTS_LONG_DOUBLE)
-  message(FATAL_ERROR "ENFORCE_LONG_DOUBLE is specified and that feature is disabled or not supported by the compiler")
+if (SLEEF_ENFORCE_LONG_DOUBLE AND NOT COMPILER_SUPPORTS_LONG_DOUBLE)
+  message(FATAL_ERROR "SLEEF_ENFORCE_LONG_DOUBLE is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # float128
 
-option(DISABLE_FLOAT128 "Disable float128" OFF)
-option(ENFORCE_FLOAT128 "Build fails if float128 is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_FLOAT128 "Disable float128" OFF)
+option(SLEEF_ENFORCE_FLOAT128 "Build fails if float128 is not supported by the compiler" OFF)
 
-if(NOT DISABLE_FLOAT128)
+if(NOT SLEEF_DISABLE_FLOAT128)
   CHECK_C_SOURCE_COMPILES("
   int main() { __float128 r = 1;
   }" COMPILER_SUPPORTS_FLOAT128)
@@ -357,16 +357,16 @@ else()
   message(STATUS "Support for float128 disabled by CMake option")
 endif()
 
-if (ENFORCE_FLOAT128 AND NOT COMPILER_SUPPORTS_FLOAT128)
-  message(FATAL_ERROR "ENFORCE_FLOAT128 is specified and that feature is disabled or not supported by the compiler")
+if (SLEEF_ENFORCE_FLOAT128 AND NOT COMPILER_SUPPORTS_FLOAT128)
+  message(FATAL_ERROR "SLEEF_ENFORCE_FLOAT128 is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # SSE2
 
-option(DISABLE_SSE2 "Disable SSE2" OFF)
-option(ENFORCE_SSE2 "Build fails if SSE2 is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_SSE2 "Disable SSE2" OFF)
+option(SLEEF_ENFORCE_SSE2 "Build fails if SSE2 is not supported by the compiler" OFF)
 
-if(SLEEF_ARCH_X86 AND NOT DISABLE_SSE2)
+if(SLEEF_ARCH_X86 AND NOT SLEEF_DISABLE_SSE2)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_SSE2}")
   CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
@@ -379,16 +379,16 @@ if(SLEEF_ARCH_X86 AND NOT DISABLE_SSE2)
     COMPILER_SUPPORTS_SSE2)
 endif()
 
-if (ENFORCE_SSE2 AND NOT COMPILER_SUPPORTS_SSE2)
-  message(FATAL_ERROR "ENFORCE_SSE2 is specified and that feature is disabled or not supported by the compiler")
+if (SLEEF_ENFORCE_SSE2 AND NOT COMPILER_SUPPORTS_SSE2)
+  message(FATAL_ERROR "SLEEF_ENFORCE_SSE2 is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # SSE 4.1
 
-option(DISABLE_SSE4 "Disable SSE4" OFF)
-option(ENFORCE_SSE4 "Build fails if SSE4 is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_SSE4 "Disable SSE4" OFF)
+option(SLEEF_ENFORCE_SSE4 "Build fails if SSE4 is not supported by the compiler" OFF)
 
-if(SLEEF_ARCH_X86 AND NOT DISABLE_SSE4)
+if(SLEEF_ARCH_X86 AND NOT SLEEF_DISABLE_SSE4)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_SSE4}")
   CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
@@ -401,16 +401,16 @@ if(SLEEF_ARCH_X86 AND NOT DISABLE_SSE4)
     COMPILER_SUPPORTS_SSE4)
 endif()
 
-if (ENFORCE_SSE4 AND NOT COMPILER_SUPPORTS_SSE4)
-  message(FATAL_ERROR "ENFORCE_SSE4 is specified and that feature is disabled or not supported by the compiler")
+if (SLEEF_ENFORCE_SSE4 AND NOT COMPILER_SUPPORTS_SSE4)
+  message(FATAL_ERROR "SLEEF_ENFORCE_SSE4 is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # AVX
 
-option(ENFORCE_AVX "Disable AVX" OFF)
-option(ENFORCE_AVX "Build fails if AVX is not supported by the compiler" OFF)
+option(SLEEF_ENFORCE_AVX "Disable AVX" OFF)
+option(SLEEF_ENFORCE_AVX "Build fails if AVX is not supported by the compiler" OFF)
 
-if(SLEEF_ARCH_X86 AND NOT DISABLE_AVX)
+if(SLEEF_ARCH_X86 AND NOT SLEEF_DISABLE_AVX)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_AVX}")
   CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
@@ -423,16 +423,16 @@ if(SLEEF_ARCH_X86 AND NOT DISABLE_AVX)
   }" COMPILER_SUPPORTS_AVX)
 endif()
 
-if (ENFORCE_AVX AND NOT COMPILER_SUPPORTS_AVX)
-  message(FATAL_ERROR "ENFORCE_AVX is specified and that feature is disabled or not supported by the compiler")
+if (SLEEF_ENFORCE_AVX AND NOT COMPILER_SUPPORTS_AVX)
+  message(FATAL_ERROR "SLEEF_ENFORCE_AVX is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # FMA4
 
-option(DISABLE_FMA4 "Disable FMA4" OFF)
-option(ENFORCE_FMA4 "Build fails if FMA4 is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_FMA4 "Disable FMA4" OFF)
+option(SLEEF_ENFORCE_FMA4 "Build fails if FMA4 is not supported by the compiler" OFF)
 
-if(SLEEF_ARCH_X86 AND NOT DISABLE_FMA4)
+if(SLEEF_ARCH_X86 AND NOT SLEEF_DISABLE_FMA4)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_FMA4}")
   CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
@@ -445,16 +445,16 @@ if(SLEEF_ARCH_X86 AND NOT DISABLE_FMA4)
     COMPILER_SUPPORTS_FMA4)
 endif()
 
-if (ENFORCE_FMA4 AND NOT COMPILER_SUPPORTS_FMA4)
-  message(FATAL_ERROR "ENFORCE_FMA4 is specified and that feature is disabled or not supported by the compiler")
+if (SLEEF_ENFORCE_FMA4 AND NOT COMPILER_SUPPORTS_FMA4)
+  message(FATAL_ERROR "SLEEF_ENFORCE_FMA4 is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # AVX2
 
-option(DISABLE_AVX2 "Disable AVX2" OFF)
-option(ENFORCE_AVX2 "Build fails if AVX2 is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_AVX2 "Disable AVX2" OFF)
+option(SLEEF_ENFORCE_AVX2 "Build fails if AVX2 is not supported by the compiler" OFF)
 
-if(SLEEF_ARCH_X86 AND NOT DISABLE_AVX2)
+if(SLEEF_ARCH_X86 AND NOT SLEEF_DISABLE_AVX2)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_AVX2}")
   CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
@@ -472,16 +472,16 @@ if(SLEEF_ARCH_X86 AND NOT DISABLE_AVX2)
   endif()
 endif()
 
-if (ENFORCE_AVX2 AND NOT COMPILER_SUPPORTS_AVX2)
-  message(FATAL_ERROR "ENFORCE_AVX2 is specified and that feature is disabled or not supported by the compiler")
+if (SLEEF_ENFORCE_AVX2 AND NOT COMPILER_SUPPORTS_AVX2)
+  message(FATAL_ERROR "SLEEF_ENFORCE_AVX2 is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # AVX512F
 
-option(DISABLE_AVX512F "Disable AVX512F" OFF)
-option(ENFORCE_AVX512F "Build fails if AVX512F is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_AVX512F "Disable AVX512F" OFF)
+option(SLEEF_ENFORCE_AVX512F "Build fails if AVX512F is not supported by the compiler" OFF)
 
-if(SLEEF_ARCH_X86 AND NOT DISABLE_AVX512F)
+if(SLEEF_ARCH_X86 AND NOT SLEEF_DISABLE_AVX512F)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_AVX512F}")
   CHECK_C_SOURCE_COMPILES("
   #if defined(_MSC_VER)
@@ -504,16 +504,16 @@ if(SLEEF_ARCH_X86 AND NOT DISABLE_AVX512F)
   endif()
 endif()
 
-if (ENFORCE_AVX512F AND NOT COMPILER_SUPPORTS_AVX512F)
-  message(FATAL_ERROR "ENFORCE_AVX512F is specified and that feature is disabled or not supported by the compiler")
+if (SLEEF_ENFORCE_AVX512F AND NOT COMPILER_SUPPORTS_AVX512F)
+  message(FATAL_ERROR "SLEEF_ENFORCE_AVX512F is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # SVE
 
-option(DISABLE_SVE "Disable SVE" OFF)
-option(ENFORCE_SVE "Build fails if SVE is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_SVE "Disable SVE" OFF)
+option(SLEEF_ENFORCE_SVE "Build fails if SVE is not supported by the compiler" OFF)
 
-if(SLEEF_ARCH_AARCH64 AND NOT DISABLE_SVE)
+if(SLEEF_ARCH_AARCH64 AND NOT SLEEF_DISABLE_SVE)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_SVE}")
   CHECK_C_SOURCE_COMPILES("
   #include <arm_sve.h>
@@ -526,16 +526,16 @@ if(SLEEF_ARCH_AARCH64 AND NOT DISABLE_SVE)
   endif()
 endif()
 
-if (ENFORCE_SVE AND NOT COMPILER_SUPPORTS_SVE)
-  message(FATAL_ERROR "ENFORCE_SVE is specified and that feature is disabled or not supported by the compiler")
+if (SLEEF_ENFORCE_SVE AND NOT COMPILER_SUPPORTS_SVE)
+  message(FATAL_ERROR "SLEEF_ENFORCE_SVE is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # VSX
 
-option(DISABLE_VSX "Disable VSX" OFF)
-option(ENFORCE_VSX "Build fails if VSX is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_VSX "Disable VSX" OFF)
+option(SLEEF_ENFORCE_VSX "Build fails if VSX is not supported by the compiler" OFF)
 
-if(SLEEF_ARCH_PPC64 AND NOT DISABLE_VSX)
+if(SLEEF_ARCH_PPC64 AND NOT SLEEF_DISABLE_VSX)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_VSX}")
   CHECK_C_SOURCE_COMPILES("
   #include <altivec.h>
@@ -556,16 +556,16 @@ if(SLEEF_ARCH_PPC64 AND NOT DISABLE_VSX)
   endif()
 endif()
 
-if (ENFORCE_VSX AND NOT COMPILER_SUPPORTS_VSX)
-  message(FATAL_ERROR "ENFORCE_VSX is specified and that feature is disabled or not supported by the compiler")
+if (SLEEF_ENFORCE_VSX AND NOT COMPILER_SUPPORTS_VSX)
+  message(FATAL_ERROR "SLEEF_ENFORCE_VSX is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # VSX3
 
-option(DISABLE_VSX3 "Disable VSX3" OFF)
-option(ENFORCE_VSX3 "Build fails if VSX3 is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_VSX3 "Disable VSX3" OFF)
+option(SLEEF_ENFORCE_VSX3 "Build fails if VSX3 is not supported by the compiler" OFF)
 
-if(SLEEF_ARCH_PPC64 AND NOT DISABLE_VSX3)
+if(SLEEF_ARCH_PPC64 AND NOT SLEEF_DISABLE_VSX3)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_VSX3}")
   CHECK_C_SOURCE_COMPILES("
   #include <altivec.h>
@@ -585,16 +585,16 @@ if(SLEEF_ARCH_PPC64 AND NOT DISABLE_VSX3)
   endif()
 endif()
 
-if (ENFORCE_VSX3 AND NOT COMPILER_SUPPORTS_VSX3)
-  message(FATAL_ERROR "ENFORCE_VSX3 is specified and that feature is disabled or not supported by the compiler")
+if (SLEEF_ENFORCE_VSX3 AND NOT COMPILER_SUPPORTS_VSX3)
+  message(FATAL_ERROR "SLEEF_ENFORCE_VSX3 is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # IBM Z
 
-option(DISABLE_VXE "Disable VXE" OFF)
-option(ENFORCE_VXE "Build fails if VXE is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_VXE "Disable VXE" OFF)
+option(SLEEF_ENFORCE_VXE "Build fails if VXE is not supported by the compiler" OFF)
 
-if(SLEEF_ARCH_S390X AND NOT DISABLE_VXE)
+if(SLEEF_ARCH_S390X AND NOT SLEEF_DISABLE_VXE)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_VXE}")
   CHECK_C_SOURCE_COMPILES("
   #include <vecintrin.h>
@@ -609,16 +609,16 @@ if(SLEEF_ARCH_S390X AND NOT DISABLE_VXE)
   endif()
 endif()
 
-if (ENFORCE_VXE AND NOT COMPILER_SUPPORTS_VXE)
-  message(FATAL_ERROR "ENFORCE_VXE is specified and that feature is disabled or not supported by the compiler")
+if (SLEEF_ENFORCE_VXE AND NOT COMPILER_SUPPORTS_VXE)
+  message(FATAL_ERROR "SLEEF_ENFORCE_VXE is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 #
 
-option(DISABLE_VXE2 "Disable VXE2" OFF)
-option(ENFORCE_VXE2 "Build fails if VXE2 is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_VXE2 "Disable VXE2" OFF)
+option(SLEEF_ENFORCE_VXE2 "Build fails if VXE2 is not supported by the compiler" OFF)
 
-if(SLEEF_ARCH_S390X AND NOT DISABLE_VXE2)
+if(SLEEF_ARCH_S390X AND NOT SLEEF_DISABLE_VXE2)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_VXE2}")
   CHECK_C_SOURCE_COMPILES("
   #include <vecintrin.h>
@@ -633,16 +633,16 @@ if(SLEEF_ARCH_S390X AND NOT DISABLE_VXE2)
   endif()
 endif()
 
-if (ENFORCE_VXE2 AND NOT COMPILER_SUPPORTS_VXE2)
-  message(FATAL_ERROR "ENFORCE_VXE2 is specified and that feature is disabled or not supported by the compiler")
+if (SLEEF_ENFORCE_VXE2 AND NOT COMPILER_SUPPORTS_VXE2)
+  message(FATAL_ERROR "SLEEF_ENFORCE_VXE2 is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # RVVM1
 
-option(DISABLE_RVVM1 "Disable RVVM1" OFF)
-option(ENFORCE_RVVM1 "Build fails if RVVM1 is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_RVVM1 "Disable RVVM1" OFF)
+option(SLEEF_ENFORCE_RVVM1 "Build fails if RVVM1 is not supported by the compiler" OFF)
 
-if(SLEEF_ARCH_RISCV64 AND NOT DISABLE_RVVM1)
+if(SLEEF_ARCH_RISCV64 AND NOT SLEEF_DISABLE_RVVM1)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_RVVM1}")
   CHECK_C_SOURCE_COMPILES("
   #include <riscv_vector.h>
@@ -655,16 +655,16 @@ if(SLEEF_ARCH_RISCV64 AND NOT DISABLE_RVVM1)
   endif()
 endif()
 
-if (ENFORCE_RVVM1 AND NOT COMPILER_SUPPORTS_RVVM1)
-  message(FATAL_ERROR "ENFORCE_RVVM1 is specified and that feature is disabled or not supported by the compiler")
+if (SLEEF_ENFORCE_RVVM1 AND NOT COMPILER_SUPPORTS_RVVM1)
+  message(FATAL_ERROR "SLEEF_ENFORCE_RVVM1 is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # RVVM2
 
-option(DISABLE_RVVM2 "Disable RVVM2" OFF)
-option(ENFORCE_RVVM2 "Build fails if RVVM2 is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_RVVM2 "Disable RVVM2" OFF)
+option(SLEEF_ENFORCE_RVVM2 "Build fails if RVVM2 is not supported by the compiler" OFF)
 
-if(SLEEF_ARCH_RISCV64 AND NOT DISABLE_RVVM2)
+if(SLEEF_ARCH_RISCV64 AND NOT SLEEF_DISABLE_RVVM2)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_RVVM2}")
   CHECK_C_SOURCE_COMPILES("
   #include <riscv_vector.h>
@@ -677,24 +677,24 @@ if(SLEEF_ARCH_RISCV64 AND NOT DISABLE_RVVM2)
   endif()
 endif()
 
-if (ENFORCE_RVVM2 AND NOT COMPILER_SUPPORTS_RVVM2)
-  message(FATAL_ERROR "ENFORCE_RVVM2 is specified and that feature is disabled or not supported by the compiler")
+if (SLEEF_ENFORCE_RVVM2 AND NOT COMPILER_SUPPORTS_RVVM2)
+  message(FATAL_ERROR "SLEEF_ENFORCE_RVVM2 is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # CUDA
 
-option(ENFORCE_CUDA "Build fails if CUDA is not supported" OFF)
+option(SLEEF_ENFORCE_CUDA "Build fails if CUDA is not supported" OFF)
 
-if (ENFORCE_CUDA AND NOT CMAKE_CUDA_COMPILER)
-  message(FATAL_ERROR "ENFORCE_CUDA is specified and that feature is disabled or not supported by the compiler")
+if (SLEEF_ENFORCE_CUDA AND NOT CMAKE_CUDA_COMPILER)
+  message(FATAL_ERROR "SLEEF_ENFORCE_CUDA is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # OpenMP
 
-option(DISABLE_OPENMP "Disable OPENMP" OFF)
-option(ENFORCE_OPENMP "Build fails if OPENMP is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_OPENMP "Disable OPENMP" OFF)
+option(SLEEF_ENFORCE_OPENMP "Build fails if OPENMP is not supported by the compiler" OFF)
 
-if(NOT DISABLE_OPENMP)
+if(NOT SLEEF_DISABLE_OPENMP)
   find_package(OpenMP)
   # Check if compilation with OpenMP really succeeds
   # It might not succeed even though find_package(OpenMP) succeeds.
@@ -724,8 +724,8 @@ else()
   message(STATUS "Support for OpenMP disabled by CMake option")
 endif()
 
-if (ENFORCE_OPENMP AND NOT COMPILER_SUPPORTS_OPENMP)
-  message(FATAL_ERROR "ENFORCE_OPENMP is specified and that feature is disabled or not supported by the compiler")
+if (SLEEF_ENFORCE_OPENMP AND NOT COMPILER_SUPPORTS_OPENMP)
+  message(FATAL_ERROR "SLEEF_ENFORCE_OPENMP is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # Weak aliases
@@ -748,7 +748,7 @@ if (COMPILER_SUPPORTS_WEAK_ALIASES AND
     NOT CMAKE_SYSTEM_PROCESSOR MATCHES "arm" AND
     NOT CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64" AND
     NOT SLEEF_CLANG_ON_WINDOWS AND
-    NOT MINGW AND BUILD_GNUABI_LIBS)
+    NOT MINGW AND SLEEF_BUILD_GNUABI_LIBS)
   set(ENABLE_GNUABI ${COMPILER_SUPPORTS_WEAK_ALIASES})
 endif()
 

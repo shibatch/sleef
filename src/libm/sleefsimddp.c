@@ -15,7 +15,7 @@
 #include "quaddef.h"
 #include "misc.h"
 
-#ifndef ENABLE_CUDA
+#ifndef SLEEF_ENABLE_CUDA
 extern const double Sleef_rempitabdp[];
 #endif
 
@@ -308,7 +308,7 @@ extern const double Sleef_rempitabdp[];
 #endif
 #endif
 
-#ifdef ENABLE_CUDA
+#ifdef SLEEF_ENABLE_CUDA
 #define CONFIG 3
 #include "helperpurec_scalar.h"
 #ifdef DORENAME

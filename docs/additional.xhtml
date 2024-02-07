@@ -240,7 +240,7 @@ source files.)  This can sometimes dramatically improve the
 performance of the code, because it is capable of fusing library
 functions into the code calling those functions. The build system in
 SLEEF supports LTO and thus it can be built with LTO support by just
-specifying <b>-DENABLE_LTO=TRUE</b> cmake option. However, there are a
+specifying <b>-DSLEEF_ENABLE_LTO=TRUE</b> cmake option. However, there are a
 few things to note in order to get the optimal performance. 1. You
 should not use the dispatcher with LTO. Dispatchers prevent the
 functions from being fused with LTO. 2. You have to use the same
@@ -260,7 +260,7 @@ can generate header files in which the library functions are all
 defined as inline functions. This can be compiled with old compilers.
 In theory, inline functions should give similar performance to LTO,
 but in reality, inline functions are better. In order to generate
-those header files, specify <b>-DBUILD_INLINE_HEADERS=TRUE</b> cmake
+those header files, specify <b>-DSLEEF_BUILD_INLINE_HEADERS=TRUE</b> cmake
 option. Below is an example code utilizing the generated header files
 for SSE2 and AVX2. You cannot use a dispatcher with these header
 files.
