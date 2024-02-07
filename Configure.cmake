@@ -639,10 +639,10 @@ endif()
 
 # RVVM1
 
-option(DISABLE_RVVM1 "Disable RVVM1" OFF)
-option(ENFORCE_RVVM1 "Build fails if RVVM1 is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_RVVM1 "Disable RVVM1" OFF)
+option(SLEEF_ENFORCE_RVVM1 "Build fails if RVVM1 is not supported by the compiler" OFF)
 
-if(SLEEF_ARCH_RISCV64 AND NOT DISABLE_RVVM1)
+if(SLEEF_ARCH_RISCV64 AND NOT SLEEF_DISABLE_RVVM1)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_RVVM1}")
   CHECK_C_SOURCE_COMPILES("
   #include <riscv_vector.h>
@@ -655,16 +655,16 @@ if(SLEEF_ARCH_RISCV64 AND NOT DISABLE_RVVM1)
   endif()
 endif()
 
-if (ENFORCE_RVVM1 AND NOT COMPILER_SUPPORTS_RVVM1)
-  message(FATAL_ERROR "ENFORCE_RVVM1 is specified and that feature is disabled or not supported by the compiler")
+if (SLEEF_ENFORCE_RVVM1 AND NOT COMPILER_SUPPORTS_RVVM1)
+  message(FATAL_ERROR "SLEEF_ENFORCE_RVVM1 is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # RVVM2
 
-option(DISABLE_RVVM2 "Disable RVVM2" OFF)
-option(ENFORCE_RVVM2 "Build fails if RVVM2 is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_RVVM2 "Disable RVVM2" OFF)
+option(SLEEF_ENFORCE_RVVM2 "Build fails if RVVM2 is not supported by the compiler" OFF)
 
-if(SLEEF_ARCH_RISCV64 AND NOT DISABLE_RVVM2)
+if(SLEEF_ARCH_RISCV64 AND NOT SLEEF_DISABLE_RVVM2)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_RVVM2}")
   CHECK_C_SOURCE_COMPILES("
   #include <riscv_vector.h>
@@ -677,16 +677,16 @@ if(SLEEF_ARCH_RISCV64 AND NOT DISABLE_RVVM2)
   endif()
 endif()
 
-if (ENFORCE_RVVM2 AND NOT COMPILER_SUPPORTS_RVVM2)
-  message(FATAL_ERROR "ENFORCE_RVVM2 is specified and that feature is disabled or not supported by the compiler")
+if (SLEEF_ENFORCE_RVVM2 AND NOT COMPILER_SUPPORTS_RVVM2)
+  message(FATAL_ERROR "SLEEF_ENFORCE_RVVM2 is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # CUDA
 
-option(ENFORCE_CUDA "Build fails if CUDA is not supported" OFF)
+option(SLEEF_ENFORCE_CUDA "Build fails if CUDA is not supported" OFF)
 
-if (ENFORCE_CUDA AND NOT CMAKE_CUDA_COMPILER)
-  message(FATAL_ERROR "ENFORCE_CUDA is specified and that feature is disabled or not supported by the compiler")
+if (SLEEF_ENFORCE_CUDA AND NOT CMAKE_CUDA_COMPILER)
+  message(FATAL_ERROR "SLEEF_ENFORCE_CUDA is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # OpenMP
