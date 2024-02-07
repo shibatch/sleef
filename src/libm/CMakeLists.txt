@@ -348,7 +348,7 @@ set(COMMON_TARGET_PROPERTIES
   C_STANDARD 99                  # -std=gnu99
   )
 
-if (BUILD_SHARED_LIBS)
+if (SLEEF_BUILD_SHARED_LIBS)
   list(APPEND COMMON_TARGET_PROPERTIES POSITION_INDEPENDENT_CODE ON)   # -fPIC
 endif()
 
@@ -359,7 +359,12 @@ endif()
 # Original sleef sources
 set(STANDARD_SOURCES rempitab.c)
 
-add_library(${TARGET_LIBSLEEF} ${STANDARD_SOURCES})
+if(SLEEF_BUILD_SHARED_LIBS)
+  add_library(${TARGET_LIBSLEEF} SHARED ${STANDARD_SOURCES})
+else()
+  add_library(${TARGET_LIBSLEEF} STATIC ${STANDARD_SOURCES})
+endif()
+
 add_dependencies(${TARGET_LIBSLEEF} ${TARGET_HEADERS})
 set_target_properties(${TARGET_LIBSLEEF} PROPERTIES
   VERSION ${SLEEF_VERSION}
@@ -884,7 +889,11 @@ if(ENABLE_GNUABI)
   endforeach()
 
   # Create library 
-  add_library(${TARGET_LIBSLEEFGNUABI} ${TARGET_LIBSLEEFGNUABI_OBJECTS} rempitab.c)
+  if(SLEEF_BUILD_SHARED_LIBS)
+    add_library(${TARGET_LIBSLEEFGNUABI} SHARED ${TARGET_LIBSLEEFGNUABI_OBJECTS} rempitab.c)
+  else()
+    add_library(${TARGET_LIBSLEEFGNUABI} STATIC ${TARGET_LIBSLEEFGNUABI_OBJECTS} rempitab.c)
+  endif()
   
   # Library properties
   set_target_properties(${TARGET_LIBSLEEFGNUABI} PROPERTIES
@@ -973,7 +982,11 @@ endif()
 # --------------------------------------------------------------------
 # Build scalar-only library from sleefdp.c and sleefsp.c
 
-add_library(sleefscalar sleefdp.c sleefsp.c rempitab.c)
+if(SLEEF_BUILD_SHARED_LIBS)
+  add_library(sleefscalar SHARED sleefdp.c sleefsp.c rempitab.c)
+else()
+  add_library(sleefscalar STATIC sleefdp.c sleefsp.c rempitab.c)
+endif()
 add_dependencies(sleefscalar ${TARGET_HEADERS})
 set_target_properties(sleefscalar PROPERTIES
   VERSION ${SLEEF_VERSION}
@@ -1005,15 +1018,6 @@ if(SLEEF_BUILD_SCALAR_LIB)
       DESTINATION "${CMAKE_INSTALL_BINDIR}"
       COMPONENT sleef_Runtime
   )
-
-  install(
-      TARGETS sleefscalar
-      DESTINATION dummy # provided above already
-      LIBRARY #
-      DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-      COMPONENT sleef_Development
-      NAMELINK_ONLY
-  )
 endif()
 
 # --------------------------------------------------------------------
@@ -1039,14 +1043,6 @@ install(
     INCLUDES #
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
 )
-install(
-    TARGETS ${TARGET_LIBSLEEF}
-    DESTINATION dummy # provided above already
-    LIBRARY #
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-    COMPONENT sleef_Development
-    NAMELINK_ONLY
-)
 configure_file("sleef.pc.in" "${CMAKE_CURRENT_BINARY_DIR}/sleef.pc" @ONLY)
 install(
     FILES "${CMAKE_CURRENT_BINARY_DIR}/sleef.pc"
@@ -1068,14 +1064,5 @@ if(ENABLE_GNUABI)
       RUNTIME #
       DESTINATION "${CMAKE_INSTALL_BINDIR}"
       COMPONENT sleef_Runtime
-  )
-
-  install(
-      TARGETS ${TARGET_LIBSLEEF}
-      DESTINATION dummy # provided above already
-      LIBRARY #
-      DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-      COMPONENT sleef_Development
-      NAMELINK_ONLY
   )
 endif()

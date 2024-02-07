@@ -100,7 +100,7 @@ if(COMPILER_SUPPORTS_BUILTIN_MATH)
   list(APPEND COMMON_TARGET_DEFINITIONS ENABLE_BUILTIN_MATH=1)
 endif()
 
-if (BUILD_SHARED_LIBS)
+if (SLEEF_BUILD_SHARED_LIBS)
   list(APPEND COMMON_TARGET_PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif()
 
@@ -202,7 +202,11 @@ foreach(SIMD ${SLEEF_SUPPORTED_QUAD_EXTENSIONS})
   endif()
 endforeach()
 
-add_library(sleefquad rempitabqp.c ${SLEEFQUAD_OBJECTS})
+if(SLEEF_BUILD_SHARED_LIBS)
+  add_library(sleefquad SHARED rempitabqp.c ${SLEEFQUAD_OBJECTS})
+else()
+  add_library(sleefquad STATIC rempitabqp.c ${SLEEFQUAD_OBJECTS})
+endif()
 
 set_target_properties(sleefquad PROPERTIES
   VERSION ${SLEEF_VERSION}
@@ -489,13 +493,4 @@ install(
     COMPONENT sleef_Runtime
     INCLUDES #
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-)
-
-install(
-    TARGETS sleefquad
-    DESTINATION dummy # provided above already
-    LIBRARY #
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-    COMPONENT sleef_Development
-    NAMELINK_ONLY
 )

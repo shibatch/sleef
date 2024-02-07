@@ -174,7 +174,7 @@ set(COMMON_TARGET_PROPERTIES
   C_STANDARD 99                  # -std=gnu99
   )
 
-if (BUILD_SHARED_LIBS)
+if (SLEEF_BUILD_SHARED_LIBS)
   list(APPEND COMMON_TARGET_PROPERTIES POSITION_INDEPENDENT_CODE ON)   # -fPIC
 endif()
 
@@ -323,8 +323,11 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
 endforeach()
 
 # Target libdft
-
-add_library(${TARGET_LIBDFT} $<TARGET_OBJECTS:dftcommon_obj> $<TARGET_OBJECTS:${TARGET_LIBARRAYMAP_OBJ}>)
+if(SLEEF_BUILD_SHARED_LIBS)
+  add_library(${TARGET_LIBDFT} SHARED $<TARGET_OBJECTS:dftcommon_obj> $<TARGET_OBJECTS:${TARGET_LIBARRAYMAP_OBJ}>)
+else()
+  add_library(${TARGET_LIBDFT} STATIC $<TARGET_OBJECTS:dftcommon_obj> $<TARGET_OBJECTS:${TARGET_LIBARRAYMAP_OBJ}>)
+endif()
 target_link_libraries(${TARGET_LIBDFT} ${TARGET_LIBSLEEF} ${LIBM})
 
 foreach(T ${LIST_SUPPORTED_FPTYPE})
@@ -372,13 +375,4 @@ install(
     COMPONENT sleef_Runtime
     INCLUDES #
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
-)
-
-install(
-    TARGETS ${TARGET_LIBDFT}
-    DESTINATION dummy # provided above already
-    LIBRARY #
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-    COMPONENT sleef_Development
-    NAMELINK_ONLY
 )

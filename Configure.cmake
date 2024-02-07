@@ -7,7 +7,7 @@ include(CheckLanguage)
 
 if (SLEEF_BUILD_STATIC_TEST_BINS)
   set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-  set(BUILD_SHARED_LIBS OFF)
+  set(SLEEF_BUILD_SHARED_LIBS OFF)
   set(CMAKE_EXE_LINKER_FLAGS "-static")
 endif()
 
@@ -834,7 +834,7 @@ endif()
 
 # Set common definitions
 
-if (NOT BUILD_SHARED_LIBS)
+if (NOT SLEEF_BUILD_SHARED_LIBS)
   set(COMMON_TARGET_DEFINITIONS SLEEF_STATIC_LIBS=1)
   set(SLEEF_STATIC_LIBS 1)
 endif()
