@@ -513,7 +513,9 @@ endif()
 option(SLEEF_DISABLE_SVE "Disable SVE" OFF)
 option(SLEEF_ENFORCE_SVE "Build fails if SVE is not supported by the compiler" OFF)
 
-if(SLEEF_ARCH_AARCH64 AND NOT SLEEF_DISABLE_SVE)
+# Darwin does not support SVE yet (see issue #474),
+# therefore we disable SVE on Darwin systems.
+if(SLEEF_ARCH_AARCH64 AND NOT SLEEF_DISABLE_SVE AND NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_SVE}")
   CHECK_C_SOURCE_COMPILES("
   #include <arm_sve.h>
