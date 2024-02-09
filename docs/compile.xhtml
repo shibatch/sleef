@@ -62,7 +62,7 @@ the <a class="underlined" href="https://gitlab.kitware.com/cmake/community/-/wik
 introductions in the wiki</a>.
 </p>
 
-<h3>Quick start</h3>
+<h2>Quick start</h2>
 
 <p class="noindent">
 You will find quick start instructions in the sources or via GitHub in the
@@ -80,12 +80,11 @@ file.
   following commands.
 
   <pre class="command">$ sudo apt-get install libmpfr-dev libssl-dev libfftw3-dev
-$ mkdir build
-$ cd build
-$ cmake -DCMAKE_INSTALL_PREFIX=/usr ..
-$ make
-$ make test
-$ sudo make install</pre>
+$ cmake -S . -B build/ ..
+$ cmake --build build/ --clean-first -j
+$ ctest --test-dir build/ -j
+$ sudo cmake --install build/ --prefix /path/to/install/dir
+  </pre>
 </p>
 
 <br/>
@@ -163,10 +162,8 @@ D:\sleef-3.X\build> cmake --build . --config Release -- /maxcpucount:1</pre>
 </p>
 
 <pre class="command">D:\sleef-3.X> "c:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
-D:\sleef-3.X> mkdir build
-D:\sleef-3.X> cd build
-D:\sleef-3.X\build> cmake -GNinja -DCMAKE_C_COMPILER:PATH="C:\Program Files\LLVM\bin\clang.exe" ..
-D:\sleef-3.X\build> ninja</pre>
+D:\sleef-3.X> cmake -S . -B build -GNinja -DCMAKE_C_COMPILER:PATH="C:\Program Files\LLVM\bin\clang.exe" ..
+D:\sleef-3.X> cmake --build build --clean-first</pre>
 
 
 <h2 id="hello">Compiling and running "Hello SLEEF"</h2>
@@ -303,9 +300,8 @@ $ cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=/opt/android-ndk-r21d/build/cmake/android
 $ ninja
 </pre>
 
-
 <p class="footer">
-  Copyright &copy; 2021 SLEEF Project.<br/>
+  Copyright &copy; 2010-2024 SLEEF Project, Naoki Shibata and contributors.<br/>
   SLEEF is open-source software and is distributed under the Boost Software License, Version 1.0.
 </p>
 
