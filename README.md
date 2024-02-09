@@ -107,6 +107,10 @@ Only Linux distributions are currently tested in CI and thus officially supporte
 
 Building SLEEF for MacOS and Windows on x86 machines was officially supported ( :white_circle: ), as of 3.5.1, however it is not currently tested.
 
+Support for MacOS, iOS and Android is only preliminary on AArch64.
+
+SVE is not supported on Darwin-based system and therefore automatically disabled by SLEEF on Darwin.
+
 ### More on supported environment
 
 Refer to our web page for [more on supported environment][supported_env_url].
@@ -178,6 +182,14 @@ SLEEF can also be directly installed using Spack.
 
 ```
 spack install sleef@master
+```
+
+### Uninstall
+
+In order to uninstall SLEEF, run
+
+```
+sudo xargs rm -v &lt; install_manifest.txt
 ```
 
 ## License
