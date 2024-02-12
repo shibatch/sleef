@@ -972,25 +972,24 @@ endif()
 # TARGET_LIBSLEEFSCALAR
 # --------------------------------------------------------------------
 # Build scalar-only library from sleefdp.c and sleefsp.c
-
-add_library(sleefscalar sleefdp.c sleefsp.c rempitab.c)
-add_dependencies(sleefscalar ${TARGET_HEADERS})
-set_target_properties(sleefscalar PROPERTIES
-  VERSION ${SLEEF_VERSION}
-  SOVERSION ${SLEEF_SOVERSION}
-  PUBLIC_HEADER ${SLEEF_INCLUDE_HEADER}
-  ${COMMON_TARGET_PROPERTIES}
-)
-
-target_compile_definitions(sleefscalar
-  PRIVATE DORENAME=1 ${COMMON_TARGET_DEFINITIONS}
-)
-
-if(COMPILER_SUPPORTS_BUILTIN_MATH)
-  target_compile_definitions(sleefscalar PRIVATE ENABLE_BUILTIN_MATH=1)
-endif()
-
 if(SLEEF_BUILD_SCALAR_LIB)
+  add_library(sleefscalar sleefdp.c sleefsp.c rempitab.c)
+  add_dependencies(sleefscalar ${TARGET_HEADERS})
+  set_target_properties(sleefscalar PROPERTIES
+    VERSION ${SLEEF_VERSION}
+    SOVERSION ${SLEEF_SOVERSION}
+    PUBLIC_HEADER ${SLEEF_INCLUDE_HEADER}
+    ${COMMON_TARGET_PROPERTIES}
+  )
+
+  target_compile_definitions(sleefscalar
+    PRIVATE DORENAME=1 ${COMMON_TARGET_DEFINITIONS}
+  )
+
+  if(COMPILER_SUPPORTS_BUILTIN_MATH)
+    target_compile_definitions(sleefscalar PRIVATE ENABLE_BUILTIN_MATH=1)
+  endif()
+
   install(
       TARGETS sleefscalar
       EXPORT sleefTargets
