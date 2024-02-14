@@ -1,3 +1,37 @@
+## 3.6 - 2024-02-14
+
+This release follows a long period of inactivity. The library is now
+being actively maintained. However, the support and test for some
+features is currently limited, as documented in [README](./README.md).
+
+### Added
+- Add documentation for the quad precision math library
+- Enable generation of inline header file for CUDA (PR #337)
+- Add support for System/390 z15 support (PR #343)
+- Add support for POWER 9 (PR #360)
+- Add quad-precision functions (PR #375, #377, #380, #381, #382, #383,
+  #385, #386, #387)
+- Add preliminary support for iOS and Android (PR #388, #389)
+- Add OpenMP pragmas to the function declarations in sleef.h to enable
+  auto-vectorization by GCC (PR #404, #406)
+- Add new public CI test infrastructure using GitHub Actions (PR #476)
+- Add support for RISC-V in libm (PR #477)
+
+### Removed
+- Remove old CI scripts based on Travis/Jenkins/Appveyor (PR #502)
+
+### Changed
+- Optimise error functions (PR #370)
+- Update CMake package config (PR #412)
+- Update documentation and move doc/website to main repository (PR #504,
+  #513)
+- Add SLEEF_ prefix to user-facing CMake options (PR #509)
+- Disable SVE on Darwin (PR #512)
+
+### Fixed
+- Fix parallel builds with GNU make (PR #491)
+- Various bug fixes (PR #492, #499, #508)
+
 ## 3.5.1 - 2020-09-15
 ### Changed
 - Fixed a bug in handling compiler options
