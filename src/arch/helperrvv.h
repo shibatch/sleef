@@ -56,43 +56,6 @@ static INLINE int vavailability_i(int name) { return -1; }
 // RISC-V Vector Types
 ////////////////////////////////////////////////////////////////////////////////
 
-// About the RISC-V Vector type translations:
-//
-// Because the single- and double-precision versions of the RVV port have
-// conflicting definitions of the vmask and vopmask types, they can only
-// be defined for at most one precision level in a single translation unit.
-// Any functions that use vmask or vopmask types are thus enabled only by the
-// corresponding ENABLE_RVV_SP or ENABLE_RVV_DP macro guards.
-#if defined(ENABLE_RVV_SP) && defined(ENABLE_RVV_DP)
-#error Cannot simultaneously define ENABLE_RVV_SP and ENABLE_RVV_DP
-#endif
-
-#ifdef ENABLE_RVV_SP
-// Types that conflict with ENABLE_RVV_DP
-#if defined(ENABLE_RVVM1) || defined(ENABLE_RVVM1NOFMA)
-typedef vuint64m2_t vmask;
-typedef vbool32_t vopmask;
-#elif defined(ENABLE_RVVM2) || defined(ENABLE_RVVM2NOFMA)
-typedef vuint64m4_t vmask;
-typedef vbool16_t vopmask;
-#else
-#error "unknown rvv lmul"
-#endif
-#endif
-
-#ifdef ENABLE_RVV_DP
-// Types that conflict with ENABLE_RVV_SP
-#if defined(ENABLE_RVVM1) || defined(ENABLE_RVVM1NOFMA)
-typedef vuint64m1_t vmask;
-typedef vbool64_t vopmask;
-#elif defined(ENABLE_RVVM2) || defined(ENABLE_RVVM2NOFMA)
-typedef vuint64m2_t vmask;
-typedef vbool32_t vopmask;
-#else
-#error "unknown rvv lmul"
-#endif
-#endif
-
 // LMUL-Dependent Type & Macro Definitions:
 //
 // Some SLEEF types are multi-value structs. RVV vectors have unknown length at
@@ -102,6 +65,11 @@ typedef vbool32_t vopmask;
 // requires LMUL=8 if the base type (vfloat or vdouble) has LMUL=2, meaning
 // LMUL=2 is currently the widest option for SLEEF function argument types.
 #if defined(ENABLE_RVVM1) || defined(ENABLE_RVVM1NOFMA)
+
+typedef vuint32m1_t rvv_vmask32;
+typedef vuint64m1_t vmask;
+typedef vbool32_t rvv_sp_vopmask;
+typedef vbool64_t rvv_dp_vopmask;
 
 typedef vint32mf2_t vint;
 typedef vfloat64m1_t vdouble;
@@ -126,7 +94,7 @@ typedef vint32m4_t dfi_t;
 #define SLEEF_RVV_SP_VCAST_VU2_U __riscv_vmv_v_x_u32m1
 #define SLEEF_RVV_SP_VREINTERPRET_VF __riscv_vreinterpret_f32m1
 #define SLEEF_RVV_SP_VREINTERPRET_VF2 __riscv_vreinterpret_f32m2
-#define SLEEF_RVV_SP_VREINTERPRET_VM __riscv_vreinterpret_u64m2
+#define SLEEF_RVV_SP_VREINTERPRET_VM __riscv_vreinterpret_u32m1
 #define SLEEF_RVV_SP_VREINTERPRET_VI2 __riscv_vreinterpret_i32m1
 #define SLEEF_RVV_SP_VREINTERPRET_2VI __riscv_vreinterpret_i32m2
 #define SLEEF_RVV_SP_VREINTERPRET_4VI __riscv_vreinterpret_i32m4
@@ -141,7 +109,6 @@ typedef vint32m4_t dfi_t;
 #define SLEEF_RVV_SP_LOAD_VF __riscv_vle32_v_f32m1
 #define SLEEF_RVV_SP_LOAD_VI2 __riscv_vle32_v_i32m1
 #define SLEEF_RVV_SP_VCAST_VM_U __riscv_vmv_v_x_u64m2
-#define SLEEF_RVV_SP_VREINTERPRET_VM __riscv_vreinterpret_u64m2
 #define SLEEF_RVV_SP_VREINTERPRET_VI64 __riscv_vreinterpret_i64m2
 #define SLEEF_RVV_SP_VREINTERPRET_VU __riscv_vreinterpret_u32m1
 #define SLEEF_RVV_SP_LOAD_VI __riscv_vle32_v_i32m1
@@ -164,6 +131,7 @@ typedef vint32m4_t dfi_t;
 #define SLEEF_RVV_DP_VREINTERPRET_8VI_4VD(x) \
   __riscv_vreinterpret_v_i64m4_i32m4(__riscv_vreinterpret_i64m4(x))
 #define SLEEF_RVV_DP_VREINTERPRET_VM __riscv_vreinterpret_u64m1
+#define SLEEF_RVV_DP_VREINTERPRET_VM_SIGNED __riscv_vreinterpret_i64m1
 #define SLEEF_RVV_DP_VREINTERPRET_VI64 __riscv_vreinterpret_i64m1
 #define SLEEF_RVV_DP_VREINTERPRET_VU64 __riscv_vreinterpret_u64m1
 #define SLEEF_RVV_DP_VREINTERPRET_VI __riscv_vreinterpret_i32mf2
@@ -192,6 +160,11 @@ typedef vint32m4_t dfi_t;
 
 #elif defined(ENABLE_RVVM2) || defined(ENABLE_RVVM2NOFMA)
 
+typedef vuint32m2_t rvv_vmask32;
+typedef vuint64m2_t vmask;
+typedef vbool16_t rvv_sp_vopmask;
+typedef vbool32_t rvv_dp_vopmask;
+
 typedef vint32m1_t vint;
 typedef vfloat64m2_t vdouble;
 typedef vfloat64m4_t vdouble2;
@@ -215,7 +188,7 @@ typedef vint32m8_t dfi_t;
 #define SLEEF_RVV_SP_VCAST_VU2_U __riscv_vmv_v_x_u32m2
 #define SLEEF_RVV_SP_VREINTERPRET_VF __riscv_vreinterpret_f32m2
 #define SLEEF_RVV_SP_VREINTERPRET_VF2 __riscv_vreinterpret_f32m4
-#define SLEEF_RVV_SP_VREINTERPRET_VM __riscv_vreinterpret_u64m4
+#define SLEEF_RVV_SP_VREINTERPRET_VM __riscv_vreinterpret_u32m2
 #define SLEEF_RVV_SP_VREINTERPRET_VI2 __riscv_vreinterpret_i32m2
 #define SLEEF_RVV_SP_VREINTERPRET_2VI __riscv_vreinterpret_i32m4
 #define SLEEF_RVV_SP_VREINTERPRET_4VI __riscv_vreinterpret_i32m8
@@ -230,7 +203,6 @@ typedef vint32m8_t dfi_t;
 #define SLEEF_RVV_SP_LOAD_VF __riscv_vle32_v_f32m2
 #define SLEEF_RVV_SP_LOAD_VI2 __riscv_vle32_v_i32m2
 #define SLEEF_RVV_SP_VCAST_VM_U __riscv_vmv_v_x_u64m4
-#define SLEEF_RVV_SP_VREINTERPRET_VM __riscv_vreinterpret_u64m4
 #define SLEEF_RVV_SP_VREINTERPRET_VI64 __riscv_vreinterpret_i64m4
 #define SLEEF_RVV_SP_VREINTERPRET_VU __riscv_vreinterpret_u32m2
 #define SLEEF_RVV_SP_LOAD_VI __riscv_vle32_v_i32m2
@@ -253,6 +225,7 @@ typedef vint32m8_t dfi_t;
 #define SLEEF_RVV_DP_VREINTERPRET_8VI_4VD(x) \
   __riscv_vreinterpret_v_i64m8_i32m8(__riscv_vreinterpret_i64m8(x))
 #define SLEEF_RVV_DP_VREINTERPRET_VM __riscv_vreinterpret_u64m2
+#define SLEEF_RVV_DP_VREINTERPRET_VM_SIGNED __riscv_vreinterpret_i64m2
 #define SLEEF_RVV_DP_VREINTERPRET_VI64 __riscv_vreinterpret_i64m2
 #define SLEEF_RVV_DP_VREINTERPRET_VU64 __riscv_vreinterpret_u64m2
 #define SLEEF_RVV_DP_VREINTERPRET_VI __riscv_vreinterpret_i32m1
@@ -516,106 +489,93 @@ static INLINE vint2 vsrl_vi2_vi2_i(vint2 x, int c) {
   return SLEEF_RVV_SP_VREINTERPRET_VI2(__riscv_vsrl(SLEEF_RVV_SP_VREINTERPRET_VU2(x), c, VECTLENSP));
 }
 
-#ifdef ENABLE_RVV_SP
 /****************************************/
 /* Bitmask Operations                   */
 /****************************************/
 static INLINE vfloat vreinterpret_vf_vm(vmask vm) {
-  return SLEEF_RVV_SP_VREINTERPRET_VF(__riscv_vncvt_x(vm, VECTLENSP));
+  return SLEEF_RVV_SP_VREINTERPRET_VF(SLEEF_RVV_SP_VREINTERPRET_VM(vm));
 }
 static INLINE vmask vreinterpret_vm_vf(vfloat vf) {
-  return __riscv_vwcvtu_x(SLEEF_RVV_SP_VREINTERPRET_VU(vf), VECTLENSP);
+  return SLEEF_RVV_DP_VREINTERPRET_VM(SLEEF_RVV_SP_VREINTERPRET_VM(vf));
 }
-static INLINE int vtestallones_i_vo32(vopmask g) {
+static INLINE int vtestallones_i_vo32(rvv_sp_vopmask g) {
   return __riscv_vcpop(g, VECTLENSP) == VECTLENSP;
 }
-static INLINE vmask vcast_vm_i_i(int64_t h, int64_t l) {
-  return SLEEF_RVV_SP_VCAST_VM_U((((uint64_t)h) << 32) | (uint32_t) l, VECTLENSP);
+static INLINE vmask vor_vm_vo32_vm(rvv_sp_vopmask x, vmask y) {
+  rvv_vmask32 y32 = SLEEF_RVV_SP_VREINTERPRET_VM(y);
+  return SLEEF_RVV_DP_VREINTERPRET_VM(__riscv_vmerge(y32, -1, x, VECTLENSP));
 }
-static INLINE vmask vand_vm_vm_vm(vmask x, vmask y) {
-  return __riscv_vand(x, y, VECTLENSP);
+static INLINE vmask vand_vm_vo32_vm(rvv_sp_vopmask x, vmask y) {
+  rvv_vmask32 y32 = SLEEF_RVV_SP_VREINTERPRET_VM(y);
+  return SLEEF_RVV_DP_VREINTERPRET_VM(__riscv_vmerge(y32, 0, __riscv_vmnot(x, VECTLENSP), VECTLENSP));
 }
-static INLINE vmask vor_vm_vm_vm(vmask x, vmask y) {
-  return __riscv_vor(x, y, VECTLENSP);
-}
-static INLINE vmask vxor_vm_vm_vm(vmask x, vmask y) {
-  return __riscv_vxor(x, y, VECTLENSP);
-}
-static INLINE vmask vandnot_vm_vm_vm(vmask x, vmask y) {
-  return __riscv_vand(SLEEF_RVV_SP_VREINTERPRET_VM(__riscv_vnot(SLEEF_RVV_SP_VREINTERPRET_VI64(x), VECTLENSP)), y, VECTLENSP);
-}
-static INLINE vmask vor_vm_vo32_vm(vopmask x, vmask y) {
-  return __riscv_vmerge(y, -1, x, VECTLENSP);
-}
-static INLINE vmask vand_vm_vo32_vm(vopmask x, vmask y) {
-  return __riscv_vmerge(y, 0, __riscv_vmnot(x, VECTLENSP), VECTLENSP);
-}
-static INLINE vmask vandnot_vm_vo32_vm(vopmask x, vmask y) {
-  return __riscv_vmerge(y, 0, x, VECTLENSP);
+static INLINE vmask vandnot_vm_vo32_vm(rvv_sp_vopmask x, vmask y) {
+  rvv_vmask32 y32 = SLEEF_RVV_SP_VREINTERPRET_VM(y);
+  return SLEEF_RVV_DP_VREINTERPRET_VM(__riscv_vmerge(y32, 0, x, VECTLENSP));
 }
 
 
 /****************************************/
 /* Logical Mask Operations              */
 /****************************************/
-static INLINE vopmask vand_vo_vo_vo(vopmask x, vopmask y) {
+static INLINE rvv_sp_vopmask rvv_sp_vand_vo_vo_vo(rvv_sp_vopmask x, rvv_sp_vopmask y) {
   return __riscv_vmand(x, y, VECTLENSP);
 }
-static INLINE vopmask vandnot_vo_vo_vo(vopmask x, vopmask y) {
+static INLINE rvv_sp_vopmask rvv_sp_vandnot_vo_vo_vo(rvv_sp_vopmask x, rvv_sp_vopmask y) {
   return __riscv_vmandn(y, x, VECTLENSP);
 }
-static INLINE vopmask vor_vo_vo_vo(vopmask x, vopmask y) {
+static INLINE rvv_sp_vopmask rvv_sp_vor_vo_vo_vo(rvv_sp_vopmask x, rvv_sp_vopmask y) {
   return __riscv_vmor(x, y, VECTLENSP);
 }
-static INLINE vopmask vxor_vo_vo_vo(vopmask x, vopmask y) {
+static INLINE rvv_sp_vopmask rvv_sp_vxor_vo_vo_vo(rvv_sp_vopmask x, rvv_sp_vopmask y) {
   return __riscv_vmxor(x, y, VECTLENSP);
 }
 // single precision FP comparison
-static INLINE vopmask veq_vo_vf_vf(vfloat x, vfloat y) {
+static INLINE rvv_sp_vopmask veq_vo_vf_vf(vfloat x, vfloat y) {
   return __riscv_vmfeq(x, y, VECTLENSP);
 }
-static INLINE vopmask vneq_vo_vf_vf(vfloat x, vfloat y) {
+static INLINE rvv_sp_vopmask vneq_vo_vf_vf(vfloat x, vfloat y) {
   return __riscv_vmfne(x, y, VECTLENSP);
 }
-static INLINE vopmask vgt_vo_vf_vf(vfloat x, vfloat y) {
+static INLINE rvv_sp_vopmask vgt_vo_vf_vf(vfloat x, vfloat y) {
   return __riscv_vmfgt(x, y, VECTLENSP);
 }
-static INLINE vopmask vge_vo_vf_vf(vfloat x, vfloat y) {
+static INLINE rvv_sp_vopmask vge_vo_vf_vf(vfloat x, vfloat y) {
   return __riscv_vmfge(x, y, VECTLENSP);
 }
-static INLINE vopmask vlt_vo_vf_vf(vfloat x, vfloat y) {
+static INLINE rvv_sp_vopmask vlt_vo_vf_vf(vfloat x, vfloat y) {
   return __riscv_vmflt(x, y, VECTLENSP);
 }
-static INLINE vopmask vle_vo_vf_vf(vfloat x, vfloat y) {
+static INLINE rvv_sp_vopmask vle_vo_vf_vf(vfloat x, vfloat y) {
   return __riscv_vmfle(x, y, VECTLENSP);
 }
-static INLINE vopmask visnan_vo_vf(vfloat d) {
+static INLINE rvv_sp_vopmask visnan_vo_vf(vfloat d) {
   return __riscv_vmfne(d, d, VECTLENSP);
 }
-static INLINE vopmask visinf_vo_vf(vfloat d) {
+static INLINE rvv_sp_vopmask visinf_vo_vf(vfloat d) {
   return __riscv_vmfeq(__riscv_vfabs(d, VECTLENSP), SLEEF_INFINITYf, VECTLENSP);
 }
-static INLINE vopmask vispinf_vo_vf(vfloat d) {
+static INLINE rvv_sp_vopmask vispinf_vo_vf(vfloat d) {
   return __riscv_vmfeq(d, SLEEF_INFINITYf, VECTLENSP);
 }
 // conditional select
-static INLINE vfloat vsel_vf_vo_vf_vf(vopmask mask, vfloat x, vfloat y) {
+static INLINE vfloat vsel_vf_vo_vf_vf(rvv_sp_vopmask mask, vfloat x, vfloat y) {
   return __riscv_vmerge(y, x, mask, VECTLENSP);
 }
-static INLINE vfloat vsel_vf_vo_f_f(vopmask mask, float v1, float v0) {
+static INLINE vfloat vsel_vf_vo_f_f(rvv_sp_vopmask mask, float v1, float v0) {
   return __riscv_vfmerge(vcast_vf_f(v0), v1, mask, VECTLENSP);
 }
-static INLINE vfloat vsel_vf_vo_vo_f_f_f(vopmask o0, vopmask o1, float d0, float d1, float d2) {
+static INLINE vfloat vsel_vf_vo_vo_f_f_f(rvv_sp_vopmask o0, rvv_sp_vopmask o1, float d0, float d1, float d2) {
   return __riscv_vfmerge(__riscv_vfmerge(vcast_vf_f(d2), d1, o1, VECTLENSP), d0, o0, VECTLENSP);
 }
-static INLINE vfloat vsel_vf_vo_vo_vo_f_f_f_f(vopmask o0, vopmask o1, vopmask o2, float d0, float d1, float d2, float d3) {
+static INLINE vfloat vsel_vf_vo_vo_vo_f_f_f_f(rvv_sp_vopmask o0, rvv_sp_vopmask o1, rvv_sp_vopmask o2, float d0, float d1, float d2, float d3) {
   return __riscv_vfmerge(__riscv_vfmerge(__riscv_vfmerge(vcast_vf_f(d3), d2, o2, VECTLENSP), d1, o1, VECTLENSP), d0, o0, VECTLENSP);
 }
 // integer comparison
-static INLINE vopmask veq_vo_vi2_vi2(vint2 x, vint2 y) {
+static INLINE rvv_sp_vopmask veq_vo_vi2_vi2(vint2 x, vint2 y) {
   return __riscv_vmseq(x, y, VECTLENSP);
 }
-static INLINE vopmask vgt_vo_vi2_vi2(vint2 x, vint2 y) {
+static INLINE rvv_sp_vopmask vgt_vo_vi2_vi2(vint2 x, vint2 y) {
   return __riscv_vmsgt(x, y, VECTLENSP);
 }
 static INLINE vint2 vgt_vi2_vi2_vi2(vint2 x, vint2 y) {
@@ -623,13 +583,12 @@ static INLINE vint2 vgt_vi2_vi2_vi2(vint2 x, vint2 y) {
   return __riscv_vmerge(zero, -1, __riscv_vmsgt(x, y, VECTLENSP), VECTLENSP);
 }
 // integer conditional select
-static INLINE vint2 vsel_vi2_vo_vi2_vi2(vopmask m, vint2 x, vint2 y) {
+static INLINE vint2 vsel_vi2_vo_vi2_vi2(rvv_sp_vopmask m, vint2 x, vint2 y) {
   return __riscv_vmerge(y, x, m, VECTLENSP);
 }
-static INLINE vint2 vand_vi2_vo_vi2(vopmask x, vint2 y) {
+static INLINE vint2 vand_vi2_vo_vi2(rvv_sp_vopmask x, vint2 y) {
   return __riscv_vmerge(y, 0, __riscv_vmnot(x, VECTLENSP), VECTLENSP);
 }
-#endif // ENABLE_RVV_SP
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -890,7 +849,6 @@ static INLINE vint vsrl_vi_vi_i(vint x, int c) {
 }
 
 
-#ifdef ENABLE_RVV_DP
 /****************************************/
 /* Bitmask Operations                   */
 /****************************************/
@@ -915,7 +873,7 @@ static INLINE vint vcastu_vi_vm(vmask vm) {
 static INLINE vint vcast_vi_vm(vmask vm) {
   return SLEEF_RVV_DP_VREINTERPRET_VI(__riscv_vncvt_x(vm, VECTLENDP));
 }
-static INLINE vmask vand_vm_vo64_vm(vopmask x, vmask y) {
+static INLINE vmask vand_vm_vo64_vm(rvv_dp_vopmask x, vmask y) {
   return __riscv_vmerge(y, 0, __riscv_vmnot(x, VECTLENDP), VECTLENDP);
 }
 static INLINE vmask vand_vm_vm_vm(vmask x, vmask y) {
@@ -928,16 +886,16 @@ static INLINE vmask vxor_vm_vm_vm(vmask x, vmask y) {
   return __riscv_vxor(x, y, VECTLENDP);
 }
 static INLINE vmask vandnot_vm_vm_vm(vmask x, vmask y) {
-  return __riscv_vand(SLEEF_RVV_DP_VREINTERPRET_VM(__riscv_vnot(SLEEF_RVV_DP_VREINTERPRET_VI64(x), VECTLENDP)), y, VECTLENDP);
+  return __riscv_vand(__riscv_vnot(x, VECTLENDP), y, VECTLENDP);
 }
-static INLINE vmask vandnot_vm_vo64_vm(vopmask x, vmask y) {
+static INLINE vmask vandnot_vm_vo64_vm(rvv_dp_vopmask x, vmask y) {
   return __riscv_vmerge(y, 0, x, VECTLENDP);
 }
 static INLINE vmask vsll64_vm_vm_i(vmask mask, int64_t c) {
   return __riscv_vsll(mask, c, VECTLENDP);
 }
 static INLINE vmask vsub64_vm_vm_vm(vmask x, vmask y) {
-  return SLEEF_RVV_DP_VREINTERPRET_VM(__riscv_vsub(SLEEF_RVV_DP_VREINTERPRET_VI64(x), SLEEF_RVV_DP_VREINTERPRET_VI64(y), VECTLENDP));
+  return __riscv_vsub(x, y, VECTLENDP);
 }
 static INLINE vmask vsrl64_vm_vm_i(vmask mask, int64_t c) {
   return __riscv_vsrl(mask, c, VECTLENDP);
@@ -945,14 +903,14 @@ static INLINE vmask vsrl64_vm_vm_i(vmask mask, int64_t c) {
 static INLINE vmask vadd64_vm_vm_vm(vmask x, vmask y) {
   return __riscv_vadd(x, y, VECTLENDP);
 }
-static INLINE vmask vor_vm_vo64_vm(vopmask x, vmask y) {
+static INLINE vmask vor_vm_vo64_vm(rvv_dp_vopmask x, vmask y) {
   return __riscv_vmerge(y, -1, x, VECTLENDP);
 }
-static INLINE vmask vsel_vm_vo64_vm_vm(vopmask mask, vmask x, vmask y) {
+static INLINE vmask vsel_vm_vo64_vm_vm(rvv_dp_vopmask mask, vmask x, vmask y) {
   return __riscv_vmerge(y, x, mask, VECTLENDP);
 }
 static INLINE vmask vneg64_vm_vm(vmask mask) {
-  return SLEEF_RVV_DP_VREINTERPRET_VM(__riscv_vneg(SLEEF_RVV_DP_VREINTERPRET_VI64(mask), VECTLENDP));
+  return SLEEF_RVV_DP_VREINTERPRET_VM(__riscv_vneg(SLEEF_RVV_DP_VREINTERPRET_VM_SIGNED(mask), VECTLENDP));
 }
 static INLINE vdouble vreinterpret_vd_vm(vmask vm) {
   return SLEEF_RVV_DP_VREINTERPRET_VD(vm);
@@ -978,79 +936,79 @@ static INLINE vquad vqsety_vq_vq_vm(vquad v, vmask y) { return __riscv_vset(v, 1
 /****************************************/
 /* Logical Mask Operations              */
 /****************************************/
-static INLINE vopmask vcast_vo64_vo32(vopmask vo) {
+static INLINE rvv_dp_vopmask vcast_vo64_vo32(rvv_dp_vopmask vo) {
   return vo;
 }
-static INLINE vopmask vcast_vo32_vo64(vopmask vo) {
+static INLINE rvv_dp_vopmask vcast_vo32_vo64(rvv_dp_vopmask vo) {
   return vo;
 }
-static INLINE vopmask vand_vo_vo_vo(vopmask x, vopmask y) {
+static INLINE rvv_dp_vopmask rvv_dp_vand_vo_vo_vo(rvv_dp_vopmask x, rvv_dp_vopmask y) {
   return __riscv_vmand(x, y, VECTLENDP);
 }
-static INLINE vopmask vandnot_vo_vo_vo(vopmask x, vopmask y) {
+static INLINE rvv_dp_vopmask rvv_dp_vandnot_vo_vo_vo(rvv_dp_vopmask x, rvv_dp_vopmask y) {
   return __riscv_vmandn(y, x, VECTLENDP);
 }
-static INLINE vopmask vor_vo_vo_vo(vopmask x, vopmask y) {
+static INLINE rvv_dp_vopmask rvv_dp_vor_vo_vo_vo(rvv_dp_vopmask x, rvv_dp_vopmask y) {
   return __riscv_vmor(x, y, VECTLENDP);
 }
-static INLINE vopmask vxor_vo_vo_vo(vopmask x, vopmask y) {
+static INLINE rvv_dp_vopmask rvv_dp_vxor_vo_vo_vo(rvv_dp_vopmask x, rvv_dp_vopmask y) {
   return __riscv_vmxor(x, y, VECTLENDP);
 }
-static INLINE vopmask veq64_vo_vm_vm(vmask x, vmask y) {
+static INLINE rvv_dp_vopmask veq64_vo_vm_vm(vmask x, vmask y) {
   return __riscv_vmseq(x, y, VECTLENDP);
 }
-static INLINE vopmask vgt64_vo_vm_vm(vmask x, vmask y) {
-  return __riscv_vmsgt(SLEEF_RVV_DP_VREINTERPRET_VI64(x), SLEEF_RVV_DP_VREINTERPRET_VI64(y), VECTLENDP);
+static INLINE rvv_dp_vopmask vgt64_vo_vm_vm(vmask x, vmask y) {
+  return __riscv_vmsgt(SLEEF_RVV_DP_VREINTERPRET_VM_SIGNED(x), SLEEF_RVV_DP_VREINTERPRET_VM_SIGNED(y), VECTLENDP);
 }
 // double-precision comparison
-static INLINE vopmask visinf_vo_vd(vdouble d) {
+static INLINE rvv_dp_vopmask visinf_vo_vd(vdouble d) {
   return __riscv_vmfeq(__riscv_vfabs(d, VECTLENDP), SLEEF_INFINITY, VECTLENDP);
 }
-static INLINE vopmask vispinf_vo_vd(vdouble d) {
+static INLINE rvv_dp_vopmask vispinf_vo_vd(vdouble d) {
   return __riscv_vmfeq(d, SLEEF_INFINITY, VECTLENDP);
 }
-static INLINE vopmask veq_vo_vd_vd(vdouble x, vdouble y) {
+static INLINE rvv_dp_vopmask veq_vo_vd_vd(vdouble x, vdouble y) {
   return __riscv_vmfeq(x, y, VECTLENDP);
 }
-static INLINE vopmask vneq_vo_vd_vd(vdouble x, vdouble y) {
+static INLINE rvv_dp_vopmask vneq_vo_vd_vd(vdouble x, vdouble y) {
   return __riscv_vmfne(x, y, VECTLENDP);
 }
-static INLINE vopmask vlt_vo_vd_vd(vdouble x, vdouble y) {
+static INLINE rvv_dp_vopmask vlt_vo_vd_vd(vdouble x, vdouble y) {
   return __riscv_vmflt(x, y, VECTLENDP);
 }
-static INLINE vopmask vle_vo_vd_vd(vdouble x, vdouble y) {
+static INLINE rvv_dp_vopmask vle_vo_vd_vd(vdouble x, vdouble y) {
   return __riscv_vmfle(x, y, VECTLENDP);
 }
-static INLINE vopmask vgt_vo_vd_vd(vdouble x, vdouble y) {
+static INLINE rvv_dp_vopmask vgt_vo_vd_vd(vdouble x, vdouble y) {
   return __riscv_vmfgt(x, y, VECTLENDP);
 }
-static INLINE vopmask vge_vo_vd_vd(vdouble x, vdouble y) {
+static INLINE rvv_dp_vopmask vge_vo_vd_vd(vdouble x, vdouble y) {
   return __riscv_vmfge(x, y, VECTLENDP);
 }
-static INLINE vopmask visnan_vo_vd(vdouble d) {
+static INLINE rvv_dp_vopmask visnan_vo_vd(vdouble d) {
   return __riscv_vmfne(d, d, VECTLENDP);
 }
 // double-precision conditional select
-static INLINE vdouble vsel_vd_vo_vd_vd(vopmask mask, vdouble x, vdouble y) {
+static INLINE vdouble vsel_vd_vo_vd_vd(rvv_dp_vopmask mask, vdouble x, vdouble y) {
   return __riscv_vmerge(y, x, mask, VECTLENDP);
 }
-static INLINE vdouble vsel_vd_vo_d_d(vopmask mask, double v0, double v1) {
+static INLINE vdouble vsel_vd_vo_d_d(rvv_dp_vopmask mask, double v0, double v1) {
   return __riscv_vfmerge(vcast_vd_d(v1), v0, mask, VECTLENDP);
 }
-static INLINE vdouble vsel_vd_vo_vo_d_d_d(vopmask o0, vopmask o1, double d0, double d1, double d2) {
+static INLINE vdouble vsel_vd_vo_vo_d_d_d(rvv_dp_vopmask o0, rvv_dp_vopmask o1, double d0, double d1, double d2) {
   return __riscv_vfmerge(__riscv_vfmerge(vcast_vd_d(d2), d1, o1, VECTLENDP), d0, o0, VECTLENDP);
 }
-static INLINE vdouble vsel_vd_vo_vo_vo_d_d_d_d(vopmask o0, vopmask o1, vopmask o2, double d0, double d1, double d2, double d3) {
+static INLINE vdouble vsel_vd_vo_vo_vo_d_d_d_d(rvv_dp_vopmask o0, rvv_dp_vopmask o1, rvv_dp_vopmask o2, double d0, double d1, double d2, double d3) {
   return __riscv_vfmerge(__riscv_vfmerge(__riscv_vfmerge(vcast_vd_d(d3), d2, o2, VECTLENDP), d1, o1, VECTLENDP), d0, o0, VECTLENDP);
 }
-static INLINE int vtestallones_i_vo64(vopmask g) {
+static INLINE int vtestallones_i_vo64(rvv_dp_vopmask g) {
   return __riscv_vcpop(g, VECTLENDP) == VECTLENDP;
 }
 // integer comparison
-static INLINE vopmask veq_vo_vi_vi(vint x, vint y) {
+static INLINE rvv_dp_vopmask veq_vo_vi_vi(vint x, vint y) {
   return __riscv_vmseq(x, y, VECTLENDP);
 }
-static INLINE vopmask vgt_vo_vi_vi(vint x, vint y) {
+static INLINE rvv_dp_vopmask vgt_vo_vi_vi(vint x, vint y) {
   return __riscv_vmsgt(x, y, VECTLENDP);
 }
 static INLINE vint vgt_vi_vi_vi(vint x, vint y) {
@@ -1058,15 +1016,54 @@ static INLINE vint vgt_vi_vi_vi(vint x, vint y) {
   return __riscv_vmerge(zero, -1, __riscv_vmsgt(x, y, VECTLENDP), VECTLENDP);
 }
 // integer conditional select
-static INLINE vint vsel_vi_vo_vi_vi(vopmask m, vint x, vint y) {
+static INLINE vint vsel_vi_vo_vi_vi(rvv_dp_vopmask m, vint x, vint y) {
   return __riscv_vmerge(y, x, m, VECTLENDP);
 }
-static INLINE vint vandnot_vi_vo_vi(vopmask mask, vint vi) {
+static INLINE vint vandnot_vi_vo_vi(rvv_dp_vopmask mask, vint vi) {
   return __riscv_vmerge(vi, 0, mask, VECTLENDP);
 }
-static INLINE vint vand_vi_vo_vi(vopmask x, vint y) {
+static INLINE vint vand_vi_vo_vi(rvv_dp_vopmask x, vint y) {
   return __riscv_vmerge(y, 0, __riscv_vmnot(x, VECTLENDP), VECTLENDP);
 }
-#endif // ENABLE_RVV_DP
+
+/****************************************/
+/* RVV_SP and RVV_DP reconciliation     */
+/****************************************/
+
+// About the RISC-V Vector type translations:
+//
+// Because the single- and double-precision versions of the RVV port have
+// conflicting definitions of the vopmask type, they can only
+// be defined for at most one precision level in a single translation unit.
+// Any functions that use vopmask type are thus given unique names and
+// then mapped to the public interface according to the corresponding
+// ENABLE_RVV_SP or ENABLE_RVV_DP macro guards.
+//
+// This is done at the end of the file to avoid unintentional references to
+// the public names internally.
+
+#if defined(ENABLE_RVV_SP) && defined(ENABLE_RVV_DP)
+#error Cannot simultaneously define ENABLE_RVV_SP and ENABLE_RVV_DP
+#endif
+
+// Types and functions that conflict with ENABLE_RVV_DP
+#ifdef ENABLE_RVV_SP
+#define vopmask rvv_sp_vopmask
+
+#define vand_vo_vo_vo    rvv_sp_vand_vo_vo_vo
+#define vandnot_vo_vo_vo rvv_sp_vandnot_vo_vo_vo
+#define vor_vo_vo_vo     rvv_sp_vor_vo_vo_vo
+#define vxor_vo_vo_vo    rvv_sp_vxor_vo_vo_vo
+#endif  // ENABLE_RVV_SP
+
+// Types and functions that conflict with ENABLE_RVV_SP
+#ifdef ENABLE_RVV_DP
+#define vopmask rvv_dp_vopmask
+
+#define vand_vo_vo_vo    rvv_dp_vand_vo_vo_vo
+#define vandnot_vo_vo_vo rvv_dp_vandnot_vo_vo_vo
+#define vor_vo_vo_vo     rvv_dp_vor_vo_vo_vo
+#define vxor_vo_vo_vo    rvv_dp_vxor_vo_vo_vo
+#endif  // ENABLE_RVV_DP
 
 #endif // HELPERRVV_H
