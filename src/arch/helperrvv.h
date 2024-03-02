@@ -71,6 +71,12 @@
 #endif
 
 #if __riscv_v_intrinsic <= 12000
+// __riscv_vcreate* intrinsics only showed up in v1.0-rc0 of the RVV intrinsics
+// spec and have already been implemented in clang-18, but are useful for
+// eliminating issues with uninitialised data because they are explicit that
+// the whole result has defined values.  Here we do our best to offer fallback
+// implementations where needed.
+//
 #define __riscv_vcreate_v_f32m1_f32m2(x, y) __riscv_vset(__riscv_vlmul_ext_v_f32m1_f32m2(x), 1, y)
 #define __riscv_vcreate_v_f32m2_f32m4(x, y) __riscv_vset(__riscv_vlmul_ext_v_f32m2_f32m4(x), 1, y)
 #define __riscv_vcreate_v_f32m4_f32m8(x, y) __riscv_vset(__riscv_vlmul_ext_v_f32m4_f32m8(x), 1, y)
@@ -99,9 +105,14 @@ static INLINE vfloat64m2x4_t __riscv_vcreate_v_f64m2x4(vfloat64m2_t x, vfloat64m
 #ifdef NDEBUG
 #define SLEEF_RVV_VEXT(size, from_to, v) __riscv_vlmul_ext_v_##from_to(v)
 #else
-// When extending a register type, emit an instruction so that qemu can
-// mark the undefined portion of the register rather than keeping it as a
-// previous value.
+// In situations where we cast from wider to narrower types and then back again
+// we should expect data loss, but it can too easily sneak through undisturbed.
+//
+// QEMU and some hardware have a feature to automatically wipe partial vectors
+// when they get truncated this way, but for pure casts like vlmul_ext we need
+// to insert a deliberate move operation to force that to happen.  Since it's
+// extra work it's only enabled for debug builds.
+//
 #define SLEEF_RVV_VEXT(size, from_to, v) __riscv_vmv_v(__riscv_vlmul_ext_v_##from_to(v), __riscv_vsetvlmax_##size())
 #endif
 
@@ -149,6 +160,11 @@ typedef vfloat64m1x4_t tdi_t;
 #define SLEEF_RVV_DP_LMUL 1
 #define SLEEF_RVV_DP_RUNTIME_VL() __riscv_vsetvlmax_e64m1()
 #if SLEEF_RVV_VLEN == 0
+// The configuration didn't provide a constant vector length, meaning it'll
+// have to be determined at run-time.  RVV offers per-data-width operations for
+// this so the result doesn't need to be adjusted and that operation is likely
+// to fold into the surrounding code for free.
+//
 #define VECTLENSP (__riscv_vsetvlmax_e32m1())
 #define VECTLENDP SLEEF_RVV_DP_RUNTIME_VL()
 //@#define VECTLENSP __riscv_vsetvlmax_e32m1()
@@ -254,6 +270,11 @@ typedef vfloat64m2x4_t tdi_t;
 #define SLEEF_RVV_DP_LMUL 2
 #define SLEEF_RVV_DP_RUNTIME_VL() __riscv_vsetvlmax_e64m2()
 #if SLEEF_RVV_VLEN == 0
+// The configuration didn't provide a constant vector length, meaning it'll
+// have to be determined at run-time.  RVV offers per-data-width operations for
+// this so the result doesn't need to be adjusted and that operation is likely
+// to fold into the surrounding code for free.
+//
 #define VECTLENSP (__riscv_vsetvlmax_e32m2())
 #define VECTLENDP SLEEF_RVV_DP_RUNTIME_VL()
 //@#define VECTLENSP __riscv_vsetvlmax_e32m2()
@@ -334,9 +355,12 @@ typedef vfloat64m2x4_t tdi_t;
 typedef vquad vargquad;
 
 static INLINE int vavailability_i(int name) {
-  // Note that VECTLENDP may be defined to SLEEF_RVV_DP_RUNTIME_VL().  That
-  // case isn't entirely redundant because it's still an opportunity to raise
-  // SIGILL to be captured by the caller if vector isn't supported.
+  // Note that in some cases VECTLENDP is defined as SLEEF_RVV_DP_RUNTIME_VL(),
+  // which makes this kind of a redundant operation.  It's still preferable to
+  // issue the instructions, though, because if it's not available then it'll
+  // raise an illegal instruction exception which is trapped by the caller for
+  // proper error handling in the expected place.
+  //
   return (SLEEF_RVV_DP_RUNTIME_VL() >= VECTLENDP) ? 3 : 0;
 }
 
@@ -573,6 +597,13 @@ static INLINE vfloat vreinterpret_vf_vm(vmask vm) {
 static INLINE vmask vreinterpret_vm_vf(vfloat vf) {
   return SLEEF_RVV_DP_VREINTERPRET_VM(SLEEF_RVV_SP_VREINTERPRET_VM(vf));
 }
+
+// These are implementations involving the vopmask type which only work in the
+// single-precision case.  Unfortunately this has a type conflict with the
+// double-precision implemention, and so a temporary rvv_sp_vopmask type is
+// used here and then macro-ed back to vopmask at the end of the file if
+// needed.
+//
 static INLINE int vtestallones_i_vo32(rvv_sp_vopmask g) {
   return __riscv_vcpop(g, VECTLENSP) == VECTLENSP;
 }
@@ -920,6 +951,10 @@ static INLINE vint vcastu_vi_vm(vmask vm) {
 static INLINE vint vcast_vi_vm(vmask vm) {
   return SLEEF_RVV_DP_VREINTERPRET_VI(__riscv_vncvt_x(vm, VECTLENDP));
 }
+
+// These are the complementary case to the earlier comment about
+// rvv_sp_vopmask.
+//
 static INLINE vmask vand_vm_vo64_vm(rvv_dp_vopmask x, vmask y) {
   return __riscv_vmerge(y, 0, __riscv_vmnot(x, VECTLENDP), VECTLENDP);
 }
@@ -1131,8 +1166,16 @@ static INLINE vfloat vreva2_vf_vf(vfloat vf) {
 //
 
 static INLINE void vscatter2_v_p_i_i_vd(double *ptr, int offset, int step, vdouble v) {
+  // Address generation for this operation turned out to be overly complex when
+  // you consider that the loop processes 128 bits per iteration and will
+  // probably only iterate 2 or 4 times.
+  //
   ptr += offset * 2;
   for (int i = 0; i < VECTLENDP; i += 2) {
+    // PROTIP: Avoid modifying `v` within the loop, and just extract the useful
+    // part directly in each iteration, because we can.  This avoids a
+    // loop-carried dependency.
+    //
     vdouble vv = __riscv_vslidedown(v, i, 2);
     __riscv_vse64(ptr, vv, 2);
     ptr += step * 2;
@@ -1140,6 +1183,7 @@ static INLINE void vscatter2_v_p_i_i_vd(double *ptr, int offset, int step, vdoub
 }
 
 static INLINE void vscatter2_v_p_i_i_vf(float *ptr, int offset, int step, vfloat v) {
+  // as above re: looping
   ptr += offset * 2;
   for (int i = 0; i < VECTLENSP; i += 2) {
     vfloat vv = __riscv_vslidedown(v, i, 2);
@@ -1292,7 +1336,13 @@ static int vcast_i_vi2(vint2 v) {
 //
 
 static vquad loadu_vq_p(const int32_t *ptr) {
-    return SLEEF_RVV_DP_VREINTERPRET_VQ(SLEEF_RVV_DP_VREINTERPRET_4VU(SLEEF_RVV_SP_LOAD_2VI(ptr, VECTLENSP * 2)));
+  // We have a lot of vreinterprets, here.  It's a side effect of this being a
+  // corner case, and the intrinsics specification not supporting direct
+  // casting between arbitrary types.  It's necessary to take several
+  // deliberate steps; first switching signed to unsigned, then changing the
+  // data width of the lanes.
+  //
+  return SLEEF_RVV_DP_VREINTERPRET_VQ(SLEEF_RVV_DP_VREINTERPRET_4VU(SLEEF_RVV_SP_LOAD_2VI(ptr, VECTLENSP * 2)));
 }
 
 static INLINE vquad cast_vq_aq(vargquad aq) { return aq; }
