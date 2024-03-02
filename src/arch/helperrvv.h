@@ -67,19 +67,17 @@
 #define __riscv_vcreate_v_u64m1_u64m2(x, y) __riscv_vset(__riscv_vlmul_ext_v_u64m1_u64m2(x), 1, y)
 #define __riscv_vcreate_v_u64m2_u64m4(x, y) __riscv_vset(__riscv_vlmul_ext_v_u64m2_u64m4(x), 1, y)
 
-#define SLEEF_RVV_UNINITIALIZED_REG(T) __extension__({          \
-        _Pragma("GCC diagnostic push")                          \
-        _Pragma("GCC diagnostic ignored \"-Wuninitialized\"")   \
-        T not_initialised;                                      \
-        not_initialised;                                        \
-        _Pragma("GCC diagnostic pop")                           \
-    })
-#define __riscv_vcreate_v_f64m1x4(x, y, z, w)                   \
-        __riscv_vset(__riscv_vset(__riscv_vset(__riscv_vset(    \
-            SLEEF_RVV_UNINITIALIZED_REG(vfloat64m1x4_t), 0, x), 1, y), 2, z), 3, w)
-#define __riscv_vcreate_v_f64m2x4(x, y, z, w)                   \
-        __riscv_vset(__riscv_vset(__riscv_vset(__riscv_vset(    \
-            SLEEF_RVV_UNINITIALIZED_REG(vfloat64m2x4_t), 0, x), 1, y), 2, z), 3, w)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuninitialized"
+static INLINE vfloat64m1x4_t __riscv_vcreate_v_f64m1x4(vfloat64m1_t x, vfloat64m1_t y, vfloat64m1_t z, vfloat64m1_t w) {
+    vfloat64m1x4_t unused;
+    return __riscv_vset(__riscv_vset(__riscv_vset(__riscv_vset(unused, 0, x), 1, y), 2, z), 3, w);
+}
+static INLINE vfloat64m2x4_t __riscv_vcreate_v_f64m2x4(vfloat64m2_t x, vfloat64m2_t y, vfloat64m2_t z, vfloat64m2_t w) {
+    vfloat64m2x4_t unused;
+    return __riscv_vset(__riscv_vset(__riscv_vset(__riscv_vset(unused, 0, x), 1, y), 2, z), 3, w);
+}
+#pragma GCC diagnostic pop
 #endif
 
 #ifdef NDEBUG
