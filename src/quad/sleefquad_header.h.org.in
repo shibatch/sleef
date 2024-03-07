@@ -106,6 +106,20 @@ typedef struct {
 
 #endif // #if !defined(Sleef_quadx2_DEFINED)
 
+#if !defined(Sleef_rvvm1quad_DEFINED)
+#if defined(__riscv) && defined(__riscv_v)
+#define Sleef_rvvm1quadDEFINED
+typedef vuint64m1x2_t Sleef_rvvm1quad;
+#endif
+#endif
+
+#if !defined(Sleef_rvvm2quad_DEFINED)
+#if defined(__riscv) && defined(__riscv_v)
+#define Sleef_rvvm2quadDEFINED
+typedef vuint64m2x2_t Sleef_rvvm2quad;
+#endif
+#endif
+
 #if !defined(Sleef_quadx4_DEFINED)
 #if defined(__AVX__)
 #define Sleef_quadx4_DEFINED

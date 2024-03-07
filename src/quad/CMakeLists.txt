@@ -12,6 +12,8 @@ set(QUAD_HEADER_PARAMS_AVX512F         8 Sleef_quadx8 Sleef_quadx8_2 __m512d    
 set(QUAD_HEADER_PARAMS_ADVSIMD         2 Sleef_quadx2 Sleef_quadx2_2 float64x2_t float32x4_t uint32x4_t int32x2_t int64x2_t uint64x2_t __ARM_NEON        advsimd)
 set(QUAD_HEADER_PARAMS_DSPX2_AARCH64   2 Sleef_quadx2 Sleef_quadx2_2 float64x2_t float32x4_t uint32x4_t int32x2_t int64x2_t uint64x2_t __ARM_NEON)
 set(QUAD_HEADER_PARAMS_SVE             x Sleef_svquad Sleef_svquad_2 svfloat64_t svfloat32_t svint32_t  svint32_t svint64_t svuint64_t __ARM_FEATURE_SVE sve)
+set(QUAD_HEADER_PARAMS_RVVM1           x Sleef_rvvm1quad Sleef_rvvm1quad_2 vfloat64m1_t vfloat32m1_t rvv_dp_mask vint32mf2_t vint64m1_t vuint64m1_t __riscv_vector rvvm1)
+set(QUAD_HEADER_PARAMS_RVVM2           x Sleef_rvvm2quad Sleef_rvvm2quad_2 vfloat64m2_t vfloat32m2_t rvv_dp_mask vint32m1_t vint64m2_t vuint64m2_t __riscv_vector rvvm2)
 set(QUAD_HEADER_PARAMS_VSX             2 Sleef_quadx2 Sleef_quadx2_2 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_UINT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_LONGLONG" "SLEEF_VECTOR_ULONGLONG" __VSX__ vsx)
 set(QUAD_HEADER_PARAMS_VSX3            2 Sleef_quadx2 Sleef_quadx2_2 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_UINT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_LONGLONG" "SLEEF_VECTOR_ULONGLONG" __VSX__ vsx3)
 set(QUAD_HEADER_PARAMS_DSPX2_PPC64     2 Sleef_quadx2 Sleef_quadx2_2 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_UINT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_LONGLONG" "SLEEF_VECTOR_ULONGLONG" __VSX__)
@@ -27,6 +29,8 @@ set(QUAD_RENAME_PARAMS_AVX2            4 avx2)
 set(QUAD_RENAME_PARAMS_AVX512F         8 avx512f)
 set(QUAD_RENAME_PARAMS_ADVSIMD         2 advsimd)
 set(QUAD_RENAME_PARAMS_SVE             x sve)
+set(QUAD_RENAME_PARAMS_RVVM1           x rvvm1)
+set(QUAD_RENAME_PARAMS_RVVM2           x rvvm2)
 set(QUAD_RENAME_PARAMS_VSX             2 vsx)
 set(QUAD_RENAME_PARAMS_VSX3            2 vsx3)
 set(QUAD_RENAME_PARAMS_VXE             2 vxe)
@@ -81,6 +85,14 @@ elseif(SLEEF_ARCH_S390X)
     DSPX2_S390X
     )
   set(QMKDISP_PARAMS_X2 2 Sleef_quadx2 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_LONGLONG" "SLEEF_VECTOR_ULONGLONG" vxe vxe2)
+elseif(SLEEF_ARCH_RISCV64)
+  set(SLEEF_HEADER_LIST
+    RVVM1
+    RVVM2
+    PUREC_SCALAR
+    PURECFMA_SCALAR
+    DSPSCALAR
+    )
 endif()
 
 #
