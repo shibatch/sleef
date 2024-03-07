@@ -225,8 +225,6 @@ jobs:
             EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DSLEEF_DISABLE_VXE2=ON"
           elif [[ ${{ matrix.arch }} = "riscv64" ]]; then
             EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DSLEEF_ENFORCE_RVVM1=ON -DSLEEF_ENFORCE_RVVM2=ON"
-            # Disable inline headers, they just don't compile on riscv64
-            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DSLEEF_BUILD_INLINE_HEADERS=OFF"
           fi
 
           cmake -S . -B _build-${{ matrix.arch }} -GNinja \

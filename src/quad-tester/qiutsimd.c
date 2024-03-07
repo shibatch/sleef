@@ -60,6 +60,10 @@
 #include <arm_sve.h>
 #endif
 
+#if defined(__riscv) && defined(__riscv_v)
+#include <riscv_vector.h>
+#endif
+
 #if defined(__VSX__)
 #include <altivec.h>
 #endif

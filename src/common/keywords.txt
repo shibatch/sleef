@@ -679,3 +679,5 @@ Sleef_rempitabdp
 Sleef_rempitabqp
 vcastu_vm_vi
 vcastu_vi_vm
+rvv_sp_vopmask
+rvv_dp_vopmask

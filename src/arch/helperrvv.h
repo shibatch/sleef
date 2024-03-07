@@ -55,14 +55,18 @@
 #define LOG2VECTLENSP (LOG2VECTLENDP+1)
 
 #define ENABLE_SP
+//@#define ENABLE_SP
 #define ENABLE_DP
+//@#define ENABLE_DP
 
 #if CONFIG != 2
 #if defined(ENABLE_RVVM1NOFMA) || defined(ENABLE_RVVM2NOFMA)
 #error "RVV NOFMA only supported for CONFIG=2"
 #else
 #define ENABLE_FMA_SP
+//@#define ENABLE_FMA_SP
 #define ENABLE_FMA_DP
+//@#define ENABLE_FMA_DP
 #endif
 #endif
 
@@ -147,9 +151,13 @@ typedef vfloat64m1x4_t tdi_t;
 #if SLEEF_RVV_VLEN == 0
 #define VECTLENSP (__riscv_vsetvlmax_e32m1())
 #define VECTLENDP SLEEF_RVV_DP_RUNTIME_VL()
+//@#define VECTLENSP __riscv_vsetvlmax_e32m1()
+//@#define VECTLENDP  __riscv_vsetvlmax_e64m1()
 #else
 #define VECTLENSP (SLEEF_RVV_SP_LMUL * SLEEF_RVV_VLEN / sizeof(float))
 #define VECTLENDP (SLEEF_RVV_DP_LMUL * SLEEF_RVV_VLEN / sizeof(double))
+//@#define VECTLENSP (SLEEF_RVV_SP_LMUL * SLEEF_RVV_VLEN / sizeof(float))
+//@#define VECTLENDP (SLEEF_RVV_DP_LMUL * SLEEF_RVV_VLEN / sizeof(double))
 #endif
 #define SLEEF_RVV_SP_VCAST_VF_F __riscv_vfmv_v_f_f32m1
 #define SLEEF_RVV_SP_VCAST_VI2_I __riscv_vmv_v_x_i32m1
@@ -248,9 +256,13 @@ typedef vfloat64m2x4_t tdi_t;
 #if SLEEF_RVV_VLEN == 0
 #define VECTLENSP (__riscv_vsetvlmax_e32m2())
 #define VECTLENDP SLEEF_RVV_DP_RUNTIME_VL()
+//@#define VECTLENSP __riscv_vsetvlmax_e32m2()
+//@#define VECTLENDP  __riscv_vsetvlmax_e64m2()
 #else
 #define VECTLENSP (SLEEF_RVV_SP_LMUL * SLEEF_RVV_VLEN / sizeof(float))
 #define VECTLENDP (SLEEF_RVV_DP_LMUL * SLEEF_RVV_VLEN / sizeof(double))
+//@#define VECTLENSP (SLEEF_RVV_SP_LMUL * SLEEF_RVV_VLEN / sizeof(float))
+//@#define VECTLENDP (SLEEF_RVV_DP_LMUL * SLEEF_RVV_VLEN / sizeof(double))
 #endif
 #define SLEEF_RVV_SP_VCAST_VF_F __riscv_vfmv_v_f_f32m2
 #define SLEEF_RVV_SP_VCAST_VI2_I __riscv_vmv_v_x_i32m2
@@ -1319,6 +1331,15 @@ static INLINE void vprefetch_v_p(const void *ptr) {}
 #define vxor_vo_vo_vo    rvv_sp_vxor_vo_vo_vo
 #endif  // ENABLE_RVV_SP
 
+//@#ifdef ENABLE_RVV_SP
+//@#define vopmask rvv_sp_vopmask
+//
+//@#define vand_vo_vo_vo    rvv_sp_vand_vo_vo_vo
+//@#define vandnot_vo_vo_vo rvv_sp_vandnot_vo_vo_vo
+//@#define vor_vo_vo_vo     rvv_sp_vor_vo_vo_vo
+//@#define vxor_vo_vo_vo    rvv_sp_vxor_vo_vo_vo
+//@#endif  // ENABLE_RVV_SP
+
 // Types and functions that conflict with ENABLE_RVV_SP
 #ifdef ENABLE_RVV_DP
 #define vopmask rvv_dp_vopmask
@@ -1328,5 +1349,14 @@ static INLINE void vprefetch_v_p(const void *ptr) {}
 #define vor_vo_vo_vo     rvv_dp_vor_vo_vo_vo
 #define vxor_vo_vo_vo    rvv_dp_vxor_vo_vo_vo
 #endif  // ENABLE_RVV_DP
+
+//@#ifdef ENABLE_RVV_DP
+//@#define vopmask rvv_dp_vopmask
+//
+//@#define vand_vo_vo_vo    rvv_dp_vand_vo_vo_vo
+//@#define vandnot_vo_vo_vo rvv_dp_vandnot_vo_vo_vo
+//@#define vor_vo_vo_vo     rvv_dp_vor_vo_vo_vo
+//@#define vxor_vo_vo_vo    rvv_dp_vxor_vo_vo_vo
+//@#endif  // ENABLE_RVV_DP
 
 #endif // HELPERRVV_H

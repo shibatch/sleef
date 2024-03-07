@@ -324,8 +324,8 @@ extern const float Sleef_rempitabsp[];
 // RISC-V
 #ifdef ENABLE_RVVM1
 #define CONFIG 1
-#if !defined(SLEEF_GENHEADER)
 #define ENABLE_RVV_SP
+#if !defined(SLEEF_GENHEADER)
 #include "helperrvv.h"
 #else
 #include "macroonlyRVVM1.h"
@@ -337,8 +337,8 @@ extern const float Sleef_rempitabsp[];
 
 #ifdef ENABLE_RVVM1NOFMA
 #define CONFIG 2
-#if !defined(SLEEF_GENHEADER)
 #define ENABLE_RVV_SP
+#if !defined(SLEEF_GENHEADER)
 #include "helperrvv.h"
 #else
 #include "macroonlyRVVM1NOFMA.h"
@@ -350,8 +350,8 @@ extern const float Sleef_rempitabsp[];
 
 #ifdef ENABLE_RVVM2
 #define CONFIG 1
-#if !defined(SLEEF_GENHEADER)
 #define ENABLE_RVV_SP
+#if !defined(SLEEF_GENHEADER)
 #include "helperrvv.h"
 #else
 #include "macroonlyRVVM2.h"
@@ -363,8 +363,8 @@ extern const float Sleef_rempitabsp[];
 
 #ifdef ENABLE_RVVM2NOFMA
 #define CONFIG 2
-#if !defined(SLEEF_GENHEADER)
 #define ENABLE_RVV_SP
+#if !defined(SLEEF_GENHEADER)
 #include "helperrvv.h"
 #else
 #include "macroonlyRVVM2NOFMA.h"
