@@ -5038,6 +5038,7 @@ void do_test() {
     for(d = -1;d < 8 && success;d += 0.001) checkAccuracy_f(mpfr_erfc, child_erfcf_u15, d, 1.5);
     showResult(success);
   }
+  mpfr_clears(frc, frt, frx, fry, frz, NULL);
 }
 
 int main(int argc, char **argv) {

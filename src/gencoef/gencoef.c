@@ -121,6 +121,7 @@ int main(int argc, char **argv)
     mpfr_set_d(b, x, GMP_RNDN);
 
     printf("%g\n", countULP(b, a));
+    mpfr_clears(a, b, NULL);
     exit(0);
   }
 #endif
@@ -138,6 +139,7 @@ int main(int argc, char **argv)
     mpfr_set_d(b, x, GMP_RNDN);
 
     printf("%g\n", countULP(b, a));
+    mpfr_clears(a, b, NULL);
     exit(0);
   }
 #endif
@@ -155,6 +157,7 @@ int main(int argc, char **argv)
     mpfr_set_ld(b, x, GMP_RNDN);
 
     printf("%g\n", countULP(b, a));
+    mpfr_clears(a, b, NULL);
     exit(0);
   }
 #endif
@@ -172,6 +175,7 @@ int main(int argc, char **argv)
     mpfr_set_f128(b, x, GMP_RNDN);
 
     printf("%g\n", countULP(b, a));
+    mpfr_clears(a, b, NULL);
     exit(0);
   }
 #endif
@@ -285,6 +289,7 @@ int main(int argc, char **argv)
     mpfr_pow(am[i], a[i], frb, GMP_RNDN);
     mpfr_set_d(frb, PADD, GMP_RNDN);
     mpfr_pow(aa[i], a[i], frb, GMP_RNDN);
+    mpfr_clears(a[i], v[i], am[i], aa[i], NULL);
   }
 
   double best = 1e+100, bestsum = 1e+100, bestworstx;

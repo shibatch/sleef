@@ -986,6 +986,6 @@ int main(int argc,char **argv)
       }
     }
   }
-
+  mpfr_clears(frw, frx, fry, frz, NULL);
   exit(0);
 }
