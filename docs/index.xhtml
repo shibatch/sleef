@@ -145,6 +145,7 @@
   <li><a class="underlined" href="aarch32.xhtml">AArch32</a> - NEON</li>
   <li><a class="underlined" href="ppc64.xhtml">PowerPC64</a> - VSX (POWER8), VSX-3 (POWER9)</li>
   <li><a class="underlined" href="s390x.xhtml">System/390</a> - VXE (z14), VXE2 (z15)</li>
+  <li>RISC-V - RVV1, RVV2</li>
   <li><a class="underlined" href="cuda.xhtml">CUDA</a></li>
   <li><a class="underlined" href="additional.xhtml#wasm">WebAssembly</a> - SSE2</li>
 </ul>
@@ -285,6 +286,14 @@
 	  <td class="lt-br" align="center">N/A</td>
 	  <td class="lt-b" align="center">N/A</td>
 	</tr>
+	<tr>
+	  <td class="lt-r" align="left">RISC-V (64-bit), Linux</td>
+	  <td></td>
+	  <td class="lt-lr" align="center">Supported</td>
+	  <td class="lt-r" align="center">Supported</td>
+	  <td class="lt-r" align="center">N/A</td>
+	  <td class="lt-" align="center">N/A</td>
+	</tr>
       </table>
     </td>
   </tr>
@@ -320,6 +329,16 @@
   *3 AVX functions are not supported for Cygwin, because AVX is not
   supported by Cygwin ABI.
 </p>
+
+<p>
+  *4 Some compiler versions simply do not support certain vector
+  extensions, for instance SVE is only supported for gcc version 9
+  onwards. Similarly, the RISC-V interface in SLEEF is based on
+  version 1.0 of the intrinsics, which is only supported from llvm
+  version 17 and gcc version 14 onwards. Toolchain files provide
+  some information on supported compiler versions.
+</p>
+
 
 <div style="margin-top: 1.0cm;"></div>
 
