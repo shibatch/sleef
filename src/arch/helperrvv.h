@@ -70,7 +70,7 @@
 #endif
 #endif
 
-#if __riscv_v_intrinsic <= 12000
+#if __riscv_v_intrinsic < 1000000 && !(defined(__clang_major__) && __clang_major__ >= 18)
 // __riscv_vcreate* intrinsics only showed up in v1.0-rc0 of the RVV intrinsics
 // spec and have already been implemented in clang-18, but are useful for
 // eliminating issues with uninitialised data because they are explicit that
