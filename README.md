@@ -92,7 +92,6 @@ Generation of inline headers is also supported for most vector extensions.
 
 #### Work in progress
 
-- DFT, Quad. and inline headers generations are not supported with RISC-V yet.
 - LTO is not tested in CI yet.
 
 ### Compiler support
@@ -100,6 +99,12 @@ Generation of inline headers is also supported for most vector extensions.
 Results are displayed for gcc 11 and llvm 17, the compiler versions used in CI tests with GitHub Actions.
 
 Older versions should be supported too, while newer ones are either not tested or have known issues.
+
+Some compiler versions simply do not support certain vector extensions, for instance SVE is only supported for gcc version 9 onwards.
+
+Similarly, the RISC-V interface in SLEEF is based on version 1.0 of the intrinsics, which is only supported from llvm version 17 and gcc version 14 onwards.
+
+Toolchain files provide some information on supported compiler versions.
 
 ### OS support
 
