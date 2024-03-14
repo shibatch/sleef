@@ -145,6 +145,27 @@ typedef vquad Sleef_quadx2;
 typedef vquad Sleef_quadx2;
 #endif
 
+// RISC-V
+#ifdef ENABLE_RVVM1
+#define CONFIG 1
+#define ENABLE_RVV_DP
+#include "helperrvv.h"
+#ifdef DORENAME
+#include "qrenamervvm1.h"
+#endif
+typedef vquad Sleef_rvvm1quad;
+#endif
+
+#ifdef ENABLE_RVVM2
+#define CONFIG 1
+#define ENABLE_RVV_DP
+#include "helperrvv.h"
+#ifdef DORENAME
+#include "qrenamervvm2.h"
+#endif
+typedef vquad Sleef_rvvm2quad;
+#endif
+
 #include "dd.h"
 #include "commonfuncs.h"
 
