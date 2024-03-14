@@ -982,15 +982,6 @@ endif()
 # --------------------------------------------------------------------
 # Build scalar-only library from sleefdp.c and sleefsp.c
 if(SLEEF_BUILD_SCALAR_LIB)
-  add_library(sleefscalar sleefdp.c sleefsp.c rempitab.c)
-  add_dependencies(sleefscalar ${TARGET_HEADERS})
-  set_target_properties(sleefscalar PROPERTIES
-    VERSION ${SLEEF_VERSION}
-    SOVERSION ${SLEEF_SOVERSION}
-    PUBLIC_HEADER ${SLEEF_INCLUDE_HEADER}
-    ${COMMON_TARGET_PROPERTIES}
-  )
-
   if(SLEEF_BUILD_SHARED_LIBS)
     add_library(sleefscalar SHARED sleefdp.c sleefsp.c rempitab.c)
   else()
