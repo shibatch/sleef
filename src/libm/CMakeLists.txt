@@ -348,7 +348,7 @@ set(COMMON_TARGET_PROPERTIES
   C_STANDARD 99                  # -std=gnu99
   )
 
-if (SLEEF_BUILD_SHARED_LIBS)
+if (_INTERNAL_SLEEF_BUILD_SHARED_LIBS)
   list(APPEND COMMON_TARGET_PROPERTIES POSITION_INDEPENDENT_CODE ON)   # -fPIC
 endif()
 
@@ -359,7 +359,7 @@ endif()
 # Original sleef sources
 set(STANDARD_SOURCES rempitab.c)
 
-if(SLEEF_BUILD_SHARED_LIBS)
+if(_INTERNAL_SLEEF_BUILD_SHARED_LIBS)
   add_library(${TARGET_LIBSLEEF} SHARED ${STANDARD_SOURCES})
 else()
   add_library(${TARGET_LIBSLEEF} STATIC ${STANDARD_SOURCES})
@@ -889,7 +889,7 @@ if(ENABLE_GNUABI)
   endforeach()
 
   # Create library 
-  if(SLEEF_BUILD_SHARED_LIBS)
+  if(_INTERNAL_SLEEF_BUILD_SHARED_LIBS)
     add_library(${TARGET_LIBSLEEFGNUABI} SHARED ${TARGET_LIBSLEEFGNUABI_OBJECTS} rempitab.c)
   else()
     add_library(${TARGET_LIBSLEEFGNUABI} STATIC ${TARGET_LIBSLEEFGNUABI_OBJECTS} rempitab.c)
@@ -982,7 +982,7 @@ endif()
 # --------------------------------------------------------------------
 # Build scalar-only library from sleefdp.c and sleefsp.c
 if(SLEEF_BUILD_SCALAR_LIB)
-  if(SLEEF_BUILD_SHARED_LIBS)
+  if(_INTERNAL_SLEEF_BUILD_SHARED_LIBS)
     add_library(sleefscalar SHARED sleefdp.c sleefsp.c rempitab.c)
   else()
     add_library(sleefscalar STATIC sleefdp.c sleefsp.c rempitab.c)
