@@ -1,3 +1,7 @@
+cmake_minimum_required(VERSION 3.18)
+project(SLEEF VERSION 3.6.0 LANGUAGES C)
+
+set(SLEEF_SOVERSION ${SLEEF_VERSION_MAJOR})
 
 # Options
 
@@ -63,7 +67,7 @@ set(SLEEF_ALL_SUPPORTED_EXTENSIONS
   SVENOFMA SVE ADVSIMDNOFMA ADVSIMD                     # Aarch64
   NEON32 NEON32VFPV4                                    # Aarch32
   VSX VSXNOFMA VSX3 VSX3NOFMA                           # PPC64
-  VXE VXENOFMA VXE2 VXE2NOFMA	                        # IBM Z
+  VXE VXENOFMA VXE2 VXE2NOFMA	                          # IBM Z
   RVVM1NOFMA RVVM1 RVVM2NOFMA RVVM2                     # RISC-V Vectors
   PUREC_SCALAR PURECFMA_SCALAR                          # Generic type
   CACHE STRING "List of SIMD architectures supported by libsleef."
@@ -74,7 +78,7 @@ set(SLEEF_SUPPORTED_LIBM_EXTENSIONS
   SVENOFMA SVE ADVSIMDNOFMA ADVSIMD                     # Aarch64
   NEON32 NEON32VFPV4                                    # Aarch32
   VSX VSXNOFMA VSX3 VSX3NOFMA                           # PPC64
-  VXE VXENOFMA VXE2 VXE2NOFMA	                        # IBM Z
+  VXE VXENOFMA VXE2 VXE2NOFMA	                          # IBM Z
   RVVM1NOFMA RVVM1 RVVM2NOFMA RVVM2                     # RISC-V Vectors
   PUREC_SCALAR PURECFMA_SCALAR                          # Generic type
   CACHE STRING "List of SIMD architectures supported by libsleef."
@@ -112,31 +116,15 @@ set(COSTOVERRIDE_RVVM2NOFMA 20)
 
 #
 
-cmake_minimum_required(VERSION 3.18)
-
-if(${CMAKE_VERSION} VERSION_GREATER "3.14.99")
-  cmake_policy(SET CMP0091 NEW)
-endif()
-
 enable_testing()
 
-set(SLEEF_VERSION_MAJOR 3)
-set(SLEEF_VERSION_MINOR 6)
-set(SLEEF_VERSION_PATCHLEVEL 0)
-set(SLEEF_VERSION ${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}.${SLEEF_VERSION_PATCHLEVEL})
-set(SLEEF_SOVERSION ${SLEEF_VERSION_MAJOR})
-
-set(LANGLIST C)
+if (SLEEF_ENABLE_CXX)
+  enable_language(CXX)
+endif()
 
 if (SLEEF_ENABLE_CUDA)
-  set(LANGLIST ${LANGLIST} CUDA)
+  enable_language(CUDA)
 endif()
-
-if (SLEEF_ENABLE_CXX)
-  set(LANGLIST ${LANGLIST} CXX)
-endif()
-
-project(SLEEF VERSION ${SLEEF_VERSION} LANGUAGES ${LANGLIST})
 
 # For specifying installation directories
 include(GNUInstallDirs)
@@ -162,7 +150,6 @@ if(SLEEF_ENABLE_LTO AND BUILD_SHARED_LIBS)
 endif(SLEEF_ENABLE_LTO AND BUILD_SHARED_LIBS)
 
 if(SLEEF_ENABLE_LTO)
-  cmake_policy(SET CMP0069 NEW)
   include(CheckIPOSupported)
   check_ipo_supported(RESULT supported OUTPUT error)
 endif()

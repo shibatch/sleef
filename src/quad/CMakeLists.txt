@@ -327,8 +327,8 @@ if(SLEEF_BUILD_INLINE_HEADERS)
 	      ${CMAKE_CURRENT_BINARY_DIR}/sleef${SIMD}.h.qtmp2
 	    | ${SED_COMMAND}
 	      # Embed version number into the header
-	      -e "s/SLEEF_VERSION_SLEEF/${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}.${SLEEF_VERSION_PATCHLEVEL}/g" # "s/SLEEF_VERSION_SLEEF/3.5.0/g"
-	      -e "s/SLEEF_SIMD_SLEEF/${SIMD}/g"                                                                      # -e "s/SLEEF_SIMD_SLEEF/SSE2/g"
+	      -e "s/SLEEF_VERSION_SLEEF/${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}.${SLEEF_VERSION_PATCH}/g" # "s/SLEEF_VERSION_SLEEF/3.5.0/g"
+	      -e "s/SLEEF_SIMD_SLEEF/${SIMD}/g"                                                                 # -e "s/SLEEF_SIMD_SLEEF/SSE2/g"
 	      # Substitute "SLEEFSHARP" at the beginning of line with "#"
 	      -e "s/^SLEEFSHARP/#/g"
 	      # Remove SLEEFXXX
