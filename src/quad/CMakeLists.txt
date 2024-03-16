@@ -502,12 +502,3 @@ install(
     INCLUDES #
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
 )
-
-install(
-    TARGETS sleefquad
-    DESTINATION dummy # provided above already
-    LIBRARY #
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-    COMPONENT sleef_Development
-    NAMELINK_ONLY
-)

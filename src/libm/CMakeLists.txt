@@ -1004,15 +1004,6 @@ if(SLEEF_BUILD_SCALAR_LIB)
       DESTINATION "${CMAKE_INSTALL_BINDIR}"
       COMPONENT sleef_Runtime
   )
-
-  install(
-      TARGETS sleefscalar
-      DESTINATION dummy # provided above already
-      LIBRARY #
-      DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-      COMPONENT sleef_Development
-      NAMELINK_ONLY
-  )
 endif()
 
 # --------------------------------------------------------------------
@@ -1038,14 +1029,6 @@ install(
     INCLUDES #
     DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
 )
-install(
-    TARGETS ${TARGET_LIBSLEEF}
-    DESTINATION dummy # provided above already
-    LIBRARY #
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-    COMPONENT sleef_Development
-    NAMELINK_ONLY
-)
 configure_file("sleef.pc.in" "${CMAKE_CURRENT_BINARY_DIR}/sleef.pc" @ONLY)
 install(
     FILES "${CMAKE_CURRENT_BINARY_DIR}/sleef.pc"
@@ -1067,14 +1050,5 @@ if(ENABLE_GNUABI)
       RUNTIME #
       DESTINATION "${CMAKE_INSTALL_BINDIR}"
       COMPONENT sleef_Runtime
-  )
-
-  install(
-      TARGETS ${TARGET_LIBSLEEF}
-      DESTINATION dummy # provided above already
-      LIBRARY #
-      DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-      COMPONENT sleef_Development
-      NAMELINK_ONLY
   )
 endif()
