@@ -33,6 +33,22 @@ option(SLEEF_DISABLE_SSL "Disable testing with the SSL library" OFF)
 option(SLEEF_ENABLE_CUDA "Enable CUDA" OFF)
 option(SLEEF_ENABLE_CXX "Enable C++" OFF)
 
+#
+
+if (DEFINED SLEEF_BUILD_SHARED_LIBS)
+  set(BUILD_SHARED_LIBS ${SLEEF_BUILD_SHARED_LIBS})
+endif ()
+
+if (SLEEF_SHOW_CONFIG)
+  # Normalize the value of BUILD_SHARED_LIBS so that it displays nicely
+  # in the configuration display
+  if (BUILD_SHARED_LIBS)
+    set(BUILD_SHARED_LIBS YES)
+  else ()
+    set(BUILD_SHARED_LIBS NO)
+  endif ()
+endif ()
+
 # Function used to generate safe command arguments for add_custom_command
 function(command_arguments PROPNAME)
   set(quoted_args "")
@@ -67,7 +83,7 @@ set(SLEEF_ALL_SUPPORTED_EXTENSIONS
   SVENOFMA SVE ADVSIMDNOFMA ADVSIMD                     # Aarch64
   NEON32 NEON32VFPV4                                    # Aarch32
   VSX VSXNOFMA VSX3 VSX3NOFMA                           # PPC64
-  VXE VXENOFMA VXE2 VXE2NOFMA	                          # IBM Z
+  VXE VXENOFMA VXE2 VXE2NOFMA                           # IBM Z
   RVVM1NOFMA RVVM1 RVVM2NOFMA RVVM2                     # RISC-V Vectors
   PUREC_SCALAR PURECFMA_SCALAR                          # Generic type
   CACHE STRING "List of SIMD architectures supported by libsleef."
@@ -78,7 +94,7 @@ set(SLEEF_SUPPORTED_LIBM_EXTENSIONS
   SVENOFMA SVE ADVSIMDNOFMA ADVSIMD                     # Aarch64
   NEON32 NEON32VFPV4                                    # Aarch32
   VSX VSXNOFMA VSX3 VSX3NOFMA                           # PPC64
-  VXE VXENOFMA VXE2 VXE2NOFMA	                          # IBM Z
+  VXE VXENOFMA VXE2 VXE2NOFMA                           # IBM Z
   RVVM1NOFMA RVVM1 RVVM2NOFMA RVVM2                     # RISC-V Vectors
   PUREC_SCALAR PURECFMA_SCALAR                          # Generic type
   CACHE STRING "List of SIMD architectures supported by libsleef."
