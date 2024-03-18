@@ -23,9 +23,9 @@ extern const float Sleef_rempitabsp[];
 
 #if defined(_MSC_VER) && !defined (__clang__)
 #pragma fp_contract (off)
-#endif
-
+#else
 #pragma STDC FP_CONTRACT OFF
+#endif
 
 // Intel
 

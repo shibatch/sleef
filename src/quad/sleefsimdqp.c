@@ -23,9 +23,9 @@ extern const double Sleef_rempitabqp[];
 
 #if defined(_MSC_VER) && !defined (__clang__)
 #pragma fp_contract (off)
-#endif
-
+#else
 #pragma STDC FP_CONTRACT OFF
+#endif
 
 #ifdef ENABLE_PUREC_SCALAR
 #define CONFIG 1
