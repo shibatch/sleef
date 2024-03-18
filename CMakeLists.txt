@@ -43,9 +43,9 @@ if (SLEEF_SHOW_CONFIG)
   # Normalize the value of BUILD_SHARED_LIBS so that it displays nicely
   # in the configuration display
   if (BUILD_SHARED_LIBS)
-    set(BUILD_SHARED_LIBS YES)
+    set(BUILD_SHARED_LIBS ON)
   else ()
-    set(BUILD_SHARED_LIBS NO)
+    set(BUILD_SHARED_LIBS OFF)
   endif ()
 endif ()
 
