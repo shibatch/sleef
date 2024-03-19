@@ -996,7 +996,7 @@ if(SLEEF_BUILD_SCALAR_LIB)
       LIBRARY #
       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
       COMPONENT sleef_Runtime
-      NAMELINK_SKIP
+      NAMELINK_COMPONENT sleef_Development
       ARCHIVE #
       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
       COMPONENT sleef_Development
@@ -1019,7 +1019,7 @@ install(
     LIBRARY #
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     COMPONENT sleef_Runtime
-    NAMELINK_SKIP
+    NAMELINK_COMPONENT sleef_Development
     ARCHIVE #
     DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     COMPONENT sleef_Development
@@ -1043,7 +1043,7 @@ if(ENABLE_GNUABI)
       LIBRARY #
       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
       COMPONENT sleef_Runtime
-      NAMELINK_SKIP
+      NAMELINK_COMPONENT sleef_Development
       ARCHIVE #
       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
       COMPONENT sleef_Development
