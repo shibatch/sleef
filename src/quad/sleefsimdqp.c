@@ -4515,6 +4515,7 @@ int main(int argc, char **argv) {
   mpfr_set_f128(fr3, xgetq(a3, lane), GMP_RNDN);
   printf("test : %s\n", sprintfr(fr3));
 #endif
+  mpfr_clears(fr0, fr1, fr2, fr3, NULL);
 }
 #endif
 #endif

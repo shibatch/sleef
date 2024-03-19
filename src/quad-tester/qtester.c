@@ -1491,6 +1491,7 @@ void do_test(int options) {
     }
     checkResult(success, maxError);
   }
+  mpfr_clears(frw, frx, fry, frz, NULL);
 }
 
 int main(int argc, char **argv) {

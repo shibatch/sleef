@@ -1294,4 +1294,5 @@ int main(int argc,char **argv)
     }
 #endif
   }
+  mpfr_clears(frw, frx, fry, frz, NULL);
 }
