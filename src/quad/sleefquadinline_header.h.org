@@ -7,8 +7,10 @@
 #ifndef SLEEF_ALWAYS_INLINE
 #if defined (__GNUC__) || defined (__clang__) || defined(__INTEL_COMPILER)
 #define SLEEF_ALWAYS_INLINE inline __attribute__((always_inline))
-#else
+#elif defined(_MSC_VER)
 #define SLEEF_ALWAYS_INLINE inline __forceinline
+#else
+#define SLEEF_ALWAYS_INLINE inline
 #endif
 #endif
 
