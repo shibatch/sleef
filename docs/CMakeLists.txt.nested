@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.4.3)
 
+project(MyProject)
+
 set(sleef_SOURCE_DIR ${CMAKE_SOURCE_DIR}/sleef)
 set(sleef_BINARY_DIR ${CMAKE_BINARY_DIR}/sleef)
 
@@ -21,5 +23,5 @@ if (SLEEF_BUILD_DFT)
   set_target_properties(dfttutorial PROPERTIES C_STANDARD 99)
   add_dependencies(dfttutorial sleef)
   find_library(LIBM m)
-  target_link_libraries(dfttutorial sleef sleefdft ${LIBM})
+  target_link_libraries(dfttutorial sleef sleefdft sleefscalar ${LIBM} -fopenmp)
 endif()

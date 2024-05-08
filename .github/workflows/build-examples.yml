@@ -1,0 +1,106 @@
+
+name: "Build & Test Examples"
+
+on:
+  # allow direct trigger
+  workflow_dispatch:
+  push:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  GCC_VERSION: "11"
+  COMMON_CMAKE_FLAGS: >
+    -DSLEEF_SHOW_CONFIG=ON
+    -DSLEEF_BUILD_GNUABI_LIBS=ON
+    -DSLEEF_BUILD_DFT=ON
+    -DSLEEF_BUILD_QUAD=OFF
+    -DSLEEF_BUILD_SCALAR_LIB=ON
+    -DSLEEF_BUILD_SHARED_LIBS=OFF
+
+jobs:
+  build-native:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+
+    name: build-native
+    steps:
+      - uses: actions/checkout@v4.1.1
+        with:
+          persist-credentials: false
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -y -qq
+          sudo apt-get install -y -qq build-essential cmake ninja-build gcc-${GCC_VERSION}
+
+      - name: Build native
+        shell: bash -ex -o pipefail {0}
+        run: |
+          cmake -S . -B _build-native -GNinja \
+            -DCMAKE_INSTALL_PREFIX=$(pwd)/_install-native \
+            -DCMAKE_TOOLCHAIN_FILE=$(pwd)/toolchains/native-gcc.cmake \
+            ${COMMON_CMAKE_FLAGS}
+          cmake --build _build-native
+          cmake --install _build-native
+
+      - name: Upload build-native artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-native
+          path: |
+            _build-*
+            _install-*
+        if: always()
+
+  examples-native:
+    runs-on: ubuntu-latest
+    needs: [build-native]
+    strategy:
+      fail-fast: false
+
+    name: examples-native
+    steps:
+      - uses: actions/checkout@v4.1.1
+        with:
+          persist-credentials: false
+
+      - name: Print host CPU info
+        run: |
+          cat /proc/cpuinfo
+
+      - name: Download build-native artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-native
+
+      - name: Create _examples-native directory
+        run: |
+          mkdir -p _examples-native
+
+      - name: Hello example native
+        shell: bash -ex -o pipefail {0}
+        run: |
+          gcc docs/hellox86.c -static -o _examples-native/hellox86 -I_install-native/include -L_install-native/lib -lsleef
+          ./_examples-native/hellox86
+
+      - name: DFT example native
+        shell: bash -ex -o pipefail {0}
+        run: |
+          gcc docs/tutorial.c -static -o _examples-native/dft -I_install-native/include -L_install-native/lib -lsleef -lsleefdft -lsleefscalar -lm -fopenmp
+          ./_examples-native/dft
+          ./_examples-native/dft
+
+      - name: Upload examples-native artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: examples-native
+          path: |
+            _examples-native
