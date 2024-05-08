@@ -1,0 +1,140 @@
+
+name: "Build SLEEF as Subproject"
+
+on:
+  # allow direct trigger
+  workflow_dispatch:
+  push:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  GCC_VERSION: "11"
+  COMMON_CMAKE_FLAGS: >
+    -DSLEEF_SHOW_CONFIG=ON
+    -DSLEEF_BUILD_GNUABI_LIBS=ON
+    -DSLEEF_BUILD_DFT=ON
+    -DSLEEF_BUILD_SCALAR_LIB=ON
+    -DSLEEF_BUILD_TESTS=OFF
+
+jobs:
+  build-nested:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+
+    name: build-nested
+    steps:
+      - uses: actions/checkout@v4.1.1
+        with:
+          persist-credentials: false
+
+      - name: Print host CPU info
+        run: |
+          cat /proc/cpuinfo
+
+      - name: Install dependencies
+        run: |
+          sudo apt update -y -qq
+          sudo apt install -y -qq build-essential cmake ninja-build gcc-${GCC_VERSION}
+
+      - name: Create nested project
+        shell: bash -ex -o pipefail {0}
+        run: |
+          # Create new project
+          mkdir -p ~/project
+          # Move examples to root of project
+          cp docs/CMakeLists.txt.nested ~/project/CMakeLists.txt
+          cp docs/hellox86.c docs/tutorial.c ~/project/
+          # Copy SLEEF sources to project
+          cd .. && cp -r sleef ~/project/
+
+      - name: Build nested project
+        shell: bash -ex -o pipefail {0}
+        run: |
+          cd ~/project
+          # Configure and build project depending on sleef as nested project
+          cmake -S . -B _build-nested -GNinja \
+            -DCMAKE_TOOLCHAIN_FILE=$(pwd)/sleef/toolchains/native-gcc.cmake \
+            ${COMMON_CMAKE_FLAGS}
+          cmake --build _build-nested -j
+
+      - name: Run examples
+        shell: bash -ex -o pipefail {0}
+        run: |
+          cd ~/project/_build-nested
+          ./hellox86
+          ./dfttutorial 4
+          ./dfttutorial 4
+
+      - name: Upload nested artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: nested project
+          path: |
+            ~/project/_build-nested
+        if: always()
+
+  build-submodule:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+
+    name: build-submodule
+    steps:
+      - uses: actions/checkout@v4.1.1
+        with:
+          persist-credentials: false
+
+      - name: Print host CPU info
+        run: |
+          cat /proc/cpuinfo
+
+      - name: Install dependencies
+        run: |
+          sudo apt update -y -qq
+          sudo apt install -y -qq build-essential cmake ninja-build gcc-${GCC_VERSION}
+
+      - name: Create submodule project
+        shell: bash -ex -o pipefail {0}
+        run: |
+          # Create new project
+          mkdir -p ~/project
+          # Move examples to root of project
+          cp docs/CMakeLists.txt ~/project/
+          cp docs/hellox86.c docs/tutorial.c ~/project/
+          # Add some toolchain files
+          cp -r toolchains ~/project/
+
+      - name: Build project with submodule
+        shell: bash -ex -o pipefail {0}
+        run: |
+          cd ~/project
+          # Configure and build project depending on sleef as submodule
+          # Options are passed in CMakeLists.txt directly
+          cmake -S . -B _build-submodule  -GNinja \
+            -DSLEEF_BUILD_DFT_TUTORIAL=ON \
+            -DCMAKE_TOOLCHAIN_FILE=~/project/toolchains/native-gcc.cmake
+          cmake --build _build-submodule -j
+
+      - name: Run examples
+        shell: bash -ex -o pipefail {0}
+        run: |
+          cd ~/project/_build-submodule
+          ./hellox86
+          ./dfttutorial 4
+          ./dfttutorial 4
+
+      - name: Upload submodule artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: submodule project
+          path: |
+            ~/project/_build-submodule
+        if: always()

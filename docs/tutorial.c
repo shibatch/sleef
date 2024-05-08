@@ -71,5 +71,5 @@ int main(int argc, char **argv) {
 
   SleefDFT_dispose(p);
 
-  exit(success);
+  exit(success ? EXIT_SUCCESS : EXIT_FAILURE);
 }
