@@ -422,7 +422,11 @@ endif()
 
 if(LIB_MPFR AND NOT MINGW)
   # Build tester2 scalar
-  foreach(P dp sp)
+  set(PRECISIONS dp sp)
+  if(COMPILER_SUPPORTS_LONG_DOUBLE)
+    list(APPEND PRECISIONS ld)
+  endif()
+  foreach(P ${PRECISIONS})
     set(T "tester2${P}")
     add_executable(${T} tester2${P}.c testerutil.c)
     target_compile_definitions(${T} PRIVATE USEMPFR=1 ${COMMON_TARGET_DEFINITIONS})

@@ -1,4 +1,4 @@
-//   Copyright Naoki Shibata and contributors 2010 - 2023.
+//   Copyright Naoki Shibata and contributors 2010 - 2024.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -155,6 +155,13 @@ typedef struct {
 typedef struct {
   float x, y;
 } Sleef_float2;
+#endif
+
+#ifndef Sleef_longdouble2_DEFINED
+#define Sleef_longdouble2_DEFINED
+typedef struct {
+  long double x, y;
+} Sleef_longdouble2;
 #endif
 
 #ifdef __cplusplus
@@ -316,3 +323,6 @@ SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_lgammaf_u10(float)
 SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_tgammaf_u10(float);
 SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_erff_u10(float);
 SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_erfcf_u15(float);
+
+SLEEF_IMPORT SLEEF_CONST Sleef_longdouble2 Sleef_sincospil_u05(long double);
+SLEEF_IMPORT SLEEF_CONST Sleef_longdouble2 Sleef_sincospil_u35(long double);
