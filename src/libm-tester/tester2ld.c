@@ -23,6 +23,7 @@
 #endif
 
 #include "sleef.h"
+#include "testerutil.h"
 
 #define DORENAME
 #include "rename.h"
@@ -41,7 +42,7 @@
 #define POSITIVE_INFINITY INFINITY
 #define NEGATIVE_INFINITY (-INFINITY)
 
-int isnumberl(long double x) { return x != INFINITYl && x != -INFINITYl && x == x; }
+int isnumberl(long double x) { return x != SLEEF_INFINITYl && x != -SLEEF_INFINITYl && x == x; }
 int isPlusZerol(long double x) { return x == 0 && copysignl(1, x) == 1; }
 int isMinusZerol(long double x) { return x == 0 && copysignl(1, x) == -1; }
 

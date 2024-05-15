@@ -358,6 +358,10 @@ endif()
 
 # Original sleef sources
 set(STANDARD_SOURCES rempitab.c)
+# Check for different precision support and add sources accordingly
+if(COMPILER_SUPPORTS_LONG_DOUBLE)
+  list(APPEND STANDARD_SOURCES sleefld.c)
+endif()
 
 add_library(${TARGET_LIBSLEEF} ${STANDARD_SOURCES})
 add_dependencies(${TARGET_LIBSLEEF} ${TARGET_HEADERS})
