@@ -12,6 +12,7 @@
 #include <limits.h>
 
 #include "misc.h"
+#include "quaddef.h"
 
 #ifdef DORENAME
 #include "rename.h"
