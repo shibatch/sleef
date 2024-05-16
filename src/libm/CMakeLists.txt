@@ -376,6 +376,13 @@ target_compile_definitions(${TARGET_LIBSLEEF}
   PRIVATE DORENAME=1 ${COMMON_TARGET_DEFINITIONS}
 )
 
+if(COMPILER_SUPPORTS_FLOAT128)
+  # TODO: Not supported for LLVM bitcode gen as it has a specific compilation flags
+  target_sources(${TARGET_LIBSLEEF} PRIVATE sleefqp.c)
+  target_compile_definitions(${TARGET_LIBSLEEF}
+    PRIVATE ENABLEFLOAT128=1 ${COMMON_TARGET_DEFINITIONS})
+endif()
+
 if(COMPILER_SUPPORTS_BUILTIN_MATH)
   target_compile_definitions(${TARGET_LIBSLEEF} PRIVATE ENABLE_BUILTIN_MATH=1)
 endif()

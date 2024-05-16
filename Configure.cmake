@@ -366,6 +366,13 @@ if (SLEEF_ENFORCE_FLOAT128 AND NOT COMPILER_SUPPORTS_FLOAT128)
   message(FATAL_ERROR "SLEEF_ENFORCE_FLOAT128 is specified and that feature is disabled or not supported by the compiler")
 endif()
 
+if(COMPILER_SUPPORTS_FLOAT128)
+  CHECK_C_SOURCE_COMPILES("
+  #include <quadmath.h>
+  int main() { __float128 r = 1;
+  }" COMPILER_SUPPORTS_QUADMATH)
+endif()
+
 # SSE2
 
 option(SLEEF_DISABLE_SSE2 "Disable SSE2" OFF)

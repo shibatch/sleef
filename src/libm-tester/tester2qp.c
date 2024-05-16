@@ -15,10 +15,12 @@
 #include <math.h>
 #include <quadmath.h>
 
+#ifdef ENABLE_SYS_getrandom
 #define _GNU_SOURCE
 #include <unistd.h>
 #include <sys/syscall.h>
 #include <linux/random.h>
+#endif
 
 #include "sleef.h"
 
@@ -94,14 +96,23 @@ Sleef_quad rnd() {
   case 0: return  INFINITY;
   case 1: return -INFINITY;
   }
+#ifdef ENABLE_SYS_getrandom
   syscall(SYS_getrandom, &c.u128, sizeof(c.u128), 0);
+#else
+  c.u128 = random() | ((__int128)random() << 31) | ((__int128)random() << (31*2)) | ((__int128)random() << (31*3)) | ((__int128)random() << (31*4));
+#endif
   return c.d;
+
 }
 
 Sleef_quad rnd_fr() {
   conv_t c;
   do {
+#ifdef ENABLE_SYS_getrandom
     syscall(SYS_getrandom, &c.u128, sizeof(c.u128), 0);
+#else
+    c.u128 = random() | ((__int128)random() << 31) | ((__int128)random() << (31*2)) | ((__int128)random() << (31*3)) | ((__int128)random() << (31*4));
+#endif
   } while(!isnumberq(c.d));
   return c.d;
 }
@@ -109,7 +120,11 @@ Sleef_quad rnd_fr() {
 Sleef_quad rnd_zo() {
   conv_t c;
   do {
+#ifdef ENABLE_SYS_getrandom
     syscall(SYS_getrandom, &c.u128, sizeof(c.u128), 0);
+#else
+    c.u128 = random() | ((__int128)random() << 31) | ((__int128)random() << (31*2)) | ((__int128)random() << (31*3)) | ((__int128)random() << (31*4));
+#endif
   } while(!isnumberq(c.d) || c.d < -1 || 1 < c.d);
   return c.d;
 }

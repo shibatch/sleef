@@ -164,6 +164,37 @@ typedef struct {
 } Sleef_longdouble2;
 #endif
 
+#if (defined(__SIZEOF_FLOAT128__) && __SIZEOF_FLOAT128__ == 16) || (defined(__linux__) && defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))) || (defined(__PPC64__) && defined(__GNUC__) && !defined(__clang__) && __GNUC__ >= 8)
+#define SLEEF_FLOAT128_IS_IEEEQP
+#endif
+
+#if !defined(SLEEF_FLOAT128_IS_IEEEQP) && defined(__SIZEOF_LONG_DOUBLE__) && __SIZEOF_LONG_DOUBLE__ == 16 && (defined(__aarch64__) || defined(__zarch__))
+#define SLEEF_LONGDOUBLE_IS_IEEEQP
+#endif
+
+#if !defined(Sleef_quad_DEFINED)
+#define Sleef_quad_DEFINED
+typedef struct { uint64_t x, y; } Sleef_uint64_2t;
+#if defined(SLEEF_FLOAT128_IS_IEEEQP) || defined(ENABLEFLOAT128)
+typedef __float128 Sleef_quad;
+#define SLEEF_QUAD_C(x) (x ## Q)
+#elif defined(SLEEF_LONGDOUBLE_IS_IEEEQP)
+typedef long double Sleef_quad;
+#define SLEEF_QUAD_C(x) (x ## L)
+#else
+typedef Sleef_uint64_2t Sleef_quad;
+#endif
+#endif
+#if !defined(Sleef_quad2_DEFINED)
+#define Sleef_quad2_DEFINED
+typedef union {
+  struct {
+    Sleef_quad x, y;
+  };
+  Sleef_quad s[2];
+} Sleef_quad2;
+#endif
+
 #ifdef __cplusplus
 extern "C"
 {
@@ -326,3 +357,8 @@ SLEEF_PRAGMA_OMP_SIMD_SP SLEEF_IMPORT SLEEF_CONST float Sleef_erfcf_u15(float);
 
 SLEEF_IMPORT SLEEF_CONST Sleef_longdouble2 Sleef_sincospil_u05(long double);
 SLEEF_IMPORT SLEEF_CONST Sleef_longdouble2 Sleef_sincospil_u35(long double);
+
+#if defined(Sleef_quad2_DEFINED)
+SLEEF_IMPORT SLEEF_CONST Sleef_quad2 Sleef_sincospiq_u05(Sleef_quad);
+SLEEF_IMPORT SLEEF_CONST Sleef_quad2 Sleef_sincospiq_u35(Sleef_quad);
+#endif
