@@ -7,7 +7,7 @@ if (SLEEF_BUILD_TESTS)
 endif()
 add_subdirectory("common")
 
-if (SLEEF_BUILD_DFT AND NOT MINGW)
+if (SLEEF_BUILD_DFT)
   add_subdirectory("dft")
   if (SLEEF_BUILD_TESTS)
     add_subdirectory("dft-tester")
