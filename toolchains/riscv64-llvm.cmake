@@ -4,7 +4,7 @@ SET (CMAKE_SYSTEM_PROCESSOR "riscv64")
 
 SET(CMAKE_FIND_ROOT_PATH  /usr/riscv64-linux-gnu /usr/include/riscv64-linux-gnu /usr/lib/riscv64-linux-gnu /lib/riscv64-linux-gnu)
 
-find_program(CMAKE_C_COMPILER NAMES clang-17 clang)
+find_program(CMAKE_C_COMPILER NAMES clang-18 clang-17 clang)
 set(CMAKE_C_COMPILER_TARGET riscv64-linux-gnu)
 
 SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)

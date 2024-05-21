@@ -15,8 +15,6 @@ permissions:
   contents: read
 
 env:
-  GCC_VERSION: "11"
-  LLVM_VERSION: "17"
   COMMON_CMAKE_FLAGS: >
     -DSLEEF_SHOW_CONFIG=1
     -DSLEEF_BUILD_GNUABI_LIBS=ON
@@ -29,14 +27,22 @@ env:
     -DSLEEF_ENFORCE_TESTER3=ON
 
 jobs:
-  build-native:
+  build-x86_64:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        compiler: [gcc, llvm]
+        include:
+          - compiler: gcc
+            compiler_version: 11
+          - compiler: gcc
+            compiler_version: 12
+          - compiler: llvm
+            compiler_version: 17
+          - compiler: llvm
+            compiler_version: 18
 
-    name: build-native-${{ matrix.compiler }}
+    name: build-x86_64-${{ matrix.compiler }}-${{ matrix.compiler_version }}
     steps:
       - uses: actions/checkout@v4.1.1
         with:
@@ -50,47 +56,55 @@ jobs:
       # Needed for llvm builds as well for target libraries
       - name: Install gcc
         run: |
-          sudo apt-get install -y -qq gcc-${GCC_VERSION}
+          sudo apt-get install -y -qq gcc${{ matrix.compiler == 'gcc' && format('-{0}', matrix.compiler_version) || '' }}
 
       - name: Install llvm
         run: |
           curl -o llvm.sh https://apt.llvm.org/llvm.sh
           chmod u+x llvm.sh
-          sudo ./llvm.sh ${LLVM_VERSION}
-          sudo ln -srf $(which clang-${LLVM_VERSION}) /usr/bin/clang
+          sudo ./llvm.sh ${{ matrix.compiler_version }}
+          sudo ln -srf $(which clang-${{ matrix.compiler_version }}) /usr/bin/clang
           rm llvm.sh
         if: ${{ matrix.compiler == 'llvm' }}
 
-      - name: Build native
+      - name: Build x86_64
         shell: bash -ex -o pipefail {0}
         run: |
           EXTRA_CMAKE_FLAGS="-DSLEEF_ENFORCE_SSE2=ON -DSLEEF_ENFORCE_SSE4=ON -DSLEEF_ENFORCE_AVX=ON -DSLEEF_ENFORCE_AVX=ON -DSLEEF_ENFORCE_AVX2=ON -DSLEEF_ENFORCE_AVX512F=ON -DSLEEF_ENFORCE_FMA4=ON"
-          cmake -S . -B _build-native -GNinja \
-            -DCMAKE_INSTALL_PREFIX=$(pwd)/_install-native \
+          cmake -S . -B _build-x86_64 -GNinja \
+            -DCMAKE_INSTALL_PREFIX=$(pwd)/_install-x86_64 \
             -DCMAKE_TOOLCHAIN_FILE=$(pwd)/toolchains/native-${{ matrix.compiler }}.cmake \
             ${COMMON_CMAKE_FLAGS} \
             ${EXTRA_CMAKE_FLAGS}
-          cmake --build _build-native
-          cmake --install _build-native
+          cmake --build _build-x86_64
+          cmake --install _build-x86_64
 
-      - name: Upload build-native-${{ matrix.compiler }} artifacts
+      - name: Upload build-x86_64-${{ matrix.compiler }}-${{ matrix.compiler_version }} artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: build-native-${{ matrix.compiler }}
+          name: build-x86_64-${{ matrix.compiler }}-${{ matrix.compiler_version }}
           path: |
             _build-*
             _install-*
         if: always()
 
-  test-native:
+  test-x86_64:
     runs-on: ubuntu-latest
-    needs: [build-native]
+    needs: [build-x86_64]
     strategy:
       fail-fast: false
       matrix:
-        compiler: [gcc, llvm]
+        include:
+          - compiler: gcc
+            compiler_version: 11
+          - compiler: gcc
+            compiler_version: 12
+          - compiler: llvm
+            compiler_version: 17
+          - compiler: llvm
+            compiler_version: 18
 
-    name: test-native-${{ matrix.compiler }}
+    name: test-x86_64-${{ matrix.compiler }}-${{ matrix.compiler_version }}
     steps:
       - uses: actions/checkout@v4.1.1
         with:
@@ -103,54 +117,115 @@ jobs:
         run: |
           cat /proc/cpuinfo
 
-      - name: Download build-native-${{ matrix.compiler }} artifacts
+      - name: Download build-x86_64-${{ matrix.compiler }}-${{ matrix.compiler_version }} artifacts
         uses: actions/download-artifact@v3
         with:
-          name: build-native-${{ matrix.compiler }}
+          name: build-x86_64-${{ matrix.compiler }}-${{ matrix.compiler_version }}
 
-      - name: Fix _build-native permissions
+      - name: Fix _build-x86_64 permissions
         run: |
-          chmod +x _build-native/bin/*
+          chmod +x _build-x86_64/bin/*
 
-      - name: Test native
+      - name: Test x86_64
         env:
           CTEST_OUTPUT_ON_FAILURE: "TRUE"
         run: |
-          cd _build-native
+          cd _build-x86_64
           ctest -j$(nproc)
 
-      - name: Upload test-native artifacts
+      - name: Upload test-x86_64 artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: test-native
+          name: test-x86_64
           path: |
-            _build-native/Testing
+            _build-x86_64/Testing
         if: always()
 
   build-cross:
     runs-on: ubuntu-latest
-    needs: [build-native]
+    needs: [build-x86_64]
     strategy:
       fail-fast: false
       matrix:
-        arch: [aarch64, armhf, ppc64el, s390x, riscv64]
-        compiler: [gcc, llvm]
         include:
           - arch: armhf
             binfmt: arm
             gnupkg: -arm-linux-gnueabihf
+            compiler: gcc
+            compiler_version: 11
+          - arch: armhf
+            binfmt: arm
+            gnupkg: -arm-linux-gnueabihf
+            compiler: gcc
+            compiler_version: 12
+          - arch: armhf
+            binfmt: arm
+            gnupkg: -arm-linux-gnueabihf
+            compiler: llvm
+            compiler_version: 17
+          - arch: armhf
+            binfmt: arm
+            gnupkg: -arm-linux-gnueabihf
+            compiler: llvm
+            compiler_version: 18
           - arch: ppc64el
             binfmt: ppc64le
             gnupkg: -powerpc64le-linux-gnu
+            compiler: gcc
+            compiler_version: 11
+          - arch: ppc64el
+            binfmt: ppc64le
+            gnupkg: -powerpc64le-linux-gnu
+            compiler: gcc
+            compiler_version: 12
+          - arch: ppc64el
+            binfmt: ppc64le
+            gnupkg: -powerpc64le-linux-gnu
+            compiler: llvm
+            compiler_version: 17
+          - arch: ppc64el
+            binfmt: ppc64le
+            gnupkg: -powerpc64le-linux-gnu
+            compiler: llvm
+            compiler_version: 18
           - arch: aarch64
             debarch: arm64
-        exclude:
-          # Only GCC trunk supports the RISC-V V intrinsics and https://github.com/riscv-collab/riscv-gnu-toolchain
+            compiler: gcc
+            compiler_version: 11
+          - arch: aarch64
+            debarch: arm64
+            compiler: gcc
+            compiler_version: 12
+          - arch: aarch64
+            debarch: arm64
+            compiler: llvm
+            compiler_version: 17
+          - arch: aarch64
+            debarch: arm64
+            compiler: llvm
+            compiler_version: 18
+          - arch: s390x
+            compiler: gcc
+            compiler_version: 11
+          - arch: s390x
+            compiler: gcc
+            compiler_version: 12
+          - arch: s390x
+            compiler: llvm
+            compiler_version: 17
+          - arch: s390x
+            compiler: llvm
+            compiler_version: 18
+          # Only GCC 14+ supports the RISC-V V intrinsics and https://github.com/riscv-collab/riscv-gnu-toolchain
           # doesn't track a recent enough version yet
           - arch: riscv64
-            compiler: gcc
+            compiler: llvm
+            compiler_version: 17
+          - arch: riscv64
+            compiler: llvm
+            compiler_version: 18
 
-    name: build-${{ matrix.arch }}-${{ matrix.compiler }}
+    name: build-${{ matrix.arch }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}
     steps:
       - uses: actions/checkout@v4.1.1
         with:
@@ -164,14 +239,14 @@ jobs:
       # Needed for llvm builds as well for target libraries
       - name: Install gcc
         run: |
-          sudo apt-get install -y -qq gcc-${GCC_VERSION}${{ matrix.gnupkg || format('-{0}-linux-gnu', matrix.arch) }}
+          sudo apt-get install -y -qq gcc${{ matrix.compiler == 'gcc' && format('-{0}', matrix.compiler_version) || '' }}${{ matrix.gnupkg || format('-{0}-linux-gnu', matrix.arch) }}
 
       - name: Install llvm
         run: |
           curl -o llvm.sh https://apt.llvm.org/llvm.sh
           chmod u+x llvm.sh
-          sudo ./llvm.sh ${LLVM_VERSION}
-          sudo ln -srf $(which clang-${LLVM_VERSION}) /usr/bin/clang
+          sudo ./llvm.sh ${{ matrix.compiler_version }}
+          sudo ln -srf $(which clang-${{ matrix.compiler_version }}) /usr/bin/clang
           rm llvm.sh
         if: ${{ matrix.compiler == 'llvm' }}
 
@@ -199,16 +274,16 @@ jobs:
           rm -rf sysroot/usr/libexec/gcc
         if: steps.check-sysroot-cache.outputs.cache-hit != 'true'
 
-      - name: Download build-native-${{ matrix.compiler }} artifacts
+      - name: Download build-x86_64-${{ matrix.compiler }}-${{ matrix.compiler_version }} artifacts
         uses: actions/download-artifact@v3
         with:
-          name: build-native-${{ matrix.compiler }}
+          name: build-x86_64-${{ matrix.compiler }}-${{ matrix.compiler_version }}
 
-      - name: Fix _build-native permissions
+      - name: Fix _build-x86_64 permissions
         run: |
-          chmod +x _build-native/bin/*
+          chmod +x _build-x86_64/bin/*
 
-      - name: Build ${{ matrix.arch }}
+      - name: Build ${{ matrix.arch }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}
         shell: bash -ex -o pipefail {0}
         run: |
           EXTRA_CMAKE_FLAGS=""
@@ -231,16 +306,16 @@ jobs:
             -DCMAKE_INSTALL_PREFIX="$(pwd)/_install-${{ matrix.arch }}" \
             -DCMAKE_TOOLCHAIN_FILE=$(pwd)/toolchains/${{ matrix.arch }}-${{ matrix.compiler }}.cmake \
             -DCMAKE_SYSROOT=$(pwd)/sysroot \
-            -DNATIVE_BUILD_DIR="$(pwd)/_build-native" \
+            -DNATIVE_BUILD_DIR="$(pwd)/_build-x86_64" \
             ${COMMON_CMAKE_FLAGS} \
             ${EXTRA_CMAKE_FLAGS}
           cmake --build _build-${{ matrix.arch }}
           cmake --install _build-${{ matrix.arch }}
 
-      - name: Upload build-${{ matrix.arch }}-${{ matrix.compiler }} artifacts
+      - name: Upload build-${{ matrix.arch }}-${{ matrix.compiler }}-${{ matrix.compiler_version }} artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: build-${{ matrix.arch }}-${{ matrix.compiler }}
+          name: build-${{ matrix.arch }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}
           path: |
             _build-${{ matrix.arch }}
             _install-${{ matrix.arch }}
@@ -248,7 +323,7 @@ jobs:
 
   test-cross:
     runs-on: ubuntu-latest
-    needs: [build-native, build-cross]
+    needs: [build-x86_64, build-cross]
     strategy:
       fail-fast: false
       matrix:
@@ -256,79 +331,162 @@ jobs:
           # AArch64
           - arch: aarch64
             compiler: gcc
+            compiler_version: 11
             qemu_cpu: "max,sve=off"
           - arch: aarch64
             compiler: gcc
+            compiler_version: 11
             qemu_cpu: "max,sve=on,sve128=on"
           - arch: aarch64
             compiler: gcc
+            compiler_version: 11
             qemu_cpu: "max,sve=on,sve256=on"
           - arch: aarch64
             compiler: gcc
+            compiler_version: 11
+            qemu_cpu: "max,sve=on,sve512=on"
+          # FIXME: AArch64 fails with GCC 12
+          # - arch: aarch64
+          #   compiler: gcc
+          #   compiler_version: 12
+          #   qemu_cpu: "max,sve=off"
+          # - arch: aarch64
+          #   compiler: gcc
+          #   compiler_version: 12
+          #   qemu_cpu: "max,sve=on,sve128=on"
+          # - arch: aarch64
+          #   compiler: gcc
+          #   compiler_version: 12
+          #   qemu_cpu: "max,sve=on,sve256=on"
+          # - arch: aarch64
+          #   compiler: gcc
+          #   compiler_version: 12
+          #   qemu_cpu: "max,sve=on,sve512=on"
+          - arch: aarch64
+            compiler: llvm
+            compiler_version: 17
+            qemu_cpu: "max,sve=off"
+          - arch: aarch64
+            compiler: llvm
+            compiler_version: 17
+            qemu_cpu: "max,sve=on,sve128=on"
+          - arch: aarch64
+            compiler: llvm
+            compiler_version: 17
+            qemu_cpu: "max,sve=on,sve256=on"
+          - arch: aarch64
+            compiler: llvm
+            compiler_version: 17
             qemu_cpu: "max,sve=on,sve512=on"
           - arch: aarch64
             compiler: llvm
+            compiler_version: 18
             qemu_cpu: "max,sve=off"
           - arch: aarch64
             compiler: llvm
+            compiler_version: 18
             qemu_cpu: "max,sve=on,sve128=on"
           - arch: aarch64
             compiler: llvm
+            compiler_version: 18
             qemu_cpu: "max,sve=on,sve256=on"
           - arch: aarch64
             compiler: llvm
+            compiler_version: 18
             qemu_cpu: "max,sve=on,sve512=on"
           # Aarch32
           - arch: armhf
-            compiler: gcc
             binfmt: arm
+            compiler: gcc
+            compiler_version: 11
             qemu_cpu: "max"
           - arch: armhf
-            compiler: llvm
             binfmt: arm
+            compiler: gcc
+            compiler_version: 12
+            qemu_cpu: "max"
+          - arch: armhf
+            binfmt: arm
+            compiler: llvm
+            compiler_version: 17
+            qemu_cpu: "max"
+          - arch: armhf
+            binfmt: arm
+            compiler: llvm
+            compiler_version: 18
             qemu_cpu: "max"
           # PPC64
           - arch: ppc64el
-            compiler: gcc
             binfmt: ppc64le
+            compiler: gcc
+            compiler_version: 11
+            qemu_cpu: "power10"
+          # FIXME: PPC64 fails with GCC 12
+          # - arch: ppc64el
+          #   binfmt: ppc64le
+          #   compiler: gcc
+          #   compiler_version: 12
+          #   qemu_cpu: "power10"
+          - arch: ppc64el
+            binfmt: ppc64le
+            compiler: llvm
+            compiler_version: 17
             qemu_cpu: "power10"
           - arch: ppc64el
-            compiler: llvm
             binfmt: ppc64le
+            compiler: llvm
+            compiler_version: 18
             qemu_cpu: "power10"
           # IBM Z
           # TODO: figure out qemu_cpu variable to make tests pass on QEMU
           - arch: s390x
             compiler: gcc
+            compiler_version: 11
+          # FIXME: s390x fails with GCC 12
+          # - arch: s390x
+          #   compiler: gcc
+          #   compiler_version: 12
           - arch: s390x
             compiler: llvm
+            compiler_version: 17
+          - arch: s390x
+            compiler: llvm
+            compiler_version: 18
           # RISC-V
-          # - arch: riscv64
-          #   compiler: gcc
-          #   qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=false"
-          # - arch: riscv64
-          #   compiler: gcc
-          #   qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=true,vlen=128,elen=64,vext_spec=v1.0"
-          # - arch: riscv64
-          #   compiler: gcc
-          #   qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=true,vlen=256,elen=64,vext_spec=v1.0"
-          # - arch: riscv64
-          #   compiler: gcc
-          #   qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=true,vlen=512,elen=64,vext_spec=v1.0"
           - arch: riscv64
             compiler: llvm
+            compiler_version: 17
             qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=false"
           - arch: riscv64
             compiler: llvm
+            compiler_version: 17
             qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=true,vlen=128,elen=64,vext_spec=v1.0"
           - arch: riscv64
             compiler: llvm
+            compiler_version: 17
             qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=true,vlen=256,elen=64,vext_spec=v1.0"
           - arch: riscv64
             compiler: llvm
+            compiler_version: 17
+            qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=true,vlen=512,elen=64,vext_spec=v1.0"
+          - arch: riscv64
+            compiler: llvm
+            compiler_version: 18
+            qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=false"
+          - arch: riscv64
+            compiler: llvm
+            compiler_version: 18
+            qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=true,vlen=128,elen=64,vext_spec=v1.0"
+          - arch: riscv64
+            compiler: llvm
+            compiler_version: 18
+            qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=true,vlen=256,elen=64,vext_spec=v1.0"
+          - arch: riscv64
+            compiler: llvm
+            compiler_version: 18
             qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=true,vlen=512,elen=64,vext_spec=v1.0"
 
-    name: "test-${{ matrix.arch }}-${{ matrix.compiler }} (qemu_cpu: \"${{ matrix.qemu_cpu }}\")"
+    name: "test-${{ matrix.arch }}-${{ matrix.compiler }}-${{ matrix.compiler_version }} (qemu_cpu: \"${{ matrix.qemu_cpu }}\")"
     steps:
       - uses: actions/checkout@v4.1.1
         with:
@@ -346,21 +504,21 @@ jobs:
         run: |
           cat /proc/cpuinfo
 
-      - name: Download build-native-${{ matrix.compiler }} artifacts
+      - name: Download build-x86_64-${{ matrix.compiler }}-${{ matrix.compiler_version }} artifacts
         uses: actions/download-artifact@v3
         with:
-          name: build-native-${{ matrix.compiler }}
+          name: build-x86_64-${{ matrix.compiler }}-${{ matrix.compiler_version }}
 
-      - name: Download build-${{ matrix.arch }}-${{ matrix.compiler }} artifacts
+      - name: Download build-${{ matrix.arch }}-${{ matrix.compiler }}-${{ matrix.compiler_version }} artifacts
         uses: actions/download-artifact@v3
         with:
-          name: build-${{ matrix.arch }}-${{ matrix.compiler }}
+          name: build-${{ matrix.arch }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}
 
-      - name: Fix _build-native and _build-${{ matrix.arch }} permissions
+      - name: Fix _build-x86_64 and _build-${{ matrix.arch }} permissions
         run: |
-          chmod +x _build-native/bin/* _build-${{ matrix.arch }}/bin/*
+          chmod +x _build-x86_64/bin/* _build-${{ matrix.arch }}/bin/*
 
-      - name: Test ${{ matrix.arch }}
+      - name: Test ${{ matrix.arch }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}
         env:
           CTEST_OUTPUT_ON_FAILURE: "TRUE"
         run: |
@@ -370,10 +528,10 @@ jobs:
           cd _build-${{ matrix.arch }}
           ctest -j$(nproc)
 
-      - name: Upload test-${{ matrix.arch }}-${{ matrix.compiler }}-${{ strategy.job-index }} artifacts
+      - name: Upload test-${{ matrix.arch }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ strategy.job-index }} artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: test-${{ matrix.arch }}-${{ matrix.compiler }}-${{ strategy.job-index }}
+          name: test-${{ matrix.arch }}-${{ matrix.compiler }}-${{ matrix.compiler_version }}-${{ strategy.job-index }}
           path: |
             _build-${{ matrix.arch }}/Testing
         if: always()
