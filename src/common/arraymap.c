@@ -27,7 +27,7 @@ static void FTRUNCATE(FILE *fp, off_t z) {
 static FILE *OPENTMPFILE() { return tmpfile(); }
 static void CLOSETMPFILE(FILE *fp) { fclose(fp); }
 #else
-#include <Windows.h>
+#include <windows.h>
 #include <io.h>
 
 static void FLOCK(FILE *fp) { }
