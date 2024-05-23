@@ -1,0 +1,106 @@
+
+name: "LLVM-MinGW Cross Build"
+
+on:
+  # allow direct trigger
+  workflow_dispatch:
+  push:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  COMMON_CMAKE_FLAGS: >
+    -DSLEEF_BUILD_DFT=ON
+    -DSLEEF_BUILD_GNUABI_LIBS=ON
+    -DSLEEF_BUILD_INLINE_HEADERS=ON
+    -DSLEEF_BUILD_QUAD=ON
+    -DSLEEF_BUILD_SCALAR_LIB=ON
+    -DSLEEF_BUILD_STATIC_TEST_BINS=ON
+    -DSLEEF_BUILD_TESTS=OFF
+    -DSLEEF_SHOW_CONFIG=1
+
+jobs:
+  build-llvm-mingw:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [aarch64, x86_64]
+        lto: [lto, nlto]
+
+    name: build-${{ matrix.arch }}-${{ matrix.lto }}
+    steps:
+      - uses: actions/checkout@v4.1.1
+        with:
+          persist-credentials: false
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -y -qq
+          sudo apt-get install -y -qq build-essential curl ninja-build libgmp-dev libmpfr-dev debootstrap 7zip
+
+      - name: Download llvm-mingw
+        uses: robinraju/release-downloader@main
+        with:
+          repository: "mstorsjo/llvm-mingw"
+          latest: true
+          extract: false
+          fileName: "llvm-mingw-*-ucrt-ubuntu-*-x86_64.tar.xz"
+
+      - name: Install llvm-mingw
+        run: |
+          tar -xaf llvm-mingw-*.tar.xz && rm llvm-mingw-*.tar.xz
+          mv llvm-mingw-* llvm-mingw
+          echo ORIGIN_PATH="$PATH" >> $GITHUB_ENV
+          echo PATH="$PWD/llvm-mingw/bin:$PATH" >> $GITHUB_ENV
+
+      - name: Build native
+        shell: bash -ex -o pipefail {0}
+        run: |
+          EXTRA_CMAKE_FLAGS="-DSLEEF_ENFORCE_SSE2=ON -DSLEEF_ENFORCE_SSE4=ON -DSLEEF_ENFORCE_AVX=ON -DSLEEF_ENFORCE_AVX2=ON -DSLEEF_ENFORCE_AVX512F=ON -DSLEEF_ENFORCE_FMA4=ON"
+          PATH=$ORIGIN_PATH
+          cmake -S . -B _build-native -GNinja \
+            -DCMAKE_INSTALL_PREFIX=$(pwd)/_install-native \
+            -DCMAKE_TOOLCHAIN_FILE=$(pwd)/toolchains/native-llvm.cmake \
+            ${COMMON_CMAKE_FLAGS} \
+            ${EXTRA_CMAKE_FLAGS}
+          cmake --build _build-native
+          cmake --install _build-native
+
+      - name: Build llvm-mingw-${{ matrix.arch }}-${{ matrix.lto }}
+        shell: bash -ex -o pipefail {0}
+        run: |
+          EXTRA_CMAKE_FLAGS=""
+          if [[ ${{ matrix.arch }} = "x86_64" ]]; then
+            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DSLEEF_ENFORCE_SSE2=ON -DSLEEF_ENFORCE_SSE4=ON -DSLEEF_ENFORCE_AVX=ON -DSLEEF_ENFORCE_AVX2=ON -DSLEEF_ENFORCE_AVX512F=ON -DSLEEF_ENFORCE_FMA4=ON"
+          fi
+          if [[ ${{ matrix.lto }} = "lto" ]]; then
+            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DSLEEF_ENABLE_LTO=ON"
+          fi
+
+          cmake -S . -B _build-${{ matrix.arch }}-${{ matrix.lto }} -GNinja \
+            ${COMMON_CMAKE_FLAGS} \
+            ${EXTRA_CMAKE_FLAGS} \
+            -DCMAKE_C_COMPILER=${{ matrix.arch }}-w64-mingw32-clang \
+            -DCMAKE_INSTALL_PREFIX="$(pwd)/_install-${{ matrix.arch }}-${{ matrix.lto }}" \
+            -DCMAKE_SYSROOT="$(pwd)/llvm-mingw/${{ matrix.arch }}-w64-mingw32" \
+            -DCMAKE_SYSTEM_NAME=Windows \
+            -DCMAKE_SYSTEM_PROCESSOR=${{ matrix.arch }} \
+            -DNATIVE_BUILD_DIR="$(pwd)/_build-native"
+          cmake --build _build-${{ matrix.arch }}-${{ matrix.lto }}
+          cmake --install _build-${{ matrix.arch }}-${{ matrix.lto }}
+
+      - name: Upload build-${{ matrix.arch }}-${{ matrix.lto }}-llvm-mingw artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-${{ matrix.arch }}-${{ matrix.lto }}-llvm-mingw
+          path: |
+            _build-${{ matrix.arch }}-${{ matrix.lto }}
+            _install-${{ matrix.arch }}-${{ matrix.lto }}
+        if: always()

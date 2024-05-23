@@ -1,0 +1,172 @@
+
+name: "MSYS2 Build & Test"
+
+on:
+  # allow direct trigger
+  workflow_dispatch:
+  push:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  COMMON_CMAKE_FLAGS: >
+    -DSLEEF_BUILD_DFT=ON
+    -DSLEEF_BUILD_GNUABI_LIBS=ON
+    -DSLEEF_BUILD_QUAD=ON
+    -DSLEEF_BUILD_SCALAR_LIB=ON
+    -DSLEEF_BUILD_STATIC_TEST_BINS=ON
+    -DSLEEF_ENFORCE_TESTER=ON
+    -DSLEEF_ENFORCE_TESTER3=ON
+    -DSLEEF_SHOW_CONFIG=1
+
+jobs:
+  build-msys2:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        sys:
+          - clang64
+          #- clangarm64
+          #- mingw64
+          #- ucrt64
+        lto: [lto, nlto]
+        #exclude:
+          #- sys: mingw64
+            #lto: lto
+          #- sys: ucrt64
+            #lto: lto
+    defaults:
+      run:
+        shell: msys2 {0}
+    name: build-msys2-${{ matrix.sys }}-${{ matrix.lto }}
+    steps:
+      - name: Disable autocrlf
+        shell: pwsh
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: ${{ matrix.sys }}
+          update: true
+          install: >-
+            git
+          pacboy: >-
+            cc:p
+            cmake:p
+            mpfr:p
+            ninja:p
+            openssl:p
+            pkgconf:p
+
+      - uses: actions/checkout@v4.1.1
+        with:
+          persist-credentials: false
+
+      - name: Build msys2-${{ matrix.sys }}-${{ matrix.lto }}
+        shell: msys2 {0}
+        run: |
+          EXTRA_CMAKE_FLAGS=""
+          if [[ ${{ matrix.sys }} = "clang64" ]]; then
+            EXTRA_CMAKE_FLAGS="$EXTRA_CMAKE_FLAGS -DSLEEF_ENFORCE_SSE2=ON -DSLEEF_ENFORCE_SSE4=ON -DSLEEF_ENFORCE_AVX=ON -DSLEEF_ENFORCE_AVX2=ON -DSLEEF_ENFORCE_AVX512F=ON -DSLEEF_ENFORCE_FMA4=ON"
+            [[ ${{ matrix.lto }} = "lto" ]] && EXTRA_CMAKE_FLAGS="$EXTRA_CMAKE_FLAGS -DSLEEF_ENABLE_LTO=ON"
+          elif [[ ${{ matrix.sys }} = "clangarm64" ]]; then
+            [[ ${{ matrix.lto }} = "lto" ]] && EXTRA_CMAKE_FLAGS="$EXTRA_CMAKE_FLAGS -DSLEEF_ENABLE_LTO=ON"
+          elif [[ ${{ matrix.sys }} = "mingw64" || ${{ matrix.sys }} = "ucrt64" ]]; then
+            EXTRA_CMAKE_FLAGS="$EXTRA_CMAKE_FLAGS -DSLEEF_ENFORCE_SSE2=ON -DSLEEF_ENFORCE_SSE4=ON -DSLEEF_ENFORCE_AVX=ON -DSLEEF_ENFORCE_AVX2=ON -DSLEEF_ENFORCE_AVX512F=ON -DSLEEF_ENFORCE_FMA4=ON"
+          fi
+          cmake -S . -B _build-msys2-${{ matrix.sys }}-${{ matrix.lto }} -GNinja \
+            ${COMMON_CMAKE_FLAGS} \
+            ${EXTRA_CMAKE_FLAGS} \
+            -DCMAKE_INSTALL_PREFIX=$(pwd)/_install-msys2-${{ matrix.sys }}-${{ matrix.lto }} \
+            -DOPENSSL_EXTRA_LIBRARIES="-lws2_32 -lcrypt32"
+          cmake --build _build-msys2-${{ matrix.sys }}-${{ matrix.lto }}
+          cmake --install _build-msys2-${{ matrix.sys }}-${{ matrix.lto }}
+
+      - name: Upload build-msys2-${{ matrix.sys }}-${{ matrix.lto }} artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-msys2-${{ matrix.sys }}-${{ matrix.lto }}
+          path: |
+            _build-msys2-${{ matrix.sys }}-${{ matrix.lto }}
+            _install-msys2-${{ matrix.sys }}-${{ matrix.lto }}
+        if: always()
+
+  test-msys2:
+    runs-on: windows-latest
+    needs: [build-msys2]
+    strategy:
+      fail-fast: false
+      matrix:
+        sys:
+          - clang64
+          #- clangarm64
+          #- mingw64
+          #- ucrt64
+        lto: [lto, nlto]
+        #exclude:
+          #- sys: mingw64
+            #lto: lto
+          #- sys: ucrt64
+            #lto: lto
+    defaults:
+      run:
+        shell: msys2 {0}
+    name: test-msys2-${{ matrix.sys }}-${{ matrix.lto }}
+    steps:
+      - name: Disable autocrlf
+        shell: pwsh
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: ${{ matrix.sys }}
+          update: true
+          install: >-
+            git
+          pacboy: >-
+            cc:p
+            cmake:p
+            mpfr:p
+            ninja:p
+            openssl:p
+            pkgconf:p
+
+      - uses: actions/checkout@v4.1.1
+        with:
+          persist-credentials: false
+
+      - name: Print host CPU info
+        run: |
+          wget -qO- https://download.sysinternals.com/files/Coreinfo.zip | bsdtar -xf-
+          ./Coreinfo64.exe -accepteula
+
+      - name: Download build-msys2-${{ matrix.sys }}-${{ matrix.lto }} artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-msys2-${{ matrix.sys }}-${{ matrix.lto }}
+
+      - name: Test msys2-${{ matrix.sys }}-${{ matrix.lto }}
+        env:
+          CTEST_OUTPUT_ON_FAILURE: "TRUE"
+        run: |
+          cd _build-msys2-${{ matrix.sys }}-${{ matrix.lto }}
+          ctest -j$(nproc)
+
+      - name: Upload test-msys2-${{ matrix.sys }}-${{ matrix.lto }} artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-msys2-${{ matrix.sys }}-${{ matrix.lto }}
+          path: |
+            _build-msys2-${{ matrix.sys }}-${{ matrix.lto }}/Testing
+        if: always()
