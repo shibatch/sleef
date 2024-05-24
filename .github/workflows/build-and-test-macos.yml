@@ -1,0 +1,143 @@
+
+name: "macOS Build & Test"
+
+on:
+  # allow direct trigger
+  workflow_dispatch:
+  push:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  COMMON_CMAKE_FLAGS: >
+    -DSLEEF_SHOW_CONFIG=1
+    -DSLEEF_BUILD_GNUABI_LIBS=ON
+    -DSLEEF_BUILD_INLINE_HEADERS=ON
+    -DSLEEF_BUILD_DFT=ON
+    -DSLEEF_BUILD_QUAD=ON
+    -DSLEEF_BUILD_SCALAR_LIB=ON
+    -DSLEEF_BUILD_STATIC_TEST_BINS=OFF
+    -DSLEEF_ENFORCE_TESTER=ON
+    -DSLEEF_ENFORCE_TESTER3=ON
+
+jobs:
+  build-macos:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - "macos-13"
+          - "macos-14"
+        include:
+          - os: "macos-13"
+            arch: "x86_64"
+            xcode: "Xcode_15.2"
+          - os: "macos-14"
+            arch: "aarch64"
+            xcode: "Xcode_15.4"
+
+    name: build-${{ matrix.os }}-${{ matrix.arch }}
+    steps:
+      - name: Change Xcode version
+        if: ${{ matrix.xcode != '' }}
+        run: |
+          sudo xcode-select -s /Applications/${{ matrix.xcode }}.app
+
+      - uses: actions/checkout@v4.1.1
+        with:
+          persist-credentials: false
+
+      - name: Install dependencies
+        run: |
+          brew update
+          brew install -q cmake ninja gmp mpfr pkg-config openssl@3
+
+      - name: Build ${{ matrix.os }}-${{ matrix.arch }}
+        shell: bash -ex -o pipefail {0}
+        run: |
+          EXTRA_CMAKE_FLAGS=""
+          if [[ ${{ matrix.arch }} = "aarch64" ]]; then
+            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS}"
+          elif [[ ${{ matrix.arch }} = "x86_64" ]]; then
+            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DSLEEF_ENFORCE_SSE2=ON -DSLEEF_ENFORCE_SSE4=ON -DSLEEF_ENFORCE_AVX=ON -DSLEEF_ENFORCE_AVX=ON -DSLEEF_ENFORCE_AVX2=ON"
+          fi
+
+          cmake -S . -B _build-${{ matrix.os }}-${{ matrix.arch }} -GNinja \
+            -DCMAKE_INSTALL_PREFIX=$(pwd)/_install-${{ matrix.os }}-${{ matrix.arch }} \
+            ${COMMON_CMAKE_FLAGS} \
+            ${EXTRA_CMAKE_FLAGS}
+          cmake --build _build-${{ matrix.os }}-${{ matrix.arch }}
+          cmake --install _build-${{ matrix.os }}-${{ matrix.arch }}
+
+      - name: Upload build-${{ matrix.os }}-${{ matrix.arch }} artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-${{ matrix.os }}-${{ matrix.arch }}
+          path: |
+            _build-*
+            _install-*
+        if: always()
+
+  test-macos:
+    runs-on: ${{ matrix.os }}
+    needs: [build-macos]
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - "macos-13"
+          - "macos-14"
+        include:
+          - os: "macos-13"
+            arch: "x86_64"
+            xcode: "Xcode_15.2"
+          - os: "macos-14"
+            arch: "aarch64"
+            xcode: "Xcode_15.4"
+
+    name: test-${{ matrix.os }}-${{ matrix.arch }}
+    steps:
+      - name: Change Xcode version
+        if: ${{ matrix.xcode != '' }}
+        run: |
+          sudo xcode-select -s /Applications/${{ matrix.xcode }}.app
+
+      - uses: actions/checkout@v4.1.1
+        with:
+          persist-credentials: false
+
+      - name: Install dependencies
+        run: |
+          brew update
+          brew install -q cmake ninja gmp mpfr pkg-config openssl@3
+
+      - name: Download build-${{ matrix.os }}-${{ matrix.arch }} artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: build-${{ matrix.os }}-${{ matrix.arch }}
+
+      - name: Fix _build-${{ matrix.os }}-${{ matrix.arch }} permissions
+        run: |
+          chmod +x _build-${{ matrix.os }}-${{ matrix.arch }}/bin/*
+
+      - name: Test ${{ matrix.os }}-${{ matrix.arch }}
+        env:
+          CTEST_OUTPUT_ON_FAILURE: "TRUE"
+        run: |
+          cd _build-${{ matrix.os }}-${{ matrix.arch }}
+          ctest -j$(sysctl -n hw.logicalcpu)
+
+      - name: Upload test-${{ matrix.os }}-${{ matrix.arch }} artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-${{ matrix.os }}-${{ matrix.arch }}
+          path: |
+            _build-${{ matrix.os }}-${{ matrix.arch }}/Testing
+        if: always()
