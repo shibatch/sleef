@@ -33,54 +33,54 @@ The following table summarises currently supported vector extensions, compilers 
 <table>
 <tr>
   <th colspan="2" rowspan="2"></th>
-  <th colspan="8">OS/Compiler</th>
+  <th colspan="9">OS/Compiler</th>
 </tr>
 <tr>
   <th colspan="3">Linux</th>
   <th colspan="2">MacOS</th>
-  <th colspan="3">Windows</th>
+  <th colspan="4">Windows</th>
 </tr>
 <tr>
   <th>Arch.</th>
   <th>Vector Extensions</th>
   <th>gcc</th><th>llvm</th><th>icc</th>
   <th>gcc</th><th>llvm</th>
-  <th>gcc</th><th>llvm</th><th>msvc</th>
+  <th>gcc</th><th>llvm-gnu</th><th>llvm-msvc</th><th>msvc</th>
 </tr>
 <tr align="center"><th>x86_64</th><th>SSE2, SSE4,<br>AVX, AVX2, AVX512F</th>
   <td>:green_circle:</td><td>:green_circle:</td><td>:white_circle:</td>
   <td>:white_circle:</td><td>:white_circle:</td>
-  <td>:white_circle:</td><td>:white_circle:</td><td>:white_circle:</td>
+  <td>:white_circle:</td><td>:green_circle:</td><td>:white_circle:</td><td>:white_circle:</td>
 </tr>
 <tr align="center"><th>x86 32bit<br>(i386)</th><th>SSE</th>
   <td>:green_circle:</td><td>:green_circle:</td><td>:white_circle:</td>
   <td>:white_circle:</td><td>:white_circle:</td>
-  <td>:white_circle:</td><td>:white_circle:</td><td>:white_circle:</td>
+  <td>:white_circle:</td><td>:white_circle:</td><td>:white_circle:</td><td>:white_circle:</td>
 </tr>
 <tr align="center"><th>AArch64<br>(arm)</th><th>Neon, SVE</th>
   <td>:green_circle:</td><td>:green_circle:</td><td>N/A</td>
   <td colspan="2">Preliminary</td>
-  <td colspan="3">N/A</td>
+  <td colspan="1">N/A</td><td>:white_circle:</td><td>:white_circle:</td><td>:white_circle:</td>
 </tr>
 <tr align="center"><th>AArch32<br>(armhf)</th><th>NEON</th>
   <td>:green_circle:</td><td>:green_circle:</td><td>N/A</td>
   <td colspan="2">Preliminary</td>
-  <td colspan="3">N/A</td>
+  <td colspan="4">N/A</td>
 </tr>
 <tr align="center"><th>PowerPC<br>(ppc64el)</th><th>VSX, VSX3</th>
   <td>:green_circle:</td><td>:green_circle:</td><td>N/A</td>
   <td colspan="2">N/A</td>
-  <td colspan="3">N/A</td>
+  <td colspan="4">N/A</td>
 </tr>
 <tr align="center"><th>IBM/Z<br>(s390x)</th><th>VXE, VXE2</th>
   <td>:green_circle:</td><td>:green_circle:</td><td>N/A</td>
   <td colspan="2">N/A</td>
-  <td colspan="3">N/A</td>
+  <td colspan="4">N/A</td>
 </tr>
 <tr align="center"><th>RISC-V<br>(riscv64)</th><th>RVV1, RVV2</th>
   <td>N/A (14+)</td><td>:green_circle:</td><td>N/A</td>
   <td colspan="2">N/A</td>
-  <td colspan="3">N/A</td>
+  <td colspan="4">N/A</td>
 </tr>
 </table>
 
@@ -93,6 +93,7 @@ Generation of inline headers is also supported for most vector extensions.
 #### Work in progress
 
 - LTO is not tested in CI yet.
+- Windows only DFT is tested for now but everything is built.
 
 ### Compiler support
 
