@@ -37,7 +37,7 @@ The following table summarises currently supported vector extensions, compilers 
 </tr>
 <tr>
   <th colspan="3">Linux</th>
-  <th colspan="2">MacOS</th>
+  <th colspan="2">macOS</th>
   <th colspan="4">Windows</th>
 </tr>
 <tr>
@@ -49,22 +49,22 @@ The following table summarises currently supported vector extensions, compilers 
 </tr>
 <tr align="center"><th>x86_64</th><th>SSE2, SSE4,<br>AVX, AVX2, AVX512F</th>
   <td>:green_circle:</td><td>:green_circle:</td><td>:white_circle:</td>
-  <td>:white_circle:</td><td>:white_circle:</td>
+  <td>:white_circle:</td><td>:green_circle:</td>
   <td>:white_circle:</td><td>:green_circle:</td><td>:white_circle:</td><td>:white_circle:</td>
 </tr>
 <tr align="center"><th>x86 32bit<br>(i386)</th><th>SSE</th>
   <td>:green_circle:</td><td>:green_circle:</td><td>:white_circle:</td>
-  <td>:white_circle:</td><td>:white_circle:</td>
+  <td colspan="2">N/A</td>
   <td>:white_circle:</td><td>:white_circle:</td><td>:white_circle:</td><td>:white_circle:</td>
 </tr>
 <tr align="center"><th>AArch64<br>(arm)</th><th>Neon, SVE</th>
   <td>:green_circle:</td><td>:green_circle:</td><td>N/A</td>
-  <td colspan="2">Preliminary</td>
+  <td colspan="1">N/A</td><td>:green_circle:</td>
   <td colspan="1">N/A</td><td>:white_circle:</td><td>:white_circle:</td><td>:white_circle:</td>
 </tr>
 <tr align="center"><th>AArch32<br>(armhf)</th><th>NEON</th>
   <td>:green_circle:</td><td>:green_circle:</td><td>N/A</td>
-  <td colspan="2">Preliminary</td>
+  <td colspan="2">N/A</td>
   <td colspan="4">N/A</td>
 </tr>
 <tr align="center"><th>PowerPC<br>(ppc64el)</th><th>VSX, VSX3</th>
@@ -109,11 +109,11 @@ Toolchain files provide some information on supported compiler versions.
 
 ### OS support
 
-Only Linux distributions are currently tested in CI and thus officially supported.
+Only Linux distributions and macOS are currently tested in CI and thus officially supported.
 
-Building SLEEF for MacOS and Windows on x86 machines was officially supported ( :white_circle: ), as of 3.5.1, however it is not currently tested.
+Building SLEEF for Windows on x86 machines was officially supported ( :white_circle: ), as of 3.5.1, however it is not currently tested.
 
-Support for MacOS, iOS and Android is only preliminary on AArch64.
+Support for iOS and Android is only preliminary on AArch64.
 
 SVE is not supported on Darwin-based system and therefore automatically disabled by SLEEF on Darwin.
 
