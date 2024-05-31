@@ -22,7 +22,7 @@
   <li><a class="underlined" href="compile.xhtml">Compiling and installing the library</a></li>
     <ul class="disc">
       <li><a href="#preliminaries">Preliminaries</a></li>
-      <li><a href="#cmakevars">Common CMake variables</a></li>
+      <li><a href="#quickstart">Quick start</a></li>
       <li><a href="#linux">Compiling and installing the library on Linux</a></li>
       <li><a href="#MSVC">Compiling the library with Microsoft Visual C++</a></li>
       <li><a href="#hello">Compiling and running "Hello SLEEF"</a></li>
@@ -62,7 +62,7 @@ the <a class="underlined" href="https://gitlab.kitware.com/cmake/community/-/wik
 introductions in the wiki</a>.
 </p>
 
-<h2>Quick start</h2>
+<h2 id="quickstart">Quick start</h2>
 
 <p class="noindent">
 You will find quick start instructions in the sources or via GitHub in the
@@ -70,14 +70,22 @@ You will find quick start instructions in the sources or via GitHub in the
 file.
 </p>
 
+<p class="noindent">
+A more detailed description of CMake usage is provided in the
+<a class="underlined" href="https://github.com/shibatch/sleef/blob/master/docs/build-with-cmake.md">docs/build-with-cmake.md</a>
+file, along with
+<a class="underlined" href="https://github.com/shibatch/sleef/blob/master/docs/build-with-cmake.md#sleef-variables">a list of CMake variables</a>
+relevant to users.
+</p>
+
 <h2 id="linux">Compiling and installing the library on Linux</h2>
 
 <p class="noindent">
-  In order to build the library, you need to install OpenMP. In order
-  to test the library, you need to install libmpfr, libssl and
-  libfftw3. Availability of these libraries are checked upon execution
-  of cmake. Please change the directory to sleef-3.X and run the
-  following commands.
+  In order to build the library, you may want to install OpenMP (optional).
+  In order to test the library, you need to install libmpfr, libssl and
+  libfftw3 (optional). Availability of these libraries are checked upon
+  execution of cmake.
+  Please change the directory to sleef-3.X and run the following commands.
 
   <pre class="command">$ sudo apt-get install libmpfr-dev libssl-dev libfftw3-dev
 $ cmake -S . -B build/ ..
@@ -86,8 +94,6 @@ $ ctest --test-dir build/ -j
 $ sudo cmake --install build/ --prefix /path/to/install/dir
   </pre>
 </p>
-
-<br/>
 
 <p>
   In order to uninstall the libraries and headers, run the following command.

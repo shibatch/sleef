@@ -121,7 +121,7 @@ optimized, or any other special set of flags.
   * `RelWithDebInfo`: builds optimized code with debug information as well
 
 - `CMAKE_INSTALL_PREFIX`: The prefix the use when running `make install`.
-			  Defaults to /usr/local on GNU/Linux and MacOS.
+			  Defaults to /usr/local on GNU/Linux and macOS.
 			  Defaults to C:/Program Files on Windows.
 
 - `CMAKE_C_FLAGS_RELEASE` : The optimization options used by the compiler.
