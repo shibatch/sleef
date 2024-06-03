@@ -1,6 +1,5 @@
 # SLEEF
 
-![Github Actions](https://github.com/shibatch/sleef/actions/workflows/build_and_test.yml/badge.svg?event=push&branch=master)
 [![DOI:10.1109/TPDS.2019.2960333](http://img.shields.io/badge/DOI-10.1109/TPDS.2019.2960333-blue.svg)](https://ieeexplore.ieee.org/document/8936472)
 [![License](https://img.shields.io/badge/License-Boost_1.0-lightblue.svg)](https://www.boost.org/LICENSE_1_0.txt)
 ![CMake](https://img.shields.io/badge/cmake-v3.18+-yellow.svg)
@@ -36,9 +35,21 @@ Compilation of SLEEF on previously supported environments might still be safe, w
   <th colspan="9">OS/Compiler</th>
 </tr>
 <tr>
-  <th colspan="3">Linux</th>
-  <th colspan="2">macOS</th>
-  <th colspan="4">Windows</th>
+  <th colspan="3">Linux</br></br>
+  <a href="https://github.com/shibatch/sleef/actions/workflows/build_and_test.yml">
+    <img src="https://github.com/shibatch/sleef/actions/workflows/build_and_test.yml/badge.svg?event=push&branch=master"></a>
+  </th>
+  <th colspan="2">macOS</br></br>
+  <a href="https://github.com/shibatch/sleef/actions/workflows/build-and-test-macos.yml">
+    <img src="https://github.com/shibatch/sleef/actions/workflows/build-and-test-macos.yml/badge.svg?event=push&branch=master"></a>
+  </th>
+  <th colspan="4">Windows</br></br>
+  <a href="https://github.com/shibatch/sleef/actions/workflows/build-and-test-msys2.yml">
+    <img src="https://github.com/shibatch/sleef/actions/workflows/build-and-test-msys2.yml/badge.svg?event=push&branch=master"></a>
+  </br>
+  <a href="https://github.com/shibatch/sleef/actions/workflows/build-cross-llvm-mingw.yml">
+    <img src="https://github.com/shibatch/sleef/actions/workflows/build-cross-llvm-mingw.yml/badge.svg?event=push&branch=master"></a>
+  </th>
 </tr>
 <tr>
   <th>Arch.</th>
