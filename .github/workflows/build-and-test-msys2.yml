@@ -2,8 +2,6 @@
 name: "MSYS2 Build & Test"
 
 on:
-  # allow direct trigger
-  workflow_dispatch:
   push:
   pull_request:
 

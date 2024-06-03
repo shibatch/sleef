@@ -2,8 +2,6 @@
 name: "Build SLEEF as Subproject"
 
 on:
-  # allow direct trigger
-  workflow_dispatch:
   push:
   pull_request:
 
