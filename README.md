@@ -12,23 +12,23 @@ SLEEF is a library that implements vectorized versions of C standard math functi
 - **Web Page:** [https://sleef.org/][webpage_url]
 - **Sources:** [https://github.com/shibatch/sleef][repo_url]
 
-## Supported vector extensions
+## Supported environment
 
-### Warning
-
-Due to limited test capacities, SLEEF is currently only officially supported on Linux with gcc or llvm/clang.
-[This issue](https://github.com/shibatch/sleef/issues/481) tracks progress on improving test coverage.
-Compilation of SLEEF on previously supported environments might still be safe, we just cannot verify it yet.
-
-### Summary
+### Test matrix
 
 The following table summarises currently supported vector extensions, compilers and OS-es.
 
 :green_circle: : Tested extensively in CI.
 
+:yellow_circle: : Tested partially in CI.
+
 :x: : Currently failing some tests in CI.
 
 :white_circle: : Not tested in CI. Might have passed tests in previous CI framework.
+
+[This issue](https://github.com/shibatch/sleef/issues/481) tracks progress on improving test coverage.
+Compilation of SLEEF on previously supported environments might still be safe, we just cannot verify it yet.
+
 
 <table>
 <tr>
@@ -50,10 +50,10 @@ The following table summarises currently supported vector extensions, compilers 
 <tr align="center"><th>x86_64</th><th>SSE2, SSE4,<br>AVX, AVX2, AVX512F</th>
   <td>:green_circle:</td><td>:green_circle:</td><td>:white_circle:</td>
   <td>:white_circle:</td><td>:green_circle:</td>
-  <td>:white_circle:</td><td>:green_circle:</td><td>:white_circle:</td><td>:white_circle:</td>
+  <td>:white_circle:</td><td>:yellow_circle:</td><td>:white_circle:</td><td>:white_circle:</td>
 </tr>
 <tr align="center"><th>x86 32bit<br>(i386)</th><th>SSE</th>
-  <td>:green_circle:</td><td>:green_circle:</td><td>:white_circle:</td>
+  <td>:white_circle:</td><td>:white_circle:</td><td>:white_circle:</td>
   <td colspan="2">N/A</td>
   <td>:white_circle:</td><td>:white_circle:</td><td>:white_circle:</td><td>:white_circle:</td>
 </tr>
@@ -90,10 +90,7 @@ The above table is valid for libm in single, double and quadruple precision, as 
 
 Generation of inline headers is also supported for most vector extensions.
 
-#### Work in progress
-
-- LTO is not tested in CI yet.
-- Windows only DFT is tested for now but everything is built.
+LTO is not tested in CI yet, except on Windows.
 
 ### Compiler support
 
@@ -109,9 +106,12 @@ Toolchain files provide some information on supported compiler versions.
 
 ### OS support
 
-Only Linux distributions and macOS are currently tested in CI and thus officially supported.
+Only Linux distributions and macOS are fully tested in CI and thus officially supported.
 
-Building SLEEF for Windows on x86 machines was officially supported ( :white_circle: ), as of 3.5.1, however it is not currently tested.
+Building SLEEF for Windows on x86 machines was officially supported ( :white_circle: ), as of 3.5.1,
+however it is only partially tested due to [known limitations of the test suite with MinGW or MSYS2](https://github.com/shibatch/sleef/issues/544).
+As a result tests for Windows on x86 only include DFT for now (other tests are disabled in build system),
+but all components are built.
 
 Support for iOS and Android is only preliminary on AArch64.
 
