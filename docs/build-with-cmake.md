@@ -10,8 +10,8 @@ for one project and manage cross-platform hardware and software complexity.
 
 If you are not already familiar with CMake, please refer to the [official
 documentation](https://cmake.org/documentation/) or the
-[Basic Introductions](https://cmake.org/Wiki/CMake#Basic_Introductions) in the
-wiki (recommended).
+[CMake Wiki](https://gitlab.kitware.com/cmake/community/-/wikis/Home)
+introduction (recommended).
 
 Before using CMake you will need to install/build the binaries on your system.
 Most systems have CMake already installed or provided by the standard package

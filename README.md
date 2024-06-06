@@ -156,6 +156,10 @@ cd sleef && mkdir build
 cmake -S . -B build
 ```
 
+By default this will generate shared libraries. In order to generate static libraries, pass option `-DBUILD_SHARED_LIBS=OFF`.
+
+For more verbose output add option `-DSLEEF_SHOW_CONFIG=ON`.
+
 4. Run make to build the project
 
 ```
@@ -192,10 +196,10 @@ spack install sleef@master
 
 ### Uninstall
 
-In order to uninstall SLEEF, run
+In order to uninstall SLEEF library and headers run
 
 ```
-sudo xargs rm -v &lt; install_manifest.txt
+sudo xargs rm -v < build/install_manifest.txt
 ```
 
 ## License
