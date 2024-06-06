@@ -1,3 +1,29 @@
+## 3.6.1 - 2024-06-10
+
+This patch release provides important bug fixes, including a fix
+for API compatibility with 3.5 (#534).
+The support and test for some features is still limited, as
+documented in [README](./README.md), however significant progress
+was made in order to test on Linux, macOS and Windows.
+
+### Added
+- Add support for RISC-V in DFT, QUAD and inline headers (#503,
+  #522).
+- Add GHA workflow to run CI tests on Windows x86 (#540) and macOS
+  x86/aarch64 (#543). And update test matrix.
+- Add GHA workflows to run examples in CI (#550).
+
+### Changed
+- Cleanup/Improve support for RISC-V in LIBM (#520, #521).
+- Update supported environment in documentation (#529, #549),
+  including website and test matrix from README.
+
+### Fixed
+- Major fix and cleanup of CMakeLists.txt (#531).
+- Fix compatibility issue after removal of quad and long double
+  sincospi (#545). Restores functions that are missing in 3.6.
+- Various bug fixes (#528, #533, #536, #537).
+
 ## 3.6 - 2024-02-14
 
 This release follows a long period of inactivity. The library is now
