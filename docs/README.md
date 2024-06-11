@@ -1,52 +1,22 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN" "http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=0.4"/>
-<meta name="description" content="SLEEF implements vectorized C99 math functions. It utilizes vector extensions including SSE2, AVX, AVX2, AVX512F for x86, and Advanced SIMD for ARM processors." />
-<meta name="google" content="notranslate" />
-<link rel="canonical" href="https://sleef.org/" />
-<link rel="icon" href="favicon.png" />
-<link rel="stylesheet" type="text/css" href="texlike.css"/>
-<link rel="stylesheet" type="text/css" href="sleef.css"/>
-<title>SLEEF Vectorized Math Library</title>
-</head>
-<body translate="no" class="notranslate">
-<h1>SLEEF Vectorized Math Library<img src="sleeflogo3.png" alt="logo" width="25%" height="25%" style="float: right" /></h1>
+---
+layout: home
+title: Home
+nav_order: 1
+permalink: /
+---
 
-<ul class="none" style="font-family: arial, sansserif; margin-top: 1.0cm;">
-  <li><a class="underlined" style="color:#a00000;" href="https://github.com/shibatch/sleef/releases">Download the latest version</a></li>
-  <li><a class="underlined" href="https://sleef.org/">Latest documentation on the web</a></li>
-  <li><a class="underlined" href="https://github.com/shibatch/sleef">GitHub repository</a></li>
-  <li><a class="underlined" href="https://github.com/shibatch/sleef/discussions">Discussions</a></li>
-  <li><a class="underlined" href="https://github.com/shibatch/sleef/wiki">Wiki pages</a></li>
-</ul>
+<h1>Home</h1>
 
 <h2>Table of contents</h2>
 
-<ul class="none" style="font-family: arial, sansserif; padding-left: 0.5cm;">
-  <li><a class="underlined" href="index.xhtml">Introduction</a>
-    <ul class="disc">
-      <li><a href="index.xhtml#overview">Overview</a></li>
-      <li><a href="index.xhtml#environment">Supported environments</a></li>
-      <li><a href="index.xhtml#credit">Credit</a></li>
-      <li><a href="index.xhtml#partners">Partners</a></li>
-      <li><a href="index.xhtml#license">License</a></li>
-      <li><a href="index.xhtml#history">History</a></li>
-      <li><a href="index.xhtml#related">Related projects</a></li>
-      <li><a href="index.xhtml#publication">Publication</a></li>
-    </ul>
-  </li>
-  <li>&nbsp;</li>
-  <li><a class="underlined" href="compile.xhtml">Compiling and installing the library</a></li>
-  <li><a class="underlined" href="purec.xhtml">Math library reference</a></li>
-  <li><a class="underlined" href="quad.xhtml"> Quad-precision math library reference</a></li>
-  <li><a class="underlined" href="dft.xhtml">DFT library reference</a></li>
-  <li><a class="underlined" href="misc.xhtml">Other tools included in the package</a></li>
-  <li><a class="underlined" href="benchmark.xhtml">Benchmark results</a></li>
-  <li><a class="underlined" href="additional.xhtml">Additional notes</a></li>
-</ul>
+  [Overview](#overview) |
+  [Supported environment](#environment) |
+  [Credit](#credit) |
+  [Partners](#partners) |
+  [License](#license) |
+  [History](#history) |
+  [Related](#related) |
+  [Publication](#publication)
 
 <h2 id="overview">Overview</h2>
 
@@ -527,20 +497,3 @@ for a full history of changes to SLEEF.</p>
   <li>Francesco Petrogalli and Paul Walker : <B>LLVM and the automatic vectorization of loops invoking math routines: -fsimdmath</B>, <I>2018 IEEE/ACM 5th Workshop on the LLVM Compiler Infrastructure in HPC (LLVM-HPC), pp. 30-38.,</I> <a class="underlined" href="https://doi.org/10.1109/LLVM-HPC.2018.8639354">DOI:10.1109/LLVM-HPC.2018.8639354</a> (Nov. 2018). [<a class="underlined" href="https://sc18.supercomputing.org/proceedings/workshops/workshop_files/ws_llvmf106s2-file1.pdf">PDF</a>]</li>
 </ul>
 
-<p class="footer">
-  Copyright &copy; 2010-2024 SLEEF Project, Naoki Shibata and contributors.<br/>
-  SLEEF is open-source software and is distributed under the Boost Software License, Version 1.0.
-</p>
-
-<script type="text/javascript">
-//<![CDATA[
-var sc_project=11391936;
-var sc_invisible=1;
-var sc_security="fa400da8";
-//]]>
-</script>
-<script type="text/javascript" src="https://www.statcounter.com/counter/counter_xhtml.js"></script>
-
-
-</body>
-</html>
