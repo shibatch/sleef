@@ -1,4 +1,21 @@
-# Introduction
+---
+layout: default
+title: Build with CMake
+parent: User Guide
+permalink: /1-user-guide/build-with-cmake
+---
+
+# Build with CMake
+
+## Table of contents
+
+* [Introduction](#introduction)
+* [Quick start](#quick-start)
+* [Build customization](#build-customization)
+* [CMake variables](#cmake-variables)
+* [SLEEF variables](#sleef-variables)
+
+## Introduction
 
 [CMake](http://www.cmake.org/) is an open-source and cross-platform building
 tool for software packages that provides easy managing of multiple build systems
@@ -20,12 +37,12 @@ manager. If that is not the case for you, please
 
 **For building SLEEF, CMake 3.18 is the minimum required.**
 
-# Quick start
+## Quick start
 
 1. Make sure CMake is available. The following command line should display a
 version number greater than or equal to 3.18.
 
-```
+```sh
 cmake --version
 ```
 
@@ -33,14 +50,14 @@ cmake --version
 [GitHub releases][release_url], or checkout out the source code from the
 [GitHub repository][repo_url].
 
-```
+```sh
 git clone https://github.com/shibatch/sleef
 ```
 
 3. Make separate directories to create out-of-source build and install. SLEEF
 does not allow for in-tree builds.
 
-```
+```sh
 cd sleef
 mkdir build
 mkdir install
@@ -48,7 +65,7 @@ mkdir install
 
 4. Run CMake to configure your project and generate the system to build it.
 
-```
+```sh
 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo \
       -DCMAKE_INSTALL_PREFIX=install/ \
       -S . -B build/
@@ -66,7 +83,7 @@ shared library build with basic debug info.
 
 6. Run make to build the project
 
-```
+```sh
 cmake --build build -j --clean-first
 ```
 
@@ -80,30 +97,30 @@ cmake --build build -j --clean-first
 
 7. Run ctest suite (CMake 3.20+)
 
-```
+```sh
 ctest --test-dir build -j
 ```
 
 or for older CMake versions
 
-```
+```sh
 cd build/ && ctest -j
 ```
 
 8. Install at path provided earlier or at new path `<prefix>`
 
-```
+```sh
 cmake --install build/ [--prefix <prefix>]
 ```
 
 Refer to our web page for [detailed build instructions][build_info_url].
 
-# Build customization
+## Build customization
 
 Variables dictate how the build is generated; options are defined and undefined,
 respectively, on the CMake command line like this:
 
-```
+```sh
 cmake -DVARIABLE=<value> <cmake-build-dir>
 cmake -UVARIABLE <cmake-build-dir>
 ```

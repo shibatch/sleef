@@ -1,45 +1,26 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN" "http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=0.4"/>
-<meta name="google" content="notranslate" />
-<link rel="canonical" href="https://sleef.org/additional.xhtml" />
-<link rel="icon" href="favicon.png" />
-<link rel="stylesheet" type="text/css" href="texlike.css"/>
-<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Ubuntu" />
-<link rel="stylesheet" type="text/css" href="sleef.css"/>
-<title>SLEEF - Additional Notes</title>
-</head>
-<body translate="no" class="notranslate">
-<h1>SLEEF - Additional Notes</h1>
+---
+layout: default
+title: Extra
+nav_order: 4
+permalink: /3-extra/
+---
+
+<h1>Additional Notes</h1>
 
 <h2>Table of contents</h2>
 
-<ul class="none" style="font-family: arial, sansserif; padding-left: 0.5cm;">
-  <li><a class="underlined" href="index.xhtml">Introduction</a></li>
-  <li><a class="underlined" href="compile.xhtml">Compiling and installing the library</a></li>
-  <li><a class="underlined" href="purec.xhtml">Math library reference</a></li>
-  <li><a class="underlined" href="quad.xhtml"> Quad-precision math library reference</a></li>
-  <li><a class="underlined" href="dft.xhtml">DFT library reference</a></li>
-  <li><a class="underlined" href="misc.xhtml">Other tools included in the package</a></li>
-  <li><a class="underlined" href="benchmark.xhtml">Benchmark results</a></li>
-  <li>&nbsp;</li>
-  <li><a class="underlined" href="additional.xhtml">Additional notes</a></li>
-    <ul class="disc">
-      <li><a href="#faq">Frequently asked questions</a></li>
-      <li><a href="#vectorizing">Vectorizing calls to scalar functions</a></li>
-      <li><a href="#gnuabi">About the GNUABI version of the library</a></li>
-      <li><a href="#lto">Using link time optimization</a></li>
-      <li><a href="#inline">Using header files of inlinable functions</a></li>
-      <li><a href="#wasm">Utilizing SLEEF for WebAssembly</a></li>
-      <li><a href="#dispatcher">How the dispatcher works</a></li>
-      <li><a href="#libsleefscalar">About libsleefscalar</a></li>
-      <li><a href="#ulp">ULP, gradual underflow and flush-to-zero mode</a></li>
-      <li><a href="#paynehanek">Explanatory source code for the modified Payne Hanek reduction method</a></li>
-      <li><a href="#logo">About the logo</a></li>
-    </ul>
+<ul class="disc">
+  <li><a href="#faq">Frequently asked questions</a></li>
+  <li><a href="#vectorizing">Vectorizing calls to scalar functions</a></li>
+  <li><a href="#gnuabi">About the GNUABI version of the library</a></li>
+  <li><a href="#lto">Using link time optimization</a></li>
+  <li><a href="#inline">Using header files of inlinable functions</a></li>
+  <li><a href="#wasm">Utilizing SLEEF for WebAssembly</a></li>
+  <li><a href="#dispatcher">How the dispatcher works</a></li>
+  <li><a href="#libsleefscalar">About libsleefscalar</a></li>
+  <li><a href="#ulp">ULP, gradual underflow and flush-to-zero mode</a></li>
+  <li><a href="#paynehanek">Explanatory source code for the modified Payne Hanek reduction method</a></li>
+  <li><a href="#logo">About the logo</a></li>
 </ul>
 
 <h2 id="faq">Frequently asked questions</h2>
@@ -633,20 +614,3 @@ and <b class="func">Sleef_sind1_u10purecfma</b>.
   Fig. 7.2: SLEEF logo
 </p>
 
-<p class="footer">
-  Copyright &copy; 2010-2024 SLEEF Project, Naoki Shibata and contributors.<br/>
-  SLEEF is open-source software and is distributed under the Boost Software License, Version 1.0.
-</p>
-
-<script type="text/javascript">
-//<![CDATA[
-var sc_project=11391936;
-var sc_invisible=1;
-var sc_security="fa400da8";
-//]]>
-</script>
-<script type="text/javascript" src="https://www.statcounter.com/counter/counter_xhtml.js"></script>
-
-
-</body>
-</html>

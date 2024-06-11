@@ -1,55 +1,25 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN" "http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=0.4"/>
-<meta name="google" content="notranslate" />
-<link rel="canonical" href="https://sleef.org/purec.xhtml" />
-<link rel="icon" href="favicon.png" />
-<link rel="stylesheet" type="text/css" href="texlike.css"/>
-<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Ubuntu" />
-<link rel="stylesheet" type="text/css" href="sleef.css"/>
-<title>SLEEF - Math library reference (scalar)</title>
-</head>
-<body translate="no" class="notranslate">
-<h1>SLEEF - Math library reference</h1>
+---
+layout: default
+title: Single & Double Precision
+parent: References
+has_children: true
+permalink: /2-references/libm/
+---
+
+<h1>Single & Double Precision Math library reference</h1>
 
 <h2>Table of contents</h2>
 
-<ul class="none" style="font-family: arial, sansserif; padding-left: 0.5cm;">
-  <li><a class="underlined" href="index.xhtml">Introduction</a></li>
-  <li><a class="underlined" href="compile.xhtml">Compiling and installing the library</a></li>
-  <li>&nbsp;</li>
-  <li><a class="underlined" href="purec.xhtml">Math library reference</a>
-  <ul class="disc">
-    <li><a class="underlined" href="purec.xhtml">Data types and functions for all architectures</a></li>
-    <ul class="circle">
-      <li><a href="#naming">Function naming convention</a></li>
-      <li><a href="#datatypes">Data types</a></li>
-      <li><a href="#trig">Trigonometric functions</a></li>
-      <li><a href="#pow">Power, exponential, and logarithmic functions</a></li>
-      <li><a href="#invtrig">Inverse trigonometric functions</a></li>
-      <li><a href="#hyp">Hyperbolic functions and inverse hyperbolic functions</a></li>
-      <li><a href="#eg">Error and gamma functions</a></li>
-      <li><a href="#nearint">Nearest integer functions</a></li>
-      <li><a href="#other">Other functions</a></li>
-    </ul>
-    <li><a class="underlined" href="x86.xhtml">Data types and functions for x86 architecture</a></li>
-    <li><a class="underlined" href="aarch64.xhtml">Data types and functions for AArch64 architecture</a></li>
-    <li><a class="underlined" href="aarch32.xhtml">Data types and functions for AArch32 architecture</a></li>
-    <li><a class="underlined" href="ppc64.xhtml">Data types and functions for PPC64 architecture</a></li>
-    <li><a class="underlined" href="s390x.xhtml">Data types and functions for System/390 architecture</a></li>
-    <li><a class="underlined" href="cuda.xhtml">Data types and functions for CUDA</a></li>
-  </ul>
-  </li>
-  <li>&nbsp;</li>
-  <li><a class="underlined" href="quad.xhtml"> Quad-precision math library reference</a></li>
-  <li><a class="underlined" href="dft.xhtml">DFT library reference</a>
-  <li><a class="underlined" href="misc.xhtml">Other tools included in the package</a></li>
-  <li><a class="underlined" href="benchmark.xhtml">Benchmark results</a></li>
-  <li><a class="underlined" href="additional.xhtml">Additional notes</a></li>
-  </li>
+<ul class="circle">
+  <li><a href="#naming">Function naming convention</a></li>
+  <li><a href="#datatypes">Data types</a></li>
+  <li><a href="#trig">Trigonometric functions</a></li>
+  <li><a href="#pow">Power, exponential, and logarithmic functions</a></li>
+  <li><a href="#invtrig">Inverse trigonometric functions</a></li>
+  <li><a href="#hyp">Hyperbolic functions and inverse hyperbolic functions</a></li>
+  <li><a href="#eg">Error and gamma functions</a></li>
+  <li><a href="#nearint">Nearest integer functions</a></li>
+  <li><a href="#other">Other functions</a></li>
 </ul>
 
 <h2 id="naming">Function naming convention</h2>
@@ -2645,20 +2615,3 @@ the C99 specification of nextafter and nextafterf functions. These functions
 do not set errno nor raise an exception.
 </p>
 
-<p class="footer">
-  Copyright &copy; 2010-2024 SLEEF Project, Naoki Shibata and contributors.<br/>
-  SLEEF is open-source software and is distributed under the Boost Software License, Version 1.0.
-</p>
-
-<script type="text/javascript">
-//<![CDATA[
-var sc_project=11391936;
-var sc_invisible=1;
-var sc_security="fa400da8";
-//]]>
-</script>
-<script type="text/javascript" src="https://www.statcounter.com/counter/counter_xhtml.js"></script>
-
-
-</body>
-</html>

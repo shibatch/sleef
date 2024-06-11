@@ -1,35 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN" "http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=0.4"/>
-<meta name="google" content="notranslate" />
-<link rel="canonical" href="https://sleef.org/benchmark.xhtml" />
-<link rel="icon" href="favicon.png" />
-<link rel="stylesheet" type="text/css" href="texlike.css"/>
-<link rel="stylesheet" type="text/css" href="sleef.css"/>
-<title>SLEEF - Benchmark Results</title>
-</head>
-<body translate="no" class="notranslate">
-<h1>SLEEF - Benchmark Results</h1>
+---
+layout: default
+title: Performance
+nav_order: 6
+permalink: /5-performance/
+---
 
-<h2>Table of contents</h2>
-
-<ul class="none" style="font-family: arial, sansserif; padding-left: 0.5cm;">
-  <li><a class="underlined" href="index.xhtml">Introduction</a></li>
-  <li><a class="underlined" href="compile.xhtml">Compiling and installing the library</a></li>
-  <li><a class="underlined" href="purec.xhtml">Math library reference</a></li>
-  <li><a class="underlined" href="quad.xhtml"> Quad-precision math library reference</a></li>
-  <li><a class="underlined" href="dft.xhtml">DFT library reference</a></li>
-  <li><a class="underlined" href="misc.xhtml">Other tools included in the package</a></li>
-  <li>&nbsp;</li>
-  <li><a class="underlined" href="benchmark.xhtml">Benchmark results</a></li>
-  <li>&nbsp;</li>
-  <li><a class="underlined" href="additional.xhtml">Additional notes</a></li>
-</ul>
-
-  <h2>Benchmark results</h2>
+<h1>Benchmark Results</h1>
 
   <p class="noindent" style="font-size:1em; margin-top:0.5cm;">
     These graphs show comparison of the execution time between
@@ -121,20 +97,3 @@
     Fig. 6.4: Execution time of single precision log, exp, pow and inverse trigonometric functions
   </p>
 
-<p class="footer">
-  Copyright &copy; 2010-2024 SLEEF Project, Naoki Shibata and contributors.<br/>
-  SLEEF is open-source software and is distributed under the Boost Software License, Version 1.0.
-</p>
-
-<script type="text/javascript">
-//<![CDATA[
-var sc_project=11391936;
-var sc_invisible=1;
-var sc_security="fa400da8";
-//]]>
-</script>
-<script type="text/javascript" src="https://www.statcounter.com/counter/counter_xhtml.js"></script>
-
-
-</body>
-</html>

@@ -1,46 +1,25 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN" "http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=0.4"/>
-<meta name="google" content="notranslate" />
-<link rel="canonical" href="https://sleef.org/compile.xhtml" />
-<link rel="icon" href="favicon.png" />
-<link rel="stylesheet" type="text/css" href="texlike.css"/>
-<link rel="stylesheet" type="text/css" href="sleef.css"/>
-<title>SLEEF - Compiling and installing the library</title>
-</head>
-<body translate="no" class="notranslate">
-<h1>SLEEF - Compiling and installing the library</h1>
+---
+layout: default
+title: User Guide
+nav_order: 2
+has_children: true
+permalink: /1-user-guide/
+---
+
+<h1>Compiling and installing the library</h1>
 
 <h2>Table of contents</h2>
 
-<ul class="none" style="font-family: arial, sansserif; padding-left: 0.5cm;">
-  <li><a class="underlined" href="index.xhtml">Introduction</a></li>
-  <li>&nbsp;</li>
-  <li><a class="underlined" href="compile.xhtml">Compiling and installing the library</a></li>
-    <ul class="disc">
-      <li><a href="#preliminaries">Preliminaries</a></li>
-      <li><a href="#quickstart">Quick start</a></li>
-      <li><a href="#linux">Compiling and installing the library on Linux</a></li>
-      <li><a href="#MSVC">Compiling the library with Microsoft Visual C++</a></li>
-      <li><a href="#hello">Compiling and running "Hello SLEEF"</a></li>
-      <li><a href="#import">Importing SLEEF into your project</a></li>
-      <li><a href="#cross">Cross compilation for iOS and Android</a></li>
-    </ul>
-  <li>&nbsp;</li>
-  <li><a class="underlined" href="purec.xhtml">Math library reference</a></li>
-  <li><a class="underlined" href="quad.xhtml"> Quad-precision math library reference</a></li>
-  <li><a class="underlined" href="dft.xhtml">DFT library reference</a></li>
-  <li><a class="underlined" href="misc.xhtml">Other tools included in the package</a></li>
-  <li><a class="underlined" href="benchmark.xhtml">Benchmark results</a></li>
-  <li><a class="underlined" href="additional.xhtml">Additional notes</a></li>
-</ul>
+* [Preliminaries](#preliminaries)
+* [Quick start](#quickstart)
+* [Compiling and installing the library on Linu](#linux)
+* [Compiling the library with Microsoft Visual C++](#MSVC)
+* [Compiling and running "Hello SLEEF"](#hello)
+* [Importing SLEEF into your project](#import)
+* [Cross compilation for iOS and Android](#cross)
 
 <h2 id="preliminaries">Preliminaries</h2>
 
-<p class="noindent">
 In order to build SLEEF, you need <a class="underlined"
 href="http://www.cmake.org/">CMake</a>, which is an open-source and
 cross-platform building tool. In order to test the library, it is
@@ -48,9 +27,7 @@ better to have <a class="underlined" href="http://www.mpfr.org/">the
 GNU MPFR Library</a>, <a class="underlined"
 href="https://wiki.openssl.org/index.php/Libssl_API">Libssl</a> and
 <a class="underlined" href="http://www.fftw.org/">FFTW</a>.
-</p>
 
-<p>
 CMake works by allowing the developer to specify build parameters and
 rules in a simple text file that cmake then processes to generate
 project files for the actual native build tools (e.g. UNIX Makefiles,
@@ -60,67 +37,58 @@ familiar with cmake, please refer to the
 or
 the <a class="underlined" href="https://gitlab.kitware.com/cmake/community/-/wikis/home">basic
 introductions in the wiki</a>.
-</p>
 
 <h2 id="quickstart">Quick start</h2>
 
-<p class="noindent">
 You will find quick start instructions in the sources or via GitHub in the
-<a class="underlined" href="https://github.com/shibatch/sleef/blob/master/README.md">README.md</a>
+[README.md](https://github.com/shibatch/sleef/blob/master/README.md#how-to-build-sleef)
 file.
-</p>
 
-<p class="noindent">
 A more detailed description of CMake usage is provided in the
-<a class="underlined" href="https://github.com/shibatch/sleef/blob/master/docs/build-with-cmake.md">docs/build-with-cmake.md</a>
-file, along with
-<a class="underlined" href="https://github.com/shibatch/sleef/blob/master/docs/build-with-cmake.md#sleef-variables">a list of CMake variables</a>
+[Build with CMake](build-with-cmake) page, along with
+[a list of CMake variables](build-with-cmake#sleef-variables)
 relevant to users.
-</p>
 
 <h2 id="linux">Compiling and installing the library on Linux</h2>
 
-<p class="noindent">
-  In order to build the library, you may want to install OpenMP (optional).
-  In order to test the library, you need to install libmpfr, libssl and
-  libfftw3 (optional). Availability of these libraries are checked upon
-  execution of cmake.
-  Please change the directory to sleef-3.X and run the following commands.
+In order to build the library, you may want to install OpenMP (optional).
+In order to test the library, you need to install libmpfr, libssl and
+libfftw3 (optional). Availability of these libraries are checked upon
+execution of cmake.
 
-  <pre class="command">$ sudo apt-get install libmpfr-dev libssl-dev libfftw3-dev
-$ cmake -S . -B build/ ..
-$ cmake --build build/ --clean-first -j
-$ ctest --test-dir build/ -j
-$ sudo cmake --install build/ --prefix /path/to/install/dir
-  </pre>
-</p>
+Please run the following from the root directory of SLEEF:
 
-<p>
-  In order to uninstall the libraries and headers, run the following command.
-</p>
+```sh
+sudo apt-get install libmpfr-dev libssl-dev libfftw3-dev
+cmake -S . -B build/ ..
+cmake --build build/ --clean-first -j
+ctest --test-dir build/ -j
+sudo cmake --install build/ --prefix /path/to/install/dir
+```
 
-<pre class="command" style="margin-top: 1em;">$ sudo xargs rm -v &lt; build/install_manifest.txt</pre>
+In order to uninstall the libraries and headers, run the following command.
+
+<pre class="command" style="margin-top: 1em;">$ sudo xargs rm -v < build/install_manifest.txt</pre>
 
 <h3 id="lto">Building the library with LTO support</h3>
 
-<p>
-  You can build the library with <a class="underlined"
-  href="additional.xhtml#lto">link time opimization(LTO)</a> support
-  with the following commands. Note that you can only build static
-  libraries with LTO support. You also have to use the same compiler
-  with the same version to build the library and other source codes.
-</p>
+You can build the library with <a class="underlined"
+href="../3-extra#lto">link time opimization(LTO)</a> support
+with the following commands. Note that you can only build static
+libraries with LTO support. You also have to use the same compiler
+with the same version to build the library and other source codes.
 
-<pre class="command">$ CC=gcc cmake -DBUILD_SHARED_LIBS=FALSE -DSLEEF_ENABLE_LTO=TRUE ..</pre>
+```sh
+CC=gcc cmake -DBUILD_SHARED_LIBS=FALSE -DSLEEF_ENABLE_LTO=TRUE ..
+```
 
-<p>
-  In order to build the library with thinLTO support with clang, you
-  need to specify LLVM AR command that exactly corresponds to the
-  clang compiler.
-</p>
+In order to build the library with thinLTO support with clang, you
+need to specify LLVM AR command that exactly corresponds to the
+clang compiler.
 
-<pre class="command">$ CC=clang-9 cmake -DBUILD_SHARED_LIBS=FALSE -DSLEEF_ENABLE_LTO=TRUE -DSLEEF_LLVM_AR_COMMAND=llvm-ar-9 ..</pre>
-
+```sh
+CC=clang-9 cmake -DBUILD_SHARED_LIBS=FALSE -DSLEEF_ENABLE_LTO=TRUE -DSLEEF_LLVM_AR_COMMAND=llvm-ar-9 ..
+```
 
 <h3 id="inline">Building the header files for inlining the whole SLEEF functions</h3>
 
@@ -265,61 +233,3 @@ $ &block;</pre>
 
 
 <h2 id="cross">Cross compilation for iOS and Android</h2>
-
-<p class="noindent">
-  SLEEF has preliminary support for iOS and Android. Here,
-  "preliminary" means that the library is only tested to be built, but
-  not tested to work correctly on the real devices. In order to cross
-  compile the library, you need a cmake tool chain file for the
-  corresponding OS. The tool chain file for iOS can be downloaded
-  from <a class="underlined"
-  href="https://github.com/leetal/ios-cmake">https://github.com/leetal/ios-cmake</a>.
-  The tool chain file for Android is included in the SDK. You first
-  need to build the library for the host computer, then for the target
-  OS. Below is an example sequence of commands for cross compiling the
-  library for iOS.
-</p>
-
-<pre class="command" style="margin-top: 2.0em; margin-bottom: 0.5cm;">$ mkdir build-native
-$ cd build-native
-$ cmake -GNinja ..
-$ ninja
-$ cd ..
-$ mkdir build-cross
-$ cd build-cross
-$ cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=../ios.toolchain.cmake -DNATIVE_BUILD_DIR=`pwd`/../build-native -DSLEEF_DISABLE_MPFR=TRUE -DSLEEF_DISABLE_SSL=TRUE ..
-$ ninja
-</pre>
-
-<p>
-Below is an example sequence of commands for cross compiling the library for Android.
-</p>
-
-<pre class="command" style="margin-top: 2.0em; margin-bottom: 0.5cm;">$ mkdir build-native
-$ cd build-native
-$ cmake -GNinja ..
-$ ninja
-$ cd ..
-$ mkdir build-cross
-$ cd build-cross
-$ cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=/opt/android-ndk-r21d/build/cmake/android.toolchain.cmake -DNATIVE_BUILD_DIR=`pwd`/../build-native -DANDROID_ABI=arm64-v8a ..
-$ ninja
-</pre>
-
-<p class="footer">
-  Copyright &copy; 2010-2024 SLEEF Project, Naoki Shibata and contributors.<br/>
-  SLEEF is open-source software and is distributed under the Boost Software License, Version 1.0.
-</p>
-
-<script type="text/javascript">
-//<![CDATA[
-var sc_project=11391936;
-var sc_invisible=1;
-var sc_security="fa400da8";
-//]]>
-</script>
-<script type="text/javascript" src="https://www.statcounter.com/counter/counter_xhtml.js"></script>
-
-
-</body>
-</html>

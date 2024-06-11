@@ -1,49 +1,21 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN" "http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en-US">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=0.4"/>
-<meta name="google" content="notranslate" />
-<link rel="canonical" href="https://sleef.org/quadppc64.xhtml" />
-<link rel="icon" href="favicon.png" />
-<link rel="stylesheet" type="text/css" href="texlike.css"/>
-<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Ubuntu" />
-<link rel="stylesheet" type="text/css" href="sleef.css"/>
-<title>SLEEF - Quad-precision math library reference (POWER)</title>
-</head>
-<body translate="no" class="notranslate">
-<h1>SLEEF - Quad-precision math library reference (POWER)</h1>
+---
+layout: default
+title: PowerPC64
+parent: Quadruple Precision
+grand_parent: References
+permalink: /2-references/quad/ppc64
+---
+
+<h1> Quadruple Precision Math Library reference (PowerPC64)</h1>
 
 <h2>Table of contents</h2>
 
-<ul class="none" style="font-family: arial, sansserif; padding-left: 0.5cm;">
-  <li><a class="underlined" href="index.xhtml">Introduction</a></li>
-  <li><a class="underlined" href="compile.xhtml">Compiling and installing the library</a></li>
-  <li><a class="underlined" href="purec.xhtml">Math library reference</a></li>
-  <li>&nbsp;</li>
-  <li><a class="underlined" href="quad.xhtml"> Quad-precision math library reference</a>
-  <ul class="disc">
-    <li><a class="underlined" href="quad.xhtml">Data types and functions for all architectures</a></li>
-    <li><a class="underlined" href="quadx86.xhtml">Data types and functions for x86 architecture</a></li>
-    <li><a class="underlined" href="quadaarch64.xhtml">Data types and functions for AArch64 architecture</a></li>
-    <li><a class="underlined" href="quadppc64.xhtml">Data types and functions for PPC64 architecture</a></li>
-    <ul class="circle">
-      <li><a href="#datatypes">Data types</a></li>
-      <li><a href="#access">Functions for accessing elements inside vector variable</a></li>
-      <li><a href="#conversion">Conversion functions</a></li>
-      <li><a href="#comparison">Comparison and selection functions</a></li>
-      <li><a href="#mathfunctions">Math functions</a></li>
-    </ul>
-    <li><a class="underlined" href="quads390x.xhtml">Data types and functions for System/390 architecture</a></li>
-    <li><a class="underlined" href="quadcuda.xhtml">Data types and functions for CUDA</a></li>
-  </ul>
-  </li>
-  <li>&nbsp;</li>
-  <li><a class="underlined" href="dft.xhtml">DFT library reference</a></li>
-  <li><a class="underlined" href="misc.xhtml">Other tools included in the package</a></li>
-  <li><a class="underlined" href="benchmark.xhtml">Benchmark results</a></li>
-  <li><a class="underlined" href="additional.xhtml">Additional notes</a></li>
+<ul class="circle">
+  <li><a href="#datatypes">Data types</a></li>
+  <li><a href="#access">Functions for accessing elements inside vector variable</a></li>
+  <li><a href="#conversion">Conversion functions</a></li>
+  <li><a href="#comparison">Comparison and selection functions</a></li>
+  <li><a href="#mathfunctions">Math functions</a></li>
 </ul>
 
 <h2 id="datatypes">Data types</h2>
@@ -1379,21 +1351,3 @@
   of <a href="quad.xhtml#Sleef_ilogbq1_purec"><b class="func">Sleef_ilogbq1_purec</b></a>.
 </p>
 
-
-<p class="footer">
-  Copyright &copy; 2010-2024 SLEEF Project, Naoki Shibata and contributors.<br/>
-  SLEEF is open-source software and is distributed under the Boost Software License, Version 1.0.
-</p>
-
-<script type="text/javascript">
-//<![CDATA[
-var sc_project=11391936;
-var sc_invisible=1;
-var sc_security="fa400da8";
-//]]>
-</script>
-<script type="text/javascript" src="https://www.statcounter.com/counter/counter_xhtml.js"></script>
-
-
-</body>
-</html>
