@@ -93,7 +93,7 @@ CC=clang-9 cmake -DBUILD_SHARED_LIBS=FALSE -DSLEEF_ENABLE_LTO=TRUE -DSLEEF_LLVM_
 <h3 id="inline">Building the header files for inlining the whole SLEEF functions</h3>
 
 <p>
-  <a class="underlined" href="additional.xhtml#inline">Header files
+  <a class="underlined" href="../3-extra#inline">Header files
   for inlining the whole SLEEF functions</a> can be built with the
   following commands. With these header files, it may be easier to
   inline the whole SLEEF functions than using LTO. You have to specify

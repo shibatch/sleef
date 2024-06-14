@@ -323,7 +323,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions of <a class="underlined"
-  href="quad.xhtml#basicComparison">comparison functions</a>.
+  href="../quad#basicComparison">comparison functions</a>.
 </p>
 
 <hr/>
@@ -346,7 +346,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_icmpq1_purec"><b class="func">Sleef_icmpq1_purec</b></a>.
+  of <a href="../quad#Sleef_icmpq1_purec"><b class="func">Sleef_icmpq1_purec</b></a>.
 </p>
 
 <hr/>
@@ -369,7 +369,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_iunordq1_purec"><b class="func">Sleef_iunordq1_purec</b></a>.
+  of <a href="../quad#Sleef_iunordq1_purec"><b class="func">Sleef_iunordq1_purec</b></a>.
 </p>
 
 <hr/>
@@ -428,7 +428,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions of <a class="underlined"
-  href="quad.xhtml#basicArithmetic">the basic arithmetic operations</a>.
+  href="../quad#basicArithmetic">the basic arithmetic operations</a>.
 </p>
 
 <hr/>
@@ -451,7 +451,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_sqrtq1_u05purec"><b class="func">Sleef_sqrtq1_u05purec</b></a>.
+  of <a href="../quad#Sleef_sqrtq1_u05purec"><b class="func">Sleef_sqrtq1_u05purec</b></a>.
 </p>
 
 <hr/>
@@ -474,7 +474,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_sinq1_u10purec"><b class="func">Sleef_sinq1_u10purec</b></a>.
+  of <a href="../quad#Sleef_sinq1_u10purec"><b class="func">Sleef_sinq1_u10purec</b></a>.
 </p>
 
 <hr/>
@@ -497,7 +497,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_cosq1_u10purec"><b class="func">Sleef_cosq1_u10purec</b></a>.
+  of <a href="../quad#Sleef_cosq1_u10purec"><b class="func">Sleef_cosq1_u10purec</b></a>.
 </p>
 
 <hr/>
@@ -520,7 +520,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_tanq1_u10purec"><b class="func">Sleef_tanq1_u10purec</b></a>.
+  of <a href="../quad#Sleef_tanq1_u10purec"><b class="func">Sleef_tanq1_u10purec</b></a>.
 </p>
 
 <hr/>
@@ -543,7 +543,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_asinq1_u10purec"><b class="func">Sleef_asinq1_u10purec</b></a>.
+  of <a href="../quad#Sleef_asinq1_u10purec"><b class="func">Sleef_asinq1_u10purec</b></a>.
 </p>
 
 <hr/>
@@ -566,7 +566,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_acosq1_u10purec"><b class="func">Sleef_acosq1_u10purec</b></a>.
+  of <a href="../quad#Sleef_acosq1_u10purec"><b class="func">Sleef_acosq1_u10purec</b></a>.
 </p>
 
 <hr/>
@@ -589,7 +589,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_atanq1_u10purec"><b class="func">Sleef_atanq1_u10purec</b></a>.
+  of <a href="../quad#Sleef_atanq1_u10purec"><b class="func">Sleef_atanq1_u10purec</b></a>.
 </p>
 
 <hr/>
@@ -612,7 +612,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_expq1_u10purec"><b class="func">Sleef_expq1_u10purec</b></a>.
+  of <a href="../quad#Sleef_expq1_u10purec"><b class="func">Sleef_expq1_u10purec</b></a>.
 </p>
 
 <hr/>
@@ -635,7 +635,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_exp2q1_u10purec"><b class="func">Sleef_exp2q1_u10purec</b></a>.
+  of <a href="../quad#Sleef_exp2q1_u10purec"><b class="func">Sleef_exp2q1_u10purec</b></a>.
 </p>
 
 <hr/>
@@ -658,7 +658,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_exp10q1_u10purec"><b class="func">Sleef_exp10q1_u10purec</b></a>.
+  of <a href="../quad#Sleef_exp10q1_u10purec"><b class="func">Sleef_exp10q1_u10purec</b></a>.
 </p>
 
 <hr/>
@@ -681,7 +681,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_expm1q1_u10purec"><b class="func">Sleef_expm1q1_u10purec</b></a>.
+  of <a href="../quad#Sleef_expm1q1_u10purec"><b class="func">Sleef_expm1q1_u10purec</b></a>.
 </p>
 
 <hr/>
@@ -704,7 +704,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_logq1_u10purec"><b class="func">Sleef_logq1_u10purec</b></a>.
+  of <a href="../quad#Sleef_logq1_u10purec"><b class="func">Sleef_logq1_u10purec</b></a>.
 </p>
 
 <hr/>
@@ -727,7 +727,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_log2q1_u10purec"><b class="func">Sleef_log2q1_u10purec</b></a>.
+  of <a href="../quad#Sleef_log2q1_u10purec"><b class="func">Sleef_log2q1_u10purec</b></a>.
 </p>
 
 <hr/>
@@ -750,7 +750,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_log10q1_u10purec"><b class="func">Sleef_log10q1_u10purec</b></a>.
+  of <a href="../quad#Sleef_log10q1_u10purec"><b class="func">Sleef_log10q1_u10purec</b></a>.
 </p>
 
 <hr/>
@@ -773,7 +773,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_log1pq1_u10purec"><b class="func">Sleef_log1pq1_u10purec</b></a>.
+  of <a href="../quad#Sleef_log1pq1_u10purec"><b class="func">Sleef_log1pq1_u10purec</b></a>.
 </p>
 
 <hr/>
@@ -796,7 +796,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_powq1_u10purec"><b class="func">Sleef_powq1_u10purec</b></a>.
+  of <a href="../quad#Sleef_powq1_u10purec"><b class="func">Sleef_powq1_u10purec</b></a>.
 </p>
 
 <hr/>
@@ -819,7 +819,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_sinhq1_u10purec"><b class="func">Sleef_sinhq1_u10purec</b></a>.
+  of <a href="../quad#Sleef_sinhq1_u10purec"><b class="func">Sleef_sinhq1_u10purec</b></a>.
 </p>
 
 <hr/>
@@ -842,7 +842,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_coshq1_u10purec"><b class="func">Sleef_coshq1_u10purec</b></a>.
+  of <a href="../quad#Sleef_coshq1_u10purec"><b class="func">Sleef_coshq1_u10purec</b></a>.
 </p>
 
 <hr/>
@@ -865,7 +865,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_tanhq1_u10purec"><b class="func">Sleef_tanhq1_u10purec</b></a>.
+  of <a href="../quad#Sleef_tanhq1_u10purec"><b class="func">Sleef_tanhq1_u10purec</b></a>.
 </p>
 
 <hr/>
@@ -888,7 +888,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_asinhq1_u10purec"><b class="func">Sleef_asinhq1_u10purec</b></a>.
+  of <a href="../quad#Sleef_asinhq1_u10purec"><b class="func">Sleef_asinhq1_u10purec</b></a>.
 </p>
 
 <hr/>
@@ -911,7 +911,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_acoshq1_u10purec"><b class="func">Sleef_acoshq1_u10purec</b></a>.
+  of <a href="../quad#Sleef_acoshq1_u10purec"><b class="func">Sleef_acoshq1_u10purec</b></a>.
 </p>
 
 <hr/>
@@ -934,7 +934,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_atanhq1_u10purec"><b class="func">Sleef_atanhq1_u10purec</b></a>.
+  of <a href="../quad#Sleef_atanhq1_u10purec"><b class="func">Sleef_atanhq1_u10purec</b></a>.
 </p>
 
 <hr/>
@@ -957,7 +957,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_truncq1_purec"><b class="func">Sleef_truncq1_purec</b></a>.
+  of <a href="../quad#Sleef_truncq1_purec"><b class="func">Sleef_truncq1_purec</b></a>.
 </p>
 
 <hr/>
@@ -980,7 +980,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_floorq1_purec"><b class="func">Sleef_floorq1_purec</b></a>.
+  of <a href="../quad#Sleef_floorq1_purec"><b class="func">Sleef_floorq1_purec</b></a>.
 </p>
 
 <hr/>
@@ -1003,7 +1003,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_ceilq1_purec"><b class="func">Sleef_ceilq1_purec</b></a>.
+  of <a href="../quad#Sleef_ceilq1_purec"><b class="func">Sleef_ceilq1_purec</b></a>.
 </p>
 
 <hr/>
@@ -1026,7 +1026,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_roundq1_purec"><b class="func">Sleef_roundq1_purec</b></a>.
+  of <a href="../quad#Sleef_roundq1_purec"><b class="func">Sleef_roundq1_purec</b></a>.
 </p>
 
 <hr/>
@@ -1049,7 +1049,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_rintq1_purec"><b class="func">Sleef_rintq1_purec</b></a>.
+  of <a href="../quad#Sleef_rintq1_purec"><b class="func">Sleef_rintq1_purec</b></a>.
 </p>
 
 <hr/>
@@ -1072,7 +1072,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_fabsq1_purec"><b class="func">Sleef_fabsq1_purec</b></a>.
+  of <a href="../quad#Sleef_fabsq1_purec"><b class="func">Sleef_fabsq1_purec</b></a>.
 </p>
 
 <hr/>
@@ -1095,7 +1095,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_copysignq1_purec"><b class="func">Sleef_copysignq1_purec</b></a>.
+  of <a href="../quad#Sleef_copysignq1_purec"><b class="func">Sleef_copysignq1_purec</b></a>.
 </p>
 
 <hr/>
@@ -1118,7 +1118,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_fmaxq1_purec"><b class="func">Sleef_fmaxq1_purec</b></a>.
+  of <a href="../quad#Sleef_fmaxq1_purec"><b class="func">Sleef_fmaxq1_purec</b></a>.
 </p>
 
 <hr/>
@@ -1141,7 +1141,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_fminq1_purec"><b class="func">Sleef_fminq1_purec</b></a>.
+  of <a href="../quad#Sleef_fminq1_purec"><b class="func">Sleef_fminq1_purec</b></a>.
 </p>
 
 <hr/>
@@ -1164,7 +1164,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_fdimq1_u05purec"><b class="func">Sleef_fdimq1_u05purec</b></a>.
+  of <a href="../quad#Sleef_fdimq1_u05purec"><b class="func">Sleef_fdimq1_u05purec</b></a>.
 </p>
 
 <hr/>
@@ -1187,7 +1187,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_fmodq1_purec"><b class="func">Sleef_fmodq1_purec</b></a>.
+  of <a href="../quad#Sleef_fmodq1_purec"><b class="func">Sleef_fmodq1_purec</b></a>.
 </p>
 
 <hr/>
@@ -1210,7 +1210,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_remainderq1_purec"><b class="func">Sleef_remainderq1_purec</b></a>.
+  of <a href="../quad#Sleef_remainderq1_purec"><b class="func">Sleef_remainderq1_purec</b></a>.
 </p>
 
 <hr/>
@@ -1233,7 +1233,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_frexpq1_purec"><b class="func">Sleef_frexpq1_purec</b></a>.
+  of <a href="../quad#Sleef_frexpq1_purec"><b class="func">Sleef_frexpq1_purec</b></a>.
 </p>
 
 <hr/>
@@ -1256,7 +1256,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_modfq1_purec"><b class="func">Sleef_modfq1_purec</b></a>.
+  of <a href="../quad#Sleef_modfq1_purec"><b class="func">Sleef_modfq1_purec</b></a>.
 </p>
 
 <hr/>
@@ -1279,7 +1279,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_hypotq1_u05purec"><b class="func">Sleef_hypotq1_u05purec</b></a>.
+  of <a href="../quad#Sleef_hypotq1_u05purec"><b class="func">Sleef_hypotq1_u05purec</b></a>.
 </p>
 
 <hr/>
@@ -1302,7 +1302,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_fmaq1_u05purec"><b class="func">Sleef_fmaq1_u05purec</b></a>.
+  of <a href="../quad#Sleef_fmaq1_u05purec"><b class="func">Sleef_fmaq1_u05purec</b></a>.
 </p>
 
 <hr/>
@@ -1325,7 +1325,7 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_ldexpq1_purec"><b class="func">Sleef_ldexpq1_purec</b></a>.
+  of <a href="../quad#Sleef_ldexpq1_purec"><b class="func">Sleef_ldexpq1_purec</b></a>.
 </p>
 
 <hr/>
@@ -1348,6 +1348,6 @@ permalink: /2-references/quad/ppc64
 
 <p class="noindent">
   These are the vectorized functions
-  of <a href="quad.xhtml#Sleef_ilogbq1_purec"><b class="func">Sleef_ilogbq1_purec</b></a>.
+  of <a href="../quad#Sleef_ilogbq1_purec"><b class="func">Sleef_ilogbq1_purec</b></a>.
 </p>
 

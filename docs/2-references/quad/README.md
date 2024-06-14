@@ -1611,11 +1611,11 @@ and <b>SLEEF_FP_ILOGBNAN</b>, respectively.
   variables. Variables <i class="var">q0</i>, <i class="var">q1</i>, <i class="var">q2</i>
   and <i class="var">q3</i> retain two QP FP values each. At line 5, 8
   and 11, QP values in arrays are loaded into these variables with
-  <a href="quadx86.xhtml#load"><b class="func">Sleef_loadq2_sse2</b></a>
+  <a href="x86#load"><b class="func">Sleef_loadq2_sse2</b></a>
   function. Vector operations are carried out from line 14 to 16, and
   then each element of the vector variable <i class="var">q3</i> is
   extracted
-  with <a href="quadx86.xhtml#get"><b class="func">Sleef_getq2_sse2</b></a>
+  with <a href="x86#get"><b class="func">Sleef_getq2_sse2</b></a>
   function and subtracted to obtain the result at line 18. Note that
   the QP subtract function in the standard library is called to do
   this subtraction.  This result is output to the console
@@ -1663,7 +1663,7 @@ and <b>SLEEF_FP_ILOGBNAN</b>, respectively.
   function is used to initialize <i class="var">q0</i> from line 4 to
   5. <a href="#Sleef_strtoq"><b class="func">Sleef_strtoq</b></a>
   function is used to initialize <i class="var">q1</i> at line 7.
-  Here, <a href="quadx86.xhtml#splat"><b class="func">Sleef_splatq2_sse2</b></a>
+  Here, <a href="x86#splat"><b class="func">Sleef_splatq2_sse2</b></a>
   function is a function for setting the specified QP FP value to all
   elements in a vector. Obtaining QP FP constants by calling these
   functions may waste some CPU time. From line 9 and

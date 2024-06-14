@@ -32,7 +32,7 @@ instructions, respectively. Functions with FMA instructions are only
 available on architectures with FMA instructions. The two digits
 number after "_u" is 10 times the maximum error for typical input
 domain in <a class="underlined"
-href="additional.xhtml#ulp">ULP</a>. The functions whose names contain
+href="../../3-extra#ulp">ULP</a>. The functions whose names contain
 "finz" and "cinz" are functions that give bit-wise consistent results
 across all platforms. The "f" attribute indicates that it utilizes FMA
 instructions, while "c" means no FMA.

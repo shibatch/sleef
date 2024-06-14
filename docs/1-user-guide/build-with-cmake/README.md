@@ -207,7 +207,7 @@ optimized, or any other special set of flags.
 
 <!-- Repository links -->
 
-[build_info_url]: https://sleef.org/compile.xhtml
+[build_info_url]: https://sleef.org/1-user-guide
 [repo_url]: https://github.com/shibatch/sleef
 [release_url]: https://github.com/shibatch/sleef/releases
 [forge_url]: https://sourceforge.net/projects/sleef

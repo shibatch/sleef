@@ -111,7 +111,7 @@ which is defined in sleef.h as follows:
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_sin_u10"><b class="func">Sleef_sin_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_sin_u10"><b class="func">Sleef_sin_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -138,7 +138,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sin_u10"><b cla
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_sinf_u10"><b class="func">Sleef_sinf_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_sinf_u10"><b class="func">Sleef_sinf_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -165,7 +165,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sinf_u10"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_sin_u35"><b class="func">Sleef_sin_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_sin_u35"><b class="func">Sleef_sin_u35</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -192,7 +192,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sin_u35"><b cla
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_sinf_u35"><b class="func">Sleef_sinf_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_sinf_u35"><b class="func">Sleef_sinf_u35</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -219,7 +219,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sinf_u35"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_cos_u10"><b class="func">Sleef_cos_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_cos_u10"><b class="func">Sleef_cos_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -246,7 +246,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cos_u10"><b cla
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_cosf_u10"><b class="func">Sleef_cosf_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_cosf_u10"><b class="func">Sleef_cosf_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -273,7 +273,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cosf_u10"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_cos_u35"><b class="func">Sleef_cos_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_cos_u35"><b class="func">Sleef_cos_u35</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -300,7 +300,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cos_u35"><b cla
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_cosf_u35"><b class="func">Sleef_cosf_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_cosf_u35"><b class="func">Sleef_cosf_u35</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -327,7 +327,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cosf_u35"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_sincos_u10"><b class="func">Sleef_sincos_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_sincos_u10"><b class="func">Sleef_sincos_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -354,7 +354,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sincos_u10"><b 
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_sincosf_u10"><b class="func">Sleef_sincosf_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_sincosf_u10"><b class="func">Sleef_sincosf_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -381,7 +381,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sincosf_u10"><b
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_sincos_u35"><b class="func">Sleef_sincos_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_sincos_u35"><b class="func">Sleef_sincos_u35</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -408,7 +408,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sincos_u35"><b 
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_sincosf_u35"><b class="func">Sleef_sincosf_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_sincosf_u35"><b class="func">Sleef_sincosf_u35</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -435,7 +435,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sincosf_u35"><b
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_sinpi_u05"><b class="func">Sleef_sinpi_u05</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_sinpi_u05"><b class="func">Sleef_sinpi_u05</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -462,7 +462,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sinpi_u05"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_sinpif_u05"><b class="func">Sleef_sinpif_u05</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_sinpif_u05"><b class="func">Sleef_sinpif_u05</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -489,7 +489,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sinpif_u05"><b 
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_cospi_u05"><b class="func">Sleef_cospi_u05</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_cospi_u05"><b class="func">Sleef_cospi_u05</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -516,7 +516,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cospi_u05"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_cospif_u05"><b class="func">Sleef_cospif_u05</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_cospif_u05"><b class="func">Sleef_cospif_u05</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -543,7 +543,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cospif_u05"><b 
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_sincospi_u05"><b class="func">Sleef_sincospi_u05</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_sincospi_u05"><b class="func">Sleef_sincospi_u05</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -570,7 +570,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sincospi_u05"><
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_sincospif_u05"><b class="func">Sleef_sincospif_u05</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_sincospif_u05"><b class="func">Sleef_sincospif_u05</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -597,7 +597,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sincospif_u05">
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_sincospi_u35"><b class="func">Sleef_sincospi_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_sincospi_u35"><b class="func">Sleef_sincospi_u35</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -624,7 +624,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sincospi_u35"><
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_sincospif_u35"><b class="func">Sleef_sincospif_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_sincospif_u35"><b class="func">Sleef_sincospif_u35</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -651,7 +651,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sincospif_u35">
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_tan_u10"><b class="func">Sleef_tan_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_tan_u10"><b class="func">Sleef_tan_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -678,7 +678,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_tan_u10"><b cla
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_tanf_u10"><b class="func">Sleef_tanf_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_tanf_u10"><b class="func">Sleef_tanf_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -705,7 +705,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_tanf_u10"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_tan_u35"><b class="func">Sleef_tan_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_tan_u35"><b class="func">Sleef_tan_u35</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -732,7 +732,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_tan_u35"><b cla
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_tanf_u35"><b class="func">Sleef_tanf_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_tanf_u35"><b class="func">Sleef_tanf_u35</b></a> with the same accuracy specification.
 </p>
 
 <h2 id="pow">Power, exponential, and logarithmic function</h2>
@@ -760,7 +760,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_tanf_u35"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_pow_u10"><b class="func">Sleef_pow_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_pow_u10"><b class="func">Sleef_pow_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -787,7 +787,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_pow_u10"><b cla
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_powf_u10"><b class="func">Sleef_powf_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_powf_u10"><b class="func">Sleef_powf_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -814,7 +814,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_powf_u10"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_log_u10"><b class="func">Sleef_log_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_log_u10"><b class="func">Sleef_log_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -841,7 +841,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_log_u10"><b cla
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_logf_u10"><b class="func">Sleef_logf_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_logf_u10"><b class="func">Sleef_logf_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -868,7 +868,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_logf_u10"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_log_u35"><b class="func">Sleef_log_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_log_u35"><b class="func">Sleef_log_u35</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -895,7 +895,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_log_u35"><b cla
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_logf_u35"><b class="func">Sleef_logf_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_logf_u35"><b class="func">Sleef_logf_u35</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -922,7 +922,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_logf_u35"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_log10_u10"><b class="func">Sleef_log10_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_log10_u10"><b class="func">Sleef_log10_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -949,7 +949,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_log10_u10"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_log10f_u10"><b class="func">Sleef_log10f_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_log10f_u10"><b class="func">Sleef_log10f_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -976,7 +976,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_log10f_u10"><b 
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_log2_u10"><b class="func">Sleef_log2_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_log2_u10"><b class="func">Sleef_log2_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1003,7 +1003,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_log2_u10"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_log2f_u10"><b class="func">Sleef_log2f_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_log2f_u10"><b class="func">Sleef_log2f_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1030,7 +1030,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_log2f_u10"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_log1p_u10"><b class="func">Sleef_log1p_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_log1p_u10"><b class="func">Sleef_log1p_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1057,7 +1057,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_log1p_u10"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_log1pf_u10"><b class="func">Sleef_log1pf_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_log1pf_u10"><b class="func">Sleef_log1pf_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1084,7 +1084,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_log1pf_u10"><b 
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_exp_u10"><b class="func">Sleef_exp_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_exp_u10"><b class="func">Sleef_exp_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1111,7 +1111,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_exp_u10"><b cla
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_expf_u10"><b class="func">Sleef_expf_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_expf_u10"><b class="func">Sleef_expf_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1138,7 +1138,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_expf_u10"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_exp2_u10"><b class="func">Sleef_exp2_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_exp2_u10"><b class="func">Sleef_exp2_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1165,7 +1165,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_exp2_u10"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_exp2f_u10"><b class="func">Sleef_exp2f_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_exp2f_u10"><b class="func">Sleef_exp2f_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1192,7 +1192,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_exp2f_u10"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_exp10_u10"><b class="func">Sleef_exp10_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_exp10_u10"><b class="func">Sleef_exp10_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1219,7 +1219,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_exp10_u10"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_exp10f_u10"><b class="func">Sleef_exp10f_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_exp10f_u10"><b class="func">Sleef_exp10f_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1246,7 +1246,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_exp10f_u10"><b 
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_expm1_u10"><b class="func">Sleef_expm1_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_expm1_u10"><b class="func">Sleef_expm1_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1273,7 +1273,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_expm1_u10"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_expm1f_u10"><b class="func">Sleef_expm1f_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_expm1f_u10"><b class="func">Sleef_expm1f_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1300,7 +1300,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_expm1f_u10"><b 
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_sqrt_u05"><b class="func">Sleef_sqrt_u05</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_sqrt_u05"><b class="func">Sleef_sqrt_u05</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1327,7 +1327,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sqrt_u05"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_sqrtf_u05"><b class="func">Sleef_sqrtf_u05</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_sqrtf_u05"><b class="func">Sleef_sqrtf_u05</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1354,7 +1354,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sqrtf_u05"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_sqrt_u35"><b class="func">Sleef_sqrt_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_sqrt_u35"><b class="func">Sleef_sqrt_u35</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1381,7 +1381,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sqrt_u35"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_sqrtf_u35"><b class="func">Sleef_sqrtf_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_sqrtf_u35"><b class="func">Sleef_sqrtf_u35</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1408,7 +1408,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sqrtf_u35"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_cbrt_u10"><b class="func">Sleef_cbrt_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_cbrt_u10"><b class="func">Sleef_cbrt_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1435,7 +1435,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cbrt_u10"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_cbrtf_u10"><b class="func">Sleef_cbrtf_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_cbrtf_u10"><b class="func">Sleef_cbrtf_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1462,7 +1462,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cbrtf_u10"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_cbrt_u35"><b class="func">Sleef_cbrt_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_cbrt_u35"><b class="func">Sleef_cbrt_u35</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1489,7 +1489,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cbrt_u35"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_cbrtf_u35"><b class="func">Sleef_cbrtf_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_cbrtf_u35"><b class="func">Sleef_cbrtf_u35</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1516,7 +1516,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cbrtf_u35"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_hypot_u05"><b class="func">Sleef_hypot_u05</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_hypot_u05"><b class="func">Sleef_hypot_u05</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1543,7 +1543,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_hypot_u05"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_hypotf_u05"><b class="func">Sleef_hypotf_u05</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_hypotf_u05"><b class="func">Sleef_hypotf_u05</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1570,7 +1570,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_hypotf_u05"><b 
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_hypot_u35"><b class="func">Sleef_hypot_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_hypot_u35"><b class="func">Sleef_hypot_u35</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1597,7 +1597,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_hypot_u35"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_hypotf_u35"><b class="func">Sleef_hypotf_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_hypotf_u35"><b class="func">Sleef_hypotf_u35</b></a> with the same accuracy specification.
 </p>
 
 
@@ -1626,7 +1626,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_hypotf_u35"><b 
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_asin_u10"><b class="func">Sleef_asin_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_asin_u10"><b class="func">Sleef_asin_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1653,7 +1653,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_asin_u10"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_asinf_u10"><b class="func">Sleef_asinf_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_asinf_u10"><b class="func">Sleef_asinf_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1680,7 +1680,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_asinf_u10"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_asin_u35"><b class="func">Sleef_asin_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_asin_u35"><b class="func">Sleef_asin_u35</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1707,7 +1707,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_asin_u35"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_asinf_u35"><b class="func">Sleef_asinf_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_asinf_u35"><b class="func">Sleef_asinf_u35</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1734,7 +1734,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_asinf_u35"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_acos_u10"><b class="func">Sleef_acos_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_acos_u10"><b class="func">Sleef_acos_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1761,7 +1761,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_acos_u10"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_acosf_u10"><b class="func">Sleef_acosf_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_acosf_u10"><b class="func">Sleef_acosf_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1788,7 +1788,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_acosf_u10"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_acos_u35"><b class="func">Sleef_acos_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_acos_u35"><b class="func">Sleef_acos_u35</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1815,7 +1815,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_acos_u35"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_acosf_u35"><b class="func">Sleef_acosf_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_acosf_u35"><b class="func">Sleef_acosf_u35</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1842,7 +1842,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_acosf_u35"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_atan_u10"><b class="func">Sleef_atan_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_atan_u10"><b class="func">Sleef_atan_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1869,7 +1869,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_atan_u10"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_atanf_u10"><b class="func">Sleef_atanf_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_atanf_u10"><b class="func">Sleef_atanf_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1896,7 +1896,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_atanf_u10"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_atan_u35"><b class="func">Sleef_atan_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_atan_u35"><b class="func">Sleef_atan_u35</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1923,7 +1923,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_atan_u35"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_atanf_u35"><b class="func">Sleef_atanf_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_atanf_u35"><b class="func">Sleef_atanf_u35</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1950,7 +1950,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_atanf_u35"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_atan2_u10"><b class="func">Sleef_atan2_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_atan2_u10"><b class="func">Sleef_atan2_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -1977,7 +1977,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_atan2_u10"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_atan2f_u10"><b class="func">Sleef_atan2f_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_atan2f_u10"><b class="func">Sleef_atan2f_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2004,7 +2004,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_atan2f_u10"><b 
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_atan2_u35"><b class="func">Sleef_atan2_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_atan2_u35"><b class="func">Sleef_atan2_u35</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2031,7 +2031,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_atan2_u35"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_atan2f_u35"><b class="func">Sleef_atan2f_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_atan2f_u35"><b class="func">Sleef_atan2f_u35</b></a> with the same accuracy specification.
 </p>
 
 
@@ -2061,7 +2061,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_atan2f_u35"><b 
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_sinh_u10"><b class="func">Sleef_sinh_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_sinh_u10"><b class="func">Sleef_sinh_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2088,7 +2088,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sinh_u10"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_sinhf_u10"><b class="func">Sleef_sinhf_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_sinhf_u10"><b class="func">Sleef_sinhf_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2115,7 +2115,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sinhf_u10"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_sinh_u35"><b class="func">Sleef_sinh_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_sinh_u35"><b class="func">Sleef_sinh_u35</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2142,7 +2142,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sinh_u35"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_sinhf_u35"><b class="func">Sleef_sinhf_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_sinhf_u35"><b class="func">Sleef_sinhf_u35</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2169,7 +2169,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_sinhf_u35"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_cosh_u10"><b class="func">Sleef_cosh_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_cosh_u10"><b class="func">Sleef_cosh_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2196,7 +2196,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cosh_u10"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_coshf_u10"><b class="func">Sleef_coshf_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_coshf_u10"><b class="func">Sleef_coshf_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2223,7 +2223,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_coshf_u10"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_cosh_u35"><b class="func">Sleef_cosh_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_cosh_u35"><b class="func">Sleef_cosh_u35</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2250,7 +2250,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_cosh_u35"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_coshf_u35"><b class="func">Sleef_coshf_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_coshf_u35"><b class="func">Sleef_coshf_u35</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2277,7 +2277,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_coshf_u35"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_tanh_u10"><b class="func">Sleef_tanh_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_tanh_u10"><b class="func">Sleef_tanh_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2304,7 +2304,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_tanh_u10"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_tanhf_u10"><b class="func">Sleef_tanhf_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_tanhf_u10"><b class="func">Sleef_tanhf_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2331,7 +2331,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_tanhf_u10"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_tanh_u35"><b class="func">Sleef_tanh_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_tanh_u35"><b class="func">Sleef_tanh_u35</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2358,7 +2358,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_tanh_u35"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_tanhf_u35"><b class="func">Sleef_tanhf_u35</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_tanhf_u35"><b class="func">Sleef_tanhf_u35</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2385,7 +2385,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_tanhf_u35"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_asinh_u10"><b class="func">Sleef_asinh_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_asinh_u10"><b class="func">Sleef_asinh_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2412,7 +2412,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_asinh_u10"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_asinhf_u10"><b class="func">Sleef_asinhf_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_asinhf_u10"><b class="func">Sleef_asinhf_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2439,7 +2439,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_asinhf_u10"><b 
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_acosh_u10"><b class="func">Sleef_acosh_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_acosh_u10"><b class="func">Sleef_acosh_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2466,7 +2466,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_acosh_u10"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_acoshf_u10"><b class="func">Sleef_acoshf_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_acoshf_u10"><b class="func">Sleef_acoshf_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2493,7 +2493,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_acoshf_u10"><b 
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_atanh_u10"><b class="func">Sleef_atanh_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_atanh_u10"><b class="func">Sleef_atanh_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2520,7 +2520,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_atanh_u10"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_atanhf_u10"><b class="func">Sleef_atanhf_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_atanhf_u10"><b class="func">Sleef_atanhf_u10</b></a> with the same accuracy specification.
 </p>
 
 
@@ -2549,7 +2549,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_atanhf_u10"><b 
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_erf_u10"><b class="func">Sleef_erf_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_erf_u10"><b class="func">Sleef_erf_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2576,7 +2576,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_erf_u10"><b cla
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_erff_u10"><b class="func">Sleef_erff_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_erff_u10"><b class="func">Sleef_erff_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2603,7 +2603,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_erff_u10"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_erfc_u15"><b class="func">Sleef_erfc_u15</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_erfc_u15"><b class="func">Sleef_erfc_u15</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2630,7 +2630,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_erfc_u15"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_erfcf_u15"><b class="func">Sleef_erfcf_u15</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_erfcf_u15"><b class="func">Sleef_erfcf_u15</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2657,7 +2657,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_erfcf_u15"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_tgamma_u10"><b class="func">Sleef_tgamma_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_tgamma_u10"><b class="func">Sleef_tgamma_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2684,7 +2684,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_tgamma_u10"><b 
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_tgammaf_u10"><b class="func">Sleef_tgammaf_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_tgammaf_u10"><b class="func">Sleef_tgammaf_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2711,7 +2711,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_tgammaf_u10"><b
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_lgamma_u10"><b class="func">Sleef_lgamma_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_lgamma_u10"><b class="func">Sleef_lgamma_u10</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2737,7 +2737,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_lgamma_u10"><b 
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_lgammaf_u10"><b class="func">Sleef_lgammaf_u10</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_lgammaf_u10"><b class="func">Sleef_lgammaf_u10</b></a> with the same accuracy specification.
 </p>
 
 
@@ -2760,7 +2760,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_lgammaf_u10"><b
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_trunc"><b class="func">Sleef_trunc</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_trunc"><b class="func">Sleef_trunc</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2781,7 +2781,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_trunc"><b class
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_truncf"><b class="func">Sleef_truncf</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_truncf"><b class="func">Sleef_truncf</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2802,7 +2802,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_truncf"><b clas
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_floor"><b class="func">Sleef_floor</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_floor"><b class="func">Sleef_floor</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2823,7 +2823,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_floor"><b class
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_floorf"><b class="func">Sleef_floorf</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_floorf"><b class="func">Sleef_floorf</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2844,7 +2844,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_floorf"><b clas
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_ceil"><b class="func">Sleef_ceil</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_ceil"><b class="func">Sleef_ceil</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2865,7 +2865,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_ceil"><b class=
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_ceilf"><b class="func">Sleef_ceilf</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_ceilf"><b class="func">Sleef_ceilf</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2886,7 +2886,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_ceilf"><b class
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_round"><b class="func">Sleef_round</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_round"><b class="func">Sleef_round</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2907,7 +2907,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_round"><b class
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_roundf"><b class="func">Sleef_roundf</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_roundf"><b class="func">Sleef_roundf</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2928,7 +2928,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_roundf"><b clas
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_rint"><b class="func">Sleef_rint</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_rint"><b class="func">Sleef_rint</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2949,7 +2949,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_rint"><b class=
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_rintf"><b class="func">Sleef_rintf</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_rintf"><b class="func">Sleef_rintf</b></a> with the same accuracy specification.
 </p>
 
 
@@ -2972,7 +2972,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_rintf"><b class
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_fma"><b class="func">Sleef_fma</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_fma"><b class="func">Sleef_fma</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -2993,7 +2993,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_fma"><b class="
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_fmaf"><b class="func">Sleef_fmaf</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_fmaf"><b class="func">Sleef_fmaf</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -3015,7 +3015,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_fmaf"><b class=
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_fmod"><b class="func">Sleef_fmod</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_fmod"><b class="func">Sleef_fmod</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -3036,7 +3036,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_fmod"><b class=
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_fmodf"><b class="func">Sleef_fmodf</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_fmodf"><b class="func">Sleef_fmodf</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -3058,7 +3058,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_fmodf"><b class
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_remainder"><b class="func">Sleef_remainder</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_remainder"><b class="func">Sleef_remainder</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -3079,7 +3079,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_remainder"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_remainderf"><b class="func">Sleef_remainderf</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_remainderf"><b class="func">Sleef_remainderf</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -3100,7 +3100,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_remainderf"><b 
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_ldexp"><b class="func">Sleef_ldexp</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_ldexp"><b class="func">Sleef_ldexp</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -3121,7 +3121,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_ldexp"><b class
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_frfrexp"><b class="func">Sleef_frfrexp</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_frfrexp"><b class="func">Sleef_frfrexp</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -3142,7 +3142,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_frfrexp"><b cla
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_frfrexpf"><b class="func">Sleef_frfrexpf</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_frfrexpf"><b class="func">Sleef_frfrexpf</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -3163,7 +3163,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_frfrexpf"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_expfrexp"><b class="func">Sleef_expfrexp</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_expfrexp"><b class="func">Sleef_expfrexp</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -3185,7 +3185,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_expfrexp"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_ilogb"><b class="func">Sleef_ilogb</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_ilogb"><b class="func">Sleef_ilogb</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -3206,7 +3206,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_ilogb"><b class
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_modf"><b class="func">Sleef_modf</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_modf"><b class="func">Sleef_modf</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -3227,7 +3227,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_modf"><b class=
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_modff"><b class="func">Sleef_modff</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_modff"><b class="func">Sleef_modff</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -3248,7 +3248,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_modff"><b class
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_fabs"><b class="func">Sleef_fabs</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_fabs"><b class="func">Sleef_fabs</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -3269,7 +3269,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_fabs"><b class=
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_fabsf"><b class="func">Sleef_fabsf</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_fabsf"><b class="func">Sleef_fabsf</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -3290,7 +3290,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_fabsf"><b class
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_copysign"><b class="func">Sleef_copysign</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_copysign"><b class="func">Sleef_copysign</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -3311,7 +3311,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_copysign"><b cl
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_copysignf"><b class="func">Sleef_copysignf</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_copysignf"><b class="func">Sleef_copysignf</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -3332,7 +3332,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_copysignf"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_fmax"><b class="func">Sleef_fmax</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_fmax"><b class="func">Sleef_fmax</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -3353,7 +3353,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_fmax"><b class=
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_fmaxf"><b class="func">Sleef_fmaxf</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_fmaxf"><b class="func">Sleef_fmaxf</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -3374,7 +3374,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_fmaxf"><b class
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_fmin"><b class="func">Sleef_fmin</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_fmin"><b class="func">Sleef_fmin</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -3395,7 +3395,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_fmin"><b class=
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_fminf"><b class="func">Sleef_fminf</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_fminf"><b class="func">Sleef_fminf</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -3416,7 +3416,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_fminf"><b class
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_fdim"><b class="func">Sleef_fdim</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_fdim"><b class="func">Sleef_fdim</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -3437,7 +3437,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_fdim"><b class=
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_fdimf"><b class="func">Sleef_fdimf</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_fdimf"><b class="func">Sleef_fdimf</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -3458,7 +3458,7 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_fdimf"><b class
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_nextafter"><b class="func">Sleef_nextafter</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_nextafter"><b class="func">Sleef_nextafter</b></a> with the same accuracy specification.
 </p>
 
 <hr/>
@@ -3479,5 +3479,5 @@ These are the vectorized functions of <a href="purec.xhtml#Sleef_nextafter"><b c
 <p class="header">Description</p>
 
 <p class="noindent">
-These are the vectorized functions of <a href="purec.xhtml#Sleef_nextafterf"><b class="func">Sleef_nextafterf</b></a> with the same accuracy specification.
+These are the vectorized functions of <a href="../libm#Sleef_nextafterf"><b class="func">Sleef_nextafterf</b></a> with the same accuracy specification.
 </p>
