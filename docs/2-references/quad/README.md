@@ -1600,7 +1600,7 @@ and <b>SLEEF_FP_ILOGBNAN</b>, respectively.
 
 <p class="noindent">
   I would like to show an example of how the vectorized QP functions
-  can be used. Below is <a class="underlined" href="machinx86.c">a
+  can be used. Below is <a class="underlined" href="../../src/machinx86.c">a
   source code</a> for computing &pi; with <a class="underlined"
   href="https://en.wikipedia.org/wiki/Machin-like_formula">Machin's
   formula</a> on x86 GNU systems. This formula has two terms with arc
@@ -1648,7 +1648,7 @@ and <b>SLEEF_FP_ILOGBNAN</b>, respectively.
 <code>}</code>
 </pre>
 <p style="text-align:center;">
-  Fig. 4.1: <a class="underlined" href="machinx86.c">Example source code for x86 computers</a>
+  Fig. 4.1: <a class="underlined" href="../../src/machinx86.c">Example source code for x86 computers</a>
 </p>
 
 <br/>
@@ -1657,7 +1657,7 @@ and <b>SLEEF_FP_ILOGBNAN</b>, respectively.
   <b class="type">__float128</b> data type is not defined on MSVC, and
   thus we cannot use literals of this type to initialize QP
   variables. Sleef provides various conversion functions for this
-  purpose. In <a class="underlined" href="machinx86.c">the following
+  purpose. In <a class="underlined" href="../../src/machinx86.c">the following
   source
   code</a>, <a href="#Sleef_cast_from_doubleq1_purec"><b class="func">Sleef_cast_from_doubleq1_purec</b></a>
   function is used to initialize <i class="var">q0</i> from line 4 to
@@ -1704,6 +1704,6 @@ and <b>SLEEF_FP_ILOGBNAN</b>, respectively.
 <code>}</code>
 </pre>
 <p style="text-align:center;">
-  Fig. 4.2: <a class="underlined" href="machinmsvc.c">Example source code for MSVC</a>
+  Fig. 4.2: <a class="underlined" href="../../src/machinmsvc.c">Example source code for MSVC</a>
 </p>
 

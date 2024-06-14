@@ -100,7 +100,7 @@ like <b class="func">Sleef_sin_u10</b> by defining
 <b>SLEEF_ENABLE_OMP_SIMD</b> macro before including <b>sleef.h</b> on
 x86_64 computers. With these pragmas, gcc can use its auto-vectorizer
 to vectorize calls to these scalar functions. For
-example, <a class="underlined" href="sophomore.c">the following
+example, <a class="underlined" href="../src/sophomore.c">the following
 code</a> can be vectorized by gcc-10.
 </p>
 
@@ -191,7 +191,7 @@ $ &block;
 </pre>
 
 <p>
-  For example, <a class="underlined" href="sophomore2.c">the above
+  For example, <a class="underlined" href="../src/sophomore2.c">the above
   code</a> can be linked against libsleefgnuabi as shown below. You
   have to specify <b>-lsleefgnuabi</b> compiler option
   before <b>-lm</b> option.
@@ -509,7 +509,7 @@ and <b class="func">Sleef_sind1_u10purecfma</b>.
   dividing the argument <i class="var">x</i> by &pi;. We devised a
   variation of the Payne-Hanek argument reduction method which is
   suitable for vector computation. Fig. 7.2
-  shows <a class="underlined" href="ph.c">an explanatory source
+  shows <a class="underlined" href="../src/ph.c">an explanatory source
   code</a> for this method. See <a class="underlined"
   href="http://dx.doi.org/10.1109/TPDS.2019.2960333">our paper</a> for
   the details.
@@ -593,7 +593,7 @@ and <b class="func">Sleef_sind1_u10purecfma</b>.
 <code>}</code>
 </pre>
 <p style="text-align:center; margin-bottom: 1.0cm;">
-  <a href="ph.c">Fig. 7.2: Explanatory source code for our modified Payne Hanek reduction method</a>
+  <a href="../src/ph.c">Fig. 7.2: Explanatory source code for our modified Payne Hanek reduction method</a>
 </p>
 
 

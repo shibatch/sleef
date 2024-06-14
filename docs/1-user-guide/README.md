@@ -144,7 +144,7 @@ D:\sleef-3.X> cmake --build build --clean-first</pre>
 
 <p class="noindent">
   Now, let's try compiling the <a class="underlined"
-  href="hellox86.c">source code shown in Fig. 2.1</a>.
+  href="../src/hellox86.c">source code shown in Fig. 2.1</a>.
 </p>
 
 <pre class="code">
@@ -172,7 +172,7 @@ D:\sleef-3.X> cmake --build build --clean-first</pre>
 <code>}</code>
 </pre>
 <p style="text-align:center;">
-  Fig. 2.1: <a href="hellox86.c">Source code for testing</a>
+  Fig. 2.1: <a href="../src/hellox86.c">Source code for testing</a>
 </p>
 
 
@@ -202,7 +202,7 @@ $ &block;</pre>
 
 <p class="noindent">
   Below is an example <a class="underlined"
-  href="CMakeLists.txt">CMakeLists.txt</a> for compiling the above
+  href="../src/CMakeLists.txt">CMakeLists.txt</a> for compiling the above
   hellox86.c. CMake will automatically download SLEEF from GitHub
   repository, and thus there is no need to include SLEEF in your
   software package. If you prefer importing SLEEF as a submodule in
@@ -228,7 +228,7 @@ $ &block;</pre>
 <code>target_link_libraries(hellox86 sleef)</code>
 </pre>
 <p style="text-align:center;">
-  Fig. 2.3: <a href="CMakeLists.txt">Example CMakeLists.txt</a>
+  Fig. 2.3: <a href="../src/CMakeLists.txt">Example CMakeLists.txt</a>
 </p>
 
 

@@ -26,7 +26,7 @@ permalink: /2-references/libm/cuda
 <p class="noindent">
   The CUDA functions in SLEEF are provided as an <a class="underlined"
   href="additional.xhtml#inline">inlinable include file</a>. Below is
-  a <a class="underlined" href="hellocuda.cu">test code</a> for the
+  a <a class="underlined" href="../../src/hellocuda.cu">test code</a> for the
   CUDA functions.
 </p>
 
@@ -78,7 +78,7 @@ permalink: /2-references/libm/cuda
 <code>}</code>
 </pre>
 <p style="text-align:center;">
-  <a class="underlined" href="hellocuda.cu">Source code for testing CUDA functions</a>
+  <a class="underlined" href="../../src/hellocuda.cu">Source code for testing CUDA functions</a>
 </p>
 
 
