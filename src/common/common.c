@@ -57,11 +57,10 @@ EXPORT uint64_t Sleef_currentTimeMicros() {
 #define MEM_ALIGN_SIZE    256
 #elif defined(__APPLE__)
 #include <sys/time.h>
-
+#define MEM_ALIGN_SIZE    256
 #else // #if defined(__MINGW32__) || defined(__MINGW64__) || defined(_MSC_VER)
 #include <time.h>
 #include <unistd.h>
-#define MEM_ALIGN_SIZE    256
 
 #if defined(__FreeBSD__) || defined(__OpenBSD__)
 #include <stdlib.h>
