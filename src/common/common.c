@@ -9,7 +9,7 @@
 #include <assert.h>
 
 #include "misc.h"
-
+#if 0
 #if defined(__MINGW32__) || defined(__MINGW64__) || defined(_MSC_VER)
 #include <sys/timeb.h>
 
@@ -50,6 +50,73 @@ EXPORT uint64_t Sleef_currentTimeMicros() {
   return (uint64_t)tp.tv_sec * INT64_C(1000000) + ((uint64_t)tp.tv_nsec/1000);
 }
 #endif // #if defined(__MINGW32__) || defined(__MINGW64__) || defined(_MSC_VER)
+#else
+
+#if defined(__MINGW32__) || defined(__MINGW64__) || defined(_MSC_VER)
+#include <sys/timeb.h>
+#define MEM_ALIGN_SIZE    256
+#elif defined(__APPLE__)
+#include <sys/time.h>
+
+#else // #if defined(__MINGW32__) || defined(__MINGW64__) || defined(_MSC_VER)
+#include <time.h>
+#include <unistd.h>
+#define MEM_ALIGN_SIZE    256
+
+#if defined(__FreeBSD__) || defined(__OpenBSD__)
+#include <stdlib.h>
+#else
+#include <malloc.h>
+#endif
+
+#define MEM_ALIGN_SIZE    4096
+
+#endif
+
+EXPORT void *Sleef_malloc(size_t z)
+{
+#if defined(__MINGW32__) || defined(__MINGW64__) || defined(_MSC_VER)
+  return _aligned_malloc(z, MEM_ALIGN_SIZE);
+#elif defined(__APPLE__)
+  void *ptr = NULL; posix_memalign(&ptr, MEM_ALIGN_SIZE, z); 
+  return ptr; 
+#else // #if defined(__MINGW32__) || defined(__MINGW64__) || defined(_MSC_VER)
+  void *ptr = NULL; 
+  posix_memalign(&ptr, MEM_ALIGN_SIZE, z); 
+  return ptr;
+#endif
+}
+
+EXPORT void Sleef_free(void *ptr)
+{
+#if defined(__MINGW32__) || defined(__MINGW64__) || defined(_MSC_VER)
+  _aligned_free(ptr);
+#elif defined(__APPLE__)
+  free(ptr);
+#else // #if defined(__MINGW32__) || defined(__MINGW64__) || defined(_MSC_VER)
+  free(ptr);
+#endif
+}
+
+EXPORT uint64_t Sleef_currentTimeMicros() 
+{
+#if defined(__MINGW32__) || defined(__MINGW64__) || defined(_MSC_VER)
+  struct __timeb64 t;
+  _ftime64(&t);
+  return t.time * INT64_C(1000000) + t.millitm*1000;
+#elif defined(__APPLE__)
+  struct timeval time;
+  gettimeofday(&time, NULL);
+  return (uint64_t)((time.tv_sec * INT64_C(1000000)) + time.tv_usec);
+#else // #if defined(__MINGW32__) || defined(__MINGW64__) || defined(_MSC_VER)
+  struct timespec tp;
+  clock_gettime(CLOCK_MONOTONIC, &tp);
+  return (uint64_t)tp.tv_sec * INT64_C(1000000) + ((uint64_t)tp.tv_nsec/1000);
+#endif
+}
+
+#endif
+
 
 #ifdef _MSC_VER
 #include <intrin.h>
