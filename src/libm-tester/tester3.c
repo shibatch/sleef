@@ -171,7 +171,7 @@ static SPTYPE vf2gety_vf_vf2(TYPE2(SPTYPE) v) { return v.y; }
 #define checkDigest(NAME, ULP) do {				\
     unsigned int md5_digest_len = EVP_MD_size(EVP_md5());	\
     unsigned char *md5_digest;					\
-    md5_digest = (unsigned char *)malloc(md5_digest_len);	\
+    md5_digest = (unsigned char *)Sleef_malloc(md5_digest_len);	\
     if (!EVP_DigestFinal_ex(ctx, md5_digest, &md5_digest_len)) { \
       fprintf(stderr, "Error finalizing digest.\n");		\
       return 0;							\
@@ -185,7 +185,7 @@ static SPTYPE vf2gety_vf_vf2(TYPE2(SPTYPE) v) { return v.y; }
         sprintf(tmp, "%02x", md5_digest[i]);			\
         strcat((char *)mes, tmp);				\
     }								\
-    free(md5_digest);						\
+    Sleef_free(md5_digest);						\
     if (fp != NULL) {						\
       fgets((char *)buf, 60, fp);				\
       if (strncmp((char *)mes, (char *)buf, strlen((char *)mes)) != 0) { \

@@ -176,7 +176,7 @@ static void startAllThreads(const int nth) {
       if (i == nth) break;
     }
   }
-  free((void *)state);
+  Sleef_free((void *)state);
 #endif
 }
 
@@ -392,7 +392,7 @@ static uint32_t perm(int nbits, uint32_t k, int s, int d) {
 static real **makeTable(int sign, int vecwidth, int log2len, const int N, const int K) {
   if (log2len < N) return NULL;
 
-  int *p = (int *)malloc(sizeof(int)*((N+1)<<N));
+  int *p = (int *)Sleef_malloc(sizeof(int)*((N+1)<<N));
   
   real **tbl = (real **)calloc(sizeof(real *), (log2len+1));
 
@@ -434,7 +434,7 @@ static real **makeTable(int sign, int vecwidth, int log2len, const int N, const 
     }
   }
 
-  free(p);
+  Sleef_free(p);
   
   return tbl;
 }
@@ -517,10 +517,10 @@ static ks_t *ksInit(SleefDFT *p) {
 }
 
 static void ksDispose(ks_t *q) {
-  free(q->heapCost);
-  free(q->heapLen);
-  free(q->heap);
-  free(q);
+  Sleef_free(q->heapCost);
+  Sleef_free(q->heapLen);
+  Sleef_free(q->heap);
+  Sleef_free(q);
 }
 
 // returns the number of paths in the heap
@@ -1158,7 +1158,7 @@ EXPORT SleefDFT *INIT(uint32_t n, const real *in, real *out, uint64_t mode) {
   if (p->isa == -1) {
     if ((p->mode & SLEEF_MODE_VERBOSE) != 0) printf("ISA not available\n");
     p->magic = 0;
-    free(p);
+    Sleef_free(p);
     return NULL;
   }
 
@@ -1169,8 +1169,8 @@ EXPORT SleefDFT *INIT(uint32_t n, const real *in, real *out, uint64_t mode) {
     p->perm[level] = (uint32_t *)Sleef_malloc(sizeof(uint32_t) * ((1 << p->log2len) + 8));
   }
 
-  p->x0 = malloc(sizeof(real *) * p->nThread);
-  p->x1 = malloc(sizeof(real *) * p->nThread);
+  p->x0 = Sleef_malloc(sizeof(real *) * p->nThread);
+  p->x1 = Sleef_malloc(sizeof(real *) * p->nThread);
 
   for(int i=0;i<p->nThread;i++) {
     p->x0[i] = (real *)Sleef_malloc(sizeof(real) * 2 * n);

@@ -54,28 +54,28 @@ static void init(int n0, int m0) {
   mpfr_init(large);
   mpfr_set_d(large, 1.0 / EPS, GMP_RNDN);
 
-  a = malloc(sizeof(mpfr_t *) * (m + 1));
+  a = Sleef_malloc(sizeof(mpfr_t *) * (m + 1));
   for(i=0;i < m+1;i++) {
-    a[i] = malloc(sizeof(mpfr_t) * (n + 1));
+    a[i] = Sleef_malloc(sizeof(mpfr_t) * (n + 1));
     for(j=0;j < (n+1);j++) {
       mpfr_zinit(a[i][j]);
     }
   }
 
-  q = malloc(sizeof(mpfr_t *) * (m + 1));
+  q = Sleef_malloc(sizeof(mpfr_t *) * (m + 1));
   for(i=0;i < m+1;i++) {
-    q[i] = malloc(sizeof(mpfr_t) * (m + 1));
+    q[i] = Sleef_malloc(sizeof(mpfr_t) * (m + 1));
     for(j=0;j < m+1;j++) {
       mpfr_zinit(q[i][j]);
     }
   }
 
-  c = malloc(sizeof(mpfr_t) * (n + 1));
+  c = Sleef_malloc(sizeof(mpfr_t) * (n + 1));
   for(j=0;j < (n+1);j++) {
     mpfr_zinit(c[j]);
   }
 
-  pivotcolumn = malloc(sizeof(mpfr_t) * (m + 1));
+  pivotcolumn = Sleef_malloc(sizeof(mpfr_t) * (m + 1));
   for(j=0;j < (m+1);j++) {
     mpfr_zinit(pivotcolumn[j]);
   }
@@ -95,32 +95,32 @@ static void dispose() {
     for(j=0;j < m+1;j++) {
       mpfr_clear(q[i][j]);
     }
-    free(q[i]);
+    Sleef_free(q[i]);
   }
-  free(q);
+  Sleef_free(q);
 
   for(i=0;i < m+1;i++) {
     for(j=0;j < n+1;j++) {
       mpfr_clear(a[i][j]);
     }
-    free(a[i]);
+    Sleef_free(a[i]);
   }
-  free(a);
+  Sleef_free(a);
 
   for(j=0;j < n+1;j++) {
     mpfr_clear(c[j]);
   }
-  free(c);
+  Sleef_free(c);
 
   for(j=0;j < m+1;j++) {
     mpfr_clear(pivotcolumn[j]);
   }
-  free(pivotcolumn);
+  Sleef_free(pivotcolumn);
 
-  free(col);
-  free(row);
-  free(nonzero_row);
-  free(inequality);
+  Sleef_free(col);
+  Sleef_free(row);
+  Sleef_free(nonzero_row);
+  Sleef_free(inequality);
 }
 
 static void prepare() {
@@ -159,8 +159,8 @@ static void tableau(mpfr_t ret, int i, int j) {
     mpfr_zinit(s);
     mpfr_set_d(s, 0, GMP_RNDN);
 
-    mpfr_t *tab = malloc(sizeof(mpfr_t) * (m + 1));
-    mpfr_ptr *ptab = malloc(sizeof(mpfr_ptr) * (m + 1));
+    mpfr_t *tab = Sleef_malloc(sizeof(mpfr_t) * (m + 1));
+    mpfr_ptr *ptab = Sleef_malloc(sizeof(mpfr_ptr) * (m + 1));
     for (k = 0; k <= m; k++) {
       mpfr_zinit(tab[k]);
       ptab[k] = (mpfr_ptr)&tab[k];
@@ -170,8 +170,8 @@ static void tableau(mpfr_t ret, int i, int j) {
     for (k = 0; k <= m; k++) {
       mpfr_clear(tab[k]);
     }
-    free(ptab);
-    free(tab);
+    Sleef_free(ptab);
+    Sleef_free(tab);
 
     mpfr_set(ret, s, GMP_RNDN);
     mpfr_clear(s);
@@ -384,7 +384,7 @@ int solve_fr(mpfr_t *result, int n0, int m0, mpfr_t **a0, int *ineq0, mpfr_t *c0
   mpfr_clear(cs);
 
   for(j=0;j<n;j++) mpfr_clear(s[j]);
-  free(s);
+  Sleef_free(s);
 
   dispose();
 
@@ -396,7 +396,7 @@ void regressMinRelError_fr(int n, int m, mpfr_t **x, mpfr_t *result) {
   mpfr_t **a0, *c0, *result0;
   int in0[m0];
 
-  a0 = malloc(sizeof(mpfr_t *) * m0);
+  a0 = Sleef_malloc(sizeof(mpfr_t *) * m0);
   for(i=0;i<m0;i++) {
     a0[i] = calloc(n0+1, sizeof(mpfr_t));
     for(j=0;j<n0+1;j++) mpfr_zinit(a0[i][j]);
@@ -454,6 +454,6 @@ void regressMinRelError_fr(int n, int m, mpfr_t **x, mpfr_t *result) {
     mpfr_set(result[i], result0[i+1], GMP_RNDN);
   }
 
-  free(result0);
-  free(c0);
+  Sleef_free(result0);
+  Sleef_free(c0);
 }

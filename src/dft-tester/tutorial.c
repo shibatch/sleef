@@ -44,8 +44,8 @@ int main(int argc, char **argv) {
     exit(-1);
   }
 
-  cmpl *ts = (cmpl *)malloc(sizeof(cmpl)*n);
-  cmpl *fs = (cmpl *)malloc(sizeof(cmpl)*n);
+  cmpl *ts = (cmpl *)Sleef_malloc(sizeof(cmpl)*n);
+  cmpl *fs = (cmpl *)Sleef_malloc(sizeof(cmpl)*n);
 
   for(int i=0;i<n;i++) {
     ts[i] =
@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
 
   printf("%s\n", success ? "OK" : "NG");
 
-  free(fs); free(ts);
+  Sleef_free(fs); Sleef_free(ts);
   Sleef_free(sy); Sleef_free(sx);
 
   SleefDFT_dispose(p);

@@ -106,7 +106,7 @@ void freeTables(SleefDFT *p) {
     for(uint32_t level=N;level<=p->log2len;level++) {
       Sleef_free(p->tbl[N][level]);
     }
-    free(p->tbl[N]);
+    Sleef_free(p->tbl[N]);
     p->tbl[N] = NULL;
   }
 }
@@ -118,7 +118,7 @@ EXPORT void SleefDFT_dispose(SleefDFT *p) {
     if (p->hlen != p->vlen) SleefDFT_dispose(p->instV);
   
     p->magic = 0;
-    free(p);
+    Sleef_free(p);
     return;
   }
 
@@ -126,7 +126,7 @@ EXPORT void SleefDFT_dispose(SleefDFT *p) {
 
   if (p->log2len <= 1) {
     p->magic = 0;
-    free(p);
+    Sleef_free(p);
     return;
   }
   
@@ -139,13 +139,13 @@ EXPORT void SleefDFT_dispose(SleefDFT *p) {
   for(int level = p->log2len;level >= 1;level--) {
     Sleef_free(p->perm[level]);
   }
-  free(p->perm);
+  Sleef_free(p->perm);
   p->perm = NULL;
 
   freeTables(p);
 
   p->magic = 0;
-  free(p);
+  Sleef_free(p);
 }
 
 uint32_t ilog2(uint32_t q) {
@@ -200,17 +200,17 @@ EXPORT void SleefDFT_setPlanFilePath(const char *path, const char *arch, uint64_
     planFilePathSet = 0;
   }
 
-  if (dftPlanFilePath != NULL) free(dftPlanFilePath);
+  if (dftPlanFilePath != NULL) Sleef_free(dftPlanFilePath);
   if (path != NULL) {
-    dftPlanFilePath = malloc(strlen(path)+10);
+    dftPlanFilePath = Sleef_malloc(strlen(path)+10);
     strcpy(dftPlanFilePath, path);
   } else {
     dftPlanFilePath = NULL;
   }
 
-  if (archID != NULL) free(archID);
+  if (archID != NULL) Sleef_free(archID);
   if (arch == NULL) arch = Sleef_getCpuIdString();
-  archID = malloc(strlen(arch)+10);
+  archID = Sleef_malloc(strlen(arch)+10);
   strcpy(archID, arch);
 
   planMode = mode;
@@ -311,10 +311,10 @@ static uint64_t planMap_getU64(uint64_t key) {
 }
 
 static void planMap_putU64(uint64_t key, uint64_t value) {
-  char *s = malloc(100);
+  char *s = Sleef_malloc(100);
   sprintf(s, "%" PRIx64, value);
   s = ArrayMap_put(planMap, key, s);
-  if (s != NULL) free(s);
+  if (s != NULL) Sleef_free(s);
 }
 
 int PlanManager_loadMeasurementResultsP(SleefDFT *p, int pathCat) {

@@ -25,7 +25,7 @@ EXPORT uint64_t Sleef_currentTimeMicros() {
 #include <sys/time.h>
 
 EXPORT void *Sleef_malloc(size_t z) { void *ptr = NULL; posix_memalign(&ptr, 256, z); return ptr; }
-EXPORT void Sleef_free(void *ptr) { free(ptr); }
+EXPORT void Sleef_free(void *ptr) { Sleef_free(ptr); }
 
 EXPORT uint64_t Sleef_currentTimeMicros() {
   struct timeval time;
@@ -42,7 +42,7 @@ EXPORT uint64_t Sleef_currentTimeMicros() {
 #endif
 
 EXPORT void *Sleef_malloc(size_t z) { void *ptr = NULL; posix_memalign(&ptr, 4096, z); return ptr; }
-EXPORT void Sleef_free(void *ptr) { free(ptr); }
+EXPORT void Sleef_free(void *ptr) { Sleef_free(ptr); }
 
 EXPORT uint64_t Sleef_currentTimeMicros() {
   struct timespec tp;
@@ -91,9 +91,9 @@ EXPORT void Sleef_free(void *ptr)
 #if defined(__MINGW32__) || defined(__MINGW64__) || defined(_MSC_VER)
   _aligned_free(ptr);
 #elif defined(__APPLE__)
-  free(ptr);
+  Sleef_free(ptr);
 #else // #if defined(__MINGW32__) || defined(__MINGW64__) || defined(_MSC_VER)
-  free(ptr);
+  Sleef_free(ptr);
 #endif
 }
 

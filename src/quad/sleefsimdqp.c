@@ -3808,7 +3808,7 @@ static int snprintquadhex(char *buf, size_t bufsize, vargquad argvalue, int widt
 #define XBUFSIZE 5000
 
 static int xvprintf(size_t (*consumer)(const char *ptr, size_t size, void *arg), void *arg, const char *fmt, va_list ap) {
-  char *xbuf = (char *)malloc(XBUFSIZE+10);
+  char *xbuf = (char *)Sleef_malloc(XBUFSIZE+10);
 
   int outlen = 0, errorflag = 0;
 
@@ -3986,11 +3986,11 @@ static int xvprintf(size_t (*consumer)(const char *ptr, size_t size, void *arg),
     }
 
     if (!subfmt_processed) {
-      char *subfmt = (char *)malloc(fmt - subfmtstart + 2);
+      char *subfmt = (char *)Sleef_malloc(fmt - subfmtstart + 2);
       memcpy(subfmt, subfmtstart, fmt - subfmtstart + 1);
       subfmt[fmt - subfmtstart + 1] = 0;
       int ret = vsnprintf(xbuf, XBUFSIZE, subfmt, ap2);
-      free(subfmt);
+      Sleef_free(subfmt);
       if (ret < 0) { errorflag = 1; break; }
       outlen += (*consumer)(xbuf, strlen(xbuf), arg);
     }
@@ -3998,7 +3998,7 @@ static int xvprintf(size_t (*consumer)(const char *ptr, size_t size, void *arg),
     fmt++;
   }
 
-  free(xbuf);
+  Sleef_free(xbuf);
 
   return errorflag ? -1 : outlen;
 }
@@ -4099,7 +4099,7 @@ static int printf_output(FILE *fp, const struct printf_info *info, const void *c
 
   vargquad q = **(const vargquad **)args[0];
 
-  char *xbuf = (char *)malloc(XBUFSIZE+10);
+  char *xbuf = (char *)Sleef_malloc(XBUFSIZE+10);
 
   int len = 0;
   if (tolower(info->spec) == 'a') {
@@ -4110,7 +4110,7 @@ static int printf_output(FILE *fp, const struct printf_info *info, const void *c
 
   size_t wlen = fwrite(xbuf, len, 1, fp);
 
-  free(xbuf);
+  Sleef_free(xbuf);
 
   return (int)wlen;
 }

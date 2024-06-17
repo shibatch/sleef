@@ -99,8 +99,8 @@ int check_cf(int n) {
   real *sx = (real *)Sleef_malloc(n*2 * sizeof(real));
   real *sy = (real *)Sleef_malloc(n*2 * sizeof(real));
 
-  cmpl *ts = (cmpl *)malloc(sizeof(cmpl)*n);
-  cmpl *fs = (cmpl *)malloc(sizeof(cmpl)*n);
+  cmpl *ts = (cmpl *)Sleef_malloc(sizeof(cmpl)*n);
+  cmpl *fs = (cmpl *)Sleef_malloc(sizeof(cmpl)*n);
 
   //
 
@@ -144,8 +144,8 @@ int check_cf(int n) {
 
   //
 
-  free(fs);
-  free(ts);
+  Sleef_free(fs);
+  Sleef_free(ts);
 
   Sleef_free(sx);
   Sleef_free(sy);
@@ -163,8 +163,8 @@ int check_cb(int n) {
   real *sx = (real *)Sleef_malloc(sizeof(real)*n*2);
   real *sy = (real *)Sleef_malloc(sizeof(real)*n*2);
 
-  cmpl *ts = (cmpl *)malloc(sizeof(cmpl)*n);
-  cmpl *fs = (cmpl *)malloc(sizeof(cmpl)*n);
+  cmpl *ts = (cmpl *)Sleef_malloc(sizeof(cmpl)*n);
+  cmpl *fs = (cmpl *)Sleef_malloc(sizeof(cmpl)*n);
 
   //
 
@@ -198,8 +198,8 @@ int check_cb(int n) {
 
   //
 
-  free(fs);
-  free(ts);
+  Sleef_free(fs);
+  Sleef_free(ts);
 
   Sleef_free(sx);
   Sleef_free(sy);
@@ -217,8 +217,8 @@ int check_rf(int n) {
   real *sx = (real *)Sleef_malloc(n * sizeof(real));
   real *sy = (real *)Sleef_malloc((n/2+1)*sizeof(real)*2);
 
-  cmpl *ts = (cmpl *)malloc(sizeof(cmpl)*n);
-  cmpl *fs = (cmpl *)malloc(sizeof(cmpl)*n);
+  cmpl *ts = (cmpl *)Sleef_malloc(sizeof(cmpl)*n);
+  cmpl *fs = (cmpl *)Sleef_malloc(sizeof(cmpl)*n);
 
   //
 
@@ -251,8 +251,8 @@ int check_rf(int n) {
 
   //
 
-  free(fs);
-  free(ts);
+  Sleef_free(fs);
+  Sleef_free(ts);
 
   Sleef_free(sx);
   Sleef_free(sy);
@@ -267,8 +267,8 @@ int check_rf(int n) {
 int check_rb(int n) {
   int i;
 
-  cmpl *ts = (cmpl *)malloc(sizeof(cmpl)*n);
-  cmpl *fs = (cmpl *)malloc(sizeof(cmpl)*n);
+  cmpl *ts = (cmpl *)Sleef_malloc(sizeof(cmpl)*n);
+  cmpl *fs = (cmpl *)Sleef_malloc(sizeof(cmpl)*n);
 
   //
 
@@ -319,8 +319,8 @@ int check_rb(int n) {
 
   //
 
-  free(fs);
-  free(ts);
+  Sleef_free(fs);
+  Sleef_free(ts);
 
   Sleef_free(sx);
   Sleef_free(sy);
@@ -337,8 +337,8 @@ int check_arf(int n) {
   real *sx = (real *)Sleef_malloc(n * sizeof(real));
   real *sy = (real *)Sleef_malloc(n * sizeof(real));
 
-  cmpl *ts = (cmpl *)malloc(sizeof(cmpl)*n);
-  cmpl *fs = (cmpl *)malloc(sizeof(cmpl)*n);
+  cmpl *ts = (cmpl *)Sleef_malloc(sizeof(cmpl)*n);
+  cmpl *fs = (cmpl *)Sleef_malloc(sizeof(cmpl)*n);
 
   //
 
@@ -391,8 +391,8 @@ int check_arb(int n) {
   real *sx = (real *)Sleef_malloc(n * sizeof(real));
   real *sy = (real *)Sleef_malloc(n * sizeof(real));
 
-  cmpl *ts = (cmpl *)malloc(sizeof(cmpl)*n);
-  cmpl *fs = (cmpl *)malloc(sizeof(cmpl)*n);
+  cmpl *ts = (cmpl *)Sleef_malloc(sizeof(cmpl)*n);
+  cmpl *fs = (cmpl *)Sleef_malloc(sizeof(cmpl)*n);
 
   //
 
@@ -445,8 +445,8 @@ int check_arb(int n) {
 
   //
 
-  free(fs);
-  free(ts);
+  Sleef_free(fs);
+  Sleef_free(ts);
 
   Sleef_free(sx);
   Sleef_free(sy);

@@ -85,7 +85,7 @@ ArrayMap *initArrayMap() {
 
   for(int i=0;i<NBUCKETS;i++) {
     thiz->capacity[i] = 8;
-    thiz->array[i] = (ArrayMapNode *)malloc(thiz->capacity[i] * sizeof(ArrayMapNode));
+    thiz->array[i] = (ArrayMapNode *)Sleef_malloc(thiz->capacity[i] * sizeof(ArrayMapNode));
     thiz->size[i] = 0;
   }
 
@@ -101,11 +101,11 @@ void ArrayMap_dispose(ArrayMap *thiz) {
       assert(thiz->array[j][i].magic == MAGIC_ARRAYMAPNODE);
       thiz->array[j][i].magic = 0;
     }
-    free(thiz->array[j]);
+    Sleef_free(thiz->array[j]);
   }
 
   thiz->magic = 0;
-  free(thiz);
+  Sleef_free(thiz);
 }
 
 int ArrayMap_size(ArrayMap *thiz) {
@@ -115,7 +115,7 @@ int ArrayMap_size(ArrayMap *thiz) {
 
 uint64_t *ArrayMap_keyArray(ArrayMap *thiz) {
   assert(thiz != NULL && thiz->magic == MAGIC_ARRAYMAP);
-  uint64_t *a = (uint64_t *)malloc(sizeof(uint64_t) * thiz->totalSize);
+  uint64_t *a = (uint64_t *)Sleef_malloc(sizeof(uint64_t) * thiz->totalSize);
   int p = 0;
   for(int j=0;j<NBUCKETS;j++) {
     for(int i=0;i<thiz->size[j];i++) {
@@ -128,7 +128,7 @@ uint64_t *ArrayMap_keyArray(ArrayMap *thiz) {
 
 void **ArrayMap_valueArray(ArrayMap *thiz) {
   assert(thiz != NULL && thiz->magic == MAGIC_ARRAYMAP);
-  void **a = (void **)malloc(sizeof(void *) * thiz->totalSize);
+  void **a = (void **)Sleef_malloc(sizeof(void *) * thiz->totalSize);
   int p = 0;
   for(int j=0;j<NBUCKETS;j++) {
     for(int i=0;i<thiz->size[j];i++) {
@@ -218,7 +218,7 @@ ArrayMap *ArrayMap_load(const char *fn, const char *prefix, const char *idstr, i
   
   ArrayMap *thiz = initArrayMap();
 
-  char *prefix2 = malloc(prefixLen+10);
+  char *prefix2 = Sleef_malloc(prefixLen+10);
   strcpy(prefix2, prefix);
   String_trim(prefix2);
   for(char *p = prefix2;*p != '\0';p++) {
@@ -228,15 +228,15 @@ ArrayMap *ArrayMap_load(const char *fn, const char *prefix, const char *idstr, i
   strcat(prefix2, " : ");
   prefixLen = (int)strlen(prefix2);
   
-  char *line = malloc(sizeof(char) * (LINELEN+10));
+  char *line = Sleef_malloc(sizeof(char) * (LINELEN+10));
   line[idstrlen] = '\0';
   
   if (fread(line, sizeof(char), idstrlen, fp) != idstrlen ||
       strcmp(idstr, line) != 0) {
     if (doLock) FUNLOCK(fp);
     fclose(fp);
-    free(prefix2);
-    free(line);
+    Sleef_free(prefix2);
+    Sleef_free(line);
     return NULL;
   }
   
@@ -246,20 +246,20 @@ ArrayMap *ArrayMap_load(const char *fn, const char *prefix, const char *idstr, i
     if (strncmp(line, prefix2, prefixLen) != 0) continue;
 
     uint64_t key;
-    char *value = malloc(sizeof(char) * LINELEN);
+    char *value = Sleef_malloc(sizeof(char) * LINELEN);
     
     if (sscanf(line + prefixLen, "%" SCNx64 " : %s\n", &key, value) == 2) {
       ArrayMap_put(thiz, (uint64_t)key, (void *)value);
     } else {
-      free(value);
+      Sleef_free(value);
     }
   }
 
   if (doLock) FUNLOCK(fp);
   fclose(fp);
   
-  free(prefix2);
-  free(line);
+  Sleef_free(prefix2);
+  Sleef_free(line);
 
   return thiz;
 }
@@ -274,7 +274,7 @@ int ArrayMap_save(ArrayMap *thiz, const char *fn, const char *prefix, const char
 
   // Generate prefix2
   
-  char *prefix2 = malloc(prefixLen+10);
+  char *prefix2 = Sleef_malloc(prefixLen+10);
   strcpy(prefix2, prefix);
   String_trim(prefix2);
   for(char *p = prefix2;*p != '\0';p++) {
@@ -301,7 +301,7 @@ int ArrayMap_save(ArrayMap *thiz, const char *fn, const char *prefix, const char
     return -1;
   }
 
-  char *line = malloc(sizeof(char) * (LINELEN+10));
+  char *line = Sleef_malloc(sizeof(char) * (LINELEN+10));
   line[idstrlen] = '\0';
 
   if (fread(line, sizeof(char), idstrlen, fp) == idstrlen && strcmp(idstr, line) == 0) {
@@ -323,7 +323,7 @@ int ArrayMap_save(ArrayMap *thiz, const char *fn, const char *prefix, const char
     fprintf(tmpfp, "%s %" PRIx64 " : %s\n", prefix2, keys[i], value);
   }
 
-  free(keys);
+  Sleef_free(keys);
 
   fseek(fp, 0, SEEK_SET);
   FTRUNCATE(fp, 0);
@@ -341,7 +341,7 @@ int ArrayMap_save(ArrayMap *thiz, const char *fn, const char *prefix, const char
   fclose(fp);
 
   CLOSETMPFILE(tmpfp);
-  free(prefix2);
-  free(line);
+  Sleef_free(prefix2);
+  Sleef_free(line);
   return 0;
 }

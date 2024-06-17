@@ -45,7 +45,7 @@ char *mpfrToStr(mpfr_t m) {
   mpfr_exp_t e;
   char *s = mpfr_get_str(NULL, &e, 10, 0, fra, GMP_RNDN);
 
-  char *ret = malloc(strlen(s) + 20);
+  char *ret = Sleef_malloc(strlen(s) + 20);
   
   if (mpfr_sgn(m) == -1) ret[0] = '-'; else ret[0] = '+';
   ret[1] = '0';
@@ -228,7 +228,7 @@ int main(int argc, char **argv)
 
     char *s;
     printf("%s, \n", s = mpfrToStr(fra));
-    free(s);
+    Sleef_free(s);
   }
   printf("\n");
   
@@ -367,7 +367,7 @@ int main(int argc, char **argv)
 
     char *s;
     printf("%s, \n", s = mpfrToStr(fra));
-    free(s);
+    Sleef_free(s);
   }
   printf("\nPhase 2 : max error = %g ULP at %g\n", best, bestworstx);
 

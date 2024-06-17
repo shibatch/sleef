@@ -258,7 +258,7 @@ char *sprintfr(mpfr_t fr) {
   mpfr_t t;
   mpfr_inits(t, NULL);
   int sign = mpfr_signbit(fr) ? -1 : 1;
-  char *s = malloc(digits + 10);
+  char *s = Sleef_malloc(digits + 10);
   if (mpfr_inf_p(fr)) {
     sprintf(s, "%cinf", sign < 0 ? '-' : '+');
   } else if (mpfr_nan_p(fr)) {
@@ -575,9 +575,9 @@ char *sprintf128(Sleef_quad q) {
   char *f = sprintfr(fr);
   mpfr_clears(fr, NULL);
   cnv_t c128 = { .q = q };
-  char *ret = malloc(128);
+  char *ret = Sleef_malloc(128);
   sprintf(ret, "%016llx%016llx (%s)", (unsigned long long)c128.h, (unsigned long long)c128.l, f);
-  free(f);
+  Sleef_free(f);
   return ret;
 }
 
@@ -631,7 +631,7 @@ Sleef_quad add_q_q(Sleef_quad q, Sleef_quad r) {
 #else // #ifdef USEMPFR
 char *sprintf128(Sleef_quad x) {
   cnv_t c128 = { .q = x };
-  char *s = malloc(128);
+  char *s = Sleef_malloc(128);
   sprintf(s, "%016llx%016llx", (unsigned long long)c128.h, (unsigned long long)c128.l);
   return s;
 }
