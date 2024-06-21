@@ -5,6 +5,13 @@ nav_order: 1
 permalink: /
 ---
 
+<p style="text-align:center; margin-top:1cm;">
+  <a class="nothing" href="img/sleeflogo.svg">
+    <img src="img/sleeflogo.svg" alt="logo" width="50%" height="50%" />
+  </a>
+</p>
+
+
 <h1>Home</h1>
 
 <h2>Table of contents</h2>
@@ -138,7 +145,6 @@ permalink: /
       <table class="lt">
         <tr>
           <td class="lt-hl"></td>
-	  <td class="lt-hl"></td>
           <td class="lt-hl"></td>
           <td class="lt-hl"></td>
           <td class="lt-hl"></td>
@@ -146,7 +152,6 @@ permalink: /
         </tr>
 	<tr>
 	  <td class="lt-br"></td>
-	  <td class="lt-hl"></td>
 	  <td class="lt-blr" align="center">GCC</td>
 	  <td class="lt-br" align="center">Clang</td>
 	  <td class="lt-br" align="center">Intel Compiler</td>
@@ -155,14 +160,12 @@ permalink: /
         <tr>
           <td class="lt-hl"></td>
 	  <td class="lt-hl"></td>
-	  <td class="lt-hl"></td>
           <td class="lt-hl"></td>
           <td class="lt-hl"></td>
           <td class="lt-hl"></td>
         </tr>
 	<tr>
 	  <td class="lt-r" align="left">x86_64, Linux</td>
-	  <td></td>
 	  <td class="lt-lr" align="center">Supported</td>
 	  <td class="lt-r" align="center">Supported</td>
 	  <td class="lt-r" align="center">Supported</td>
@@ -170,7 +173,6 @@ permalink: /
 	</tr>
 	<tr>
 	  <td class="lt-r" align="left">AArch64, Linux</td>
-	  <td></td>
 	  <td class="lt-lr" align="center">Supported</td>
 	  <td class="lt-r" align="center">Supported</td>
 	  <td class="lt-r" align="center">N/A</td>
@@ -178,7 +180,6 @@ permalink: /
 	</tr>
 	<tr>
 	  <td class="lt-r" align="left">x86_64, macOS</td>
-	  <td></td>
 	  <td class="lt-lr" align="center">Supported(*2)</td>
 	  <td class="lt-r" align="center">Supported(*2)</td>
 	  <td class="lt-r" align="center"></td>
@@ -186,7 +187,6 @@ permalink: /
 	</tr>
 	<tr>
 	  <td class="lt-r" align="left">x86_64, Windows</td>
-	  <td></td>
 	  <td class="lt-lr" align="center">Supported(Cygwin)(*3)</td>
 	  <td class="lt-r" align="center"><a class="underlined" href="1-user-guide#cow">Supported</a></td>
 	  <td class="lt-r" align="center"></td>
@@ -194,7 +194,6 @@ permalink: /
 	</tr>
 	<tr>
 	  <td class="lt-r" align="left">AArch32, Linux</td>
-	  <td></td>
 	  <td class="lt-lr" align="center">Supported(*1)</td>
 	  <td class="lt-r" align="center">Supported(*1)</td>
 	  <td class="lt-r" align="center">N/A</td>
@@ -202,7 +201,6 @@ permalink: /
 	</tr>
 	<tr>
 	  <td class="lt-r" align="left">PowerPC (64 bit), Linux</td>
-	  <td></td>
 	  <td class="lt-lr" align="center">Supported</td>
 	  <td class="lt-r" align="center">Supported</td>
 	  <td class="lt-r" align="center">N/A</td>
@@ -210,7 +208,6 @@ permalink: /
 	</tr>
 	<tr>
 	  <td class="lt-r" align="left">System/390 (64 bit), Linux</td>
-	  <td></td>
 	  <td class="lt-lr" align="center">Supported</td>
 	  <td class="lt-r" align="center">Supported</td>
 	  <td class="lt-r" align="center">N/A</td>
@@ -218,7 +215,6 @@ permalink: /
 	</tr>
 	<tr>
 	  <td class="lt-r" align="left">x86_64, FreeBSD</td>
-	  <td></td>
 	  <td class="lt-lr" align="center"></td>
 	  <td class="lt-r" align="center">Supported</td>
 	  <td class="lt-r" align="center">N/A</td>
@@ -226,7 +222,6 @@ permalink: /
 	</tr>
 	<tr>
 	  <td class="lt-r" align="left">x86 (32 bit), Linux</td>
-	  <td></td>
 	  <td class="lt-lr" align="center">Supported</td>
 	  <td class="lt-r" align="center">Supported</td>
 	  <td class="lt-r" align="center"></td>
@@ -234,7 +229,6 @@ permalink: /
 	</tr>
 	<tr>
 	  <td class="lt-r" align="left">AArch64, macOS</td>
-	  <td></td>
 	  <td class="lt-lr" align="center">Supported</td>
 	  <td class="lt-r" align="center">Supported</td>
 	  <td class="lt-r" align="center">N/A</td>
@@ -242,7 +236,6 @@ permalink: /
 	</tr>
 	<tr>
 	  <td class="lt-r" align="left">AArch64, Android</td>
-	  <td></td>
 	  <td class="lt-lr" align="center"></td>
 	  <td class="lt-r" align="center"><a class="underlined" href="1-user-guide#cross">Preliminary</a></td>
 	  <td class="lt-r" align="center">N/A</td>
@@ -250,7 +243,6 @@ permalink: /
 	</tr>
 	<tr>
 	  <td class="lt-br" align="left">AArch64, iOS</td>
-	  <td class="lt-hl"></td>
 	  <td class="lt-blr" align="center"></td>
 	  <td class="lt-br" align="center"><a class="underlined" href="1-user-guide#cross">Preliminary</a></td>
 	  <td class="lt-br" align="center">N/A</td>
@@ -258,7 +250,6 @@ permalink: /
 	</tr>
 	<tr>
 	  <td class="lt-r" align="left">RISC-V (64-bit), Linux</td>
-	  <td></td>
 	  <td class="lt-lr" align="center">Supported</td>
 	  <td class="lt-r" align="center">Supported</td>
 	  <td class="lt-r" align="center">N/A</td>

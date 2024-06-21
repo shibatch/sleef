@@ -1,7 +1,7 @@
 title: SLEEF Vectorized Math Library
 description: Vectorized C99 math functions across popular platforms and architectures.
-logo: sleeflogo3.svg
-favicon_ico: favicon.png
+logo: img/sleeflogo-notext.svg
+favicon_ico: img/favicon.png
 
 theme: just-the-docs
 footer_content: "Copyright &copy; 2010-2024 SLEEF Project, Naoki Shibata and contributors. <a href=\"https://github.com/shibatch/sleef/blob/master/LICENSE.txt\">SLEEF is open-source software and is distributed under the Boost Software License, Version 1.0.</a>"
