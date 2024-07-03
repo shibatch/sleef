@@ -369,62 +369,12 @@ permalink: /
 
 <h2 id="partners">Partner institutes and corporations</h2>
 
-<table style="margin-top:1cm;">
-  <tr><td>&nbsp;</td></tr>
-  <tr>
-    <td style="text-align:center;"><a href="https://www.naist.jp/en/"><img src="naistlogo.svg"
-    height="135px" alt="NAIST logo"/></a></td>
-    <td style="vertical-align: top;">
-      <p class="noindent" style="margin-left:2em;">
-Division of Information Science of Nara Institute
-of Science and Technology participates through Naoki Shibata.
-      </p>
-    </td>
-  </tr>
-  <tr><td>&nbsp;</td></tr>
-  <tr><td>&nbsp;</td></tr>
-  <tr><td>&nbsp;</td></tr>
-  <tr>
-    <td style="text-align:center;"><a href="https://ibm.com/"><img src="https://sleef.org/IBM_logo.svg" alt="IBM logo" 
-    height="68px" /></a></td>
-    <td style="vertical-align: top;">
-      <p class="noindent" style="margin-left:2em;">
-As the leading company in a wide range of information technologies, 
-<a class="underlined" href="https://ibm.com/">IBM</a>
-participates through David Edelsohn.
-      </p>
-    </td>
-  </tr>
-  <tr><td>&nbsp;</td></tr>
-  <tr><td>&nbsp;</td></tr>
-  <tr><td>&nbsp;</td></tr>
-  <tr>
-    <td style="text-align:center;"><a href="https://www.arm.com/"><img src="https://sleef.org/Arm-logo-blue-pms313.svg" alt="ARM logo" 
-    height="60px" /></a></td>
-    <td style="vertical-align: top;">
-      <p class="noindent" style="margin-left:2em;">
-As the leading IP company in semiconductors
-design, <a class="underlined" href="https://www.arm.com/">ARM</a>
-participates through Pierre Blanchard, Joe Ramsay and Joana Cruz.
-      </p>
-    </td>
-  </tr>
-  <tr><td>&nbsp;</td></tr>
-  <tr><td>&nbsp;</td></tr>
-  <tr><td>&nbsp;</td></tr>
-  <tr>
-    <td style="text-align:center;"><a href="https://unity3d.com/"><img src="https://sleef.org/Unity_Technologies_logo.svg" alt="Unity Technologies logo" 
-    height="92px" /></a></td>
-    <td style="vertical-align: top;">
-      <p class="noindent" style="margin-left:2em;">As the leading
-company in developing a video game engine, <a class="underlined"
-href="https://unity3d.com/">Unity Technologies</a> participates
-through Alexandre Mutel.
-      </p>
-    </td>
-  </tr>
-  <tr><td>&nbsp;</td></tr>
-</table>
+|               |                   |
+|:-------------:|:------------------|
+| [![NAIST logo](img/naistlogo.svg)](https://www.naist.jp/en/) | Division of Information Science of Nara Institute of Science and Technology participates through Naoki Shibata. |
+| [![IBM logo](img/IBM_logo.svg)](https://ibm.com) | As the leading company in a wide range of information technologies, <a class="underlined" href="https://ibm.com/">IBM</a> participates through David Edelsohn. |
+| [![ARM logo](img/Arm-logo-blue-pms313.svg)](https://www.arm.com) | As the leading IP company in semiconductors design, <a class="underlined" href="https://www.arm.com/">ARM</a> participates through Pierre Blanchard, Joe Ramsay and Joana Cruz. |
+| [![Unity Technologies logo](img/Unity_Technologies_logo.svg)](https://unity3d.com) | As the leading company in developing a video game engine, <a class="underlined" href="https://unity3d.com/">Unity Technologies</a> participates through Alexandre Mutel. |
 
 <h2 id="license">License</h2>
 
@@ -434,16 +384,9 @@ href="http://www.boost.org/LICENSE_1_0.txt">Boost Software License
     Version 1.0</a>.
 </p>
 
-<p class="noindent" style="margin-top: 0.8cm;">
-  <a class="nothing" href="https://opensource.org/">
-    <img src="osi_logo.png" width="90" height="103" alt="open source logo" style="position:relative; top:3px;"/>
-  </a>
-&nbsp; Boost Software License is <a class="underlined"
-href="https://opensource.org/licenses/BSL-1.0">OSI-certified</a>.
-See <a class="underlined"
-href="http://www.boost.org/users/license.html">this page</a> for more
-information about Boost Software License.
-</p>
+|               |                   |
+|:-------------:|:------------------|
+| [![open source logo](img/osi_logo.png)](https://opensource.org) | Boost Software License is <a class="underlined" href="https://opensource.org/licenses/BSL-1.0">OSI-certified</a>. </br> See <a class="underlined" href="http://www.boost.org/users/license.html">this page</a> for more information about Boost Software License. |
 
 <h2 id="history">History</h2>
 

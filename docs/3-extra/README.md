@@ -607,8 +607,8 @@ and <b class="func">Sleef_sind1_u10purecfma</b>.
 <br/>
 
 <p style="text-align:center; margin-top:1cm;">
-  <a class="nothing" href="sleeflogo3.svg">
-    <img src="sleeflogo3.png" alt="logo" width="40%" height="40%" />
+  <a class="nothing" href="../img/sleeflogo3.svg">
+    <img src="../img/sleeflogo3.png" alt="logo" width="40%" height="40%" />
   </a>
   <br />
   Fig. 7.2: SLEEF logo

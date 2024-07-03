@@ -66,32 +66,32 @@ permalink: /5-performance/
   <p style="margin-bottom:1cm;">&nbsp;</p>
   
   <p style="text-align:center; margin-bottom:2cm;">
-    <a class="nothing" href="trigdp.png">
-      <img src="trigdp.png" alt="Performance graph for DP trigonometric functions" width="50%" height="50%"/>
+    <a class="nothing" href="../img/trigdp.png">
+      <img src="../img/trigdp.png" alt="Performance graph for DP trigonometric functions" width="50%" height="50%"/>
     </a>
     <br />
     Fig. 6.1: Execution time of double precision trigonometric functions
   </p>
   
   <p style="text-align:center; margin-bottom:2cm;">
-    <a class="nothing" href="trigsp.png">
-      <img src="trigsp.png" alt="Performance graph for SP trigonometric functions" width="50%" height="50%"/>
+    <a class="nothing" href="../img/trigsp.png">
+      <img src="../img/trigsp.png" alt="Performance graph for SP trigonometric functions" width="50%" height="50%"/>
     </a>
     <br />
     Fig. 6.2: Execution time of single precision trigonometric functions
   </p>
   
   <p style="text-align:center; margin-bottom:2cm;">
-    <a class="nothing" href="nontrigdp.png">
-      <img src="nontrigdp.png" alt="Performance graph for other DP functions" width="50%" height="50%"/>
+    <a class="nothing" href="../img/nontrigdp.png">
+      <img src="../img/nontrigdp.png" alt="Performance graph for other DP functions" width="50%" height="50%"/>
     </a>
     <br />
     Fig. 6.3: Execution time of double precision log, exp, pow and inverse trigonometric functions
   </p>
 
   <p style="text-align:center; margin-bottom:2cm;">
-    <a class="nothing" href="nontrigsp.png">
-      <img src="nontrigsp.png" alt="Performance graph for other SP functions" width="50%" height="50%"/>
+    <a class="nothing" href="../img/nontrigsp.png">
+      <img src="../img/nontrigsp.png" alt="Performance graph for other SP functions" width="50%" height="50%"/>
     </a>
     <br />
     Fig. 6.4: Execution time of single precision log, exp, pow and inverse trigonometric functions

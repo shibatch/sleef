@@ -8,3 +8,10 @@ footer_content: "Copyright &copy; 2010-2024 SLEEF Project, Naoki Shibata and con
 
 aux_links:
   "SLEEF On GitHub": https://github.com/shibatch/sleef
+
+# For relative path to images and sources
+plugins:
+  - jekyll-relative-links
+relative_links:
+  enabled: true
+  collections: true
