@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <signal.h>
 #include <setjmp.h>
+#include <sys/auxv.h>
 
 #include "misc.h"
 
@@ -15,9 +16,15 @@
 
 #include "dispatcher.h"
 
+static int cpuSupportsVXE2() {
+  static int ret = -1;
+  if (ret == -1)
+    ret = !!(getauxval(AT_HWCAP) & HWCAP_S390_VXRS_EXT2);
+  return ret;
+}
+
 #ifdef ENABLE_VXE2
-void sleef_tryVXE2();
-#define SUBST_IF_EXT1(funcvxe2) if (cpuSupportsExt(sleef_tryVXE2)) p = funcvxe2;
+#define SUBST_IF_EXT1(funcvxe2) if (cpuSupportsVXE2()) p = funcvxe2;
 #else
 #define SUBST_IF_EXT1(funcvxe2)
 #endif

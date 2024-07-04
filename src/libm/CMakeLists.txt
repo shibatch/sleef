@@ -833,12 +833,6 @@ if (SLEEF_ARCH_S390X)
   add_dependencies(disps390x_128_obj disps390x_128.c_generated renamedsp128.h_generated ${TARGET_HEADERS})
   target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:disps390x_128_obj>)
 
-  if(COMPILER_SUPPORTS_VXE2)
-    add_library(tryvxe2_obj OBJECT tryvxe2.c)
-    target_compile_options(tryvxe2_obj PRIVATE ${FLAGS_ENABLE_VXE2})
-    set_target_properties(tryvxe2_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
-    target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:tryvxe2_obj>)
-  endif()
 endif(SLEEF_ARCH_S390X)
 
 # --------------------------------------------------------------------
