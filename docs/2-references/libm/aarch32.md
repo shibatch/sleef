@@ -10,1346 +10,818 @@ permalink: /2-references/libm/aarch32
 
 <h2>Table of contents</h2>
 
-<ul class="circle">
-  <li><a href="#datatypes">Data types</a></li>
-  <li><a href="#trig">Trigonometric functions</a></li>
-  <li><a href="#pow">Power, exponential, and logarithmic functions</a></li>
-  <li><a href="#invtrig">Inverse trigonometric functions</a></li>
-  <li><a href="#hyp">Hyperbolic functions and inverse hyperbolic functions</a></li>
-  <li><a href="#eg">Error and gamma functions</a></li>
-  <li><a href="#nearint">Nearest integer functions</a></li>
-  <li><a href="#other">Other functions</a></li>
-</ul>
+* [Data types](#datatypes)
+* [Trigonometric functions](#trig)
+* [Power, exponential, and logarithmic functions](#pow)
+* [Inverse trigonometric functions](#invtrig)
+* [Hyperbolic functions and inverse hyperbolic functions](#hyp)
+* [Error and gamma functions](#eg)
+* [Nearest integer functions](#nearint)
+* [Other functions](#other)
 
 <h2 id="datatypes">Data types for AArch32 architecture</h2>
 
-<p class="funcname"><b class="type">Sleef_float32x4_t_2</b></p>
+### Sleef_float32x4_t_2
 
-<p class="header">Description</p>
-
-<p class="noindent">
-<b class="type">Sleef_float32x4_t_2</b> is a data type for storing two <b class="type">float32x4_t</b> values,
+`Sleef_float32x4_t_2` is a data type for storing two `float32x4_t` values,
 which is defined in sleef.h as follows:
-</p>
 
-<pre class="white">typedef struct {
+```c
+typedef struct {
   float32x4_t x, y;
 } Sleef_float32x4_t_2;
-</pre>
-
+```
 
 <h2 id="trig">Trigonometric Functions</h2>
 
-<p class="funcname">Vectorized single precision sine function with 1.0 ULP error bound</p>
+### Vectorized single precision sine function with 1.0 ULP error bound
 
-<p class="header">Synopsis</p>
+```c
+#include <sleef.h>
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_sinf4_u10</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_sinf4_u10neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+float32x4_t Sleef_sinf4_u10(float32x4_t a);
+float32x4_t Sleef_sinf4_u10neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="header">Description</p>
+These are the vectorized functions of [Sleef_sinf_u10](../libm#sleef_sinf_u10). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_sinf_u10"><b class="func">Sleef_sinf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+### Vectorized single precision sine function with 3.5 ULP error bound
 
-<hr/>
-<p class="funcname">Vectorized single precision sine function with 3.5 ULP error bound</p>
+```c
+#include <sleef.h>
 
-<p class="header">Synopsis</p>
+float32x4_t Sleef_sinf4_u35(float32x4_t a);
+float32x4_t Sleef_sinf4_u35neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_sinf4_u35</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_sinf4_u35neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+These are the vectorized functions of [Sleef_sinf_u35](../libm#sleef_sinf_u35). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="header">Description</p>
+### Vectorized single precision cosine function with 1.0 ULP error bound
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_sinf_u35"><b class="func">Sleef_sinf_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+```c
+#include <sleef.h>
 
-<hr/>
-<p class="funcname">Vectorized single precision cosine function with 1.0 ULP error bound</p>
+float32x4_t Sleef_cosf4_u10(float32x4_t a);
+float32x4_t Sleef_cosf4_u10neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="header">Synopsis</p>
+These are the vectorized functions of [Sleef_cosf_u10](../libm#sleef_cosf_u10). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_cosf4_u10</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_cosf4_u10neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+### Vectorized single precision cosine function with 3.5 ULP error bound
 
-<p class="header">Description</p>
+```c
+#include <sleef.h>
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_cosf_u10"><b class="func">Sleef_cosf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+float32x4_t Sleef_cosf4_u35(float32x4_t a);
+float32x4_t Sleef_cosf4_u35neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<hr/>
-<p class="funcname">Vectorized single precision cosine function with 3.5 ULP error bound</p>
+These are the vectorized functions of [Sleef_cosf_u35](../libm#sleef_cosf_u35). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="header">Synopsis</p>
+### Vectorized single precision combined sine and cosine function with 1.0 ULP error bound
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_cosf4_u35</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_cosf4_u35neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+```c
+#include <sleef.h>
 
-<p class="header">Description</p>
+Sleef_float32x4_t_2 Sleef_sincosf4_u10(float32x4_t a);
+Sleef_float32x4_t_2 Sleef_sincosf4_u10neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_cosf_u35"><b class="func">Sleef_cosf_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+These are the vectorized functions of [Sleef_sincosf_u10](../libm#sleef_sincosf_u10). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<hr/>
-<p class="funcname">Vectorized single precision combined sine and cosine function with 1.0 ULP error bound</p>
+### Vectorized single precision combined sine and cosine function with 3.5 ULP error bound
 
-<p class="header">Synopsis</p>
+```c
+#include <sleef.h>
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">Sleef_float32x4_t_2</b> <b class="func">Sleef_sincosf4_u10</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef_float32x4_t_2</b> <b class="func">Sleef_sincosf4_u10neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+Sleef_float32x4_t_2 Sleef_sincosf4_u35(float32x4_t a);
+Sleef_float32x4_t_2 Sleef_sincosf4_u35neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="header">Description</p>
+These are the vectorized functions of [Sleef_sincosf_u35](../libm#sleef_sincosf_u35). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_sincosf_u10"><b class="func">Sleef_sincosf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+### Vectorized single precision sine function with 0.506 ULP error bound
 
-<hr/>
-<p class="funcname">Vectorized single precision combined sine and cosine function with 3.5 ULP error bound</p>
+```c
+#include <sleef.h>
 
-<p class="header">Synopsis</p>
+float32x4_t Sleef_sinpif4_u05(float32x4_t a);
+float32x4_t Sleef_sinpif4_u05neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">Sleef_float32x4_t_2</b> <b class="func">Sleef_sincosf4_u35</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef_float32x4_t_2</b> <b class="func">Sleef_sincosf4_u35neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+These are the vectorized functions of [Sleef_sinpif_u05](../libm#sleef_sinpif_u05). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="header">Description</p>
+### Vectorized single precision cosine function with 0.506 ULP error bound
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_sincosf_u35"><b class="func">Sleef_sincosf_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+```c
+#include <sleef.h>
 
-<hr/>
-<p class="funcname">Vectorized single precision sine function with 0.506 ULP error bound</p>
+float32x4_t Sleef_cospif4_u05(float32x4_t a);
+float32x4_t Sleef_cospif4_u05neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="header">Synopsis</p>
+These are the vectorized functions of [Sleef_cospif_u05](../libm#sleef_cospif_u05). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_sinpif4_u05</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_sinpif4_u05neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+### Vectorized single precision combined sine and cosine function with 0.506 ULP error bound
 
-<p class="header">Description</p>
+```c
+#include <sleef.h>
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_sinpif_u05"><b class="func">Sleef_sinpif_u05</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+Sleef_float32x4_t_2 Sleef_sincospif4_u05(float32x4_t a);
+Sleef_float32x4_t_2 Sleef_sincospif4_u05neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<hr/>
-<p class="funcname">Vectorized single precision cosine function with 0.506 ULP error bound</p>
+These are the vectorized functions of [Sleef_sincospif_u05](../libm#sleef_sincospif_u05). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="header">Synopsis</p>
+### Vectorized single precision combined sine and cosine function with 3.5 ULP error bound
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_cospif4_u05</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_cospif4_u05neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+```c
+#include <sleef.h>
 
-<p class="header">Description</p>
+Sleef_float32x4_t_2 Sleef_sincospif4_u35(float32x4_t a);
+Sleef_float32x4_t_2 Sleef_sincospif4_u35neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_cospif_u05"><b class="func">Sleef_cospif_u05</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+These are the vectorized functions of [Sleef_sincospif_u35](../libm#sleef_sincospif_u35). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<hr/>
-<p class="funcname">Vectorized single precision combined sine and cosine function with 0.506 ULP error bound</p>
+### Vectorized single precision tangent function with 1.0 ULP error bound
 
-<p class="header">Synopsis</p>
+```c
+#include <sleef.h>
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">Sleef_float32x4_t_2</b> <b class="func">Sleef_sincospif4_u05</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef_float32x4_t_2</b> <b class="func">Sleef_sincospif4_u05neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+float32x4_t Sleef_tanf4_u10(float32x4_t a);
+float32x4_t Sleef_tanf4_u10neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="header">Description</p>
+These are the vectorized functions of [Sleef_tanf_u10](../libm#sleef_tanf_u10). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_sincospif_u05"><b class="func">Sleef_sincospif_u05</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+### Vectorized single precision tangent function with 3.5 ULP error bound
 
-<hr/>
-<p class="funcname">Vectorized single precision combined sine and cosine function with 3.5 ULP error bound</p>
+```c
+#include <sleef.h>
 
-<p class="header">Synopsis</p>
+float32x4_t Sleef_tanf4_u35(float32x4_t a);
+float32x4_t Sleef_tanf4_u35neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">Sleef_float32x4_t_2</b> <b class="func">Sleef_sincospif4_u35</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef_float32x4_t_2</b> <b class="func">Sleef_sincospif4_u35neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_sincospif_u35"><b class="func">Sleef_sincospif_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
-
-<hr/>
-<p class="funcname">Vectorized single precision tangent function with 1.0 ULP error bound</p>
-
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_tanf4_u10</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_tanf4_u10neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_tanf_u10"><b class="func">Sleef_tanf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
-
-<hr/>
-<p class="funcname">Vectorized single precision tangent function with 3.5 ULP error bound</p>
-
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_tanf4_u35</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_tanf4_u35neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_tanf_u35"><b class="func">Sleef_tanf_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+These are the vectorized functions of [Sleef_tanf_u35](../libm#sleef_tanf_u35). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
 <h2 id="pow">Power, exponential, and logarithmic function</h2>
 
-<p class="funcname">Vectorized single precision power function with 1.0 ULP error bound</p>
-
-<p class="header">Synopsis</p>
+### Vectorized single precision power function with 1.0 ULP error bound
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_powf4_u10</b>(<b class="type">float32x4_t</b> <i class="var">a</i>, <b class="type">float32x4_t</b> <i class="var">b</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_powf4_u10neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>, <b class="type">float32x4_t</b> <i class="var">b</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_powf_u10"><b class="func">Sleef_powf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
-
-<hr/>
-<p class="funcname">Vectorized single precision natural logarithmic function with 1.0 ULP error bound</p>
-
-<p class="header">Synopsis</p>
+```c
+#include <sleef.h>
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_logf4_u10</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_logf4_u10neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_logf_u10"><b class="func">Sleef_logf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
-
-<hr/>
-<p class="funcname">Vectorized single precision natural logarithmic function with 3.5 ULP error bound</p>
-
-<p class="header">Synopsis</p>
+float32x4_t Sleef_powf4_u10(float32x4_t a, float32x4_t b);
+float32x4_t Sleef_powf4_u10neon(float32x4_t a, float32x4_t b);
+```
+Link with `-lsleef`.
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_logf4_u35</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_logf4_u35neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_logf_u35"><b class="func">Sleef_logf_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
-
-<hr/>
-<p class="funcname">Vectorized single precision base-10 logarithmic function with 1.0 ULP error bound</p>
-
-<p class="header">Synopsis</p>
+These are the vectorized functions of [Sleef_powf_u10](../libm#sleef_powf_u10). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_log10f4_u10</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_log10f4_u10neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_log10f_u10"><b class="func">Sleef_log10f_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
-
-<hr/>
-<p class="funcname">Vectorized single precision base-2 logarithmic function with 1.0 ULP error bound</p>
-
-<p class="header">Synopsis</p>
+### Vectorized single precision natural logarithmic function with 1.0 ULP error bound
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_log2f4_u10</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_log2f4_u10neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_log2f_u10"><b class="func">Sleef_log2f_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
-
-<hr/>
-<p class="funcname">Vectorized single precision logarithm of one plus argument with 1.0 ULP error bound</p>
-
-<p class="header">Synopsis</p>
+```c
+#include <sleef.h>
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_log1pf4_u10</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_log1pf4_u10neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_log1pf_u10"><b class="func">Sleef_log1pf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
-
-<hr/>
-<p class="funcname">Vectorized single precision base-<i>e</i> exponential function function with 1.0 ULP error bound</p>
-
-<p class="header">Synopsis</p>
+float32x4_t Sleef_logf4_u10(float32x4_t a);
+float32x4_t Sleef_logf4_u10neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_expf4_u10</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_expf4_u10neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_expf_u10"><b class="func">Sleef_expf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
-
-<hr/>
-<p class="funcname">Vectorized single precision base-<i>2</i> exponential function function with 1.0 ULP error bound</p>
-
-<p class="header">Synopsis</p>
+These are the vectorized functions of [Sleef_logf_u10](../libm#sleef_logf_u10). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_exp2f4_u10</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_exp2f4_u10neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_exp2f_u10"><b class="func">Sleef_exp2f_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
-
-<hr/>
-<p class="funcname">Vectorized single precision base-10 exponential function function with 1.0 ULP error bound</p>
-
-<p class="header">Synopsis</p>
+### Vectorized single precision natural logarithmic function with 3.5 ULP error bound
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_exp10f4_u10</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_exp10f4_u10neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_exp10f_u10"><b class="func">Sleef_exp10f_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
-
-<hr/>
-<p class="funcname">Vectorized single precision base-<i>e</i> exponential function minus 1 with 1.0 ULP error bound</p>
-
-<p class="header">Synopsis</p>
+```c
+#include <sleef.h>
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_expm1f4_u10</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_expm1f4_u10neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_expm1f_u10"><b class="func">Sleef_expm1f_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
-
-<hr/>
-<p class="funcname">Vectorized single precision square root function with 0.5001 ULP error bound</p>
-
-<p class="header">Synopsis</p>
+float32x4_t Sleef_logf4_u35(float32x4_t a);
+float32x4_t Sleef_logf4_u35neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_sqrtf4</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_sqrtf4_neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_sqrtf_u05"><b class="func">Sleef_sqrtf_u05</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
-
-<hr/>
-<p class="funcname">Vectorized single precision square root function with 3.5 ULP error bound</p>
+These are the vectorized functions of [Sleef_logf_u35](../libm#sleef_logf_u35). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="header">Synopsis</p>
+### Vectorized single precision base-10 logarithmic function with 1.0 ULP error bound
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_sqrtf4_u35</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_sqrtf4_u35neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+```c
+#include <sleef.h>
 
-<p class="header">Description</p>
+float32x4_t Sleef_log10f4_u10(float32x4_t a);
+float32x4_t Sleef_log10f4_u10neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_sqrtf_u35"><b class="func">Sleef_sqrtf_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+These are the vectorized functions of [Sleef_log10f_u10](../libm#sleef_log10f_u10). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<hr/>
-<p class="funcname">Vectorized single precision cubic root function with 1.0 ULP error bound</p>
+### Vectorized single precision base-2 logarithmic function with 1.0 ULP error bound
 
-<p class="header">Synopsis</p>
+```c
+#include <sleef.h>
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_cbrtf4_u10</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_cbrtf4_u10neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+float32x4_t Sleef_log2f4_u10(float32x4_t a);
+float32x4_t Sleef_log2f4_u10neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="header">Description</p>
+These are the vectorized functions of [Sleef_log2f_u10](../libm#sleef_log2f_u10). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_cbrtf_u10"><b class="func">Sleef_cbrtf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+### Vectorized single precision logarithm of one plus argument with 1.0 ULP error bound
 
-<hr/>
-<p class="funcname">Vectorized single precision cubic root function with 3.5 ULP error bound</p>
+```c
+#include <sleef.h>
 
-<p class="header">Synopsis</p>
+float32x4_t Sleef_log1pf4_u10(float32x4_t a);
+float32x4_t Sleef_log1pf4_u10neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_cbrtf4_u35</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_cbrtf4_u35neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+These are the vectorized functions of [Sleef_log1pf_u10](../libm#sleef_log1pf_u10). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="header">Description</p>
+### Vectorized single precision base-<i>e</i> exponential function function with 1.0 ULP error bound
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_cbrtf_u35"><b class="func">Sleef_cbrtf_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+```c
+#include <sleef.h>
 
-<hr/>
-<p class="funcname">Vectorized single precision 2D Euclidian distance function with 0.5 ULP error bound</p>
+float32x4_t Sleef_expf4_u10(float32x4_t a);
+float32x4_t Sleef_expf4_u10neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="header">Synopsis</p>
+These are the vectorized functions of [Sleef_expf_u10](../libm#sleef_expf_u10). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_hypotf4_u05</b>(<b class="type">float32x4_t</b> <i class="var">a</i>, <b class="type">float32x4_t</b> <i class="var">b</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_hypotf4_u05neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>, <b class="type">float32x4_t</b> <i class="var">b</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+### Vectorized single precision base-<i>2</i> exponential function function with 1.0 ULP error bound
 
-<p class="header">Description</p>
+```c
+#include <sleef.h>
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_hypotf_u05"><b class="func">Sleef_hypotf_u05</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+float32x4_t Sleef_exp2f4_u10(float32x4_t a);
+float32x4_t Sleef_exp2f4_u10neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<hr/>
-<p class="funcname">Vectorized single precision 2D Euclidian distance function with 3.5 ULP error bound</p>
+These are the vectorized functions of [Sleef_exp2f_u10](../libm#sleef_exp2f_u10). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="header">Synopsis</p>
+### Vectorized single precision base-10 exponential function function with 1.0 ULP error bound
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_hypotf4_u35</b>(<b class="type">float32x4_t</b> <i class="var">a</i>, <b class="type">float32x4_t</b> <i class="var">b</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_hypotf4_u35neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>, <b class="type">float32x4_t</b> <i class="var">b</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+```c
+#include <sleef.h>
 
-<p class="header">Description</p>
+float32x4_t Sleef_exp10f4_u10(float32x4_t a);
+float32x4_t Sleef_exp10f4_u10neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_hypotf_u35"><b class="func">Sleef_hypotf_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+These are the vectorized functions of [Sleef_exp10f_u10](../libm#sleef_exp10f_u10). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
+### Vectorized single precision base-<i>e</i> exponential function minus 1 with 1.0 ULP error bound
+
+```c
+#include <sleef.h>
+
+float32x4_t Sleef_expm1f4_u10(float32x4_t a);
+float32x4_t Sleef_expm1f4_u10neon(float32x4_t a);
+```
+Link with `-lsleef`.
+
+These are the vectorized functions of [Sleef_expm1f_u10](../libm#sleef_expm1f_u10). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+
+### Vectorized single precision square root function with 0.5001 ULP error bound
+
+```c
+#include <sleef.h>
+
+float32x4_t Sleef_sqrtf4(float32x4_t a);
+float32x4_t Sleef_sqrtf4_neon(float32x4_t a);
+```
+Link with `-lsleef`.
+
+These are the vectorized functions of [Sleef_sqrtf_u05](../libm#sleef_sqrtf_u05). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+
+### Vectorized single precision square root function with 3.5 ULP error bound
+
+```c
+#include <sleef.h>
+
+float32x4_t Sleef_sqrtf4_u35(float32x4_t a);
+float32x4_t Sleef_sqrtf4_u35neon(float32x4_t a);
+```
+Link with `-lsleef`.
+
+These are the vectorized functions of [Sleef_sqrtf_u35](../libm#sleef_sqrtf_u35). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+
+### Vectorized single precision cubic root function with 1.0 ULP error bound
+
+```c
+#include <sleef.h>
+
+float32x4_t Sleef_cbrtf4_u10(float32x4_t a);
+float32x4_t Sleef_cbrtf4_u10neon(float32x4_t a);
+```
+Link with `-lsleef`.
+
+These are the vectorized functions of [Sleef_cbrtf_u10](../libm#sleef_cbrtf_u10). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+
+### Vectorized single precision cubic root function with 3.5 ULP error bound
+
+```c
+#include <sleef.h>
+
+float32x4_t Sleef_cbrtf4_u35(float32x4_t a);
+float32x4_t Sleef_cbrtf4_u35neon(float32x4_t a);
+```
+Link with `-lsleef`.
+
+These are the vectorized functions of [Sleef_cbrtf_u35](../libm#sleef_cbrtf_u35). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+
+### Vectorized single precision 2D Euclidian distance function with 0.5 ULP error bound
+
+```c
+#include <sleef.h>
+
+float32x4_t Sleef_hypotf4_u05(float32x4_t a, float32x4_t b);
+float32x4_t Sleef_hypotf4_u05neon(float32x4_t a, float32x4_t b);
+```
+Link with `-lsleef`.
+
+These are the vectorized functions of [Sleef_hypotf_u05](../libm#sleef_hypotf_u05). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
+
+### Vectorized single precision 2D Euclidian distance function with 3.5 ULP error bound
+
+```c
+#include <sleef.h>
+
+float32x4_t Sleef_hypotf4_u35(float32x4_t a, float32x4_t b);
+float32x4_t Sleef_hypotf4_u35neon(float32x4_t a, float32x4_t b);
+```
+Link with `-lsleef`.
+
+These are the vectorized functions of [Sleef_hypotf_u35](../libm#sleef_hypotf_u35). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
 <h2 id="invtrig">Inverse Trigonometric Functions</h2>
 
-<p class="funcname">Vectorized single precision arc sine function with 3.5 ULP error bound</p>
+### Vectorized single precision arc sine function with 3.5 ULP error bound
 
-<p class="header">Synopsis</p>
+```c
+#include <sleef.h>
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_asinf4_u10</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_asinf4_u10neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+float32x4_t Sleef_asinf4_u10(float32x4_t a);
+float32x4_t Sleef_asinf4_u10neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="header">Description</p>
+These are the vectorized functions of [Sleef_asinf_u10](../libm#sleef_asinf_u10). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_asinf_u10"><b class="func">Sleef_asinf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+### Vectorized single precision arc sine function with 3.5 ULP error bound
 
-<hr/>
-<p class="funcname">Vectorized single precision arc sine function with 3.5 ULP error bound</p>
+```c
+#include <sleef.h>
 
-<p class="header">Synopsis</p>
+float32x4_t Sleef_asinf4_u35(float32x4_t a);
+float32x4_t Sleef_asinf4_u35neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_asinf4_u35</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_asinf4_u35neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+These are the vectorized functions of [Sleef_asinf_u35](../libm#sleef_asinf_u35). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="header">Description</p>
+### Vectorized single precision arc cosine function with 1.0 ULP error bound
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_asinf_u35"><b class="func">Sleef_asinf_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+```c
+#include <sleef.h>
 
-<hr/>
-<p class="funcname">Vectorized single precision arc cosine function with 1.0 ULP error bound</p>
+float32x4_t Sleef_acosf4_u10(float32x4_t a);
+float32x4_t Sleef_acosf4_u10neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="header">Synopsis</p>
+These are the vectorized functions of [Sleef_acosf_u10](../libm#sleef_acosf_u10). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_acosf4_u10</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_acosf4_u10neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+### Vectorized single precision arc cosine function with 3.5 ULP error bound
 
-<p class="header">Description</p>
+```c
+#include <sleef.h>
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_acosf_u10"><b class="func">Sleef_acosf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+float32x4_t Sleef_acosf4_u35(float32x4_t a);
+float32x4_t Sleef_acosf4_u35neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<hr/>
-<p class="funcname">Vectorized single precision arc cosine function with 3.5 ULP error bound</p>
+These are the vectorized functions of [Sleef_acosf_u35](../libm#sleef_acosf_u35). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="header">Synopsis</p>
+### Vectorized single precision arc tangent function with 1.0 ULP error bound
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_acosf4_u35</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_acosf4_u35neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+```c
+#include <sleef.h>
 
-<p class="header">Description</p>
+float32x4_t Sleef_atanf4_u10(float32x4_t a);
+float32x4_t Sleef_atanf4_u10neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_acosf_u35"><b class="func">Sleef_acosf_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+These are the vectorized functions of [Sleef_atanf_u10](../libm#sleef_atanf_u10). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<hr/>
-<p class="funcname">Vectorized single precision arc tangent function with 1.0 ULP error bound</p>
+### Vectorized single precision arc tangent function with 3.5 ULP error bound
 
-<p class="header">Synopsis</p>
+```c
+#include <sleef.h>
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_atanf4_u10</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_atanf4_u10neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+float32x4_t Sleef_atanf4_u35(float32x4_t a);
+float32x4_t Sleef_atanf4_u35neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="header">Description</p>
+These are the vectorized functions of [Sleef_atanf_u35](../libm#sleef_atanf_u35). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_atanf_u10"><b class="func">Sleef_atanf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+### Vectorized single precision arc tangent function of two variables with 1.0 ULP error bound
 
-<hr/>
-<p class="funcname">Vectorized single precision arc tangent function with 3.5 ULP error bound</p>
+```c
+#include <sleef.h>
 
-<p class="header">Synopsis</p>
+float32x4_t Sleef_atan2f4_u10(float32x4_t a, float32x4_t b);
+float32x4_t Sleef_atan2f4_u10neon(float32x4_t a, float32x4_t b);
+```
+Link with `-lsleef`.
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_atanf4_u35</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_atanf4_u35neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+These are the vectorized functions of [Sleef_atan2f_u10](../libm#sleef_atan2f_u10). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="header">Description</p>
+### Vectorized single precision arc tangent function of two variables with 3.5 ULP error bound
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_atanf_u35"><b class="func">Sleef_atanf_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+```c
+#include <sleef.h>
 
-<hr/>
-<p class="funcname">Vectorized single precision arc tangent function of two variables with 1.0 ULP error bound</p>
+float32x4_t Sleef_atan2f4_u35(float32x4_t a, float32x4_t b);
+float32x4_t Sleef_atan2f4_u35neon(float32x4_t a, float32x4_t b);
+```
+Link with `-lsleef`.
 
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_atan2f4_u10</b>(<b class="type">float32x4_t</b> <i class="var">a</i>, <b class="type">float32x4_t</b> <i class="var">b</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_atan2f4_u10neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>, <b class="type">float32x4_t</b> <i class="var">b</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_atan2f_u10"><b class="func">Sleef_atan2f_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
-
-<hr/>
-<p class="funcname">Vectorized single precision arc tangent function of two variables with 3.5 ULP error bound</p>
-
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_atan2f4_u35</b>(<b class="type">float32x4_t</b> <i class="var">a</i>, <b class="type">float32x4_t</b> <i class="var">b</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_atan2f4_u35neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>, <b class="type">float32x4_t</b> <i class="var">b</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_atan2f_u35"><b class="func">Sleef_atan2f_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
-
-
+These are the vectorized functions of [Sleef_atan2f_u35](../libm#sleef_atan2f_u35). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
 <h2 id="hyp">Hyperbolic function and inverse hyperbolic function</h2>
 
-<p class="funcname">Vectorized single precision hyperbolic sine function</p>
+### Vectorized single precision hyperbolic sine function
 
-<p class="header">Synopsis</p>
+```c
+#include <sleef.h>
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_sinhf4_u10</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_sinhf4_u10neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+float32x4_t Sleef_sinhf4_u10(float32x4_t a);
+float32x4_t Sleef_sinhf4_u10neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="header">Description</p>
+These are the vectorized functions of [Sleef_sinhf_u10](../libm#sleef_sinhf_u10). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_sinhf_u10"><b class="func">Sleef_sinhf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+### Vectorized single precision hyperbolic sine function
 
-<hr/>
-<p class="funcname">Vectorized single precision hyperbolic sine function</p>
+```c
+#include <sleef.h>
 
-<p class="header">Synopsis</p>
+float32x4_t Sleef_sinhf4_u35(float32x4_t a);
+float32x4_t Sleef_sinhf4_u35neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_sinhf4_u35</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_sinhf4_u35neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+These are the vectorized functions of [Sleef_sinhf_u35](../libm#sleef_sinhf_u35). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="header">Description</p>
+### Vectorized single precision hyperbolic cosine function
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_sinhf_u35"><b class="func">Sleef_sinhf_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+```c
+#include <sleef.h>
 
-<hr/>
-<p class="funcname">Vectorized single precision hyperbolic cosine function</p>
+float32x4_t Sleef_coshf4_u10(float32x4_t a);
+float32x4_t Sleef_coshf4_u10neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="header">Synopsis</p>
+These are the vectorized functions of [Sleef_coshf_u10](../libm#sleef_coshf_u10). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_coshf4_u10</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_coshf4_u10neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+### Vectorized single precision hyperbolic cosine function
 
-<p class="header">Description</p>
+```c
+#include <sleef.h>
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_coshf_u10"><b class="func">Sleef_coshf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+float32x4_t Sleef_coshf4_u35(float32x4_t a);
+float32x4_t Sleef_coshf4_u35neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<hr/>
-<p class="funcname">Vectorized single precision hyperbolic cosine function</p>
+These are the vectorized functions of [Sleef_coshf_u35](../libm#sleef_coshf_u35). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="header">Synopsis</p>
+### Vectorized single precision hyperbolic tangent function
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_coshf4_u35</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_coshf4_u35neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+```c
+#include <sleef.h>
 
-<p class="header">Description</p>
+float32x4_t Sleef_tanhf4_u10(float32x4_t a);
+float32x4_t Sleef_tanhf4_u10neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_coshf_u35"><b class="func">Sleef_coshf_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+These are the vectorized functions of [Sleef_tanhf_u10](../libm#sleef_tanhf_u10). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<hr/>
-<p class="funcname">Vectorized single precision hyperbolic tangent function</p>
+### Vectorized single precision hyperbolic tangent function
 
-<p class="header">Synopsis</p>
+```c
+#include <sleef.h>
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_tanhf4_u10</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_tanhf4_u10neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+float32x4_t Sleef_tanhf4_u35(float32x4_t a);
+float32x4_t Sleef_tanhf4_u35neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="header">Description</p>
+These are the vectorized functions of [Sleef_tanhf_u35](../libm#sleef_tanhf_u35). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_tanhf_u10"><b class="func">Sleef_tanhf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+### Vectorized single precision inverse hyperbolic sine function
 
-<hr/>
-<p class="funcname">Vectorized single precision hyperbolic tangent function</p>
+```c
+#include <sleef.h>
 
-<p class="header">Synopsis</p>
+float32x4_t Sleef_asinhf4_u10(float32x4_t a);
+float32x4_t Sleef_asinhf4_u10neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_tanhf4_u35</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_tanhf4_u35neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+These are the vectorized functions of [Sleef_asinhf_u10](../libm#sleef_asinhf_u10). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="header">Description</p>
+### Vectorized single precision inverse hyperbolic cosine function
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_tanhf_u35"><b class="func">Sleef_tanhf_u35</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+```c
+#include <sleef.h>
 
-<hr/>
-<p class="funcname">Vectorized single precision inverse hyperbolic sine function</p>
+float32x4_t Sleef_acoshf4_u10(float32x4_t a);
+float32x4_t Sleef_acoshf4_u10neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="header">Synopsis</p>
+These are the vectorized functions of [Sleef_acoshf_u10](../libm#sleef_acoshf_u10). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_asinhf4_u10</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_asinhf4_u10neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+### Vectorized single precision inverse hyperbolic tangent function
 
-<p class="header">Description</p>
+```c
+#include <sleef.h>
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_asinhf_u10"><b class="func">Sleef_asinhf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+float32x4_t Sleef_atanhf4_u10(float32x4_t a);
+float32x4_t Sleef_atanhf4_u10neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<hr/>
-<p class="funcname">Vectorized single precision inverse hyperbolic cosine function</p>
-
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_acoshf4_u10</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_acoshf4_u10neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_acoshf_u10"><b class="func">Sleef_acoshf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
-
-<hr/>
-<p class="funcname">Vectorized single precision inverse hyperbolic tangent function</p>
-
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_atanhf4_u10</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_atanhf4_u10neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_atanhf_u10"><b class="func">Sleef_atanhf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
-
+These are the vectorized functions of [Sleef_atanhf_u10](../libm#sleef_atanhf_u10). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
 <h2 id="eg">Error and gamma function</h2>
 
-<p class="funcname">Vectorized single precision error function</p>
+### Vectorized single precision error function
 
-<p class="header">Synopsis</p>
+```c
+#include <sleef.h>
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_erff4_u10</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_erff4_u10neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+float32x4_t Sleef_erff4_u10(float32x4_t a);
+float32x4_t Sleef_erff4_u10neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="header">Description</p>
+These are the vectorized functions of [Sleef_erff_u10](../libm#sleef_erff_u10). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_erff_u10"><b class="func">Sleef_erff_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+### Vectorized single precision complementary error function
 
-<hr/>
-<p class="funcname">Vectorized single precision complementary error function</p>
+```c
+#include <sleef.h>
 
-<p class="header">Synopsis</p>
+float32x4_t Sleef_erfcf4_u15(float32x4_t a);
+float32x4_t Sleef_erfcf4_u15neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_erfcf4_u15</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_erfcf4_u15neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+These are the vectorized functions of [Sleef_erfcf_u15](../libm#sleef_erfcf_u15). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="header">Description</p>
+### Vectorized single precision gamma function
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_erfcf_u15"><b class="func">Sleef_erfcf_u15</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+```c
+#include <sleef.h>
 
-<hr/>
-<p class="funcname">Vectorized single precision gamma function</p>
+float32x4_t Sleef_tgammaf4_u10(float32x4_t a);
+float32x4_t Sleef_tgammaf4_u10neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="header">Synopsis</p>
+These are the vectorized functions of [Sleef_tgammaf_u10](../libm#sleef_tgammaf_u10). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_tgammaf4_u10</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_tgammaf4_u10neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+### Vectorized single precision log gamma function
 
-<p class="header">Description</p>
+```c
+#include <sleef.h>
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_tgammaf_u10"><b class="func">Sleef_tgammaf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+float32x4_t Sleef_lgammaf4_u10(float32x4_t a);
+float32x4_t Sleef_lgammaf4_u10neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<hr/>
-<p class="funcname">Vectorized single precision log gamma function</p>
-
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_lgammaf4_u10</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_lgammaf4_u10neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_lgammaf_u10"><b class="func">Sleef_lgammaf_u10</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
-
+These are the vectorized functions of [Sleef_lgammaf_u10](../libm#sleef_lgammaf_u10). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
 <h2 id="nearint">Nearest integer function</h2>
 
-<p class="funcname">Vectorized single precision function for rounding to integer towards zero</p>
+### Vectorized single precision function for rounding to integer towards zero
 
-<p class="header">Synopsis</p>
+```c
+#include <sleef.h>
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_truncf4</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_truncf4_neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+float32x4_t Sleef_truncf4(float32x4_t a);
+float32x4_t Sleef_truncf4_neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="header">Description</p>
+These are the vectorized functions of [Sleef_truncf](../libm#sleef_truncf). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_truncf"><b class="func">Sleef_truncf</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+### Vectorized single precision function for rounding to integer towards negative infinity
 
-<hr/>
-<p class="funcname">Vectorized single precision function for rounding to integer towards negative infinity</p>
+```c
+#include <sleef.h>
 
-<p class="header">Synopsis</p>
+float32x4_t Sleef_floorf4(float32x4_t a);
+float32x4_t Sleef_floorf4_neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_floorf4</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_floorf4_neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+These are the vectorized functions of [Sleef_floorf](../libm#sleef_floorf). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="header">Description</p>
+### Vectorized single precision function for rounding to integer towards positive infinity
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_floorf"><b class="func">Sleef_floorf</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+```c
+#include <sleef.h>
 
-<hr/>
-<p class="funcname">Vectorized single precision function for rounding to integer towards positive infinity</p>
+float32x4_t Sleef_ceilf4(float32x4_t a);
+float32x4_t Sleef_ceilf4_neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="header">Synopsis</p>
+These are the vectorized functions of [Sleef_ceilf](../libm#sleef_ceilf). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_ceilf4</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_ceilf4_neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+### Vectorized single precision function for rounding to nearest integer
 
-<p class="header">Description</p>
+```c
+#include <sleef.h>
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_ceilf"><b class="func">Sleef_ceilf</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+float32x4_t Sleef_roundf4(float32x4_t a);
+float32x4_t Sleef_roundf4_neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<hr/>
-<p class="funcname">Vectorized single precision function for rounding to nearest integer</p>
+These are the vectorized functions of [Sleef_roundf](../libm#sleef_roundf). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="header">Synopsis</p>
+### Vectorized single precision function for rounding to nearest integer
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_roundf4</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_roundf4_neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+```c
+#include <sleef.h>
 
-<p class="header">Description</p>
+float32x4_t Sleef_rintf4(float32x4_t a);
+float32x4_t Sleef_rintf4_neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_roundf"><b class="func">Sleef_roundf</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
-
-<hr/>
-<p class="funcname">Vectorized single precision function for rounding to nearest integer</p>
-
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_rintf4</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_rintf4_neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_rintf"><b class="func">Sleef_rintf</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
-
+These are the vectorized functions of [Sleef_rintf](../libm#sleef_rintf). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
 <h2 id="other">Other function</h2>
 
-<p class="funcname">Vectorized single precision function for fused multiply-accumulation</p>
+### Vectorized single precision function for fused multiply-accumulation
 
-<p class="header">Synopsis</p>
+```c
+#include <sleef.h>
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_fmaf4</b>(<b class="type">float32x4_t</b> <i class="var">a</i>, <b class="type">float32x4_t</b> <i class="var">b</i>, <b class="type">float32x4_t</b> <i class="var">c</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_fmaf4_neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>, <b class="type">float32x4_t</b> <i class="var">b</i>, <b class="type">float32x4_t</b> <i class="var">c</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+float32x4_t Sleef_fmaf4(float32x4_t a, float32x4_t b, float32x4_t c);
+float32x4_t Sleef_fmaf4_neon(float32x4_t a, float32x4_t b, float32x4_t c);
+```
+Link with `-lsleef`.
 
-<p class="header">Description</p>
+These are the vectorized functions of [Sleef_fmaf](../libm#sleef_fmaf). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_fmaf"><b class="func">Sleef_fmaf</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+### Vectorized single precision FP remainder
 
-<hr/>
+```c
+#include <sleef.h>
 
-<p class="funcname">Vectorized single precision FP remainder</p>
+float32x4_t Sleef_fmodf4(float32x4_t a, float32x4_t b);
+float32x4_t Sleef_fmodf4_neon(float32x4_t a, float32x4_t b);
+```
+Link with `-lsleef`.
 
-<p class="header">Synopsis</p>
+These are the vectorized functions of [Sleef_fmodf](../libm#sleef_fmodf). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_fmodf4</b>(<b class="type">float32x4_t</b> <i class="var">a</i>, <b class="type">float32x4_t</b> <i class="var">b</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_fmodf4_neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>, <b class="type">float32x4_t</b> <i class="var">b</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+### Vectorized single precision FP remainder
 
-<p class="header">Description</p>
+```c
+#include <sleef.h>
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_fmodf"><b class="func">Sleef_fmodf</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+float32x4_t Sleef_remainderf4(float32x4_t a, float32x4_t b);
+float32x4_t Sleef_remainderf4_neon(float32x4_t a, float32x4_t b);
+```
+Link with `-lsleef`.
 
-<hr/>
+These are the vectorized functions of [Sleef_remainderf](../libm#sleef_remainderf). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="funcname">Vectorized single precision FP remainder</p>
+### Vectorized single precision function for obtaining fractional component of an FP number
 
-<p class="header">Synopsis</p>
+```c
+#include <sleef.h>
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_remainderf4</b>(<b class="type">float32x4_t</b> <i class="var">a</i>, <b class="type">float32x4_t</b> <i class="var">b</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_remainderf4_neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>, <b class="type">float32x4_t</b> <i class="var">b</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+float32x4_t Sleef_frfrexpf4(float32x4_t a);
+float32x4_t Sleef_frfrexpf4_neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="header">Description</p>
+These are the vectorized functions of [Sleef_frfrexpf](../libm#sleef_frfrexpf). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_remainderf"><b class="func">Sleef_remainderf</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+### Vectorized single precision signed integral and fractional values
 
-<hr/>
-<p class="funcname">Vectorized single precision function for obtaining fractional component of an FP number</p>
+```c
+#include <sleef.h>
 
-<p class="header">Synopsis</p>
+Sleef_float32x4_t_2 Sleef_modff4(float32x4_t a);
+Sleef_float32x4_t_2 Sleef_modff4_neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_frfrexpf4</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_frfrexpf4_neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+These are the vectorized functions of [Sleef_modff](../libm#sleef_modff). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="header">Description</p>
+### Vectorized single precision function for calculating the absolute value
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_frfrexpf"><b class="func">Sleef_frfrexpf</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+```c
+#include <sleef.h>
 
-<hr/>
+float32x4_t Sleef_fabsf4(float32x4_t a);
+float32x4_t Sleef_fabsf4_neon(float32x4_t a);
+```
+Link with `-lsleef`.
 
-<p class="funcname">Vectorized single precision signed integral and fractional values</p>
+These are the vectorized functions of [Sleef_fabsf](../libm#sleef_fabsf). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="header">Synopsis</p>
+### Vectorized single precision function for copying signs
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">Sleef_float32x4_t_2</b> <b class="func">Sleef_modff4</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">Sleef_float32x4_t_2</b> <b class="func">Sleef_modff4_neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+```c
+#include <sleef.h>
 
-<p class="header">Description</p>
+float32x4_t Sleef_copysignf4(float32x4_t a, float32x4_t b);
+float32x4_t Sleef_copysignf4_neon(float32x4_t a, float32x4_t b);
+```
+Link with `-lsleef`.
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_modff"><b class="func">Sleef_modff</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+These are the vectorized functions of [Sleef_copysignf](../libm#sleef_copysignf). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<hr/>
-<p class="funcname">Vectorized single precision function for calculating the absolute value</p>
+### Vectorized single precision function for determining maximum of two values
 
-<p class="header">Synopsis</p>
+```c
+#include <sleef.h>
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_fabsf4</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_fabsf4_neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+float32x4_t Sleef_fmaxf4(float32x4_t a, float32x4_t b);
+float32x4_t Sleef_fmaxf4_neon(float32x4_t a, float32x4_t b);
+```
+Link with `-lsleef`.
 
-<p class="header">Description</p>
+These are the vectorized functions of [Sleef_fmaxf](../libm#sleef_fmaxf). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_fabsf"><b class="func">Sleef_fabsf</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+### Vectorized single precision function for determining minimum of two values
 
-<hr/>
-<p class="funcname">Vectorized single precision function for copying signs</p>
+```c
+#include <sleef.h>
 
-<p class="header">Synopsis</p>
+float32x4_t Sleef_fminf4(float32x4_t a, float32x4_t b);
+float32x4_t Sleef_fminf4_neon(float32x4_t a, float32x4_t b);
+```
+Link with `-lsleef`.
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_copysignf4</b>(<b class="type">float32x4_t</b> <i class="var">a</i>, <b class="type">float32x4_t</b> <i class="var">b</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_copysignf4_neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>, <b class="type">float32x4_t</b> <i class="var">b</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+These are the vectorized functions of [Sleef_fminf](../libm#sleef_fminf). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="header">Description</p>
+### Vectorized single precision function to calculate positive difference of two values
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_copysignf"><b class="func">Sleef_copysignf</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+```c
+#include <sleef.h>
 
-<hr/>
-<p class="funcname">Vectorized single precision function for determining maximum of two values</p>
+float32x4_t Sleef_fdimf4(float32x4_t a, float32x4_t b);
+float32x4_t Sleef_fdimf4_neon(float32x4_t a, float32x4_t b);
+```
+Link with `-lsleef`.
 
-<p class="header">Synopsis</p>
+These are the vectorized functions of [Sleef_fdimf](../libm#sleef_fdimf). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
 
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_fmaxf4</b>(<b class="type">float32x4_t</b> <i class="var">a</i>, <b class="type">float32x4_t</b> <i class="var">b</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_fmaxf4_neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>, <b class="type">float32x4_t</b> <i class="var">b</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
+### Vectorized single precision function for obtaining the next representable FP value
 
-<p class="header">Description</p>
+```c
+#include <sleef.h>
 
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_fmaxf"><b class="func">Sleef_fmaxf</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+float32x4_t Sleef_nextafterf4(float32x4_t a, float32x4_t b);
+float32x4_t Sleef_nextafterf4_neon(float32x4_t a, float32x4_t b);
+```
+Link with `-lsleef`.
 
-<hr/>
-<p class="funcname">Vectorized single precision function for determining minimum of two values</p>
-
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_fminf4</b>(<b class="type">float32x4_t</b> <i class="var">a</i>, <b class="type">float32x4_t</b> <i class="var">b</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_fminf4_neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>, <b class="type">float32x4_t</b> <i class="var">b</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_fminf"><b class="func">Sleef_fminf</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
-
-<hr/>
-<p class="funcname">Vectorized single precision function to calculate positive difference of two values</p>
-
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_fdimf4</b>(<b class="type">float32x4_t</b> <i class="var">a</i>, <b class="type">float32x4_t</b> <i class="var">b</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_fdimf4_neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>, <b class="type">float32x4_t</b> <i class="var">b</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_fdimf"><b class="func">Sleef_fdimf</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
-
-<hr/>
-<p class="funcname">Vectorized single precision function for obtaining the next representable FP value</p>
-
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_nextafterf4</b>(<b class="type">float32x4_t</b> <i class="var">a</i>, <b class="type">float32x4_t</b> <i class="var">b</i>);<br/>
-<b class="type">float32x4_t</b> <b class="func">Sleef_nextafterf4_neon</b>(<b class="type">float32x4_t</b> <i class="var">a</i>, <b class="type">float32x4_t</b> <i class="var">b</i>);<br/>
-<br/>
-<span class="normal">Link with</span> -lsleef.
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-These are the vectorized functions of <a href="../libm#Sleef_nextafterf"><b class="func">Sleef_nextafterf</b></a>. This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
-</p>
+These are the vectorized functions of [Sleef_nextafterf](../libm#sleef_nextafterf). This function may be less accurate than the scalar function since AArch32 NEON is not IEEE 754-compliant.
