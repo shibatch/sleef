@@ -3663,26 +3663,36 @@ EXPORT CONST void *xgetPtrf(int name) {
 #endif
 
 #ifdef ENABLE_GNUABI
-EXPORT CONST VECTOR_CC vfloat __acosf_finite     (vfloat)         __attribute__((weak, alias(str_xacosf_u1  )));
-EXPORT CONST VECTOR_CC vfloat __acoshf_finite    (vfloat)         __attribute__((weak, alias(str_xacoshf    )));
-EXPORT CONST VECTOR_CC vfloat __asinf_finite     (vfloat)         __attribute__((weak, alias(str_xasinf_u1  )));
-EXPORT CONST VECTOR_CC vfloat __atan2f_finite    (vfloat, vfloat) __attribute__((weak, alias(str_xatan2f_u1 )));
-EXPORT CONST VECTOR_CC vfloat __atanhf_finite    (vfloat)         __attribute__((weak, alias(str_xatanhf    )));
-EXPORT CONST VECTOR_CC vfloat __coshf_finite     (vfloat)         __attribute__((weak, alias(str_xcoshf     )));
-EXPORT CONST VECTOR_CC vfloat __exp10f_finite    (vfloat)         __attribute__((weak, alias(str_xexp10f    )));
-EXPORT CONST VECTOR_CC vfloat __exp2f_finite     (vfloat)         __attribute__((weak, alias(str_xexp2f     )));
-EXPORT CONST VECTOR_CC vfloat __expf_finite      (vfloat)         __attribute__((weak, alias(str_xexpf      )));
-EXPORT CONST VECTOR_CC vfloat __fmodf_finite     (vfloat, vfloat) __attribute__((weak, alias(str_xfmodf     )));
-EXPORT CONST VECTOR_CC vfloat __remainderf_finite(vfloat, vfloat) __attribute__((weak, alias(str_xremainderf)));
-EXPORT CONST VECTOR_CC vfloat __modff_finite      (vfloat, vfloat *) __attribute__((weak, alias(str_xmodff  )));
-EXPORT CONST VECTOR_CC vfloat __hypotf_u05_finite(vfloat, vfloat) __attribute__((weak, alias(str_xhypotf_u05)));
-EXPORT CONST VECTOR_CC vfloat __lgammaf_u1_finite(vfloat)         __attribute__((weak, alias(str_xlgammaf_u1)));
-EXPORT CONST VECTOR_CC vfloat __log10f_finite    (vfloat)         __attribute__((weak, alias(str_xlog10f    )));
-EXPORT CONST VECTOR_CC vfloat __logf_finite      (vfloat)         __attribute__((weak, alias(str_xlogf_u1   )));
-EXPORT CONST VECTOR_CC vfloat __powf_finite      (vfloat, vfloat) __attribute__((weak, alias(str_xpowf      )));
-EXPORT CONST VECTOR_CC vfloat __sinhf_finite     (vfloat)         __attribute__((weak, alias(str_xsinhf     )));
-EXPORT CONST VECTOR_CC vfloat __sqrtf_finite     (vfloat)         __attribute__((weak, alias(str_xsqrtf     )));
-EXPORT CONST VECTOR_CC vfloat __tgammaf_u1_finite(vfloat)         __attribute__((weak, alias(str_xtgammaf_u1)));
+/* "finite" aliases for compatibility with GLIBC */
+#if ENABLE_ALIAS
+#define DFINITE_ALIAS_vf_vf(ALIASEE, TARGET) EXPORT CONST VECTOR_CC vfloat ALIASEE (vfloat) __attribute__((weak, alias(FUNC)));
+#define DFINITE_ALIAS_vf2_vf(ALIASEE, TARGET) EXPORT CONST VECTOR_CC vfloat ALIASEE (vfloat, vfloat) __attribute__((weak, alias(FUNC)));
+#  define DFINITE_ALIAS_vfp_vf(ALIASEE, TARGET) EXPORT CONST VECTOR_CC vfloat ALIASEE (vfloat, vfloat *) __attribute__((weak, alias(FUNC)));
+#else
+#define DFINITE_ALIAS_vf_vf(ALIASEE, TARGET) EXPORT CONST VECTOR_CC vfloat ALIASEE (vfloat x) { return TARGET(x); }
+#define DFINITE_ALIAS_vf2_vf(ALIASEE, TARGET) EXPORT CONST VECTOR_CC vfloat ALIASEE (vfloat x, vfloat y) { return TARGET(x, y); }
+#define DFINITE_ALIAS_vfp_vf(ALIASEE, TARGET) EXPORT CONST VECTOR_CC vfloat ALIASEE (vfloat x, float *y) { return TARGET(x, y); }
+#endif
+DFINITE_ALIAS_vf_vf(__acosf_finite,       xacosf_u1)
+DFINITE_ALIAS_vf_vf(__acoshf_finite,      xacoshf)
+DFINITE_ALIAS_vf_vf(__asinf_finite,       xasinf_u1)
+DFINITE_ALIAS_vf2_vf(__atan2f_finite,     xatan2f_u1)
+DFINITE_ALIAS_vf_vf(__atanhf_finite,      xatanhf)
+DFINITE_ALIAS_vf_vf(__coshf_finite,       xcoshf)
+DFINITE_ALIAS_vf_vf(__exp10f_finite,      xexp10f)
+DFINITE_ALIAS_vf_vf(__exp2f_finite,       xexp2f)
+DFINITE_ALIAS_vf_vf(__expf_finite,        xexpf)
+DFINITE_ALIAS_vf2_vf(__fmodf_finite,      xfmodf)
+DFINITE_ALIAS_vf2_vf(__remainderf_finite, xremainderf)
+DFINITE_ALIAS_vfp_vf(__modff_finite,      xmodff)
+DFINITE_ALIAS_vf2_vf(__hypotf_u05_finite, xhypotf_u05)
+DFINITE_ALIAS_vf_vf(__lgammaf_u1_finite,  xlgammaf_u1)
+DFINITE_ALIAS_vf_vf(__log10f_finite,      xlog10f)
+DFINITE_ALIAS_vf_vf(__logf_finite,        xlogf_u1)
+DFINITE_ALIAS_vf2_vf(__powf_finite,       xpowf)
+DFINITE_ALIAS_vf_vf(__sinhf_finite,       xsinhf)
+DFINITE_ALIAS_vf_vf(__sqrtf_finite,       xsqrtf)
+DFINITE_ALIAS_vf_vf(__tgammaf_u1_finite,  xtgammaf_u1)
 
 #ifdef HEADER_MASKED
 #include HEADER_MASKED
