@@ -10,1166 +10,718 @@ permalink: /2-references/quad/cuda
 
 <h2>Table of contents</h2>
 
-<ul class="circle">
-  <li><a href="#tutorial">Tutorial</a></li>
-  <li><a href="#conversion">Conversion functions</a></li>
-  <li><a href="#comparison">Comparison and selection functions</a></li>
-  <li><a href="#mathfunctions">Math functions</a></li>
-</ul>
+* [Tutorial](#tutorial)
+* [Conversion functions](#conversion)
+* [Comparison and selection functions](#comparison)
+* [Math functions](#mathfunctions)
 
 <h2 id="tutorial">Tutorial</h2>
 
-<p class="noindent">
-  Below is a <a class="underlined" href="hellocudaquad.cu">test
-  code</a> for the CUDA functions. CUDA devices cannot directly
-  compute with the QP FP data type. Thus, you have to
-  use <b class="type">Sleef_quadx1</b> data type to retain a QP FP
-  value in CUDA device codes. This data type has the same structure as
-  the QP FP data type, and you can directly access the number by
-  casting the pointer to the QP FP data type supported by the
-  compiler. Beware of the strict-aliasing rule in this case.
-</p>
+Below is a [test code](../../src/hellocudaquad.cu) for the CUDA functions. CUDA
+devices cannot directly compute with the QP FP data type. Thus, you have to use
+`Sleef_quadx1` data type to retain a QP FP value in CUDA device codes. This
+data type has the same structure as the QP FP data type, and you can directly
+access the number by casting the pointer to the QP FP data type supported by
+the compiler. Beware of the strict-aliasing rule in this case.
 
-<pre class="code">
-<code>#include &lt;iostream&gt;</code>
-<code>#include &lt;quadmath.h&gt;</code>
-<code></code>
-<code>#include &quot;sleefquadinline_cuda.h&quot;</code>
-<code></code>
-<code>// Based on the tutorial code at https://developer.nvidia.com/blog/even-easier-introduction-cuda/</code>
-<code></code>
-<code>__global__ void pow_gpu(int n, Sleef_quadx1 *r, Sleef_quadx1 *x, Sleef_quadx1 *y) {</code>
-<code>  int index = threadIdx.x, stride = blockDim.x;</code>
-<code></code>
-<code>  for (int i = index; i &lt; n; i += stride)</code>
-<code>    r[i] = Sleef_powq1_u10cuda(x[i], y[i]);</code>
-<code>}</code>
-<code></code>
-<code>int main(void) {</code>
-<code>  int N = 1 &lt;&lt; 20;</code>
-<code></code>
-<code>  Sleef_quadx1 *rd, *xd, *yd;</code>
-<code>  cudaMallocManaged(&amp;rd, N*sizeof(Sleef_quadx1));</code>
-<code>  cudaMallocManaged(&amp;xd, N*sizeof(Sleef_quadx1));</code>
-<code>  cudaMallocManaged(&amp;yd, N*sizeof(Sleef_quadx1));</code>
-<code></code>
-<code>  __float128 *r = (__float128 *)rd, *x = (__float128 *)xd, *y = (__float128 *)yd;</code>
-<code></code>
-<code>  for (int i = 0; i &lt; N; i++) {</code>
-<code>    r[i] = 0.0;</code>
-<code>    x[i] = 1.00001Q;</code>
-<code>    y[i] = i;</code>
-<code>  }</code>
-<code>  pow_gpu&lt;&lt;&lt;1, 256&gt;&gt;&gt;(N, rd, xd, yd);</code>
-<code></code>
-<code>  cudaDeviceSynchronize();</code>
-<code></code>
-<code>  double maxError = 0.0;</code>
-<code>  for (int i = 0; i &lt; N; i++)</code>
-<code>    maxError = fmax(maxError, fabsq(r[i]-powq(x[i], y[i])));</code>
-<code>  std::cout &lt;&lt; &quot;Max error: &quot; &lt;&lt; maxError &lt;&lt; std::endl;</code>
-<code></code>
-<code>  cudaFree(yd);</code>
-<code>  cudaFree(xd);</code>
-<code>  cudaFree(rd);</code>
-<code></code>
-<code>  return 0;</code>
-<code>}</code>
-</pre>
+```c
+
+#include <iostream>
+#include <quadmath.h>
+
+#include "sleefquadinline_cuda.h"
+
+// Based on the tutorial code at https://developer.nvidia.com/blog/even-easier-introduction-cuda/
+
+__global__ void pow_gpu(int n, Sleef_quadx1 *r, Sleef_quadx1 *x, Sleef_quadx1 *y) {
+  int index = threadIdx.x, stride = blockDim.x;
+
+  for (int i = index; i < n; i += stride)
+    r[i] = Sleef_powq1_u10cuda(x[i], y[i]);
+}
+
+int main(void) {
+  int N = 1 << 20;
+
+  Sleef_quadx1 *rd, *xd, *yd;
+  cudaMallocManaged(&rd, N*sizeof(Sleef_quadx1));
+  cudaMallocManaged(&xd, N*sizeof(Sleef_quadx1));
+  cudaMallocManaged(&yd, N*sizeof(Sleef_quadx1));
+
+  __float128 *r = (__float128 *)rd, *x = (__float128 *)xd, *y = (__float128 *)yd;
+
+  for (int i = 0; i < N; i++) {
+    r[i] = 0.0;
+    x[i] = 1.00001Q;
+    y[i] = i;
+  }
+  pow_gpu<<<1, 256>>> (N, rd, xd, yd);
+
+  cudaDeviceSynchronize();
+
+  double maxError = 0.0;
+  for (int i = 0; i < N; i++)
+    maxError = fmax(maxError, fabsq(r[i]-powq(x[i], y[i])));
+  std::cout << "Max error: " << maxError << std::endl;
+
+  cudaFree(yd);
+  cudaFree(xd);
+  cudaFree(rd);
+
+  return 0;
+```
 <p style="text-align:center;">
-  <a class="underlined" href="hellocudaquad.cu">Source code for testing CUDA functions</a>
+<a class="underlined" href="../../src/hellocudaquad.cu">Source code for testing CUDA functions</a>
 </p>
 
-<br/>
-<br/>
-<br/>
+You may want to use both CPU and GPU functions in the same source code. This is
+possible, as shown in [the following test code](../../src/hellocudaquad2.cu).
+You cannot use the library version of the SLEEF functions in CUDA source codes.
+Please include the header files for inlineable functions along with the header
+file for CUDA functions. The I/O functions are defined in
+`sleefquadinline_purec_scalar.h`.  You cannot use `SLEEF_QUAD_C` or `sleef_q`
+in device functions.
 
-<p>
-  You may want to use both CPU and GPU functions in the same source
-  code. This is possible, as shown in <a class="underlined"
-  href="hellocudaquad2.cu">the following test code</a>. You cannot use
-  the library version of the SLEEF functions in CUDA source
-  codes. Please include the header files for inlineable functions
-  along with the header file for CUDA functions. The I/O functions are
-  defined in sleefquadinline_purec_scalar.h.  You cannot
-  use <b class="func">SLEEF_QUAD_C</b> or <b class="func">sleef_q</b>
-  in device functions.
-</p>
+```c
 
-<pre class="code">
-<code>// nvcc -O3 hellocudaquad2.cu -I./include --fmad=false -Xcompiler -ffp-contract=off</code>
-<code></code>
-<code>#include &lt;iostream&gt;</code>
-<code>#include &lt;stdio.h&gt;</code>
-<code>#include &lt;stdint.h&gt;</code>
-<code>#include &lt;stdarg.h&gt;</code>
-<code>#include &lt;ctype.h&gt;</code>
-<code>#include &lt;assert.h&gt;</code>
-<code>#include &lt;emmintrin.h&gt;</code>
-<code></code>
-<code>#include &quot;sleefquadinline_sse2.h&quot;</code>
-<code>#include &quot;sleefquadinline_purec_scalar.h&quot;</code>
-<code>#include &quot;sleefquadinline_cuda.h&quot;</code>
-<code>#include &quot;sleefinline_sse2.h&quot;</code>
-<code></code>
-<code>// Based on the tutorial code at https://developer.nvidia.com/blog/even-easier-introduction-cuda/</code>
-<code></code>
-<code>__global__ void pow_gpu(int n, Sleef_quadx1 *r, Sleef_quadx1 *x, Sleef_quadx1 *y) {</code>
-<code>  int index = threadIdx.x, stride = blockDim.x;</code>
-<code></code>
-<code>  for (int i = index; i &lt; n; i += stride)</code>
-<code>    r[i] = Sleef_powq1_u10cuda(x[i], y[i]);</code>
-<code>}</code>
-<code></code>
-<code>int main(void) {</code>
-<code>  int N = 1 &lt;&lt; 20;</code>
-<code></code>
-<code>  Sleef_quadx1 *rd, *xd, *yd;</code>
-<code>  cudaMallocManaged(&amp;rd, N*sizeof(Sleef_quadx1));</code>
-<code>  cudaMallocManaged(&amp;xd, N*sizeof(Sleef_quadx1));</code>
-<code>  cudaMallocManaged(&amp;yd, N*sizeof(Sleef_quadx1));</code>
-<code></code>
-<code>  Sleef_quad *r = (Sleef_quad *)rd, *x = (Sleef_quad *)xd, *y = (Sleef_quad *)yd;</code>
-<code></code>
-<code>  //</code>
-<code></code>
-<code>  for (int i = 0; i &lt; N; i++) {</code>
-<code>    r[i] = Sleef_cast_from_doubleq1_purec(0);</code>
-<code>    x[i] = Sleef_cast_from_doubleq1_purec(1.00001);</code>
-<code>    y[i] = Sleef_cast_from_doubleq1_purec(i);</code>
-<code>  }</code>
-<code></code>
-<code>  pow_gpu&lt;&lt;&lt;1, 256&gt;&gt;&gt;(N, rd, xd, yd);</code>
-<code></code>
-<code>  cudaDeviceSynchronize();</code>
-<code></code>
-<code>  Sleef_quadx2 maxError = Sleef_splatq2_sse2(Sleef_strtoq(&quot;0.0&quot;, NULL));</code>
-<code></code>
-<code>  for (int i = 0; i &lt; N; i += 2) {</code>
-<code>    Sleef_quadx2 r2 = Sleef_loadq2_sse2(&amp;r[i]);</code>
-<code>    Sleef_quadx2 x2 = Sleef_loadq2_sse2(&amp;x[i]);</code>
-<code>    Sleef_quadx2 y2 = Sleef_loadq2_sse2(&amp;y[i]);</code>
-<code></code>
-<code>    Sleef_quadx2 q = Sleef_fabsq2_sse2(Sleef_subq2_u05sse2(r2, Sleef_powq2_u10sse2(x2, y2)));</code>
-<code>    maxError = Sleef_fmaxq2_sse2(maxError, q);</code>
-<code>  }</code>
-<code></code>
-<code>  Sleef_printf(&quot;Max error: %Qg\n&quot;,</code>
-<code>               Sleef_fmaxq1_purec(Sleef_getq2_sse2(maxError, 0), Sleef_getq2_sse2(maxError, 1)));</code>
-<code></code>
-<code>  //</code>
-<code></code>
-<code>  cudaFree(yd);</code>
-<code>  cudaFree(xd);</code>
-<code>  cudaFree(rd);</code>
-<code></code>
-<code>  return 0;</code>
-<code>}</code>
-</pre>
+// nvcc -O3 hellocudaquad2.cu -I./include --fmad=false -Xcompiler -ffp-contract=off
+
+#include <iostream>
+#include <stdio.h>
+#include <stdint.h>
+#include <stdarg.h>
+#include <ctype.h>
+#include <assert.h>
+#include <emmintrin.h>
+
+#include "sleefquadinline_sse2.h"
+#include "sleefquadinline_purec_scalar.h"
+#include "sleefquadinline_cuda.h"
+#include "sleefinline_sse2.h"
+
+// Based on the tutorial code at https://developer.nvidia.com/blog/even-easier-introduction-cuda/
+
+__global__ void pow_gpu(int n, Sleef_quadx1 *r, Sleef_quadx1 *x, Sleef_quadx1 *y) {
+  int index = threadIdx.x, stride = blockDim.x;
+
+  for (int i = index; i < n; i += stride)
+    r[i] = Sleef_powq1_u10cuda(x[i], y[i]);
+}
+
+int main(void) {
+  int N = 1 << 20;
+
+  Sleef_quadx1 *rd, *xd, *yd;
+  cudaMallocManaged(&rd, N*sizeof(Sleef_quadx1));
+  cudaMallocManaged(&xd, N*sizeof(Sleef_quadx1));
+  cudaMallocManaged(&yd, N*sizeof(Sleef_quadx1));
+
+  Sleef_quad *r = (Sleef_quad *)rd, *x = (Sleef_quad *)xd, *y = (Sleef_quad *)yd;
+
+  //
+
+  for (int i = 0; i < N; i++) {
+    r[i] = Sleef_cast_from_doubleq1_purec(0);
+    x[i] = Sleef_cast_from_doubleq1_purec(1.00001);
+    y[i] = Sleef_cast_from_doubleq1_purec(i);
+  }
+
+  pow_gpu<<<1, 256>>>(N, rd, xd, yd);
+
+  cudaDeviceSynchronize();
+
+  Sleef_quadx2 maxError = Sleef_splatq2_sse2(Sleef_strtoq("0.0", NULL));
+
+  for (int i = 0; i < N; i += 2) {
+    Sleef_quadx2 r2 = Sleef_loadq2_sse2(&r[i]);
+    Sleef_quadx2 x2 = Sleef_loadq2_sse2(&x[i]);
+    Sleef_quadx2 y2 = Sleef_loadq2_sse2(&y[i]);
+
+    Sleef_quadx2 q = Sleef_fabsq2_sse2(Sleef_subq2_u05sse2(r2, Sleef_powq2_u10sse2(x2, y2)));
+    maxError = Sleef_fmaxq2_sse2(maxError, q);
+  }
+
+  Sleef_printf("Max error: %Qg\n",
+               Sleef_fmaxq1_purec(Sleef_getq2_sse2(maxError, 0), Sleef_getq2_sse2(maxError, 1)));
+
+  //
+
+  cudaFree(yd);
+  cudaFree(xd);
+  cudaFree(rd);
+
+  return 0;
+```
 <p style="text-align:center;">
-  <a class="underlined" href="hellocudaquad2.cu">Source code for testing CUDA functions with CPU functions</a>
+<a class="underlined" href="../../src/hellocudaquad2.cu">Source code for testing CUDA functions with CPU functions</a>
 </p>
-
 
 <h2 id="conversion">Conversion functions</h2>
 
-<p class="funcname">Convert QP number to double-precision number</p>
+### Convert QP number to double-precision number
 
-<p class="header">Synopsis</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">double</b> <b class="func">Sleef_cast_to_doubleq1_cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-</p>
+__device__ double Sleef_cast_to_doubleq1_cuda( Sleef_quadx1 a );
+```
 
-<p class="header">Description</p>
+These functions convert a QP FP value to a double-precision value.
 
-<p class="noindent">
-  These functions convert a QP FP value to a double-precision value.
-</p>
+### Convert double-precision number to QP number
 
-<hr/>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="funcname">Convert double-precision number to QP number</p>
+__device__ Sleef_quadx1 Sleef_cast_from_doubleq1_cuda( double a );
+```
 
-<p class="header">Synopsis</p>
+These functions convert a double-precision value to a QP FP value.
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_cast_from_doubleq1_cuda</b>( <b class="type">double</b> <i class="var">a</i> );<br/>
-</p>
+### Convert QP number to 64-bit signed integer
 
-<p class="header">Description</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="noindent">
-  These functions convert a double-precision value to a QP FP value.
-</p>
+__device__ int64_t Sleef_cast_to_int64q1_cuda( Sleef_quadx1 a );
+```
 
-<hr/>
+These functions convert a QP FP value to a 64-bit signed integer.
 
+### Convert 64-bit signed integer to QP number
 
-<p class="funcname">Convert QP number to 64-bit signed integer</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="header">Synopsis</p>
+__device__ Sleef_quadx1 Sleef_cast_from_int64q1_cuda( int64_t a );
+```
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">int64_t</b> <b class="func">Sleef_cast_to_int64q1_cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-</p>
+These functions convert a 64-bit signed integer to a QP FP value.
 
-<p class="header">Description</p>
+### Convert QP number to 64-bit unsigned integer
 
-<p class="noindent">
-  These functions convert a QP FP value to a 64-bit signed integer.
-</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<hr/>
+__device__ uint64_t Sleef_cast_to_uint64q1_cuda( Sleef_quadx1 a );
+```
 
+These functions convert a QP FP value to a 64-bit signed integer.
 
-<p class="funcname">Convert 64-bit signed integer to QP number</p>
+### Convert 64-bit unsigned integer to QP number
 
-<p class="header">Synopsis</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_cast_from_int64q1_cuda</b>( <b class="type">int64_t</b> <i class="var">a</i> );<br/>
-</p>
+__device__ Sleef_quadx1 Sleef_cast_from_uint64q1_cuda( uint64_t a );
+```
 
-<p class="header">Description</p>
-
-<p class="noindent">
-  These functions convert a 64-bit signed integer to a QP FP value.
-</p>
-
-<hr/>
-
-
-<p class="funcname">Convert QP number to 64-bit unsigned integer</p>
-
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">uint64_t</b> <b class="func">Sleef_cast_to_uint64q1_cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-  These functions convert a QP FP value to a 64-bit signed integer.
-</p>
-
-<hr/>
-
-
-<p class="funcname">Convert 64-bit unsigned integer to QP number</p>
-
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_cast_from_uint64q1_cuda</b>( <b class="type">uint64_t</b> <i class="var">a</i> );<br/>
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-  These functions convert a 64-bit unsigned integer to a QP FP value.
-</p>
-
+These functions convert a 64-bit unsigned integer to a QP FP value.
 
 <h2 id="comparison">Comparison and selection functions</h2>
 
-<p class="funcname">QP comparison functions</p>
+### QP comparison functions
 
-<p class="header">Synopsis</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">int32_t</b> <b class="func">Sleef_icmpltq1_cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i>, <b class="type">Sleef_quadx1</b> <i class="var">b</i> );<br/>
-<b>__device__</b> <b class="type">int32_t</b> <b class="func">Sleef_icmpleq1_cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i>, <b class="type">Sleef_quadx1</b> <i class="var">b</i> );<br/>
-<b>__device__</b> <b class="type">int32_t</b> <b class="func">Sleef_icmpgtq1_cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i>, <b class="type">Sleef_quadx1</b> <i class="var">b</i> );<br/>
-<b>__device__</b> <b class="type">int32_t</b> <b class="func">Sleef_icmpgeq1_cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i>, <b class="type">Sleef_quadx1</b> <i class="var">b</i> );<br/>
-<b>__device__</b> <b class="type">int32_t</b> <b class="func">Sleef_icmpeqq1_cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i>, <b class="type">Sleef_quadx1</b> <i class="var">b</i> );<br/>
-<b>__device__</b> <b class="type">int32_t</b> <b class="func">Sleef_icmpneq1_cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i>, <b class="type">Sleef_quadx1</b> <i class="var">b</i> );<br/>
-</p>
+__device__ int32_t Sleef_icmpltq1_cuda(Sleef_quadx1 a, Sleef_quadx1 b);
+__device__ int32_t Sleef_icmpleq1_cuda(Sleef_quadx1 a, Sleef_quadx1 b);
+__device__ int32_t Sleef_icmpgtq1_cuda(Sleef_quadx1 a, Sleef_quadx1 b);
+__device__ int32_t Sleef_icmpgeq1_cuda(Sleef_quadx1 a, Sleef_quadx1 b);
+__device__ int32_t Sleef_icmpeqq1_cuda(Sleef_quadx1 a, Sleef_quadx1 b);
+__device__ int32_t Sleef_icmpneq1_cuda( Sleef_quadx1 a, Sleef_quadx1 b );
+```
 
-<p class="header">Description</p>
+These are the vectorized functions of [comparison
+functions](../quad#basicComparison).
 
-<p class="noindent">
-  These are the vectorized functions of <a class="underlined"
-  href="../quad#basicComparison">comparison functions</a>.
-</p>
+### QP comparison functions of the second kind
 
-<hr/>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="funcname">QP comparison functions of the second kind</p>
+__device__ int32_t Sleef_icmpq1_cuda( Sleef_quadx1 a, Sleef_quadx1 b );
+```
 
-<p class="header">Synopsis</p>
+These are the vectorized functions
+of [Sleef_icmpq1_purec](../quad#sleef_icmpq1_purec).
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">int32_t</b> <b class="func">Sleef_icmpq1_cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i>, <b class="type">Sleef_quadx1</b> <i class="var">b</i> );<br/>
-</p>
+### Check orderedness
 
-<p class="header">Description</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_icmpq1_purec"><b class="func">Sleef_icmpq1_purec</b></a>.
-</p>
+__device__ int32_t Sleef_iunordq1_cuda( Sleef_quadx1 a, Sleef_quadx1 b );
+```
 
-<hr/>
+These are the vectorized functions
+of [Sleef_iunordq1_purec](../quad#sleef_iunordq1_purec).
 
-<p class="funcname">Check orderedness</p>
+### Select elements
 
-<p class="header">Synopsis</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">int32_t</b> <b class="func">Sleef_iunordq1_cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i>, <b class="type">Sleef_quadx1</b> <i class="var">b</i> );<br/>
-</p>
+__device__ Sleef_quadx1 Sleef_iselectq1_cuda( int32_t c, Sleef_quadx1 a, Sleef_quadx1 b );
+```
 
-<p class="header">Description</p>
-
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_iunordq1_purec"><b class="func">Sleef_iunordq1_purec</b></a>.
-</p>
-
-<hr/>
-
-<p class="funcname">Select elements</p>
-
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_iselectq1_cuda</b>( <b class="type">int32_t</b> <i class="var">c</i>, <b class="type">Sleef_quadx1</b> <i class="var">a</i>, <b class="type">Sleef_quadx1</b> <i class="var">b</i> );<br/>
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-  These are the vectorized functions that operate in the same way as the ternary operator.
-</p>
-
+These are the vectorized functions that operate in the same way as the ternary operator.
 
 <h2 id="mathfunctions">Math functions</h2>
 
-<p class="funcname">QP functions for basic arithmetic operations</p>
+### QP functions for basic arithmetic operations
 
-<p class="header">Synopsis</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_addq1_u05cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i>, <b class="type">Sleef_quadx1</b> <i class="var">b</i> );<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_subq1_u05cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i>, <b class="type">Sleef_quadx1</b> <i class="var">b</i> );<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_mulq1_u05cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i>, <b class="type">Sleef_quadx1</b> <i class="var">b</i> );<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_divq1_u05cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i>, <b class="type">Sleef_quadx1</b> <i class="var">b</i> );<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_negq1_cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-</p>
+__device__ Sleef_quadx1 Sleef_addq1_u05cuda(Sleef_quadx1 a, Sleef_quadx1 b);
+__device__ Sleef_quadx1 Sleef_subq1_u05cuda(Sleef_quadx1 a, Sleef_quadx1 b);
+__device__ Sleef_quadx1 Sleef_mulq1_u05cuda(Sleef_quadx1 a, Sleef_quadx1 b);
+__device__ Sleef_quadx1 Sleef_divq1_u05cuda(Sleef_quadx1 a, Sleef_quadx1 b);
+__device__ Sleef_quadx1 Sleef_negq1_cuda( Sleef_quadx1 a );
+```
 
-<p class="header">Description</p>
+These are the vectorized functions of [the basic arithmetic
+operations](../quad#basicArithmetic).
 
-<p class="noindent">
-  These are the vectorized functions of <a class="underlined"
-  href="../quad#basicArithmetic">the basic arithmetic operations</a>.
-</p>
+### Square root functions
 
-<hr/>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="funcname">Square root functions</p>
+__device__ Sleef_quadx1 Sleef_sqrtq1_u05cuda( Sleef_quadx1 a );
+```
 
-<p class="header">Synopsis</p>
+These are the vectorized functions
+of [Sleef_sqrtq1_u05purec](../quad#sleef_sqrtq1_u05purec).
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_sqrtq1_u05cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-</p>
+### Sine functions
 
-<p class="header">Description</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_sqrtq1_u05purec"><b class="func">Sleef_sqrtq1_u05purec</b></a>.
-</p>
+__device__ Sleef_quadx1 Sleef_sinq1_u10cuda( Sleef_quadx1 a );
+```
 
-<hr/>
+These are the vectorized functions
+of [Sleef_sinq1_u10purec](../quad#sleef_sinq1_u10purec).
 
-<p class="funcname">Sine functions</p>
+### Cosine functions
 
-<p class="header">Synopsis</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_sinq1_u10cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-</p>
+__device__ Sleef_quadx1 Sleef_cosq1_u10cuda( Sleef_quadx1 a );
+```
 
-<p class="header">Description</p>
+These are the vectorized functions
+of [Sleef_cosq1_u10purec](../quad#sleef_cosq1_u10purec).
 
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_sinq1_u10purec"><b class="func">Sleef_sinq1_u10purec</b></a>.
-</p>
+### Tangent functions
 
-<hr/>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="funcname">Cosine functions</p>
+__device__ Sleef_quadx1 Sleef_tanq1_u10cuda( Sleef_quadx1 a );
+```
 
-<p class="header">Synopsis</p>
+These are the vectorized functions
+of [Sleef_tanq1_u10purec](../quad#sleef_tanq1_u10purec).
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_cosq1_u10cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-</p>
+### Arc sine functions
 
-<p class="header">Description</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_cosq1_u10purec"><b class="func">Sleef_cosq1_u10purec</b></a>.
-</p>
+__device__ Sleef_quadx1 Sleef_asinq1_u10cuda( Sleef_quadx1 a );
+```
 
-<hr/>
+These are the vectorized functions
+of [Sleef_asinq1_u10purec](../quad#sleef_asinq1_u10purec).
 
-<p class="funcname">Tangent functions</p>
+### Arc cosine functions
 
-<p class="header">Synopsis</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_tanq1_u10cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-</p>
+__device__ Sleef_quadx1 Sleef_acosq1_u10cuda( Sleef_quadx1 a );
+```
 
-<p class="header">Description</p>
+These are the vectorized functions
+of [Sleef_acosq1_u10purec](../quad#sleef_acosq1_u10purec).
 
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_tanq1_u10purec"><b class="func">Sleef_tanq1_u10purec</b></a>.
-</p>
+### Arc tangent functions
 
-<hr/>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="funcname">Arc sine functions</p>
+__device__ Sleef_quadx1 Sleef_atanq1_u10cuda( Sleef_quadx1 a );
+```
 
-<p class="header">Synopsis</p>
+These are the vectorized functions
+of [Sleef_atanq1_u10purec](../quad#sleef_atanq1_u10purec).
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_asinq1_u10cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-</p>
+### Base-<i>e</i> exponential functions
 
-<p class="header">Description</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_asinq1_u10purec"><b class="func">Sleef_asinq1_u10purec</b></a>.
-</p>
+__device__ Sleef_quadx1 Sleef_expq1_u10cuda( Sleef_quadx1 a );
+```
 
-<hr/>
+These are the vectorized functions
+of [Sleef_expq1_u10purec](../quad#sleef_expq1_u10purec).
 
-<p class="funcname">Arc cosine functions</p>
+### Base-2 exponential functions
 
-<p class="header">Synopsis</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_acosq1_u10cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-</p>
+__device__ Sleef_quadx1 Sleef_exp2q1_u10cuda( Sleef_quadx1 a );
+```
 
-<p class="header">Description</p>
+These are the vectorized functions
+of [Sleef_exp2q1_u10purec](../quad#sleef_exp2q1_u10purec).
 
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_acosq1_u10purec"><b class="func">Sleef_acosq1_u10purec</b></a>.
-</p>
+### Base-10 exponentail
 
-<hr/>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="funcname">Arc tangent functions</p>
+__device__ Sleef_quadx1 Sleef_exp10q1_u10cuda( Sleef_quadx1 a );
+```
 
-<p class="header">Synopsis</p>
+These are the vectorized functions
+of [Sleef_exp10q1_u10purec](../quad#sleef_exp10q1_u10purec).
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_atanq1_u10cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-</p>
+### Base-<i>e</i> exponential functions minus 1
 
-<p class="header">Description</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_atanq1_u10purec"><b class="func">Sleef_atanq1_u10purec</b></a>.
-</p>
+__device__ Sleef_quadx1 Sleef_expm1q1_u10cuda( Sleef_quadx1 a );
+```
 
-<hr/>
+These are the vectorized functions
+of [Sleef_expm1q1_u10purec](../quad#sleef_expm1q1_u10purec).
 
-<p class="funcname">Base-<i>e</i> exponential functions</p>
+### Natural logarithmic functions
 
-<p class="header">Synopsis</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_expq1_u10cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-</p>
+__device__ Sleef_quadx1 Sleef_logq1_u10cuda( Sleef_quadx1 a );
+```
 
-<p class="header">Description</p>
+These are the vectorized functions
+of [Sleef_logq1_u10purec](../quad#sleef_logq1_u10purec).
 
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_expq1_u10purec"><b class="func">Sleef_expq1_u10purec</b></a>.
-</p>
+### Base-2 logarithmic functions
 
-<hr/>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="funcname">Base-2 exponential functions</p>
+__device__ Sleef_quadx1 Sleef_log2q1_u10cuda( Sleef_quadx1 a );
+```
 
-<p class="header">Synopsis</p>
+These are the vectorized functions
+of [Sleef_log2q1_u10purec](../quad#sleef_log2q1_u10purec).
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_exp2q1_u10cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-</p>
+### Base-10 logarithmic functions
 
-<p class="header">Description</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_exp2q1_u10purec"><b class="func">Sleef_exp2q1_u10purec</b></a>.
-</p>
+__device__ Sleef_quadx1 Sleef_log10q1_u10cuda( Sleef_quadx1 a );
+```
 
-<hr/>
+These are the vectorized functions
+of [Sleef_log10q1_u10purec](../quad#sleef_log10q1_u10purec).
 
-<p class="funcname">Base-10 exponentail</p>
+### Logarithm of one plus argument
 
-<p class="header">Synopsis</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_exp10q1_u10cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-</p>
+__device__ Sleef_quadx1 Sleef_log1pq1_u10cuda( Sleef_quadx1 a );
+```
 
-<p class="header">Description</p>
+These are the vectorized functions
+of [Sleef_log1pq1_u10purec](../quad#sleef_log1pq1_u10purec).
 
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_exp10q1_u10purec"><b class="func">Sleef_exp10q1_u10purec</b></a>.
-</p>
+### Power functions
 
-<hr/>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="funcname">Base-<i>e</i> exponential functions minus 1</p>
+__device__ Sleef_quadx1 Sleef_powq1_u10cuda( Sleef_quadx1 x, Sleef_quadx1 y );
+```
 
-<p class="header">Synopsis</p>
+These are the vectorized functions
+of [Sleef_powq1_u10purec](../quad#sleef_powq1_u10purec).
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_expm1q1_u10cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-</p>
+### Hyperbolic sine functions
 
-<p class="header">Description</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_expm1q1_u10purec"><b class="func">Sleef_expm1q1_u10purec</b></a>.
-</p>
+__device__ Sleef_quadx1 Sleef_sinhq1_u10cuda( Sleef_quadx1 a );
+```
 
-<hr/>
+These are the vectorized functions
+of [Sleef_sinhq1_u10purec](../quad#sleef_sinhq1_u10purec).
 
-<p class="funcname">Natural logarithmic functions</p>
+### Hyperbolic cosine functions
 
-<p class="header">Synopsis</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_logq1_u10cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-</p>
+__device__ Sleef_quadx1 Sleef_coshq1_u10cuda( Sleef_quadx1 a );
+```
 
-<p class="header">Description</p>
+These are the vectorized functions
+of [Sleef_coshq1_u10purec](../quad#sleef_coshq1_u10purec).
 
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_logq1_u10purec"><b class="func">Sleef_logq1_u10purec</b></a>.
-</p>
+### Hyperbolic tangent functions
 
-<hr/>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="funcname">Base-2 logarithmic functions</p>
+__device__ Sleef_quadx1 Sleef_tanhq1_u10cuda( Sleef_quadx1 a );
+```
 
-<p class="header">Synopsis</p>
+These are the vectorized functions
+of [Sleef_tanhq1_u10purec](../quad#sleef_tanhq1_u10purec).
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_log2q1_u10cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-</p>
+### Inverse hyperbolic sine functions
 
-<p class="header">Description</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_log2q1_u10purec"><b class="func">Sleef_log2q1_u10purec</b></a>.
-</p>
+__device__ Sleef_quadx1 Sleef_asinhq1_u10cuda( Sleef_quadx1 a );
+```
 
-<hr/>
+These are the vectorized functions
+of [Sleef_asinhq1_u10purec](../quad#sleef_asinhq1_u10purec).
 
-<p class="funcname">Base-10 logarithmic functions</p>
+### Inverse hyperbolic cosine functions
 
-<p class="header">Synopsis</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_log10q1_u10cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-</p>
+__device__ Sleef_quadx1 Sleef_acoshq1_u10cuda( Sleef_quadx1 a );
+```
 
-<p class="header">Description</p>
+These are the vectorized functions
+of [Sleef_acoshq1_u10purec](../quad#sleef_acoshq1_u10purec).
 
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_log10q1_u10purec"><b class="func">Sleef_log10q1_u10purec</b></a>.
-</p>
+### Inverse hyperbolic tangent functions
 
-<hr/>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="funcname">Logarithm of one plus argument</p>
+__device__ Sleef_quadx1 Sleef_atanhq1_u10cuda( Sleef_quadx1 a );
+```
 
-<p class="header">Synopsis</p>
+These are the vectorized functions
+of [Sleef_atanhq1_u10purec](../quad#sleef_atanhq1_u10purec).
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_log1pq1_u10cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-</p>
+### Round to integer towards zero
 
-<p class="header">Description</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_log1pq1_u10purec"><b class="func">Sleef_log1pq1_u10purec</b></a>.
-</p>
+__device__ Sleef_quadx1 Sleef_truncq1_cuda( Sleef_quadx1 a );
+```
 
-<hr/>
+These are the vectorized functions
+of [Sleef_truncq1_purec](../quad#sleef_truncq1_purec).
 
-<p class="funcname">Power functions</p>
+### Round to integer towards minus infinity
 
-<p class="header">Synopsis</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_powq1_u10cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">x</i>, <b class="type">Sleef_quadx1</b> <i class="var">y</i> );<br/>
-<br/>
-</p>
+__device__ Sleef_quadx1 Sleef_floorq1_cuda( Sleef_quadx1 a );
+```
 
-<p class="header">Description</p>
+These are the vectorized functions
+of [Sleef_floorq1_purec](../quad#sleef_floorq1_purec).
 
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_powq1_u10purec"><b class="func">Sleef_powq1_u10purec</b></a>.
-</p>
+### Round to integer towards plus infinity
 
-<hr/>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="funcname">Hyperbolic sine functions</p>
+__device__ Sleef_quadx1 Sleef_ceilq1_cuda( Sleef_quadx1 a );
+```
 
-<p class="header">Synopsis</p>
+These are the vectorized functions
+of [Sleef_ceilq1_purec](../quad#sleef_ceilq1_purec).
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_sinhq1_u10cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-<br/>
-</p>
+### Round to integer away from zero
 
-<p class="header">Description</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_sinhq1_u10purec"><b class="func">Sleef_sinhq1_u10purec</b></a>.
-</p>
+__device__ Sleef_quadx1 Sleef_roundq1_cuda( Sleef_quadx1 a );
+```
 
-<hr/>
+These are the vectorized functions
+of [Sleef_roundq1_purec](../quad#sleef_roundq1_purec).
 
-<p class="funcname">Hyperbolic cosine functions</p>
+### Round to integer, ties round to even
 
-<p class="header">Synopsis</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_coshq1_u10cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-<br/>
-</p>
+__device__ Sleef_quadx1 Sleef_rintq1_cuda( Sleef_quadx1 a );
+```
 
-<p class="header">Description</p>
+These are the vectorized functions
+of [Sleef_rintq1_purec](../quad#sleef_rintq1_purec).
 
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_coshq1_u10purec"><b class="func">Sleef_coshq1_u10purec</b></a>.
-</p>
+### Absolute value
 
-<hr/>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="funcname">Hyperbolic tangent functions</p>
+__device__ Sleef_quadx1 Sleef_fabsq1_cuda( Sleef_quadx1 a );
+```
 
-<p class="header">Synopsis</p>
+These are the vectorized functions
+of [Sleef_fabsq1_purec](../quad#sleef_fabsq1_purec).
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_tanhq1_u10cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-<br/>
-</p>
+### Copy sign of a number
 
-<p class="header">Description</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_tanhq1_u10purec"><b class="func">Sleef_tanhq1_u10purec</b></a>.
-</p>
+__device__ Sleef_quadx1 Sleef_copysignq1_cuda( Sleef_quadx1 x, Sleef_quadx1 y );
+```
 
-<hr/>
+These are the vectorized functions
+of [Sleef_copysignq1_purec](../quad#sleef_copysignq1_purec).
 
-<p class="funcname">Inverse hyperbolic sine functions</p>
+### Maximum of two numbers
 
-<p class="header">Synopsis</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_asinhq1_u10cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-<br/>
-</p>
+__device__ Sleef_quadx1 Sleef_fmaxq1_cuda( Sleef_quadx1 x, Sleef_quadx1 y );
+```
 
-<p class="header">Description</p>
+These are the vectorized functions
+of [Sleef_fmaxq1_purec](../quad#sleef_fmaxq1_purec).
 
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_asinhq1_u10purec"><b class="func">Sleef_asinhq1_u10purec</b></a>.
-</p>
+### Minimum of two numbers
 
-<hr/>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="funcname">Inverse hyperbolic cosine functions</p>
+__device__ Sleef_quadx1 Sleef_fminq1_cuda( Sleef_quadx1 x, Sleef_quadx1 y );
+```
 
-<p class="header">Synopsis</p>
+These are the vectorized functions
+of [Sleef_fminq1_purec](../quad#sleef_fminq1_purec).
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_acoshq1_u10cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-<br/>
-</p>
+### Positive difference
 
-<p class="header">Description</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_acoshq1_u10purec"><b class="func">Sleef_acoshq1_u10purec</b></a>.
-</p>
+__device__ Sleef_quadx1 Sleef_fdimq1_u05cuda( Sleef_quadx1 x, Sleef_quadx1 y );
+```
 
-<hr/>
+These are the vectorized functions
+of [Sleef_fdimq1_u05purec](../quad#sleef_fdimq1_u05purec).
 
-<p class="funcname">Inverse hyperbolic tangent functions</p>
+### Floating point remainder
 
-<p class="header">Synopsis</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_atanhq1_u10cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-<br/>
-</p>
+__device__ Sleef_quadx1 Sleef_fmodq1_cuda( Sleef_quadx1 x, Sleef_quadx1 y );
+```
 
-<p class="header">Description</p>
+These are the vectorized functions
+of [Sleef_fmodq1_purec](../quad#sleef_fmodq1_purec).
 
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_atanhq1_u10purec"><b class="func">Sleef_atanhq1_u10purec</b></a>.
-</p>
+### Floating point remainder
 
-<hr/>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="funcname">Round to integer towards zero</p>
+__device__ Sleef_quadx1 Sleef_remainderq1_cuda( Sleef_quadx1 x, Sleef_quadx1 y );
+```
 
-<p class="header">Synopsis</p>
+These are the vectorized functions
+of [Sleef_remainderq1_purec](../quad#sleef_remainderq1_purec).
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_truncq1_cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-<br/>
-</p>
+### Split a number to fractional and integral components
 
-<p class="header">Description</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_truncq1_purec"><b class="func">Sleef_truncq1_purec</b></a>.
-</p>
+__device__ Sleef_quadx1 Sleef_frexpq1_cuda( Sleef_quadx1 x, int32_t * ptr );
+```
 
-<hr/>
+These are the vectorized functions
+of [Sleef_frexpq1_purec](../quad#sleef_frexpq1_purec).
 
-<p class="funcname">Round to integer towards minus infinity</p>
+### Break a number into integral and fractional parts
 
-<p class="header">Synopsis</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_floorq1_cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-<br/>
-</p>
+__device__ Sleef_quadx1 Sleef_modfq1_cuda( Sleef_quadx1 x, Sleef_quadx1 * ptr );
+```
 
-<p class="header">Description</p>
+These are the vectorized functions
+of [Sleef_modfq1_purec](../quad#sleef_modfq1_purec).
 
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_floorq1_purec"><b class="func">Sleef_floorq1_purec</b></a>.
-</p>
+### 2D Euclidian distance
 
-<hr/>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="funcname">Round to integer towards plus infinity</p>
+__device__ Sleef_quadx1 Sleef_hypotq1_u05cuda( Sleef_quadx1 x, Sleef_quadx1 y );
+```
 
-<p class="header">Synopsis</p>
+These are the vectorized functions
+of [Sleef_hypotq1_u05purec](../quad#sleef_hypotq1_u05purec).
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_ceilq1_cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-<br/>
-</p>
+### Fused multiply and accumulate
 
-<p class="header">Description</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_ceilq1_purec"><b class="func">Sleef_ceilq1_purec</b></a>.
-</p>
+__device__ Sleef_quadx1 Sleef_fmaq1_u05cuda( Sleef_quadx1 x, Sleef_quadx1 y, Sleef_quadx1 z );
+```
 
-<hr/>
+These are the vectorized functions
+of [Sleef_fmaq1_u05purec](../quad#sleef_fmaq1_u05purec).
 
-<p class="funcname">Round to integer away from zero</p>
+### Multiply by integral power of 2
 
-<p class="header">Synopsis</p>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_roundq1_cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-<br/>
-</p>
+__device__ Sleef_quadx1 Sleef_ldexpq1_cuda( Sleef_quadx1 x, int32_t e );
+```
 
-<p class="header">Description</p>
+These are the vectorized functions
+of [Sleef_ldexpq1_purec](../quad#sleef_ldexpq1_purec).
 
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_roundq1_purec"><b class="func">Sleef_roundq1_purec</b></a>.
-</p>
+### Integer exponent of an FP number
 
-<hr/>
+```c
+#include <sleefquadinline_cuda.h>
 
-<p class="funcname">Round to integer, ties round to even</p>
+__device__ int32_t Sleef_ilogbq1_cuda( Sleef_quadx1 x );
+```
 
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_rintq1_cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-<br/>
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_rintq1_purec"><b class="func">Sleef_rintq1_purec</b></a>.
-</p>
-
-<hr/>
-
-<p class="funcname">Absolute value</p>
-
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_fabsq1_cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">a</i> );<br/>
-<br/>
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_fabsq1_purec"><b class="func">Sleef_fabsq1_purec</b></a>.
-</p>
-
-<hr/>
-
-<p class="funcname">Copy sign of a number</p>
-
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_copysignq1_cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">x</i>, <b class="type">Sleef_quadx1</b> <i class="var">y</i> );<br/>
-<br/>
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_copysignq1_purec"><b class="func">Sleef_copysignq1_purec</b></a>.
-</p>
-
-<hr/>
-
-<p class="funcname">Maximum of two numbers</p>
-
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_fmaxq1_cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">x</i>, <b class="type">Sleef_quadx1</b> <i class="var">y</i> );<br/>
-<br/>
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_fmaxq1_purec"><b class="func">Sleef_fmaxq1_purec</b></a>.
-</p>
-
-<hr/>
-
-<p class="funcname">Minimum of two numbers</p>
-
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_fminq1_cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">x</i>, <b class="type">Sleef_quadx1</b> <i class="var">y</i> );<br/>
-<br/>
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_fminq1_purec"><b class="func">Sleef_fminq1_purec</b></a>.
-</p>
-
-<hr/>
-
-<p class="funcname">Positive difference</p>
-
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_fdimq1_u05cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">x</i>, <b class="type">Sleef_quadx1</b> <i class="var">y</i> );<br/>
-<br/>
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_fdimq1_u05purec"><b class="func">Sleef_fdimq1_u05purec</b></a>.
-</p>
-
-<hr/>
-
-<p class="funcname">Floating point remainder</p>
-
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_fmodq1_cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">x</i>, <b class="type">Sleef_quadx1</b> <i class="var">y</i> );<br/>
-<br/>
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_fmodq1_purec"><b class="func">Sleef_fmodq1_purec</b></a>.
-</p>
-
-<hr/>
-
-<p class="funcname">Floating point remainder</p>
-
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_remainderq1_cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">x</i>, <b class="type">Sleef_quadx1</b> <i class="var">y</i> );<br/>
-<br/>
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_remainderq1_purec"><b class="func">Sleef_remainderq1_purec</b></a>.
-</p>
-
-<hr/>
-
-<p class="funcname">Split a number to fractional and integral components</p>
-
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_frexpq1_cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">x</i>, <b class="type">int32_t *</b> <i class="var">ptr</i> );<br/>
-<br/>
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_frexpq1_purec"><b class="func">Sleef_frexpq1_purec</b></a>.
-</p>
-
-<hr/>
-
-<p class="funcname">Break a number into integral and fractional parts</p>
-
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_modfq1_cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">x</i>, <b class="type">Sleef_quadx1 *</b> <i class="var">ptr</i> );<br/>
-<br/>
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_modfq1_purec"><b class="func">Sleef_modfq1_purec</b></a>.
-</p>
-
-<hr/>
-
-<p class="funcname">2D Euclidian distance</p>
-
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_hypotq1_u05cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">x</i>, <b class="type">Sleef_quadx1</b> <i class="var">y</i> );<br/>
-<br/>
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_hypotq1_u05purec"><b class="func">Sleef_hypotq1_u05purec</b></a>.
-</p>
-
-<hr/>
-
-<p class="funcname">Fused multiply and accumulate</p>
-
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_fmaq1_u05cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">x</i>, <b class="type">Sleef_quadx1</b> <i class="var">y</i>, <b class="type">Sleef_quadx1</b> <i class="var">z</i> );<br/>
-<br/>
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_fmaq1_u05purec"><b class="func">Sleef_fmaq1_u05purec</b></a>.
-</p>
-
-<hr/>
-
-<p class="funcname">Multiply by integral power of 2</p>
-
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">Sleef_quadx1</b> <b class="func">Sleef_ldexpq1_cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">x</i>, <b class="type">int32_t</b> <i class="var">e</i> );<br/>
-<br/>
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_ldexpq1_purec"><b class="func">Sleef_ldexpq1_purec</b></a>.
-</p>
-
-<hr/>
-
-<p class="funcname">Integer exponent of an FP number</p>
-
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;sleefquadinline_cuda.h&gt;<br/>
-<br/>
-<b>__device__</b> <b class="type">int32_t</b> <b class="func">Sleef_ilogbq1_cuda</b>( <b class="type">Sleef_quadx1</b> <i class="var">x</i> );<br/>
-<br/>
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-  These are the vectorized functions
-  of <a href="../quad#Sleef_ilogbq1_purec"><b class="func">Sleef_ilogbq1_purec</b></a>.
-</p>
+These are the vectorized functions
+of [Sleef_ilogbq1_purec](../quad#sleef_ilogbq1_purec).
 
