@@ -9,450 +9,292 @@ permalink: /2-references/dft
 
 <h2>Table of contents</h2>
 
-<ul class="disc">
-  <li><a href="#tutorial">Tutorial</a></li>
-  <!--<li><a href="#compatibility">Compatibility with other libraries</a></li>-->
-  <li><a href="#reference">Function reference</a></li>
-</ul>
+* [Tutorial](#tutorial)
+* [Function reference](#reference)
 
 <h2 id="tutorial">Tutorial</h2>
 
-<p class="noindent">
-  I now explain how to use this DFT library by referring to an example
-  source code shown below. 
-  <a class="underlined" href="../src/tutorial.c">This source code</a> is
-  included in the distribution package under src/dft-tester directory.
-</p>
+I now explain how to use this DFT library by referring to an example source
+code shown below. [This source code](../../src/tutorial.c) is included in the
+distribution package under src/dft-tester directory.
 
-<pre class="code">
-<code>// gcc tutorial.c -lsleef -lsleefdft -lm</code>
-<code>#include &lt;stdio.h&gt;</code>
-<code>#include &lt;stdlib.h&gt;</code>
-<code>#include &lt;stdint.h&gt;</code>
-<code>#include &lt;math.h&gt;</code>
-<code>#include &lt;complex.h&gt;</code>
-<code></code>
-<code>#include "sleef.h"</code>
-<code>#include "sleefdft.h"</code>
-<code></code>
-<code>#define THRES 1e-4</code>
-<code></code>
-<code>typedef double complex cmpl;</code>
-<code></code>
-<code>cmpl omega(double n, double kn) {</code>
-<code>  return cexp((-2 * M_PI * _Complex_I / n) * kn);</code>
-<code>}</code>
-<code></code>
-<code>void forward(cmpl *ts, cmpl *fs, int len) {</code>
-<code>  for(int k=0;k&lt;len;k++) {</code>
-<code>    fs[k] = 0;</code>
-<code>    for(int n=0;n&lt;len;n++) fs[k] += ts[n] * omega(len, n*k);</code>
-<code>  }</code>
-<code>}</code>
-<code></code>
-<code>int main(int argc, char **argv) {</code>
-<code>  int n = 256;</code>
-<code>  if (argc == 2) n = 1 &lt;&lt; atoi(argv[1]);</code>
-<code></code>
-<code>  SleefDFT_setPlanFilePath("plan.txt", NULL, SLEEF_PLAN_AUTOMATIC);</code>
-<code></code>
-<code>  double *sx = (double *)Sleef_malloc(n*2 * sizeof(double));</code>
-<code>  double *sy = (double *)Sleef_malloc(n*2 * sizeof(double));</code>
-<code></code>
-<code>  struct SleefDFT *p = SleefDFT_double_init1d(n, sx, sy, SLEEF_MODE_FORWARD);</code>
-<code></code>
-<code>  if (p == NULL) {</code>
-<code>    printf("SleefDFT initialization failed\n");</code>
-<code>    exit(-1);</code>
-<code>  }</code>
-<code></code>
-<code>  cmpl *ts = (cmpl *)malloc(sizeof(cmpl)*n);</code>
-<code>  cmpl *fs = (cmpl *)malloc(sizeof(cmpl)*n);</code>
-<code></code>
-<code>  for(int i=0;i&lt;n;i++) {</code>
-<code>    ts[i] =</code>
-<code>      (2.0 * (rand() / (double)RAND_MAX) - 1) * 1.0 +</code>
-<code>      (2.0 * (rand() / (double)RAND_MAX) - 1) * _Complex_I;</code>
-<code></code>
-<code>    sx[(i*2+0)] = creal(ts[i]);</code>
-<code>    sx[(i*2+1)] = cimag(ts[i]);</code>
-<code>  }</code>
-<code></code>
-<code>  forward(ts, fs, n);</code>
-<code></code>
-<code>  SleefDFT_double_execute(p, NULL, NULL);</code>
-<code></code>
-<code>  int success = 1;</code>
-<code></code>
-<code>  for(int i=0;i&lt;n;i++) {</code>
-<code>    if ((fabs(sy[(i*2+0)] - creal(fs[i])) &gt; THRES) ||</code>
-<code>        (fabs(sy[(i*2+1)] - cimag(fs[i])) &gt; THRES)) {</code>
-<code>      success = 0;</code>
-<code>    }</code>
-<code>  }</code>
-<code></code>
-<code>  printf("%s\n", success ? "OK" : "NG");</code>
-<code></code>
-<code>  free(fs); free(ts);</code>
-<code>  Sleef_free(sy); Sleef_free(sx);</code>
-<code></code>
-<code>  SleefDFT_dispose(p);</code>
-<code></code>
-<code>  exit(success);</code>
-<code>}</code>
-</pre>
+```c
+// gcc tutorial.c -lsleef -lsleefdft -lm
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <math.h>
+#include <complex.h>
+
+#include "sleef.h"
+#include "sleefdft.h"
+
+#define THRES 1e-4
+
+typedef double complex cmpl;
+
+cmpl omega(double n, double kn) {
+  return cexp((-2 * M_PI * _Complex_I / n) * kn);
+}
+
+void forward(cmpl *ts, cmpl *fs, int len) {
+  for(int k=0;k<len;k++) {
+    fs[k] = 0;
+    for(int n=0;n<len;n++) fs[k] += ts[n] * omega(len, n*k);
+  }
+}
+
+int main(int argc, char **argv) {
+  int n = 256;
+  if (argc == 2) n = 1 <&lt; atoi(argv[1]);
+
+  SleefDFT_setPlanFilePath("plan.txt", NULL, SLEEF_PLAN_AUTOMATIC);
+
+  double *sx = (double *)Sleef_malloc(n*2 * sizeof(double));
+  double *sy = (double *)Sleef_malloc(n*2 * sizeof(double));
+
+  struct SleefDFT *p = SleefDFT_double_init1d(n, sx, sy, SLEEF_MODE_FORWARD);
+
+  if (p == NULL) {
+    printf("SleefDFT initialization failed\n");
+    exit(-1);
+  }
+
+  cmpl *ts = (cmpl *)malloc(sizeof(cmpl)*n);
+  cmpl *fs = (cmpl *)malloc(sizeof(cmpl)*n);
+
+  for(int i=0;i<n;i++) {
+    ts[i] =
+    (2.0 * (rand() / (double)RAND_MAX) - 1) * 1.0 +
+    (2.0 * (rand() / (double)RAND_MAX) - 1) * _Complex_I;
+
+  sx[(i*2+0)] = creal(ts[i]);
+  sx[(i*2+1)] = cimag(ts[i]);
+  }
+
+  forward(ts, fs, n);
+
+  SleefDFT_double_execute(p, NULL, NULL);
+
+  int success = 1;
+
+  for(int i=0;i<n;i++) {
+    if ((fabs(sy[(i*2+0)] - creal(fs[i])) > THRES) ||
+        (fabs(sy[(i*2+1)] - cimag(fs[i])) > THRES)) {
+      success = 0;
+    }
+  }
+
+  printf("%s\n", success ? "OK" : "NG");
+
+  free(fs); free(ts);
+  Sleef_free(sy); Sleef_free(sx);
+
+  SleefDFT_dispose(p);
+
+  exit(success);
+}
+```
 <p style="text-align:center;">
-  Fig. 4.1: <a href="../src/tutorial.c">Test code for DFT subroutines</a>
+Fig. 4.1: <a href="../../src/tutorial.c">Test code for DFT subroutines</a>
 </p>
 
-<div style="margin-top: 1.0cm;"></div>
+As shown in the first line, you can compile the source code with the following
+command, after you install the library.
 
-<p>
-  As shown in the first line, you can compile the source code with the
-  following command, after you install the library.
-</p>
+```sh
+gcc tutorial.c -lsleef -lsleefdft -lm
+```
 
-<pre class="command">$ gcc tutorial.c -lsleef -lsleefdft -lm
-</pre>
+This program takes one integer argument `n`. It executes forward complex
+transform with size `2^n` using a naive transform and the library. If the two
+results match, it prints OK.
 
-<p>
-  This program takes one integer argument <i class="var">n</i>. It executes
-  forward complex transform with size 2<sup><i class="var">n</i></sup> using a
-  naive transform and the library. If the two results match, it prints
-  OK.
-</p>
+For the first execution, this program takes a few seconds to finish. This is
+because the library measures computation speed with many different
+configurations to find the best execution plan. The best plan is saved to
+"plan.txt", as specified in line 28. Later executions will finish instantly as
+the library reads the plan from this file. Instead of specifying the file name
+in the program, the file can be specified by `SLEEFDFTPLAN` environment
+variable. Instead of constructing or loading a plan, the library can estimate a
+modestly good configuration, if `SLEEF_MODE_ESTIMATE` flag is specified at line
+30.
 
-<p>
-  For the first execution, this program takes a few seconds to
-  finish. This is because the library measures computation speed with
-  many different configurations to find the best execution plan. The
-  best plan is saved to "plan.txt", as specified in line 28. Later
-  executions will finish instantly as the library reads the plan from
-  this file. Instead of specifying the file name in the program, the
-  file can be specified by SLEEFDFTPLAN environment variable. Instead
-  of constructing or loading a plan, the library can estimate a
-  modestly good configuration, if SLEEF_MODE_ESTIMATE flag is
-  specified at line 30.
-</p>
+This library executes transforms using the most suitable SIMD instructions
+available on the computer, in addition to multi-threading. In order to make the
+computation efficient, the library requires the input and output arrays to be
+aligned to some boundaries so that the data can be accessed with SIMD
+instructions. By using `Sleef_malloc`, as seen in line 37 and 38, this
+alignment is ensured. Memory allocated with `Sleef_malloc` has to be freed with
+`Sleef_free`, as seen in line 68.  When a transform is executed, you need to
+pass the pointer returned by `Sleef_malloc`. You can allocate an aligned memory
+region yourself, and pass the pointer to the library.
 
-<p>
-  This library executes transforms using the most suitable SIMD
-  instructions available on the computer, in addition to
-  multi-threading. In order to make the computation efficient, the
-  library requires the input and output arrays to be aligned to some
-  boundaries so that the data can be accessed with SIMD
-  instructions. By using <b class="func">Sleef_malloc</b>, as seen in
-  line 37 and 38, this alignment is ensured. Memory allocated
-  with <b class="func">Sleef_malloc</b> has to be freed
-  with <b class="func">Sleef_free</b>, as seen in line 68.  When a
-  transform is executed, you need to pass the pointer returned
-  by <b class="func">Sleef_malloc</b>. You can allocate an aligned
-  memory region yourself, and pass the pointer to the library.
-</p>
+The real and imaginary parts of the `k`th number are stored in (`2k`)-th and
+(`2k+1`)-th elements of the input and output array, respectively. At line 54,
+the transform is executed by the library. You can specify the same array as the
+input and output.
 
-<p>
-  The real and imaginary parts of the <i>k</i>th number
-  are stored in (2<i>k</i>)-th and
-  (2<i>k</i>+1)-th elements of the input and output array,
-  respectively. At line 54, the transform is executed by the
-  library. You can specify the same array as the input and output.
-</p>
-
-<p>
-  Under ../src/dft-tester directory, there are other examples showing how
-  to execute transforms in a way that you get equivalent results to
-  other libraries.
-</p>
-
-<!--<h2 id="compatibility">Compatibility with other libraries</h2>-->
-
+Under `../src/dft-tester` directory, there are other examples showing how to
+execute transforms in a way that you get equivalent results to other libraries.
 
 <h2 id="reference">Function reference</h2>
 
-<p class="funcname"><b class="func">Sleef_malloc</b> - allocate aligned memory</p>
+### `Sleef_malloc`
 
-<p class="header">Synopsis</p>
+Allocate aligned memory
 
-<p class="synopsis">
-#include &lt;stdlib.h&gt;<br/>
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">void *</b> <b class="func">Sleef_malloc</b>(<b class="type">size_t</b> <i class="var">z</i>);<br/>
-<br/>
-Link with -lsleef.
+```c
+#include <stdlib.h>
+#include <sleef.h>
+
+void * Sleef_malloc (size_t z);
+```
+
+Link with `-lsleef`.
+
+`Sleef_malloc` allocates `z` bytes of aligned memory region, and return the
+pointer to that region. The returned pointer points an address that can be
+accessed by all SIMD load and store instructions available on that computer.
+Memory regions allocated by `Sleef_malloc` have to be freed with `Sleef_free`.
+
+### `Sleef_free`
+
+```c
+#include <stdlib.h>
+#include <sleef.h>
+
+void Sleef_free (void *ptr);
+```
+
+Link with `-lsleef`.
+
+A memory region pointed by `ptr` that is allocated by `Sleef_malloc` can be
+freed with `Sleef_free`.
+
+### `SleefDFT_setPlanFilePath`
+
+Set the file path for storing execution plans
+
+```c
+#include <stdint.h>
+#include <sleefdft.h>
+
+void SleefDFT_setPlanFilePath (const char *path, const char *arch, uint64_t mode);
+```
+
+Link with `-lsleefdft -lsleef`.
+
+File name for storing execution plan can be specified by this function. If NULL
+is specified as `path`, the file name is read from SLEEFDFTPLAN environment
+variable. A string for identifying system micro architecture can be also given.
+The library will automatically detect the marchitecture if NULL is given as
+`arch`. Management options for the plan file can be specified by the `mode`
+parameter, as shown below.
+
+<p style="text-align:center;">
+Table 4.2: Mode flags for `SleefFT_setPlanFilePath`
 </p>
 
-<p class="header">Description</p>
+| Flag                   | Meaning           |
+|:----------------------:|:------------------|
+| `SLEEF_PLAN_AUTOMATIC` | Execution plans are automatically loaded and saved. Plans are generated if it does not exist. |
+| `SLEEF_PLAN_READONLY`  | Execution plans are automatically loaded, but not saved. |
+| `SLEEF_PLAN_RESET`     | Existing execution plans are reset and constructed from the beginning. |
 
-<p class="noindent">
-  <b class="func">Sleef_malloc</b> allocates <i class="var">z</i> bytes of aligned
-  memory region, and return the pointer to that region. The returned
-  pointer points an address that can be accessed by all SIMD load and
-  store instructions available on that computer. Memory regions
-  allocated by <b class="func">Sleef_malloc</b> have to be freed
-  with <b class="func">Sleef_free</b>.
+### `SleefDFT_double_init1d`
+### `SleefDFT_float_init1d`
+
+Initialize the tables for 1D transform
+
+```c
+#include <stdint.h>
+#include <sleefdft.h>
+
+struct SleefDFT * SleefDFT_double_init1d(uint32_t n, const double *in, double *out, uint64_t mode);
+struct SleefDFT * SleefDFT_float_init1d(uint32_t n, const float *in, float *out, uint64_t mode);
+```
+
+Link with `-lsleefdft -lsleef`.
+
+These functions generates and initializes the tables that is used for 1D
+transform, and returns the pointer. Size of transform can be specified by `n`.
+Currently, power-of-two sizes can be only specified. The list of the flags that
+can be passed to `mode` is shown below.
+
+<p style="text-align:center;">
+Table 4.3: Mode flags for `SleefDFT_double_init`
 </p>
 
-<hr/>
+| Flag                   | Meaning           |
+|:----------------------:|:------------------|
+| `SLEEF_MODE_FORWARD`   | Tables are initialized for forward transforms. |
+| `SLEEF_MODE_BACKWARD`  | Tables are initialized for backward transforms. |
+| `SLEEF_MODE_COMPLEX`   | Tables are initialized for complex transforms. |
+| `SLEEF_MODE_REAL`      | Tables are initialized for real transforms. |
+| `SLEEF_MODE_ALT`       | Tables are initialized for alternative real transforms. |
+| `SLEEF_MODE_ESTIMATE`  | Execution plans are estimated. |
+| `SLEEF_MODE_MEASURE`   | Execution plans are measured when they are needed. |
+| `SLEEF_MODE_VERBOSE`   | Messages are displayed. |
+| `SLEEF_MODE_NO_MT`     | Multithreading will be disabled in the computation for transforms. |
 
-<p class="funcname"><b class="func">Sleef_free</b> - free memory allocated by <b class="func">Sleef_malloc</b></p>
+These functions return a pointer to the data that is used for 1D DFT
+computation, or NULL if an error occurred.
 
-<p class="header">Synopsis</p>
+### `SleefDFT_double_init2d`
+### `SleefDFT_float_init2d`
 
-<p class="synopsis">
-#include &lt;stdlib.h&gt;<br/>
-#include &lt;sleef.h&gt;<br/>
-<br/>
-<b class="type">void</b> <b class="func">Sleef_free</b>(<b class="type">void *</b><i class="var">ptr</i>);<br/>
-<br/>
-Link with -lsleef.
-</p>
+Initialize the tables for 2D transform
 
-<p class="header">Description</p>
+```c
+#include <stdint.h>
+#include <sleefdft.h>
 
-<p class="noindent">
-  A memory region pointed by <i class="var">ptr</i> that is allocated
-by <b class="func">Sleef_malloc</b> can be freed
-with <b class="func">Sleef_free</b>.
-</p>
+struct SleefDFT * SleefDFT_double_init2d(uint32_t n, uint32_t m, const double *in, double *out, uint64_t mode);
+struct SleefDFT * SleefDFT_float_init2d(uint32_t n, uint32_t m, const float *in, float *out, uint64_t mode);
+```
 
-<hr/>
+Link with `-lsleefdft -lsleef`.
 
-<p class="funcname"><b class="func">SleefDFT_setPlanFilePath</b> - set the file path for storing execution plans</p>
+These functions generates and initilizes the tables that is used for 2D
+transform, and returns the pointer. Size of transform can be specified by `n`.
+Currently, power-of-two sizes can be only specified. The list of the flags that
+can be passed to `mode` is shown below.
 
-<p class="header">Synopsis</p>
+These functions return a pointer to the data that is used for 2D DFT
+computation, or NULL if an error occurred.
 
-<p class="synopsis">
-#include &lt;stdint.h&gt;<br/>
-#include &lt;sleefdft.h&gt;<br/>
-<br/>
-<b class="type">void</b> <b class="func">SleefDFT_setPlanFilePath</b>(<b class="type">const char *</b><i class="var">path</i>, <b class="type">const char *</b><i class="var">arch</i>, <b class="type">uint64_t</b> <i class="var">mode</i>);<br/>
-<br/>
-Link with -lsleefdft -lsleef.
-</p>
+### `SleefDFT_double_execute`
+### `SleefDFT_float_execute`
 
-<p class="header">Description</p>
+Execute a transform
 
-<p class="noindent">
-File name for storing execution plan can be specified by this
-function. If NULL is specified as <i class="var">path</i>, the file name is read
-from SLEEFDFTPLAN environment variable. A string for identifying
-system micro architecture can be also given. The library will
-automatically detect the marchitecture if NULL is given
-as <i class="var">arch</i>. Management options for the plan file can be specified
-by the <i class="var">mode</i> parameter, as shown below.
-</p>
+```c
+#include <stdint.h>
+#include <sleefdft.h>
 
-<div style="margin-top: 1.0cm;"></div>
+void SleefDFT_double_execute(struct SleefDFT *ptr, const double *in, double *out);
+void SleefDFT_float_execute(struct SleefDFT *ptr, const float *in, float *out);
+```
 
-<table style="text-align:center;" align="center">
-  <tr align="center">
-    <td class="caption">Table 4.2: Mode flags for SleefFT_setPlanFilePath</td>
-  </tr>
-  <tr align="center">
-    <td>
-      <table class="lt">
-        <tr>
-          <td class="lt-hl"></td>
-          <td class="lt-hl"></td>
-        </tr>
-	<tr>
-	  <td class="lt-br" align="center">Flag</td>
-	  <td class="lt-b" align="center">Meaning</td>
-	</tr>
-	<tr>
-	  <td class="lt-hl"></td>
-	  <td class="lt-hl"></td>
-	</tr>
-	<tr>
-	  <td class="lt-r" align="left">SLEEF_PLAN_AUTOMATIC</td>
-	  <td class="lt-" align="left">Execution plans are automatically loaded and saved. Plans are generated if it does not exist.</td>
-	</tr>
-	<tr>
-	  <td class="lt-r" align="left">SLEEF_PLAN_READONLY</td>
-	  <td class="lt-" align="left">Execution plans are automatically loaded, but not saved.</td>
-	</tr>
-	<tr>
-	  <td class="lt-br" align="left">SLEEF_PLAN_RESET</td>
-	  <td class="lt-b" align="left">Existing execution plans are reset and constructed from the beginning.</td>
-	</tr>
-      </table>
-    </td>
-  </tr>
-</table>
+Link with `-lsleefdft -lsleef`.
 
-<hr/>
+`ptr` is a pointer to the plan. `in` and `out` must be pointers returned from
+`Sleef_malloc` function. You can specify the same pointer to `in` and `out`.
 
-<p class="funcname"><b class="func">SleefDFT_double_init1d</b>, <b class="func">SleefDFT_float_init1d</b> - initialize the tables for 1D transform</p>
+### `SleefDFT_dispose`
 
-<p class="header">Synopsis</p>
+Dispose the tables for transforms
 
-<p class="synopsis">
-#include &lt;stdint.h&gt;<br/>
-#include &lt;sleefdft.h&gt;<br/>
-<br/>
-<b class="type">struct SleefDFT *</b> <b class="func">SleefDFT_double_init1d</b>(<b class="type">uint32_t</b> <i class="var">n</i>, <b class="type">const double *</b><i class="var">in</i>, <b class="type">double *</b><i class="var">out</i>, <b class="type">uint64_t</b> <i class="var">mode</i>);<br/>
-<b class="type">struct SleefDFT *</b> <b class="func">SleefDFT_float_init1d</b>(<b class="type">uint32_t</b> <i class="var">n</i>, <b class="type">const float *</b><i class="var">in</i>, <b class="type">float *</b><i class="var">out</i>, <b class="type">uint64_t</b> <i class="var">mode</i>);<br/>
-<br/>
-Link with -lsleefdft -lsleef.
-</p>
+```c
+#include <stdint.h>
+#include <sleefdft.h>
 
-<p class="header">Description</p>
+void SleefDFT_dispose(struct SleefDFT *ptr);
+```
 
-<p class="noindent">
-  These functions generates and initializes the tables that is used for
-  1D transform, and returns the pointer. Size of transform can be
-  specified by <i class="var">n</i>. Currently, power-of-two sizes can be only
-  specified. The list of the flags that can be passed to <i class="var">mode</i>
-  is shown below.
-</p>
+Link with `-lsleefdft -lsleef`.
 
-<div style="margin-top: 1.0cm;"></div>
-
-<table style="text-align:center;" align="center">
-  <tr align="center">
-    <td class="caption">Table 4.3: Mode flags for SleefDFT_double_init</td>
-  </tr>
-  <tr align="center">
-    <td>
-      <table class="lt">
-        <tr>
-          <td class="lt-hl"></td>
-          <td class="lt-hl"></td>
-        </tr>
-	<tr>
-	  <td class="lt-br" align="center">Flag</td>
-	  <td class="lt-b" align="center">Meaning</td>
-	</tr>
-	<tr>
-	  <td class="lt-hl"></td>
-	  <td class="lt-hl"></td>
-	</tr>
-	<tr>
-	  <td class="lt-r" align="left">SLEEF_MODE_FORWARD</td>
-	  <td class="lt-" align="left">Tables are initialized for forward transforms.</td>
-	</tr>
-	<tr>
-	  <td class="lt-r" align="left">SLEEF_MODE_BACKWARD</td>
-	  <td class="lt-" align="left">Tables are initialized for backward transforms.</td>
-	</tr>
-	<tr>
-	  <td class="lt-r" align="left">SLEEF_MODE_COMPLEX</td>
-	  <td class="lt-" align="left">Tables are initialized for complex transforms.</td>
-	</tr>
-	<tr>
-	  <td class="lt-r" align="left">SLEEF_MODE_REAL</td>
-	  <td class="lt-" align="left">Tables are initialized for real transforms.</td>
-	</tr>
-	<tr>
-	  <td class="lt-r" align="left">SLEEF_MODE_ALT</td>
-	  <td class="lt-" align="left">Tables are initialized for alternative real transforms.</td>
-	</tr>
-	<tr>
-	  <td class="lt-r" align="left">SLEEF_MODE_ESTIMATE</td>
-	  <td class="lt-" align="left">Execution plans are estimated.</td>
-	</tr>
-	<tr>
-	  <td class="lt-r" align="left">SLEEF_MODE_MEASURE</td>
-	  <td class="lt-" align="left">Execution plans are measured when they are needed.</td>
-	</tr>
-	<tr>
-	  <td class="lt-r" align="left">SLEEF_MODE_VERBOSE</td>
-	  <td class="lt-" align="left">Messages are displayed.</td>
-	</tr>
-	<tr>
-	  <td class="lt-br" align="left">SLEEF_MODE_NO_MT</td>
-	  <td class="lt-b" align="left">Multithreading will be disabled in the computation for transforms.</td>
-	</tr>
-      </table>
-    </td>
-  </tr>
-</table>
-
-<p class="header">Return value</p>
-
-<p class="noindent">
-  These functions return a pointer to the data that is used for 1D DFT
-  computation, or NULL if an error occurred.
-</p>
-
-<hr/>
-
-<p class="funcname"><b class="func">SleefDFT_double_init2d</b>, <b class="func">SleefDFT_float_init2d</b> - initialize the tables for 2D transform</p>
-
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;stdint.h&gt;<br/>
-#include &lt;sleefdft.h&gt;<br/>
-<br/>
-<b class="type">struct SleefDFT *</b> <b class="func">SleefDFT_double_init2d</b>(<b class="type">uint32_t</b> <i class="var">n</i>, <b class="type">uint32_t</b> <i class="var">m</i>, <b class="type">const double *</b><i class="var">in</i>, <b class="type">double *</b><i class="var">out</i>, <b class="type">uint64_t</b> <i class="var">mode</i>);<br/>
-<b class="type">struct SleefDFT *</b> <b class="func">SleefDFT_float_init2d</b>(<b class="type">uint32_t</b> <i class="var">n</i>, <b class="type">uint32_t</b> <i class="var">m</i>, <b class="type">const float *</b><i class="var">in</i>, <b class="type">float *</b><i class="var">out</i>, <b class="type">uint64_t</b> <i class="var">mode</i>);<br/>
-<br/>
-Link with -lsleefdft -lsleef.
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-  These functions generates and initilizes the tables that is used for
-  2D transform, and returns the pointer. Size of transform can be
-  specified by <i class="var">n</i>. Currently, power-of-two sizes can be only
-  specified. The list of the flags that can be passed to <i class="var">mode</i>
-  is shown below.
-</p>
-
-<p class="header">Return value</p>
-
-<p class="noindent">
-  These functions return a pointer to the data that is used for 2D DFT
-  computation, or NULL if an error occurred.
-</p>
-
-<hr/>
-
-<p class="funcname"><b class="func">SleefDFT_double_execute</b>, <b class="func">SleefDFT_float_execute</b> - execute a transform</p>
-
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;stdint.h&gt;<br/>
-#include &lt;sleefdft.h&gt;<br/>
-<br/>
-<b class="type">void</b> <b class="func">SleefDFT_double_execute</b>(<b class="type">struct SleefDFT *</b><i class="var">ptr</i>, <b class="type">const double *</b><i class="var">in</i>, <b class="type">double *</b><i class="var">out</i>);<br/>
-<b class="type">void</b> <b class="func">SleefDFT_float_execute</b>(<b class="type">struct SleefDFT *</b><i class="var">ptr</i>, <b class="type">const float *</b><i class="var">in</i>, <b class="type">float *</b><i class="var">out</i>);<br/>
-<br/>
-Link with -lsleefdft -lsleef.
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-  <i class="var">ptr</i> is a pointer to the
-plan. <i class="var">in</i> and <i class="var">out</i> must be
-pointers returned from Sleef_malloc function. You can specify the same
-pointer to <i class="var">in</i> and <i class="var">out</i>.
-</p>
-
-<hr/>
-
-<p class="funcname"><b class="func">SleefDFT_dispose</b> - dispose the tables for transforms</p>
-
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;stdint.h&gt;<br/>
-#include &lt;sleefdft.h&gt;<br/>
-<br/>
-<b class="type">void</b> <b class="func">SleefDFT_dispose</b>(<b class="type">struct SleefDFT *</b><i class="var">ptr</i>);<br/>
-<br/>
-Link with -lsleefdft -lsleef.
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-  This function frees a plan returned
-  by <b class="func">SleefDFT_double_init1d</b>, <b class="func">SleefDFT_float_init1d</b>, <b class="func">SleefDFT_double_init2d</b>, or <b class="func">SleefDFT_float_init2d</b> functions.
-</p>
+This function frees a plan returned by `SleefDFT_double_init1d`,
+`SleefDFT_double_init2d`, or `SleefDFT_float_init2d` functions.
 
