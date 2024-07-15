@@ -3695,6 +3695,17 @@ DFINITE_ALIAS_vf_vf(__sqrtf_finite,       xsqrtf)
 DFINITE_ALIAS_vf_vf(__tgammaf_u1_finite,  xtgammaf_u1)
 
 #ifdef HEADER_MASKED
+
+#if ENABLE_ALIAS
+#define DMASKED_ALIAS_vfloat(ALIASEE, TARGET) EXPORT CONST VECTOR_CC vfloat ALIASEE(vfloat, vopmask) __attribute__((weak, alias(FUNC)));
+#define DMASKED_ALIAS_vfloat2(ALIASEE, TARGET) EXPORT CONST VECTOR_CC vfloat ALIASEE(vfloat, vfloat, vopmask) __attribute__((weak, alias(FUNC)));
+#define DMASKED_ALIAS_vfloatp(ALIASEE, TARGET) EXPORT CONST VECTOR_CC vfloat ALIASEE(vfloat, vfloat*, vopmask) __attribute__((weak, alias(FUNC)));
+#else
+#define DMASKED_ALIAS_vfloat(ALIASEE, TARGET) EXPORT CONST VECTOR_CC vfloat ALIASEE(vfloat x, vopmask m) { return TARGET(x, m); }
+#define DMASKED_ALIAS_vfloat2(ALIASEE, TARGET) EXPORT CONST VECTOR_CC vfloat ALIASEE(vfloat x, vfloat y, vopmask m) { return TARGET(x, y, m); }
+#define DMASKED_ALIAS_vfloatp(ALIASEE, TARGET) EXPORT CONST VECTOR_CC vfloat ALIASEE(vfloat x, float *y, vopmask m) { return TARGET(x, y, m); }
+#endif
+
 #include HEADER_MASKED
 #endif
 #endif /* #ifdef ENABLE_GNUABI */

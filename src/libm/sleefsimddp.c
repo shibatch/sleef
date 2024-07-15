@@ -3745,6 +3745,17 @@ DFINITE_ALIAS_vd_vd(__sqrt_finite,       xsqrt)
 DFINITE_ALIAS_vd_vd(__tgamma_u1_finite,  xtgamma_u1)
 
 #ifdef HEADER_MASKED
+
+#if ENABLE_ALIAS
+#define DMASKED_ALIAS_vdouble(ALIASEE, TARGET) EXPORT CONST VECTOR_CC vdouble ALIASEE(vdouble, vopmask) __attribute__((weak, alias(FUNC)));
+#define DMASKED_ALIAS_vdouble2(ALIASEE, TARGET) EXPORT CONST VECTOR_CC vdouble ALIASEE(vdouble, vdouble, vopmask) __attribute__((weak, alias(FUNC)));
+#define DMASKED_ALIAS_vdoublep(ALIASEE, TARGET) EXPORT CONST VECTOR_CC vdouble ALIASEE(vdouble, vdouble*, vopmask) __attribute__((weak, alias(FUNC)));
+#else
+#define DMASKED_ALIAS_vdouble(ALIASEE, TARGET) EXPORT CONST VECTOR_CC vdouble ALIASEE(vdouble x, vopmask m) { return TARGET(x, m); }
+#define DMASKED_ALIAS_vdouble2(ALIASEE, TARGET) EXPORT CONST VECTOR_CC vdouble ALIASEE(vdouble x, vdouble y, vopmask m) { return TARGET(x, y, m); }
+#define DMASKED_ALIAS_vdoublep(ALIASEE, TARGET) EXPORT CONST VECTOR_CC vdouble ALIASEE(vdouble x, double *y, vopmask m) { return TARGET(x, y, m); }
+#endif
+
 #include HEADER_MASKED
 #endif
 #endif /* #ifdef ENABLE_GNUABI */
