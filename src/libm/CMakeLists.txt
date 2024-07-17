@@ -262,7 +262,7 @@ add_custom_target(renameCUDA.h_generated DEPENDS ${HEADER_CUDA})
 add_host_executable(${TARGET_MKRENAME_GNUABI} mkrename_gnuabi.c)
 
 set(HEADER_GNUABI_FILES_GENERATED "")
-if(ENABLE_GNUABI)
+if(SLEEF_BUILD_GNUABI_LIBS)
   foreach(SIMD ${SLEEF_SUPPORTED_GNUABI_EXTENSIONS})
     if(COMPILER_SUPPORTS_${SIMD})
       string(TOLOWER ${SIMD} vecarch)
@@ -288,7 +288,7 @@ endif()
 add_host_executable(${TARGET_MKMASKED_GNUABI} mkmasked_gnuabi.c)
 
 # maskedXXX_YY_gnuabi.h
-if(ENABLE_GNUABI)
+if(SLEEF_BUILD_GNUABI_LIBS)
   foreach(SIMD ${SLEEF_SUPPORTED_GNUABI_EXTENSIONS})
     if(COMPILER_SUPPORTS_${SIMD} AND MKMASKED_PARAMS_GNUABI_${SIMD}_sp)
       string(TOLOWER ${SIMD} vecarch)
@@ -846,7 +846,7 @@ endif(SLEEF_ARCH_S390X)
 # Compile SIMD versions for GNU Abi
 # --------------------------------------------------------------------
 # Build gnuabi version from just simd object files
-if(ENABLE_GNUABI)
+if(SLEEF_BUILD_GNUABI_LIBS)
   set(TARGET_LIBSLEEFGNUABI_OBJECTS "")
   foreach(SIMD ${SLEEF_SUPPORTED_GNUABI_EXTENSIONS})
     if(COMPILER_SUPPORTS_${SIMD})
@@ -912,7 +912,7 @@ if(ENABLE_GNUABI)
 if(LIBM AND NOT COMPILER_SUPPORTS_BUILTIN_MATH)
   target_link_libraries(${TARGET_LIBSLEEFGNUABI} ${LIBM})
 endif()
-endif(ENABLE_GNUABI)
+endif(SLEEF_BUILD_GNUABI_LIBS)
 
 # --------------------------------------------------------------------
 # TARGET_LLVM_BITCODE
@@ -1047,7 +1047,7 @@ install(
     COMPONENT sleef_Development
 )
 
-if(ENABLE_GNUABI)
+if(SLEEF_BUILD_GNUABI_LIBS)
   install(
       TARGETS ${TARGET_LIBSLEEFGNUABI}
       EXPORT sleefTargets
