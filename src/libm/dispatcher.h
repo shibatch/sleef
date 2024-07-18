@@ -19,16 +19,46 @@ static sigjmp_buf sigjmp;
 #define LONGJMP siglongjmp
 #endif
 
+// Protect sigjmp from parallel access
+// FIXME: Static initializers will not work on Windows and MacOS
+#ifdef __linux__
+static pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
+#else
+#error "pthread initializer not supported"
+#endif
+
 static void sighandler(int signum) {
   LONGJMP(sigjmp, 1);
 }
 
-static int cpuSupportsExt(void (*tryExt)()) {
-  static int cache = -1;
-  if (cache != -1) return cache;
+// On Linux we prefer the more robust sigaction over signal
+#ifdef __linux__
+#define SIGNAL(SIGNUM, SIGHANDLER, ORIG)			\
+  {								\
+    struct sigaction sigact = { .sa_handler = (SIGHANDLER) };	\
+    sigaction((SIGNUM), &sigact, (ORIG));			\
+  }
+#define RESTORE_SIGNAL(SIGNUM, ORIG)				\
+  sigaction((SIGNUM), (ORIG), NULL);
+#else
+#define SIGNAL(SIGNUM, SIGHANDLER, ORIG)	\
+  (ORIG) = signal((SIGNUM), (SIGHANDLER));
+#define RESTORE_SIGNAL(SIGNUM, ORIG)		\
+  signal((SIGNUM), (ORIG));
+#endif
 
-  void (*org);
-  org = signal(SIGILL, sighandler);
+static int cpuSupportsExt(void (*tryExt)()) {
+  // FIXME: Strictly speaking this should be an atomic_int
+  // But int should be atomic on all supported targets anyway?!
+  static int cache = -1;
+
+  // This is not atomic. However, since the only transition is from -1
+  // to either 0 or 1 and never back, this should be ok.
+  if (cache != -1) return cache;
+  pthread_mutex_lock(&mtx);
+
+  void *org = NULL;
+  SIGNAL(SIGILL, sighandler, org);
 
   if (SETJMP(sigjmp) == 0) {
     (*tryExt)();
@@ -37,7 +67,9 @@ static int cpuSupportsExt(void (*tryExt)()) {
     cache = 0;
   }
 
-  signal(SIGILL, org);
+  RESTORE_SIGNAL(SIGILL, org);
+
+  pthread_mutex_unlock(&mtx);
   return cache;
 }
 
