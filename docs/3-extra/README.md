@@ -504,8 +504,8 @@ It is a soup ladle. A sleef means a soup ladle in Dutch.
 <br/>
 
 <p style="text-align:center; margin-top:1cm;">
-  <a class="nothing" href="../img/sleeflogo.svg">
-    <img src="../img/sleeflogo.svg" alt="logo" width="40%" height="40%" />
+  <a class="nothing" href="../img/sleef-logo.svg">
+    <img src="../img/sleef-logo.svg" alt="logo" width="40%" height="40%" />
   </a>
   <br />
   Fig. 7.2: SLEEF logo

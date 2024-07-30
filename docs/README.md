@@ -6,8 +6,8 @@ permalink: /
 ---
 
 <p style="text-align:center; margin-top:1cm;">
-  <a class="nothing" href="img/sleeflogo.svg">
-    <img src="img/sleeflogo.svg" alt="logo" width="50%" height="50%" />
+  <a class="nothing" href="img/sleef-logo.svg">
+    <img src="img/sleef-logo.svg" alt="logo" width="50%" height="50%" />
   </a>
 </p>
 
@@ -287,10 +287,10 @@ All functions in the library are thread safe unless otherwise noted.
 
 |               |                   |
 |:-------------:|:------------------|
-| [![NAIST logo](img/naistlogo.svg)](https://www.naist.jp/en/) | Division of Information Science of Nara Institute of Science and Technology participates through Naoki Shibata. |
-| [![IBM logo](img/IBM_logo.svg)](https://ibm.com) | As the leading company in a wide range of information technologies, [IBM](https://ibm.com/) participates through David Edelsohn. |
-| [![ARM logo](img/Arm-logo-blue-pms313.svg)](https://www.arm.com) | As the leading IP company in semiconductors design, [ARM](https://www.arm.com/) participates through Pierre Blanchard, Joe Ramsay and Joana Cruz. |
-| [![Unity Technologies logo](img/Unity_Technologies_logo.svg)](https://unity3d.com) | As the leading company in developing a video game engine, [Unity Technologies](https://unity3d.com/) participates through Alexandre Mutel. |
+| [![NAIST logo](img/naist-logo.svg)](https://www.naist.jp/en/) | Division of Information Science of Nara Institute of Science and Technology participates through Naoki Shibata. |
+| [![IBM logo](img/ibm-logo.svg)](https://ibm.com) | As the leading company in a wide range of information technologies, [IBM](https://ibm.com/) participates through David Edelsohn. |
+| [![ARM logo](img/arm-logo.svg)](https://www.arm.com) | As the leading IP company in semiconductors design, [ARM](https://www.arm.com/) participates through Pierre Blanchard, Joe Ramsay and Joana Cruz. |
+| [![Unity Technologies logo](img/unity-logo.svg)](https://unity3d.com) | As the leading company in developing a video game engine, [Unity Technologies](https://unity3d.com/) participates through Alexandre Mutel. |
 
 <h2 id="license">License</h2>
 
@@ -299,7 +299,7 @@ SLEEF is distributed under [Boost Software License Version
 
 |               |                   |
 |:-------------:|:------------------|
-| [![open source logo](img/osi_logo.png)](https://opensource.org) | Boost Software License is [OSI-certified](https://opensource.org/licenses/BSL-1.0). </br> See [this page](http://www.boost.org/users/license.html) for more information about Boost Software License. |
+| [![open source logo](img/osi-logo.svg)](https://opensource.org) | Boost Software License is [OSI-certified](https://opensource.org/licenses/BSL-1.0). See [this page](http://www.boost.org/users/license.html) for more information about Boost Software License. |
 
 <h2 id="history">History</h2>
 
