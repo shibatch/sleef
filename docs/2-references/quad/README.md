@@ -457,6 +457,8 @@ These functions return 1 if either argument is NaN, otherwise 0.
 
 <h2 id="mathfunctions">Math functions</h2>
 
+### Basic Arithmetic
+
 ```c
 #include <sleefquad.h>
 
@@ -1263,7 +1265,7 @@ Sleef_printf("%.40Pg\n", &pi);
 }
 ```
 <p style="text-align:center;">
-Fig. 4.1: [Example source code for x86 computers](../../src/machinx86.c)
+Fig. 4.1: <a href="../../src/machinx86.c">Example source code for x86 computers</a>
 </p>
 
 `__float128` data type is not defined on MSVC, and thus we cannot use literals
@@ -1279,7 +1281,7 @@ calling these functions may waste some CPU time. From line 9 and 12,
 [sleef_q](#sleef_q) function is used to intialize `q2`. [sleef_q](#sleef_q) is
 a function for defining a QP FP constant. You can convert any QP FP value to
 this representation using `qutil` utility program. At line 20,
-[Sleef_subq1_u05purec](#basicArithmetic) function is used to subtract a scalar
+[Sleef_subq1_u05purec](#basic-arithmetic) function is used to subtract a scalar
 value from another to obtain the result.
 
 ```c
@@ -1308,6 +1310,6 @@ Sleef_printf("%.40Pg\n", &pi);
 }
 ```
 <p style="text-align:center;">
-Fig. 4.2: [Example source code for MSVC](../../src/machinmsvc.c)
+Fig. 4.2: <a href="../../src/machinmsvc.c">Example source code for MSVC</a>
 <p>
 
