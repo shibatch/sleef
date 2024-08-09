@@ -9,5 +9,6 @@ permalink: /2-references/
 
 # References for Math Libraries
 
-We provide reference for all functions in each component of the SLEEF library.
+We provide reference for all functions in each component of the SLEEF math
+libraries.
 

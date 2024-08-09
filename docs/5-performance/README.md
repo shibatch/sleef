@@ -5,7 +5,7 @@ nav_order: 6
 permalink: /5-performance/
 ---
 
-<h1>Benchmark Results</h1>
+<h1>Performance</h1>
 
 These graphs show comparison of the execution time between
 [SLEEF](https://github.com/shibatch/sleef)-3.2 compiled with GCC-7.2 and Intel

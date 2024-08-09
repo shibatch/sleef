@@ -6,7 +6,9 @@ has_children: true
 permalink: /1-user-guide/
 ---
 
-<h1>Compiling and installing the library</h1>
+<h1>User Guide</h1>
+
+Guidelines on how to compile and install the library.
 
 <h2>Table of contents</h2>
 
@@ -103,7 +105,7 @@ cmake -DSLEEF_BUILD_INLINE_HEADERS=TRUE ..
 <h2 id="MSVC">Compiling the library with Microsoft Visual C++</h2>
 
 You need Visual Studio 2019. Open developer command prompt for VS2019 and
-change directory to sleef-3.X. When configuring a build with cmake, you need to
+change directory to sleef root. When configuring a build with CMake, you need to
 use a specific generator: `cmake -G"Visual Studio 16 2019" ..` This generator
 will create a proper solution `SLEEF.sln` under the build directory. You can
 still use `cmake --build .` to build the library without opening Visual Studio.
@@ -113,8 +115,8 @@ Below is an example of commands for building SLEEF with Visual Studio.
 ```sh
 mkdir build
 cd build
-cmake -G"Visual Studio 15 2017 Win64" ..    &amp;:: If you are using VS2017
-cmake -G"Visual Studio 16 2019" ..          &amp;:: If you are using VS2019
+cmake -G"Visual Studio 15 2017 Win64" ..    &:: If you are using VS2017
+cmake -G"Visual Studio 16 2019" ..          &:: If you are using VS2019
 cmake --build . --config Release -- /maxcpucount:1
 ```
 

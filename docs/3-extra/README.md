@@ -5,7 +5,9 @@ nav_order: 4
 permalink: /3-extra/
 ---
 
-<h1>Additional Notes</h1>
+<h1>Extra</h1>
+
+Additional notes on SLEEF components.
 
 <h2>Table of contents</h2>
 

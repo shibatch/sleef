@@ -248,8 +248,8 @@ All functions in the library are thread safe unless otherwise noted.
 <h2 id="credit">Credit</h2>
 
 * The main developer is [Naoki Shibata](https://github.com/shibatch)
-  ([shibatch@users.sourceforge.net](mailto:shibatch@users.sourceforge.net)) at
-  Nara Institute of Science and Technology.
+  ([shibatch@users.sourceforge.net](mailto:shibatch@users.sourceforge.net))
+  formerly at Nara Institute of Science and Technology.
 
 * [Pierre Blanchard](https://github.com/blapie), at Arm Ltd. is the current
   global maintainer for SLEEF, alongside
@@ -257,8 +257,13 @@ All functions in the library are thread safe unless otherwise noted.
   [Joe Ramsay](https://github.com/joeramsay).
 
 * [Ludovic Henry](https://github.com/luhenry) at Rivos Inc.  participated in
-  adding support for RISC-V vector extensions as well as CI tests based on
-  Github Actions.
+  adding support for RISC-V vector extensions as well as a whole new framework
+  for CI tests based on Github Actions. They provided substantial help to
+  improve maintainership of the library. Thanks to the RISC-V community,
+  namely [Eric Love](https://github.com/ericlove) (SiFive),
+  [@sh1boot](https://github.com/sh1boot), and
+  [@GlassOfWhiskey](https://github.com/GlassOfWhiskey) for the help in
+  extending SLEEF support to RISC-V vector extensions.
 
 * [Francesco Petrogalli](https://github.com/fpetrogalli) at ARM Ltd.
   contributed the helper for AArch64 (helperadvsimd.h, helpersve.h) and GNUABI
@@ -287,7 +292,6 @@ All functions in the library are thread safe unless otherwise noted.
 
 |               |                   |
 |:-------------:|:------------------|
-| [![NAIST logo](img/naist-logo.svg)](https://www.naist.jp/en/) | Division of Information Science of Nara Institute of Science and Technology participates through Naoki Shibata. |
 | [![IBM logo](img/ibm-logo.svg)](https://ibm.com) | As the leading company in a wide range of information technologies, [IBM](https://ibm.com/) participates through David Edelsohn. |
 | [![ARM logo](img/arm-logo.svg)](https://www.arm.com) | As the leading IP company in semiconductors design, [ARM](https://www.arm.com/) participates through Pierre Blanchard, Joe Ramsay and Joana Cruz. |
 | [![Unity Technologies logo](img/unity-logo.svg)](https://unity3d.com) | As the leading company in developing a video game engine, [Unity Technologies](https://unity3d.com/) participates through Alexandre Mutel. |

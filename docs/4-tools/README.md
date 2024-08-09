@@ -5,7 +5,9 @@ nav_order: 5
 permalink: /4-tools/
 ---
 
-<h1>Other tools included in the package</h1>
+<h1>Tools</h1>
+
+Other tools included in the package.
 
 <h2>Table of contents</h2>
 
