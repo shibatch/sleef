@@ -1828,7 +1828,8 @@ float Sleef_floorf1(float a);
 float Sleef_floorf1_purec(float a);
 float Sleef_floorf1_purecfma(float a);
 float Sleef_cinz_floorf1_purec(float a);
-float Sleef_finz_floorf1_purecfma(float a);```
+float Sleef_finz_floorf1_purecfma(float a);
+```
 Link with `-lsleef`.
 
 #### Description
