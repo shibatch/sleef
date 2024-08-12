@@ -7,7 +7,7 @@ permalink: /6-contribute/
 
 # Contribute to SLEEF
 
-## Discussions
+## Discussions
 
 If you have a question that does not necessarily require a change to SLEEF,
 such as asking how something works or how to contribute, please [open a
