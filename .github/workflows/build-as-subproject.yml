@@ -48,8 +48,8 @@ jobs:
           # Create new project
           mkdir -p ~/project
           # Move examples to root of project
-          cp docs/CMakeLists.txt.nested ~/project/CMakeLists.txt
-          cp docs/hellox86.c docs/tutorial.c ~/project/
+          cp docs/src/CMakeLists.txt.nested ~/project/CMakeLists.txt
+          cp docs/src/hellox86.c docs/src/tutorial.c ~/project/
           # Copy SLEEF sources to project
           cd .. && cp -r sleef ~/project/
 
@@ -105,8 +105,8 @@ jobs:
           # Create new project
           mkdir -p ~/project
           # Move examples to root of project
-          cp docs/CMakeLists.txt ~/project/
-          cp docs/hellox86.c docs/tutorial.c ~/project/
+          cp docs/src/CMakeLists.txt ~/project/
+          cp docs/src/hellox86.c docs/src/tutorial.c ~/project/
           # Add some toolchain files
           cp -r toolchains ~/project/
 

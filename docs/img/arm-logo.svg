@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   id="Blue_313"
+   data-name="Blue 313"
+   viewBox="0 0 115.31325 35.111321"
+   version="1.1"
+   sodipodi:docname="Arm-logo-blue-pms313.svg"
+   width="115.31325"
+   height="35.11132"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="3.9683211"
+     inkscape:cx="-29.987493"
+     inkscape:cy="19.907663"
+     inkscape:window-width="1312"
+     inkscape:window-height="449"
+     inkscape:window-x="0"
+     inkscape:window-y="38"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="Blue_313" />
+  <defs
+     id="defs1">
+    <style
+       id="style1">.cls-1{fill:#008fbe;}</style>
+  </defs>
+  <title
+     id="title1">Arm-logo-blue-pms313</title>
+  <path
+     class="cls-1"
+     d="m 69.717375,0.8772479 h 7.726875 v 3.076125 a 10.2375,10.2375 0 0 1 8.2095,-3.9438763 9.75,9.75 0 0 1 8.5995,4.8750013 c 2.75925,-3.943875 6.942,-4.8750013 9.85725,-4.8750013 4.02187,0 7.57088,1.8915013 9.46725,5.2065013 0.62888,1.106625 1.7355,3.549 1.7355,8.3606251 v 20.509124 h -7.73175 v -18.30075 c 0,-3.704999 -0.39487,-5.206499 -0.71175,-5.9133741 -0.4875,-1.262625 -1.6575,-2.925 -4.41675,-2.925 a 5.7135,5.7135 0 0 0 -4.577625,2.4375 C 96.53475,11.275623 96.37875,14.117747 96.37875,16.954997 v 17.13075 H 88.647 v -18.30075 c 0,-3.704999 -0.394875,-5.206499 -0.71175,-5.9133741 -0.4875,-1.262625 -1.6575,-2.925 -4.41675,-2.925 a 5.708625,5.708625 0 0 0 -4.57275,2.4375 c -1.340625,1.8915001 -1.5015,4.7336241 -1.5015,7.5708741 v 17.13075 h -7.726875 z m -26.76375,0 h 7.73175 v 2.998125 a 13.381875,13.381875 0 0 1 3.232125,-2.75925 8.926125,8.926125 0 0 1 4.733625,-1.1066263 11.466,11.466 0 0 1 6.07425,1.5795013 l -3.173625,7.02 a 7.0005,7.0005 0 0 0 -3.943875,-1.184625 c -1.6575,0 -3.315,0.234 -4.811625,1.8135 -2.130375,2.2863751 -2.130375,5.4404991 -2.130375,7.6488741 v 17.199 H 42.9585 Z M 7.878,17.598497 c 0,5.757375 3.627,10.569 9.228375,10.569 4.875,0 9.384375,-3.549 9.384375,-10.491 0,-7.258874 -4.49475,-10.7249991 -9.384375,-10.7249991 C 11.505,6.9514979 7.878,11.685123 7.878,17.598497 M 26.017875,0.8772479 H 33.76425 V 34.085747 h -7.7415 v -3.471 a 12.753,12.753 0 0 1 -9.93525,4.49475 C 5.85,35.109497 0,26.592872 0,17.442497 0,6.6346229 7.414875,0.0094966 16.170375,0.0094966 A 12.104625,12.104625 0 0 1 26.0325,4.7431229 Z"
+     id="path1"
+     style="stroke-width:0.4875" />
+  <metadata
+     id="metadata1">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>Arm-logo-blue-pms313</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+</svg>
