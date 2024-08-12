@@ -14,7 +14,7 @@ Guidelines on how to compile and install the library.
 
 * [Preliminaries](#preliminaries)
 * [Quick start](#quickstart)
-* [Compiling and installing the library on Linu](#linux)
+* [Compiling and installing the library on Linux](#linux)
 * [Compiling the library with Microsoft Visual C++](#MSVC)
 * [Compiling and running "Hello SLEEF"](#hello)
 * [Importing SLEEF into your project](#import)
