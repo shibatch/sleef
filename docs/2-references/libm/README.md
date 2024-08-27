@@ -1587,14 +1587,15 @@ Link with `-lsleef`.
 
 #### Description
 
-These functions evaluate the inverse hyperbolic cosine function of a value in
-a. The error bound of the returned value is 1.0 ULP if a is in [-1.34e+154,
-1.34e+154] for the double-precision function or 1.001 ULP if a is in
-[-1.84e+19, 1.84e+19] for the single-precision function . If a is a finite
-value out of this range, infinity with a correct sign or a correct value with
-1.0 ULP error bound is returned. These functions treat the non-number arguments
-and return non-numbers as specified in the C99 specification. These functions
-do not set errno nor raise an exception.
+These functions evaluate the inverse hyperbolic cosine function of a value in a.
+The error bound of the returned value is 1.0 ULP if a is in [1, 1.34e+154] for
+the double-precision function or 1.001 ULP if a is in [1, 1.84e+19] for the
+single-precision function. If a is lower than 1, nan is returned (including for
+the negative infinity case). If the argument is positive (including positive
+infinity) but lives outside the ranges defined above, then positive infinity is
+returned. These functions treat the non-number arguments and return non-numbers
+as specified in the C99 specification. These functions do not set errno nor raise
+an exception.
 
 ### Sleef_atanh_u10
 ### Sleef_atanhf_u10
