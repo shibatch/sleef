@@ -39,14 +39,14 @@ int cpuSupportsAVX512F() {
 #endif
 
 void fillDP(double *buf, double min, double max) {
-  for(int i=0;i<NITER1*veclen;i++) {
+  for(int i=0;i<N*veclen;i++) {
     double r = ((double)random() + RAND_MAX * (double)random()) / (RAND_MAX * (double)RAND_MAX);
     buf[i] = r * (max - min) + min;
   }
 }
 
 void fillSP(float *buf, double min, double max) {
-  for(int i=0;i<NITER1*veclen;i++) {
+  for(int i=0;i<N*veclen;i++) {
     double r = ((double)random() + RAND_MAX * (double)random()) / (RAND_MAX * (double)RAND_MAX);
     buf[i] = r * (max - min) + min;
   }
@@ -86,8 +86,8 @@ int main(int argc, char **argv) {
 #error Unsupported architecture
 #endif
   
-  posix_memalign((void **)&abufdp, veclen*sizeof(double), NITER1*veclen*sizeof(double));
-  posix_memalign((void **)&bbufdp, veclen*sizeof(double), NITER1*veclen*sizeof(double));
+  posix_memalign((void **)&abufdp, veclen*sizeof(double), N*veclen*sizeof(double));
+  posix_memalign((void **)&bbufdp, veclen*sizeof(double), N*veclen*sizeof(double));
 
   abufsp = (float *)abufdp;
   bbufsp = (float *)bbufdp;
