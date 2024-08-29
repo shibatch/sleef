@@ -6,7 +6,6 @@
 #define NITER (N * ITER)
 
 #define callFuncSLEEF1_1(funcName, name, xmin, xmax, ulp, arg, type_in, type_out) ({	\
-      __attribute__((unused)) type_out out = funcName(*((type_in *) arg));	\
       printf("%s\n", #funcName);						\
       uint64_t t0 = Sleef_currentTimeMicros();					\
       for(int j=0;j<ITER;j++) {							\
@@ -22,7 +21,6 @@
     })
 
 #define callFuncSLEEF1_2(funcName, name, xmin, xmax, ymin, ymax, ulp, arg1, arg2, type_in, type_out) ({ \
-      __attribute__((unused)) type_out out = funcName(*((type_in *) arg1), *((type_in *) arg2));	\
       printf("%s\n", #funcName);									\
       uint64_t t0 = Sleef_currentTimeMicros();								\
       for(int j=0;j<ITER;j++) {										\
