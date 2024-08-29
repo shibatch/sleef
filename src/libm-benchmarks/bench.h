@@ -11,7 +11,7 @@
       for(int j=0;j<ITER;j++) {							\
 	type_in *p = (type_in *)(arg);						\
 	for(int i=0;i<N;i++){							\
-		out = funcName(*p++);						\
+		__attribute__((unused)) type_out out = funcName(*p++);						\
 	}									\
       }										\
       uint64_t t1 =  Sleef_currentTimeMicros();					\
@@ -26,7 +26,7 @@
       for(int j=0;j<ITER;j++) {										\
 	type_in *p1 = (type_in *)(arg1), *p2 = (type_in *)(arg2);					\
 	for(int i=0;i<N;i++){										\
-		out = funcName(*p1++, *p2++);								\
+		__attribute__((unused)) type_out out = funcName(*p1++, *p2++);								\
 	}												\
       }													\
       uint64_t t1 =  Sleef_currentTimeMicros();								\
