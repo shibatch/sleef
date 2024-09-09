@@ -13,6 +13,7 @@ option(SLEEF_BUILD_QUAD "libsleefquad will be built." OFF)
 option(SLEEF_BUILD_GNUABI_LIBS "libsleefgnuabi will be built." ON)
 option(SLEEF_BUILD_SCALAR_LIB "libsleefscalar will be built." OFF)
 option(SLEEF_BUILD_TESTS "Tests will be built." ON)
+option(SLEEF_BUILD_BENCH "Bench will be built." OFF)
 option(SLEEF_BUILD_INLINE_HEADERS "Build header for inlining whole SLEEF functions" OFF)
 
 option(SLEEF_TEST_ALL_IUT "Perform tests on implementations with all vector extensions" OFF)

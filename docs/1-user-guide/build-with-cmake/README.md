@@ -162,6 +162,10 @@ optimized, or any other special set of flags.
 - `SLEEF_LLVM_AR_COMMAND` : Specify LLVM AR command when you build the library with thinLTO support with clang.
 - `SLEEF_ENABLE_LLVM_BITCODE` : Generate LLVM bitcode
 
+### Benchmarks
+
+- `SLEEF_BUILD_BENCH` : Build benchmark tool if set to TRUE
+
 ### Tests
 
 - `SLEEF_BUILD_TESTS` : Avoid building testing tools if set to FALSE
