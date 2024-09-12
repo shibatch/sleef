@@ -139,8 +139,7 @@ make measure
   You can start over by 'make restart'.
 ```
 
-Then,
-
+Then type `make plot` to generate graphs. 
 ```sh
 make plot
   javac ProcessData.java
@@ -158,8 +157,17 @@ make plot
   mv output.png nontrigsp.png
 ```
 
-Then type `make plot` to generate graphs. You need to have JDK and gnuplot
-installed on your computer. Four graphs are generated : trigdp.png,
-nontrigdp.png, trigsp.png and nontrigsp.png. Please see our [benchmark
-results](../5-performance/) for an example of generated graphs by this tool.
+You need to have JDK and gnuplot installed on your computer.
+Install these with:
+```sh
+sudo apt install openjdk-19-jdk-headless
+```
+and 
+```sh
+sudo apt install gnuplot
+```
+
+Four graphs are generated : trigdp.png, nontrigdp.png, trigsp.png
+and nontrigsp.png. Please see our [benchmark results](../5-performance/) for
+an example of generated graphs by this tool.
 
