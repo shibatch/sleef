@@ -1,3 +1,27 @@
+## 3.7 - 2024-09-17
+
+The focus of this release has been to meet open-source community standards.  It
+does so by providing Contributing Guidelines, Issues and Pull-Requests
+templates. Additionally, the documentation has been reworked to improve
+navigation (via search bar, side menu/panel, eased navigation on GitHub, ...)
+and maintainability (reduced line count, mostly markdown sources, ...). The
+website rendering is now delegated to a template customisable theme. See the
+new website at [sleef.org](https://sleef.org/), and [docs/](./docs) for the
+GitHub-rendered documentation. The release also provides various bug fixes on
+several targets, for CPU detection and in the benchmark infrastructure.
+
+### Added
+- Add issue and PR templates. by @blapie in https://github.com/shibatch/sleef/pull/565
+
+### Changed
+- Adjust scheduling of GHA workflows by @blapie in https://github.com/shibatch/sleef/pull/553
+- Port documentation from html to markdown by @blapie in https://github.com/shibatch/sleef/pull/564
+- Update acosh documentation by @joanaxcruz in https://github.com/shibatch/sleef/pull/572
+
+### Fixed
+- S/390: Use getauxval for detecting VXE2 to fix #560 by @Andreas-Krebbel in https://github.com/shibatch/sleef/pull/561
+- Revive micro-benchmarks for vector functions by @joanaxcruz in https://github.com/shibatch/sleef/pull/571
+
 ## 3.6.1 - 2024-06-10
 
 This patch release provides important bug fixes, including a fix
