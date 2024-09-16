@@ -3714,48 +3714,28 @@ int main(int argc, char **argv) {
 
 #ifdef ENABLE_GNUABI
 /* "finite" aliases for compatibility with GLIBC */
-#if ENABLE_ALIAS
-#define DFINITE_ALIAS_vd_vd(ALIASEE, TARGET) EXPORT CONST VECTOR_CC vdouble ALIASEE (vdouble) __attribute__((weak, alias(FUNC)));
-#define DFINITE_ALIAS_vd2_vd(ALIASEE, TARGET) EXPORT CONST VECTOR_CC vdouble ALIASEE (vdouble, vdouble) __attribute__((weak, alias(FUNC)));
-#define DFINITE_ALIAS_vdp_vd(ALIASEE, TARGET) EXPORT CONST VECTOR_CC vdouble ALIASEE (vdouble, vdouble *) __attribute__((weak, alias(FUNC)));
-#else
-#define DFINITE_ALIAS_vd_vd(ALIASEE, TARGET) EXPORT CONST VECTOR_CC vdouble ALIASEE (vdouble x) { return TARGET(x); }
-#define DFINITE_ALIAS_vd2_vd(ALIASEE, TARGET) EXPORT CONST VECTOR_CC vdouble ALIASEE (vdouble x, vdouble y) { return TARGET(x, y); }
-#define DFINITE_ALIAS_vdp_vd(ALIASEE, TARGET) EXPORT CONST VECTOR_CC vdouble ALIASEE (vdouble x, double *y) { return TARGET(x, y); }
-#endif
-DFINITE_ALIAS_vd_vd(__acos_finite,       xacos)
-DFINITE_ALIAS_vd_vd(__acosh_finite,      xacosh)
-DFINITE_ALIAS_vd_vd(__asin_finite,       xasin_u1)
-DFINITE_ALIAS_vd2_vd(__atan2_finite,     xatan2_u1)
-DFINITE_ALIAS_vd_vd(__atanh_finite,      xatanh)
-DFINITE_ALIAS_vd_vd(__cosh_finite,       xcosh)
-DFINITE_ALIAS_vd_vd(__exp10_finite,      xexp10)
-DFINITE_ALIAS_vd_vd(__exp2_finite,       xexp2)
-DFINITE_ALIAS_vd_vd(__exp_finite,        xexp)
-DFINITE_ALIAS_vd2_vd(__fmod_finite,      xfmod)
-DFINITE_ALIAS_vd2_vd(__remainder_finite, xremainder)
-DFINITE_ALIAS_vdp_vd(__modf_finite,      xmodf)
-DFINITE_ALIAS_vd2_vd(__hypot_u05_finite, xhypot_u05)
-DFINITE_ALIAS_vd_vd(__lgamma_u1_finite,  xlgamma_u1)
-DFINITE_ALIAS_vd_vd(__log10_finite,      xlog10)
-DFINITE_ALIAS_vd_vd(__log_finite,        xlog_u1)
-DFINITE_ALIAS_vd2_vd(__pow_finite,       xpow)
-DFINITE_ALIAS_vd_vd(__sinh_finite,       xsinh)
-DFINITE_ALIAS_vd_vd(__sqrt_finite,       xsqrt)
-DFINITE_ALIAS_vd_vd(__tgamma_u1_finite,  xtgamma_u1)
+EXPORT CONST VECTOR_CC vdouble __acos_finite     (vdouble)          __attribute__((weak, alias(str_xacos     )));
+EXPORT CONST VECTOR_CC vdouble __acosh_finite    (vdouble)          __attribute__((weak, alias(str_xacosh    )));
+EXPORT CONST VECTOR_CC vdouble __asin_finite     (vdouble)          __attribute__((weak, alias(str_xasin_u1  )));
+EXPORT CONST VECTOR_CC vdouble __atan2_finite    (vdouble, vdouble) __attribute__((weak, alias(str_xatan2_u1 )));
+EXPORT CONST VECTOR_CC vdouble __atanh_finite    (vdouble)          __attribute__((weak, alias(str_xatanh    )));
+EXPORT CONST VECTOR_CC vdouble __cosh_finite     (vdouble)          __attribute__((weak, alias(str_xcosh     )));
+EXPORT CONST VECTOR_CC vdouble __exp10_finite    (vdouble)          __attribute__((weak, alias(str_xexp10    )));
+EXPORT CONST VECTOR_CC vdouble __exp2_finite     (vdouble)          __attribute__((weak, alias(str_xexp2     )));
+EXPORT CONST VECTOR_CC vdouble __exp_finite      (vdouble)          __attribute__((weak, alias(str_xexp      )));
+EXPORT CONST VECTOR_CC vdouble __fmod_finite     (vdouble, vdouble) __attribute__((weak, alias(str_xfmod     )));
+EXPORT CONST VECTOR_CC vdouble __remainder_finite(vdouble, vdouble) __attribute__((weak, alias(str_xremainder)));
+EXPORT CONST VECTOR_CC vdouble __modf_finite     (vdouble, vdouble *) __attribute__((weak, alias(str_xmodf   )));
+EXPORT CONST VECTOR_CC vdouble __hypot_u05_finite(vdouble, vdouble) __attribute__((weak, alias(str_xhypot_u05)));
+EXPORT CONST VECTOR_CC vdouble __lgamma_u1_finite(vdouble)          __attribute__((weak, alias(str_xlgamma_u1)));
+EXPORT CONST VECTOR_CC vdouble __log10_finite    (vdouble)          __attribute__((weak, alias(str_xlog10    )));
+EXPORT CONST VECTOR_CC vdouble __log_finite      (vdouble)          __attribute__((weak, alias(str_xlog_u1   )));
+EXPORT CONST VECTOR_CC vdouble __pow_finite      (vdouble, vdouble) __attribute__((weak, alias(str_xpow      )));
+EXPORT CONST VECTOR_CC vdouble __sinh_finite     (vdouble)          __attribute__((weak, alias(str_xsinh     )));
+EXPORT CONST VECTOR_CC vdouble __sqrt_finite     (vdouble)          __attribute__((weak, alias(str_xsqrt     )));
+EXPORT CONST VECTOR_CC vdouble __tgamma_u1_finite(vdouble)          __attribute__((weak, alias(str_xtgamma_u1)));
 
 #ifdef HEADER_MASKED
-
-#if ENABLE_ALIAS
-#define DMASKED_ALIAS_vdouble(ALIASEE, TARGET) EXPORT CONST VECTOR_CC vdouble ALIASEE(vdouble, vopmask) __attribute__((weak, alias(FUNC)));
-#define DMASKED_ALIAS_vdouble2(ALIASEE, TARGET) EXPORT CONST VECTOR_CC vdouble ALIASEE(vdouble, vdouble, vopmask) __attribute__((weak, alias(FUNC)));
-#define DMASKED_ALIAS_vdoublep(ALIASEE, TARGET) EXPORT CONST VECTOR_CC vdouble ALIASEE(vdouble, vdouble*, vopmask) __attribute__((weak, alias(FUNC)));
-#else
-#define DMASKED_ALIAS_vdouble(ALIASEE, TARGET) EXPORT CONST VECTOR_CC vdouble ALIASEE(vdouble x, vopmask m) { return TARGET(x, m); }
-#define DMASKED_ALIAS_vdouble2(ALIASEE, TARGET) EXPORT CONST VECTOR_CC vdouble ALIASEE(vdouble x, vdouble y, vopmask m) { return TARGET(x, y, m); }
-#define DMASKED_ALIAS_vdoublep(ALIASEE, TARGET) EXPORT CONST VECTOR_CC vdouble ALIASEE(vdouble x, double *y, vopmask m) { return TARGET(x, y, m); }
-#endif
-
 #include HEADER_MASKED
 #endif
 #endif /* #ifdef ENABLE_GNUABI */

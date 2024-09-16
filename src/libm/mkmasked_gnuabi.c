@@ -77,21 +77,25 @@ int main(int argc, char **argv) {
     switch(funcList[i].funcType) {
     case 0: {
       printf("EXPORT CONST %s %s(%s a0, vopmask m) { return %s(a0); }\n",
-	     vfpname[fptype], funcname[1], vfpname[fptype], funcname[0]);
+             vfpname[fptype], funcname[1], vfpname[fptype], funcname[0]);
 
       if (funcList[i].ulp < 20)
-	printf("DMASKED_ALIAS_%s(%s, %s)\n", vfpname[fptype], funcname[3], funcname[1]);
+        printf("EXPORT CONST %s %s(%s, vopmask) __attribute__((weak, alias(\"%s\")));\n",
+               vfpname[fptype], funcname[3], vfpname[fptype], funcname[1]);
       else
-	printf("DMASKED_ALIAS_%s(%s_u%d, %s)\n", vfpname[fptype], funcname[3], funcList[i].ulp, funcname[1]);
+        printf("EXPORT CONST %s %s_u%d(%s, vopmask) __attribute__((weak, alias(\"%s\")));\n",
+               vfpname[fptype], funcname[3],funcList[i].ulp, vfpname[fptype], funcname[1]);
       break;
     }
     case 1: {
       printf("EXPORT CONST %s %s(%s a0, %s a1, vopmask m) { return %s(a0, a1); }\n",
 	     vfpname[fptype], funcname[1], vfpname[fptype], vfpname[fptype], funcname[0]);
       if (funcList[i].ulp < 20)
-	printf("DMASKED_ALIAS_%s2(%s, %s)\n", vfpname[fptype], funcname[3], funcname[1]);
+        printf("EXPORT CONST %s %s(%s, %s, vopmask) __attribute__((weak, alias(\"%s\")));\n",
+               vfpname[fptype], funcname[3], vfpname[fptype], vfpname[fptype], funcname[1]);
       else
-	printf("DMASKED_ALIAS_%s2(%s_u%d, %s)\n", vfpname[fptype], funcname[3], funcList[i].ulp, funcname[1]);
+        printf("EXPORT CONST %s %s_u%d(%s, %s, vopmask) __attribute__((weak, alias(\"%s\")));\n",
+               vfpname[fptype], funcname[3],funcList[i].ulp, vfpname[fptype], vfpname[fptype], funcname[1]);
       break;
     }
     case 2:
@@ -156,10 +160,13 @@ int main(int argc, char **argv) {
 
       printf("EXPORT CONST %s %s(%s a0, %s a1, vopmask m) { return %s(a0, a1); }\n",
              vfpname[fptype], funcname[1], vfpname[fptype], ptr_type, funcname[0]);
+
       if (funcList[i].ulp < 20)
-	printf("DMASKED_ALIAS_%sp(%s, %s)\n", vfpname[fptype], funcname[3], funcname[1]);
+        printf("EXPORT CONST %s %s(%s, %s, vopmask) __attribute__((weak, alias(\"%s\")));\n",
+               vfpname[fptype], funcname[3], vfpname[fptype], ptr_type, funcname[1]);
       else
-	printf("DMASKED_ALIAS_%sp(%s_u%d, %s)\n", vfpname[fptype], funcname[3], funcList[i].ulp, funcname[1]);
+        printf("EXPORT CONST %s %s_u%d(%s, %s, vopmask) __attribute__((weak, alias(\"%s\")));\n",
+               vfpname[fptype], funcname[3],funcList[i].ulp, vfpname[fptype], ptr_type, funcname[1]);
     }
       break;
     }

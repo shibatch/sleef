@@ -355,7 +355,7 @@ function(add_gnuabi_compatibility_test SIMD MASKED)
   endif(EMULATOR)
 endfunction(add_gnuabi_compatibility_test)
 
-if(SLEEF_BUILD_GNUABI_LIBS)
+if(ENABLE_GNUABI)
   foreach(SIMD ${SLEEF_SUPPORTED_GNUABI_EXTENSIONS})
     if(COMPILER_SUPPORTS_${SIMD})
       # GNUABI compatibility for the unmasked symbols.
@@ -366,7 +366,7 @@ if(SLEEF_BUILD_GNUABI_LIBS)
       endif(MKMASKED_PARAMS_GNUABI_${SIMD}_sp)
     endif (COMPILER_SUPPORTS_${SIMD})
   endforeach(SIMD ${SLEEF_SUPPORTED_GNUABI_EXTENSIONS})
-endif(SLEEF_BUILD_GNUABI_LIBS)
+endif(ENABLE_GNUABI)
 
 #
 
@@ -461,7 +461,7 @@ if(LIB_MPFR AND NOT MINGW)
   endif()
 endif(LIB_MPFR AND NOT MINGW)
 
-if(SLEEF_BUILD_GNUABI_LIBS AND COMPILER_SUPPORTS_OMP_SIMD AND NOT SLEEF_TARGET_PROCESSOR MATCHES "^i.86$")
+if(ENABLE_GNUABI AND COMPILER_SUPPORTS_OMP_SIMD AND NOT SLEEF_TARGET_PROCESSOR MATCHES "^i.86$")
   # Build tester for vectorabi
   add_executable(testervecabi testervecabi.c)
   target_compile_definitions(testervecabi PRIVATE ${COMMON_TARGET_DEFINITIONS})
@@ -474,7 +474,7 @@ endif()
 
 # mveclibtest
 
-if (SLEEF_BUILD_GNUABI_LIBS AND SLEEF_ARCH_X86 AND CMAKE_C_COMPILER_ID MATCHES "GNU" AND CMAKE_C_COMPILER_VERSION VERSION_GREATER 7.99)
+if (ENABLE_GNUABI AND SLEEF_ARCH_X86 AND CMAKE_C_COMPILER_ID MATCHES "GNU" AND CMAKE_C_COMPILER_VERSION VERSION_GREATER 7.99)
   add_executable(mveclibtest-sse2 mveclibtest.c ${sleef_SOURCE_DIR}/src/common/main_checkfeature.c)
   set_target_properties(mveclibtest-sse2 PROPERTIES C_STANDARD 99)
   target_compile_options(mveclibtest-sse2 PRIVATE ${FLAGS_FASTMATH} "-O3")
