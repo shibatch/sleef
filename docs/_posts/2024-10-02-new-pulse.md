@@ -1,0 +1,125 @@
+---
+layout: post
+title: A New Pulse for SLEEF
+author: Pierre Blanchard
+author_url: https://github.com/blapie
+---
+
+The SLEEF project provides open-source vectorized elementary math routines
+across widely used computer architectures and associated vector extensions. Its
+latest release came out this month along with updated documentation and
+contribution guidelines. This post inaugurates a new blog section on the
+project's website.
+
+## Towards Fairer Contributions to SLEEF
+
+At the end of 2023, after a long period of uncertainty for SLEEF, as discussed
+on [#442](https://github.com/shibatch/sleef/issues/442), the SLEEF project has
+been revitalized with many contributions being accepted and three releases
+made. Like many open-source projects, SLEEF relies on the contributions of the
+community and the availability of maintainers. Without support (be it financial
+or in kind) from the main actors that benefit from these projects, there is a
+high chance for such projects to fall dormant again in the future.
+
+Nearly a year ago Shibata-san, the project owner, came to an agreement with
+Arm&reg;, and temporarily handed over the global maintainer role to a team of
+software engineers at Arm, see discussion
+[#472](https://github.com/shibatch/sleef/discussions/472). After identifying
+critical pending issues and pull-requests (PRs), in what came to be a long
+backlog overhaul, the newly accredited maintainers focused on revamping
+Continuous Integration (CI) and triaging issues and PRs. The team received
+outstanding contributions from the community for extending support to new
+architectures ([#477](https://github.com/shibatch/sleef/pull/477)), improving
+the build system ([#531](https://github.com/shibatch/sleef/pull/531)) and CI
+testing ([#476](https://github.com/shibatch/sleef/pull/476)), as well as
+supporting on macOS and Windows, see PRs
+[#540](https://github.com/shibatch/sleef/pull/540) and
+[#543](https://github.com/shibatch/sleef/pull/543). A first release in almost 3
+years came out of this joint effort, namely [SLEEF
+3.6](https://github.com/shibatch/sleef/releases/tag/3.6), followed by a
+substantial patch release, [SLEEF
+3.6.1](https://github.com/shibatch/sleef/releases/tag/3.6.1).
+
+<p style="text-align:center;">
+  <a class="nothing" href="https://github.com/shibatch/sleef/graphs/contributors">
+    <img src="../../../img/insights.png" alt="Insights"/>
+  </a>
+  <br/>
+  Contributions/Commits over time, as shown on the GitHub Insights.
+</p>
+
+## A Community-Driven Revival
+
+Community contributions have been central to the recent revival of SLEEF. As
+maintainers, our task was to motivate and facilitate direct contributions from
+the community and make sure they serve the community’s broader interests.
+
+To keep maintenance as low-cost and future proof as possible, it was agreed to
+rely on GitHub's functionalities, such as [GitHub Actions for CI
+testing](https://github.com/shibatch/sleef/actions). With help from the
+community, we are now nearly matching the level of testing prior to 2020, while
+supporting more widely used and reproducible build environments as provided by
+GitHub-hosted runners.
+
+We are grateful for the contributions from communities based around the many
+architectures SLEEF now supports, including IBM&reg; S/390 and PowerPC, Intel&reg; x86,
+RISC-V, and Arm architectures.
+
+<p style="text-align:center;">
+  <a class="nothing" href="../../../img/matrix.png">
+    <img src="../../../img/matrix.png" alt="Matrix"/>
+  </a>
+  <br/>
+  Sample of the table/matrix of supported environment, reporting the status of
+  GHA-based post-commit pipeline on multiple OS-es, and support level for
+  individual vector extensions.
+</p>
+
+## A New Regular Release Schedule
+
+The growing engagement on the repository is a good indicator of the
+community's attachment to the project and its appetite for the SLEEF project
+maintenance and development. By demand of many users, SLEEF is now on a regular
+release schedule (a minor release every 6 months), which is particularly
+helpful to large open-source projects that rely on SLEEF such as PyTorch, e.g.
+[#131642](https://github.com/pytorch/pytorch/pull/131642) and
+[#134672](https://github.com/pytorch/pytorch/pull/134672),  Spack, e.g.
+[#45431](https://github.com/spack/spack/pull/45431), or Linux distributions
+like Ubuntu and Fedora.
+
+The [latest release of
+SLEEF](https://github.com/shibatch/sleef/releases/tag/3.7) paves the way to a
+community-maintained open-source project by providing crucial [community
+standards](https://github.com/shibatch/sleef/community) such as issues and PR
+templates, as well as clear [Contribution Guidelines](../6-contribute/). On top
+of this, the latest released version does facilitate maintenance of
+documentation by making it more accessible and easier to contribute to (via
+markdown), not to mention improved navigation and rendering on both GitHub UI
+and [sleef.org](https://sleef.org/).
+
+## What to Expect Next?
+
+To stay on top of new compilers and OS-es, a lot of the maintainers time is
+spent on testing infrastructure and bug fixes. This increasing demand means
+increasing firefighting pressure, which could mean less time available for
+developing new features. However, keeping the community's engagement high is
+key to a healthy open-source project. We also believe that investing in
+efficient maintenance will make new feature integration more seamless in the
+future.
+
+Benchmarking and testing engines are currently being reworked with maintenance
+cost and portability in mind. We expect to make more machines and platforms
+available in CI via self-hosted runners, and we plan to add further security
+checks in CI. By popular demand, CPU detection is another aspect that we are
+looking to spend time on soon.
+
+As always SLEEF is open to contributions, so please visit our [Contribution
+Guidelines](../6-contribute/) to find ways to contribute. If you would like to
+request a feature or fix a bug, the community can assist you in achieving this.
+
+## Acknowledgment
+
+We would like to thank the community for its continuous support in delivering a
+high-quality open-source project that works across platforms, their precious
+feedback and contributions have been central to the recent revival of the
+project and will be as essential for the future of SLEEF.
