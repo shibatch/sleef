@@ -28,13 +28,19 @@ env:
 
 jobs:
   build-native:
-    runs-on: ubuntu-latest
+    # Native Build and Test run on a range of runners
+    # - Github hosted, only Linux x86.
+    # - Arm-hosted (via AWS), only Linux c6g or c7g.
+    #   Please refer to the documentation at
+    #   https://gitlab.arm.com/tooling/gha-runner-docs
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-latest, ah-ubuntu_22_04-c6g_x-50]
         compiler: [gcc, llvm]
 
-    name: build-native-${{ matrix.compiler }}
+    name: build-native-${{ matrix.os }}-${{ matrix.compiler }}
     steps:
       - uses: actions/checkout@v4.1.1
         with:
@@ -43,7 +49,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update -y -qq
-          sudo apt-get install -y -qq build-essential curl ninja-build libgmp-dev libmpfr-dev
+          sudo apt-get install -y -qq build-essential cmake curl ninja-build libgmp-dev libmpfr-dev
 
       # Needed for llvm builds as well for target libraries
       - name: Install gcc
@@ -59,10 +65,30 @@ jobs:
           rm llvm.sh
         if: ${{ matrix.compiler == 'llvm' }}
 
+      - name: Set x86_64 config
+        shell: bash -ex -o pipefail {0}
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: |
+            export EXTRA_CMAKE_FLAGS="\
+              -DSLEEF_ENFORCE_SSE2=ON -DSLEEF_ENFORCE_SSE4=ON \
+              -DSLEEF_ENFORCE_AVX=ON -DSLEEF_ENFORCE_AVX2=ON \
+              -DSLEEF_ENFORCE_AVX512F=ON -DSLEEF_ENFORCE_FMA4=ON"
+
+      - name: Set AArch64 Neon config
+        shell: bash -ex -o pipefail {0}
+        if: contains(${{ matrix.os }}, 'c6g')
+        run: |
+            export EXTRA_CMAKE_FLAGS=""
+
+      - name: Set AArch64 SVE config
+        shell: bash -ex -o pipefail {0}
+        if: contains(${{ matrix.os }}, 'c7g')
+        run: |
+            export EXTRA_CMAKE_FLAGS="-DSLEEF_ENFORCE_SVE=ON"
+
       - name: Build native
         shell: bash -ex -o pipefail {0}
         run: |
-          EXTRA_CMAKE_FLAGS="-DSLEEF_ENFORCE_SSE2=ON -DSLEEF_ENFORCE_SSE4=ON -DSLEEF_ENFORCE_AVX=ON -DSLEEF_ENFORCE_AVX=ON -DSLEEF_ENFORCE_AVX2=ON -DSLEEF_ENFORCE_AVX512F=ON -DSLEEF_ENFORCE_FMA4=ON"
           cmake -S . -B _build-native -GNinja \
             -DCMAKE_INSTALL_PREFIX=$(pwd)/_install-native \
             -DCMAKE_TOOLCHAIN_FILE=$(pwd)/toolchains/native-${{ matrix.compiler }}.cmake \
@@ -81,14 +107,15 @@ jobs:
         if: always()
 
   test-native:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     needs: [build-native]
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-latest, ah-ubuntu_22_04-c6g_x-50]
         compiler: [gcc, llvm]
 
-    name: test-native-${{ matrix.compiler }}
+    name: test-native-${{ matrix.os }}-${{ matrix.compiler }}
     steps:
       - uses: actions/checkout@v4.1.1
         with:
@@ -101,10 +128,10 @@ jobs:
         run: |
           cat /proc/cpuinfo
 
-      - name: Download build-native-${{ matrix.compiler }} artifacts
+      - name: Download build-native-${{ matrix.os }}-${{ matrix.compiler }} artifacts
         uses: actions/download-artifact@v3
         with:
-          name: build-native-${{ matrix.compiler }}
+          name: build-native-${{ matrix.os }}-${{ matrix.compiler }}
 
       - name: Fix _build-native permissions
         run: |
@@ -197,10 +224,10 @@ jobs:
           rm -rf sysroot/usr/libexec/gcc
         if: steps.check-sysroot-cache.outputs.cache-hit != 'true'
 
-      - name: Download build-native-${{ matrix.compiler }} artifacts
+      - name: Download build-native-ubuntu-latest-${{ matrix.compiler }} artifacts
         uses: actions/download-artifact@v3
         with:
-          name: build-native-${{ matrix.compiler }}
+          name: build-native-ubuntu-latest-${{ matrix.compiler }}
 
       - name: Fix _build-native permissions
         run: |
@@ -345,10 +372,10 @@ jobs:
         run: |
           cat /proc/cpuinfo
 
-      - name: Download build-native-${{ matrix.compiler }} artifacts
+      - name: Download build-native-ubuntu-latest-${{ matrix.compiler }} artifacts
         uses: actions/download-artifact@v3
         with:
-          name: build-native-${{ matrix.compiler }}
+          name: build-native-ubuntu-latest-${{ matrix.compiler }}
 
       - name: Download build-${{ matrix.arch }}-${{ matrix.compiler }} artifacts
         uses: actions/download-artifact@v3
