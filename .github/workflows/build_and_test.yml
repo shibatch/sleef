@@ -33,6 +33,8 @@ jobs:
     # - Arm-hosted (via AWS), only Linux c6g or c7g.
     #   Please refer to the documentation at
     #   https://gitlab.arm.com/tooling/gha-runner-docs
+    #   Here we use c7g (2xlarge) for easy access to
+    #   SVE-enabled runners (with 8 vCPUs).
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
