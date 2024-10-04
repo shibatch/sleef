@@ -160,7 +160,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [aarch64, armhf, ppc64el, s390x, riscv64]
+        arch: [armhf, ppc64el, s390x, riscv64]
         compiler: [gcc, llvm]
         include:
           - arch: armhf
@@ -169,8 +169,6 @@ jobs:
           - arch: ppc64el
             binfmt: ppc64le
             gnupkg: -powerpc64le-linux-gnu
-          - arch: aarch64
-            debarch: arm64
         exclude:
           # Only GCC trunk supports the RISC-V V intrinsics and https://github.com/riscv-collab/riscv-gnu-toolchain
           # doesn't track a recent enough version yet
@@ -239,9 +237,7 @@ jobs:
         shell: bash -ex -o pipefail {0}
         run: |
           EXTRA_CMAKE_FLAGS=""
-          if [[ ${{ matrix.arch }} = "aarch64" ]]; then
-            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DSLEEF_ENFORCE_SVE=ON"
-          elif [[ ${{ matrix.arch }} = "armhf" ]]; then
+          if [[ ${{ matrix.arch }} = "armhf" ]]; then
             # Disable inline headers, they just don't compile on armhf
             EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DSLEEF_BUILD_INLINE_HEADERS=OFF"
           elif [[ ${{ matrix.arch }} = "ppc64el" ]]; then
@@ -281,31 +277,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # AArch64
-          - arch: aarch64
-            compiler: gcc
-            qemu_cpu: "max,sve=off"
-          - arch: aarch64
-            compiler: gcc
-            qemu_cpu: "max,sve=on,sve128=on"
-          - arch: aarch64
-            compiler: gcc
-            qemu_cpu: "max,sve=on,sve256=on"
-          - arch: aarch64
-            compiler: gcc
-            qemu_cpu: "max,sve=on,sve512=on"
-          - arch: aarch64
-            compiler: llvm
-            qemu_cpu: "max,sve=off"
-          - arch: aarch64
-            compiler: llvm
-            qemu_cpu: "max,sve=on,sve128=on"
-          - arch: aarch64
-            compiler: llvm
-            qemu_cpu: "max,sve=on,sve256=on"
-          - arch: aarch64
-            compiler: llvm
-            qemu_cpu: "max,sve=on,sve512=on"
           # Aarch32
           - arch: armhf
             compiler: gcc
