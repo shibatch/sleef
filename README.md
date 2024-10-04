@@ -119,6 +119,9 @@ Toolchain files provide some information on supported compiler versions.
 
 Only Linux distributions and macOS are fully tested in CI and thus officially supported.
 
+Only AArch64 and x86_64 vector extensions are built and tested natively on Linux and macOS.
+Other architectures/vector extensions are cross-compiled on Linux.
+
 Building SLEEF for Windows on x86 machines was officially supported ( :white_circle: ), as of 3.5.1,
 however it is only partially tested due to [known limitations of the test suite with MinGW or MSYS2](https://github.com/shibatch/sleef/issues/544).
 As a result tests for Windows on x86 only include DFT for now (other tests are disabled in build system),

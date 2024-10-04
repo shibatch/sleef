@@ -28,13 +28,21 @@ env:
 
 jobs:
   build-native:
-    runs-on: ubuntu-latest
+    # Native Build and Test run on a range of runners
+    # - Github hosted, only Linux x86.
+    # - Arm-hosted (via AWS), only Linux c6g or c7g.
+    #   Please refer to the documentation at
+    #   https://gitlab.arm.com/tooling/gha-runner-docs
+    #   Here we use c7g (2xlarge) for easy access to
+    #   SVE-enabled runners (with 8 vCPUs).
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-latest, ah-ubuntu_22_04-c7g_2x-50]
         compiler: [gcc, llvm]
 
-    name: build-native-${{ matrix.compiler }}
+    name: build-native-${{ matrix.os }}-${{ matrix.compiler }}
     steps:
       - uses: actions/checkout@v4.1.1
         with:
@@ -43,7 +51,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update -y -qq
-          sudo apt-get install -y -qq build-essential curl ninja-build libgmp-dev libmpfr-dev
+          sudo apt-get install -y -qq build-essential cmake curl ninja-build libgmp-dev libmpfr-dev libssl-dev
 
       # Needed for llvm builds as well for target libraries
       - name: Install gcc
@@ -59,10 +67,30 @@ jobs:
           rm llvm.sh
         if: ${{ matrix.compiler == 'llvm' }}
 
+      - name: Set x86_64 config
+        shell: bash -ex -o pipefail {0}
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: |
+            export EXTRA_CMAKE_FLAGS="\
+              -DSLEEF_ENFORCE_SSE2=ON -DSLEEF_ENFORCE_SSE4=ON \
+              -DSLEEF_ENFORCE_AVX=ON -DSLEEF_ENFORCE_AVX2=ON \
+              -DSLEEF_ENFORCE_AVX512F=ON -DSLEEF_ENFORCE_FMA4=ON"
+
+      - name: Set AArch64 Neon config
+        shell: bash -ex -o pipefail {0}
+        if: contains(matrix.os, 'c6g')
+        run: |
+            export EXTRA_CMAKE_FLAGS=""
+
+      - name: Set AArch64 SVE config
+        shell: bash -ex -o pipefail {0}
+        if: contains(matrix.os, 'c7g')
+        run: |
+            export EXTRA_CMAKE_FLAGS="-DSLEEF_ENFORCE_SVE=ON"
+
       - name: Build native
         shell: bash -ex -o pipefail {0}
         run: |
-          EXTRA_CMAKE_FLAGS="-DSLEEF_ENFORCE_SSE2=ON -DSLEEF_ENFORCE_SSE4=ON -DSLEEF_ENFORCE_AVX=ON -DSLEEF_ENFORCE_AVX=ON -DSLEEF_ENFORCE_AVX2=ON -DSLEEF_ENFORCE_AVX512F=ON -DSLEEF_ENFORCE_FMA4=ON"
           cmake -S . -B _build-native -GNinja \
             -DCMAKE_INSTALL_PREFIX=$(pwd)/_install-native \
             -DCMAKE_TOOLCHAIN_FILE=$(pwd)/toolchains/native-${{ matrix.compiler }}.cmake \
@@ -71,40 +99,41 @@ jobs:
           cmake --build _build-native
           cmake --install _build-native
 
-      - name: Upload build-native-${{ matrix.compiler }} artifacts
+      - name: Upload build-native-${{ matrix.os }}-${{ matrix.compiler }} artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: build-native-${{ matrix.compiler }}
+          name: build-native-${{ matrix.os }}-${{ matrix.compiler }}
           path: |
             _build-*
             _install-*
         if: always()
 
   test-native:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     needs: [build-native]
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-latest, ah-ubuntu_22_04-c7g_2x-50]
         compiler: [gcc, llvm]
 
-    name: test-native-${{ matrix.compiler }}
+    name: test-native-${{ matrix.os }}-${{ matrix.compiler }}
     steps:
       - uses: actions/checkout@v4.1.1
         with:
           persist-credentials: false
 
       - name: Install dependencies
-        run: sudo apt-get update -y -qq && sudo apt-get install -y -qq libgmp-dev libmpfr-dev
+        run: sudo apt-get update -y -qq && sudo apt-get install -y -qq cmake libgmp-dev libmpfr-dev libssl-dev
 
       - name: Print host CPU info
         run: |
           cat /proc/cpuinfo
 
-      - name: Download build-native-${{ matrix.compiler }} artifacts
+      - name: Download build-native-${{ matrix.os }}-${{ matrix.compiler }} artifacts
         uses: actions/download-artifact@v3
         with:
-          name: build-native-${{ matrix.compiler }}
+          name: build-native-${{ matrix.os }}-${{ matrix.compiler }}
 
       - name: Fix _build-native permissions
         run: |
@@ -131,7 +160,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        arch: [aarch64, armhf, ppc64el, s390x, riscv64]
+        arch: [armhf, ppc64el, s390x, riscv64]
         compiler: [gcc, llvm]
         include:
           - arch: armhf
@@ -140,8 +169,6 @@ jobs:
           - arch: ppc64el
             binfmt: ppc64le
             gnupkg: -powerpc64le-linux-gnu
-          - arch: aarch64
-            debarch: arm64
         exclude:
           # Only GCC trunk supports the RISC-V V intrinsics and https://github.com/riscv-collab/riscv-gnu-toolchain
           # doesn't track a recent enough version yet
@@ -197,10 +224,10 @@ jobs:
           rm -rf sysroot/usr/libexec/gcc
         if: steps.check-sysroot-cache.outputs.cache-hit != 'true'
 
-      - name: Download build-native-${{ matrix.compiler }} artifacts
+      - name: Download build-native-ubuntu-latest-${{ matrix.compiler }} artifacts
         uses: actions/download-artifact@v3
         with:
-          name: build-native-${{ matrix.compiler }}
+          name: build-native-ubuntu-latest-${{ matrix.compiler }}
 
       - name: Fix _build-native permissions
         run: |
@@ -210,9 +237,7 @@ jobs:
         shell: bash -ex -o pipefail {0}
         run: |
           EXTRA_CMAKE_FLAGS=""
-          if [[ ${{ matrix.arch }} = "aarch64" ]]; then
-            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DSLEEF_ENFORCE_SVE=ON"
-          elif [[ ${{ matrix.arch }} = "armhf" ]]; then
+          if [[ ${{ matrix.arch }} = "armhf" ]]; then
             # Disable inline headers, they just don't compile on armhf
             EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DSLEEF_BUILD_INLINE_HEADERS=OFF"
           elif [[ ${{ matrix.arch }} = "ppc64el" ]]; then
@@ -252,31 +277,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # AArch64
-          - arch: aarch64
-            compiler: gcc
-            qemu_cpu: "max,sve=off"
-          - arch: aarch64
-            compiler: gcc
-            qemu_cpu: "max,sve=on,sve128=on"
-          - arch: aarch64
-            compiler: gcc
-            qemu_cpu: "max,sve=on,sve256=on"
-          - arch: aarch64
-            compiler: gcc
-            qemu_cpu: "max,sve=on,sve512=on"
-          - arch: aarch64
-            compiler: llvm
-            qemu_cpu: "max,sve=off"
-          - arch: aarch64
-            compiler: llvm
-            qemu_cpu: "max,sve=on,sve128=on"
-          - arch: aarch64
-            compiler: llvm
-            qemu_cpu: "max,sve=on,sve256=on"
-          - arch: aarch64
-            compiler: llvm
-            qemu_cpu: "max,sve=on,sve512=on"
           # Aarch32
           - arch: armhf
             compiler: gcc
@@ -345,10 +345,10 @@ jobs:
         run: |
           cat /proc/cpuinfo
 
-      - name: Download build-native-${{ matrix.compiler }} artifacts
+      - name: Download build-native-ubuntu-latest-${{ matrix.compiler }} artifacts
         uses: actions/download-artifact@v3
         with:
-          name: build-native-${{ matrix.compiler }}
+          name: build-native-ubuntu-latest-${{ matrix.compiler }}
 
       - name: Download build-${{ matrix.arch }}-${{ matrix.compiler }} artifacts
         uses: actions/download-artifact@v3
