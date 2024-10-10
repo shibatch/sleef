@@ -102,7 +102,7 @@ static INLINE int vavailability_i(int name) {
 
 #endif // #if !defined(SLEEF_GENHEADER)
 
-static INLINE void vprefetch_v_p(const void *ptr) { _mm_prefetch(ptr, _MM_HINT_T0); }
+static INLINE void vprefetch_v_p(const void *ptr) { _mm_prefetch((const char *)ptr, _MM_HINT_T0); }
 
 #ifdef __INTEL_COMPILER
 static INLINE int vtestallones_i_vo64(vopmask g) { return _mm512_mask2int(g) == 0xff; }
