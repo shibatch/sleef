@@ -92,7 +92,7 @@ In some cases, it is desirable to fix the last few coefficients to values like
 
 Finding a set of good parameters is not a straightforward process.
 
-<h2 id="benchmark">Benchmarking tool</h2>
+<h2 id="benchmark-legacy">Legacy Benchmarking tool</h2>
 
 SLEEF has a tool for measuring and plotting execution time of each function in
 the library. It consists of an executable for measurements, a makefile for
@@ -162,7 +162,7 @@ Install these with:
 ```sh
 sudo apt install openjdk-19-jdk-headless
 ```
-and 
+and
 ```sh
 sudo apt install gnuplot
 ```
@@ -171,3 +171,55 @@ Four graphs are generated : trigdp.png, nontrigdp.png, trigsp.png
 and nontrigsp.png. Please see our [benchmark results](../5-performance/) for
 an example of generated graphs by this tool.
 
+<h2 id="benchmark">Benchmarking tool</h2>
+
+This tool uses the [googlebench](https://github.com/google/benchmark) framework to benchmark SLEEF
+functions.
+It is integrated with SLEEF via CMake.
+In order to build this tool automatically when SLEEF is
+built, pass the `-DSLEEF_BUILD_BENCH=ON` CMake option when
+setting up the build directory:
+```sh
+cmake -S . -B build -DSLEEF_BUILD_BENCH=ON
+```
+After building SLEEF:
+```sh
+cmake --build build -j
+```
+in `build/bin` folder you will find an executable named
+benchsleef128.
+Run this executable with `./build/bin/benchsleef128` in
+order to obtain microbenchmarks for the functions in the project.
+A filter option can also be provided to the executable.
+This feature in inherited from googlebench, and takes
+a regular expression, and executes only the benchmarks
+whose name matches the regular expression.
+The set of all the benchmarks available can be obtained
+when running the benchmark tool when no filter is set
+and corresponds to all the benchmarks listed in
+`benchsleef.cpp`.
+```sh
+# Examples:
+# * This will benchmark Sleef_sinf_u10 on all intervals enabled in the tool.
+./build/bin/benchsleef128 --benchmark_filter=sinf_u10
+# * This will benchmark all single precision sin functions (scalar, vector and sve if available):
+./build/bin/benchsleef128 --benchmark_filter=sinf
+# * This will benchmark all single precision vector functions:
+./build/bin/benchsleef128 --benchmark_filter=vectorf
+```
+Note: all corresponds to all functions available in SLEEF and enabled in the benchmarks in this context.
+<h3 id="benchmark">Benchmarking on aarch64</h3>
+If you're running SLEEF on a machine with SVE support the executable generated will have SVE benchmarks
+available for functions specified in `benchsleef.cpp`.
+<h3 id="benchmark">Benchmarking on x86</h3>
+If you're running SLEEF on an x86 machine, two extra
+executables may be built (according to feature detection):
+
+```sh
+./build/bin/benchsleef256
+./build/bin/benchsleef512
+```
+These will benchmark 256bit and 512bit vector implementations
+for vector functions respectively.
+Note these executables can also be used to benchmark scalar
+functions.
