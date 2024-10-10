@@ -16,7 +16,7 @@ permissions:
 
 env:
   GCC_VERSION: "11"
-  REF_TAG: "3.6"
+  REF_TAG: "3.6.1"
   TEST_TAG: "master"
   COMMON_CMAKE_FLAGS: >
     -DSLEEF_SHOW_CONFIG=ON
