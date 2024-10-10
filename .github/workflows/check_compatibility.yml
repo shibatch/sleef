@@ -28,7 +28,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        tag: ["3.6", "master"]
+        tag: ["3.6.1", "master"]
 
     name: build-${{ matrix.tag }}
     steps:
