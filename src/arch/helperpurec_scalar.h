@@ -426,7 +426,7 @@ static INLINE void vstream_v_p_vf(float *ptr, vfloat v) { *ptr = v; }
 static vquad loadu_vq_p(void *p) {
   vquad vq;
   memcpy(8 + (char *)&vq, p, 8);
-  memcpy((char *)&vq, 8 + p, 8);
+  memcpy((char *)&vq, 8 + (char *)p, 8);
   return vq;
 }
 
