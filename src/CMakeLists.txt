@@ -8,7 +8,7 @@ endif()
 add_subdirectory("common")
 
 if (SLEEF_BUILD_BENCH)
-  add_subdirectory("benchmarks")
+  add_subdirectory("libm-benchmarks")
 endif()
 
 if (SLEEF_BUILD_DFT)
