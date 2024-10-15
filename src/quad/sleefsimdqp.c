@@ -3995,6 +3995,8 @@ static int xvprintf(size_t (*consumer)(const char *ptr, size_t size, void *arg),
       outlen += (*consumer)(xbuf, strlen(xbuf), arg);
     }
 
+    va_end(ap2);
+
     fmt++;
   }
 
