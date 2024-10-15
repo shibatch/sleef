@@ -109,7 +109,7 @@ template <> newtype gen_input (double lo, double hi)
 ```
 <h3 id="benchmark">Note</h3>
 This tool can also be built as a standalone project.
-From `sleef/src/benchmarks` directory, run:
+From `sleef/src/libm-benchmarks` directory, run:
 ```sh
 cmake -S . -B build -Dsleef_BINARY_DIR=<build_dir>
 cmake --build build -j
