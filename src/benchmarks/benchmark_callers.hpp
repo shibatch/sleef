@@ -55,9 +55,9 @@
 // Generate benchmarks for SVE function implementations
 #ifdef ENABLE_SVECTOR_BENCHMARKS
 #define BENCH_SINGLE_SVE(fun, ulp, min, max)                                   \
-  BENCH(Sleef_##fun##fx_##ulp##sve, scalarf, min, max);
+  BENCH(Sleef_##fun##fx_##ulp##sve, svef, min, max);
 #define BENCH_DOUBLE_SVE(fun, ulp, min, max)                                   \
-  BENCH(Sleef_##fun##dx_##ulp##sve, scalard, min, max);
+  BENCH(Sleef_##fun##dx_##ulp##sve, sved, min, max);
 #define BENCH_SVE(fun, ulp, min, max)                                          \
   BENCH_SINGLE_SVE(fun, ulp, min, max);                                        \
   BENCH_DOUBLE_SVE(fun, ulp, min, max);
