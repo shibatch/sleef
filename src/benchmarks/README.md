@@ -35,6 +35,16 @@ and corresponds to all the benchmarks listed in
 ./build/bin/benchsleef128 --benchmark_filter=vectorf
 ```
 Note: all corresponds to all functions available in SLEEF and enabled in the benchmarks in this context.
+
+This tool also supports multiple output formats, a feature
+also inherited from googlebench framework.
+The output formats available are `console`(default), `json` and `csv`.
+```sh
+# Examples:
+# * This will print output in the terminal in json format:
+./build/bin/benchsleef128 --benchmark_format=json
+```
+
 <h3 id="benchmark">Benchmarking on aarch64</h3>
 If you're running SLEEF on a machine with SVE support the executable generated will have SVE benchmarks
 available for functions specified in `benchsleef.cpp`.
