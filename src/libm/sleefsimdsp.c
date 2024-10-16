@@ -853,6 +853,9 @@ EXPORT CONST VECTOR_CC vfloat xtanf(vfloat d) {
   if (LIKELY(vtestallones_i_vo32(vlt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(TRIGRANGEMAX2f*0.5f))))) {
     q = vrint_vi2_vf(vmul_vf_vf_vf(d, vcast_vf_f((float)(2 * M_1_PI))));
     u = vcast_vf_vi2(q);
+#if (defined(ENABLE_PUREC_SCALAR) || defined(ENABLE_PURECFMA_SCALAR) || defined(ENABLE_VXE) || defined(ENABLE_VXENOFMA) || defined(ENABLE_VXE2) || defined(ENABLE_VXE2NOFMA)) && !defined(__clang__) && __GNUC__ == 13
+    u = vsel_vf_vo_vf_vf(veq_vo_vi2_vi2(q, vcast_vi2_i(0)), vcast_vf_f(0), u);
+#endif
     x = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_A2f*0.5f), x);
     x = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_B2f*0.5f), x);
     x = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_C2f*0.5f), x);
@@ -908,6 +911,9 @@ EXPORT CONST VECTOR_CC vfloat xtanf(vfloat d) {
 
   q = vrint_vi2_vf(vmul_vf_vf_vf(d, vcast_vf_f((float)(2 * M_1_PI))));
   u = vcast_vf_vi2(q);
+#if (defined(ENABLE_PUREC_SCALAR) || defined(ENABLE_PURECFMA_SCALAR) || defined(ENABLE_VXE) || defined(ENABLE_VXENOFMA) || defined(ENABLE_VXE2) || defined(ENABLE_VXE2NOFMA)) && !defined(__clang__) && __GNUC__ == 13
+    u = vsel_vf_vo_vf_vf(veq_vo_vi2_vi2(q, vcast_vi2_i(0)), vcast_vf_f(0), u);
+#endif
   x = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_A2f*0.5f), d);
   x = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_B2f*0.5f), x);
   x = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_C2f*0.5f), x);
@@ -1770,7 +1776,7 @@ EXPORT CONST VECTOR_CC vfloat xatanf(vfloat d) {
   t = vreinterpret_vf_vm(vxor_vm_vm_vm(vand_vm_vo32_vm(veq_vo_vi2_vi2(vand_vi2_vi2_vi2(q, vcast_vi2_i(2)), vcast_vi2_i(2)), vreinterpret_vm_vf(vcast_vf_f(-0.0f))), vreinterpret_vm_vf(t)));
 
 #if defined(ENABLE_NEON32) || defined(ENABLE_NEON32VFPV4)
-  t = vsel_vf_vo_vf_vf(visinf_vo_vf(d), vmulsign_vf_vf_vf(vcast_vf_f(1.5874010519681994747517056f), d), t);
+  t = vsel_vf_vo_vf_vf(visinf_vo_vf(d), vmulsign_vf_vf_vf(vcast_vf_f(1.570796326794896557998982), d), t);
 #endif
 
   return t;

@@ -4825,6 +4825,8 @@ void do_test() {
     fprintf(stderr, "atanf : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_f(mpfr_atan, child_atanf, d, 3.5);
     for(d = -10000;d < 10000 && success;d += 2.1) checkAccuracy_f(mpfr_atan, child_atanf, d, 3.5);
+    checkAccuracy_f(mpfr_atan, child_atanf, +INFINITY, 3.5);
+    checkAccuracy_f(mpfr_atan, child_atanf, -INFINITY, 3.5);
     showResult(success);
 
     //
