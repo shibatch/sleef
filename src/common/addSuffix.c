@@ -207,7 +207,18 @@ int main(int argc, char **argv) {
     nkeywords++;
     if (nkeywords >= nalloc) {
       nalloc *= 2;
-      keywords = realloc(keywords, sizeof(char *) * nalloc);
+      char ** tmp = realloc(keywords, sizeof(char *) * nalloc);
+      if (tmp == NULL) {
+        // free keywords if realloc fails
+        // otherwise address is lost.
+        free(keywords);
+        fclose(fp);
+        fprintf(stderr, "Failed realloc!\n");
+        exit(-1);
+      }
+      else {
+        keywords = tmp;
+      }
     }
   }
 
@@ -227,6 +238,8 @@ int main(int argc, char **argv) {
   doit(fp);
 
   fclose(fp);
+
+  free(keywords);
 
   exit(0);
 }
