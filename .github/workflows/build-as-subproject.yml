@@ -23,7 +23,7 @@ env:
 
 jobs:
   build-nested:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
 
@@ -80,7 +80,7 @@ jobs:
         if: always()
 
   build-submodule:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
 

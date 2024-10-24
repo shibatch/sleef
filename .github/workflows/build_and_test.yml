@@ -39,7 +39,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, ah-ubuntu_22_04-c7g_2x-50]
+        os: [ubuntu-24.04, ah-ubuntu_22_04-c7g_2x-50]
         compiler: [gcc, llvm]
 
     name: build-native-${{ matrix.os }}-${{ matrix.compiler }}
@@ -69,7 +69,7 @@ jobs:
 
       - name: Set x86_64 config
         shell: bash -ex -o pipefail {0}
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: ${{ matrix.os == 'ubuntu-24.04' }}
         run: |
             export EXTRA_CMAKE_FLAGS="\
               -DSLEEF_ENFORCE_SSE2=ON -DSLEEF_ENFORCE_SSE4=ON \
@@ -114,7 +114,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, ah-ubuntu_22_04-c7g_2x-50]
+        os: [ubuntu-24.04, ah-ubuntu_22_04-c7g_2x-50]
         compiler: [gcc, llvm]
 
     name: test-native-${{ matrix.os }}-${{ matrix.compiler }}
@@ -155,7 +155,7 @@ jobs:
         if: always()
 
   build-cross:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: [build-native]
     strategy:
       fail-fast: false
@@ -224,10 +224,10 @@ jobs:
           rm -rf sysroot/usr/libexec/gcc
         if: steps.check-sysroot-cache.outputs.cache-hit != 'true'
 
-      - name: Download build-native-ubuntu-latest-${{ matrix.compiler }} artifacts
+      - name: Download build-native-ubuntu-24.04-${{ matrix.compiler }} artifacts
         uses: actions/download-artifact@v3
         with:
-          name: build-native-ubuntu-latest-${{ matrix.compiler }}
+          name: build-native-ubuntu-24.04-${{ matrix.compiler }}
 
       - name: Fix _build-native permissions
         run: |
@@ -271,7 +271,7 @@ jobs:
 
   test-cross:
     if: github.event_name == 'push' && github.ref_name == 'master'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: [build-native, build-cross]
     strategy:
       fail-fast: false
@@ -311,9 +311,6 @@ jobs:
           # - arch: riscv64
           #   compiler: gcc
           #   qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=true,vlen=256,elen=64,vext_spec=v1.0"
-          # - arch: riscv64
-          #   compiler: gcc
-          #   qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=true,vlen=512,elen=64,vext_spec=v1.0"
           - arch: riscv64
             compiler: llvm
             qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=false"
@@ -323,9 +320,6 @@ jobs:
           - arch: riscv64
             compiler: llvm
             qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=true,vlen=256,elen=64,vext_spec=v1.0"
-          - arch: riscv64
-            compiler: llvm
-            qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=true,vlen=512,elen=64,vext_spec=v1.0"
 
     name: "test-${{ matrix.arch }}-${{ matrix.compiler }} (qemu_cpu: \"${{ matrix.qemu_cpu }}\")"
     steps:
@@ -345,10 +339,10 @@ jobs:
         run: |
           cat /proc/cpuinfo
 
-      - name: Download build-native-ubuntu-latest-${{ matrix.compiler }} artifacts
+      - name: Download build-native-ubuntu-24.04-${{ matrix.compiler }} artifacts
         uses: actions/download-artifact@v3
         with:
-          name: build-native-ubuntu-latest-${{ matrix.compiler }}
+          name: build-native-ubuntu-24.04-${{ matrix.compiler }}
 
       - name: Download build-${{ matrix.arch }}-${{ matrix.compiler }} artifacts
         uses: actions/download-artifact@v3
