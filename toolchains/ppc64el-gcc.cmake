@@ -5,7 +5,8 @@ SET (CMAKE_SYSTEM_PROCESSOR "ppc64")
 SET(CMAKE_FIND_ROOT_PATH  /usr/powerpc64le-linux-gnu /usr/include/powerpc64le-linux-gnu /usr/lib/powerpc64le-linux-gnu)
 
 find_program(CMAKE_C_COMPILER
-             NAMES powerpc64le-linux-gnu-gcc-12
+             NAMES powerpc64le-linux-gnu-gcc-13
+                   powerpc64le-linux-gnu-gcc-12
                    powerpc64le-linux-gnu-gcc-11
                    powerpc64le-linux-gnu-gcc-10
                    powerpc64le-linux-gnu-gcc-9
