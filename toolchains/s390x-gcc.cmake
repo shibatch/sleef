@@ -7,6 +7,10 @@ SET(CMAKE_FIND_ROOT_PATH  /usr/s390x-linux-gnu /usr/include/s390x-linux-gnu /usr
 find_program(CMAKE_C_COMPILER
              NAMES s390x-linux-gnu-gcc-12
                    s390x-linux-gnu-gcc-11
+                   s390x-linux-gnu-gcc-10
+                   s390x-linux-gnu-gcc-9
+                   s390x-linux-gnu-gcc-8
+                   s390x-linux-gnu-gcc-7
                    s390x-linux-gnu-gcc)
 
 SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
