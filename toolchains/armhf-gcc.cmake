@@ -5,7 +5,8 @@ SET (CMAKE_SYSTEM_PROCESSOR "armhf")
 SET(CMAKE_FIND_ROOT_PATH  /usr/arm-linux-gnueabihf /usr/include/arm-linux-gnueabihf /usr/lib/arm-linux-gnueabihf)
 
 find_program(CMAKE_C_COMPILER
-             NAMES arm-linux-gnueabihf-gcc-12
+             NAMES arm-linux-gnueabihf-gcc-13
+                   arm-linux-gnueabihf-gcc-12
                    arm-linux-gnueabihf-gcc-11
                    arm-linux-gnueabihf-gcc-10
                    arm-linux-gnueabihf-gcc-9
