@@ -54,7 +54,10 @@ jobs:
           sudo apt-get install -y -qq build-essential cmake curl ninja-build libgmp-dev libmpfr-dev libssl-dev
 
       # Needed for llvm builds as well for target libraries
+      # Use default gcc version on Arm-hosted runners, ie. gcc 11,
+      # since versions of 12+ are not recent enough on Ubuntu 22.04.
       - name: Install gcc
+        if: ${{ matrix.os == 'ubuntu-24.04' }}
         run: |
           sudo apt-get install -y -qq gcc-${GCC_VERSION}
 
