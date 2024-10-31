@@ -1,5 +1,6 @@
 find_program(CMAKE_C_COMPILER
-             NAMES gcc-13
+             NAMES gcc-14
+                   gcc-13
                    gcc-12
                    gcc-11
                    gcc-10

@@ -105,7 +105,7 @@ LTO is not tested in CI yet, except on Windows.
 
 ### Compiler support
 
-Results are displayed for gcc 13 and llvm 17, the compiler versions used in CI tests with GitHub Actions.
+Results are displayed for gcc 14 and llvm 17, the compiler versions used in CI tests with GitHub Actions.
 
 Older versions should be supported too, while newer ones are either not tested or have known issues.
 
@@ -122,7 +122,7 @@ Only Linux distributions and macOS are fully tested in CI and thus officially su
 Only AArch64 and x86_64 vector extensions are built and tested natively on Linux and macOS.
 Other architectures/vector extensions are cross-compiled on Linux.
 
-Native AArch64 tests on Linux are using gcc 11 (default in Ubuntu 22.04), while native x86_64 and cross-compiled tests use gcc 13.
+Native AArch64 tests on Linux are using gcc 11 (default in Ubuntu 22.04), while native x86_64 and cross-compiled tests use gcc 14.
 
 Building SLEEF for Windows on x86 machines was officially supported ( :white_circle: ), as of 3.5.1,
 however it is only partially tested due to [known limitations of the test suite with MinGW or MSYS2](https://github.com/shibatch/sleef/issues/544).
