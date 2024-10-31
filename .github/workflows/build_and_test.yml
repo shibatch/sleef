@@ -305,15 +305,15 @@ jobs:
           - arch: s390x
             compiler: llvm
           # RISC-V
-          # - arch: riscv64
-          #   compiler: gcc
-          #   qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=false"
-          # - arch: riscv64
-          #   compiler: gcc
-          #   qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=true,vlen=128,elen=64,vext_spec=v1.0"
-          # - arch: riscv64
-          #   compiler: gcc
-          #   qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=true,vlen=256,elen=64,vext_spec=v1.0"
+          - arch: riscv64
+            compiler: gcc
+            qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=false"
+          - arch: riscv64
+            compiler: gcc
+            qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=true,vlen=128,elen=64,vext_spec=v1.0"
+          - arch: riscv64
+            compiler: gcc
+            qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=true,vlen=256,elen=64,vext_spec=v1.0"
           - arch: riscv64
             compiler: llvm
             qemu_cpu: "rv64,zba=true,zbb=true,zbs=true,v=false"

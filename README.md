@@ -89,7 +89,7 @@ Compilation of SLEEF on previously supported environments might still be safe, w
   <td colspan="4">N/A</td>
 </tr>
 <tr align="center"><th>RISC-V<br>(riscv64)</th><th>RVV1, RVV2</th>
-  <td>N/A (14+)</td><td>:green_circle:</td><td>N/A</td>
+  <td>:green_circle:</td><td>:green_circle:</td><td>N/A</td>
   <td colspan="2">N/A</td>
   <td colspan="4">N/A</td>
 </tr>
