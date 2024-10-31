@@ -5,7 +5,8 @@ SET (CMAKE_SYSTEM_PROCESSOR "s390x")
 SET(CMAKE_FIND_ROOT_PATH  /usr/s390x-linux-gnu /usr/include/s390x-linux-gnu /usr/lib/s390x-linux-gnu)
 
 find_program(CMAKE_C_COMPILER
-             NAMES s390x-linux-gnu-gcc-13
+             NAMES s390x-linux-gnu-gcc-14
+                   s390x-linux-gnu-gcc-13
                    s390x-linux-gnu-gcc-12
                    s390x-linux-gnu-gcc-11
                    s390x-linux-gnu-gcc-10
