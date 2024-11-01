@@ -659,9 +659,23 @@ option(SLEEF_ENFORCE_RVVM1 "Build fails if RVVM1 is not supported by the compile
 if(SLEEF_ARCH_RISCV64 AND NOT SLEEF_DISABLE_RVVM1)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_RVVM1}")
   CHECK_C_SOURCE_COMPILES("
-  #include <riscv_vector.h>
-  int main() {
-    vint32m1_t r = __riscv_vmv_v_x_i32m1(1, __riscv_vlenb() * 8 / 32); }"
+  #ifdef __riscv_v
+  #if __riscv_v < 1000000
+  #error \"RVV version 1.0 not supported\"
+  #endif
+  #else
+  #error \"RVV not supported\"
+  #endif
+
+  #ifdef __riscv_v_intrinsic
+  #if __riscv_v_intrinsic < 12000
+  #error \"RVV instrinsics version 0.12 not supported\"
+  #endif
+  #else
+  #error \"RVV intrinsics not supported\"
+  #endif
+
+  int main(void) { return 0; }"
     COMPILER_SUPPORTS_RVVM1)
 
   if(COMPILER_SUPPORTS_RVVM1)
@@ -681,9 +695,23 @@ option(SLEEF_ENFORCE_RVVM2 "Build fails if RVVM2 is not supported by the compile
 if(SLEEF_ARCH_RISCV64 AND NOT SLEEF_DISABLE_RVVM2)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_RVVM2}")
   CHECK_C_SOURCE_COMPILES("
-  #include <riscv_vector.h>
-  int main() {
-    vint32m2_t r = __riscv_vmv_v_x_i32m2(1, 2 * __riscv_vlenb() * 8 / 32); }"
+  #ifdef __riscv_v
+  #if __riscv_v < 1000000
+  #error \"RVV version 1.0 not supported\"
+  #endif
+  #else
+  #error \"RVV not supported\"
+  #endif
+
+  #ifdef __riscv_v_intrinsic
+  #if __riscv_v_intrinsic < 12000
+  #error \"RVV instrinsics version 0.12 not supported\"
+  #endif
+  #else
+  #error \"RVV intrinsics not supported\"
+  #endif
+
+  int main(void) { return 0; }"
     COMPILER_SUPPORTS_RVVM2)
 
   if(COMPILER_SUPPORTS_RVVM2)
