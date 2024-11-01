@@ -172,11 +172,6 @@ jobs:
           - arch: ppc64el
             binfmt: ppc64le
             gnupkg: -powerpc64le-linux-gnu
-        exclude:
-          # Only GCC trunk supports the RISC-V V intrinsics and https://github.com/riscv-collab/riscv-gnu-toolchain
-          # doesn't track a recent enough version yet
-          - arch: riscv64
-            compiler: gcc
 
     name: build-${{ matrix.arch }}-${{ matrix.compiler }}
     steps:
