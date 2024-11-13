@@ -34,6 +34,8 @@ option(SLEEF_DISABLE_SSL "Disable testing with the SSL library" OFF)
 option(SLEEF_ENABLE_CUDA "Enable CUDA" OFF)
 option(SLEEF_ENABLE_CXX "Enable C++" OFF)
 
+option(SLEEF_BUILD_WITH_LIBM "build libsleef with libm, can turn off on Windows to solve mutiple math functions issue." ON)
+
 #
 
 if (SLEEF_BUILD_BENCH)

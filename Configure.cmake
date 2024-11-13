@@ -48,7 +48,9 @@ endif()
 
 # Some toolchains require explicit linking of the libraries following.
 find_library(LIB_MPFR mpfr)
-find_library(LIBM m)
+if(SLEEF_BUILD_WITH_LIBM)
+  find_library(LIBM m)
+endif()
 find_library(LIBGMP gmp)
 find_library(LIBRT rt)
 find_library(LIBFFTW3 fftw3)
