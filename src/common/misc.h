@@ -13,8 +13,13 @@
 #include <string.h>
 #endif
 
+
 #ifndef M_PI
 #define M_PI 3.141592653589793238462643383279502884
+#endif
+
+#ifndef M_PIf
+# define M_PIf ((float)M_PI)
 #endif
 
 #ifndef M_PIl
@@ -137,9 +142,10 @@
 #define L2Lf 1.428606765330187045e-06f
 
 #define R_LN2f 1.442695040888963407359924681001892137426645954152985934135449406931f
-#ifndef M_PIf
-# define M_PIf ((float)M_PI)
-#endif
+
+// Overflow bound for exp and pow
+
+#define LOG_DBL_MAX 0x1.62e42fefa39efp+9 /* 709.782712893384 */
 
 //
 

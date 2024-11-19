@@ -2167,10 +2167,11 @@ EXPORT CONST VECTOR_CC vdouble xexp(vdouble d) {
 
   u = vadd_vd_vd_vd(vcast_vd_d(1), vmla_vd_vd_vd_vd(vmul_vd_vd_vd(s, s), u, s));
 #endif // #ifdef ENABLE_FMA_DP
-  
+
   u = vldexp2_vd_vd_vi(u, q);
 
-  u = vsel_vd_vo_vd_vd(vgt_vo_vd_vd(d, vcast_vd_d(709.78271114955742909217217426)), vcast_vd_d(SLEEF_INFINITY), u);
+  vopmask o = vgt_vo_vd_vd(d, vcast_vd_d(LOG_DBL_MAX));
+  u = vsel_vd_vo_vd_vd(o, vcast_vd_d(SLEEF_INFINITY), u);
   u = vreinterpret_vd_vm(vandnot_vm_vo64_vm(vlt_vo_vd_vd(d, vcast_vd_d(-1000)), vreinterpret_vm_vd(u)));
 
   return u;
@@ -2340,13 +2341,13 @@ static INLINE CONST VECTOR_CC vdouble expk(vdouble2 d) {
 
 #if !defined(DETERMINISTIC)
 EXPORT CONST VECTOR_CC vdouble xpow(vdouble x, vdouble y) {
-#if 1
   vopmask yisint = visint_vo_vd(y);
   vopmask yisodd = vand_vo_vo_vo(visodd_vo_vd(y), yisint);
 
   vdouble2 d = ddmul_vd2_vd2_vd(logk(vabs_vd_vd(x)), y);
   vdouble result = expk(d);
-  result = vsel_vd_vo_vd_vd(vgt_vo_vd_vd(vd2getx_vd_vd2(d), vcast_vd_d(709.78271114955742909217217426)), vcast_vd_d(SLEEF_INFINITY), result);
+  vopmask o = vgt_vo_vd_vd(vd2getx_vd_vd2(d), vcast_vd_d(LOG_DBL_MAX));
+  result = vsel_vd_vo_vd_vd(o, vcast_vd_d(SLEEF_INFINITY), result);
 
   result = vmul_vd_vd_vd(result,
 			 vsel_vd_vo_vd_vd(vgt_vo_vd_vd(x, vcast_vd_d(0)),
@@ -2372,9 +2373,6 @@ EXPORT CONST VECTOR_CC vdouble xpow(vdouble x, vdouble y) {
   result = vsel_vd_vo_vd_vd(vor_vo_vo_vo(veq_vo_vd_vd(y, vcast_vd_d(0)), veq_vo_vd_vd(x, vcast_vd_d(1))), vcast_vd_d(1), result);
 
   return result;
-#else
-  return expk(ddmul_vd2_vd2_vd(logk(x), y));
-#endif
 }
 #endif // #if !defined(DETERMINISTIC)
 
