@@ -3903,6 +3903,8 @@ void do_test() {
     fprintf(stderr, "exp : ");
     for(d = -10;d < 10 && success;d += 0.002) checkAccuracy_d(mpfr_exp, child_exp, d, 1.0);
     for(d = -1000;d < 1000 && success;d += 1.1) checkAccuracy_d(mpfr_exp, child_exp, d, 1.0);
+    // Test for early or late overflow, e.g before or after x = LOG_DBL_MAX
+    for(d = LOG_DBL_MAX - 0.0001;(d < LOG_DBL_MAX + 0.0001) && success;d += 0.00001) checkAccuracy_d(mpfr_exp, child_exp, d, 1.0);
     showResult(success);
 
     //
@@ -3914,6 +3916,8 @@ void do_test() {
       }
     }
     for(y = -1000;y < 1000 && success;y += 0.1) checkAccuracy_d_d(mpfr_pow, child_pow, 2.1, y, 1.0);
+    // Test for early or late overflow (test limited to x = e)
+    for(d = LOG_DBL_MAX - 0.0001;(d < LOG_DBL_MAX + 0.0001) && success;d += 0.00001) checkAccuracy_d_d(mpfr_pow, child_pow, exp(1.0), d, 1.0);
     showResult(success);
 
     //

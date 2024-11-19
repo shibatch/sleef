@@ -1490,9 +1490,9 @@ EXPORT CONST double xexp(double d) {
   u = s * s * u + s + 1;
   u = ldexp2k(u, q);
 
-  if (d > 709.78271114955742909217217426) u = SLEEF_INFINITY;
+  if (d > LOG_DBL_MAX) u = SLEEF_INFINITY;
   if (d < -1000) u = 0;
-  
+
   return u;
 }
 
@@ -1641,7 +1641,7 @@ EXPORT CONST double xpow(double x, double y) {
   Sleef_double2 d = ddmul_d2_d2_d(logk(fabsk(x)), y);
   double result = expk(d);
 
-  result = (d.x > 709.78271114955742909217217426 || xisnan(result)) ? SLEEF_INFINITY : result;
+  result = (d.x > LOG_DBL_MAX || xisnan(result)) ? SLEEF_INFINITY : result;
   result *= (x > 0 ? 1 : (yisint ? (yisodd ? -1 : 1) : SLEEF_NAN));
 
   double efx = mulsign(fabsk(x) - 1, y);
