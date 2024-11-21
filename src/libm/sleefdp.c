@@ -2145,16 +2145,18 @@ EXPORT CONST double xlog1p(double d) {
   double m, t, x2;
   int e;
 
+  if (d > LOG1P_BOUND) return xlog_u1(d); // ~log(d)
+
   double dp1 = d + 1;
-  
+
   int o = dp1 < DBL_MIN;
   if (o) dp1 *= (double)(INT64_C(1) << 32) * (double)(INT64_C(1) << 32);
-      
+
   e = ilogb2k(dp1 * (1.0/0.75));
 
   t = ldexp3k(1, -e);
   m = mla(d, t, t - 1);
-  
+
   if (o) e -= 64;
 
   x = dddiv_d2_d2_d2(dd(m, 0), ddadd_d2_d_d(2, m));
@@ -2175,8 +2177,7 @@ EXPORT CONST double xlog1p(double d) {
   s = ddadd_d2_d2_d(s, x2 * x.x * t);
 
   double r = s.x + s.y;
-  
-  if (d > 1e+307) r = SLEEF_INFINITY;
+
   if (d < -1 || xisnan(d)) r = SLEEF_NAN;
   if (d == -1) r = -SLEEF_INFINITY;
   if (xisnegzero(d)) r = -0.0;

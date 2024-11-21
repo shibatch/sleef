@@ -2987,17 +2987,19 @@ EXPORT CONST VECTOR_CC vdouble xlog1p(vdouble d) {
 	    0.2857142932794299317e+0,
 	    0.3999999999635251990e+0,
 	    0.6666666666667333541e+0);
-  
+
   s = ddadd_vd2_vd2_vd2(s, ddscale_vd2_vd2_vd(x, vcast_vd_d(2)));
   s = ddadd_vd2_vd2_vd(s, vmul_vd_vd_vd(vmul_vd_vd_vd(x2, vd2getx_vd_vd2(x)), t));
 
   vdouble r = vadd_vd_vd_vd(vd2getx_vd_vd2(s), vd2gety_vd_vd2(s));
-  
-  r = vsel_vd_vo_vd_vd(vgt_vo_vd_vd(d, vcast_vd_d(1e+307)), vcast_vd_d(SLEEF_INFINITY), r);
+
+  // Use log(d) if d too large to use core approximation.
+  vopmask ocore = vle_vo_vd_vd(d, vcast_vd_d(LOG1P_BOUND));
+  if(!LIKELY(vtestallones_i_vo64 (ocore))) r = vsel_vd_vo_vd_vd(ocore, r, xlog_u1(d));
   r = vsel_vd_vo_vd_vd(vor_vo_vo_vo(vlt_vo_vd_vd(d, vcast_vd_d(-1)), visnan_vo_vd(d)), vcast_vd_d(SLEEF_NAN), r);
   r = vsel_vd_vo_vd_vd(veq_vo_vd_vd(d, vcast_vd_d(-1)), vcast_vd_d(-SLEEF_INFINITY), r);
   r = vsel_vd_vo_vd_vd(visnegzero_vo_vd(d), vcast_vd_d(-0.0), r);
-  
+
   return r;
 }
 

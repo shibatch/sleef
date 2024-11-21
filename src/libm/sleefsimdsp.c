@@ -2873,13 +2873,15 @@ EXPORT CONST VECTOR_CC vfloat xlog1pf(vfloat d) {
   t = vcast_vf_f(+0.3027294874e+0f);
   t = vmla_vf_vf_vf_vf(t, x2, vcast_vf_f(+0.3996108174e+0f));
   t = vmla_vf_vf_vf_vf(t, x2, vcast_vf_f(+0.6666694880e+0f));
-  
+
   s = dfadd_vf2_vf2_vf2(s, dfscale_vf2_vf2_vf(x, vcast_vf_f(2)));
   s = dfadd_vf2_vf2_vf(s, vmul_vf_vf_vf(vmul_vf_vf_vf(x2, vf2getx_vf_vf2(x)), t));
 
   vfloat r = vadd_vf_vf_vf(vf2getx_vf_vf2(s), vf2gety_vf_vf2(s));
-  
-  r = vsel_vf_vo_vf_vf(vgt_vo_vf_vf(d, vcast_vf_f(1e+38)), vcast_vf_f(SLEEF_INFINITYf), r);
+
+  // Use log(d) if d too large to use core approximation.
+  vopmask ocore = vle_vo_vf_vf(d, vcast_vf_f(LOG1PF_BOUND));
+  if(!LIKELY(vtestallones_i_vo32 (ocore))) r = vsel_vf_vo_vf_vf(ocore, r, xlogf_u1(d));
   r = vreinterpret_vf_vm(vor_vm_vo32_vm(vgt_vo_vf_vf(vcast_vf_f(-1), d), vreinterpret_vm_vf(r)));
   r = vsel_vf_vo_vf_vf(veq_vo_vf_vf(d, vcast_vf_f(-1)), vcast_vf_f(-SLEEF_INFINITYf), r);
   r = vsel_vf_vo_vf_vf(visnegzero_vo_vf(d), vcast_vf_f(-0.0f), r);
