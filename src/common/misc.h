@@ -143,9 +143,16 @@
 
 #define R_LN2f 1.442695040888963407359924681001892137426645954152985934135449406931f
 
-// Overflow bound for exp and pow
+// Overflow bounds
 
+// - exp(x) overflows for x over (also used in pow)
 #define LOG_DBL_MAX 0x1.62e42fefa39efp+9 /* 709.782712893384 */
+
+// Other bounds
+
+// - log1p(f)(x) approximation holds up to x equals
+#define LOG1PF_BOUND 0x1.2ced32p+126 /* 1.0e+38 */
+#define LOG1P_BOUND 0x1.c7b1f3cac7433p+1019 /* 1.0e+307 */
 
 //
 

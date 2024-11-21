@@ -4145,6 +4145,7 @@ void do_test() {
 
     fprintf(stderr, "log1p : ");
     for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_d(mpfr_log1p, child_log1p, d, 1.0);
+    for(d = 1.0e+307;d < DBL_MAX && success;d += 1.0e+306) checkAccuracy_d(mpfr_log1p, child_log1p, d, 1.0);
     showResult(success);
 
     //
@@ -5018,6 +5019,7 @@ void do_test() {
 
     fprintf(stderr, "log1pf : ");
     for(d = 0.0001;d < 10 && success;d += 0.001) checkAccuracy_f(mpfr_log1p, child_log1pf, d, 1.0);
+    for(d = 1.0e+38;d < FLT_MAX && success;d += 1.0e+37) checkAccuracy_f(mpfr_log1p, child_log1pf, d, 1.0);
     showResult(success);
 
     //

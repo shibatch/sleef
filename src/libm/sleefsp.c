@@ -1733,18 +1733,20 @@ EXPORT CONST float xlog1pf(float d) {
   float m, t, x2;
   int e;
 
+  if (d > LOG1PF_BOUND) return xlogf(d); // ~log(d)
+
   float dp1 = d + 1;
-  
+
   int o = dp1 < FLT_MIN;
   if (o) dp1 *= (float)(INT64_C(1) << 32) * (float)(INT64_C(1) << 32);
-      
+
   e = ilogb2kf(dp1 * (1.0f/0.75f));
 
   t = ldexp3kf(1, -e);
   m = mlaf(d, t, t-1);
 
   if (o) e -= 64;
-  
+
   x = dfdiv_f2_f2_f2(df(m, 0), dfadd_f2_f_f(2, m));
   x2 = x.x * x.x;
 
@@ -1757,8 +1759,7 @@ EXPORT CONST float xlog1pf(float d) {
   s = dfadd_f2_f2_f(s, x2 * x.x * t);
 
   float r = s.x + s.y;
-    
-  if (d > 1e+38) r = SLEEF_INFINITYf;
+
   if (d < -1) r = SLEEF_NANf;
   if (d == -1) r = -SLEEF_INFINITYf;
   if (xisnegzerof(d)) r = -0.0f;
