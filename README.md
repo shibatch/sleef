@@ -230,8 +230,8 @@ Copyright &copy; 2010-2024 SLEEF Project, Naoki Shibata and contributors.<br/>
 <!-- Repository links -->
 
 [webpage_url]: https://sleef.org/
-[build_info_url]: https://sleef.org/compile.xhtml
-[supported_env_url]: https://sleef.org/index.xhtml#environment
+[build_info_url]: https://sleef.org/1-user-guide/#preliminaries
+[supported_env_url]: https://sleef.org/index.html#environment
 [repo_url]: https://github.com/shibatch/sleef
 [repo_license_url]: https://github.com/shibatch/sleef/blob/main/LICENSE.txt
 [license_url]: http://www.boost.org/LICENSE_1_0.txt
