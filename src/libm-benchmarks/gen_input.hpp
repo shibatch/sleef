@@ -6,6 +6,7 @@
 #pragma once
 #include "type_defs.hpp"
 #include <algorithm>
+#include <cstdint>
 #include <vector>
 
 ///////////////////////////////////

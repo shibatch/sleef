@@ -62,6 +62,15 @@ for vector functions respectively.
 Note these executables can also be used to benchmark scalar
 functions.
 
+<h3 id="benchmark">Benchmarking libm</h3>
+This tool can also benchmark libm functions listed in 
+`benchlibm.cpp`.
+To enable this, pass on extra build option `-DSLEEF_BUILD_BENCH_REF=ON`
+(on top of `-DSLEEF_BUILD_BENCH` from before).
+This will produce a new script `./build/bin/benchlibm128`.
+You can interact with this in a similar fashion as described for 
+`./build/bin/benchsleef128`.
+
 <h3 id="benchmark">Maintenance</h3>
 Some functions are still not enabled in the benchmarks.
 In order to add a function which uses the types already
