@@ -14,6 +14,7 @@ option(SLEEF_BUILD_GNUABI_LIBS "libsleefgnuabi will be built." ON)
 option(SLEEF_BUILD_SCALAR_LIB "libsleefscalar will be built." OFF)
 option(SLEEF_BUILD_TESTS "Tests will be built." ON)
 option(SLEEF_BUILD_BENCH "Bench will be built." OFF)
+option(SLEEF_BUILD_BENCH_REF "Benchmark script for reference (e.g. system libm) will be built." OFF)
 option(SLEEF_BUILD_INLINE_HEADERS "Build header for inlining whole SLEEF functions" OFF)
 
 option(SLEEF_TEST_ALL_IUT "Perform tests on implementations with all vector extensions" OFF)
@@ -40,6 +41,15 @@ option(SLEEF_BUILD_WITH_LIBM "build libsleef with libm, can turn off on Windows 
 
 if (SLEEF_BUILD_BENCH)
   set(SLEEF_ENABLE_CXX ON)
+endif ()
+
+if (SLEEF_BUILD_BENCH_REF)
+  if (NOT SLEEF_BUILD_BENCH)
+    message(FATAL_ERROR "SLEEF_BUILD_BENCH must be on when SLEEF_BUILD_BENCH_REF is enabled.")
+  endif ()
+  if(NOT CMAKE_SYSTEM_NAME MATCHES Linux)
+     message(FATAL_ERROR "Libm benchmarking not supported in this OS.")
+  endif()
 endif ()
 
 if (DEFINED SLEEF_BUILD_SHARED_LIBS)

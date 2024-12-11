@@ -4,7 +4,6 @@
 //          http://www.boost.org/LICENSE_1_0.txt)
 
 #pragma once
-#include <sleef.h>
 
 ///////////////////////////////////
 // Library Includes and ///////////
@@ -14,6 +13,9 @@ template <typename T> const inline int vector_len = 1;
 template <> const inline int vector_len<float> = 1;
 template <> const inline int vector_len<double> = 1;
 
+#if !defined(BENCH_LIBM)
+
+#include <sleef.h>
 #if defined(__i386__) || defined(__x86_64__)
 #if defined(_MSC_VER)
 #include <intrin.h>
@@ -93,4 +95,6 @@ typedef svfloat32x2_t svfloat2;
 template <> const inline int vector_len<svfloat> = svcntw();
 template <> const inline int vector_len<svdouble> = svcntd();
 #define ENABLE_SVECTOR_BENCHMARKS
+#endif
+
 #endif

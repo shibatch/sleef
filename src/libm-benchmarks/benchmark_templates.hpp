@@ -45,3 +45,19 @@ static void BM_Sleef_templated_function(benchmark::State &state,
       benchmark::Counter(num_els_processed, benchmark::Counter::kIsRate |
                                                 benchmark::Counter::kInvert);
 }
+
+// Necessary for libm sincos (which takes 3 arguments)
+template <typename T>
+static void BM_Sleef_templated_function(benchmark::State &state,
+                                        void (*fun)(T, T*, T*), double min,
+                                        double max) {
+  T p0, p1;
+  T x = gen_input<T>(min, max);
+  for (auto _ : state) {
+    call_fun(fun, x, &p0, &p1);
+  }
+  int num_els_processed = state.iterations() * vector_len<T>;
+  state.counters["NSperEl"] =
+      benchmark::Counter(num_els_processed, benchmark::Counter::kIsRate |
+                                                benchmark::Counter::kInvert);
+}
