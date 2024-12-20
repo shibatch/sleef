@@ -190,6 +190,10 @@ ctest --test-dir build -j
 
 For more detailed build instructions please refer to the [dedicated section on CMake](./docs/1-user-guide/build-with-cmake) or to [our web page][build_info_url].
 
+## How to cross-compile SLEEF
+
+For more detailed please refer to [cross-compile SLEEF](./docs/1-user-guide#cross_linux)
+
 ## Install SLEEF
 
 ### From source
