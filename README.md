@@ -190,50 +190,9 @@ ctest --test-dir build -j
 
 For more detailed build instructions please refer to the [dedicated section on CMake](./docs/1-user-guide/build-with-cmake) or to [our web page][build_info_url].
 
-## How to CROSS-COMPILE SLEEF
-Two methods are used for cross-compiling SLEEF. Here are examples of cross-compiling SLEEF for the arm architecture on a platform with X86 architecture and Linux OS:
+## How to cross-compile SLEEF
 
-### Method 1
-1. First, compile the native SLEEF.
-```bash
-cmake -S . -B build-native
-
-cmake --build build-native -j --clean-first
-```
-
-2. Cross-compile the target platform's SLEEF.
-```bash
-cmake -DCMAKE_TOOLCHAIN_FILE=./toolchains/aarch64-gcc.cmake -DNATIVE_BUILD_DIR=$(pwd)/build-native/ -S . -B build
-
-cmake --build build -j --clean-first
-```
-
-### Method 2
-
-No need to compile the native SLEEF
-
-1. Install qemu on Ubuntu.
-```bash
-sudo apt install -y qemu-user-static binfmt-support
-```
-
-2. Set the environment variable.
-```bash
-export SLEEF_TARGET_EXEC_USE_QEMU=ON
-```
-
-3. Set the dynamic linker/loader path.
-```bash
-# for aarch64
-export QEMU_LD_PREFIX=/usr/aarch64-linux-gnu/
-```
-
-4. Cross-compile the target platform's SLEEF.
-```bash
-cmake -DCMAKE_TOOLCHAIN_FILE=./toolchains/aarch64-gcc.cmake -S . -B build
-
-cmake --build build -j --clean-first
-```
+For more detailed please refer to [cross-compile SLEEF](./docs/1-user-guide#cross_linux)
 
 ## Install SLEEF
 

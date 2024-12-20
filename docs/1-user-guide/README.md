@@ -18,6 +18,7 @@ Guidelines on how to compile and install the library.
 * [Compiling the library with Microsoft Visual C++](#MSVC)
 * [Compiling and running "Hello SLEEF"](#hello)
 * [Importing SLEEF into your project](#import)
+* [Cross compilation for Linux](#cross_linux)
 * [Cross compilation for iOS and Android](#cross)
 
 <h2 id="preliminaries">Preliminaries</h2>
@@ -202,6 +203,62 @@ target_link_libraries(hellox86 sleef)
 <p style="text-align:center;">
   Fig. 2.3: <a href="../src/CMakeLists.txt">Example CMakeLists.txt</a>
 </p>
+
+
+<h2 id="cross_linux">Cross compilation for Linux</h2>
+
+Two methods are used for cross-compiling SLEEF. Both rely on existing toolchain
+files provided in the `toolchains/` directory.
+
+Here are examples of cross-compiling SLEEF for the AArch64 on a platform with 
+x86_64 and Linux OS:
+
+<h3 id="method1">Method1</h3>
+
+Please run the following from the root directory of SLEEF:
+
+1. First, compile the native SLEEF.
+```bash
+cmake -S . -B build-native
+
+cmake --build build-native -j --clean-first
+```
+
+2. Cross-compile the target platform's SLEEF.
+```bash
+cmake -DCMAKE_TOOLCHAIN_FILE=./toolchains/aarch64-gcc.cmake -DNATIVE_BUILD_DIR=$(pwd)/build-native/ -S . -B build
+
+cmake --build build -j --clean-first
+```
+
+<h3 id="method2">Method2</h3>
+
+If running via an emulator like QEMU, there is no need to compile the native SLEEF.
+
+Please run the following from the root directory of SLEEF:
+
+1. Install qemu on Ubuntu.
+```bash
+sudo apt install -y qemu-user-static binfmt-support
+```
+
+2. Set the environment variable.
+```bash
+export SLEEF_TARGET_EXEC_USE_QEMU=ON
+```
+
+3. Set the dynamic linker/loader path.
+```bash
+# for AArch64
+export QEMU_LD_PREFIX=/usr/aarch64-linux-gnu/
+```
+
+4. Cross-compile the target platform's SLEEF.
+```bash
+cmake -DCMAKE_TOOLCHAIN_FILE=./toolchains/aarch64-gcc.cmake -S . -B build
+
+cmake --build build -j --clean-first
+```
 
 
 <h2 id="cross">Cross compilation for iOS and Android</h2>
