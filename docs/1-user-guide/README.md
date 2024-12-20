@@ -213,7 +213,7 @@ files provided in the `toolchains/` directory.
 Here are examples of cross-compiling SLEEF for the AArch64 on a platform with 
 x86_64 and Linux OS:
 
-<h3 id="method1">Method1</h3>
+<h3 id="method1">Method 1</h3>
 
 Please run the following from the root directory of SLEEF:
 
@@ -231,7 +231,7 @@ cmake -DCMAKE_TOOLCHAIN_FILE=./toolchains/aarch64-gcc.cmake -DNATIVE_BUILD_DIR=$
 cmake --build build -j --clean-first
 ```
 
-<h3 id="method2">Method2</h3>
+<h3 id="method2">Method 2</h3>
 
 If running via an emulator like QEMU, there is no need to compile the native SLEEF.
 
@@ -274,29 +274,21 @@ the library for the host computer, then for the target OS. Below is an example
 sequence of commands for cross compiling the library for iOS.
 
 ```sh
-mkdir build-native
-cd build-native
-cmake -GNinja ..
-ninja
-cd ..
-mkdir build-cross
-cd build-cross
-cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=../ios.toolchain.cmake -DNATIVE_BUILD_DIR=`pwd`/../build-native -DSLEEF_DISABLE_MPFR=TRUE -DSLEEF_DISABLE_SSL=TRUE ..
-ninja
+# Build natively first
+cmake -S . -B build-native
+cmake --build build-native -j --clean-first
+# Then cross-compile for iOS
+cmake  -S . -B build-cross -DCMAKE_TOOLCHAIN_FILE=./toolchains/ios.toolchain.cmake -DNATIVE_BUILD_DIR=$(pwd)/build-native -DSLEEF_DISABLE_MPFR=TRUE -DSLEEF_DISABLE_SSL=TRUE
 ```
 
 Below is an example sequence of commands for cross compiling the library for
 Android.
 
 ```sh
-mkdir build-native
-cd build-native
-cmake -GNinja ..
-ninja
-cd ..
-mkdir build-cross
-cd build-cross
-cmake -GNinja -DCMAKE_TOOLCHAIN_FILE=/opt/android-ndk-r21d/build/cmake/android.toolchain.cmake -DNATIVE_BUILD_DIR=`pwd`/../build-native -DANDROID_ABI=arm64-v8a ..
-ninja
+# Build natively first
+cmake -S . -B build-native
+cmake --build build-native -j --clean-first
+# Then cross-compile for Android
+cmake  -S . -B build-cross -DCMAKE_TOOLCHAIN_FILE=/opt/android-ndk-r21d/build/cmake/android.toolchain.cmake -DNATIVE_BUILD_DIR=$(pwd)/build-native -DANDROID_ABI=arm64-v8a
 ```
 
