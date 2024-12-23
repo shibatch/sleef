@@ -1,0 +1,5 @@
+pandas
+plotly
+re
+pathlib
+argparse
