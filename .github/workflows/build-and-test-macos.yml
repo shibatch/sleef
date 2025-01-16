@@ -75,7 +75,7 @@ jobs:
           cmake --install _build-${{ matrix.os }}-${{ matrix.arch }}
 
       - name: Upload build-${{ matrix.os }}-${{ matrix.arch }} artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-${{ matrix.os }}-${{ matrix.arch }}
           path: |
@@ -117,7 +117,7 @@ jobs:
           brew install -q cmake ninja gmp mpfr pkg-config openssl@3
 
       - name: Download build-${{ matrix.os }}-${{ matrix.arch }} artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: build-${{ matrix.os }}-${{ matrix.arch }}
 
@@ -133,7 +133,7 @@ jobs:
           ctest -j$(sysctl -n hw.logicalcpu)
 
       - name: Upload test-${{ matrix.os }}-${{ matrix.arch }} artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-${{ matrix.os }}-${{ matrix.arch }}
           path: |

@@ -95,7 +95,7 @@ jobs:
           cmake --install _build-${{ matrix.arch }}-${{ matrix.lto }}
 
       - name: Upload build-${{ matrix.arch }}-${{ matrix.lto }}-llvm-mingw artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-${{ matrix.arch }}-${{ matrix.lto }}-llvm-mingw
           path: |

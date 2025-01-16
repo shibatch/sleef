@@ -90,7 +90,7 @@ jobs:
           cmake --install _build-msys2-${{ matrix.sys }}-${{ matrix.lto }}
 
       - name: Upload build-msys2-${{ matrix.sys }}-${{ matrix.lto }} artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-msys2-${{ matrix.sys }}-${{ matrix.lto }}
           path: |
@@ -150,7 +150,7 @@ jobs:
           ./Coreinfo64.exe -accepteula
 
       - name: Download build-msys2-${{ matrix.sys }}-${{ matrix.lto }} artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: build-msys2-${{ matrix.sys }}-${{ matrix.lto }}
 
@@ -162,7 +162,7 @@ jobs:
           ctest -j$(nproc)
 
       - name: Upload test-msys2-${{ matrix.sys }}-${{ matrix.lto }} artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-msys2-${{ matrix.sys }}-${{ matrix.lto }}
           path: |

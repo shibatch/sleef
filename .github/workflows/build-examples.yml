@@ -50,7 +50,7 @@ jobs:
           cmake --install _build-native
 
       - name: Upload build-native artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-native
           path: |
@@ -75,7 +75,7 @@ jobs:
           cat /proc/cpuinfo
 
       - name: Download build-native artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: build-native
 
@@ -97,7 +97,7 @@ jobs:
           ./_examples-native/dft
 
       - name: Upload examples-native artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: examples-native
           path: |
