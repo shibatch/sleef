@@ -152,7 +152,7 @@ jobs:
       - name: Upload test-native artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: test-native
+          name: test-native-${{ matrix.os }}-${{ matrix.compiler }}
           path: |
             _build-native/Testing
         if: always()
