@@ -103,7 +103,7 @@ jobs:
           cmake --install _build-native
 
       - name: Upload build-native-${{ matrix.os }}-${{ matrix.compiler }} artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-native-${{ matrix.os }}-${{ matrix.compiler }}
           path: |
@@ -134,7 +134,7 @@ jobs:
           cat /proc/cpuinfo
 
       - name: Download build-native-${{ matrix.os }}-${{ matrix.compiler }} artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: build-native-${{ matrix.os }}-${{ matrix.compiler }}
 
@@ -150,7 +150,7 @@ jobs:
           ctest -j$(nproc)
 
       - name: Upload test-native artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-native
           path: |
@@ -223,7 +223,7 @@ jobs:
         if: steps.check-sysroot-cache.outputs.cache-hit != 'true'
 
       - name: Download build-native-ubuntu-24.04-${{ matrix.compiler }} artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: build-native-ubuntu-24.04-${{ matrix.compiler }}
 
@@ -259,7 +259,7 @@ jobs:
           cmake --install _build-${{ matrix.arch }}
 
       - name: Upload build-${{ matrix.arch }}-${{ matrix.compiler }} artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-${{ matrix.arch }}-${{ matrix.compiler }}
           path: |
@@ -338,12 +338,12 @@ jobs:
           cat /proc/cpuinfo
 
       - name: Download build-native-ubuntu-24.04-${{ matrix.compiler }} artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: build-native-ubuntu-24.04-${{ matrix.compiler }}
 
       - name: Download build-${{ matrix.arch }}-${{ matrix.compiler }} artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: build-${{ matrix.arch }}-${{ matrix.compiler }}
 
@@ -362,7 +362,7 @@ jobs:
           ctest -j$(nproc)
 
       - name: Upload test-${{ matrix.arch }}-${{ matrix.compiler }}-${{ strategy.job-index }} artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-${{ matrix.arch }}-${{ matrix.compiler }}-${{ strategy.job-index }}
           path: |

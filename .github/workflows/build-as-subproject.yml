@@ -72,7 +72,7 @@ jobs:
           ./dfttutorial 4
 
       - name: Upload nested artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: nested project
           path: |
@@ -130,7 +130,7 @@ jobs:
           ./dfttutorial 4
 
       - name: Upload submodule artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: submodule project
           path: |

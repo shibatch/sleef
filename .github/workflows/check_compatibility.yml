@@ -57,7 +57,7 @@ jobs:
           cmake --install _build-${{ matrix.tag }}
 
       - name: Upload build-${{ matrix.tag }} artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-${{ matrix.tag }}
           path: |
@@ -79,12 +79,12 @@ jobs:
           sudo apt install -y -qq abigail-tools
 
       - name: Download build-${{ env.REF_TAG }} artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: build-${{ env.REF_TAG }}
 
       - name: Download build-${{ env.TEST_TAG }} artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: build-${{ env.TEST_TAG }}
 
