@@ -371,7 +371,7 @@ static INLINE vdouble vcast_vd_vi(vint vi)
 {
   vdouble ret;
   vint swap = vec_mergeh(vi, vi);
-#if defined(__clang__) || __GNUC__ >= 7
+#if defined(__clang__) || (__GNUC__ >= 7 && __GNUC__ < 15)
   ret = __builtin_vsx_xvcvsxwdp(swap);
 #else
   __asm__ __volatile__("xvcvsxwdp %x0,%x1" : "=wa" (ret) : "wa" (swap));
@@ -406,7 +406,7 @@ static INLINE vint2 vtruncate_vi2_vf(vfloat vf)
 static INLINE vint vtruncate_vi_vd(vdouble vd)
 {
   vint ret;
-#if defined(__clang__) || __GNUC__ >= 7
+#if defined(__clang__) || (__GNUC__ >= 7 && __GNUC__ < 15)
   ret = __builtin_vsx_xvcvdpsxws(vd);
 #else
   __asm__ __volatile__("xvcvdpsxws %x0,%x1" : "=wa" (ret) : "wa" (vd));
