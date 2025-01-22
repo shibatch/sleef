@@ -4,7 +4,7 @@ logo: img/sleef-logo-notext.svg
 favicon_ico: "/img/favicon.ico"
 
 theme: just-the-docs
-footer_content: "Copyright &copy; 2010-2024 SLEEF Project, Naoki Shibata and contributors. <a href=\"https://github.com/shibatch/sleef/blob/master/LICENSE.txt\">SLEEF is open-source software and is distributed under the Boost Software License, Version 1.0.</a>"
+footer_content: "Copyright &copy; 2010-2025 SLEEF Project, Naoki Shibata and contributors. <a href=\"https://github.com/shibatch/sleef/blob/master/LICENSE.txt\">SLEEF is open-source software and is distributed under the Boost Software License, Version 1.0.</a>"
 
 aux_links:
   "SLEEF On GitHub": https://github.com/shibatch/sleef
