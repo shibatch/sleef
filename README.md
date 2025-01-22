@@ -228,7 +228,7 @@ The software is distributed under the Boost Software License, Version 1.0.
 See accompanying file [LICENSE.txt](./LICENSE.txt) or copy at [http://www.boost.org/LICENSE_1_0.txt][license_url].
 Contributions to this project are accepted under the same license.
 
-Copyright &copy; 2010-2024 SLEEF Project, Naoki Shibata and contributors.<br/>
+Copyright &copy; 2010-2025 SLEEF Project, Naoki Shibata and contributors.<br/>
 
 
 <!-- Repository links -->
