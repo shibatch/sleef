@@ -1,3 +1,28 @@
+## 3.8 - 2025-01-27
+The focus of this release has been to facilitate benchmarking in SLEEF.
+It does so by providing a benchmarking tool and a plotting tool to postprocess
+the results.
+AArch64 self-hosted runners have been added to CI. Following this, the Linux and
+compiler version have been updated.
+Fix inaccuracy issues in a few functions, failures with cpp checks and a few
+bugs.
+Finally, the project has been extended with a blog section and its first blog
+[post](https://sleef.org/2024/10/02/new-pulse.html).
+
+### Added
+- Add benchmark and plotting tool by @joanaxcruz in #589, #597, #608 and #609
+- Use Arm-hosted runners by @blapie in #581
+- Add blog section and first post. by @blapie in #582
+
+### Changed
+- Update GH runners to Ubuntu 24.04 and GCC14 by @blapie in #598, #599 and #601
+
+### Fixed
+- Fix cbrt on AArch32, and atanf(+-0) with gcc-13 by @shibatch in #592
+- Fix oflow bound in log1p(f), exp and pow by @blapie in #604 and #606
+- Work around removal of some PowerPC intrinsics in GCC 15 by @musicinmybrain in #612
+- Fix errors reported by cppcheck by @blapie in #595
+
 ## 3.7 - 2024-09-17
 
 The focus of this release has been to meet open-source community standards.  It
