@@ -15,7 +15,7 @@
 #include "quaddef.h"
 #include "misc.h"
 
-#ifndef SLEEF_ENABLE_CUDA
+#ifndef ENABLE_CUDA
 extern const double Sleef_rempitabqp[];
 #endif
 
@@ -47,7 +47,7 @@ extern const double Sleef_rempitabqp[];
 #endif
 #endif
 
-#ifdef SLEEF_ENABLE_CUDA
+#ifdef ENABLE_CUDA
 #define CONFIG 3
 #include "helperpurec_scalar.h"
 #ifdef DORENAME
@@ -737,11 +737,9 @@ static INLINE CONST VECTOR_CC vdouble2 poly27dd(vdouble2 x, vdouble c26, double2
 
 //
 
-#ifndef SLEEF_ENABLE_CUDA
 typedef struct {
   double x, y, z;
 } double3;
-#endif
 
 static INLINE CONST VECTOR_CC vdouble3 cast_vd3_d3(double3 td) {
   return vd3setxyz_vd3_vd_vd_vd(vcast_vd_d(td.x), vcast_vd_d(td.y), vcast_vd_d(td.z));
@@ -3209,7 +3207,7 @@ EXPORT CONST VECTOR_CC vargquad xldexpq(vargquad aa, vint e) {
 
 #ifndef ENABLE_SVE
 
-#ifndef SLEEF_ENABLE_CUDA
+#ifndef ENABLE_CUDA
 #define EXPORT2 EXPORT
 #define CONST2 CONST
 #else

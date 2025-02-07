@@ -157,6 +157,7 @@ endif()
 
 if (SLEEF_ENABLE_CUDA)
   enable_language(CUDA)
+  set(CMAKE_CUDA_ARCHITECTURES all-major)
 endif()
 
 # For specifying installation directories
