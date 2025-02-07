@@ -288,13 +288,6 @@ All functions in the library are thread safe unless otherwise noted.
 * [And many more contributors you can find listed on
   GitHub.](https://github.com/shibatch/sleef/graphs/contributors)
 
-<h2 id="partners">Partner institutes and corporations</h2>
-
-|               |                   |
-|:-------------:|:------------------|
-| [![IBM logo](img/ibm-logo.svg)](https://ibm.com) | As the leading company in a wide range of information technologies, [IBM](https://ibm.com/) participates through David Edelsohn. |
-| [![ARM logo](img/arm-logo.svg)](https://www.arm.com) | As the leading IP company in semiconductors design, [ARM](https://www.arm.com/) participates through Pierre Blanchard, Joe Ramsay and Joana Cruz. |
-| [![Unity Technologies logo](img/unity-logo.svg)](https://unity3d.com) | As the leading company in developing a video game engine, [Unity Technologies](https://unity3d.com/) participates through Alexandre Mutel. |
 
 <h2 id="license">License</h2>
 
