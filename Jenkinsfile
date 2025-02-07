@@ -14,6 +14,7 @@ pipeline {
                 	 echo "x86_64 gcc-13 on" `hostname`
 			 export CC=gcc-13
 			 export CXX=g++-13
+			 export CUDACXX=/opt/cuda-12.6/bin/nvcc
  			 mkdir build
 			 cd build
 			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=../../install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_ENABLE_CUDA=True -DSLEEF_BUILD_DFT=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_INLINE_HEADERS=TRUE -DSLEEF_ENFORCE_SSE2=TRUE -DSLEEF_ENFORCE_SSE4=TRUE -DSLEEF_ENFORCE_AVX=TRUE -DSLEEF_ENFORCE_AVX2=TRUE -DSLEEF_ENFORCE_AVX512F=TRUE
