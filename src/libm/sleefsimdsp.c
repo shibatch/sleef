@@ -15,7 +15,7 @@
 #include "quaddef.h"
 #include "misc.h"
 
-#ifndef SLEEF_ENABLE_CUDA
+#ifndef ENABLE_CUDA
 extern const float Sleef_rempitabsp[];
 #endif
 
@@ -420,7 +420,7 @@ extern const float Sleef_rempitabsp[];
 #endif
 #endif
 
-#ifdef SLEEF_ENABLE_CUDA
+#ifdef ENABLE_CUDA
 #define CONFIG 3
 #if !defined(SLEEF_GENHEADER)
 #include "helperpurec_scalar.h"

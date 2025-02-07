@@ -521,7 +521,7 @@ if(SLEEF_BUILD_INLINE_HEADERS)
           set(INLINE_HEADER_ORG ${CMAKE_CURRENT_SOURCE_DIR}/sleefinline_cuda_header.h.org)
 	  # Remove redundant __device__
 	  set(TARGET_REPLACEMENTS -e "s/__device__ __device__/__device__/g" -e "s/__device__ __device__/__device__/g")
-	  set(TARGET_ADDSUFFIX_KEYWORDS double2 double3 float2)
+	  set(TARGET_ADDSUFFIX_KEYWORDS)
 	else()
 	  set(TARGET_ADDSUFFIX_KEYWORDS Sleef_rempitabdp Sleef_rempitabsp)
           set(INLINE_HEADER_ORG ${CMAKE_CURRENT_SOURCE_DIR}/sleefinline_header.h.org)
