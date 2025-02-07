@@ -6,6 +6,8 @@
 [![Spack](https://img.shields.io/spack/v/sleef)](https://spack.readthedocs.io/en/v0.16.2/package_list.html#sleef)
 [![SourceForge Downloads](https://img.shields.io/sourceforge/dt/sleef)](https://sourceforge.net/projects/sleef/)
 
+[![Build Status](https://shibatch.dns-cloud.net/jenkins8086/job/sleef/badge/icon)](https://shibatch.dns-cloud.net/jenkins8086/job/sleef/)
+
 SLEEF is a library that implements vectorized versions of C standard math functions. This library also includes DFT subroutines.
 
 - **Web Page:** [https://sleef.org/][webpage_url]
