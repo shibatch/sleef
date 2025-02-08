@@ -22,6 +22,9 @@ option(SLEEF_SHOW_CONFIG "Show SLEEF configuration status messages." ON)
 option(SLEEF_SHOW_ERROR_LOG "Show cmake error log." OFF)
 option(SLEEF_ASAN "Enable address sanitizing on all targets." OFF)
 
+option(SLEEF_ENABLE_TESTER "Enable testing libm with tester" ON)
+option(SLEEF_ENABLE_TESTER4 "Enable testing with tester4" OFF)
+
 option(SLEEF_ENFORCE_TESTER "Build fails if tester is not available" OFF)
 option(SLEEF_ENFORCE_TESTER3 "Build fails if tester3 is not built" OFF)
 
@@ -33,15 +36,13 @@ option(SLEEF_DISABLE_MPFR "Disable testing with the MPFR library" OFF)
 option(SLEEF_DISABLE_SSL "Disable testing with the SSL library" OFF)
 
 option(SLEEF_ENABLE_CUDA "Enable CUDA" OFF)
-option(SLEEF_ENABLE_CXX "Enable C++" OFF)
 
 option(SLEEF_BUILD_WITH_LIBM "build libsleef with libm, can turn off on Windows to solve mutiple math functions issue." ON)
 
 #
 
-if (SLEEF_BUILD_BENCH)
-  set(SLEEF_ENABLE_CXX ON)
-endif ()
+set(SLEEF_ENABLE_CXX ON)
+set(CMAKE_CXX_STANDARD 20)
 
 if (SLEEF_BUILD_BENCH_REF)
   if (NOT SLEEF_BUILD_BENCH)
