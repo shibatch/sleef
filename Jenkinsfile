@@ -27,14 +27,14 @@ pipeline {
             	     }
                 }
 
-                stage('riscv linux gcc-14') {
+                stage('riscv linux gcc-13') {
             	     agent { label 'riscv && ubuntu23' }
                      options { skipDefaultCheckout() }
             	     steps {
                          cleanWs()
                          checkout scm
 	    	     	 sh '''
-                	 echo "riscv gcc-14 on" `hostname`
+                	 echo "riscv gcc-13 on" `hostname`
 			 export CC=gcc-13
 			 export CXX=g++-13
  			 mkdir build
