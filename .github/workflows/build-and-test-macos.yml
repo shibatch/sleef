@@ -23,6 +23,8 @@ env:
     -DSLEEF_BUILD_STATIC_TEST_BINS=OFF
     -DSLEEF_ENFORCE_TESTER=ON
     -DSLEEF_ENFORCE_TESTER3=ON
+    -DSLEEF_ENABLE_TESTER4=OFF
+    -DSLEEF_ENABLE_TESTER=ON
 
 jobs:
   build-macos:
@@ -64,7 +66,7 @@ jobs:
           if [[ ${{ matrix.arch }} = "aarch64" ]]; then
             EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS}"
           elif [[ ${{ matrix.arch }} = "x86_64" ]]; then
-            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DSLEEF_ENFORCE_SSE2=ON -DSLEEF_ENFORCE_SSE4=ON -DSLEEF_ENFORCE_AVX=ON -DSLEEF_ENFORCE_AVX=ON -DSLEEF_ENFORCE_AVX2=ON"
+            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DSLEEF_ENFORCE_SSE2=ON -DSLEEF_ENFORCE_SSE4=ON -DSLEEF_ENFORCE_AVX=ON -DSLEEF_ENFORCE_AVX2=ON"
           fi
 
           cmake -S . -B _build-${{ matrix.os }}-${{ matrix.arch }} -GNinja \
