@@ -26,6 +26,76 @@ pipeline {
 			 '''
             	     }
                 }
+
+                stage('arm32 linux gcc-12') {
+            	     agent { label 'armv7 && debian12' }
+                     options { skipDefaultCheckout() }
+            	     steps {
+                         cleanWs()
+                         checkout scm
+	    	     	 sh '''
+                	 echo "arm32 gcc-12 on" `hostname`
+			 export CC=gcc-12
+			 export CXX=g++-12
+ 			 mkdir build
+			 cd build
+			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=../../install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_ENABLE_TESTER4=True -DSLEEF_ENABLE_TESTER=False
+			 cmake -E time oomstaller ninja -j `nproc`
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j `nproc`
+			 '''
+            	     }
+                }
+
+		stage('cross-ppc64el gcc') {
+            	     agent { label 'x86_64 && ubuntu24 && cuda' }
+            	     steps {
+                         cleanWs()
+                         checkout scm
+	    	     	 sh '''
+                	 echo "Cross ppc64el gcc on" `hostname`
+			 rm -rf build-native
+ 			 mkdir build-native
+			 cd build-native
+			 cmake -GNinja .. -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_DFT=TRUE
+			 cmake -E time ninja
+			 cd ..
+ 			 mkdir build
+			 cd build
+			 cmake -GNinja .. -DCMAKE_TOOLCHAIN_FILE=../toolchains/ppc64el-gcc.cmake -DNATIVE_BUILD_DIR=`pwd`/../build-native -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_ENFORCE_TESTER3=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_DFT=TRUE -DSLEEF_ENABLE_TESTER4=True -DSLEEF_ENABLE_TESTER=False
+			 cmake -E time ninja
+			 export OMP_WAIT_POLICY=passive
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j `nproc`
+			 ninja install
+			 '''
+            	     }
+		 }
+
+		stage('cross-s390x gcc') {
+            	     agent { label 'x86_64 && ubuntu24 && cuda' }
+            	     steps {
+                         cleanWs()
+                         checkout scm
+	    	     	 sh '''
+                	 echo "Cross s390x gcc on" `hostname`
+			 rm -rf build-native
+ 			 mkdir build-native
+			 cd build-native
+			 cmake -GNinja .. -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_DFT=TRUE
+			 cmake -E time ninja
+			 cd ..
+ 			 mkdir build
+			 cd build
+			 cmake -GNinja .. -DCMAKE_TOOLCHAIN_FILE=../toolchains/s390x-gcc.cmake -DNATIVE_BUILD_DIR=`pwd`/../build-native -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_ENFORCE_TESTER3=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_DFT=TRUE -DSLEEF_ENABLE_TESTER4=True -DSLEEF_ENABLE_TESTER=False
+			 cmake -E time ninja
+			 export OMP_WAIT_POLICY=passive
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j `nproc`
+			 ninja install
+			 '''
+            	     }
+		 }
             }
         }
     }
