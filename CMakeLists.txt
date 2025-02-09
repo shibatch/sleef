@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.18)
-project(SLEEF VERSION 3.8.0 LANGUAGES C)
+
+set(SLEEF_VERSION 3.9.0)
+
+message(STATUS "Configuring SLEEF ${SLEEF_VERSION}")
+project(SLEEF VERSION ${SLEEF_VERSION} LANGUAGES C CXX)
 
 set(SLEEF_SOVERSION ${SLEEF_VERSION_MAJOR})
 
@@ -34,6 +38,7 @@ option(SLEEF_ENABLE_ALTSQRT "Enable alternative sqrt method (aarch64 only)" OFF)
 option(SLEEF_DISABLE_FFTW "Disable testing the DFT library with FFTW" OFF)
 option(SLEEF_DISABLE_MPFR "Disable testing with the MPFR library" OFF)
 option(SLEEF_DISABLE_SSL "Disable testing with the SSL library" OFF)
+option(SLEEF_ENABLE_TLFLOAT "Enable use of TLFloat library" ON)
 
 option(SLEEF_ENABLE_CUDA "Enable CUDA" OFF)
 

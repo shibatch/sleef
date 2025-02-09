@@ -247,7 +247,7 @@ macro(test_extension SIMD)
     endif(SLEEF_ENABLE_TESTER)
     #
 
-    if (SLEEF_ENABLE_TESTER4)
+    if (SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
       set(TESTER4_SRC tester4simd.cpp ${sleef_SOURCE_DIR}/src/common/main_checkfeature.c)
 
       string(CONCAT TARGET_TESTER4_${SIMD} "tester4" ${LCSIMD})
@@ -321,7 +321,7 @@ macro(test_extension SIMD)
 	  add_test_with_emu(1.0 ${TARGET_TESTER4I_${SIMD}})
 	endif()
       endif(SLEEF_BUILD_INLINE_HEADERS)
-    endif(SLEEF_ENABLE_TESTER4)
+    endif(SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
 
     #
 
@@ -493,7 +493,7 @@ if (SLEEF_ARCH_X86)
     list(APPEND IUT_LIST iutdsp256)
   endif(SLEEF_ENABLE_TESTER)
 
-  if (SLEEF_ENABLE_TESTER4)
+  if (SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
     # tester4dsp128
     add_executable(tester4dsp128 ${TESTER4_SRC})
     target_compile_definitions(tester4dsp128 PRIVATE
@@ -511,7 +511,7 @@ if (SLEEF_ARCH_X86)
     target_link_libraries(tester4dsp256 ${TARGET_LIBSLEEF} ${TLFLOAT_LIBRARIES})
     add_dependencies(tester4dsp256 ${TARGET_HEADERS} ${TARGET_LIBSLEEF} ext_tlfloat)
     add_test_with_emu(1.0 tester4dsp256)
-  endif(SLEEF_ENABLE_TESTER4)
+  endif(SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
 endif(SLEEF_ARCH_X86)
 
 if (SLEEF_ARCH_PPC64)
