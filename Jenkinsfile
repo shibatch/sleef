@@ -27,6 +27,23 @@ pipeline {
             	     }
                 }
 
+                stage('x86_64 windows vs2022') {
+            	     agent { label 'windows11 && vs2022' }
+                     options { skipDefaultCheckout() }
+            	     steps {
+                         cleanWs()
+                         checkout scm
+		     	 bat """
+			 call "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
+			 if not %ERRORLEVEL% == 0 exit /b %ERRORLEVEL%
+			 call "winbuild-msvc.bat" -DCMAKE_BUILD_TYPE=Release -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_DFT=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_ENFORCE_SSE2=TRUE -DSLEEF_ENFORCE_SSE4=TRUE -DSLEEF_ENFORCE_AVX=TRUE -DSLEEF_ENFORCE_AVX2=TRUE -DSLEEF_ENFORCE_AVX512F=TRUE -DSLEEF_ENABLE_TESTER4=True
+			 if not %ERRORLEVEL% == 0 exit /b %ERRORLEVEL%
+			 ctest -j 4 --output-on-failure
+			 exit /b %ERRORLEVEL%
+			 """
+		     }
+		}
+
                 stage('riscv linux gcc-13') {
             	     agent { label 'riscv && ubuntu23' }
                      options { skipDefaultCheckout() }
