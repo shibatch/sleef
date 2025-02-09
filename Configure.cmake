@@ -96,59 +96,63 @@ endif()
 
 # Include TLFloat as a submodule
 
-set(TLFLOAT_MINIMUM_VERSION 1.11.2)
-set(TLFLOAT_GIT_TAG "5b03b9fd41aaf4d655361f971fe45e738646f286")
+if (SLEEF_ENABLE_TLFLOAT)
+  set(TLFLOAT_MINIMUM_VERSION 1.11.2)
+  set(TLFLOAT_GIT_TAG "5b03b9fd41aaf4d655361f971fe45e738646f286")
 
-set(TLFLOAT_SOURCE_DIR "${PROJECT_SOURCE_DIR}/submodules/tlfloat")
-set(TLFLOAT_INSTALL_DIR "${SLEEF_SUBMODULE_INSTALL_DIR}/tlfloat")
+  set(TLFLOAT_SOURCE_DIR "${PROJECT_SOURCE_DIR}/submodules/tlfloat")
+  set(TLFLOAT_INSTALL_DIR "${SLEEF_SUBMODULE_INSTALL_DIR}/tlfloat")
 
-set(TLFLOAT_CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${TLFLOAT_INSTALL_DIR} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DBUILD_LIBS=True -DBUILD_UTILS=False -DBUILD_TESTS=False)
+  set(TLFLOAT_CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${TLFLOAT_INSTALL_DIR} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DBUILD_LIBS=True -DBUILD_UTILS=False -DBUILD_TESTS=False)
 
-if (CMAKE_C_COMPILER)
-  list(APPEND TLFLOAT_CMAKE_ARGS -DCMAKE_C_COMPILER:PATH=${CMAKE_C_COMPILER})
-endif()
+  if (CMAKE_C_COMPILER)
+    list(APPEND TLFLOAT_CMAKE_ARGS -DCMAKE_C_COMPILER:PATH=${CMAKE_C_COMPILER})
+  endif()
 
-if (CMAKE_CXX_COMPILER)
-  list(APPEND TLFLOAT_CMAKE_ARGS -DCMAKE_CXX_COMPILER:PATH=${CMAKE_CXX_COMPILER})
-endif()
+  if (CMAKE_CXX_COMPILER)
+    list(APPEND TLFLOAT_CMAKE_ARGS -DCMAKE_CXX_COMPILER:PATH=${CMAKE_CXX_COMPILER})
+  endif()
 
-if (CMAKE_TOOLCHAIN_FILE)
-  list(APPEND TLFLOAT_CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE})
-endif()
+  if (CMAKE_TOOLCHAIN_FILE)
+    list(APPEND TLFLOAT_CMAKE_ARGS -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE})
+  endif()
 
-if (EXISTS "${TLFLOAT_SOURCE_DIR}/CMakeLists.txt")
-  # If the source code of tlfloat is already downloaded, use it
-  ExternalProject_Add(ext_tlfloat
-    SOURCE_DIR "${TLFLOAT_SOURCE_DIR}"
-    CMAKE_ARGS ${TLFLOAT_CMAKE_ARGS}
-    )
-  include_directories(BEFORE "${TLFLOAT_INSTALL_DIR}/include")
-  link_directories(BEFORE "${TLFLOAT_INSTALL_DIR}/lib")
-  set(TLFLOAT_LIBRARIES "tlfloat")
-else()
-  pkg_search_module(TLFLOAT tlfloat)
-
-  if (TLFLOAT_FOUND AND TLFLOAT_VERSION VERSION_GREATER_EQUAL TLFLOAT_MINIMUM_VERSION)
-    # If tlfloat is installed on the system
-    add_custom_target(ext_tlfloat ALL)
-    include_directories(BEFORE "${TLFLOAT_INCLUDE_DIRS}")
-    link_directories(BEFORE "${TLFLOAT_LIBDIR}")
-    message(STATUS "Found installed TLFloat " ${TLFLOAT_VERSION})
-  else()
-    # Otherwise, download the source code
-    find_package(Git REQUIRED)
+  if (EXISTS "${TLFLOAT_SOURCE_DIR}/CMakeLists.txt")
+    # If the source code of tlfloat is already downloaded, use it
     ExternalProject_Add(ext_tlfloat
-      GIT_REPOSITORY https://github.com/shibatch/tlfloat
-      GIT_TAG "${TLFLOAT_GIT_TAG}"
       SOURCE_DIR "${TLFLOAT_SOURCE_DIR}"
       CMAKE_ARGS ${TLFLOAT_CMAKE_ARGS}
-      )
-
+      UPDATE_DISCONNECTED TRUE
+    )
     include_directories(BEFORE "${TLFLOAT_INSTALL_DIR}/include")
     link_directories(BEFORE "${TLFLOAT_INSTALL_DIR}/lib")
     set(TLFLOAT_LIBRARIES "tlfloat")
+  else()
+    pkg_search_module(TLFLOAT tlfloat)
+
+    if (TLFLOAT_FOUND AND TLFLOAT_VERSION VERSION_GREATER_EQUAL TLFLOAT_MINIMUM_VERSION)
+      # If tlfloat is installed on the system
+      add_custom_target(ext_tlfloat ALL)
+      include_directories(BEFORE "${TLFLOAT_INCLUDE_DIRS}")
+      link_directories(BEFORE "${TLFLOAT_LIBDIR}")
+      message(STATUS "Found installed TLFloat " ${TLFLOAT_VERSION})
+    else()
+      # Otherwise, download the source code
+      find_package(Git REQUIRED)
+      ExternalProject_Add(ext_tlfloat
+	GIT_REPOSITORY https://github.com/shibatch/tlfloat
+	GIT_TAG "${TLFLOAT_GIT_TAG}"
+	SOURCE_DIR "${TLFLOAT_SOURCE_DIR}"
+	CMAKE_ARGS ${TLFLOAT_CMAKE_ARGS}
+	UPDATE_DISCONNECTED TRUE
+      )
+
+      include_directories(BEFORE "${TLFLOAT_INSTALL_DIR}/include")
+      link_directories(BEFORE "${TLFLOAT_INSTALL_DIR}/lib")
+      set(TLFLOAT_LIBRARIES "tlfloat")
+    endif()
   endif()
-endif()
+endif(SLEEF_ENABLE_TLFLOAT)
 
 # Force set default build type if none was specified
 # Note: some sleef code requires the optimisation flags turned on
