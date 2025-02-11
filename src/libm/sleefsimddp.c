@@ -3081,7 +3081,7 @@ EXPORT CONST VECTOR_CC vint xexpfrexp(vdouble x) {
   vint ret = vcastu_vi_vm(vreinterpret_vm_vd(x));
   ret = vsub_vi_vi_vi(vand_vi_vi_vi(vsrl_vi_vi_i(ret, 20), vcast_vi_i(0x7ff)), vcast_vi_i(0x3fe));
 
-  ret = vsel_vi_vo_vi_vi(vor_vo_vo_vo(vor_vo_vo_vo(veq_vo_vd_vd(x, vcast_vd_d(0)), visnan_vo_vd(x)), visinf_vo_vd(x)), vcast_vi_i(0), ret);
+  ret = vsel_vi_vo_vi_vi(vcast_vo32_vo64(vor_vo_vo_vo(vor_vo_vo_vo(veq_vo_vd_vd(x, vcast_vd_d(0)), visnan_vo_vd(x)), visinf_vo_vd(x))), vcast_vi_i(0), ret);
   
   return ret;
 }
