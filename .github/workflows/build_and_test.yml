@@ -32,16 +32,11 @@ jobs:
   build-native:
     # Native Build and Test run on a range of runners
     # - Github hosted, only Linux x86.
-    # - Arm-hosted (via AWS), only Linux c6g or c7g.
-    #   Please refer to the documentation at
-    #   https://gitlab.arm.com/tooling/gha-runner-docs
-    #   Here we use c7g (2xlarge) for easy access to
-    #   SVE-enabled runners (with 8 vCPUs).
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, ah-ubuntu_22_04-c7g_2x-50]
+        os: [ubuntu-24.04]
         compiler: [gcc, llvm]
 
     name: build-native-${{ matrix.os }}-${{ matrix.compiler }}
@@ -87,12 +82,6 @@ jobs:
         run: |
             export EXTRA_CMAKE_FLAGS=""
 
-      - name: Set AArch64 SVE config
-        shell: bash -ex -o pipefail {0}
-        if: contains(matrix.os, 'c7g')
-        run: |
-            export EXTRA_CMAKE_FLAGS="-DSLEEF_ENFORCE_SVE=ON"
-
       - name: Build native
         shell: bash -ex -o pipefail {0}
         run: |
@@ -119,7 +108,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, ah-ubuntu_22_04-c7g_2x-50]
+        os: [ubuntu-24.04]
         compiler: [gcc, llvm]
 
     name: test-native-${{ matrix.os }}-${{ matrix.compiler }}

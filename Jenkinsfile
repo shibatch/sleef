@@ -87,6 +87,26 @@ pipeline {
             	     }
                 }
 
+                stage('aarch64 linux gcc-14') {
+            	     agent { label 'aarch64 && ubuntu24' }
+                     options { skipDefaultCheckout() }
+            	     steps {
+                         cleanWs()
+                         checkout scm
+	    	     	 sh '''
+                	 echo "aarch64 gcc-14 on" `hostname`
+			 export CC=gcc-14
+			 export CXX=g++-14
+ 			 mkdir build
+			 cd build
+			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=../../install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_DFT=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_INLINE_HEADERS=TRUE -DSLEEF_ENFORCE_SVE=TRUE -DEMULATOR=qemu-aarch64-static -DSLEEF_ENABLE_TESTER4=True
+			 cmake -E time ninja
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j `nproc`
+			 '''
+            	     }
+                }
+
 		stage('cross-ppc64el gcc') {
             	     agent { label 'x86_64 && ubuntu24 && cuda' }
             	     steps {
