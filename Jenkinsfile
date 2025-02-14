@@ -88,7 +88,7 @@ pipeline {
                 }
 
                 stage('aarch64 linux gcc-14') {
-            	     agent { label 'aarch64 && ubuntu24' }
+            	     agent { label 'aarch64 && ubuntu24 && apple' }
                      options { skipDefaultCheckout() }
             	     steps {
                          cleanWs()
