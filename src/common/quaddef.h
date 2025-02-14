@@ -16,6 +16,9 @@
 #if !defined(Sleef_quad_DEFINED)
 #define Sleef_quad_DEFINED
 typedef struct { uint64_t x, y; } Sleef_uint64_2t;
+#ifdef _AIX
+#undef  SLEEF_FLOAT128_IS_IEEEQP
+#endif
 #if defined(SLEEF_FLOAT128_IS_IEEEQP) || defined(ENABLEFLOAT128)
 typedef __float128 Sleef_quad;
 #define SLEEF_QUAD_C(x) (x ## Q)

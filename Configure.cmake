@@ -197,7 +197,7 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
   set(COMPILER_SUPPORTS_NEON32VFPV4 1)
 
   set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mfpu=vfpv4")
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64" OR CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)")
   set(SLEEF_ARCH_PPC64 ON CACHE INTERNAL "True for PPC64 architecture.")
 
   set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mvsx")
@@ -626,8 +626,8 @@ if(SLEEF_ARCH_PPC64 AND NOT SLEEF_DISABLE_VSX)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_VSX}")
   CHECK_C_SOURCE_COMPILES("
   #include <altivec.h>
-  #ifndef __LITTLE_ENDIAN__
-    #error \"Only VSX(ISA2.07) little-endian mode is supported \"
+  #if !defined(__LITTLE_ENDIAN__) && !defined(_AIX)
+    #error \"Only VSX(ISA2.07) little-endian mode and AIX is supported \"
   #endif
   int main() {
     vector double d;
