@@ -261,7 +261,7 @@ set(CLANG_FLAGS_ENABLE_RVVM2NOFMA "-march=rv64gcv_zba_zbb_zbs")
 set(FLAGS_OTHERS "")
 
 # All variables storing compiler flags should be prefixed with FLAGS_
-if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
+if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang|QCC)")
   # Always compile sleef with -ffp-contract.
   set(FLAGS_STRICTMATH "-ffp-contract=off")
   set(FLAGS_FASTMATH "-ffast-math")
@@ -282,13 +282,13 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
 
   # Warning flags.
   set(FLAGS_WALL "-Wall -Wno-unused-function -Wno-attributes -Wno-unused-result")
-  if(CMAKE_C_COMPILER_ID MATCHES "GNU")
+  if(CMAKE_C_COMPILER_ID MATCHES "(GNU|QCC)")
     # The following compiler option is needed to suppress the warning
     # "AVX vector return without AVX enabled changes the ABI" at
     # src/arch/helpervecext.h:88
     string(CONCAT FLAGS_WALL ${FLAGS_WALL} " -Wno-psabi")
     set(FLAGS_ENABLE_NEON32 "-mfpu=neon")
-  endif(CMAKE_C_COMPILER_ID MATCHES "GNU")
+  endif(CMAKE_C_COMPILER_ID MATCHES "(GNU|QCC)")
 
   if(CMAKE_C_COMPILER_ID MATCHES "Clang" AND SLEEF_ENABLE_LTO)
     if (NOT SLEEF_LLVM_AR_COMMAND)
@@ -369,7 +369,7 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "Intel")
 endif()
 
 set(SLEEF_C_FLAGS "${FLAGS_WALL} ${FLAGS_STRICTMATH} ${FLAGS_OTHERS}")
-if(CMAKE_C_COMPILER_ID MATCHES "GNU" AND CMAKE_C_COMPILER_VERSION VERSION_GREATER 6.99)
+if(CMAKE_C_COMPILER_ID MATCHES "(GNU|QCC)" AND CMAKE_C_COMPILER_VERSION VERSION_GREATER 6.99)
   set(DFT_C_FLAGS "${FLAGS_WALL} ${FLAGS_NOSTRICTALIASING} ${FLAGS_OTHERS}")
 else()
   set(DFT_C_FLAGS "${FLAGS_WALL} ${FLAGS_NOSTRICTALIASING} ${FLAGS_FASTMATH} ${FLAGS_OTHERS}")
@@ -379,7 +379,15 @@ if(CMAKE_C_COMPILER_ID MATCHES "GNU")
   set(FLAGS_ENABLE_SVE "${FLAGS_ENABLE_SVE};-fno-tree-vrp")
 endif()
 
+if(QNX AND CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64")
+  #set(SLEEF_C_FLAGS "${SLEEF_C_FLAGS} -march=armv8-a ")
+  #set(DFT_C_FLAGS "${DFT_C_FLAGS} -march=armv8-a ")
+endif()
+
 if (CMAKE_SYSTEM_PROCESSOR MATCHES "^i.86$" AND CMAKE_C_COMPILER_ID MATCHES "GNU")
+  set(SLEEF_C_FLAGS "${SLEEF_C_FLAGS} -msse2 -mfpmath=sse")
+  set(DFT_C_FLAGS "${DFT_C_FLAGS} -msse2 -mfpmath=sse -m128bit-long-double")
+elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "^i.86$" AND CMAKE_C_COMPILER_ID MATCHES "QCC")
   set(SLEEF_C_FLAGS "${SLEEF_C_FLAGS} -msse2 -mfpmath=sse")
   set(DFT_C_FLAGS "${DFT_C_FLAGS} -msse2 -mfpmath=sse -m128bit-long-double")
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^i.86$" AND CMAKE_C_COMPILER_ID MATCHES "Clang")
