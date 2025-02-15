@@ -17,7 +17,8 @@ extern "C" {
   } EVP_MD_CTX;
 
   const EVP_MD *EVP_sha256(void);
-  size_t EVP_MD_get_size(const EVP_MD *);
+  int EVP_MD_get_size(const EVP_MD *);
+  size_t EVP_MD_size(const EVP_MD *);
   EVP_MD_CTX *EVP_MD_CTX_new(void);
   int EVP_DigestInit_ex(EVP_MD_CTX *ctx, const EVP_MD *type, ENGINE *impl);
   int EVP_DigestUpdate(EVP_MD_CTX *ctx, const void *d, size_t cnt);

@@ -11,7 +11,11 @@
 #include <string.h>
 #include <time.h>
 
+#ifndef SLEEF_USE_INTERNAL_SHA256
 #include <openssl/evp.h>
+#else
+#include "psha2_capi.h"
+#endif
 
 #include "sleef.h"
 #include "misc.h"

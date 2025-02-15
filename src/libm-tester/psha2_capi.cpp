@@ -8,7 +8,12 @@ const EVP_MD *EVP_sha256(void) {
   return &one[0];
 }
 
-size_t EVP_MD_get_size(const EVP_MD *e) {
+size_t EVP_MD_size(const EVP_MD *e) {
+  if (*e == 1) return SHA256_DIGEST_LENGTH;
+  return 0;
+}
+
+int EVP_MD_get_size(const EVP_MD *e) {
   if (*e == 1) return SHA256_DIGEST_LENGTH;
   return 0;
 }
