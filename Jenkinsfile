@@ -44,16 +44,16 @@ pipeline {
 		     }
 		}
 
-                stage('riscv linux gcc-13') {
+                stage('riscv linux gcc-14') {
             	     agent { label 'riscv && ubuntu23' }
                      options { skipDefaultCheckout() }
             	     steps {
                          cleanWs()
                          checkout scm
 	    	     	 sh '''
-                	 echo "riscv gcc-13 on" `hostname`
-			 export CC=gcc-13
-			 export CXX=g++-13
+                	 echo "riscv gcc-14 on" `hostname`
+			 export CC=gcc-14.2.0
+			 export CXX=g++-14.2.0
  			 mkdir build
 			 cd build
 			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=../../install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_DFT=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_INLINE_HEADERS=TRUE -DSLEEF_ENABLE_TESTER4=True -DSLEEF_ENABLE_TESTER=False
