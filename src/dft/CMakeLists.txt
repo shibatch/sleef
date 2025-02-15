@@ -138,10 +138,10 @@ set(ISALIST_SP purecsp)
 set(ISALIST_DP purecdp)
 
 set(LIST_SUPPORTED_FPTYPE 0 1)
-if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
+if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang|QCC)")
   set(ISALIST_SP vecextsp)
   set(ISALIST_DP vecextdp)
-endif(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang)")
+endif(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang|QCC)")
 
 # List all available vector data types
 
