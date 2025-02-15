@@ -17,7 +17,7 @@ pipeline {
 			 export CUDACXX=/opt/cuda-12.6/bin/nvcc
  			 mkdir build
 			 cd build
-			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=../../install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_ENABLE_CUDA=True -DSLEEF_BUILD_DFT=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_INLINE_HEADERS=TRUE -DSLEEF_ENFORCE_SSE2=TRUE -DSLEEF_ENFORCE_SSE4=TRUE -DSLEEF_ENFORCE_AVX=TRUE -DSLEEF_ENFORCE_AVX2=TRUE -DSLEEF_ENFORCE_AVX512F=TRUE -DSLEEF_ENABLE_TESTER4=True
+			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=../../install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_ENABLE_CUDA=True -DSLEEF_ENFORCE_CUDA=True -DSLEEF_BUILD_DFT=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_INLINE_HEADERS=TRUE -DSLEEF_ENFORCE_SSE2=TRUE -DSLEEF_ENFORCE_SSE4=TRUE -DSLEEF_ENFORCE_AVX=TRUE -DSLEEF_ENFORCE_AVX2=TRUE -DSLEEF_ENFORCE_AVX512F=TRUE -DSLEEF_ENABLE_TESTER4=True
 			 cmake -E time ninja
 			 export OMP_WAIT_POLICY=passive
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
@@ -44,19 +44,19 @@ pipeline {
 		     }
 		}
 
-                stage('riscv linux gcc-13') {
+                stage('riscv linux gcc-14') {
             	     agent { label 'riscv && ubuntu23' }
                      options { skipDefaultCheckout() }
             	     steps {
                          cleanWs()
                          checkout scm
 	    	     	 sh '''
-                	 echo "riscv gcc-13 on" `hostname`
-			 export CC=gcc-13
-			 export CXX=g++-13
+                	 echo "riscv gcc-14 on" `hostname`
+			 export CC=gcc-14.2.0
+			 export CXX=g++-14.2.0
  			 mkdir build
 			 cd build
-			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=../../install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_DFT=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_INLINE_HEADERS=TRUE -DSLEEF_ENABLE_TESTER4=True -DSLEEF_ENABLE_TESTER=False
+			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=../../install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_DFT=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_INLINE_HEADERS=TRUE -DSLEEF_ENABLE_TESTER4=True -DSLEEF_ENABLE_TESTER=False -DSLEEF_ENFORCE_RVVM1=True -DSLEEF_ENFORCE_RVVM2=True
 			 cmake -E time oomstaller ninja -j `nproc`
 			 export OMP_WAIT_POLICY=passive
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
@@ -122,7 +122,7 @@ pipeline {
 			 cd ..
  			 mkdir build
 			 cd build
-			 cmake -GNinja .. -DCMAKE_TOOLCHAIN_FILE=../toolchains/ppc64el-gcc.cmake -DNATIVE_BUILD_DIR=`pwd`/../build-native -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_ENFORCE_TESTER3=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_DFT=TRUE -DSLEEF_ENABLE_TESTER4=True -DSLEEF_ENABLE_TESTER=False
+			 cmake -GNinja .. -DCMAKE_TOOLCHAIN_FILE=../toolchains/ppc64el-gcc.cmake -DNATIVE_BUILD_DIR=`pwd`/../build-native -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_ENFORCE_TESTER3=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_DFT=TRUE -DSLEEF_ENABLE_TESTER4=True -DSLEEF_ENABLE_TESTER=False -DSLEEF_ENFORCE_VSX=True -DSLEEF_ENFORCE_VSX3=True
 			 cmake -E time ninja
 			 export OMP_WAIT_POLICY=passive
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
@@ -147,7 +147,7 @@ pipeline {
 			 cd ..
  			 mkdir build
 			 cd build
-			 cmake -GNinja .. -DCMAKE_TOOLCHAIN_FILE=../toolchains/s390x-gcc.cmake -DNATIVE_BUILD_DIR=`pwd`/../build-native -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_ENFORCE_TESTER3=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_DFT=TRUE -DSLEEF_ENABLE_TESTER4=True -DSLEEF_ENABLE_TESTER=False
+			 cmake -GNinja .. -DCMAKE_TOOLCHAIN_FILE=../toolchains/s390x-gcc.cmake -DNATIVE_BUILD_DIR=`pwd`/../build-native -DCMAKE_INSTALL_PREFIX=../install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_ENFORCE_TESTER3=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_DFT=TRUE -DSLEEF_ENABLE_TESTER4=True -DSLEEF_ENABLE_TESTER=False -DSLEEF_ENFORCE_VXE=True -DSLEEF_ENFORCE_VXE2=True
 			 cmake -E time ninja
 			 export OMP_WAIT_POLICY=passive
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
