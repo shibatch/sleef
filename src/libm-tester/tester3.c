@@ -11,7 +11,11 @@
 #include <string.h>
 #include <time.h>
 
+#ifndef SLEEF_USE_INTERNAL_SHA256
 #include <openssl/evp.h>
+#else
+#include "psha2_capi.h"
+#endif
 
 #include "sleef.h"
 #include "misc.h"
@@ -163,31 +167,31 @@ static SPTYPE vf2gety_vf_vf2(TYPE2(SPTYPE) v) { return v.y; }
         fprintf(stderr, "Error creating context.\n");	\
         return 0;					\
     }							\
-    if (!EVP_DigestInit_ex(ctx, EVP_md5(), NULL)) {	\
+    if (!EVP_DigestInit_ex(ctx, EVP_sha256(), NULL)) {	\
         fprintf(stderr, "Error initializing context.\n"); \
         return 0;					\
     }
 
 #define checkDigest(NAME, ULP) do {				\
-    unsigned int md5_digest_len = EVP_MD_size(EVP_md5());	\
-    unsigned char *md5_digest;					\
-    md5_digest = (unsigned char *)malloc(md5_digest_len);	\
-    if (!EVP_DigestFinal_ex(ctx, md5_digest, &md5_digest_len)) { \
+    unsigned int sha256_digest_len = EVP_MD_size(EVP_sha256());	\
+    unsigned char *sha256_digest;				\
+    sha256_digest = (unsigned char *)malloc(sha256_digest_len);	\
+    if (!EVP_DigestFinal_ex(ctx, sha256_digest, &sha256_digest_len)) { \
       fprintf(stderr, "Error finalizing digest.\n");		\
       return 0;							\
     }								\
     EVP_MD_CTX_free(ctx);					\
-    unsigned char mes[64], buf[64];				\
-    memset(mes, 0, 64);						\
+    unsigned char mes[256], buf[256];				\
+    memset(mes, 0, 256);					\
     sprintf((char *)mes, "%s ", #NAME " " #ULP);		\
     char tmp[3] = { 0 };					\
-    for (int i = 0; i < md5_digest_len; i++) {			\
-        sprintf(tmp, "%02x", md5_digest[i]);			\
-        strcat((char *)mes, tmp);				\
+    for (int i = 0; i < sha256_digest_len; i++) {		\
+      snprintf(tmp, sizeof(tmp), "%02x", sha256_digest[i]);	\
+      strncat((char *)mes, tmp, sizeof(mes));			\
     }								\
-    free(md5_digest);						\
+    free(sha256_digest);					\
     if (fp != NULL) {						\
-      fgets((char *)buf, 60, fp);				\
+      fgets((char *)buf, 250, fp);					\
       if (strncmp((char *)mes, (char *)buf, strlen((char *)mes)) != 0) { \
 	puts((char *)mes);					\
 	puts((char *)buf);					\

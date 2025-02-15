@@ -11,35 +11,40 @@ if (SLEEF_BUILD_STATIC_TEST_BINS)
   set(CMAKE_EXE_LINKER_FLAGS "-static")
 endif()
 
-set(OPENSSL_EXTRA_LIBRARIES "" CACHE STRING "Extra libraries for openssl")
-if (NOT CMAKE_CROSSCOMPILING AND NOT SLEEF_FORCE_FIND_PACKAGE_SSL)
-  if (SLEEF_BUILD_STATIC_TEST_BINS)
-    set(OPENSSL_USE_STATIC_LIBS TRUE)
-  endif()
-  find_package(OpenSSL)
-  if (OPENSSL_FOUND)
-    set(SLEEF_OPENSSL_FOUND TRUE)
-    set(SLEEF_OPENSSL_LIBRARIES ${OPENSSL_LIBRARIES})
-    # Work around for tester3 sig segv, when linking versions of openssl (1.1.1) statically.
-    # This is a known issue https://github.com/openssl/openssl/issues/13872.
+if (NOT SLEEF_DISABLE_SSL)
+  set(OPENSSL_EXTRA_LIBRARIES "" CACHE STRING "Extra libraries for openssl")
+  if (NOT CMAKE_CROSSCOMPILING AND NOT SLEEF_FORCE_FIND_PACKAGE_SSL)
     if (SLEEF_BUILD_STATIC_TEST_BINS)
-      string(REGEX REPLACE
-             "-lpthread" "-Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
-             SLEEF_OPENSSL_LIBRARIES "${OPENSSL_LIBRARIES}")
+      set(OPENSSL_USE_STATIC_LIBS TRUE)
     endif()
-    set(SLEEF_OPENSSL_VERSION ${OPENSSL_VERSION})
-    set(SLEEF_OPENSSL_LIBRARIES ${SLEEF_OPENSSL_LIBRARIES} ${OPENSSL_EXTRA_LIBRARIES})
-    set(SLEEF_OPENSSL_INCLUDE_DIR ${OPENSSL_INCLUDE_DIR})
+    find_package(OpenSSL)
+    if (OPENSSL_FOUND)
+      set(SLEEF_OPENSSL_FOUND TRUE)
+      set(SLEEF_OPENSSL_LIBRARIES ${OPENSSL_LIBRARIES})
+      # Work around for tester3 sig segv, when linking versions of openssl (1.1.1) statically.
+      # This is a known issue https://github.com/openssl/openssl/issues/13872.
+      if (SLEEF_BUILD_STATIC_TEST_BINS)
+	string(REGEX REPLACE
+          "-lpthread" "-Wl,--whole-archive -lpthread -Wl,--no-whole-archive"
+          SLEEF_OPENSSL_LIBRARIES "${OPENSSL_LIBRARIES}")
+      endif()
+      set(SLEEF_OPENSSL_VERSION ${OPENSSL_VERSION})
+      set(SLEEF_OPENSSL_LIBRARIES ${SLEEF_OPENSSL_LIBRARIES} ${OPENSSL_EXTRA_LIBRARIES})
+      set(SLEEF_OPENSSL_INCLUDE_DIR ${OPENSSL_INCLUDE_DIR})
+    endif()
+  else()
+    # find_package cannot find OpenSSL when cross-compiling
+    find_library(LIBSSL ssl)
+    find_library(LIBCRYPTO crypto)
+    if (LIBSSL AND LIBCRYPTO)
+      set(SLEEF_OPENSSL_FOUND TRUE)
+      set(SLEEF_OPENSSL_LIBRARIES ${LIBSSL} ${LIBCRYPTO} ${OPENSSL_EXTRA_LIBRARIES})
+      set(SLEEF_OPENSSL_VERSION ${LIBSSL})
+    endif()
   endif()
 else()
-  # find_package cannot find OpenSSL when cross-compiling
-  find_library(LIBSSL ssl)
-  find_library(LIBCRYPTO crypto)
-  if (LIBSSL AND LIBCRYPTO)
-    set(SLEEF_OPENSSL_FOUND TRUE)
-    set(SLEEF_OPENSSL_LIBRARIES ${LIBSSL} ${LIBCRYPTO} ${OPENSSL_EXTRA_LIBRARIES})
-    set(SLEEF_OPENSSL_VERSION ${LIBSSL})
-  endif()
+  set(SLEEF_OPENSSL_FOUND FALSE)
+  message(STATUS "Detection of OpenSSL is skipped since SLEEF_DISABLE_SSL is specified")
 endif()
 
 if (SLEEF_ENFORCE_TESTER3 AND NOT SLEEF_OPENSSL_FOUND)
@@ -77,10 +82,6 @@ endif()
 
 if (SLEEF_DISABLE_MPFR)
   set(LIB_MPFR "")
-endif()
-
-if (SLEEF_DISABLE_SSL)
-  set(SLEEF_OPENSSL_FOUND FALSE)
 endif()
 
 # Include submodules
