@@ -1,10 +1,6 @@
 pipeline {
     agent { label 'jenkinsfile' }
 
-    script {
-        System.setProperty("org.jenkinsci.plugins.durabletask.BourneShellScript.HEARTBEAT_CHECK_INTERVAL", "86400");
-    }
-
     stages {
         stage('Preamble') {
             parallel {
@@ -52,6 +48,9 @@ pipeline {
             	     agent { label 'riscv && ubuntu23' }
                      options { skipDefaultCheckout() }
             	     steps {
+		         script {
+			     System.setProperty("org.jenkinsci.plugins.durabletask.BourneShellScript.HEARTBEAT_CHECK_INTERVAL", "86400");
+			 }
                          cleanWs()
                          checkout scm
 	    	     	 sh '''
