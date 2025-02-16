@@ -167,10 +167,6 @@ endif()
 
 set(IUT_SRC iutsimd.c ${sleef_SOURCE_DIR}/src/common/main_checkfeature.c testerutil.c)
 
-if (NOT SLEEF_OPENSSL_FOUND)
-  add_library(obj_psha OBJECT psha2_capi.cpp)
-endif()
-
 # Add vector extension `iut`s
 macro(test_extension SIMD)
   if(COMPILER_SUPPORTS_${SIMD})
@@ -386,7 +382,8 @@ macro(test_extension SIMD)
 	target_link_libraries(${T} ${TARGET_LIBSLEEF} ${LIBM} ${SLEEF_OPENSSL_LIBRARIES})
 	target_include_directories(${T} PRIVATE ${SLEEF_OPENSSL_INCLUDE_DIR})
       else()
-	target_link_libraries(${T} ${TARGET_LIBSLEEF} ${LIBM} obj_psha)
+	target_link_libraries(${T} ${TARGET_LIBSLEEF} ${LIBM} ${TARGET_PSHA_OBJ})
+	target_include_directories(${T} PRIVATE ${sleef_SOURCE_DIR}/src/common)
       endif()
 
       add_dependencies(${T} ${TARGET_HEADERS})
@@ -655,19 +652,4 @@ if (FILECHECK_COMMAND AND COMPILER_SUPPORTS_OPENMP AND SLEEF_ARCH_X86 AND CMAKE_
   add_test(NAME autovec-sse2 COMMAND sh -c "${CMAKE_C_COMPILER} -Wno-attributes -fopenmp -msse2 -O3 ${CMAKE_CURRENT_SOURCE_DIR}/autovec.c -I${sleef_BINARY_DIR}/include -S -o- | ${FILECHECK_COMMAND} ${CMAKE_CURRENT_SOURCE_DIR}/autovec.c -check-prefix=CHECK-SSE2")
   add_test(NAME testervecabi-sse2 COMMAND sh -c "${CMAKE_C_COMPILER} -Wno-attributes -fopenmp -msse2 -O3 ${CMAKE_CURRENT_SOURCE_DIR}/testervecabi.c -I${sleef_BINARY_DIR}/include -S -o- | ${FILECHECK_COMMAND} ${CMAKE_CURRENT_SOURCE_DIR}/testervecabi.c -check-prefix=CHECK-SSE2")
   add_test(NAME testervecabi-avx2 COMMAND sh -c "${CMAKE_C_COMPILER} -Wno-attributes -fopenmp -mavx2 -O3 ${CMAKE_CURRENT_SOURCE_DIR}/testervecabi.c -I${sleef_BINARY_DIR}/include -S -o- | ${FILECHECK_COMMAND} ${CMAKE_CURRENT_SOURCE_DIR}/testervecabi.c -check-prefix=CHECK-AVX2")
-endif()
-
-# Tests for internal sha256
-
-if (SLEEF_OPENSSL_FOUND)
-  add_executable(test_psha test_psha2.cpp)
-  target_link_libraries(test_psha ${SLEEF_OPENSSL_LIBRARIES})
-  target_include_directories(test_psha PRIVATE ${SLEEF_OPENSSL_INCLUDE_DIR})
-  add_test(NAME test_psha COMMAND test_psha)
-
-  add_executable(test_psha_capi test_psha2.cpp)
-  target_compile_definitions(test_psha_capi PRIVATE TEST_CAPI=1)
-  target_link_libraries(test_psha_capi ${SLEEF_OPENSSL_LIBRARIES})
-  target_include_directories(test_psha_capi PRIVATE ${SLEEF_OPENSSL_INCLUDE_DIR})
-  add_test(NAME test_psha_capi COMMAND test_psha_capi)
 endif()
