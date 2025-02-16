@@ -32,6 +32,7 @@ if (SLEEF_OPENSSL_FOUND)
 else()
   target_link_libraries(tester3printf sleefquad ${TARGET_LIBSLEEF} ${TARGET_PSHA_OBJ})
   target_include_directories(tester3printf PRIVATE ${sleef_SOURCE_DIR}/src/common)
+  target_compile_definitions(tester3printf PRIVATE SLEEF_USE_INTERNAL_SHA256=1)
 endif()
 
 if (SDE_COMMAND)
