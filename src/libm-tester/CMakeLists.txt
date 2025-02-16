@@ -95,7 +95,7 @@ endif()
 
 #
 
-function(add_test_with_emu COST CMD)
+function(add_test_with_emu C CMD)
   if (SDE_COMMAND)
     add_test(NAME ${CMD} COMMAND ${SDE_COMMAND} "--" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${CMD})
   elseif(EMULATOR)
@@ -103,6 +103,7 @@ function(add_test_with_emu COST CMD)
   else()
     add_test(NAME ${CMD} COMMAND ${CMD})
   endif()
+  set_tests_properties(${CMD} PROPERTIES COST ${C})
 endfunction()
 
 function(add_test_iut IUT C)
