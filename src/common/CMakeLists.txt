@@ -23,3 +23,19 @@ set_target_properties(${TARGET_LIBARRAYMAP_OBJ} PROPERTIES ${COMMON_TARGET_PROPE
 
 add_host_executable("addSuffix" addSuffix.c)
 set_target_properties("addSuffix" PROPERTIES C_STANDARD 99)
+
+if (NOT SLEEF_OPENSSL_FOUND)
+  add_library(${TARGET_PSHA_OBJ} OBJECT psha2_capi.cpp)
+else()
+  # Tests for internal sha256
+  add_executable(test_psha test_psha2.cpp)
+  target_link_libraries(test_psha ${SLEEF_OPENSSL_LIBRARIES})
+  target_include_directories(test_psha PRIVATE ${SLEEF_OPENSSL_INCLUDE_DIR})
+  add_test(NAME test_psha COMMAND test_psha)
+
+  add_executable(test_psha_capi test_psha2.cpp)
+  target_compile_definitions(test_psha_capi PRIVATE TEST_CAPI=1)
+  target_link_libraries(test_psha_capi ${SLEEF_OPENSSL_LIBRARIES})
+  target_include_directories(test_psha_capi PRIVATE ${SLEEF_OPENSSL_INCLUDE_DIR})
+  add_test(NAME test_psha_capi COMMAND test_psha_capi)
+endif()

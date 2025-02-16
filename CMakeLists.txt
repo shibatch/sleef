@@ -146,8 +146,8 @@ set(COSTOVERRIDE_AVX2 2)
 set(COSTOVERRIDE_AVX 2)
 set(COSTOVERRIDE_NEON32 2)
 set(COSTOVERRIDE_NEON32VFPV4 2)
-set(COSTOVERRIDE_SVE 10)
-set(COSTOVERRIDE_SVENOFMA 10)
+set(COSTOVERRIDE_SVE 20)
+set(COSTOVERRIDE_SVENOFMA 20)
 set(COSTOVERRIDE_RVVM1 10)
 set(COSTOVERRIDE_RVVM1NOFMA 10)
 set(COSTOVERRIDE_RVVM2 20)
@@ -253,6 +253,7 @@ set(TARGET_MKALIAS "mkalias")
 # Defined in src/common/CMakeLists.txt via command add_library
 set(TARGET_LIBCOMMON_OBJ "common")
 set(TARGET_LIBARRAYMAP_OBJ "arraymap")
+set(TARGET_PSHA_OBJ "psha_obj")
 
 # Function used to add an executable that is executed on host
 function(add_host_executable TARGETNAME)

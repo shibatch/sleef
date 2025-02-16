@@ -9,6 +9,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <cstdint>
 #include <cstring>
 #include <ctime>
 
@@ -18,7 +19,7 @@ int main(int argc, char **argv) {
   bool success = true;
 
   for(int i=0;i<10000;i++) {
-    int len = rand() % (1 << (rand() % 16));
+    int len = (rand() + ((int64_t)RAND_MAX + 1) * rand()) % (1 << (1 + (rand() % 18)));
     unsigned char *plaintext = (unsigned char *)malloc(len);
     for(int i=0;i<len;i++) plaintext[i] = rand() & 0xff;
 

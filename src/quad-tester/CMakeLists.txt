@@ -19,26 +19,30 @@ if(COMPILER_SUPPORTS_FLOAT128)
   list(APPEND COMMON_TARGET_DEFINITIONS ENABLEFLOAT128=1)
 endif()
 
-#
+# Build tester3printf
 
-if(SLEEF_OPENSSL_FOUND)
-  # Build tester3printf
-  add_executable(tester3printf tester3printf.c)
-  add_dependencies(tester3printf sleefquad sleefquad_headers ${TARGET_LIBSLEEF} ${TARGET_HEADERS})
-  target_compile_definitions(tester3printf PRIVATE ${COMMON_TARGET_DEFINITIONS})
-  set_target_properties(tester3printf PROPERTIES C_STANDARD 99)
+add_executable(tester3printf tester3printf.c)
+add_dependencies(tester3printf sleefquad sleefquad_headers ${TARGET_LIBSLEEF} ${TARGET_HEADERS})
+target_compile_definitions(tester3printf PRIVATE ${COMMON_TARGET_DEFINITIONS})
+set_target_properties(tester3printf PROPERTIES C_STANDARD 99)
+
+if (SLEEF_OPENSSL_FOUND)
   target_link_libraries(tester3printf sleefquad ${TARGET_LIBSLEEF} ${SLEEF_OPENSSL_LIBRARIES})
   target_include_directories(tester3printf PRIVATE ${SLEEF_OPENSSL_INCLUDE_DIR})
-
-  if (SDE_COMMAND)
-    add_test(NAME tester3printf COMMAND ${SDE_COMMAND} "--" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tester3printf ${sleef_SOURCE_DIR}/src/quad-tester/hash_printf.txt)
-  elseif(EMULATOR)
-    add_test(NAME tester3printf COMMAND ${EMULATOR} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tester3printf ${sleef_SOURCE_DIR}/src/quad-tester/hash_printf.txt)
-  else()
-    add_test(NAME tester3printf COMMAND tester3printf ${sleef_SOURCE_DIR}/src/quad-tester/hash_printf.txt)
-  endif()
-  set_tests_properties(tester3printf PROPERTIES COST 5.0)
+else()
+  target_link_libraries(tester3printf sleefquad ${TARGET_LIBSLEEF} ${TARGET_PSHA_OBJ})
+  target_include_directories(tester3printf PRIVATE ${sleef_SOURCE_DIR}/src/common)
+  target_compile_definitions(tester3printf PRIVATE SLEEF_USE_INTERNAL_SHA256=1)
 endif()
+
+if (SDE_COMMAND)
+  add_test(NAME tester3printf COMMAND ${SDE_COMMAND} "--" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tester3printf ${sleef_SOURCE_DIR}/src/quad-tester/hash_printf.txt)
+elseif(EMULATOR)
+  add_test(NAME tester3printf COMMAND ${EMULATOR} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tester3printf ${sleef_SOURCE_DIR}/src/quad-tester/hash_printf.txt)
+else()
+  add_test(NAME tester3printf COMMAND tester3printf ${sleef_SOURCE_DIR}/src/quad-tester/hash_printf.txt)
+endif()
+set_tests_properties(tester3printf PROPERTIES COST 5.0)
 
 #
 
