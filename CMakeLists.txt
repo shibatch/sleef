@@ -254,6 +254,7 @@ set(TARGET_MKALIAS "mkalias")
 set(TARGET_LIBCOMMON_OBJ "common")
 set(TARGET_LIBARRAYMAP_OBJ "arraymap")
 set(TARGET_PSHA_OBJ "psha_obj")
+set(TARGET_TESTERUTIL_OBJ "testerutil_obj")
 set(TARGET_QTESTERUTIL_OBJ "qtesterutil_obj")
 
 # Function used to add an executable that is executed on host
