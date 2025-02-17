@@ -187,7 +187,7 @@ static SPTYPE vf2gety_vf_vf2(TYPE2(SPTYPE) v) { return v.y; }
     char tmp[3] = { 0 };					\
     for (int i = 0; i < sha256_digest_len; i++) {		\
       snprintf(tmp, sizeof(tmp), "%02x", sha256_digest[i]);	\
-      strncat((char *)mes, tmp, sizeof(mes));			\
+      strncat((char *)mes, tmp, sizeof(mes)-1);			\
     }								\
     free(sha256_digest);					\
     if (fp != NULL) {						\

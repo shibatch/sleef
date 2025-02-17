@@ -254,6 +254,8 @@ set(TARGET_MKALIAS "mkalias")
 set(TARGET_LIBCOMMON_OBJ "common")
 set(TARGET_LIBARRAYMAP_OBJ "arraymap")
 set(TARGET_PSHA_OBJ "psha_obj")
+set(TARGET_TESTERUTIL_OBJ "testerutil_obj")
+set(TARGET_QTESTERUTIL_OBJ "qtesterutil_obj")
 
 # Function used to add an executable that is executed on host
 function(add_host_executable TARGETNAME)
@@ -276,7 +278,7 @@ endfunction()
 
 function(host_target_AAVPCS_definitions TARGETNAME)
   if (NOT CMAKE_CROSSCOMPILING)
-    target_compile_definitions(${TARGETNAME} PRIVATE ENABLE_AAVPCS=1)
+#    target_compile_definitions(${TARGETNAME} PRIVATE ENABLE_AAVPCS=1)
   endif()
 endfunction()
 

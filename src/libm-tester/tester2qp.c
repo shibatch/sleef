@@ -24,7 +24,7 @@
 
 #include "sleef.h"
 
-#include "f128util.h"
+#include "qtesterutil.h"
 
 #define DORENAME
 #include "rename.h"
