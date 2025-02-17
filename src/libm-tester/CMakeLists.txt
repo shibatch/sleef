@@ -381,7 +381,7 @@ macro(test_extension SIMD)
 
       target_link_libraries(${T} ${TARGET_LIBSLEEF} ${LIBM} ${TARGET_TESTERUTIL_OBJ})
       if(LIB_MPFR)
-	target_link_libraries(${T} ${LIB_MPFR})
+	target_link_libraries(${T} ${LIB_MPFR} ${LIBGMP})
       endif()
       if (SLEEF_OPENSSL_FOUND)
 	target_link_libraries(${T} ${SLEEF_OPENSSL_LIBRARIES})
