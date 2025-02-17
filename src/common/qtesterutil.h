@@ -4,6 +4,7 @@
 //          http://www.boost.org/LICENSE_1_0.txt)
 
 #include "quaddef.h"
+#include "testerutil.h"
 
 typedef struct {
 #if defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
@@ -33,24 +34,6 @@ int isinff128(Sleef_quad a);
 int isnonnumberf128(Sleef_quad a);
 int isnanf128(Sleef_quad a);
 
-static double u2d(uint64_t u) {
-  union {
-    double f;
-    uint64_t i;
-  } tmp;
-  tmp.i = u;
-  return tmp.f;
-}
-
-static uint64_t d2u(double d) {
-  union {
-    double f;
-    uint64_t i;
-  } tmp;
-  tmp.f = d;
-  return tmp.i;
-}
-
 #ifdef USEMPFR
 void mpfr_set_f128(mpfr_t frx, Sleef_quad a, mpfr_rnd_t rnd);
 Sleef_quad mpfr_get_f128(mpfr_t m, mpfr_rnd_t rnd);
@@ -58,6 +41,10 @@ Sleef_quad mpfr_get_f128(mpfr_t m, mpfr_rnd_t rnd);
 double countULPf128(Sleef_quad d, mpfr_t c, int checkNegZero);
 char *sprintfr(mpfr_t fr);
 char *sprintf128(Sleef_quad x);
+
+#ifdef QUADMATH_H
+void printf128(Sleef_quad f);
+#endif
 
 double cast_d_q(Sleef_quad q);
 Sleef_quad cast_q_str(const char *s);
