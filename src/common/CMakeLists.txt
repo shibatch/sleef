@@ -39,3 +39,13 @@ else()
   target_include_directories(test_psha_capi PRIVATE ${SLEEF_OPENSSL_INCLUDE_DIR})
   add_test(NAME test_psha_capi COMMAND test_psha_capi)
 endif()
+
+# Target TARGET_QTESTERUTIL_OBJ
+add_library(${TARGET_QTESTERUTIL_OBJ} OBJECT qtesterutil.c)
+target_compile_definitions(${TARGET_QTESTERUTIL_OBJ} PRIVATE ${COMMON_TARGET_DEFINITIONS})
+if(LIB_MPFR)
+  target_compile_definitions(${TARGET_QTESTERUTIL_OBJ} PRIVATE USEMPFR=1)
+  target_link_libraries(${TARGET_QTESTERUTIL_OBJ} ${LIB_MPFR})
+endif()
+if(COMPILER_SUPPORTS_QUADMATH)
+endif()
