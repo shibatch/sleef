@@ -18,7 +18,7 @@
 extern int enableFlushToZero;
 double flushToZero(double y);
 
-int isnumber(double x);
+int xisnumber(double x);
 int isPlusZero(double x);
 int isMinusZero(double x);
 int xisnan(double x);

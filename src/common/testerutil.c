@@ -38,7 +38,7 @@
 #define POSITIVE_INFINITYf ((float)INFINITY)
 #define NEGATIVE_INFINITYf (-(float)INFINITY)
 
-int isnumber(double x) { return !isinf(x) && !isnan(x); }
+int xisnumber(double x) { return !isinf(x) && !isnan(x); }
 int isPlusZero(double x) { return x == 0 && copysign(1, x) == 1; }
 int isMinusZero(double x) { return x == 0 && copysign(1, x) == -1; }
 double sign(double d) { return d < 0 ? -1 : 1; }
