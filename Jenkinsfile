@@ -110,7 +110,6 @@ pipeline {
             	     }
                 }
 
-		/*
                 stage('aarch64 linux clang-18') {
             	     agent { label 'aarch64 && ubuntu24 && apple' }
                      options { skipDefaultCheckout() }
@@ -123,14 +122,13 @@ pipeline {
 			 export CXX=clang++-18
  			 mkdir build
 			 cd build
-			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=../../install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_DFT=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_INLINE_HEADERS=TRUE -DSLEEF_ENFORCE_SVE=TRUE -DEMULATOR=qemu-aarch64-static -DSLEEF_ENABLE_TESTER4=True -DSLEEF_ENABLE_TESTER=False
+			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=../../install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_DFT=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_INLINE_HEADERS=TRUE -DSLEEF_ENFORCE_SVE=TRUE -DEMULATOR=qemu-aarch64-static -DSLEEF_ENABLE_TESTER4=True -DSLEEF_ENABLE_TESTER=False -DSLEEF_ASAN=True
 			 cmake -E time ninja
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
 		         ctest -j `nproc`
 			 '''
             	     }
                 }
-		*/
 
 		stage('cross-ppc64el gcc') {
             	     agent { label 'x86_64 && ubuntu24 && cuda' }
