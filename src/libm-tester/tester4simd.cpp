@@ -13,10 +13,10 @@
 #include <cmath>
 #include <cfloat>
 #include <climits>
-#include <tlfloat/tlfloat.h>
+
+#include "testerutil.h"
 
 using namespace std;
-using namespace tlfloat;
 
 //
 
@@ -445,13 +445,6 @@ static vfloat vf2gety_vf_vf2(vfloat2 v) { return v.y; }
 #define SLEEF_FLT_DENORM_MIN 1.40129846e-45F
 #endif
 
-#if defined(ENABLE_NEON32) || defined(ENABLE_NEON32VFPV4)
-static const bool enableFlushToZero = true;
-#warning Flush to zero
-#else
-static const bool enableFlushToZero = false;
-#endif
-
 //
 
 extern "C" {
@@ -484,63 +477,6 @@ extern "C" {
 #endif
     return 0;
   }
-}
-
-//
-
-static uint32_t xrand() {
-  static uint64_t seed = chrono::system_clock::now().time_since_epoch().count();
-  seed = seed * 6364136223846793005ULL + 1;
-  return seed >> 32;
-}
-
-static void memrand(void *p, size_t size) {
-  uint32_t *q = (uint32_t *)p;
-  unsigned i;
-  for(i=0;i<size/sizeof(*q);i++) *q++ = xrand();
-  uint8_t *r = (uint8_t *)q;
-  for(i *= sizeof(*q);i<size;i++) *r++ = xrand() & 0xff;
-}
-
-static double u2d(uint64_t u) { return bit_cast<double>(u); }
-static uint64_t d2u(double d) { return bit_cast<uint64_t>(d); }
-static float u2f(uint32_t u) { return bit_cast<float>(u); }
-static uint32_t f2u(float f) { return bit_cast<uint32_t>(f); }
-
-static float flushToZero(float y) {
-  if (enableFlushToZero && -FLT_MIN < y && y < FLT_MIN) y = copysign(0.0f, y);
-  return y;
-}
-
-//
-
-template<typename T>
-static double countULP(T ot, const T& oc,
-		       const int nbmant, const T& fltmin, const T& fltmax,
-		       const bool checkSignedZero=false, const double abound=0.0) {
-  if (isnan_(oc) && isnan_(ot)) return 0;
-  if (isnan_(oc) || isnan_(ot)) return 10001;
-  if (isinf_(oc) && !isinf_(ot)) return INFINITY;
-
-  const T halffltmin = mul_(fltmin, T(0.5));
-  const bool ciszero = fabs_(oc) < halffltmin, cisinf = fabs_(oc) > fltmax;
-
-  if (cisinf && isinf_(ot) && signbit_(oc) == signbit_(ot)) return 0;
-  if (ciszero && ot != 0) return 10000;
-  if (checkSignedZero && ciszero && ot == 0 && signbit_(oc) != signbit_(ot)) return 10002;
-
-  double v = 0;
-  if (isinf_(ot) && !isinf_(oc)) {
-    ot = copysign_(fltmax, ot);
-    v = 1;
-  }
-
-  const int ec = ilogb_(oc);
-
-  auto e = fabs_(oc - ot);
-  if (e < abound) return 0;
-
-  return double(div_(e, fmax_(ldexp_(T(1), ec + 1 - nbmant), fltmin))) + v;
 }
 
 //
