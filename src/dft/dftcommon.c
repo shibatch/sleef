@@ -111,8 +111,8 @@ void freeTables(SleefDFT *p) {
   }
 
   for(int i=0;i<p->nThread;i++) {
-    free(p->x1[i]);
-    free(p->x0[i]);
+    Sleef_free(p->x1[i]);
+    Sleef_free(p->x0[i]);
   }
 
   free(p->x1);
