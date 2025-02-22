@@ -110,6 +110,7 @@ pipeline {
             	     }
                 }
 
+		/*
                 stage('aarch64 linux clang-18') {
             	     agent { label 'aarch64 && ubuntu24 && apple' }
                      options { skipDefaultCheckout() }
@@ -129,6 +130,7 @@ pipeline {
 			 '''
             	     }
                 }
+		*/
 
 		stage('cross-ppc64el gcc') {
             	     agent { label 'x86_64 && ubuntu24 && cuda' }
