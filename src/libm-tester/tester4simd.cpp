@@ -481,6 +481,8 @@ extern "C" {
 
 //
 
+#include "countulp.hpp"
+
 #if defined(ENABLE_DP)
 template<typename T>
 static bool check_d_d(const char *msg, vdouble (*vfunc)(vdouble), T (*tlfunc)(const T),
@@ -931,6 +933,11 @@ extern "C" {
 }
 
 int main2(int argc, char **argv) {
+#if defined(ENABLE_NEON32) || defined(ENABLE_NEON32VFPV4)
+  enableFlushToZero = true;
+#warning Flush to zero
+#endif
+
   bool success = true;
 
   // Tests if counting ulp numbers is correct
