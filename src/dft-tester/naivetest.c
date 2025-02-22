@@ -126,20 +126,12 @@ int check_cf(int n) {
   //
 
   int success = 1;
-  double rmsn = 0, rmsd = 0;
   
   for(i=0;i<n;i++) {
     if ((fabs(sy[(i*2+0)] - creal(fs[i])) > THRES) ||
 	(fabs(sy[(i*2+1)] - cimag(fs[i])) > THRES)) {
       success = 0;
     }
-   
-    double t;
-    t = (sy[(i*2+0)] - creal(fs[i]));
-    rmsn += t*t;
-    t = (sy[(i*2+1)] - cimag(fs[i]));
-    rmsn += t*t;
-    rmsd += creal(fs[i]) * creal(fs[i]) + cimag(fs[i]) * cimag(fs[i]);
   }
 
   //
@@ -375,6 +367,9 @@ int check_arf(int n) {
   }
 
   //
+
+  free(fs);
+  free(ts);
 
   Sleef_free(sx);
   Sleef_free(sy);
