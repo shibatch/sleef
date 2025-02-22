@@ -239,6 +239,8 @@ int main(int argc, char **argv) {
 
   fclose(fp);
 
+  for(int i=0;i<nkeywords;i++) free(keywords[i]);
+
   free(keywords);
 
   exit(0);

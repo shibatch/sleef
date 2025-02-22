@@ -109,6 +109,14 @@ void freeTables(SleefDFT *p) {
     free(p->tbl[N]);
     p->tbl[N] = NULL;
   }
+
+  for(int i=0;i<p->nThread;i++) {
+    Sleef_free(p->x1[i]);
+    Sleef_free(p->x0[i]);
+  }
+
+  free(p->x1);
+  free(p->x0);
 }
 
 EXPORT void SleefDFT_dispose(SleefDFT *p) {

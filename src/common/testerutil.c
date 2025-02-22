@@ -99,11 +99,20 @@ void xsrand(uint64_t s) {
 
 // Fill memory with random bits
 void memrand(void *p, int size) {
-  uint64_t *q = (uint64_t *)p;
+  uint8_t *q = (uint8_t *)p;
   int i;
-  for(i=0;i<size;i+=8) *q++ = xrand();
-  uint8_t *r = (uint8_t *)q;
-  for(;i<size;i++) *r++ = xrand() & 0xff;
+  for(i=0;i<(size & ~7);i+=8) {
+    uint64_t u = xrand();
+    *q++ = (uint8_t)(u & 0xff); u >>= 8;
+    *q++ = (uint8_t)(u & 0xff); u >>= 8;
+    *q++ = (uint8_t)(u & 0xff); u >>= 8;
+    *q++ = (uint8_t)(u & 0xff); u >>= 8;
+    *q++ = (uint8_t)(u & 0xff); u >>= 8;
+    *q++ = (uint8_t)(u & 0xff); u >>= 8;
+    *q++ = (uint8_t)(u & 0xff); u >>= 8;
+    *q++ = (uint8_t)(u & 0xff); u >>= 8;
+  }
+  for(;i<size;i++) *q++ = xrand() & 0xff;
 }
 
 //
