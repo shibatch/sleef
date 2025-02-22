@@ -481,8 +481,6 @@ extern "C" {
 
 //
 
-#include "countulp.hpp"
-
 #if defined(ENABLE_DP)
 template<typename T>
 static bool check_d_d(const char *msg, vdouble (*vfunc)(vdouble), T (*tlfunc)(const T),
