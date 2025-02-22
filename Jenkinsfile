@@ -51,7 +51,7 @@ pipeline {
                 }
 
                 stage('x86_64 windows clang') {
-            	     agent { label 'windows11 && clang' }
+            	     agent { label 'windows11 && vs2022' }
                      options { skipDefaultCheckout() }
             	     steps {
                          cleanWs()
