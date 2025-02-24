@@ -231,7 +231,7 @@ int main(int argc, char **argv) {
 	  break;
 	case 15:
 	  assert(funcList[i].ulp == -1);
-	  printf("SLEEF_IMPORT SLEEF_CONST void Sleef_%sq%s%s%s(Sleef_quad *, %s);\n",
+	  printf("SLEEF_IMPORT void Sleef_%sq%s%s%s(Sleef_quad *, %s);\n",
 		 funcList[i].name, wqp,
 		 isaub, isaname,
 		 vargquadname);

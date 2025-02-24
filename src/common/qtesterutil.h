@@ -6,6 +6,10 @@
 #include "quaddef.h"
 #include "testerutil.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct {
 #if defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
   uint64_t h, l;
@@ -50,4 +54,22 @@ double cast_d_q(Sleef_quad q);
 Sleef_quad cast_q_str(const char *s);
 Sleef_quad cast_q_str_hex(const char *s);
 Sleef_quad add_q_d(Sleef_quad q, double d);
+#endif
+
+#ifdef __cplusplus
+}
+
+static tlfloat_quad rndf128_(Sleef_quad min, Sleef_quad max, int setSignRandomly) {
+  return std::bit_cast<tlfloat_quad>(rndf128(min, max, setSignRandomly));
+}
+
+#if !defined(TLFLOAT_COMPILER_SUPPORTS_FLOAT128) && !defined(TLFLOAT_LONGDOUBLE_IS_FLOAT128)
+static Sleef_quad rndf128(tlfloat_quad min, tlfloat_quad max, int setSignRandomly) {
+  return rndf128(std::bit_cast<Sleef_quad>(min), std::bit_cast<Sleef_quad>(max), setSignRandomly);
+}
+
+static tlfloat_quad rndf128_(tlfloat_quad min, tlfloat_quad max, int setSignRandomly) {
+  return std::bit_cast<tlfloat_quad>(rndf128(std::bit_cast<Sleef_quad>(min), std::bit_cast<Sleef_quad>(max), setSignRandomly));
+}
+#endif
 #endif

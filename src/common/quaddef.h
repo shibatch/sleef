@@ -9,7 +9,7 @@
 #define SLEEF_FLOAT128_IS_IEEEQP
 #endif
 
-#if !defined(SLEEF_FLOAT128_IS_IEEEQP) && defined(__SIZEOF_LONG_DOUBLE__) && __SIZEOF_LONG_DOUBLE__ == 16 && (defined(__aarch64__) || defined(__zarch__))
+#if !defined(SLEEF_FLOAT128_IS_IEEEQP) && defined(__SIZEOF_LONG_DOUBLE__) && __SIZEOF_LONG_DOUBLE__ == 16 && (defined(__aarch64__) || defined(__zarch__) || defined(__riscv))
 #define SLEEF_LONGDOUBLE_IS_IEEEQP
 #endif
 
@@ -81,7 +81,7 @@ SLEEFSHARPif !defined(SLEEFXXX__NVCC__) && ((defined(SLEEFXXX__SIZEOF_FLOAT128__
 SLEEFSHARPdefine SLEEFXXXSLEEF_FLOAT128_IS_IEEEQP
 SLEEFSHARPendif
 
-SLEEFSHARPif !defined(SLEEFXXXSLEEF_FLOAT128_IS_IEEEQP) && !defined(SLEEFXXX__NVCC__) && defined(SLEEFXXX__SIZEOF_LONG_DOUBLE__) && SLEEFXXX__SIZEOF_LONG_DOUBLE__ == 16 && (defined(SLEEFXXX__aarch64__) || defined(SLEEFXXX__zarch__))
+SLEEFSHARPif !defined(SLEEFXXXSLEEF_FLOAT128_IS_IEEEQP) && !defined(SLEEFXXX__NVCC__) && defined(SLEEFXXX__SIZEOF_LONG_DOUBLE__) && SLEEFXXX__SIZEOF_LONG_DOUBLE__ == 16 && (defined(SLEEFXXX__aarch64__) || defined(SLEEFXXX__zarch__) || defined(SLEEFXXX__riscv))
 SLEEFSHARPdefine SLEEFXXXSLEEF_LONGDOUBLE_IS_IEEEQP
 SLEEFSHARPendif
 
