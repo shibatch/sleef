@@ -189,6 +189,7 @@ pipeline {
 			 cmake -E time ninja
 			 export OMP_WAIT_POLICY=passive
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+			 export LD_LIBRARY_PATH=/usr/powerpc64le-linux-gnu/lib
 		         ctest -j `nproc`
 			 ninja install
 			 '''

@@ -308,6 +308,9 @@ extern "C" {
 
 static double maxULP = 0;
 
+static tlfloat_quad xgetq_(VARGQUAD aq, int idx) { return bit_cast<tlfloat_quad>(xgetq(aq, idx)); }
+static VARGQUAD xsetq(VARGQUAD aq, int idx, tlfloat_quad q) { return xsetq(aq, idx, bit_cast<Sleef_quad>(q)); }
+
 static bool check_q_q(const char *msg, VARGQUAD (*vfunc)(VARGQUAD), tlfloat_octuple (*tlfunc)(const tlfloat_octuple),
 		      const tlfloat_quad *a0, size_t z, double tol, bool checkSignedZero) {
   VARGQUAD v0;
@@ -316,9 +319,9 @@ static bool check_q_q(const char *msg, VARGQUAD (*vfunc)(VARGQUAD), tlfloat_octu
     int idx = xrand() % VECTLENDP;
     v0 = xsetq(v0, idx, a0[i]);
     v0 = (*vfunc)(v0);
-    tlfloat_octuple t = xgetq(v0, idx), c = (*tlfunc)(a0[i]);
+    tlfloat_octuple t = xgetq_(v0, idx), c = (*tlfunc)(a0[i]);
     double u = countULP<tlfloat_octuple>(t, c, SLEEF_QUAD_MANT_DIG,
-					 SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX, checkSignedZero);
+					 (tlfloat_quad)TLFLOAT_FLT128_DENORM_MIN, (tlfloat_quad)TLFLOAT_FLT128_MAX, checkSignedZero);
     // tlfloat_printf("t = %.35Og, c = %.35Og, ulp = %g\n", t, c, u);
     if (u > maxULP) maxULP = u;
     if (u > tol) {
@@ -337,9 +340,9 @@ static bool check_q_q_(const char *msg, VARGQUAD (*vfunc)(VARGQUAD), tlfloat_oct
     int idx = xrand() % VECTLENDP;
     v0 = xsetq(v0, idx, a0[i]);
     v0 = (*vfunc)(v0);
-    tlfloat_octuple t = xgetq(v0, idx), c = (*tlfunc)((tlfloat_octuple)a0[i]);
+    tlfloat_octuple t = xgetq_(v0, idx), c = (*tlfunc)((tlfloat_octuple)a0[i]);
     double u = countULP<tlfloat_octuple>(t, c, SLEEF_QUAD_MANT_DIG,
-					 SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX, checkSignedZero);
+					 (tlfloat_quad)TLFLOAT_FLT128_DENORM_MIN, (tlfloat_quad)TLFLOAT_FLT128_MAX, checkSignedZero);
     // tlfloat_printf("t = %.35Og, c = %.35Og, ulp = %g\n", t, c, u);
     if (u > maxULP) maxULP = u;
     if (u > tol) {
@@ -356,14 +359,14 @@ static bool check_q_q(const char *msg, VARGQUAD (*vfunc)(VARGQUAD), tlfloat_octu
   tlfloat_quad min = tlfloat_strtoq(minStr, nullptr), max = tlfloat_strtoq(maxStr, nullptr);
   VARGQUAD v0;
   for(int i=0;i<nLoop;i++) {
-    Sleef_quad x = rndf128(min, max, sign);
+    tlfloat_quad x = rndf128_(min, max, sign);
     memrand(&v0, SIZEOF_VARGQUAD);
     int idx = xrand() % VECTLENDP;
     v0 = xsetq(v0, idx, x);
     v0 = (*vfunc)(v0);
-    tlfloat_octuple t = xgetq(v0, idx), c = (*tlfunc)(x);
+    tlfloat_octuple t = xgetq_(v0, idx), c = (*tlfunc)(x);
     double u = countULP<tlfloat_octuple>(t, c, SLEEF_QUAD_MANT_DIG,
-					 SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX, checkSignedZero);
+					 (tlfloat_quad)TLFLOAT_FLT128_DENORM_MIN, (tlfloat_quad)TLFLOAT_FLT128_MAX, checkSignedZero);
     // tlfloat_printf("t = %.35Og, c = %.35Og, ulp = %g\n", t, c, u);
     if (u > maxULP) maxULP = u;
     if (u > tol) {
@@ -380,14 +383,14 @@ static bool check_q_q_(const char *msg, VARGQUAD (*vfunc)(VARGQUAD), tlfloat_oct
   tlfloat_quad min = tlfloat_strtoq(minStr, nullptr), max = tlfloat_strtoq(maxStr, nullptr);
   VARGQUAD v0;
   for(int i=0;i<nLoop;i++) {
-    Sleef_quad x = rndf128(min, max, sign);
+    tlfloat_quad x = rndf128_(min, max, sign);
     memrand(&v0, SIZEOF_VARGQUAD);
     int idx = xrand() % VECTLENDP;
     v0 = xsetq(v0, idx, x);
     v0 = (*vfunc)(v0);
-    tlfloat_octuple t = xgetq(v0, idx), c = (*tlfunc)((tlfloat_octuple)x);
+    tlfloat_octuple t = xgetq_(v0, idx), c = (*tlfunc)(tlfloat_octuple(x));
     double u = countULP<tlfloat_octuple>(t, c, SLEEF_QUAD_MANT_DIG,
-					 SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX, checkSignedZero);
+					 (tlfloat_quad)TLFLOAT_FLT128_DENORM_MIN, (tlfloat_quad)TLFLOAT_FLT128_MAX, checkSignedZero);
     // tlfloat_printf("t = %.35Og, c = %.35Og, ulp = %g\n", t, c, u);
     if (u > maxULP) maxULP = u;
     if (u > tol) {
@@ -410,9 +413,9 @@ static bool check_q_q_q(const char *msg, VARGQUAD (*vfunc)(VARGQUAD, VARGQUAD),
       v0 = xsetq(v0, idx, a[i]);
       v1 = xsetq(v1, idx, a[j]);
       v0 = (*vfunc)(v0, v1);
-      tlfloat_octuple t = xgetq(v0, idx), c = (*tlfunc)(a[i], a[j]);
+      tlfloat_octuple t = xgetq_(v0, idx), c = (*tlfunc)(a[i], a[j]);
       double u = countULP<tlfloat_octuple>(t, c, SLEEF_QUAD_MANT_DIG,
-					   SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX, checkSignedZero);
+					   (tlfloat_quad)TLFLOAT_FLT128_DENORM_MIN, (tlfloat_quad)TLFLOAT_FLT128_MAX, checkSignedZero);
       //tlfloat_printf("t = %.35Og, c = %.35Og, ulp = %g\n", t, c, u);
       if (u > maxULP) maxULP = u;
       if (u > tol) {
@@ -437,9 +440,9 @@ static bool check_q_q_q_(const char *msg, VARGQUAD (*vfunc)(VARGQUAD, VARGQUAD),
       v0 = xsetq(v0, idx, a[i]);
       v1 = xsetq(v1, idx, a[j]);
       v0 = (*vfunc)(v0, v1);
-      tlfloat_octuple t = xgetq(v0, idx), c = (*tlfunc)((tlfloat_octuple)a[i], (tlfloat_octuple)a[j]);
+      tlfloat_octuple t = xgetq_(v0, idx), c = (*tlfunc)((tlfloat_octuple)a[i], (tlfloat_octuple)a[j]);
       double u = countULP<tlfloat_octuple>(t, c, SLEEF_QUAD_MANT_DIG,
-					   SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX, checkSignedZero);
+					   (tlfloat_quad)TLFLOAT_FLT128_DENORM_MIN, (tlfloat_quad)TLFLOAT_FLT128_MAX, checkSignedZero);
       //tlfloat_printf("t = %.35Og, c = %.35Og, ulp = %g\n", t, c, u);
       if (u > maxULP) maxULP = u;
       if (u > tol) {
@@ -460,15 +463,15 @@ static bool check_q_q_q(const char *msg, VARGQUAD (*vfunc)(VARGQUAD, VARGQUAD),
   for(int i=0;i<nLoop;i++) {
     int idx = xrand() % VECTLENDP;
     memrand(&v0, SIZEOF_VARGQUAD);
-    Sleef_quad x = rndf128(min, max, sign);
+    tlfloat_quad x = rndf128_(min, max, sign);
     v0 = xsetq(v0, idx, x);
     memrand(&v1, SIZEOF_VARGQUAD);
-    Sleef_quad y = rndf128(min, max, sign);
+    tlfloat_quad y = rndf128_(min, max, sign);
     v1 = xsetq(v1, idx, y);
     v0 = (*vfunc)(v0, v1);
-    tlfloat_octuple t = xgetq(v0, idx), c = (*tlfunc)(x, y);
+    tlfloat_octuple t = xgetq_(v0, idx), c = (*tlfunc)(x, y);
     double u = countULP<tlfloat_octuple>(t, c, SLEEF_QUAD_MANT_DIG,
-					 SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX, checkSignedZero);
+					 (tlfloat_quad)TLFLOAT_FLT128_DENORM_MIN, (tlfloat_quad)TLFLOAT_FLT128_MAX, checkSignedZero);
     //tlfloat_printf("t = %.35Og, c = %.35Og, ulp = %g\n", t, c, u);
     if (u > maxULP) maxULP = u;
     if (u > tol) {
@@ -488,15 +491,15 @@ static bool check_q_q_q_(const char *msg, VARGQUAD (*vfunc)(VARGQUAD, VARGQUAD),
   for(int i=0;i<nLoop;i++) {
     int idx = xrand() % VECTLENDP;
     memrand(&v0, SIZEOF_VARGQUAD);
-    Sleef_quad x = rndf128(min, max, sign);
+    tlfloat_quad x = rndf128_(min, max, sign);
     v0 = xsetq(v0, idx, x);
     memrand(&v1, SIZEOF_VARGQUAD);
-    Sleef_quad y = rndf128(min, max, sign);
+    tlfloat_quad y = rndf128_(min, max, sign);
     v1 = xsetq(v1, idx, y);
     v0 = (*vfunc)(v0, v1);
-    tlfloat_octuple t = xgetq(v0, idx), c = (*tlfunc)((tlfloat_octuple)x, (tlfloat_octuple)y);
+    tlfloat_octuple t = xgetq_(v0, idx), c = (*tlfunc)((tlfloat_octuple)x, (tlfloat_octuple)y);
     double u = countULP<tlfloat_octuple>(t, c, SLEEF_QUAD_MANT_DIG,
-					 SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX, checkSignedZero);
+					 (tlfloat_quad)TLFLOAT_FLT128_DENORM_MIN, (tlfloat_quad)TLFLOAT_FLT128_MAX, checkSignedZero);
     //tlfloat_printf("t = %.35Og, c = %.35Og, ulp = %g\n", t, c, u);
     if (u > maxULP) maxULP = u;
     if (u > tol) {
@@ -522,9 +525,9 @@ static bool check_q_q_q_q_(const char *msg, VARGQUAD (*vfunc)(VARGQUAD, VARGQUAD
 	v1 = xsetq(v1, idx, a[j]);
 	v2 = xsetq(v2, idx, a[k]);
 	v0 = (*vfunc)(v0, v1, v2);
-	tlfloat_octuple t = xgetq(v0, idx), c = (*tlfunc)((tlfloat_octuple)a[i], (tlfloat_octuple)a[j], (tlfloat_octuple)a[k]);
+	tlfloat_octuple t = xgetq_(v0, idx), c = (*tlfunc)((tlfloat_octuple)a[i], (tlfloat_octuple)a[j], (tlfloat_octuple)a[k]);
 	double u = countULP<tlfloat_octuple>(t, c, SLEEF_QUAD_MANT_DIG,
-					     SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX, checkSignedZero);
+					     (tlfloat_quad)TLFLOAT_FLT128_DENORM_MIN, (tlfloat_quad)TLFLOAT_FLT128_MAX, checkSignedZero);
 	//tlfloat_printf("t = %.35Og, c = %.35Og, ulp = %g\n", t, c, u);
 	if (u > maxULP) maxULP = u;
 	if (u > tol) {
@@ -546,18 +549,18 @@ static bool check_q_q_q_q_(const char *msg, VARGQUAD (*vfunc)(VARGQUAD, VARGQUAD
   for(int i=0;i<nLoop;i++) {
     int idx = xrand() % VECTLENDP;
     memrand(&v0, SIZEOF_VARGQUAD);
-    Sleef_quad x = rndf128(min, max, sign);
+    tlfloat_quad x = rndf128_(min, max, sign);
     v0 = xsetq(v0, idx, x);
     memrand(&v1, SIZEOF_VARGQUAD);
-    Sleef_quad y = rndf128(min, max, sign);
+    tlfloat_quad y = rndf128_(min, max, sign);
     v1 = xsetq(v1, idx, y);
     memrand(&v2, SIZEOF_VARGQUAD);
-    Sleef_quad z = rndf128(min, max, sign);
+    tlfloat_quad z = rndf128_(min, max, sign);
     v2 = xsetq(v2, idx, z);
     v0 = (*vfunc)(v0, v1, v2);
-    tlfloat_octuple t = xgetq(v0, idx), c = (*tlfunc)((tlfloat_octuple)x, (tlfloat_octuple)y, (tlfloat_octuple)z);
+    tlfloat_octuple t = xgetq_(v0, idx), c = (*tlfunc)((tlfloat_octuple)x, (tlfloat_octuple)y, (tlfloat_octuple)z);
     double u = countULP<tlfloat_octuple>(t, c, SLEEF_QUAD_MANT_DIG,
-					 SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX, checkSignedZero);
+					 (tlfloat_quad)TLFLOAT_FLT128_DENORM_MIN, (tlfloat_quad)TLFLOAT_FLT128_MAX, checkSignedZero);
     //tlfloat_printf("t = %.35Og, c = %.35Og, ulp = %g\n", t, c, u);
     if (u > maxULP) maxULP = u;
     if (u > tol) {
@@ -591,15 +594,15 @@ static bool check_i_q_q_(const char *msg, vint (*vfunc)(VARGQUAD, VARGQUAD), int
   return true;
 }
 
-void check(const tlfloat_octuple t, const tlfloat_octuple c, int nbmant,
-	   const tlfloat_octuple flmin, const tlfloat_octuple flmax, const tlfloat_octuple culp) {
-  tlfloat_octuple tulp = countULP<tlfloat_octuple>(t, c, nbmant, flmin, flmax, true);
+void check(const tlfloat_quad t, const tlfloat_quad c, int nbmant,
+           const tlfloat_quad flmin, const tlfloat_quad flmax, const double culp) {
+  double tulp = countULP<tlfloat_octuple>(t, c, nbmant, flmin, flmax, true);
   if (tulp != culp) {
     cout << "NG" << endl;
-    printf("t = %a\n", (double)t);
-    printf("c = %a\n", (double)c);
-    printf("tulp = %g\n", (double)tulp);
-    printf("culp = %g\n", (double)culp);
+    tlfloat_printf("t = %Oa %.35Og\n", t, t);
+    tlfloat_printf("c = %Oa %.35Og\n", c, c);
+    printf("tulp = %g\n", tulp);
+    printf("culp = %g\n", culp);
     exit(-1);
   }
 }
@@ -621,34 +624,34 @@ int main2(int argc, char **argv) {
 
   // Tests if counting ulp numbers is correct
 
-  check(+0.0, +0.0, SLEEF_QUAD_MANT_DIG, SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX,     0);
-  check(-0.0, +0.0, SLEEF_QUAD_MANT_DIG, SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX, 10002);
-  check(+0.0, -0.0, SLEEF_QUAD_MANT_DIG, SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX, 10002);
-  check(-0.0, -0.0, SLEEF_QUAD_MANT_DIG, SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX,     0);
+  check(+0.0, +0.0, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX,     0);
+  check(-0.0, +0.0, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 10002);
+  check(+0.0, -0.0, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 10002);
+  check(-0.0, -0.0, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX,     0);
 
-  check(+1.0, +1.0, SLEEF_QUAD_MANT_DIG, SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX,     0);
-  check(tlfloat_nextafterq(+1.0, +INFINITY), +1.0, SLEEF_QUAD_MANT_DIG, SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX, 1.0);
-  check(tlfloat_nextafterq(+1.0, -INFINITY), +1.0, SLEEF_QUAD_MANT_DIG, SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX, 0.5);
+  check(+1.0, +1.0, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX,     0);
+  check(tlfloat_nextafterq(+1.0, +INFINITY), +1.0, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 1.0);
+  check(tlfloat_nextafterq(+1.0, -INFINITY), +1.0, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 0.5);
 
-  check(-1.0, -1.0, SLEEF_QUAD_MANT_DIG, SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX,     0);
-  check(tlfloat_nextafterq(-1.0, +INFINITY), -1.0, SLEEF_QUAD_MANT_DIG, SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX, 0.5);
-  check(tlfloat_nextafterq(-1.0, -INFINITY), -1.0, SLEEF_QUAD_MANT_DIG, SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX, 1.0);
+  check(-1.0, -1.0, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX,     0);
+  check(tlfloat_nextafterq(-1.0, +INFINITY), -1.0, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 0.5);
+  check(tlfloat_nextafterq(-1.0, -INFINITY), -1.0, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 1.0);
 
-  check(INFINITY, INFINITY, SLEEF_QUAD_MANT_DIG, SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX, 0);
-  check(tlfloat_nextafterq(INFINITY, 0), INFINITY, SLEEF_QUAD_MANT_DIG, SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX, INFINITY);
-  check(INFINITY, tlfloat_nextafterq(INFINITY, 0), SLEEF_QUAD_MANT_DIG, SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX, 1.0);
+  check(INFINITY, INFINITY, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 0);
+  check(tlfloat_nextafterq(INFINITY, 0), INFINITY, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, INFINITY);
+  check(INFINITY, tlfloat_nextafterq(INFINITY, 0), SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 1.0);
 
-  check(-INFINITY, -INFINITY, SLEEF_QUAD_MANT_DIG, SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX, 0);
-  check(tlfloat_nextafterq(-INFINITY, 0), -INFINITY, SLEEF_QUAD_MANT_DIG, SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX, INFINITY);
-  check(-INFINITY, tlfloat_nextafterq(-INFINITY, 0), SLEEF_QUAD_MANT_DIG, SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX, 1.0);
+  check(-INFINITY, -INFINITY, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 0);
+  check(tlfloat_nextafterq(-INFINITY, 0), -INFINITY, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, INFINITY);
+  check(-INFINITY, tlfloat_nextafterq(-INFINITY, 0), SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 1.0);
 
-  check(SLEEF_QUAD_MIN, SLEEF_QUAD_MIN, SLEEF_QUAD_MANT_DIG, SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX, 0);
-  check(tlfloat_nextafterq(SLEEF_QUAD_MIN, 0.0), SLEEF_QUAD_MIN, SLEEF_QUAD_MANT_DIG, SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX, 1.0);
-  check(tlfloat_nextafterq(SLEEF_QUAD_MIN, 1.0), SLEEF_QUAD_MIN, SLEEF_QUAD_MANT_DIG, SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX, 1.0);
+  check(TLFLOAT_FLT128_MIN, TLFLOAT_FLT128_MIN, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 0);
+  check(tlfloat_nextafterq(TLFLOAT_FLT128_MIN, 0.0), TLFLOAT_FLT128_MIN, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 1.0);
+  check(tlfloat_nextafterq(TLFLOAT_FLT128_MIN, 1.0), TLFLOAT_FLT128_MIN, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 1.0);
 
-  check(-SLEEF_QUAD_MIN, -SLEEF_QUAD_MIN, SLEEF_QUAD_MANT_DIG, SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX, 0);
-  check(tlfloat_nextafterq(-SLEEF_QUAD_MIN, 0.0), -SLEEF_QUAD_MIN, SLEEF_QUAD_MANT_DIG, SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX, 1.0);
-  check(tlfloat_nextafterq(-SLEEF_QUAD_MIN, 1.0), -SLEEF_QUAD_MIN, SLEEF_QUAD_MANT_DIG, SLEEF_QUAD_DENORM_MIN, SLEEF_QUAD_MAX, 1.0);
+  check(-(tlfloat_quad)TLFLOAT_FLT128_MIN, -(tlfloat_quad)TLFLOAT_FLT128_MIN, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 0);
+  check(tlfloat_nextafterq(-(tlfloat_quad)TLFLOAT_FLT128_MIN, 0.0), -(tlfloat_quad)TLFLOAT_FLT128_MIN, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 1.0);
+  check(tlfloat_nextafterq(-(tlfloat_quad)TLFLOAT_FLT128_MIN, 1.0), -(tlfloat_quad)TLFLOAT_FLT128_MIN, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 1.0);
 
   //
 
@@ -687,9 +690,9 @@ int main2(int argc, char **argv) {
 
   {
     VARGQUAD v0 = xsplatq(SLEEF_M_PIq);
-    VARGQUAD v1 = xsplatq(tlfloat_strtoq("2.718281828459045235360287471352662498", NULL));
+    VARGQUAD v1 = xsplatq(bit_cast<Sleef_quad>(tlfloat_strtoq("2.718281828459045235360287471352662498", NULL)));
     Sleef_quad q = xgetq(xmulq_u05(v0, v1), 0);
-    if (Sleef_icmpneq1_purec(q, tlfloat_strtoq("8.539734222673567065463550869546573820", NULL))) {
+    if (Sleef_icmpneq1_purec(q, bit_cast<Sleef_quad>(tlfloat_strtoq("8.539734222673567065463550869546573820", NULL)))) {
       tlfloat_printf("Testing with xgetq failed : %.35Qg\n", q);
       exit(-1);
     }
@@ -1194,11 +1197,11 @@ int main2(int argc, char **argv) {
 	  tmp[idx] = ldexpCheckVals[i];
 	  vint vi1 = vloadu_vi_p(tmp);
 	  vq0 = xldexpq(vq0, vi1);
-	  t = xgetq(vq0, idx);
+	  t = xgetq_(vq0, idx);
 	}
 	tlfloat_quad c = tlfloat_ldexpq(a0, ldexpCheckVals[i]);
 	if (!((tlfloat_isnanq(t) && tlfloat_isnanq(c)) || tlfloat_quad(t) == c)) {
-	  tlfloat_printf("ldexp : arg0 = %Qa (%.35Qg), arg1 = %d, t = %.35Qg, c = %.25Qg\n",
+	  tlfloat_printf("arg0 = %Qa (%.35Qg), arg1 = %d, t = %.35Qg, c = %.25Qg\n",
 			 a0, a0, ldexpCheckVals[i], t, c);
 	  success = false;
 	  break;
@@ -1227,9 +1230,78 @@ int main2(int argc, char **argv) {
 	t = tmp[idx];
       }
       if (t != c) {
-	tlfloat_printf("ilogb : arg0 = %Qa (%.35Qg), t = %d, c = %d\n",
+	tlfloat_printf("arg0 = %Qa (%.35Qg), t = %d, c = %d\n",
 		       a0, a0, t, c);
-	success = 0;
+	success = false;
+	break;
+      }
+    }
+
+    printf("%s\n", success ? "OK" : "NG");
+  }
+
+  {
+    printf("cast_from_doubleq : ");
+
+    xsrand(1);
+    for(int i=0;i<10 * NTEST;i++) {
+      double d;
+      switch(i) {
+	case 0: d = +0.0; break;
+	case 1: d = -0.0; break;
+	case 2: d = +SLEEF_INFINITY; break;
+	case 3: d = -SLEEF_INFINITY; break;
+	case 4: d = SLEEF_NAN; break;
+	default : memrand(&d, sizeof(d));
+      }
+      tlfloat_quad c = tlfloat_quad(d);
+      tlfloat_quad t = 0;
+      {
+	int idx = xrand() % VECTLENDP;
+	double s[VECTLENDP];
+	memrand(s, sizeof(s));
+	s[idx] = d;
+	VARGQUAD q = xcast_from_doubleq(vloadu_vd_p(s));
+	t = xgetq_(q, idx);
+      }
+      if (!((tlfloat_isnanq(t) && tlfloat_isnanq(c)) || t == c)) {
+	tlfloat_printf("arg0 = %a (%.16g), t = %Qa (%.35Qg), c = %Qa (%.35Qg)\n",
+		       d, d, t, t, c, c);
+	success = false;
+	break;
+      }
+    }
+
+    printf("%s\n", success ? "OK" : "NG");
+  }
+
+  {
+    printf("cast_to_doubleq : ");
+
+    xsrand(1);
+    Sleef_quad min = bit_cast<Sleef_quad>(tlfloat_strtoq("0", nullptr)), max = bit_cast<Sleef_quad>(tlfloat_strtoq("1e+20", nullptr));
+    for(int i=0;i<10 * NTEST;i++) {
+      Sleef_quad a;
+      if (i < int(sizeof(stdCheckVals)/sizeof(stdCheckVals[0]))) {
+	a = bit_cast<Sleef_quad>(stdCheckVals[i]);
+      } else {
+	a = rndf128(min, max, true);
+      }
+      double t = 0, c = (double)bit_cast<tlfloat_quad>(a);
+      {
+	int idx = xrand() % VECTLENDP;
+	VARGQUAD v0;
+	memrand(&v0, SIZEOF_VARGQUAD);
+	v0 = xsetq(v0, idx, a);
+	vdouble vd = xcast_to_doubleq(v0);
+	double s[VECTLENDP];
+	vstoreu_v_p_vd(s, vd);
+	t = s[idx];
+      }
+      if (!((tlfloat_isnan(t) && tlfloat_isnan(c)) || t == c)) {
+	tlfloat_printf("arg0 = %Qa (%.35Qg), t = %a (%.16g), c = %a (%.16g)\n",
+		       a, a, t, t, c, c);
+	success = false;
 	break;
       }
     }
