@@ -63,7 +63,7 @@ static tlfloat_quad rndf128_(Sleef_quad min, Sleef_quad max, int setSignRandomly
   return std::bit_cast<tlfloat_quad>(rndf128(min, max, setSignRandomly));
 }
 
-#ifndef TLFLOAT_COMPILER_SUPPORTS_FLOAT128
+#if !defined(TLFLOAT_COMPILER_SUPPORTS_FLOAT128) && !defined(TLFLOAT_LONGDOUBLE_IS_FLOAT128)
 static Sleef_quad rndf128(tlfloat_quad min, tlfloat_quad max, int setSignRandomly) {
   return rndf128(std::bit_cast<Sleef_quad>(min), std::bit_cast<Sleef_quad>(max), setSignRandomly);
 }

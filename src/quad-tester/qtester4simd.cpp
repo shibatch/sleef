@@ -310,7 +310,7 @@ static double maxULP = 0;
 
 static tlfloat_quad xgetq_(VARGQUAD aq, int idx) { return bit_cast<tlfloat_quad>(xgetq(aq, idx)); }
 
-#ifndef TLFLOAT_COMPILER_SUPPORTS_FLOAT128
+#if !defined(TLFLOAT_COMPILER_SUPPORTS_FLOAT128) && !defined(TLFLOAT_LONGDOUBLE_IS_FLOAT128)
 static VARGQUAD xsetq(VARGQUAD aq, int idx, tlfloat_quad q) { return xsetq(aq, idx, bit_cast<Sleef_quad>(q)); }
 #endif
 
