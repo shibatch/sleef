@@ -705,7 +705,7 @@ int main2(int argc, char **argv) {
 
   {
     VARGQUAD v0 = xsplatq(SLEEF_M_PIq);
-    VARGQUAD v1 = xsplatq(Sleef_strtoq("2.718281828459045235360287471352662498", NULL));
+    VARGQUAD v1 = xsplatq(tlfloat_strtoq("2.718281828459045235360287471352662498", NULL));
     Sleef_quad q = xgetq(xmulq_u05(v0, v1), 0);
     if (Sleef_icmpneq1_purec(q, tlfloat_strtoq("8.539734222673567065463550869546573820", NULL))) {
       fprintf(stderr, "Testing with xgetq failed\n");
@@ -1185,6 +1185,43 @@ int main2(int argc, char **argv) {
 		      sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0]), 1.0, true) && success;
   success = check_q_q("atanhq_u10", xatanhq_u10, tlfloat_atanho, "1e-15" , "1" , true, 10 * NTEST, 1ULL, 1.0, true) && success;
   showULP(success);
+
+  {
+    fprintf(stderr, "ldexp : ");
+
+    static const int ldexpCheckVals[] = {
+      -40000, -32770, -32769, -32768, -32767, -32766, -32765, -16386, -16385, -16384, -16383, -16382, -5, -4, -3, -2, -1, 0,
+      +40000, +32770, +32769, +32768, +32767, +32766, +32765, +16386, +16385, +16384, +16383, +16382, +5, +4, +3, +2, +1
+    };
+    
+    for(int i=0;i<sizeof(ldexpCheckVals)/sizeof(ldexpCheckVals[0]);i++) {
+      for(int j=0;j<sizeof(stdCheckVals)/sizeof(stdCheckVals[0]);j++) {
+	Sleef_quad a0 = stdCheckVals[j];
+	tlfloat_quad t = 0;
+	{
+	  int idx = xrand() % VECTLENDP;
+	  VARGQUAD vq0;
+	  memrand(&vq0, SIZEOF_VARGQUAD);
+	  vq0 = xsetq(vq0, idx, a0);
+	  int tmp[VECTLENDP*2];
+	  memrand(tmp, sizeof(tmp));
+	  tmp[idx] = ldexpCheckVals[i];
+	  vint vi1 = vloadu_vi_p(tmp);
+	  vq0 = xldexpq(vq0, vi1);
+	  t = xgetq(vq0, idx);
+	}
+	tlfloat_quad c = tlfloat_ldexpq(a0, ldexpCheckVals[i]);
+	if (!((tlfloat_isnanq(t) && tlfloat_isnanq(c)) || tlfloat_quad(t) == c)) {
+	  tlfloat_printf("ldexp : arg0 = %Qa (%.35Qg), arg1 = %d, t = %.35Qg, c = %.25Qg\n",
+			 a0, a0, ldexpCheckVals[i], t, c);
+	  success = false;
+	  break;
+	}
+      }
+    }
+
+    printf("%s\n", success ? "OK" : "NG");
+  }
 
   //
 
