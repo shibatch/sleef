@@ -246,6 +246,7 @@ macro(test_extension SIMD)
 	list(APPEND IUT_LIST ${IUTINAME})
       endif(SLEEF_BUILD_INLINE_HEADERS AND SED_COMMAND)
     endif(SLEEF_ENABLE_TESTER)
+
     #
 
     if (SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
@@ -257,7 +258,7 @@ macro(test_extension SIMD)
       target_compile_options(${TARGET_TESTER4_${SIMD}}
 	PRIVATE ${FLAGS_ENABLE_${SIMD}})
       target_compile_definitions(${TARGET_TESTER4_${SIMD}}
-	PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS} TLFLOAT_ENABLE_INLINING=1)
+	PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS})
       target_link_libraries(${TARGET_TESTER4_${SIMD}} ${TARGET_LIBSLEEF} ${TLFLOAT_LIBRARIES} ${TARGET_TESTERUTIL_OBJ})
       if (FORCE_AAVPCS)
 	target_compile_definitions(${TARGET_TESTER4_${SIMD}} PRIVATE ENABLE_AAVPCS=1)
@@ -281,7 +282,7 @@ macro(test_extension SIMD)
       target_compile_options(${TARGET_TESTER4Y_${SIMD}}
 	PRIVATE ${FLAGS_ENABLE_${SIMD}})
       target_compile_definitions(${TARGET_TESTER4Y_${SIMD}}
-	PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS} DETERMINISTIC=1 TLFLOAT_ENABLE_INLINING=1)
+	PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS} DETERMINISTIC=1)
       target_link_libraries(${TARGET_TESTER4Y_${SIMD}} ${TARGET_LIBSLEEF} ${TLFLOAT_LIBRARIES} ${TARGET_TESTERUTIL_OBJ})
       add_dependencies(${TARGET_TESTER4Y_${SIMD}} ${TARGET_HEADERS})
       add_dependencies(${TARGET_TESTER4Y_${SIMD}} ${TARGET_LIBSLEEF})
@@ -310,7 +311,6 @@ macro(test_extension SIMD)
 	  USE_INLINE_HEADER="sleefinline_${LCSIMD}.h"
 	  MACRO_ONLY_HEADER="macroonly${SIMD}.h"
 	  SIMD_SUFFIX=_${LCSIMD}_sleef
-	  TLFLOAT_ENABLE_INLINING=1
 	  )
 	target_include_directories(${TARGET_TESTER4I_${SIMD}} PRIVATE ${PROJECT_BINARY_DIR}/include)
 	add_dependencies(${TARGET_TESTER4I_${SIMD}} ${TARGET_INLINE_HEADERS})
@@ -511,7 +511,7 @@ if (SLEEF_ARCH_X86)
     # tester4dsp128
     add_executable(tester4dsp128 ${TESTER4_SRC})
     target_compile_definitions(tester4dsp128 PRIVATE
-      ENABLE_DSP128=1 ${COMMON_TARGET_DEFINITIONS} TLFLOAT_ENABLE_INLINING=1)
+      ENABLE_DSP128=1 ${COMMON_TARGET_DEFINITIONS})
     target_compile_options(tester4dsp128 PRIVATE ${FLAGS_ENABLE_SSE2})
     target_link_libraries(tester4dsp128 ${TARGET_LIBSLEEF} ${TLFLOAT_LIBRARIES} ${TARGET_TESTERUTIL_OBJ})
     add_dependencies(tester4dsp128 ${TARGET_HEADERS} ${TARGET_LIBSLEEF} ext_tlfloat)
@@ -520,7 +520,7 @@ if (SLEEF_ARCH_X86)
     # tester4dsp256
     add_executable(tester4dsp256 ${TESTER4_SRC})
     target_compile_definitions(tester4dsp256 PRIVATE
-      ENABLE_DSP256=1 ${COMMON_TARGET_DEFINITIONS} TLFLOAT_ENABLE_INLINING=1)
+      ENABLE_DSP256=1 ${COMMON_TARGET_DEFINITIONS})
     target_compile_options(tester4dsp256 PRIVATE ${FLAGS_ENABLE_AVX})
     target_link_libraries(tester4dsp256 ${TARGET_LIBSLEEF} ${TLFLOAT_LIBRARIES} ${TARGET_TESTERUTIL_OBJ})
     add_dependencies(tester4dsp256 ${TARGET_HEADERS} ${TARGET_LIBSLEEF} ext_tlfloat)
@@ -538,6 +538,15 @@ if (SLEEF_ARCH_PPC64)
     add_test_iut(iutdsp128 1.0)
     list(APPEND IUT_LIST iutdsp128)
   endif(SLEEF_ENABLE_TESTER)
+
+  if (SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
+    add_executable(tester4dsp128 ${TESTER4_SRC})
+    target_compile_definitions(tester4dsp128 PRIVATE ENABLE_DSPPOWER_128=1 ${COMMON_TARGET_DEFINITIONS})
+    target_compile_options(tester4dsp128 PRIVATE ${FLAGS_ENABLE_VSX})
+    target_link_libraries(tester4dsp128 ${TARGET_LIBSLEEF} ${TLFLOAT_LIBRARIES} ${TARGET_TESTERUTIL_OBJ})
+    add_dependencies(tester4dsp128 ${TARGET_HEADERS} ${TARGET_LIBSLEEF} ext_tlfloat)
+    add_test_with_emu(1.0 tester4dsp128)
+  endif(SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
 endif(SLEEF_ARCH_PPC64)
 
 if (SLEEF_ARCH_S390X)
@@ -550,6 +559,15 @@ if (SLEEF_ARCH_S390X)
     add_test_iut(iutdsp128 1.0)
     list(APPEND IUT_LIST iutdsp128)
   endif(SLEEF_ENABLE_TESTER)
+
+  if (SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
+    add_executable(tester4dsp128 ${TESTER4_SRC})
+    target_compile_definitions(tester4dsp128 PRIVATE ENABLE_DSPS390X_128=1 ${COMMON_TARGET_DEFINITIONS})
+    target_compile_options(tester4dsp128 PRIVATE ${FLAGS_ENABLE_VXE})
+    target_link_libraries(tester4dsp128 ${TARGET_LIBSLEEF} ${TLFLOAT_LIBRARIES} ${TARGET_TESTERUTIL_OBJ})
+    add_dependencies(tester4dsp128 ${TARGET_HEADERS} ${TARGET_LIBSLEEF} ext_tlfloat)
+    add_test_with_emu(1.0 tester4dsp128)
+  endif(SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
 endif(SLEEF_ARCH_S390X)
 
 if(SLEEF_BUILD_SCALAR_LIB)

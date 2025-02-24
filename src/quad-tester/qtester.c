@@ -903,9 +903,11 @@ void do_test(int options) {
   testComparisonOuterLoop(mpfr_equal_p, child_icmpeqq, stdCheckVals);
   checkResult(success, -1);
 
+#if 0
   fprintf(stderr, "icmpne : ");
   testComparisonOuterLoop(mpfr_lessgreater_p, child_icmpneq, stdCheckVals);
   checkResult(success, -1);
+#endif
 
   fprintf(stderr, "icmpq : ");
   testComparisonOuterLoop(mpfr_cmp, child_icmpq, stdCheckVals);

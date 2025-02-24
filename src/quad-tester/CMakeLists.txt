@@ -94,25 +94,52 @@ set(IUT_SRC qiutsimd.c ${sleef_SOURCE_DIR}/src/common/main_checkfeature.c)
 macro(test_extension SIMD)
   if(COMPILER_SUPPORTS_${SIMD})
     string(TOLOWER ${SIMD} LCSIMD)
-    string(CONCAT TARGET_IUT${SIMD} "qiut" ${LCSIMD})
 
-    add_executable(${TARGET_IUT${SIMD}} ${IUT_SRC})
-    target_compile_options(${TARGET_IUT${SIMD}}
-      PRIVATE ${FLAGS_ENABLE_${SIMD}})
-    target_compile_definitions(${TARGET_IUT${SIMD}}
-      PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS})
-    target_link_libraries(${TARGET_IUT${SIMD}} sleefquad ${TARGET_LIBSLEEF} ${LIBRT} ${TARGET_QTESTERUTIL_OBJ} ${TARGET_TESTERUTIL_OBJ} ${LIBQUADMATH} ${LIBM})
+    if (SLEEF_ENABLE_TESTER)
+      string(CONCAT TARGET_IUT${SIMD} "qiut" ${LCSIMD})
 
-    add_dependencies(${TARGET_IUT${SIMD}} sleefquad_headers ${TARGET_HEADERS})
-    add_dependencies(${TARGET_IUT${SIMD}} sleefquad ${TARGET_LIBSLEEF})
-    set_target_properties(${TARGET_IUT${SIMD}} PROPERTIES C_STANDARD 99)
-    if (DEFINED COSTOVERRIDE_${SIMD})
-      math(EXPR C "${COSTOVERRIDE_${SIMD}} + 1")
-      add_test_iut(${TARGET_IUT${SIMD}} ${C})
-    else()
-      add_test_iut(${TARGET_IUT${SIMD}} 0.5)
-    endif()
-    list(APPEND IUT_LIST ${TARGET_IUT${SIMD}})
+      add_executable(${TARGET_IUT${SIMD}} ${IUT_SRC})
+      target_compile_options(${TARGET_IUT${SIMD}}
+	PRIVATE ${FLAGS_ENABLE_${SIMD}})
+      target_compile_definitions(${TARGET_IUT${SIMD}}
+	PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS})
+      target_link_libraries(${TARGET_IUT${SIMD}} sleefquad ${TARGET_LIBSLEEF} ${LIBRT} ${TARGET_QTESTERUTIL_OBJ} ${TARGET_TESTERUTIL_OBJ} ${LIBQUADMATH} ${LIBM})
+
+      add_dependencies(${TARGET_IUT${SIMD}} sleefquad_headers ${TARGET_HEADERS})
+      add_dependencies(${TARGET_IUT${SIMD}} sleefquad ${TARGET_LIBSLEEF})
+      set_target_properties(${TARGET_IUT${SIMD}} PROPERTIES C_STANDARD 99)
+      if (DEFINED COSTOVERRIDE_${SIMD})
+	math(EXPR C "${COSTOVERRIDE_${SIMD}} + 1")
+	add_test_iut(${TARGET_IUT${SIMD}} ${C})
+      else()
+	add_test_iut(${TARGET_IUT${SIMD}} 0.5)
+      endif()
+      list(APPEND IUT_LIST ${TARGET_IUT${SIMD}})
+    endif(SLEEF_ENABLE_TESTER)
+
+    #
+
+    if (SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
+      set(TESTER4_SRC qtester4simd.cpp ${sleef_SOURCE_DIR}/src/common/main_checkfeature.c)
+      string(CONCAT TARGET_TESTER4_${SIMD} "qtester4" ${LCSIMD})
+
+      add_executable(${TARGET_TESTER4_${SIMD}} ${TESTER4_SRC})
+      target_compile_options(${TARGET_TESTER4_${SIMD}}
+	PRIVATE ${FLAGS_ENABLE_${SIMD}})
+      target_compile_definitions(${TARGET_TESTER4_${SIMD}}
+	PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS})
+      target_link_libraries(${TARGET_TESTER4_${SIMD}} sleefquad ${TARGET_LIBSLEEF} ${TARGET_QTESTERUTIL_OBJ} ${TARGET_TESTERUTIL_OBJ} ${TLFLOAT_LIBRARIES} ${LIBM})
+
+      add_dependencies(${TARGET_TESTER4_${SIMD}} sleefquad_headers ${TARGET_HEADERS})
+      add_dependencies(${TARGET_TESTER4_${SIMD}} sleefquad ${TARGET_LIBSLEEF})
+      add_dependencies(${TARGET_TESTER4_${SIMD}} ext_tlfloat)
+      set_target_properties(${TARGET_TESTER4_${SIMD}} PROPERTIES C_STANDARD 99)
+      if (DEFINED COSTOVERRIDE_${SIMD})
+	add_test_with_emu(${COSTOVERRIDE_${SIMD}} ${TARGET_TESTER4_${SIMD}})
+      else()
+	add_test_with_emu(1.0 ${TARGET_TESTER4_${SIMD}})
+      endif()
+    endif(SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
 
     # The iut programs whose names begin with "qiuti" are the iut for the
     # inline version of quad functions.
@@ -120,30 +147,64 @@ macro(test_extension SIMD)
     if (SLEEF_BUILD_INLINE_HEADERS AND SED_COMMAND)
       if (MSVC AND NOT SLEEF_CLANG_ON_WINDOWS)
 	message(STATUS "Quad inline headers are not tested with MSVC")
-      else()
-	string(CONCAT IUTINAME "qiuti" ${LCSIMD})
-	add_executable(${IUTINAME} ${IUT_SRC})
-	target_compile_options(${IUTINAME}
-	  PRIVATE ${FLAGS_ENABLE_${SIMD}})
-	target_compile_definitions(${IUTINAME}
-	  PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS}
-	  USE_INLINE_HEADER="sleefquadinline_${LCSIMD}.h"
-	  MACRO_ONLY_HEADER="qmacroonly${SIMD}.h"
-	  SIMD_SUFFIX=_${LCSIMD}_sleefq
+      else(MSVC AND NOT SLEEF_CLANG_ON_WINDOWS)
+	if (SLEEF_ENABLE_TESTER)
+	  string(CONCAT IUTINAME "qiuti" ${LCSIMD})
+	  add_executable(${IUTINAME} ${IUT_SRC})
+	  target_compile_options(${IUTINAME}
+	    PRIVATE ${FLAGS_ENABLE_${SIMD}})
+	  target_compile_definitions(${IUTINAME}
+	    PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS}
+	    USE_INLINE_HEADER="sleefquadinline_${LCSIMD}.h"
+	    MACRO_ONLY_HEADER="qmacroonly${SIMD}.h"
+	    SIMD_SUFFIX=_${LCSIMD}_sleefq
 	  )
-	target_include_directories(${IUTINAME} PRIVATE ${PROJECT_BINARY_DIR}/include)
-	target_link_libraries(${IUTINAME} ${LIBRT} ${TARGET_QTESTERUTIL_OBJ} ${TARGET_TESTERUTIL_OBJ} ${LIBQUADMATH} ${LIBM})
-	add_dependencies(${IUTINAME} ${TARGET_QINLINE_HEADERS})
-	set_target_properties(${IUTINAME} PROPERTIES C_STANDARD 99)
-	if (DEFINED COSTOVERRIDE_${SIMD})
-	  math(EXPR C "${COSTOVERRIDE_${SIMD}} + 1")
-	  add_test_iut(${IUTINAME} ${C})
-	else()
-	  add_test_iut(${IUTINAME} 0.5)
-	endif()
-	list(APPEND IUT_LIST ${IUTINAME})
-      endif()
+	  target_include_directories(${IUTINAME} PRIVATE ${PROJECT_BINARY_DIR}/include)
+	  target_link_libraries(${IUTINAME} ${LIBRT} ${TARGET_QTESTERUTIL_OBJ} ${TARGET_TESTERUTIL_OBJ} ${LIBQUADMATH} ${LIBM})
+	  add_dependencies(${IUTINAME} ${TARGET_QINLINE_HEADERS})
+	  set_target_properties(${IUTINAME} PROPERTIES C_STANDARD 99)
+	  if (DEFINED COSTOVERRIDE_${SIMD})
+	    math(EXPR C "${COSTOVERRIDE_${SIMD}} + 1")
+	    add_test_iut(${IUTINAME} ${C})
+	  else()
+	    add_test_iut(${IUTINAME} 0.5)
+	  endif()
+	  list(APPEND IUT_LIST ${IUTINAME})
+	endif(SLEEF_ENABLE_TESTER)
+
+	#
+
+	if (SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
+	  string(CONCAT TARGET_TESTER4I_${SIMD} "qtester4i" ${LCSIMD})
+	  add_executable(${TARGET_TESTER4I_${SIMD}} ${TESTER4_SRC})
+	  target_compile_options(${TARGET_TESTER4I_${SIMD}}
+	    PRIVATE ${FLAGS_ENABLE_${SIMD}})
+	  target_compile_definitions(${TARGET_TESTER4I_${SIMD}}
+	    PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS})
+	  target_link_libraries(${TARGET_TESTER4I_${SIMD}} sleefquad ${TARGET_LIBSLEEF} ${TARGET_QTESTERUTIL_OBJ} ${TARGET_TESTERUTIL_OBJ} ${TLFLOAT_LIBRARIES})
+	  if(CMAKE_C_COMPILER_ID MATCHES "GNU")
+	    target_compile_options(${TARGET_TESTER4I_${SIMD}} PRIVATE "-Wno-unknown-pragmas")
+	  endif()
+	  target_compile_definitions(${TARGET_TESTER4I_${SIMD}}
+	    PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS}
+	    USE_INLINE_HEADER="sleefquadinline_${LCSIMD}.h"
+	    MACRO_ONLY_HEADER="qmacroonly${SIMD}.h"
+	    SIMD_SUFFIX=_${LCSIMD}_sleefq
+	  )
+	  target_include_directories(${TARGET_TESTER4I_${SIMD}} PRIVATE ${PROJECT_BINARY_DIR}/include)
+	  add_dependencies(${TARGET_TESTER4I_${SIMD}} sleefquad sleefquad_headers ${TARGET_QINLINE_HEADERS} ext_tlfloat)
+	  #set_target_properties(${TARGET_TESTER4I_${SIMD}} PROPERTIES ${COMMON_TARGET_PROPERTIES})
+	  if (DEFINED COSTOVERRIDE_${SIMD})
+	    add_test_with_emu(${COSTOVERRIDE_${SIMD}} ${TARGET_TESTER4I_${SIMD}})
+	  else()
+	    add_test_with_emu(1.0 ${TARGET_TESTER4I_${SIMD}})
+	  endif()
+	endif(SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
+
+      endif(MSVC AND NOT SLEEF_CLANG_ON_WINDOWS)
     endif(SLEEF_BUILD_INLINE_HEADERS AND SED_COMMAND)
+
+    #
 
     if(LIB_MPFR AND NOT MINGW)
       # Build qtester2 SIMD
@@ -168,63 +229,180 @@ endforeach()
 
 # Compile executable 'qiutdspscalar'
 
-add_executable(qiutdspscalar ${IUT_SRC})
-target_compile_definitions(qiutdspscalar PRIVATE ENABLE_DSPSCALAR=1 ${COMMON_TARGET_DEFINITIONS})
-target_link_libraries(qiutdspscalar sleefquad ${TARGET_LIBSLEEF} ${LIBRT} ${TARGET_QTESTERUTIL_OBJ} ${TARGET_TESTERUTIL_OBJ} ${LIBQUADMATH} ${LIBM})
-set_target_properties(qiutdspscalar PROPERTIES C_STANDARD 99)
-add_dependencies(qiutdspscalar sleefquad_headers ${TARGET_HEADERS})
-add_dependencies(qiutdspscalar sleefquad ${TARGET_LIBSLEEF})
-add_test_iut(qiutdspscalar 0.5)
-list(APPEND IUT_LIST qiutdspscalar)
+if (SLEEF_ENABLE_TESTER)
+  add_executable(qiutdspscalar ${IUT_SRC})
+  target_compile_definitions(qiutdspscalar PRIVATE ENABLE_DSPSCALAR=1 ${COMMON_TARGET_DEFINITIONS})
+  target_link_libraries(qiutdspscalar sleefquad ${TARGET_LIBSLEEF} ${LIBRT} ${TARGET_QTESTERUTIL_OBJ} ${TARGET_TESTERUTIL_OBJ} ${LIBQUADMATH} ${LIBM})
+  set_target_properties(qiutdspscalar PROPERTIES C_STANDARD 99)
+  add_dependencies(qiutdspscalar sleefquad_headers ${TARGET_HEADERS})
+  add_dependencies(qiutdspscalar sleefquad ${TARGET_LIBSLEEF})
+  add_test_iut(qiutdspscalar 0.5)
+  list(APPEND IUT_LIST qiutdspscalar)
+endif(SLEEF_ENABLE_TESTER)
+
+if (SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
+  # Compile executable 'qtester4dspscalar'
+  set(TESTER4_SRC qtester4simd.cpp ${sleef_SOURCE_DIR}/src/common/main_checkfeature.c)
+  set(SIMD "DSPSCALAR")
+  set(LCSIMD "dspscalar")
+  string(CONCAT TARGET_TESTER4_${SIMD} "qtester4" ${LCSIMD})
+
+  add_executable(${TARGET_TESTER4_${SIMD}} ${TESTER4_SRC})
+  target_compile_definitions(${TARGET_TESTER4_${SIMD}} PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS})
+  target_link_libraries(${TARGET_TESTER4_${SIMD}} sleefquad ${TARGET_LIBSLEEF} ${TARGET_QTESTERUTIL_OBJ} ${TARGET_TESTERUTIL_OBJ} ${TLFLOAT_LIBRARIES} ${LIBM})
+  add_dependencies(${TARGET_TESTER4_${SIMD}} sleefquad_headers ${TARGET_HEADERS})
+  add_dependencies(${TARGET_TESTER4_${SIMD}} sleefquad ${TARGET_LIBSLEEF})
+  add_dependencies(${TARGET_TESTER4_${SIMD}} ext_tlfloat)
+  set_target_properties(${TARGET_TESTER4_${SIMD}} PROPERTIES C_STANDARD 99)
+  if (DEFINED COSTOVERRIDE_${SIMD})
+    add_test_with_emu(${COSTOVERRIDE_${SIMD}} ${TARGET_TESTER4_${SIMD}})
+  else()
+    add_test_with_emu(1.0 ${TARGET_TESTER4_${SIMD}})
+  endif()
+endif(SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
 
 if (SLEEF_ARCH_X86)
-  # Compile executable 'qiutdspx2'
-  add_executable(qiutdspx2 ${IUT_SRC})
-  target_compile_definitions(qiutdspx2 PRIVATE ENABLE_DSPX2_X86=1 ${COMMON_TARGET_DEFINITIONS})
-  target_link_libraries(qiutdspx2 sleefquad ${TARGET_LIBSLEEF} ${LIBRT} ${TARGET_QTESTERUTIL_OBJ} ${TARGET_TESTERUTIL_OBJ} ${LIBQUADMATH} ${LIBM})
-  set_target_properties(qiutdspx2 PROPERTIES C_STANDARD 99)
-  add_dependencies(qiutdspx2 sleefquad_headers ${TARGET_HEADERS})
-  add_dependencies(qiutdspx2 sleefquad ${TARGET_LIBSLEEF})
-  add_test_iut(qiutdspx2 0.5)
-  list(APPEND IUT_LIST qiutdspx2)
+  if (SLEEF_ENABLE_TESTER)
+    # Compile executable 'qiutdspx2'
+    add_executable(qiutdspx2 ${IUT_SRC})
+    target_compile_definitions(qiutdspx2 PRIVATE ENABLE_DSPX2_X86=1 ${COMMON_TARGET_DEFINITIONS})
+    target_link_libraries(qiutdspx2 sleefquad ${TARGET_LIBSLEEF} ${LIBRT} ${TARGET_QTESTERUTIL_OBJ} ${TARGET_TESTERUTIL_OBJ} ${LIBQUADMATH} ${LIBM})
+    set_target_properties(qiutdspx2 PROPERTIES C_STANDARD 99)
+    add_dependencies(qiutdspx2 sleefquad_headers ${TARGET_HEADERS})
+    add_dependencies(qiutdspx2 sleefquad ${TARGET_LIBSLEEF})
+    add_test_iut(qiutdspx2 0.5)
+    list(APPEND IUT_LIST qiutdspx2)
+  endif(SLEEF_ENABLE_TESTER)
+
+  if (SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
+    # Compile executable 'qtester4dspx2'
+    set(TESTER4_SRC qtester4simd.cpp ${sleef_SOURCE_DIR}/src/common/main_checkfeature.c)
+    set(SIMD "DSPX2")
+    set(LCSIMD "dspx2")
+    string(CONCAT TARGET_TESTER4_${SIMD} "qtester4" ${LCSIMD})
+
+    add_executable(${TARGET_TESTER4_${SIMD}} ${TESTER4_SRC})
+    target_compile_definitions(${TARGET_TESTER4_${SIMD}} PRIVATE ENABLE_DSPX2_X86=1 ${COMMON_TARGET_DEFINITIONS})
+    target_link_libraries(${TARGET_TESTER4_${SIMD}} sleefquad ${TARGET_LIBSLEEF} ${TARGET_QTESTERUTIL_OBJ} ${TARGET_TESTERUTIL_OBJ} ${TLFLOAT_LIBRARIES} ${LIBM})
+    add_dependencies(${TARGET_TESTER4_${SIMD}} sleefquad_headers ${TARGET_HEADERS})
+    add_dependencies(${TARGET_TESTER4_${SIMD}} sleefquad ${TARGET_LIBSLEEF})
+    add_dependencies(${TARGET_TESTER4_${SIMD}} ext_tlfloat)
+    set_target_properties(${TARGET_TESTER4_${SIMD}} PROPERTIES C_STANDARD 99)
+    if (DEFINED COSTOVERRIDE_${SIMD})
+      add_test_with_emu(${COSTOVERRIDE_${SIMD}} ${TARGET_TESTER4_${SIMD}})
+    else()
+      add_test_with_emu(1.0 ${TARGET_TESTER4_${SIMD}})
+    endif()
+  endif(SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
 endif()
 
 if (SLEEF_ARCH_AARCH64)
-  # Compile executable 'qiutdspx2'
-  add_executable(qiutdspx2 ${IUT_SRC})
-  target_compile_definitions(qiutdspx2 PRIVATE ENABLE_DSPX2_AARCH64=1 ${COMMON_TARGET_DEFINITIONS})
-  set_target_properties(qiutdspx2 PROPERTIES C_STANDARD 99)
-  target_link_libraries(qiutdspx2 sleefquad ${TARGET_LIBSLEEF} ${LIBRT} ${TARGET_QTESTERUTIL_OBJ} ${TARGET_TESTERUTIL_OBJ} ${LIBQUADMATH} ${LIBM})
-  add_dependencies(qiutdspx2 sleefquad_headers ${TARGET_HEADERS})
-  add_dependencies(qiutdspx2 sleefquad ${TARGET_LIBSLEEF})
-  add_test_iut(qiutdspx2 0.5)
-  list(APPEND IUT_LIST qiutdspx2)
+  if (SLEEF_ENABLE_TESTER)
+    # Compile executable 'qiutdspx2'
+    add_executable(qiutdspx2 ${IUT_SRC})
+    target_compile_definitions(qiutdspx2 PRIVATE ENABLE_DSPX2_AARCH64=1 ${COMMON_TARGET_DEFINITIONS})
+    set_target_properties(qiutdspx2 PROPERTIES C_STANDARD 99)
+    target_link_libraries(qiutdspx2 sleefquad ${TARGET_LIBSLEEF} ${LIBRT} ${TARGET_QTESTERUTIL_OBJ} ${TARGET_TESTERUTIL_OBJ} ${LIBQUADMATH} ${LIBM})
+    add_dependencies(qiutdspx2 sleefquad_headers ${TARGET_HEADERS})
+    add_dependencies(qiutdspx2 sleefquad ${TARGET_LIBSLEEF})
+    add_test_iut(qiutdspx2 0.5)
+    list(APPEND IUT_LIST qiutdspx2)
+  endif(SLEEF_ENABLE_TESTER)
+
+  if (SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
+    # Compile executable 'qtester4dspx2'
+    set(TESTER4_SRC qtester4simd.cpp ${sleef_SOURCE_DIR}/src/common/main_checkfeature.c)
+    set(SIMD "DSPX2")
+    set(LCSIMD "dspx2")
+    string(CONCAT TARGET_TESTER4_${SIMD} "qtester4" ${LCSIMD})
+
+    add_executable(${TARGET_TESTER4_${SIMD}} ${TESTER4_SRC})
+    target_compile_definitions(${TARGET_TESTER4_${SIMD}} PRIVATE ENABLE_DSPX2_AARCH64=1 ${COMMON_TARGET_DEFINITIONS})
+    target_link_libraries(${TARGET_TESTER4_${SIMD}} sleefquad ${TARGET_LIBSLEEF} ${TARGET_QTESTERUTIL_OBJ} ${TARGET_TESTERUTIL_OBJ} ${TLFLOAT_LIBRARIES} ${LIBM})
+    add_dependencies(${TARGET_TESTER4_${SIMD}} sleefquad_headers ${TARGET_HEADERS})
+    add_dependencies(${TARGET_TESTER4_${SIMD}} sleefquad ${TARGET_LIBSLEEF})
+    add_dependencies(${TARGET_TESTER4_${SIMD}} ext_tlfloat)
+    set_target_properties(${TARGET_TESTER4_${SIMD}} PROPERTIES C_STANDARD 99)
+    if (DEFINED COSTOVERRIDE_${SIMD})
+      add_test_with_emu(${COSTOVERRIDE_${SIMD}} ${TARGET_TESTER4_${SIMD}})
+    else()
+      add_test_with_emu(1.0 ${TARGET_TESTER4_${SIMD}})
+    endif()
+  endif(SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
 endif()
 
 if (SLEEF_ARCH_PPC64)
-  # Compile executable 'qiutdspx2'
-  add_executable(qiutdspx2 ${IUT_SRC})
-  target_compile_options(qiutdspx2 PRIVATE ${FLAGS_ENABLE_VSX})
-  set_target_properties(qiutdspx2 PROPERTIES C_STANDARD 99)
-  target_compile_definitions(qiutdspx2 PRIVATE ENABLE_DSPX2_PPC64=1 ${COMMON_TARGET_DEFINITIONS})
-  target_link_libraries(qiutdspx2 sleefquad ${TARGET_LIBSLEEF} ${LIBRT} ${TARGET_QTESTERUTIL_OBJ} ${TARGET_TESTERUTIL_OBJ} ${LIBQUADMATH} ${LIBM})
-  add_dependencies(qiutdspx2 sleefquad_headers ${TARGET_HEADERS})
-  add_dependencies(qiutdspx2 sleefquad ${TARGET_LIBSLEEF})
-  add_test_iut(qiutdspx2 0.5)
-  list(APPEND IUT_LIST qiutdspx2)
+  if (SLEEF_ENABLE_TESTER)
+    # Compile executable 'qiutdspx2'
+    add_executable(qiutdspx2 ${IUT_SRC})
+    target_compile_options(qiutdspx2 PRIVATE ${FLAGS_ENABLE_VSX})
+    set_target_properties(qiutdspx2 PROPERTIES C_STANDARD 99)
+    target_compile_definitions(qiutdspx2 PRIVATE ENABLE_DSPX2_PPC64=1 ${COMMON_TARGET_DEFINITIONS})
+    target_link_libraries(qiutdspx2 sleefquad ${TARGET_LIBSLEEF} ${LIBRT} ${TARGET_QTESTERUTIL_OBJ} ${TARGET_TESTERUTIL_OBJ} ${LIBQUADMATH} ${LIBM})
+    add_dependencies(qiutdspx2 sleefquad_headers ${TARGET_HEADERS})
+    add_dependencies(qiutdspx2 sleefquad ${TARGET_LIBSLEEF})
+    add_test_iut(qiutdspx2 0.5)
+    list(APPEND IUT_LIST qiutdspx2)
+  endif(SLEEF_ENABLE_TESTER)
+
+  if (SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
+    # Compile executable 'qtester4dspx2'
+    set(TESTER4_SRC qtester4simd.cpp ${sleef_SOURCE_DIR}/src/common/main_checkfeature.c)
+    set(SIMD "DSPX2")
+    set(LCSIMD "dspx2")
+    string(CONCAT TARGET_TESTER4_${SIMD} "qtester4" ${LCSIMD})
+
+    add_executable(${TARGET_TESTER4_${SIMD}} ${TESTER4_SRC})
+    target_compile_options(${TARGET_TESTER4_${SIMD}} PRIVATE ${FLAGS_ENABLE_VSX})
+    target_compile_definitions(${TARGET_TESTER4_${SIMD}} PRIVATE ENABLE_DSPX2_PPC64=1 ${COMMON_TARGET_DEFINITIONS})
+    target_link_libraries(${TARGET_TESTER4_${SIMD}} sleefquad ${TARGET_LIBSLEEF} ${TARGET_QTESTERUTIL_OBJ} ${TARGET_TESTERUTIL_OBJ} ${TLFLOAT_LIBRARIES} ${LIBM})
+    add_dependencies(${TARGET_TESTER4_${SIMD}} sleefquad_headers ${TARGET_HEADERS})
+    add_dependencies(${TARGET_TESTER4_${SIMD}} sleefquad ${TARGET_LIBSLEEF})
+    add_dependencies(${TARGET_TESTER4_${SIMD}} ext_tlfloat)
+    set_target_properties(${TARGET_TESTER4_${SIMD}} PROPERTIES C_STANDARD 99)
+    if (DEFINED COSTOVERRIDE_${SIMD})
+      add_test_with_emu(${COSTOVERRIDE_${SIMD}} ${TARGET_TESTER4_${SIMD}})
+    else()
+      add_test_with_emu(1.0 ${TARGET_TESTER4_${SIMD}})
+    endif()
+  endif(SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
 endif()
 
 if (SLEEF_ARCH_S390X)
-  # Compile executable 'qiutdspx2'
-  add_executable(qiutdspx2 ${IUT_SRC})
-  target_compile_options(qiutdspx2 PRIVATE ${FLAGS_ENABLE_VXE})
-  set_target_properties(qiutdspx2 PROPERTIES C_STANDARD 99)
-  target_compile_definitions(qiutdspx2 PRIVATE ENABLE_DSPX2_S390X=1 ${COMMON_TARGET_DEFINITIONS})
-  target_link_libraries(qiutdspx2 sleefquad ${TARGET_LIBSLEEF} ${LIBRT} ${TARGET_QTESTERUTIL_OBJ} ${TARGET_TESTERUTIL_OBJ} ${LIBQUADMATH} ${LIBM})
-  add_dependencies(qiutdspx2 sleefquad_headers ${TARGET_HEADERS})
-  add_dependencies(qiutdspx2 sleefquad ${TARGET_LIBSLEEF})
-  add_test_iut(qiutdspx2 0.5)
-  list(APPEND IUT_LIST qiutdspx2)
+  if (SLEEF_ENABLE_TESTER)
+    # Compile executable 'qiutdspx2'
+    add_executable(qiutdspx2 ${IUT_SRC})
+    target_compile_options(qiutdspx2 PRIVATE ${FLAGS_ENABLE_VXE})
+    set_target_properties(qiutdspx2 PROPERTIES C_STANDARD 99)
+    target_compile_definitions(qiutdspx2 PRIVATE ENABLE_DSPX2_S390X=1 ${COMMON_TARGET_DEFINITIONS})
+    target_link_libraries(qiutdspx2 sleefquad ${TARGET_LIBSLEEF} ${LIBRT} ${TARGET_QTESTERUTIL_OBJ} ${TARGET_TESTERUTIL_OBJ} ${LIBQUADMATH} ${LIBM})
+    add_dependencies(qiutdspx2 sleefquad_headers ${TARGET_HEADERS})
+    add_dependencies(qiutdspx2 sleefquad ${TARGET_LIBSLEEF})
+    add_test_iut(qiutdspx2 0.5)
+    list(APPEND IUT_LIST qiutdspx2)
+  endif(SLEEF_ENABLE_TESTER)
+
+  if (SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
+    # Compile executable 'qtester4dspx2'
+    set(TESTER4_SRC qtester4simd.cpp ${sleef_SOURCE_DIR}/src/common/main_checkfeature.c)
+    set(SIMD "DSPX2")
+    set(LCSIMD "dspx2")
+    string(CONCAT TARGET_TESTER4_${SIMD} "qtester4" ${LCSIMD})
+
+    add_executable(${TARGET_TESTER4_${SIMD}} ${TESTER4_SRC})
+    target_compile_options(${TARGET_TESTER4_${SIMD}} PRIVATE ${FLAGS_ENABLE_VXE})
+    target_compile_definitions(${TARGET_TESTER4_${SIMD}} PRIVATE ENABLE_DSPX2_S390X=1 ${COMMON_TARGET_DEFINITIONS})
+    target_link_libraries(${TARGET_TESTER4_${SIMD}} sleefquad ${TARGET_LIBSLEEF} ${TARGET_QTESTERUTIL_OBJ} ${TARGET_TESTERUTIL_OBJ} ${TLFLOAT_LIBRARIES} ${LIBM})
+    add_dependencies(${TARGET_TESTER4_${SIMD}} sleefquad_headers ${TARGET_HEADERS})
+    add_dependencies(${TARGET_TESTER4_${SIMD}} sleefquad ${TARGET_LIBSLEEF})
+    add_dependencies(${TARGET_TESTER4_${SIMD}} ext_tlfloat)
+    set_target_properties(${TARGET_TESTER4_${SIMD}} PROPERTIES C_STANDARD 99)
+    if (DEFINED COSTOVERRIDE_${SIMD})
+      add_test_with_emu(${COSTOVERRIDE_${SIMD}} ${TARGET_TESTER4_${SIMD}})
+    else()
+      add_test_with_emu(1.0 ${TARGET_TESTER4_${SIMD}})
+    endif()
+  endif(SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
 endif()
 
 # Compile executable 'qiutcuda'

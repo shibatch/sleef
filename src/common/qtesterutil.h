@@ -6,6 +6,10 @@
 #include "quaddef.h"
 #include "testerutil.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct {
 #if defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
   uint64_t h, l;
@@ -50,4 +54,8 @@ double cast_d_q(Sleef_quad q);
 Sleef_quad cast_q_str(const char *s);
 Sleef_quad cast_q_str_hex(const char *s);
 Sleef_quad add_q_d(Sleef_quad q, double d);
+#endif
+
+#ifdef __cplusplus
+}
 #endif

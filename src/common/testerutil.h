@@ -11,6 +11,7 @@ using namespace tlfloat;
 #if defined(__GNUC__) && !defined(__clang__)
 #pragma GCC diagnostic ignored "-Wuninitialized"
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#pragma GCC diagnostic ignored "-Wattributes"
 #endif
 
 #if defined(__clang__)
