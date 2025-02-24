@@ -306,24 +306,6 @@ extern "C" {
 
 //
 
-#if defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
-typedef union {
-  Sleef_quad q;
-  struct {
-    uint64_t h, l;
-  };
-} cnv128;
-#else
-typedef union {
-  Sleef_quad q;
-  struct {
-    uint64_t l, h;
-  };
-} cnv128;
-#endif
-
-//
-
 static double maxULP = 0;
 
 static bool check_q_q(const char *msg, VARGQUAD (*vfunc)(VARGQUAD), tlfloat_octuple (*tlfunc)(const tlfloat_octuple),
@@ -708,7 +690,7 @@ int main2(int argc, char **argv) {
     VARGQUAD v1 = xsplatq(tlfloat_strtoq("2.718281828459045235360287471352662498", NULL));
     Sleef_quad q = xgetq(xmulq_u05(v0, v1), 0);
     if (Sleef_icmpneq1_purec(q, tlfloat_strtoq("8.539734222673567065463550869546573820", NULL))) {
-      fprintf(stderr, "Testing with xgetq failed\n");
+      tlfloat_printf("Testing with xgetq failed : %.35Qg\n", q);
       exit(-1);
     }
   }
@@ -731,6 +713,7 @@ int main2(int argc, char **argv) {
     "Inf", "-Inf", "NaN"
   };
 
+#if 0
   static const char *noNegZeroCheckValsStr[] = {
     "0.0", "+0.25", "-0.25", "+0.5", "-0.5", "+0.75", "-0.75", "+1.0", "-1.0",
     "+1.25", "-1.25", "+1.5", "-1.5", "+2.0", "-2.0", "+2.5", "-2.5", "+3.0", "-3.0",
@@ -754,6 +737,7 @@ int main2(int argc, char **argv) {
     "+" STR_QUAD_DENORM_MIN, "-" STR_QUAD_DENORM_MIN,
     "Inf", "-Inf"
   };
+#endif
 
   static const char *noInfCheckValsStr[] = {
     "-0.0", "0.0", "+0.25", "-0.25", "+0.5", "-0.5", "+0.75", "-0.75", "+1.0", "-1.0",
@@ -767,6 +751,7 @@ int main2(int argc, char **argv) {
     "NaN"
   };
 
+#if 0
   static const char *finiteCheckValsStr[] = {
     "-0.0", "0.0", "+0.25", "-0.25", "+0.5", "-0.5", "+0.75", "-0.75", "+1.0", "-1.0",
     "+1.25", "-1.25", "+1.5", "-1.5", "+2.0", "-2.0", "+2.5", "-2.5", "+3.0", "-3.0",
@@ -777,6 +762,7 @@ int main2(int argc, char **argv) {
     "+" STR_QUAD_MIN, "-" STR_QUAD_MIN,
     "+" STR_QUAD_DENORM_MIN, "-" STR_QUAD_DENORM_MIN,
   };
+#endif
 
   static const char *trigCheckValsStr[] = {
     "3.141592653589793238462643383279502884197169399375105820974944592307",
@@ -827,10 +813,10 @@ int main2(int argc, char **argv) {
     AVAL[i] = tlfloat_strtoq(ASTR[i], nullptr)
 
   DEFCHECKVALS(stdCheckValsStr, stdCheckVals);
-  DEFCHECKVALS(noNegZeroCheckValsStr, noNegZeroCheckVals);
-  DEFCHECKVALS(noNanCheckValsStr, noNanCheckVals);
+  //DEFCHECKVALS(noNegZeroCheckValsStr, noNegZeroCheckVals);
+  //DEFCHECKVALS(noNanCheckValsStr, noNanCheckVals);
   DEFCHECKVALS(noInfCheckValsStr, noInfCheckVals);
-  DEFCHECKVALS(finiteCheckValsStr, finiteCheckVals);
+  //DEFCHECKVALS(finiteCheckValsStr, finiteCheckVals);
   DEFCHECKVALS(trigCheckValsStr, trigCheckVals);
   DEFCHECKVALS(bigIntCheckValsStr, bigIntCheckVals);
   DEFCHECKVALS(log1pCheckValsStr, log1pCheckVals);
@@ -1187,16 +1173,16 @@ int main2(int argc, char **argv) {
   showULP(success);
 
   {
-    fprintf(stderr, "ldexp : ");
+    printf("ldexp : ");
 
     static const int ldexpCheckVals[] = {
       -40000, -32770, -32769, -32768, -32767, -32766, -32765, -16386, -16385, -16384, -16383, -16382, -5, -4, -3, -2, -1, 0,
       +40000, +32770, +32769, +32768, +32767, +32766, +32765, +16386, +16385, +16384, +16383, +16382, +5, +4, +3, +2, +1
     };
     
-    for(int i=0;i<sizeof(ldexpCheckVals)/sizeof(ldexpCheckVals[0]);i++) {
-      for(int j=0;j<sizeof(stdCheckVals)/sizeof(stdCheckVals[0]);j++) {
-	Sleef_quad a0 = stdCheckVals[j];
+    for(int i=0;i<int(sizeof(ldexpCheckVals)/sizeof(ldexpCheckVals[0]));i++) {
+      for(int j=0;j<int(sizeof(stdCheckVals)/sizeof(stdCheckVals[0]));j++) {
+	tlfloat_quad a0 = stdCheckVals[j];
 	tlfloat_quad t = 0;
 	{
 	  int idx = xrand() % VECTLENDP;
@@ -1217,6 +1203,34 @@ int main2(int argc, char **argv) {
 	  success = false;
 	  break;
 	}
+      }
+    }
+
+    printf("%s\n", success ? "OK" : "NG");
+  }
+
+  {
+    printf("ilogb : ");
+
+    for(int i=0;i<int(sizeof(stdCheckVals)/sizeof(stdCheckVals[0]));i++) {
+      tlfloat_quad a0 = stdCheckVals[i];
+      int c = tlfloat_ilogbq(a0);
+      int t = 0;
+      {
+	int idx = xrand() % VECTLENDP;
+	VARGQUAD vq0;
+	memrand(&vq0, SIZEOF_VARGQUAD);
+	vq0 = xsetq(vq0, idx, a0);
+	vint vi1 = xilogbq(vq0);
+	int tmp[VECTLENDP*2];
+	vstoreu_v_p_vi(tmp, vi1);
+	t = tmp[idx];
+      }
+      if (t != c) {
+	tlfloat_printf("ilogb : arg0 = %Qa (%.35Qg), t = %d, c = %d\n",
+		       a0, a0, t, c);
+	success = 0;
+	break;
       }
     }
 

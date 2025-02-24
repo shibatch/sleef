@@ -3,6 +3,8 @@
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
+#include <string.h>
+
 #ifdef __cplusplus
 #include <tlfloat/tlfloat.h>
 using namespace tlfloat;
@@ -62,39 +64,27 @@ void memrand(void *p, int size);
 // The following functions are meant to be inlined
 
 static double u2d(uint64_t u) {
-  union {
-    double f;
-    uint64_t i;
-  } tmp;
-  tmp.i = u;
-  return tmp.f;
+  double d = 0;
+  memcpy(&d, &u, sizeof(d));
+  return d;
 }
 
 static uint64_t d2u(double d) {
-  union {
-    double f;
-    uint64_t i;
-  } tmp;
-  tmp.f = d;
-  return tmp.i;
+  uint64_t u = 0;
+  memcpy(&u, &d, sizeof(u));
+  return u;
 }
 
 static float u2f(uint32_t u) {
-  union {
-    float f;
-    uint32_t i;
-  } tmp;
-  tmp.i = u;
-  return tmp.f;
+  float f = 0;
+  memcpy(&f, &u, sizeof(f));
+  return f;
 }
 
 static uint32_t f2u(float d) {
-  union {
-    float f;
-    uint32_t i;
-  } tmp;
-  tmp.f = d;
-  return tmp.i;
+  uint32_t u = 0;
+  memcpy(&u, &d, sizeof(u));
+  return u;
 }
 
 static int startsWith(char *str, char *prefix) {
