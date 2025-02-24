@@ -15,14 +15,13 @@
 #include <climits>
 #include <cassert>
 
+#include "quaddef.h"
+#include "misc.h"
 #include "qtesterutil.h"
 
 using namespace std;
 
 //
-
-#include "quaddef.h"
-#include "misc.h"
 
 #if !defined(USE_INLINE_HEADER)
 #include "sleef.h"
