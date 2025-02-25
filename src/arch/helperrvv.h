@@ -158,14 +158,14 @@ typedef vfloat64m1x4_t tdi_t;
 
 #define SLEEF_RVV_SP_LMUL 1
 #define SLEEF_RVV_DP_LMUL 1
-#define SLEEF_RVV_DP_RUNTIME_VL() __riscv_vsetvlmax_e64m1()
+#define SLEEF_RVV_DP_RUNTIME_VL() ((int)__riscv_vsetvlmax_e64m1())
 #if SLEEF_RVV_VLEN == 0
 // The configuration didn't provide a constant vector length, meaning it'll
 // have to be determined at run-time.  RVV offers per-data-width operations for
 // this so the result doesn't need to be adjusted and that operation is likely
 // to fold into the surrounding code for free.
 //
-#define VECTLENSP (__riscv_vsetvlmax_e32m1())
+#define VECTLENSP ((int)__riscv_vsetvlmax_e32m1())
 #define VECTLENDP SLEEF_RVV_DP_RUNTIME_VL()
 //@#define VECTLENSP __riscv_vsetvlmax_e32m1()
 //@#define VECTLENDP  __riscv_vsetvlmax_e64m1()
@@ -268,7 +268,7 @@ typedef vfloat64m2x4_t tdi_t;
 
 #define SLEEF_RVV_SP_LMUL 2
 #define SLEEF_RVV_DP_LMUL 2
-#define SLEEF_RVV_DP_RUNTIME_VL() __riscv_vsetvlmax_e64m2()
+#define SLEEF_RVV_DP_RUNTIME_VL() ((int)__riscv_vsetvlmax_e64m2())
 #if SLEEF_RVV_VLEN == 0
 // The configuration didn't provide a constant vector length, meaning it'll
 // have to be determined at run-time.  RVV offers per-data-width operations for
