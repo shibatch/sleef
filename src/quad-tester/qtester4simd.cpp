@@ -322,29 +322,8 @@ static bool check_q_q(const char *msg, VARGQUAD (*vfunc)(VARGQUAD), tlfloat_octu
     v0 = xsetq(v0, idx, a0[i]);
     v0 = (*vfunc)(v0);
     tlfloat_octuple t = xgetq_(v0, idx), c = (*tlfunc)(a0[i]);
-    double u = countULP<tlfloat_octuple>(t, c, SLEEF_QUAD_MANT_DIG,
-					 (tlfloat_quad)TLFLOAT_FLT128_DENORM_MIN, (tlfloat_quad)TLFLOAT_FLT128_MAX, checkSignedZero);
-    // tlfloat_printf("t = %.35Og, c = %.35Og, ulp = %g\n", t, c, u);
-    if (u > maxULP) maxULP = u;
-    if (u > tol) {
-      tlfloat_printf("%s : arg = %Qa (%.35Qg), ulp = %g, t = %.35Og, c = %.35Og\n", msg, a0[i], a0[i], u, t, c);
-      return false;
-    }
-  }
-  return true;
-}
-
-static bool check_q_q_(const char *msg, VARGQUAD (*vfunc)(VARGQUAD), tlfloat_octuple_ (*tlfunc)(const tlfloat_octuple_),
-		       const tlfloat_quad *a0, size_t z, double tol, bool checkSignedZero) {
-  VARGQUAD v0;
-  for(size_t i=0;i<z;i++) {
-    memrand(&v0, SIZEOF_VARGQUAD);
-    int idx = xrand() % VECTLENDP;
-    v0 = xsetq(v0, idx, a0[i]);
-    v0 = (*vfunc)(v0);
-    tlfloat_octuple t = xgetq_(v0, idx), c = (*tlfunc)((tlfloat_octuple)a0[i]);
-    double u = countULP<tlfloat_octuple>(t, c, SLEEF_QUAD_MANT_DIG,
-					 (tlfloat_quad)TLFLOAT_FLT128_DENORM_MIN, (tlfloat_quad)TLFLOAT_FLT128_MAX, checkSignedZero);
+    double u = countULP<tlfloat_octuple>(t, c, TLFLOAT_FLT128_MANT_DIG,
+					 TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, checkSignedZero);
     // tlfloat_printf("t = %.35Og, c = %.35Og, ulp = %g\n", t, c, u);
     if (u > maxULP) maxULP = u;
     if (u > tol) {
@@ -367,32 +346,8 @@ static bool check_q_q(const char *msg, VARGQUAD (*vfunc)(VARGQUAD), tlfloat_octu
     v0 = xsetq(v0, idx, x);
     v0 = (*vfunc)(v0);
     tlfloat_octuple t = xgetq_(v0, idx), c = (*tlfunc)(x);
-    double u = countULP<tlfloat_octuple>(t, c, SLEEF_QUAD_MANT_DIG,
-					 (tlfloat_quad)TLFLOAT_FLT128_DENORM_MIN, (tlfloat_quad)TLFLOAT_FLT128_MAX, checkSignedZero);
-    // tlfloat_printf("t = %.35Og, c = %.35Og, ulp = %g\n", t, c, u);
-    if (u > maxULP) maxULP = u;
-    if (u > tol) {
-      tlfloat_printf("%s : arg = %Qa (%.35Qg), ulp = %g, t = %.35Og, c = %.35Og\n", msg, x, x, u, t, c);
-      return false;
-    }
-  }
-  return true;
-}
-
-static bool check_q_q_(const char *msg, VARGQUAD (*vfunc)(VARGQUAD), tlfloat_octuple_ (*tlfunc)(const tlfloat_octuple_),
-		       const char *minStr, const char *maxStr, bool sign, int nLoop, uint64_t seed, double tol, bool checkSignedZero) {
-  xsrand(seed);
-  tlfloat_quad min = tlfloat_strtoq(minStr, nullptr), max = tlfloat_strtoq(maxStr, nullptr);
-  VARGQUAD v0;
-  for(int i=0;i<nLoop;i++) {
-    tlfloat_quad x = rndf128_(min, max, sign);
-    memrand(&v0, SIZEOF_VARGQUAD);
-    int idx = xrand() % VECTLENDP;
-    v0 = xsetq(v0, idx, x);
-    v0 = (*vfunc)(v0);
-    tlfloat_octuple t = xgetq_(v0, idx), c = (*tlfunc)(tlfloat_octuple(x));
-    double u = countULP<tlfloat_octuple>(t, c, SLEEF_QUAD_MANT_DIG,
-					 (tlfloat_quad)TLFLOAT_FLT128_DENORM_MIN, (tlfloat_quad)TLFLOAT_FLT128_MAX, checkSignedZero);
+    double u = countULP<tlfloat_octuple>(t, c, TLFLOAT_FLT128_MANT_DIG,
+					 TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, checkSignedZero);
     // tlfloat_printf("t = %.35Og, c = %.35Og, ulp = %g\n", t, c, u);
     if (u > maxULP) maxULP = u;
     if (u > tol) {
@@ -416,39 +371,13 @@ static bool check_q_q_q(const char *msg, VARGQUAD (*vfunc)(VARGQUAD, VARGQUAD),
       v1 = xsetq(v1, idx, a[j]);
       v0 = (*vfunc)(v0, v1);
       tlfloat_octuple t = xgetq_(v0, idx), c = (*tlfunc)(a[i], a[j]);
-      double u = countULP<tlfloat_octuple>(t, c, SLEEF_QUAD_MANT_DIG,
-					   (tlfloat_quad)TLFLOAT_FLT128_DENORM_MIN, (tlfloat_quad)TLFLOAT_FLT128_MAX, checkSignedZero);
+      double u = countULP<tlfloat_octuple>(t, c, TLFLOAT_FLT128_MANT_DIG,
+					   TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, checkSignedZero);
       //tlfloat_printf("t = %.35Og, c = %.35Og, ulp = %g\n", t, c, u);
       if (u > maxULP) maxULP = u;
       if (u > tol) {
 	tlfloat_printf("%s : arg0 = %Qa (%.35Qg), arg1 = %Qa (%.35Qg), ulp = %g, t = %Oa (%.35Og), c = %Oa (%.35Og)\n", msg, a[i], a[i], a[j], a[j], u, t, t, c, c);
 	tlfloat_printf("c = %Qa (%.35Qg)\n", (tlfloat_quad)c, (tlfloat_quad)c);
-	return false;
-      }
-    }
-  }
-  return true;
-}
-
-static bool check_q_q_q_(const char *msg, VARGQUAD (*vfunc)(VARGQUAD, VARGQUAD),
-			 tlfloat_octuple_ (*tlfunc)(const tlfloat_octuple_, const tlfloat_octuple_),
-			 const tlfloat_quad *a, size_t z, double tol, bool checkSignedZero) {
-  VARGQUAD v0, v1;
-  for(size_t i=0;i<z;i++) {
-    for(size_t j=0;j<z;j++) {
-      memrand(&v0, SIZEOF_VARGQUAD);
-      memrand(&v1, SIZEOF_VARGQUAD);
-      int idx = xrand() % VECTLENDP;
-      v0 = xsetq(v0, idx, a[i]);
-      v1 = xsetq(v1, idx, a[j]);
-      v0 = (*vfunc)(v0, v1);
-      tlfloat_octuple t = xgetq_(v0, idx), c = (*tlfunc)((tlfloat_octuple)a[i], (tlfloat_octuple)a[j]);
-      double u = countULP<tlfloat_octuple>(t, c, SLEEF_QUAD_MANT_DIG,
-					   (tlfloat_quad)TLFLOAT_FLT128_DENORM_MIN, (tlfloat_quad)TLFLOAT_FLT128_MAX, checkSignedZero);
-      //tlfloat_printf("t = %.35Og, c = %.35Og, ulp = %g\n", t, c, u);
-      if (u > maxULP) maxULP = u;
-      if (u > tol) {
-	tlfloat_printf("%s : arg0 = %Qa (%.35Qg), arg1 = %Qa (%.35Qg), ulp = %g, t = %Oa (%.35Og), c = %Oa (%.35Og)\n", msg, a[i], a[i], a[j], a[j], u, t, t, c, c);
 	return false;
       }
     }
@@ -472,8 +401,8 @@ static bool check_q_q_q(const char *msg, VARGQUAD (*vfunc)(VARGQUAD, VARGQUAD),
     v1 = xsetq(v1, idx, y);
     v0 = (*vfunc)(v0, v1);
     tlfloat_octuple t = xgetq_(v0, idx), c = (*tlfunc)(x, y);
-    double u = countULP<tlfloat_octuple>(t, c, SLEEF_QUAD_MANT_DIG,
-					 (tlfloat_quad)TLFLOAT_FLT128_DENORM_MIN, (tlfloat_quad)TLFLOAT_FLT128_MAX, checkSignedZero);
+    double u = countULP<tlfloat_octuple>(t, c, TLFLOAT_FLT128_MANT_DIG,
+					 TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, checkSignedZero);
     //tlfloat_printf("t = %.35Og, c = %.35Og, ulp = %g\n", t, c, u);
     if (u > maxULP) maxULP = u;
     if (u > tol) {
@@ -484,37 +413,9 @@ static bool check_q_q_q(const char *msg, VARGQUAD (*vfunc)(VARGQUAD, VARGQUAD),
   return true;
 }
 
-static bool check_q_q_q_(const char *msg, VARGQUAD (*vfunc)(VARGQUAD, VARGQUAD),
-			 tlfloat_octuple_ (*tlfunc)(const tlfloat_octuple_, const tlfloat_octuple_),
-			 const char *minStr, const char *maxStr, bool sign, int nLoop, uint64_t seed, double tol, bool checkSignedZero) {
-  xsrand(seed);
-  tlfloat_quad min = tlfloat_strtoq(minStr, nullptr), max = tlfloat_strtoq(maxStr, nullptr);
-  VARGQUAD v0, v1;
-  for(int i=0;i<nLoop;i++) {
-    int idx = xrand() % VECTLENDP;
-    memrand(&v0, SIZEOF_VARGQUAD);
-    tlfloat_quad x = rndf128_(min, max, sign);
-    v0 = xsetq(v0, idx, x);
-    memrand(&v1, SIZEOF_VARGQUAD);
-    tlfloat_quad y = rndf128_(min, max, sign);
-    v1 = xsetq(v1, idx, y);
-    v0 = (*vfunc)(v0, v1);
-    tlfloat_octuple t = xgetq_(v0, idx), c = (*tlfunc)((tlfloat_octuple)x, (tlfloat_octuple)y);
-    double u = countULP<tlfloat_octuple>(t, c, SLEEF_QUAD_MANT_DIG,
-					 (tlfloat_quad)TLFLOAT_FLT128_DENORM_MIN, (tlfloat_quad)TLFLOAT_FLT128_MAX, checkSignedZero);
-    //tlfloat_printf("t = %.35Og, c = %.35Og, ulp = %g\n", t, c, u);
-    if (u > maxULP) maxULP = u;
-    if (u > tol) {
-      tlfloat_printf("%s : arg0 = %Qa (%.35Qg), arg1 = %Qa (%.35Qg), ulp = %g, t = %Oa (%.35Og), c = %Oa (%.35Og)\n", msg, x, x, y, y, u, t, t, c, c);
-      return false;
-    }
-  }
-  return true;
-}
-
-static bool check_q_q_q_q_(const char *msg, VARGQUAD (*vfunc)(VARGQUAD, VARGQUAD, VARGQUAD),
-			   tlfloat_octuple_ (*tlfunc)(const tlfloat_octuple_, const tlfloat_octuple_, const tlfloat_octuple_),
-			   const tlfloat_quad *a, size_t z, double tol, bool checkSignedZero) {
+static bool check_q_q_q_q(const char *msg, VARGQUAD (*vfunc)(VARGQUAD, VARGQUAD, VARGQUAD),
+			  tlfloat_octuple (*tlfunc)(const tlfloat_octuple, const tlfloat_octuple, const tlfloat_octuple),
+			  const tlfloat_quad *a, size_t z, double tol, bool checkSignedZero) {
   VARGQUAD v0, v1, v2;
   for(size_t i=0;i<z;i++) {
     for(size_t j=0;j<z;j++) {
@@ -528,8 +429,8 @@ static bool check_q_q_q_q_(const char *msg, VARGQUAD (*vfunc)(VARGQUAD, VARGQUAD
 	v2 = xsetq(v2, idx, a[k]);
 	v0 = (*vfunc)(v0, v1, v2);
 	tlfloat_octuple t = xgetq_(v0, idx), c = (*tlfunc)((tlfloat_octuple)a[i], (tlfloat_octuple)a[j], (tlfloat_octuple)a[k]);
-	double u = countULP<tlfloat_octuple>(t, c, SLEEF_QUAD_MANT_DIG,
-					     (tlfloat_quad)TLFLOAT_FLT128_DENORM_MIN, (tlfloat_quad)TLFLOAT_FLT128_MAX, checkSignedZero);
+	double u = countULP<tlfloat_octuple>(t, c, TLFLOAT_FLT128_MANT_DIG,
+					     TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, checkSignedZero);
 	//tlfloat_printf("t = %.35Og, c = %.35Og, ulp = %g\n", t, c, u);
 	if (u > maxULP) maxULP = u;
 	if (u > tol) {
@@ -542,9 +443,9 @@ static bool check_q_q_q_q_(const char *msg, VARGQUAD (*vfunc)(VARGQUAD, VARGQUAD
   return true;
 }
 
-static bool check_q_q_q_q_(const char *msg, VARGQUAD (*vfunc)(VARGQUAD, VARGQUAD, VARGQUAD),
-			   tlfloat_octuple_ (*tlfunc)(const tlfloat_octuple_, const tlfloat_octuple_, const tlfloat_octuple_),
-			   const char *minStr, const char *maxStr, bool sign, int nLoop, uint64_t seed, double tol, bool checkSignedZero) {
+static bool check_q_q_q_q(const char *msg, VARGQUAD (*vfunc)(VARGQUAD, VARGQUAD, VARGQUAD),
+			  tlfloat_octuple (*tlfunc)(const tlfloat_octuple, const tlfloat_octuple, const tlfloat_octuple),
+			  const char *minStr, const char *maxStr, bool sign, int nLoop, uint64_t seed, double tol, bool checkSignedZero) {
   xsrand(seed);
   tlfloat_quad min = tlfloat_strtoq(minStr, nullptr), max = tlfloat_strtoq(maxStr, nullptr);
   VARGQUAD v0, v1, v2;
@@ -561,8 +462,8 @@ static bool check_q_q_q_q_(const char *msg, VARGQUAD (*vfunc)(VARGQUAD, VARGQUAD
     v2 = xsetq(v2, idx, z);
     v0 = (*vfunc)(v0, v1, v2);
     tlfloat_octuple t = xgetq_(v0, idx), c = (*tlfunc)((tlfloat_octuple)x, (tlfloat_octuple)y, (tlfloat_octuple)z);
-    double u = countULP<tlfloat_octuple>(t, c, SLEEF_QUAD_MANT_DIG,
-					 (tlfloat_quad)TLFLOAT_FLT128_DENORM_MIN, (tlfloat_quad)TLFLOAT_FLT128_MAX, checkSignedZero);
+    double u = countULP<tlfloat_octuple>(t, c, TLFLOAT_FLT128_MANT_DIG,
+					 TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, checkSignedZero);
     //tlfloat_printf("t = %.35Og, c = %.35Og, ulp = %g\n", t, c, u);
     if (u > maxULP) maxULP = u;
     if (u > tol) {
@@ -573,8 +474,8 @@ static bool check_q_q_q_q_(const char *msg, VARGQUAD (*vfunc)(VARGQUAD, VARGQUAD
   return true;
 }
 
-static bool check_i_q_q_(const char *msg, vint (*vfunc)(VARGQUAD, VARGQUAD), int (*tlfunc)(const tlfloat_octuple_, const tlfloat_octuple_),
-			 const tlfloat_quad *a, size_t z) {
+static bool check_i_q_q(const char *msg, vint (*vfunc)(VARGQUAD, VARGQUAD), int (*tlfunc)(const tlfloat_octuple, const tlfloat_octuple),
+			const tlfloat_quad *a, size_t z) {
   VARGQUAD v0, v1;
   for(size_t i=0;i<z;i++) {
     for(size_t j=0;j<z;j++) {
@@ -626,34 +527,34 @@ int main2(int argc, char **argv) {
 
   // Tests if counting ulp numbers is correct
 
-  check(+0.0, +0.0, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX,     0);
-  check(-0.0, +0.0, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 10002);
-  check(+0.0, -0.0, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 10002);
-  check(-0.0, -0.0, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX,     0);
+  check(+0.0, +0.0, TLFLOAT_FLT128_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX,     0);
+  check(-0.0, +0.0, TLFLOAT_FLT128_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 10002);
+  check(+0.0, -0.0, TLFLOAT_FLT128_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 10002);
+  check(-0.0, -0.0, TLFLOAT_FLT128_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX,     0);
 
-  check(+1.0, +1.0, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX,     0);
-  check(tlfloat_nextafterq(+1.0, +INFINITY), +1.0, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 1.0);
-  check(tlfloat_nextafterq(+1.0, -INFINITY), +1.0, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 0.5);
+  check(+1.0, +1.0, TLFLOAT_FLT128_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX,     0);
+  check(tlfloat_nextafterq(+1.0, +INFINITY), +1.0, TLFLOAT_FLT128_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 1.0);
+  check(tlfloat_nextafterq(+1.0, -INFINITY), +1.0, TLFLOAT_FLT128_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 0.5);
 
-  check(-1.0, -1.0, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX,     0);
-  check(tlfloat_nextafterq(-1.0, +INFINITY), -1.0, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 0.5);
-  check(tlfloat_nextafterq(-1.0, -INFINITY), -1.0, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 1.0);
+  check(-1.0, -1.0, TLFLOAT_FLT128_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX,     0);
+  check(tlfloat_nextafterq(-1.0, +INFINITY), -1.0, TLFLOAT_FLT128_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 0.5);
+  check(tlfloat_nextafterq(-1.0, -INFINITY), -1.0, TLFLOAT_FLT128_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 1.0);
 
-  check(INFINITY, INFINITY, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 0);
-  check(tlfloat_nextafterq(INFINITY, 0), INFINITY, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, INFINITY);
-  check(INFINITY, tlfloat_nextafterq(INFINITY, 0), SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 1.0);
+  check(INFINITY, INFINITY, TLFLOAT_FLT128_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 0);
+  check(tlfloat_nextafterq(INFINITY, 0), INFINITY, TLFLOAT_FLT128_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, INFINITY);
+  check(INFINITY, tlfloat_nextafterq(INFINITY, 0), TLFLOAT_FLT128_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 1.0);
 
-  check(-INFINITY, -INFINITY, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 0);
-  check(tlfloat_nextafterq(-INFINITY, 0), -INFINITY, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, INFINITY);
-  check(-INFINITY, tlfloat_nextafterq(-INFINITY, 0), SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 1.0);
+  check(-INFINITY, -INFINITY, TLFLOAT_FLT128_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 0);
+  check(tlfloat_nextafterq(-INFINITY, 0), -INFINITY, TLFLOAT_FLT128_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, INFINITY);
+  check(-INFINITY, tlfloat_nextafterq(-INFINITY, 0), TLFLOAT_FLT128_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 1.0);
 
-  check(TLFLOAT_FLT128_MIN, TLFLOAT_FLT128_MIN, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 0);
-  check(tlfloat_nextafterq(TLFLOAT_FLT128_MIN, 0.0), TLFLOAT_FLT128_MIN, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 1.0);
-  check(tlfloat_nextafterq(TLFLOAT_FLT128_MIN, 1.0), TLFLOAT_FLT128_MIN, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 1.0);
+  check(TLFLOAT_FLT128_MIN, TLFLOAT_FLT128_MIN, TLFLOAT_FLT128_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 0);
+  check(tlfloat_nextafterq(TLFLOAT_FLT128_MIN, 0.0), TLFLOAT_FLT128_MIN, TLFLOAT_FLT128_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 1.0);
+  check(tlfloat_nextafterq(TLFLOAT_FLT128_MIN, 1.0), TLFLOAT_FLT128_MIN, TLFLOAT_FLT128_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 1.0);
 
-  check(-(tlfloat_quad)TLFLOAT_FLT128_MIN, -(tlfloat_quad)TLFLOAT_FLT128_MIN, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 0);
-  check(tlfloat_nextafterq(-(tlfloat_quad)TLFLOAT_FLT128_MIN, 0.0), -(tlfloat_quad)TLFLOAT_FLT128_MIN, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 1.0);
-  check(tlfloat_nextafterq(-(tlfloat_quad)TLFLOAT_FLT128_MIN, 1.0), -(tlfloat_quad)TLFLOAT_FLT128_MIN, SLEEF_QUAD_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 1.0);
+  check(-TLFLOAT_FLT128_MIN, -TLFLOAT_FLT128_MIN, TLFLOAT_FLT128_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 0);
+  check(tlfloat_nextafterq(-TLFLOAT_FLT128_MIN, 0.0), -TLFLOAT_FLT128_MIN, TLFLOAT_FLT128_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 1.0);
+  check(tlfloat_nextafterq(-TLFLOAT_FLT128_MIN, 1.0), -TLFLOAT_FLT128_MIN, TLFLOAT_FLT128_MANT_DIG, TLFLOAT_FLT128_DENORM_MIN, TLFLOAT_FLT128_MAX, 1.0);
 
   //
 
@@ -831,113 +732,113 @@ int main2(int argc, char **argv) {
   const double arithEB = 0.5000000001;
 
   cout << "addq_u05 ";
-  success = check_q_q_q_("addq_u05", xaddq_u05, tlfloat_addo,
-			 stdCheckVals, sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0]), 
-			 arithEB, true) && success;
-  success = check_q_q_q_("addq_u05", xaddq_u05, tlfloat_addo, "1e-100" , "1e+100" , true, 5 * NTEST, 1ULL, arithEB, true) && success;
-  success = check_q_q_q_("addq_u05", xaddq_u05, tlfloat_addo, "1e-4000", "1e+4000", true, 5 * NTEST, 1ULL, arithEB, true) && success;
+  success = check_q_q_q("addq_u05", xaddq_u05, tlfloat_addo,
+			stdCheckVals, sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0]), 
+			arithEB, true) && success;
+  success = check_q_q_q("addq_u05", xaddq_u05, tlfloat_addo, "1e-100" , "1e+100" , true, 5 * NTEST, 1ULL, arithEB, true) && success;
+  success = check_q_q_q("addq_u05", xaddq_u05, tlfloat_addo, "1e-4000", "1e+4000", true, 5 * NTEST, 1ULL, arithEB, true) && success;
   showULP(success);
 
   cout << "subq_u05 ";
-  success = check_q_q_q_("subq_u05", xsubq_u05, tlfloat_subo,
-			 stdCheckVals, sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0]), 
-			 arithEB, true) && success;
-  success = check_q_q_q_("subq_u05", xsubq_u05, tlfloat_subo, "1e-100" , "1e+100" , true, 5 * NTEST, 1ULL, arithEB, true) && success;
-  success = check_q_q_q_("subq_u05", xsubq_u05, tlfloat_subo, "1e-4000", "1e+4000", true, 5 * NTEST, 1ULL, arithEB, true) && success;
+  success = check_q_q_q("subq_u05", xsubq_u05, tlfloat_subo,
+			stdCheckVals, sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0]), 
+			arithEB, true) && success;
+  success = check_q_q_q("subq_u05", xsubq_u05, tlfloat_subo, "1e-100" , "1e+100" , true, 5 * NTEST, 1ULL, arithEB, true) && success;
+  success = check_q_q_q("subq_u05", xsubq_u05, tlfloat_subo, "1e-4000", "1e+4000", true, 5 * NTEST, 1ULL, arithEB, true) && success;
   showULP(success);
 
   cout << "mulq_u05 ";
-  success = check_q_q_q_("mulq_u05", xmulq_u05, tlfloat_mulo,
-			 stdCheckVals, sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0]), 
-			 arithEB, true) && success;
-  success = check_q_q_q_("mulq_u05", xmulq_u05, tlfloat_mulo, "1e-100" , "1e+100" , true, 5 * NTEST, 1ULL, arithEB, true) && success;
-  success = check_q_q_q_("mulq_u05", xmulq_u05, tlfloat_mulo, "1e-4000", "1e+4000", true, 5 * NTEST, 1ULL, arithEB, true) && success;
+  success = check_q_q_q("mulq_u05", xmulq_u05, tlfloat_mulo,
+			stdCheckVals, sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0]), 
+			arithEB, true) && success;
+  success = check_q_q_q("mulq_u05", xmulq_u05, tlfloat_mulo, "1e-100" , "1e+100" , true, 5 * NTEST, 1ULL, arithEB, true) && success;
+  success = check_q_q_q("mulq_u05", xmulq_u05, tlfloat_mulo, "1e-4000", "1e+4000", true, 5 * NTEST, 1ULL, arithEB, true) && success;
   showULP(success);
 
   cout << "divq_u05 ";
-  success = check_q_q_q_("divq_u05", xdivq_u05, tlfloat_divo,
-			 stdCheckVals, sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0]), 
-			 arithEB, true) && success;
-  success = check_q_q_q_("divq_u05", xdivq_u05, tlfloat_divo, "1e-100" , "1e+100" , true, 5 * NTEST, 1ULL, arithEB, true) && success;
-  success = check_q_q_q_("divq_u05", xdivq_u05, tlfloat_divo, "1e-4000", "1e+4000", true, 5 * NTEST, 1ULL, arithEB, true) && success;
+  success = check_q_q_q("divq_u05", xdivq_u05, tlfloat_divo,
+			stdCheckVals, sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0]), 
+			arithEB, true) && success;
+  success = check_q_q_q("divq_u05", xdivq_u05, tlfloat_divo, "1e-100" , "1e+100" , true, 5 * NTEST, 1ULL, arithEB, true) && success;
+  success = check_q_q_q("divq_u05", xdivq_u05, tlfloat_divo, "1e-4000", "1e+4000", true, 5 * NTEST, 1ULL, arithEB, true) && success;
   showULP(success);
 
   cout << "fmaq_u05 ";
-  success = check_q_q_q_q_("fmaq_u05", xfmaq_u05, tlfloat_fmao,
-			   stdCheckVals, sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0]), 
-			   arithEB, true) && success;
-  success = check_q_q_q_q_("fmaq_u05", xfmaq_u05, tlfloat_fmao, "1e-100" , "1e+100" , true, 5 * NTEST, 1ULL, arithEB, true) && success;
-  success = check_q_q_q_q_("fmaq_u05", xfmaq_u05, tlfloat_fmao, "1e-4000", "1e+4000", true, 5 * NTEST, 1ULL, arithEB, true) && success;
+  success = check_q_q_q_q("fmaq_u05", xfmaq_u05, tlfloat_fmao,
+			  stdCheckVals, sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0]), 
+			  arithEB, true) && success;
+  success = check_q_q_q_q("fmaq_u05", xfmaq_u05, tlfloat_fmao, "1e-100" , "1e+100" , true, 5 * NTEST, 1ULL, arithEB, true) && success;
+  success = check_q_q_q_q("fmaq_u05", xfmaq_u05, tlfloat_fmao, "1e-4000", "1e+4000", true, 5 * NTEST, 1ULL, arithEB, true) && success;
   showULP(success);
 
   cout << "negq ";
-  success = check_q_q_("negq", xnegq, tlfloat_nego, stdCheckVals,
-		       sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0]), arithEB, true) && success;
-  success = check_q_q_("negq", xnegq, tlfloat_nego, "1e-100" , "1e+100" , true, 5 * NTEST, 1ULL, arithEB, true) && success;
-  success = check_q_q_("negq", xnegq, tlfloat_nego, "1e-4000", "1e+4000", true, 5 * NTEST, 1ULL, arithEB, true) && success;
+  success = check_q_q("negq", xnegq, tlfloat_nego, stdCheckVals,
+		      sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0]), arithEB, true) && success;
+  success = check_q_q("negq", xnegq, tlfloat_nego, "1e-100" , "1e+100" , true, 5 * NTEST, 1ULL, arithEB, true) && success;
+  success = check_q_q("negq", xnegq, tlfloat_nego, "1e-4000", "1e+4000", true, 5 * NTEST, 1ULL, arithEB, true) && success;
   showULP(success);
 
   cout << "fabsq ";
-  success = check_q_q_("fabsq", xfabsq, tlfloat_fabso, stdCheckVals,
-		       sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0]), arithEB, true) && success;
-  success = check_q_q_("fabsq", xfabsq, tlfloat_fabso, "1e-100" , "1e+100" , true, 5 * NTEST, 1ULL, arithEB, true) && success;
-  success = check_q_q_("fabsq", xfabsq, tlfloat_fabso, "1e-4000", "1e+4000", true, 5 * NTEST, 1ULL, arithEB, true) && success;
+  success = check_q_q("fabsq", xfabsq, tlfloat_fabso, stdCheckVals,
+		      sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0]), arithEB, true) && success;
+  success = check_q_q("fabsq", xfabsq, tlfloat_fabso, "1e-100" , "1e+100" , true, 5 * NTEST, 1ULL, arithEB, true) && success;
+  success = check_q_q("fabsq", xfabsq, tlfloat_fabso, "1e-4000", "1e+4000", true, 5 * NTEST, 1ULL, arithEB, true) && success;
   showULP(success);
 
   cout << "fmaxq ";
-  success = check_q_q_q_("fmaxq", xfmaxq, tlfloat_fmaxo,
-			 stdCheckVals, sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0]), 
-			 arithEB, true) && success;
-  success = check_q_q_q_("fmaxq", xfmaxq, tlfloat_fmaxo, "1e-100" , "1e+100" , true, 5 * NTEST, 1ULL, arithEB, true) && success;
-  success = check_q_q_q_("fmaxq", xfmaxq, tlfloat_fmaxo, "1e-4000", "1e+4000", true, 5 * NTEST, 1ULL, arithEB, true) && success;
+  success = check_q_q_q("fmaxq", xfmaxq, tlfloat_fmaxo,
+			stdCheckVals, sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0]), 
+			arithEB, true) && success;
+  success = check_q_q_q("fmaxq", xfmaxq, tlfloat_fmaxo, "1e-100" , "1e+100" , true, 5 * NTEST, 1ULL, arithEB, true) && success;
+  success = check_q_q_q("fmaxq", xfmaxq, tlfloat_fmaxo, "1e-4000", "1e+4000", true, 5 * NTEST, 1ULL, arithEB, true) && success;
   showULP(success);
 
   cout << "fminq ";
-  success = check_q_q_q_("fminq", xfminq, tlfloat_fmino,
-			 stdCheckVals, sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0]), 
-			 arithEB, true) && success;
-  success = check_q_q_q_("fminq", xfminq, tlfloat_fmino, "1e-100" , "1e+100" , true, 5 * NTEST, 1ULL, arithEB, true) && success;
-  success = check_q_q_q_("fminq", xfminq, tlfloat_fmino, "1e-4000", "1e+4000", true, 5 * NTEST, 1ULL, arithEB, true) && success;
+  success = check_q_q_q("fminq", xfminq, tlfloat_fmino,
+			stdCheckVals, sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0]), 
+			arithEB, true) && success;
+  success = check_q_q_q("fminq", xfminq, tlfloat_fmino, "1e-100" , "1e+100" , true, 5 * NTEST, 1ULL, arithEB, true) && success;
+  success = check_q_q_q("fminq", xfminq, tlfloat_fmino, "1e-4000", "1e+4000", true, 5 * NTEST, 1ULL, arithEB, true) && success;
   showULP(success);
 
   cout << "copysignq ";
-  success = check_q_q_q_("copysignq", xcopysignq, tlfloat_copysigno,
-			 stdCheckVals, sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0]), 
-			 arithEB, true) && success;
-  success = check_q_q_q_("copysignq", xcopysignq, tlfloat_copysigno, "1e-100" , "1e+100" , true, 5 * NTEST, 1ULL, arithEB, true) && success;
-  success = check_q_q_q_("copysignq", xcopysignq, tlfloat_copysigno, "1e-4000", "1e+4000", true, 5 * NTEST, 1ULL, arithEB, true) && success;
+  success = check_q_q_q("copysignq", xcopysignq, tlfloat_copysigno,
+			stdCheckVals, sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0]), 
+			arithEB, true) && success;
+  success = check_q_q_q("copysignq", xcopysignq, tlfloat_copysigno, "1e-100" , "1e+100" , true, 5 * NTEST, 1ULL, arithEB, true) && success;
+  success = check_q_q_q("copysignq", xcopysignq, tlfloat_copysigno, "1e-4000", "1e+4000", true, 5 * NTEST, 1ULL, arithEB, true) && success;
   showULP(success);
 
   cout << "fdimq_u05 ";
-  success = check_q_q_q_("fdimq_u05", xfdimq_u05, tlfloat_fdimo,
-			 noInfCheckVals, sizeof(noInfCheckValsStr)/sizeof(noInfCheckValsStr[0]), 
-			 arithEB, true) && success;
-  success = check_q_q_q_("fdimq_u05", xfdimq_u05, tlfloat_fdimo, "1e-100" , "1e+100" , true, 5 * NTEST, 1ULL, arithEB, true) && success;
-  success = check_q_q_q_("fdimq_u05", xfdimq_u05, tlfloat_fdimo, "1e-4000", "1e+4000", true, 5 * NTEST, 1ULL, arithEB, true) && success;
+  success = check_q_q_q("fdimq_u05", xfdimq_u05, tlfloat_fdimo,
+			noInfCheckVals, sizeof(noInfCheckValsStr)/sizeof(noInfCheckValsStr[0]), 
+			arithEB, true) && success;
+  success = check_q_q_q("fdimq_u05", xfdimq_u05, tlfloat_fdimo, "1e-100" , "1e+100" , true, 5 * NTEST, 1ULL, arithEB, true) && success;
+  success = check_q_q_q("fdimq_u05", xfdimq_u05, tlfloat_fdimo, "1e-4000", "1e+4000", true, 5 * NTEST, 1ULL, arithEB, true) && success;
   showULP(success);
 
   cout << "fmodq ";
-  success = check_q_q_q_("fmodq", xfmodq, tlfloat_fmodo,
-			 stdCheckVals, sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0]), 
-			 arithEB, true) && success;
-  success = check_q_q_q_("fmodq", xfmodq, tlfloat_fmodo, "1e-100" , "1e+100" , true, 5 * NTEST, 1ULL, arithEB, true) && success;
-  success = check_q_q_q_("fmodq", xfmodq, tlfloat_fmodo, "1e-4000", "1e+4000", true, 5 * NTEST, 1ULL, arithEB, true) && success;
+  success = check_q_q_q("fmodq", xfmodq, tlfloat_fmodo,
+			stdCheckVals, sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0]), 
+			arithEB, true) && success;
+  success = check_q_q_q("fmodq", xfmodq, tlfloat_fmodo, "1e-100" , "1e+100" , true, 5 * NTEST, 1ULL, arithEB, true) && success;
+  success = check_q_q_q("fmodq", xfmodq, tlfloat_fmodo, "1e-4000", "1e+4000", true, 5 * NTEST, 1ULL, arithEB, true) && success;
   showULP(success);
 
   cout << "remainderq ";
-  success = check_q_q_q_("remainderq", xremainderq, tlfloat_remaindero,
-			 stdCheckVals, sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0]), 
-			 arithEB, true) && success;
-  success = check_q_q_q_("remainderq", xremainderq, tlfloat_remaindero, "1e-100" , "1e+100" , true, 5 * NTEST, 1ULL, arithEB, true) && success;
-  success = check_q_q_q_("remainderq", xremainderq, tlfloat_remaindero, "1e-4000", "1e+4000", true, 5 * NTEST, 1ULL, arithEB, true) && success;
+  success = check_q_q_q("remainderq", xremainderq, tlfloat_remaindero,
+			stdCheckVals, sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0]), 
+			arithEB, true) && success;
+  success = check_q_q_q("remainderq", xremainderq, tlfloat_remaindero, "1e-100" , "1e+100" , true, 5 * NTEST, 1ULL, arithEB, true) && success;
+  success = check_q_q_q("remainderq", xremainderq, tlfloat_remaindero, "1e-4000", "1e+4000", true, 5 * NTEST, 1ULL, arithEB, true) && success;
   showULP(success);
 
   cout << "hypotq_u05 ";
-  success = check_q_q_q_("hypotq_u05", xhypotq_u05, tlfloat_hypoto,
-			 stdCheckVals, sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0]), 
-			 arithEB, true) && success;
-  success = check_q_q_q_("hypotq_u05", xhypotq_u05, tlfloat_hypoto, "1e-100" , "1e+100" , true, 5 * NTEST, 1ULL, arithEB, true) && success;
-  success = check_q_q_q_("hypotq_u05", xhypotq_u05, tlfloat_hypoto, "1e-4000", "1e+4000", true, 5 * NTEST, 1ULL, arithEB, true) && success;
+  success = check_q_q_q("hypotq_u05", xhypotq_u05, tlfloat_hypoto,
+			stdCheckVals, sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0]), 
+			arithEB, true) && success;
+  success = check_q_q_q("hypotq_u05", xhypotq_u05, tlfloat_hypoto, "1e-100" , "1e+100" , true, 5 * NTEST, 1ULL, arithEB, true) && success;
+  success = check_q_q_q("hypotq_u05", xhypotq_u05, tlfloat_hypoto, "1e-4000", "1e+4000", true, 5 * NTEST, 1ULL, arithEB, true) && success;
   showULP(success);
 
   cout << "truncq ";
@@ -990,33 +891,33 @@ int main2(int argc, char **argv) {
   //
 
   fprintf(stderr, "icmpltq : ");
-  success = check_i_q_q_("icmpltq", xicmpltq, tlfloat_lt_o_o, stdCheckVals,
-			 sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0])) && success;
+  success = check_i_q_q("icmpltq", xicmpltq, tlfloat_lt_o_o, stdCheckVals,
+			sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0])) && success;
   printf("%s\n", success ? "OK" : "NG");
 
   fprintf(stderr, "icmpgtq : ");
-  success = check_i_q_q_("icmpgtq", xicmpgtq, tlfloat_gt_o_o, stdCheckVals,
-			 sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0])) && success;
+  success = check_i_q_q("icmpgtq", xicmpgtq, tlfloat_gt_o_o, stdCheckVals,
+			sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0])) && success;
   printf("%s\n", success ? "OK" : "NG");
 
   fprintf(stderr, "icmpleq : ");
-  success = check_i_q_q_("icmpleq", xicmpleq, tlfloat_le_o_o, stdCheckVals,
-			 sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0])) && success;
+  success = check_i_q_q("icmpleq", xicmpleq, tlfloat_le_o_o, stdCheckVals,
+			sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0])) && success;
   printf("%s\n", success ? "OK" : "NG");
 
   fprintf(stderr, "icmpgeq : ");
-  success = check_i_q_q_("icmpgeq", xicmpgeq, tlfloat_ge_o_o, stdCheckVals,
-			 sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0])) && success;
+  success = check_i_q_q("icmpgeq", xicmpgeq, tlfloat_ge_o_o, stdCheckVals,
+			sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0])) && success;
   printf("%s\n", success ? "OK" : "NG");
 
   fprintf(stderr, "icmpeqq : ");
-  success = check_i_q_q_("icmpeqq", xicmpeqq, tlfloat_eq_o_o, stdCheckVals,
-			 sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0])) && success;
+  success = check_i_q_q("icmpeqq", xicmpeqq, tlfloat_eq_o_o, stdCheckVals,
+			sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0])) && success;
   printf("%s\n", success ? "OK" : "NG");
 
   fprintf(stderr, "icmpneq : ");
-  success = check_i_q_q_("icmpneq", xicmpneq, tlfloat_ne_o_o, stdCheckVals,
-			 sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0])) && success;
+  success = check_i_q_q("icmpneq", xicmpneq, tlfloat_ne_o_o, stdCheckVals,
+			sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0])) && success;
   printf("%s\n", success ? "OK" : "NG");
 
   //
@@ -1249,12 +1150,12 @@ int main2(int argc, char **argv) {
     for(int i=0;i<10 * NTEST;i++) {
       double d;
       switch(i) {
-	case 0: d = +0.0; break;
-	case 1: d = -0.0; break;
-	case 2: d = +SLEEF_INFINITY; break;
-	case 3: d = -SLEEF_INFINITY; break;
-	case 4: d = SLEEF_NAN; break;
-	default : memrand(&d, sizeof(d));
+      case 0: d = +0.0; break;
+      case 1: d = -0.0; break;
+      case 2: d = +SLEEF_INFINITY; break;
+      case 3: d = -SLEEF_INFINITY; break;
+      case 4: d = SLEEF_NAN; break;
+      default : memrand(&d, sizeof(d));
       }
       tlfloat_quad c = tlfloat_quad(d);
       tlfloat_quad t = 0;
