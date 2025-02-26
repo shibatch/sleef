@@ -1,12 +1,6 @@
 # SLEEF
 
 [![DOI:10.1109/TPDS.2019.2960333](http://img.shields.io/badge/DOI-10.1109/TPDS.2019.2960333-blue.svg)](https://ieeexplore.ieee.org/document/8936472)
-[![License](https://img.shields.io/badge/License-Boost_1.0-lightblue.svg)](https://www.boost.org/LICENSE_1_0.txt)
-![CMake](https://img.shields.io/badge/cmake-v3.18+-yellow.svg)
-[![Spack](https://img.shields.io/spack/v/sleef)](https://spack.readthedocs.io/en/v0.16.2/package_list.html#sleef)
-[![SourceForge Downloads](https://img.shields.io/sourceforge/dt/sleef)](https://sourceforge.net/projects/sleef/)
-
-[![Build Status](https://shibatch.dns-cloud.net/jenkins8086/buildStatus/icon?job=sleef)](https://shibatch.dns-cloud.net/jenkins8086/job/sleef/) 
 
 SLEEF is a library that implements vectorized versions of C standard math functions. This library also includes DFT subroutines.
 
@@ -206,14 +200,6 @@ Assuming following instructions were followed.
 
 ```
 cmake --install build --prefix=<prefix>
-```
-
-### Using Spack
-
-SLEEF can also be directly installed using Spack.
-
-```
-spack install sleef@master
 ```
 
 ### Uninstall
