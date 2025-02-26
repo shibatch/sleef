@@ -1243,7 +1243,7 @@ int main2(int argc, char **argv) {
 	memrand(&v0, SIZEOF_VARGQUAD);
 	v0 = xsetq(v0, idx, a);
 	int64_t s[VECTLENDP];
-	vstoreu_v_p_vd((double *)s, vreinterpret_vd_vm(vreinterpret_vm_vi64(xcast_to_int64q(v0)))); \
+	vstoreu_v_p_vd((double *)s, vreinterpret_vd_vm(vreinterpret_vm_vi64(xcast_to_int64q(v0))));
 	t = s[idx];
       }
       if (-ldexp(1, 63) < a && a < ldexp(1, 63) && t != c) {
@@ -1276,7 +1276,7 @@ int main2(int argc, char **argv) {
 	uint64_t s[VECTLENDP];
 	memrand(s, sizeof(s));
 	s[idx] = d;
-	VARGQUAD q = xcast_from_uint64q(vreinterpret_vi64_vm(vreinterpret_vm_vd(vloadu_vd_p((double *)s))));
+	VARGQUAD q = xcast_from_uint64q(vreinterpret_vu64_vm(vreinterpret_vm_vd(vloadu_vd_p((double *)s))));
 	t = (tlfloat_quad)xgetq(q, idx);
       }
       if (t != c) {
@@ -1309,7 +1309,7 @@ int main2(int argc, char **argv) {
 	memrand(&v0, SIZEOF_VARGQUAD);
 	v0 = xsetq(v0, idx, a);
 	uint64_t s[VECTLENDP];
-	vstoreu_v_p_vd((double *)s, vreinterpret_vd_vm(vreinterpret_vm_vi64(xcast_to_uint64q(v0)))); \
+	vstoreu_v_p_vd((double *)s, vreinterpret_vd_vm(vreinterpret_vm_vu64(xcast_to_uint64q(v0))));
 	t = s[idx];
       }
       if (0 <= a && a < ldexp(1, 64) && t != c) {
