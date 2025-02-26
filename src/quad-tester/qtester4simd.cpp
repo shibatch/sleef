@@ -290,7 +290,7 @@ using namespace std;
 extern "C" {
   int check_feature(double d, float f) {
     double s[VECTLENDP];
-    for(int i=0;i<VECTLENDP;i++) s[i] = d;
+    for(int i=0;i<(int)VECTLENDP;i++) s[i] = d;
     VARGQUAD a = xcast_from_doubleq(vloadu_vd_p(s));
     a = xpowq_u10(a, a);
     vint vi = xicmpeqq(a, xsplatq(sleef_q(+0x1000000000000LL, 0x0000000000000000ULL, 0)));
@@ -623,18 +623,6 @@ int main2(int argc, char **argv) {
     "+" STR_QUAD_DENORM_MIN, "-" STR_QUAD_DENORM_MIN,
     "Inf", "-Inf", "NaN"
   };
-
-  static const char *noNanCheckValsStr[] = {
-    "-0.0", "0.0", "+0.25", "-0.25", "+0.5", "-0.5", "+0.75", "-0.75", "+1.0", "-1.0",
-    "+1.25", "-1.25", "+1.5", "-1.5", "+2.0", "-2.0", "+2.5", "-2.5", "+3.0", "-3.0",
-    "+4.0", "-4.0", "+5.0", "-5.0", "+6.0", "-6.0", "+7.0", "-7.0", 
-    "1.234", "-1.234", "+1.234e+100", "-1.234e+100", "+1.234e-100", "-1.234e-100",
-    "+1.234e+3000", "-1.234e+3000", "+1.234e-3000", "-1.234e-3000",
-    "3.1415926535897932384626433832795028841971693993751058209749445923078164",
-    "+" STR_QUAD_MIN, "-" STR_QUAD_MIN,
-    "+" STR_QUAD_DENORM_MIN, "-" STR_QUAD_DENORM_MIN,
-    "Inf", "-Inf"
-  };
 #endif
 
   static const char *noInfCheckValsStr[] = {
@@ -712,7 +700,6 @@ int main2(int argc, char **argv) {
 
   DEFCHECKVALS(stdCheckValsStr, stdCheckVals);
   //DEFCHECKVALS(noNegZeroCheckValsStr, noNegZeroCheckVals);
-  //DEFCHECKVALS(noNanCheckValsStr, noNanCheckVals);
   DEFCHECKVALS(noInfCheckValsStr, noInfCheckVals);
   //DEFCHECKVALS(finiteCheckValsStr, finiteCheckVals);
   DEFCHECKVALS(trigCheckValsStr, trigCheckVals);
@@ -1196,6 +1183,138 @@ int main2(int argc, char **argv) {
       if (!((tlfloat_isnan(t) && tlfloat_isnan(c)) || t == c)) {
 	tlfloat_printf("arg0 = %Qa (%.35Qg), t = %a (%.16g), c = %a (%.16g)\n",
 		       a, a, t, t, c, c);
+	success = false;
+	break;
+      }
+    }
+
+    printf("%s\n", success ? "OK" : "NG");
+  }
+
+  {
+    printf("cast_from_int64q : ");
+
+    xsrand(1);
+    for(int i=0;i<10 * NTEST;i++) {
+      int64_t d;
+      switch(i) {
+      case 0: d = 0; break;
+      case 1: d = +0x7fffffffffffffffL; break;
+      case 2: d = -0x8000000000000000L; break;
+      default : memrand(&d, sizeof(d));
+      }
+      tlfloat_quad c = tlfloat_quad(d);
+      tlfloat_quad t = 0;
+      {
+	int idx = xrand() % VECTLENDP;
+	int64_t s[VECTLENDP];
+	memrand(s, sizeof(s));
+	s[idx] = d;
+	VARGQUAD q = xcast_from_int64q(vreinterpret_vi64_vm(vreinterpret_vm_vd(vloadu_vd_p((double *)s))));
+	t = (tlfloat_quad)xgetq(q, idx);
+      }
+      if (t != c) {
+	tlfloat_printf("arg0 = %016llx (%lld), t = %Qa (%.35Qg), c = %Qa (%.35Qg)\n",
+		       (long long)d, (long long)d, t, t, c, c);
+	success = false;
+	break;
+      }
+    }
+
+    printf("%s\n", success ? "OK" : "NG");
+  }
+
+  {
+    printf("cast_to_int64q : ");
+
+    xsrand(1);
+    Sleef_quad min = (Sleef_quad)tlfloat_strtoq("0", nullptr), max = (Sleef_quad)tlfloat_strtoq("1e+20", nullptr);
+    for(int i=0;i<10 * NTEST;i++) {
+      Sleef_quad a;
+      if (i < int(sizeof(stdCheckVals)/sizeof(stdCheckVals[0])-1)) {
+	a = (Sleef_quad)stdCheckVals[i];
+      } else {
+	a = rndf128(min, max, true);
+      }
+      int64_t t = 0, c = (int64_t)(tlfloat_quad)a;
+      {
+	int idx = xrand() % VECTLENDP;
+	VARGQUAD v0;
+	memrand(&v0, SIZEOF_VARGQUAD);
+	v0 = xsetq(v0, idx, a);
+	int64_t s[VECTLENDP];
+	vstoreu_v_p_vd((double *)s, vreinterpret_vd_vm(vreinterpret_vm_vi64(xcast_to_int64q(v0)))); \
+	t = s[idx];
+      }
+      if (-ldexp(1, 63) < a && a < ldexp(1, 63) && t != c) {
+	tlfloat_printf("arg0 = %Qa (%.35Qg), t = %016llx (%lld), c = %016llx (%lld)\n",
+		       a, a, (long long)t, (long long)t, (long long)c, (long long)c);
+	success = false;
+	break;
+      }
+    }
+
+    printf("%s\n", success ? "OK" : "NG");
+  }
+
+  {
+    printf("cast_from_uint64q : ");
+
+    xsrand(1);
+    for(int i=0;i<10 * NTEST;i++) {
+      uint64_t d;
+      switch(i) {
+      case 0: d = 0; break;
+      case 1: d = +0x7fffffffffffffffL; break;
+      case 2: d = -0x8000000000000000L; break;
+      default : memrand(&d, sizeof(d));
+      }
+      tlfloat_quad c = tlfloat_quad(d);
+      tlfloat_quad t = 0;
+      {
+	int idx = xrand() % VECTLENDP;
+	uint64_t s[VECTLENDP];
+	memrand(s, sizeof(s));
+	s[idx] = d;
+	VARGQUAD q = xcast_from_uint64q(vreinterpret_vi64_vm(vreinterpret_vm_vd(vloadu_vd_p((double *)s))));
+	t = (tlfloat_quad)xgetq(q, idx);
+      }
+      if (t != c) {
+	tlfloat_printf("arg0 = %016llx (%lld), t = %Qa (%.35Qg), c = %Qa (%.35Qg)\n",
+		       (long long)d, (long long)d, t, t, c, c);
+	success = false;
+	break;
+      }
+    }
+
+    printf("%s\n", success ? "OK" : "NG");
+  }
+
+  {
+    printf("cast_to_uint64q : ");
+
+    xsrand(1);
+    Sleef_quad min = (Sleef_quad)tlfloat_strtoq("0", nullptr), max = (Sleef_quad)tlfloat_strtoq("1e+20", nullptr);
+    for(int i=0;i<10 * NTEST;i++) {
+      Sleef_quad a;
+      if (i < int(sizeof(stdCheckVals)/sizeof(stdCheckVals[0])-1)) {
+	a = (Sleef_quad)stdCheckVals[i];
+      } else {
+	a = rndf128(min, max, true);
+      }
+      uint64_t t = 0, c = (uint64_t)(tlfloat_quad)a;
+      {
+	int idx = xrand() % VECTLENDP;
+	VARGQUAD v0;
+	memrand(&v0, SIZEOF_VARGQUAD);
+	v0 = xsetq(v0, idx, a);
+	uint64_t s[VECTLENDP];
+	vstoreu_v_p_vd((double *)s, vreinterpret_vd_vm(vreinterpret_vm_vi64(xcast_to_uint64q(v0)))); \
+	t = s[idx];
+      }
+      if (0 <= a && a < ldexp(1, 64) && t != c) {
+	tlfloat_printf("arg0 = %Qa (%.35Qg), t = %016llx (%lld), c = %016llx (%lld)\n",
+		       a, a, (long long)t, (long long)t, (long long)c, (long long)c);
 	success = false;
 	break;
       }
