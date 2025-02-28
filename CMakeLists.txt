@@ -26,11 +26,12 @@ option(SLEEF_SHOW_CONFIG "Show SLEEF configuration status messages." ON)
 option(SLEEF_SHOW_ERROR_LOG "Show cmake error log." OFF)
 option(SLEEF_ASAN "Enable address sanitizing on all targets." OFF)
 
-option(SLEEF_ENABLE_TESTER "Enable testing libm with tester" ON)
-option(SLEEF_ENABLE_TESTER4 "Enable testing with tester4" OFF)
+option(SLEEF_ENABLE_TESTER "Enable testing libm with tester" OFF)
+option(SLEEF_ENABLE_TESTER4 "Enable testing with tester4" ON)
 
 option(SLEEF_ENFORCE_TESTER "Build fails if tester is not available" OFF)
 option(SLEEF_ENFORCE_TESTER3 "Build fails if tester3 is not built" OFF)
+option(SLEEF_ENFORCE_TESTER4 "Build fails if tester4 is not available" OFF)
 
 option(SLEEF_ENABLE_ALTDIV  "Enable alternative division method (aarch64 only)" OFF)
 option(SLEEF_ENABLE_ALTSQRT "Enable alternative sqrt method (aarch64 only)" OFF)

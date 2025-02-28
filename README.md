@@ -1,4 +1,4 @@
-# SLEEF
+# SLEEF - SIMD Library for Evaluating Elementary Functions
 
 [![DOI:10.1109/TPDS.2019.2960333](http://img.shields.io/badge/DOI-10.1109/TPDS.2019.2960333-blue.svg)](https://ieeexplore.ieee.org/document/8936472)
 
