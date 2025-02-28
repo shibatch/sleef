@@ -515,7 +515,7 @@ extern "C" {
 
 int main2(int argc, char **argv) {
   bool success = true;
-  const int NTEST = 1000;
+  const int64_t NTEST = argc == 1 ? 1000 : strtoll(argv[1], NULL, 10);
 
   // Tests if counting ulp numbers is correct
 
@@ -611,20 +611,6 @@ int main2(int argc, char **argv) {
     "Inf", "-Inf", "NaN"
   };
 
-#if 0
-  static const char *noNegZeroCheckValsStr[] = {
-    "0.0", "+0.25", "-0.25", "+0.5", "-0.5", "+0.75", "-0.75", "+1.0", "-1.0",
-    "+1.25", "-1.25", "+1.5", "-1.5", "+2.0", "-2.0", "+2.5", "-2.5", "+3.0", "-3.0",
-    "+4.0", "-4.0", "+5.0", "-5.0", "+6.0", "-6.0", "+7.0", "-7.0", 
-    "1.234", "-1.234", "+1.234e+100", "-1.234e+100", "+1.234e-100", "-1.234e-100",
-    "+1.234e+3000", "-1.234e+3000", "+1.234e-3000", "-1.234e-3000",
-    "3.1415926535897932384626433832795028841971693993751058209749445923078164",
-    "+" STR_QUAD_MIN, "-" STR_QUAD_MIN,
-    "+" STR_QUAD_DENORM_MIN, "-" STR_QUAD_DENORM_MIN,
-    "Inf", "-Inf", "NaN"
-  };
-#endif
-
   static const char *noInfCheckValsStr[] = {
     "-0.0", "0.0", "+0.25", "-0.25", "+0.5", "-0.5", "+0.75", "-0.75", "+1.0", "-1.0",
     "+1.25", "-1.25", "+1.5", "-1.5", "+2.0", "-2.0", "+2.5", "-2.5", "+3.0", "-3.0",
@@ -636,19 +622,6 @@ int main2(int argc, char **argv) {
     "+" STR_QUAD_DENORM_MIN, "-" STR_QUAD_DENORM_MIN,
     "NaN"
   };
-
-#if 0
-  static const char *finiteCheckValsStr[] = {
-    "-0.0", "0.0", "+0.25", "-0.25", "+0.5", "-0.5", "+0.75", "-0.75", "+1.0", "-1.0",
-    "+1.25", "-1.25", "+1.5", "-1.5", "+2.0", "-2.0", "+2.5", "-2.5", "+3.0", "-3.0",
-    "+4.0", "-4.0", "+5.0", "-5.0", "+6.0", "-6.0", "+7.0", "-7.0", 
-    "1.234", "-1.234", "+1.234e+100", "-1.234e+100", "+1.234e-100", "-1.234e-100",
-    "+1.234e+3000", "-1.234e+3000", "+1.234e-3000", "-1.234e-3000",
-    "3.1415926535897932384626433832795028841971693993751058209749445923078164",
-    "+" STR_QUAD_MIN, "-" STR_QUAD_MIN,
-    "+" STR_QUAD_DENORM_MIN, "-" STR_QUAD_DENORM_MIN,
-  };
-#endif
 
   static const char *trigCheckValsStr[] = {
     "3.141592653589793238462643383279502884197169399375105820974944592307",
@@ -699,9 +672,7 @@ int main2(int argc, char **argv) {
     AVAL[i] = tlfloat_strtoq(ASTR[i], nullptr)
 
   DEFCHECKVALS(stdCheckValsStr, stdCheckVals);
-  //DEFCHECKVALS(noNegZeroCheckValsStr, noNegZeroCheckVals);
   DEFCHECKVALS(noInfCheckValsStr, noInfCheckVals);
-  //DEFCHECKVALS(finiteCheckValsStr, finiteCheckVals);
   DEFCHECKVALS(trigCheckValsStr, trigCheckVals);
   DEFCHECKVALS(bigIntCheckValsStr, bigIntCheckVals);
   DEFCHECKVALS(log1pCheckValsStr, log1pCheckVals);
@@ -1180,9 +1151,11 @@ int main2(int argc, char **argv) {
 	vstoreu_v_p_vd(s, vd);
 	t = s[idx];
       }
-      if (!((tlfloat_isnan(t) && tlfloat_isnan(c)) || t == c)) {
-	tlfloat_printf("arg0 = %Qa (%.35Qg), t = %a (%.16g), c = %a (%.16g)\n",
-		       a, a, t, t, c, c);
+      double u = countULP<tlfloat_quad>(t, c, DBL_MANT_DIG,
+					SLEEF_DBL_DENORM_MIN, DBL_MAX, true);
+      if (!((tlfloat_isnan(t) && tlfloat_isnan(c)) || (fabs(t) <= DBL_MIN && u <= 1.0) || t == c)) {
+	tlfloat_printf("arg0 = %Qa (%.35Qg), t = %a (%.16g), c = %a (%.16g), u = %g\n",
+		       a, a, t, t, c, c, u);
 	success = false;
 	break;
       }
