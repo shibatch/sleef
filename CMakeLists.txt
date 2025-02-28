@@ -7,13 +7,15 @@ project(SLEEF VERSION ${SLEEF_VERSION} LANGUAGES C CXX)
 
 set(SLEEF_SOVERSION ${SLEEF_VERSION_MAJOR})
 
+set(CMAKE_CXX_STANDARD 20)
+
 # Options
 
 option(SLEEF_BUILD_STATIC_TEST_BINS "Build statically linked test executables" OFF)
 option(SLEEF_ENABLE_LTO "Enable LTO on GCC or ThinLTO on clang" OFF)
 option(SLEEF_BUILD_LIBM "libsleef will be built." ON)
 option(SLEEF_BUILD_DFT "libsleefdft will be built." OFF)
-option(SLEEF_BUILD_QUAD "libsleefquad will be built." OFF)
+option(SLEEF_BUILD_QUAD "libsleefquad will be built." ON)
 option(SLEEF_BUILD_GNUABI_LIBS "libsleefgnuabi will be built." ON)
 option(SLEEF_BUILD_SCALAR_LIB "libsleefscalar will be built." OFF)
 option(SLEEF_BUILD_TESTS "Tests will be built." ON)
@@ -27,10 +29,11 @@ option(SLEEF_SHOW_ERROR_LOG "Show cmake error log." OFF)
 option(SLEEF_ASAN "Enable address sanitizing on all targets." OFF)
 
 option(SLEEF_ENABLE_TESTER "Enable testing libm with tester" OFF)
-option(SLEEF_ENABLE_TESTER4 "Enable testing with tester4" ON)
-
 option(SLEEF_ENFORCE_TESTER "Build fails if tester is not available" OFF)
+
 option(SLEEF_ENFORCE_TESTER3 "Build fails if tester3 is not built" OFF)
+
+option(SLEEF_ENABLE_TESTER4 "Enable testing with tester4" ON)
 option(SLEEF_ENFORCE_TESTER4 "Build fails if tester4 is not available" OFF)
 
 option(SLEEF_ENABLE_ALTDIV  "Enable alternative division method (aarch64 only)" OFF)
@@ -38,17 +41,54 @@ option(SLEEF_ENABLE_ALTSQRT "Enable alternative sqrt method (aarch64 only)" OFF)
 
 option(SLEEF_DISABLE_FFTW "Disable testing the DFT library with FFTW" OFF)
 option(SLEEF_DISABLE_MPFR "Disable testing with the MPFR library" OFF)
-option(SLEEF_DISABLE_SSL "Disable testing with the SSL library" OFF)
 option(SLEEF_ENABLE_TLFLOAT "Enable use of TLFloat library" ON)
+
+option(SLEEF_DISABLE_SSL "Disable testing with the SSL library" OFF)
+set(OPENSSL_EXTRA_LIBRARIES "" CACHE STRING "Extra libraries for openssl")
 
 option(SLEEF_ENABLE_CUDA "Enable CUDA" OFF)
 
 option(SLEEF_BUILD_WITH_LIBM "build libsleef with libm, can turn off on Windows to solve mutiple math functions issue." ON)
 
-#
+option(SLEEF_DISABLE_LONG_DOUBLE "Disable long double" OFF)
+option(SLEEF_ENFORCE_LONG_DOUBLE "Build fails if long double is not supported by the compiler" OFF)
 
-set(SLEEF_ENABLE_CXX ON)
-set(CMAKE_CXX_STANDARD 20)
+option(SLEEF_DISABLE_FLOAT128 "Disable float128" OFF)
+option(SLEEF_ENFORCE_FLOAT128 "Build fails if float128 is not supported by the compiler" OFF)
+
+option(SLEEF_DISABLE_SSE2 "Disable SSE2" OFF)
+option(SLEEF_ENFORCE_SSE2 "Build fails if SSE2 is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_SSE4 "Disable SSE4" OFF)
+option(SLEEF_ENFORCE_SSE4 "Build fails if SSE4 is not supported by the compiler" OFF)
+option(SLEEF_ENFORCE_AVX "Disable AVX" OFF)
+option(SLEEF_ENFORCE_AVX "Build fails if AVX is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_FMA4 "Disable FMA4" OFF)
+option(SLEEF_ENFORCE_FMA4 "Build fails if FMA4 is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_AVX2 "Disable AVX2" OFF)
+option(SLEEF_ENFORCE_AVX2 "Build fails if AVX2 is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_AVX512F "Disable AVX512F" OFF)
+option(SLEEF_ENFORCE_AVX512F "Build fails if AVX512F is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_SVE "Disable SVE" OFF)
+option(SLEEF_ENFORCE_SVE "Build fails if SVE is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_VSX "Disable VSX" OFF)
+option(SLEEF_ENFORCE_VSX "Build fails if VSX is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_VSX3 "Disable VSX3" OFF)
+option(SLEEF_ENFORCE_VSX3 "Build fails if VSX3 is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_VXE "Disable VXE" OFF)
+option(SLEEF_ENFORCE_VXE "Build fails if VXE is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_VXE2 "Disable VXE2" OFF)
+option(SLEEF_ENFORCE_VXE2 "Build fails if VXE2 is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_RVVM1 "Disable RVVM1" OFF)
+option(SLEEF_ENFORCE_RVVM1 "Build fails if RVVM1 is not supported by the compiler" OFF)
+option(SLEEF_DISABLE_RVVM2 "Disable RVVM2" OFF)
+option(SLEEF_ENFORCE_RVVM2 "Build fails if RVVM2 is not supported by the compiler" OFF)
+
+option(SLEEF_ENFORCE_CUDA "Build fails if CUDA is not supported" OFF)
+
+option(SLEEF_DISABLE_OPENMP "Disable OPENMP" OFF)
+option(SLEEF_ENFORCE_OPENMP "Build fails if OPENMP is not supported by the compiler" OFF)
+
+#
 
 if (SLEEF_BUILD_BENCH_REF)
   if (NOT SLEEF_BUILD_BENCH)
@@ -147,8 +187,8 @@ set(COSTOVERRIDE_AVX2 2)
 set(COSTOVERRIDE_AVX 2)
 set(COSTOVERRIDE_NEON32 2)
 set(COSTOVERRIDE_NEON32VFPV4 2)
-set(COSTOVERRIDE_SVE 20)
-set(COSTOVERRIDE_SVENOFMA 20)
+set(COSTOVERRIDE_SVE 10)
+set(COSTOVERRIDE_SVENOFMA 10)
 set(COSTOVERRIDE_RVVM1 10)
 set(COSTOVERRIDE_RVVM1NOFMA 10)
 set(COSTOVERRIDE_RVVM2 20)
@@ -157,10 +197,7 @@ set(COSTOVERRIDE_RVVM2NOFMA 20)
 #
 
 enable_testing()
-
-if (SLEEF_ENABLE_CXX)
-  enable_language(CXX)
-endif()
+enable_language(CXX)
 
 if (SLEEF_ENABLE_CUDA)
   enable_language(CUDA)
@@ -222,6 +259,7 @@ include(Configure.cmake)
 configure_file(
   ${PROJECT_SOURCE_DIR}/sleef-config.h.in
   ${PROJECT_BINARY_DIR}/include/sleef-config.h @ONLY)
+include_directories(AFTER "${PROJECT_BINARY_DIR}/include")
 
 # We like to have a documented index of all targets in the project. The
 # variables listed below carry the names of the targets defined throughout

@@ -1,5 +1,6 @@
 include(CheckCCompilerFlag)
 include(CheckCSourceCompiles)
+include(CheckCXXSourceCompiles)
 include(CheckTypeSize)
 include(CheckLanguage)
 
@@ -12,7 +13,6 @@ if (SLEEF_BUILD_STATIC_TEST_BINS)
 endif()
 
 if (NOT SLEEF_DISABLE_SSL)
-  set(OPENSSL_EXTRA_LIBRARIES "" CACHE STRING "Extra libraries for openssl")
   if (NOT CMAKE_CROSSCOMPILING AND NOT SLEEF_FORCE_FIND_PACKAGE_SSL)
     if (SLEEF_BUILD_STATIC_TEST_BINS)
       set(OPENSSL_USE_STATIC_LIBS TRUE)
@@ -223,7 +223,7 @@ if(NOT CLANG_EXE_PATH)
     set(CLANG_EXE_PATH ${CMAKE_C_COMPILER})
   else()
     # Else we may find clang on the path?
-    find_program(CLANG_EXE_PATH NAMES clang "clang-11" "clang-10" "clang-9" "clang-8" "clang-7" "clang-6.0" "clang-5.0" "clang-4.0" "clang-3.9")
+    find_program(CLANG_EXE_PATH NAMES clang "clang-25" "clang-24" "clang-23" "clang-22" "clang-21" "clang-20" "clang-19" "clang-18" "clang-17")
   endif()
 endif()
 
@@ -410,9 +410,6 @@ endif()
 
 # Long double
 
-option(SLEEF_DISABLE_LONG_DOUBLE "Disable long double" OFF)
-option(SLEEF_ENFORCE_LONG_DOUBLE "Build fails if long double is not supported by the compiler" OFF)
-
 if(NOT SLEEF_DISABLE_LONG_DOUBLE)
   CHECK_TYPE_SIZE("long double" LD_SIZE)
   if(LD_SIZE GREATER "9")
@@ -433,9 +430,6 @@ endif()
 
 # float128
 
-option(SLEEF_DISABLE_FLOAT128 "Disable float128" OFF)
-option(SLEEF_ENFORCE_FLOAT128 "Build fails if float128 is not supported by the compiler" OFF)
-
 if(NOT SLEEF_DISABLE_FLOAT128)
   CHECK_C_SOURCE_COMPILES("
   int main() { __float128 r = 1;
@@ -455,10 +449,37 @@ if(COMPILER_SUPPORTS_FLOAT128)
   }" COMPILER_SUPPORTS_QUADMATH)
 endif()
 
-# SSE2
+if(COMPILER_SUPPORTS_FLOAT128)
+  if (CMAKE_CXX_COMPILER_TARGET)
+    set(CMAKE_REQUIRED_FLAGS "--target=${CMAKE_CXX_COMPILER_TARGET}")
+  endif()
+  CHECK_CXX_SOURCE_COMPILES("
+#include <bit>
+struct s { long long x, y; };
+int main(int argc, char **argv) {
+  constexpr s a = std::bit_cast<s>(__float128(0.1234)*__float128(56.789));
+  static_assert((a.x ^ a.y) == 0xc7d695c93a4e2b71LL);
+  __float128 i = argc;
+  return (int)i;
+}
+" SLEEF_FLOAT128_IS_IEEEQP)
+  set(CMAKE_REQUIRED_FLAGS)
+endif()
 
-option(SLEEF_DISABLE_SSE2 "Disable SSE2" OFF)
-option(SLEEF_ENFORCE_SSE2 "Build fails if SSE2 is not supported by the compiler" OFF)
+if (CMAKE_CXX_COMPILER_TARGET)
+  set(CMAKE_REQUIRED_FLAGS "--target=${CMAKE_CXX_COMPILER_TARGET}")
+endif()
+CHECK_CXX_SOURCE_COMPILES("
+#include <bit>
+struct s { long long x, y; };
+int main(void) {
+  constexpr s a = std::bit_cast<s>((long double)0.1234*(long double)56.789);
+  static_assert((a.x ^ a.y) == 0xc7d695c93a4e2b71LL);
+}
+" SLEEF_LONGDOUBLE_IS_IEEEQP)
+set(CMAKE_REQUIRED_FLAGS)
+
+# SSE2
 
 if(SLEEF_ARCH_X86 AND NOT SLEEF_DISABLE_SSE2)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_SSE2}")
@@ -479,9 +500,6 @@ endif()
 
 # SSE 4.1
 
-option(SLEEF_DISABLE_SSE4 "Disable SSE4" OFF)
-option(SLEEF_ENFORCE_SSE4 "Build fails if SSE4 is not supported by the compiler" OFF)
-
 if(SLEEF_ARCH_X86 AND NOT SLEEF_DISABLE_SSE4)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_SSE4}")
   CHECK_C_SOURCE_COMPILES("
@@ -500,9 +518,6 @@ if (SLEEF_ENFORCE_SSE4 AND NOT COMPILER_SUPPORTS_SSE4)
 endif()
 
 # AVX
-
-option(SLEEF_ENFORCE_AVX "Disable AVX" OFF)
-option(SLEEF_ENFORCE_AVX "Build fails if AVX is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_X86 AND NOT SLEEF_DISABLE_AVX)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_AVX}")
@@ -523,9 +538,6 @@ endif()
 
 # FMA4
 
-option(SLEEF_DISABLE_FMA4 "Disable FMA4" OFF)
-option(SLEEF_ENFORCE_FMA4 "Build fails if FMA4 is not supported by the compiler" OFF)
-
 if(SLEEF_ARCH_X86 AND NOT SLEEF_DISABLE_FMA4)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_FMA4}")
   CHECK_C_SOURCE_COMPILES("
@@ -544,9 +556,6 @@ if (SLEEF_ENFORCE_FMA4 AND NOT COMPILER_SUPPORTS_FMA4)
 endif()
 
 # AVX2
-
-option(SLEEF_DISABLE_AVX2 "Disable AVX2" OFF)
-option(SLEEF_ENFORCE_AVX2 "Build fails if AVX2 is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_X86 AND NOT SLEEF_DISABLE_AVX2)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_AVX2}")
@@ -572,8 +581,6 @@ endif()
 
 # AVX512F
 
-option(SLEEF_DISABLE_AVX512F "Disable AVX512F" OFF)
-option(SLEEF_ENFORCE_AVX512F "Build fails if AVX512F is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_X86 AND NOT SLEEF_DISABLE_AVX512F)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_AVX512F}")
@@ -604,9 +611,6 @@ endif()
 
 # SVE
 
-option(SLEEF_DISABLE_SVE "Disable SVE" OFF)
-option(SLEEF_ENFORCE_SVE "Build fails if SVE is not supported by the compiler" OFF)
-
 # Darwin does not support SVE yet (see issue #474),
 # therefore we disable SVE on Darwin systems.
 if(SLEEF_ARCH_AARCH64 AND NOT SLEEF_DISABLE_SVE AND NOT CMAKE_SYSTEM_NAME STREQUAL "Darwin")
@@ -627,9 +631,6 @@ if (SLEEF_ENFORCE_SVE AND NOT COMPILER_SUPPORTS_SVE)
 endif()
 
 # VSX
-
-option(SLEEF_DISABLE_VSX "Disable VSX" OFF)
-option(SLEEF_ENFORCE_VSX "Build fails if VSX is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_PPC64 AND NOT SLEEF_DISABLE_VSX)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_VSX}")
@@ -658,9 +659,6 @@ endif()
 
 # VSX3
 
-option(SLEEF_DISABLE_VSX3 "Disable VSX3" OFF)
-option(SLEEF_ENFORCE_VSX3 "Build fails if VSX3 is not supported by the compiler" OFF)
-
 if(SLEEF_ARCH_PPC64 AND NOT SLEEF_DISABLE_VSX3)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_VSX3}")
   CHECK_C_SOURCE_COMPILES("
@@ -687,9 +685,6 @@ endif()
 
 # IBM Z
 
-option(SLEEF_DISABLE_VXE "Disable VXE" OFF)
-option(SLEEF_ENFORCE_VXE "Build fails if VXE is not supported by the compiler" OFF)
-
 if(SLEEF_ARCH_S390X AND NOT SLEEF_DISABLE_VXE)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_VXE}")
   CHECK_C_SOURCE_COMPILES("
@@ -711,9 +706,6 @@ endif()
 
 #
 
-option(SLEEF_DISABLE_VXE2 "Disable VXE2" OFF)
-option(SLEEF_ENFORCE_VXE2 "Build fails if VXE2 is not supported by the compiler" OFF)
-
 if(SLEEF_ARCH_S390X AND NOT SLEEF_DISABLE_VXE2)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_VXE2}")
   CHECK_C_SOURCE_COMPILES("
@@ -734,9 +726,6 @@ if (SLEEF_ENFORCE_VXE2 AND NOT COMPILER_SUPPORTS_VXE2)
 endif()
 
 # RVVM1
-
-option(SLEEF_DISABLE_RVVM1 "Disable RVVM1" OFF)
-option(SLEEF_ENFORCE_RVVM1 "Build fails if RVVM1 is not supported by the compiler" OFF)
 
 if(SLEEF_ARCH_RISCV64 AND NOT SLEEF_DISABLE_RVVM1)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_RVVM1}")
@@ -771,9 +760,6 @@ endif()
 
 # RVVM2
 
-option(SLEEF_DISABLE_RVVM2 "Disable RVVM2" OFF)
-option(SLEEF_ENFORCE_RVVM2 "Build fails if RVVM2 is not supported by the compiler" OFF)
-
 if(SLEEF_ARCH_RISCV64 AND NOT SLEEF_DISABLE_RVVM2)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_RVVM2}")
   CHECK_C_SOURCE_COMPILES("
@@ -807,16 +793,11 @@ endif()
 
 # CUDA
 
-option(SLEEF_ENFORCE_CUDA "Build fails if CUDA is not supported" OFF)
-
 if (SLEEF_ENFORCE_CUDA AND NOT CMAKE_CUDA_COMPILER)
   message(FATAL_ERROR "SLEEF_ENFORCE_CUDA is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # OpenMP
-
-option(SLEEF_DISABLE_OPENMP "Disable OPENMP" OFF)
-option(SLEEF_ENFORCE_OPENMP "Build fails if OPENMP is not supported by the compiler" OFF)
 
 if(NOT SLEEF_DISABLE_OPENMP)
   find_package(OpenMP)

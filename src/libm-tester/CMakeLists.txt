@@ -165,7 +165,7 @@ if (SLEEF_ENABLE_TESTER)
 endif()
 
 # Compile executable 'iutcuda'
-if (SLEEF_ENABLE_TESTER AND SLEEF_BUILD_INLINE_HEADERS AND SED_COMMAND AND CMAKE_CUDA_COMPILER)
+if (SLEEF_BUILD_INLINE_HEADERS AND SED_COMMAND AND CMAKE_CUDA_COMPILER)
   add_executable(iutcuda iutcuda.cu)
   set_target_properties(iutcuda PROPERTIES LINKER_LANGUAGE CUDA)
   target_compile_options(iutcuda PRIVATE "--fmad=false;-Xcompiler;-ffp-contract=off")
@@ -617,20 +617,18 @@ if(LIB_MPFR AND NOT MINGW)
     add_dependencies(${T} ${TARGET_LIBSLEEF})
   endforeach()
 
-  if (SLEEF_ENABLE_TESTER)
-    # Compile executable 'tester'
-    add_host_executable(${TARGET_TESTER} tester.c)
-    if (NOT CMAKE_CROSSCOMPILING)
-      target_link_libraries(${TARGET_TESTER} ${TARGET_LIBSLEEF} ${TARGET_TESTERUTIL_OBJ} ${LIB_MPFR} ${LIBGMP} ${LIBM})
-      target_compile_definitions(${TARGET_TESTER}
-	PRIVATE USEMPFR=1 ${COMMON_TARGET_DEFINITIONS})
-      target_compile_options(${TARGET_TESTER} PRIVATE -Wno-unused-result)
-      set_target_properties(${TARGET_TESTER} PROPERTIES ${COMMON_TARGET_PROPERTIES})
-      if (MPFR_INCLUDE_DIR)
-	target_include_directories(${TARGET_TESTER} PRIVATE ${MPFR_INCLUDE_DIR})
-      endif()
+  # Compile executable 'tester'
+  add_host_executable(${TARGET_TESTER} tester.c)
+  if (NOT CMAKE_CROSSCOMPILING)
+    target_link_libraries(${TARGET_TESTER} ${TARGET_LIBSLEEF} ${TARGET_TESTERUTIL_OBJ} ${LIB_MPFR} ${LIBGMP} ${LIBM})
+    target_compile_definitions(${TARGET_TESTER}
+      PRIVATE USEMPFR=1 ${COMMON_TARGET_DEFINITIONS})
+    target_compile_options(${TARGET_TESTER} PRIVATE -Wno-unused-result)
+    set_target_properties(${TARGET_TESTER} PROPERTIES ${COMMON_TARGET_PROPERTIES})
+    if (MPFR_INCLUDE_DIR)
+      target_include_directories(${TARGET_TESTER} PRIVATE ${MPFR_INCLUDE_DIR})
     endif()
-  endif(SLEEF_ENABLE_TESTER)
+  endif()
 endif(LIB_MPFR AND NOT MINGW)
 
 if(ENABLE_GNUABI AND COMPILER_SUPPORTS_OMP_SIMD AND NOT SLEEF_TARGET_PROCESSOR MATCHES "^i.86$")

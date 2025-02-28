@@ -504,6 +504,8 @@ if(SLEEF_BUILD_INLINE_HEADERS)
   file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/include/)
   set(INLINE_HEADER_FILES_GENERATED "")
 
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/sleefinline_header.h.org.in ${CMAKE_CURRENT_BINARY_DIR}/sleefinline_header.h.org)
+
   if (SED_COMMAND)
     foreach(SIMD ${SLEEF_SUPPORTED_LIBM_EXTENSIONS} CUDA)
       if(COMPILER_SUPPORTS_${SIMD} OR ${SIMD} STREQUAL "CUDA")
@@ -524,7 +526,7 @@ if(SLEEF_BUILD_INLINE_HEADERS)
 	  set(TARGET_ADDSUFFIX_KEYWORDS)
 	else()
 	  set(TARGET_ADDSUFFIX_KEYWORDS Sleef_rempitabdp Sleef_rempitabsp)
-          set(INLINE_HEADER_ORG ${CMAKE_CURRENT_SOURCE_DIR}/sleefinline_header.h.org)
+          set(INLINE_HEADER_ORG ${CMAKE_CURRENT_BINARY_DIR}/sleefinline_header.h.org)
 	endif()
 
 	set(INLINE_HEADER_FILE ${PROJECT_BINARY_DIR}/include/sleefinline_${SIMDLC}.h)
