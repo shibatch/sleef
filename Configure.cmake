@@ -787,6 +787,8 @@ if(SLEEF_ARCH_RISCV64 AND NOT SLEEF_DISABLE_RVVM2)
   endif()
 endif()
 
+set(CMAKE_REQUIRED_FLAGS)
+
 if (SLEEF_ENFORCE_RVVM2 AND NOT COMPILER_SUPPORTS_RVVM2)
   message(FATAL_ERROR "SLEEF_ENFORCE_RVVM2 is specified and that feature is disabled or not supported by the compiler")
 endif()
