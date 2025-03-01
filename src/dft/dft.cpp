@@ -460,7 +460,7 @@ static int pos2config(int pos) { return pos == -1 ? -1 : ((pos - 1) / (MAXBUTWID
 static int pos2level(int pos) { return pos == -1 ? -1 : (((pos - 1) / MAXBUTWIDTH) % MAXLOG2LEN); }
 static int pos2N(int pos) { return pos == -1 ? -1 : ((pos - 1) % MAXBUTWIDTH + 1); }
 
-typedef struct {
+struct ks_t {
   SleefDFT *p;
 
   int countu[POSMAX];
@@ -469,178 +469,178 @@ typedef struct {
   uint64_t cost[NSHORTESTPATHS];
   int nPaths;
 
-  int *heap;
-  int *heapLen;
-  uint64_t *heapCost;
   int heapSize, nPathsInHeap;
-} ks_t;
+  int *heap;
+  uint64_t *heapCost;
+  int *heapLen;
 
-static ks_t *ksInit(SleefDFT *p) {
-  ks_t *q = (ks_t *)calloc(1, sizeof(ks_t));
-  q->p = p;
-  q->heapSize = 10;
-  q->heap = (int *)calloc(q->heapSize, sizeof(int)*MAXPATHLEN);
-  q->heapCost = (uint64_t *)calloc(q->heapSize, sizeof(uint64_t));
-  q->heapLen = (int *)calloc(q->heapSize, sizeof(int));
-  return q;
-}
-
-static void ksDispose(ks_t *q) {
-  free(q->heapCost);
-  free(q->heapLen);
-  free(q->heap);
-  free(q);
-}
-
-// returns the number of paths in the heap
-static int ksSize(ks_t *q) { return q->nPathsInHeap; }
-
-// adds a path to the heap
-static void ksAddPath(ks_t *q, int *path, int pathLen, uint64_t cost) {
-  assert(pathLen <= MAXPATHLEN);
-
-  if (q->nPathsInHeap == q->heapSize) {
-    q->heapSize *= 2;
-    q->heap = (int *)realloc(q->heap, q->heapSize * sizeof(int)*MAXPATHLEN);
-    q->heapCost = (uint64_t *)realloc(q->heapCost, q->heapSize * sizeof(uint64_t));
-    q->heapLen = (int *)realloc(q->heapLen, q->heapSize * sizeof(int));
+  ks_t(SleefDFT *p_) :
+    p(p_), nPaths(0), heapSize(10), nPathsInHeap(0),
+    heap((int *)calloc(heapSize, sizeof(int)*MAXPATHLEN)),
+    heapCost((uint64_t *)calloc(heapSize, sizeof(uint64_t))), 
+    heapLen((int *)calloc(heapSize, sizeof(int))) {
+    memset(countu, 0, sizeof(countu));
+    memset(path, 0, sizeof(path));
+    memset(pathLen, 0, sizeof(pathLen));
+    memset(cost, 0, sizeof(cost));
   }
 
-  for(int i=0;i<pathLen;i++) q->heap[q->nPathsInHeap * MAXPATHLEN + i] = path[i];
-  q->heapLen[q->nPathsInHeap] = pathLen;
-  q->heapCost[q->nPathsInHeap] = cost;
-  q->nPathsInHeap++;
-}
-
-// returns the cost of n-th paths in the heap
-static uint64_t ksCost(ks_t *q, int n) {
-  assert(0 <= n && n < q->nPathsInHeap);
-  return q->heapCost[n];
-}
-
-// copies the n-th paths in the heap to path, returns its length
-static int ksGetPath(ks_t *q, int *path, int n) {
-  assert(0 <= n && n < q->nPathsInHeap);
-  int len = q->heapLen[n];
-  for(int i=0;i<len;i++) path[i] = q->heap[n * MAXPATHLEN + i];
-  return len;
-}
-
-// removes the n-th paths in the heap
-static void ksRemove(ks_t *q, int n) {
-  assert(0 <= n && n < q->nPathsInHeap);
-
-  for(int i=n;i<q->nPathsInHeap-1;i++) {
-    int len = q->heapLen[i+1];
-    assert(len < MAXPATHLEN);
-    for(int j=0;j<len;j++) q->heap[i * MAXPATHLEN + j] = q->heap[(i+1) * MAXPATHLEN + j];
-    q->heapLen[i] = q->heapLen[i+1];
-    q->heapCost[i] = q->heapCost[i+1];
-  }
-  q->nPathsInHeap--;
-}
-
-// returns the countu value at pos
-static int ksCountu(ks_t *q, int pos) {
-  assert(0 <= pos && pos < POSMAX);
-  return q->countu[pos];
-}
-
-// set the countu value at pos to n
-static void ksSetCountu(ks_t *q, int pos, int n) {
-  assert(0 <= pos && pos < POSMAX);
-  q->countu[pos] = n;
-}
-
-// adds a path as one of the best k paths, returns the number best paths
-static int ksAddBestPath(ks_t *q, int *path, int pathLen, uint64_t cost) {
-  assert(pathLen <= MAXPATHLEN);
-  assert(q->nPaths < NSHORTESTPATHS);
-  for(int i=0;i<pathLen;i++) q->path[q->nPaths][i] = path[i];
-  q->pathLen[q->nPaths] = pathLen;
-  q->cost[q->nPaths] = cost;
-  q->nPaths++;
-  return q->nPaths;
-}
-
-// returns if pos is a destination
-static int ksIsDest(ks_t *q, int pos) { return pos2level(pos) == 0; }
-
-// returns n-th adjacent nodes at pos.
-static int ksAdjacent(ks_t *q, int pos, int n) {
-  if (pos != -1 && pos2level(pos) == 0) return -1;
-
-  int NMAX = MIN(MIN(q->p->log2len, MAXBUTWIDTH+1), q->p->log2len - q->p->log2vecwidth + 1);
-
-  if (pos == -1) {
-    int N = n / 2 + MAX(q->p->log2vecwidth, 1);
-    if (N >= NMAX) return -1;
-    return cln2pos((n & 1) * CONFIG_MT, q->p->log2len, N);
+  ~ks_t() {
+    free(heapCost);
+    free(heapLen);
+    free(heap);
   }
 
-  int config = (pos2config(pos) & CONFIG_MT);
-  int N = n + 1;
-  int level = pos2level(pos) - pos2N(pos);
+  /** returns the number of paths in the heap */
+  int ksSize() { return nPathsInHeap; }
 
-  if (level < 0 || N >= NMAX) return -1;
-  if (level == 0) return n == 0 ? cln2pos(0, 0, 0) : -1;
+  /** returns the cost of n-th paths in the heap */
+  uint64_t ksCost(int n) {
+    assert(0 <= n && n < nPathsInHeap);
+    return heapCost[n];
+  }
 
-  return cln2pos(config, level, N);
-}
+  /** adds a path to the heap */
+  void ksAddPath(int *path, int pathLen, uint64_t cost) {
+    assert(pathLen <= MAXPATHLEN);
 
-static uint64_t ksAdjacentCost(ks_t *q, int pos, int n) {
-  int nxpos = ksAdjacent(q, pos, n);
-  if (nxpos == -1) return 0;
-  int config = pos2config(nxpos), level = pos2level(nxpos), N = pos2N(nxpos);
-  uint64_t ret0 = q->p->tm[config | 0][level*(MAXBUTWIDTH+1) + N];
-  uint64_t ret1 = q->p->tm[config | 1][level*(MAXBUTWIDTH+1) + N];
-  return MIN(ret0, ret1);
-}
+    if (nPathsInHeap == heapSize) {
+      heapSize *= 2;
+      heap = (int *)realloc(heap, heapSize * sizeof(int)*MAXPATHLEN);
+      heapCost = (uint64_t *)realloc(heapCost, heapSize * sizeof(uint64_t));
+      heapLen = (int *)realloc(heapLen, heapSize * sizeof(int));
+    }
+
+    for(int i=0;i<pathLen;i++) heap[nPathsInHeap * MAXPATHLEN + i] = path[i];
+    heapLen[nPathsInHeap] = pathLen;
+    heapCost[nPathsInHeap] = cost;
+    nPathsInHeap++;
+  }
+
+  /** copies the n-th paths in the heap to path, returns its length */
+  int ksGetPath(int *path, int n) {
+    assert(0 <= n && n < nPathsInHeap);
+    int len = heapLen[n];
+    for(int i=0;i<len;i++) path[i] = heap[n * MAXPATHLEN + i];
+    return len;
+  }
+
+  /** removes the n-th paths in the heap */
+  void ksRemove(int n) {
+    assert(0 <= n && n < nPathsInHeap);
+
+    for(int i=n;i<nPathsInHeap-1;i++) {
+      int len = heapLen[i+1];
+      assert(len < MAXPATHLEN);
+      for(int j=0;j<len;j++) heap[i * MAXPATHLEN + j] = heap[(i+1) * MAXPATHLEN + j];
+      heapLen[i] = heapLen[i+1];
+      heapCost[i] = heapCost[i+1];
+    }
+    nPathsInHeap--;
+  }
+
+  /** returns the countu value at pos */
+  int ksCountu(int pos) {
+    assert(0 <= pos && pos < POSMAX);
+    return countu[pos];
+  }
+
+  /** set the countu value at pos to n */
+  void ksSetCountu(int pos, int n) {
+    assert(0 <= pos && pos < POSMAX);
+    countu[pos] = n;
+  }
+
+  /** adds a path as one of the best k paths, returns the number best paths */
+  int ksAddBestPath(int *path_, int pathLen_, uint64_t cost_) {
+    assert(pathLen_ <= MAXPATHLEN);
+    assert(nPaths < NSHORTESTPATHS);
+    for(int i=0;i<pathLen_;i++) path[nPaths][i] = path_[i];
+    pathLen[nPaths] = pathLen_;
+    cost[nPaths] = cost_;
+    nPaths++;
+    return nPaths;
+  }
+
+  /** returns if pos is a destination */
+  int ksIsDest(int pos) { return pos2level(pos) == 0; }
+
+  /** returns n-th adjacent nodes at pos */
+  int ksAdjacent(int pos, int n) {
+    if (pos != -1 && pos2level(pos) == 0) return -1;
+
+    int NMAX = MIN(MIN(p->log2len, MAXBUTWIDTH+1), p->log2len - p->log2vecwidth + 1);
+
+    if (pos == -1) {
+      int N = n / 2 + MAX(p->log2vecwidth, 1);
+      if (N >= NMAX) return -1;
+      return cln2pos((n & 1) * CONFIG_MT, p->log2len, N);
+    }
+
+    int config = (pos2config(pos) & CONFIG_MT);
+    int N = n + 1;
+    int level = pos2level(pos) - pos2N(pos);
+
+    if (level < 0 || N >= NMAX) return -1;
+    if (level == 0) return n == 0 ? cln2pos(0, 0, 0) : -1;
+
+    return cln2pos(config, level, N);
+  }
+
+  uint64_t ksAdjacentCost(int pos, int n) {
+    int nxpos = ksAdjacent(pos, n);
+    if (nxpos == -1) return 0;
+    int config = pos2config(nxpos), level = pos2level(nxpos), N = pos2N(nxpos);
+    uint64_t ret0 = p->tm[config | 0][level*(MAXBUTWIDTH+1) + N];
+    uint64_t ret1 = p->tm[config | 1][level*(MAXBUTWIDTH+1) + N];
+    return MIN(ret0, ret1);
+  }
+};
 
 static void searchForBestPath(SleefDFT *p) {
-  ks_t *q = ksInit(p);
+  ks_t *q = new ks_t(p);
 
   for(int i=0;;i++) {
-    int v = ksAdjacent(q, -1, i);
+    int v = q->ksAdjacent(-1, i);
     if (v == -1) break;
-    uint64_t c = ksAdjacentCost(q, -1, i);
+    uint64_t c = q->ksAdjacentCost(-1, i);
     int path[1] = { v };
-    ksAddPath(q, path, 1, c);
+    q->ksAddPath(path, 1, c);
   }
 
-  while(ksSize(q) != 0) {
+  while(q->ksSize() != 0) {
     uint64_t bestCost = 1ULL << 60;
     int bestPathNum = -1;
 
-    for(int i=0;i<ksSize(q);i++) {
-      if (ksCost(q, i) < bestCost) {
-	bestCost = ksCost(q, i);
+    for(int i=0;i<q->ksSize();i++) {
+      if (q->ksCost(i) < bestCost) {
+	bestCost = q->ksCost(i);
 	bestPathNum = i;
       }
     }
     if (bestPathNum == -1) break;
 
     int path[MAXPATHLEN];
-    int pathLen = ksGetPath(q, path, bestPathNum);
-    uint64_t cost = ksCost(q, bestPathNum);
-    ksRemove(q, bestPathNum);
+    int pathLen = q->ksGetPath(path, bestPathNum);
+    uint64_t cost = q->ksCost(bestPathNum);
+    q->ksRemove(bestPathNum);
 
     int lastPos = path[pathLen-1];
-    if (ksCountu(q, lastPos) >= NSHORTESTPATHS) continue;
-    ksSetCountu(q, lastPos, ksCountu(q, lastPos)+1);
+    if (q->ksCountu(lastPos) >= NSHORTESTPATHS) continue;
+    q->ksSetCountu(lastPos, q->ksCountu(lastPos)+1);
 
-    if (ksIsDest(q, lastPos)) {
-      if (ksAddBestPath(q, path, pathLen, cost) >= NSHORTESTPATHS) break;
+    if (q->ksIsDest(lastPos)) {
+      if (q->ksAddBestPath(path, pathLen, cost) >= NSHORTESTPATHS) break;
       continue;
     }
 
     for(int i=0;;i++) {
-      int v = ksAdjacent(q, lastPos, i);
+      int v = q->ksAdjacent(lastPos, i);
       if (v == -1) break;
       assert(0 <= pos2N(v) && pos2N(v) <= q->p->log2len);
-      uint64_t c = ksAdjacentCost(q, lastPos, i);
+      uint64_t c = q->ksAdjacentCost(lastPos, i);
       path[pathLen] = v;
-      ksAddPath(q, path, pathLen+1, cost + c);
+      q->ksAddPath(path, pathLen+1, cost + c);
     }
   }
 
@@ -756,7 +756,7 @@ static void searchForBestPath(SleefDFT *p) {
     }
   }
 
-  ksDispose(q);
+  delete q;
 }
 
 //

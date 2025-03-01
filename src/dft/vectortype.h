@@ -57,10 +57,6 @@
 #include "helpers390x_128.h"
 #endif
 
-#ifdef ENABLE_VECEXT
-#include "helpervecext.h"
-#endif
-
 #ifdef ENABLE_PUREC
 #include "helperpurec.h"
 #endif
