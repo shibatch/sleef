@@ -20,7 +20,7 @@ env:
     -DSLEEF_BUILD_GNUABI_LIBS=ON
     -DSLEEF_BUILD_INLINE_HEADERS=ON
     -DSLEEF_BUILD_DFT=ON
-    -DSLEEF_BUILD_ENFORCE_DFT=ON
+    -DSLEEF_ENFORCE_DFT=ON
     -DSLEEF_BUILD_QUAD=ON
     -DSLEEF_BUILD_SCALAR_LIB=ON
     -DSLEEF_BUILD_STATIC_TEST_BINS=ON
@@ -61,7 +61,7 @@ jobs:
 
       - name: Install llvm
         run: |
-          sudo apt-get install -y -qq clang libomp-dev
+          sudo apt-get install -y -qq clang libomp-dev libgomp-dev
         if: ${{ matrix.compiler == 'llvm' }}
 
       - name: Set x86_64 config
