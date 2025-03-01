@@ -408,42 +408,6 @@ endif()
 
 # FEATURE DETECTION
 
-# OpenMP
-
-if(NOT SLEEF_DISABLE_OPENMP)
-  find_package(OpenMP)
-  # Check if compilation with OpenMP really succeeds
-  # It might not succeed even though find_package(OpenMP) succeeds.
-  if(OPENMP_FOUND)
-    set (CMAKE_REQUIRED_FLAGS "${OpenMP_C_FLAGS}")
-    CHECK_C_SOURCE_COMPILES("
-  #include <stdio.h>
-  int main() {
-  int i;
-  #pragma omp parallel for
-    for(i=0;i < 10;i++) { putchar(0); }
-  }"
-      COMPILER_SUPPORTS_OPENMP)
-
-    CHECK_C_SOURCE_COMPILES("
-  #pragma omp declare simd notinbranch
-  double func(double x) { return x + 1; }
-  double a[1024];
-  int main() {
-  #pragma omp parallel for simd
-    for (int i = 0; i < 1024; i++) a[i] = func(a[i]);
-  }
-  "
-      COMPILER_SUPPORTS_OMP_SIMD)
-  endif(OPENMP_FOUND)
-else()
-  message(STATUS "Support for OpenMP disabled by CMake option")
-endif()
-
-if (SLEEF_ENFORCE_OPENMP AND NOT COMPILER_SUPPORTS_OPENMP)
-  message(FATAL_ERROR "SLEEF_ENFORCE_OPENMP is specified and that feature is disabled or not supported by the compiler")
-endif()
-
 # Long double
 
 if(NOT SLEEF_DISABLE_LONG_DOUBLE)
@@ -822,8 +786,6 @@ if(SLEEF_ARCH_RISCV64 AND NOT SLEEF_DISABLE_RVVM2)
   endif()
 endif()
 
-set(CMAKE_REQUIRED_FLAGS)
-
 if (SLEEF_ENFORCE_RVVM2 AND NOT COMPILER_SUPPORTS_RVVM2)
   message(FATAL_ERROR "SLEEF_ENFORCE_RVVM2 is specified and that feature is disabled or not supported by the compiler")
 endif()
@@ -832,6 +794,43 @@ endif()
 
 if (SLEEF_ENFORCE_CUDA AND NOT CMAKE_CUDA_COMPILER)
   message(FATAL_ERROR "SLEEF_ENFORCE_CUDA is specified and that feature is disabled or not supported by the compiler")
+endif()
+
+# OpenMP
+
+if(NOT SLEEF_DISABLE_OPENMP)
+  set(CMAKE_REQUIRED_FLAGS)
+  find_package(OpenMP)
+  # Check if compilation with OpenMP really succeeds
+  # It might not succeed even though find_package(OpenMP) succeeds.
+  if(OPENMP_FOUND)
+    set (CMAKE_REQUIRED_FLAGS "${OpenMP_C_FLAGS}")
+    CHECK_C_SOURCE_COMPILES("
+  #include <stdio.h>
+  int main() {
+  int i;
+  #pragma omp parallel for
+    for(i=0;i < 10;i++) { putchar(0); }
+  }"
+      COMPILER_SUPPORTS_OPENMP)
+
+    CHECK_C_SOURCE_COMPILES("
+  #pragma omp declare simd notinbranch
+  double func(double x) { return x + 1; }
+  double a[1024];
+  int main() {
+  #pragma omp parallel for simd
+    for (int i = 0; i < 1024; i++) a[i] = func(a[i]);
+  }
+  "
+      COMPILER_SUPPORTS_OMP_SIMD)
+  endif(OPENMP_FOUND)
+else()
+  message(STATUS "Support for OpenMP disabled by CMake option")
+endif()
+
+if (SLEEF_ENFORCE_OPENMP AND NOT COMPILER_SUPPORTS_OPENMP)
+  message(FATAL_ERROR "SLEEF_ENFORCE_OPENMP is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # Weak aliases
