@@ -20,9 +20,7 @@
 #include "arraymap.h"
 #include "dftcommon.hpp"
 
-#ifdef _OPENMP
 #include <omp.h>
-#endif
 
 #if BASETYPEID == 1
 typedef double real;
@@ -154,17 +152,14 @@ static int checkISAAvailability(int isa) {
   return 0;
 }
 
-#ifdef _OPENMP
 static int omp_thread_count() {
   int n = 0;
 #pragma omp parallel reduction(+:n)
   n += 1;
   return n;
 }
-#endif
 
 static void startAllThreads(const int nth) {
-#ifdef _OPENMP
   volatile int8_t *state = (int8_t *)calloc(nth, 1);
   int th=0;
 #pragma omp parallel for
@@ -177,7 +172,6 @@ static void startAllThreads(const int nth) {
     }
   }
   free((void *)state);
-#endif
 }
 
 // Dispatcher
@@ -214,12 +208,7 @@ static void dispatch(SleefDFT *p, const int N, real *d, const real *s, const int
 
 // Transposer
 
-#if defined(__GNUC__) && __GNUC__ < 5
-// This is another workaround of a bug in gcc-4
-#define LOG2BS 3
-#else
 #define LOG2BS 4
-#endif
 
 #define BS (1 << LOG2BS)
 #define TRANSPOSE_BLOCK(y2) do {					\
@@ -254,7 +243,6 @@ static void transpose(real *RESTRICT ALIGNED(256) d, real *RESTRICT ALIGNED(256)
 	  row[y2] = *(row_t *)&s[(((y+y2) << log2m)+x)*2];
 	}
 
-#if LOG2BS == 4
 	TRANSPOSE_BLOCK( 0); TRANSPOSE_BLOCK( 1);
 	TRANSPOSE_BLOCK( 2); TRANSPOSE_BLOCK( 3);
 	TRANSPOSE_BLOCK( 4); TRANSPOSE_BLOCK( 5);
@@ -263,15 +251,7 @@ static void transpose(real *RESTRICT ALIGNED(256) d, real *RESTRICT ALIGNED(256)
 	TRANSPOSE_BLOCK(10); TRANSPOSE_BLOCK(11);
 	TRANSPOSE_BLOCK(12); TRANSPOSE_BLOCK(13);
 	TRANSPOSE_BLOCK(14); TRANSPOSE_BLOCK(15);
-#else
-	for(int y2=0;y2<BS;y2++) {
-	  for(int x2=y2+1;x2<BS;x2++) {
-	    element_t r = *(element_t *)&row[y2].r[x2*2+0];
-	    *(element_t *)&row[y2].r[x2*2+0] = *(element_t *)&row[x2].r[y2*2+0];
-	    *(element_t *)&row[x2].r[y2*2+0] = r;
-	  }
-	}
-#endif
+
 	for(int y2=0;y2<BS;y2++) {
 	  *(row_t *)&d[(((x+y2) << log2n)+y)*2] = row[y2];
 	}
@@ -280,7 +260,6 @@ static void transpose(real *RESTRICT ALIGNED(256) d, real *RESTRICT ALIGNED(256)
   }
 }
 
-#ifdef _OPENMP
 static void transposeMT(real *RESTRICT ALIGNED(256) d, real *RESTRICT ALIGNED(256) s, int log2n, int log2m) {
   if (log2n < LOG2BS || log2m < LOG2BS) {
     for(int y=0;y<(1 << log2n);y++) {
@@ -308,7 +287,6 @@ static void transposeMT(real *RESTRICT ALIGNED(256) d, real *RESTRICT ALIGNED(25
 	  row[y2] = *(row_t *)&s[(((y+y2) << log2m)+x)*2];
 	}
 
-#if LOG2BS == 4
 	TRANSPOSE_BLOCK( 0); TRANSPOSE_BLOCK( 1);
 	TRANSPOSE_BLOCK( 2); TRANSPOSE_BLOCK( 3);
 	TRANSPOSE_BLOCK( 4); TRANSPOSE_BLOCK( 5);
@@ -317,15 +295,7 @@ static void transposeMT(real *RESTRICT ALIGNED(256) d, real *RESTRICT ALIGNED(25
 	TRANSPOSE_BLOCK(10); TRANSPOSE_BLOCK(11);
 	TRANSPOSE_BLOCK(12); TRANSPOSE_BLOCK(13);
 	TRANSPOSE_BLOCK(14); TRANSPOSE_BLOCK(15);
-#else
-	for(int y2=0;y2<BS;y2++) {
-	  for(int x2=y2+1;x2<BS;x2++) {
-	    element_t r = *(element_t *)&row[y2].r[x2*2+0];
-	    *(element_t *)&row[y2].r[x2*2+0] = *(element_t *)&row[x2].r[y2*2+0];
-	    *(element_t *)&row[x2].r[y2*2+0] = r;
-	  }
-	}
-#endif
+
 	for(int y2=0;y2<BS;y2++) {
 	  *(row_t *)&d[(((x+y2) << log2n)+y)*2] = row[y2];
 	}
@@ -333,7 +303,6 @@ static void transposeMT(real *RESTRICT ALIGNED(256) d, real *RESTRICT ALIGNED(25
     }
   }
 }
-#endif // #ifdef _OPENMP
 
 // Table generator
 
@@ -686,11 +655,7 @@ static void searchForBestPath(SleefDFT *p) {
     const real *s = p->in  == NULL ? (s2 = (real *)memset(Sleef_malloc((2 << p->log2len) * sizeof(real)), 0, sizeof(real) * (2 << p->log2len))) : (const real *)p->in;
     real       *d = p->out == NULL ? (d2 = (real *)memset(Sleef_malloc((2 << p->log2len) * sizeof(real)), 0, sizeof(real) * (2 << p->log2len))) : (real *)p->out;
 
-#ifdef _OPENMP
     const int tn = omp_get_thread_num();
-#else
-    const int tn = 0;
-#endif
 
     real *t[] = { (real *)p->x1[tn], (real *)p->x0[tn], d };
 
@@ -807,11 +772,7 @@ static void measureBut(SleefDFT *p) {
 
   //
 
-#ifdef _OPENMP
   const int tn = omp_get_thread_num();
-#else
-  const int tn = 0;
-#endif
 
   real *s = (real *)memset(p->x0[tn], 0, sizeof(real) * (2 << p->log2len));
   real *d = (real *)memset(p->x1[tn], 0, sizeof(real) * (2 << p->log2len));
@@ -843,9 +804,8 @@ static void measureBut(SleefDFT *p) {
 	    if (p->vecwidth > (1 << N)) continue;
 	    if ((config & CONFIG_MT) != 0) {
 	      int i1=0;
-#ifdef _OPENMP
+
 #pragma omp parallel for
-#endif
 	      for(i1=0;i1 < (1 << (p->log2len-N-p->log2vecwidth));i1++) {
 		int i0 = i1 << p->log2vecwidth;
 		p->perm[level][i1] = 2*perm(p->log2len, i0, p->log2len-level, p->log2len-(level-N));
@@ -869,9 +829,8 @@ static void measureBut(SleefDFT *p) {
 	    if ((int)p->log2len - (int)level < p->log2vecwidth) continue;
 	    if ((config & CONFIG_MT) != 0) {
 	      int i1=0;
-#ifdef _OPENMP
+
 #pragma omp parallel for
-#endif
 	      for(i1=0;i1 < (1 << (p->log2len-N-p->log2vecwidth));i1++) {
 		int i0 = i1 << p->log2vecwidth;
 		p->perm[level][i1] = 2*perm(p->log2len, i0, p->log2len-level, p->log2len-(level-N));
@@ -1094,18 +1053,14 @@ static void measureTranspose(SleefDFT *p) {
 
   if ((p->mode & SLEEF_MODE_VERBOSE) != 0) printf("transpose NoMT(measured): %lld\n", (long long int)p->tmNoMT);
 
-#ifdef _OPENMP
   tm = Sleef_currentTimeMicros();
   for(int i=0;i<niter;i++) {
-    transposeMT(tBuf2, p->tBuf, p->log2hlen, p->log2vlen);
-    transposeMT(tBuf2, p->tBuf, p->log2vlen, p->log2hlen);
+    transposeMT(tBuf2, (real *)p->tBuf, p->log2hlen, p->log2vlen);
+    transposeMT(tBuf2, (real *)p->tBuf, p->log2vlen, p->log2hlen);
   }
   p->tmMT = Sleef_currentTimeMicros() - tm + 1;
 
   if ((p->mode & SLEEF_MODE_VERBOSE) != 0) printf("transpose   MT(measured): %lld\n", (long long int)p->tmMT);
-#else
-  p->tmMT = p->tmNoMT*2;
-#endif
   
   Sleef_free(tBuf2);
 
@@ -1136,12 +1091,7 @@ EXPORT SleefDFT *INIT(uint32_t n, const real *in, real *out, uint64_t mode) {
 
   if ((mode & SLEEF_MODE_ALT) != 0) p->mode = mode = mode ^ SLEEF_MODE_BACKWARD;
 
-#ifdef _OPENMP
   p->nThread = omp_thread_count();
-#else
-  p->nThread = 1;
-  p->mode2 &= ~SLEEF_MODE2_MT1D;
-#endif
 
   // ISA availability
 
@@ -1298,7 +1248,6 @@ EXPORT void EXECUTE(SleefDFT *p, const real *s0, real *d0) {
 
     real *tBuf = (real *)(p->tBuf);
 
-#ifdef _OPENMP
     if ((p->mode3 & SLEEF_MODE3_MT2D) != 0 &&
 	(((p->mode & SLEEF_MODE_DEBUG) == 0 && p->tmMT < p->tmNoMT) ||
 	 ((p->mode & SLEEF_MODE_DEBUG) != 0 && (rand() & 1))))
@@ -1317,9 +1266,7 @@ EXPORT void EXECUTE(SleefDFT *p, const real *s0, real *d0) {
 	}
 
 	transposeMT(d, tBuf, p->log2hlen, p->log2vlen);
-      } else
-#endif
-      {
+      } else {
 	for(int y=0;y<p->vlen;y++) {
 	  EXECUTE(p->instH, &s[p->hlen*2*y], &tBuf[p->hlen*2*y]);
 	}
@@ -1398,12 +1345,8 @@ EXPORT void EXECUTE(SleefDFT *p, const real *s0, real *d0) {
 
   //
 
-#ifdef _OPENMP
   const int tn = omp_get_thread_num();
   real *t[] = { (real *)p->x1[tn], (real *)p->x0[tn], d };
-#else
-  real *t[] = { (real *)p->x1[0], (real *)p->x0[0], d };
-#endif
   
   const real *lb = s;
   int nb = 0;

@@ -11,7 +11,7 @@ if (SLEEF_BUILD_BENCH)
   add_subdirectory("libm-benchmarks")
 endif()
 
-if (SLEEF_BUILD_DFT)
+if (SLEEF_BUILD_DFT AND COMPILER_SUPPORTS_OPENMP)
   add_subdirectory("dft")
   if (SLEEF_BUILD_TESTS)
     add_subdirectory("dft-tester")

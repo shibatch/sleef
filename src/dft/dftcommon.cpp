@@ -10,12 +10,8 @@
 #include <ctype.h>
 #include <inttypes.h>
 #include <assert.h>
-
 #include <math.h>
-
-#ifdef _OPENMP
 #include <omp.h>
-#endif
 
 #include "misc.h"
 #include "sleef.h"
@@ -179,13 +175,10 @@ char *archID = NULL;
 uint64_t planMode = SLEEF_PLAN_REFERTOENVVAR;
 ArrayMap *planMap = NULL;
 int planFilePathSet = 0, planFileLoaded = 0;
-#ifdef _OPENMP
 omp_lock_t planMapLock;
 int planMapLockInitialized = 0;
-#endif
 
 static void initPlanMapLock() {
-#ifdef _OPENMP
 #pragma omp critical
   {
     if (!planMapLockInitialized) {
@@ -193,7 +186,6 @@ static void initPlanMapLock() {
       omp_init_lock(&planMapLock);
     }
   }
-#endif
 }
 
 static void planMap_clear() {
@@ -332,16 +324,13 @@ int PlanManager_loadMeasurementResultsP(SleefDFT *p, int pathCat) {
 
   initPlanMapLock();
 
-#ifdef _OPENMP
   omp_set_lock(&planMapLock);
-#endif
+
   if (!planFileLoaded) loadPlanFromFile();
 
   int stat = planMap_getU64(keyButStat(p->baseTypeID, p->log2len, p->mode, pathCat+10));
   if (stat == 0) {
-#ifdef _OPENMP
     omp_unset_lock(&planMapLock);
-#endif
     return 0;
   }
 
@@ -356,9 +345,7 @@ int PlanManager_loadMeasurementResultsP(SleefDFT *p, int pathCat) {
   p->pathLen = 0;
   for(int j = p->log2len;j >= 0;j--) if (p->bestPath[j] != 0) p->pathLen++;
   
-#ifdef _OPENMP
   omp_unset_lock(&planMapLock);
-#endif
   return ret;
 }
 
@@ -367,15 +354,11 @@ void PlanManager_saveMeasurementResultsP(SleefDFT *p, int pathCat) {
 
   initPlanMapLock();
 
-#ifdef _OPENMP
   omp_set_lock(&planMapLock);
-#endif
   if (!planFileLoaded) loadPlanFromFile();
 
   if (planMap_getU64(keyButStat(p->baseTypeID, p->log2len, p->mode, pathCat+10)) != 0) {
-#ifdef _OPENMP
     omp_unset_lock(&planMapLock);
-#endif
     return;
   }
   
@@ -388,9 +371,7 @@ void PlanManager_saveMeasurementResultsP(SleefDFT *p, int pathCat) {
 
   if ((planMode & SLEEF_PLAN_READONLY) == 0) savePlanToFile();
 
-#ifdef _OPENMP
   omp_unset_lock(&planMapLock);
-#endif
 }
 
 int PlanManager_loadMeasurementResultsT(SleefDFT *p) {
@@ -398,17 +379,13 @@ int PlanManager_loadMeasurementResultsT(SleefDFT *p) {
 
   initPlanMapLock();
 
-#ifdef _OPENMP
   omp_set_lock(&planMapLock);
-#endif
   if (!planFileLoaded) loadPlanFromFile();
 
   p->tmNoMT = planMap_getU64(keyTrans(p->baseTypeID, p->log2hlen, p->log2vlen, 0));
   p->tmMT   = planMap_getU64(keyTrans(p->baseTypeID, p->log2hlen, p->log2vlen, 1));
   
-#ifdef _OPENMP
   omp_unset_lock(&planMapLock);
-#endif
   return p->tmNoMT != 0;
 }
 
@@ -417,9 +394,7 @@ void PlanManager_saveMeasurementResultsT(SleefDFT *p) {
 
   initPlanMapLock();
 
-#ifdef _OPENMP
   omp_set_lock(&planMapLock);
-#endif
   if (!planFileLoaded) loadPlanFromFile();
 
   planMap_putU64(keyTrans(p->baseTypeID, p->log2hlen, p->log2vlen, 0), p->tmNoMT);
@@ -427,7 +402,5 @@ void PlanManager_saveMeasurementResultsT(SleefDFT *p) {
   
   if ((planMode & SLEEF_PLAN_READONLY) == 0) savePlanToFile();
 
-#ifdef _OPENMP
   omp_unset_lock(&planMapLock);
-#endif
 }
