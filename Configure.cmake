@@ -930,10 +930,6 @@ if(SLEEF_SHOW_ERROR_LOG)
   endif()
 endif(SLEEF_SHOW_ERROR_LOG)
 
-if (MSVC OR SLEEF_CLANG_ON_WINDOWS)
-  set(COMPILER_SUPPORTS_OPENMP FALSE)   # At this time, OpenMP is not supported on MSVC
-endif()
-
 ##
 
 # Set common definitions
