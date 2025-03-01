@@ -18,7 +18,7 @@
 #include "misc.h"
 #include "common.h"
 #include "arraymap.h"
-#include "dftcommon.h"
+#include "dftcommon.hpp"
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -45,7 +45,9 @@ typedef Sleef_double2 sc_t;
 #define BUTF butf_double
 #define BUTB butb_double
 #define SINCOSPI Sleef_sincospi_u05
+extern "C" {
 #include "dispatchdp.h"
+}
 #elif BASETYPEID == 2
 typedef float real;
 typedef Sleef_float2 sc_t;
@@ -67,7 +69,9 @@ typedef Sleef_float2 sc_t;
 #define BUTF butf_float
 #define BUTB butb_float
 #define SINCOSPI Sleef_sincospif_u05
+extern "C" {
 #include "dispatchsp.h"
+}
 #else
 #error No BASETYPEID specified
 #endif
@@ -165,7 +169,7 @@ static int omp_thread_count() {
 
 static void startAllThreads(const int nth) {
 #ifdef _OPENMP
-  volatile int8_t *state = calloc(nth, 1);
+  volatile int8_t *state = (int8_t *)calloc(nth, 1);
   int th=0;
 #pragma omp parallel for
   for(th=0;th<nth;th++) {
@@ -196,18 +200,18 @@ static void dispatch(SleefDFT *p, const int N, real *d, const real *s, const int
     assert(p->vecwidth <= (1 << N));
     if ((p->mode & SLEEF_MODE_BACKWARD) == 0) {
       void (*func)(real *, uint32_t *, const real *, const int, const real *, const int) = TBUTF[config][p->isa][N];
-      (*func)(d, p->perm[level], s, log2len-N, p->tbl[N][level], K);
+      (*func)(d, p->perm[level], s, log2len-N, (const real *)p->tbl[N][level], K);
     } else {
       void (*func)(real *, uint32_t *, const real *, const int, const real *, const int) = TBUTB[config][p->isa][N];
-      (*func)(d, p->perm[level], s, log2len-N, p->tbl[N][level], K);
+      (*func)(d, p->perm[level], s, log2len-N, (const real *)p->tbl[N][level], K);
     }
   } else {
     if ((p->mode & SLEEF_MODE_BACKWARD) == 0) {
       void (*func)(real *, uint32_t *, const int, const real *, const int, const real *, const int) = BUTF[config][p->isa][N];
-      (*func)(d, p->perm[level], log2len-level, s, log2len-N, p->tbl[N][level], K);
+      (*func)(d, p->perm[level], log2len-level, s, log2len-N, (const real *)p->tbl[N][level], K);
     } else {
       void (*func)(real *, uint32_t *, const int, const real *, const int, const real *, const int) = BUTB[config][p->isa][N];
-      (*func)(d, p->perm[level], log2len-level, s, log2len-N, p->tbl[N][level], K);
+      (*func)(d, p->perm[level], log2len-level, s, log2len-N, (const real *)p->tbl[N][level], K);
     }
   }
 }
@@ -507,12 +511,12 @@ typedef struct {
 } ks_t;
 
 static ks_t *ksInit(SleefDFT *p) {
-  ks_t *q = calloc(1, sizeof(ks_t));
+  ks_t *q = (ks_t *)calloc(1, sizeof(ks_t));
   q->p = p;
   q->heapSize = 10;
-  q->heap = calloc(q->heapSize, sizeof(int)*MAXPATHLEN);
-  q->heapCost = calloc(q->heapSize, sizeof(uint64_t));
-  q->heapLen = calloc(q->heapSize, sizeof(int));
+  q->heap = (int *)calloc(q->heapSize, sizeof(int)*MAXPATHLEN);
+  q->heapCost = (uint64_t *)calloc(q->heapSize, sizeof(uint64_t));
+  q->heapLen = (int *)calloc(q->heapSize, sizeof(int));
   return q;
 }
 
@@ -532,9 +536,9 @@ static void ksAddPath(ks_t *q, int *path, int pathLen, uint64_t cost) {
 
   if (q->nPathsInHeap == q->heapSize) {
     q->heapSize *= 2;
-    q->heap = realloc(q->heap, q->heapSize * sizeof(int)*MAXPATHLEN);
-    q->heapCost = realloc(q->heapCost, q->heapSize * sizeof(uint64_t));
-    q->heapLen = realloc(q->heapLen, q->heapSize * sizeof(int));
+    q->heap = (int *)realloc(q->heap, q->heapSize * sizeof(int)*MAXPATHLEN);
+    q->heapCost = (uint64_t *)realloc(q->heapCost, q->heapSize * sizeof(uint64_t));
+    q->heapLen = (int *)realloc(q->heapLen, q->heapSize * sizeof(int));
   }
 
   for(int i=0;i<pathLen;i++) q->heap[q->nPathsInHeap * MAXPATHLEN + i] = path[i];
@@ -683,8 +687,8 @@ static void searchForBestPath(SleefDFT *p) {
     const int niter =  1 + 5000000 / ((1 << p->log2len) + 1);
 
     real *s2 = NULL, *d2 = NULL;
-    const real *s = p->in  == NULL ? (s2 = (real *)memset(Sleef_malloc((2 << p->log2len) * sizeof(real)), 0, sizeof(real) * (2 << p->log2len))) : p->in;
-    real       *d = p->out == NULL ? (d2 = (real *)memset(Sleef_malloc((2 << p->log2len) * sizeof(real)), 0, sizeof(real) * (2 << p->log2len))) : p->out;
+    const real *s = p->in  == NULL ? (s2 = (real *)memset(Sleef_malloc((2 << p->log2len) * sizeof(real)), 0, sizeof(real) * (2 << p->log2len))) : (const real *)p->in;
+    real       *d = p->out == NULL ? (d2 = (real *)memset(Sleef_malloc((2 << p->log2len) * sizeof(real)), 0, sizeof(real) * (2 << p->log2len))) : (real *)p->out;
 
 #ifdef _OPENMP
     const int tn = omp_get_thread_num();
@@ -692,7 +696,7 @@ static void searchForBestPath(SleefDFT *p) {
     const int tn = 0;
 #endif
 
-    real *t[] = { p->x1[tn], p->x0[tn], d };
+    real *t[] = { (real *)p->x1[tn], (real *)p->x0[tn], d };
 
     for(int mt=0;mt<2;mt++) {
       for(int i=q->nPaths-1;i>=0;i--) {
@@ -1087,8 +1091,8 @@ static void measureTranspose(SleefDFT *p) {
 
   tm = Sleef_currentTimeMicros();
   for(int i=0;i<niter;i++) {
-    transpose(tBuf2, p->tBuf, p->log2hlen, p->log2vlen);
-    transpose(tBuf2, p->tBuf, p->log2vlen, p->log2hlen);
+    transpose(tBuf2, (real *)p->tBuf, p->log2hlen, p->log2vlen);
+    transpose(tBuf2, (real *)p->tBuf, p->log2vlen, p->log2hlen);
   }
   p->tmNoMT = Sleef_currentTimeMicros() - tm + 1;
 
@@ -1169,8 +1173,8 @@ EXPORT SleefDFT *INIT(uint32_t n, const real *in, real *out, uint64_t mode) {
     p->perm[level] = (uint32_t *)Sleef_malloc(sizeof(uint32_t) * ((1 << p->log2len) + 8));
   }
 
-  p->x0 = malloc(sizeof(real *) * p->nThread);
-  p->x1 = malloc(sizeof(real *) * p->nThread);
+  p->x0 = (void **)malloc(sizeof(real *) * p->nThread);
+  p->x1 = (void **)malloc(sizeof(real *) * p->nThread);
 
   for(int i=0;i<p->nThread;i++) {
     p->x0[i] = (real *)Sleef_malloc(sizeof(real) * 2 * n);
@@ -1290,8 +1294,8 @@ EXPORT SleefDFT *INIT2D(uint32_t vlen, uint32_t hlen, const real *in, real *out,
 EXPORT void EXECUTE(SleefDFT *p, const real *s0, real *d0) {
   assert(p != NULL && (p->magic == MAGIC || p->magic == MAGIC2D));
 
-  const real *s = s0 == NULL ? p->in : s0;
-  real *d = d0 == NULL ? p->out : d0;
+  const real *s = s0 == NULL ? (const real *)p->in : s0;
+  real *d = d0 == NULL ? (real *)p->out : d0;
 
   if (p->magic == MAGIC2D) {
   // S -> T -> D -> T -> D
@@ -1400,9 +1404,9 @@ EXPORT void EXECUTE(SleefDFT *p, const real *s0, real *d0) {
 
 #ifdef _OPENMP
   const int tn = omp_get_thread_num();
-  real *t[] = { p->x1[tn], p->x0[tn], d };
+  real *t[] = { (real *)p->x1[tn], (real *)p->x0[tn], d };
 #else
-  real *t[] = { p->x1[0], p->x0[0], d };
+  real *t[] = { (real *)p->x1[0], (real *)p->x0[0], d };
 #endif
   
   const real *lb = s;
@@ -1414,7 +1418,7 @@ EXPORT void EXECUTE(SleefDFT *p, const real *s0, real *d0) {
   
   if ((p->mode & SLEEF_MODE_REAL) != 0 &&
       ((p->mode & SLEEF_MODE_BACKWARD) != 0) != ((p->mode & SLEEF_MODE_ALT) != 0)) {
-    (*REALSUB1[p->isa])(t[nb+1], s, p->log2len, p->rtCoef0, p->rtCoef1, (p->mode & SLEEF_MODE_ALT) == 0);
+    (*REALSUB1[p->isa])(t[nb+1], s, p->log2len, (const real *)p->rtCoef0, (const real *)p->rtCoef1, (p->mode & SLEEF_MODE_ALT) == 0);
     if ((p-> mode & SLEEF_MODE_ALT) == 0) t[nb+1][(1 << p->log2len)+1] = -s[(1 << p->log2len)+1] * 2;
     lb = t[nb+1];
     nb = (nb + 1) & 1;
@@ -1430,7 +1434,7 @@ EXPORT void EXECUTE(SleefDFT *p, const real *s0, real *d0) {
 
   if ((p->mode & SLEEF_MODE_REAL) != 0 && 
       ((p->mode & SLEEF_MODE_BACKWARD) == 0) != ((p->mode & SLEEF_MODE_ALT) != 0)) {
-    (*REALSUB0[p->isa])(d, lb, p->log2len, p->rtCoef0, p->rtCoef1);
+    (*REALSUB0[p->isa])(d, lb, p->log2len, (const real *)p->rtCoef0, (const real *)p->rtCoef1);
     if ((p->mode & SLEEF_MODE_ALT) == 0) {
       d[(1 << p->log2len)+1] = -d[(1 << p->log2len)+1];
       d[(2 << p->log2len)+0] =  d[1];

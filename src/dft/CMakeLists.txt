@@ -296,7 +296,7 @@ endforeach()
 
 # Target dftcommon.o
 
-add_library(dftcommon_obj OBJECT dftcommon.c dftcommon.h ${CMAKE_CURRENT_BINARY_DIR}/dispatchparam.h ${sleef_BINARY_DIR}/include/sleef.h)
+add_library(dftcommon_obj OBJECT dftcommon.cpp dftcommon.hpp ${CMAKE_CURRENT_BINARY_DIR}/dispatchparam.h ${sleef_BINARY_DIR}/include/sleef.h)
 add_dependencies(dftcommon_obj ${TARGET_HEADERS} dispatchparam.h_generated)
 set_source_files_properties(${sleef_BINARY_DIR}/include/sleef.h PROPERTIES GENERATED TRUE)
 set_target_properties(dftcommon_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
@@ -309,7 +309,7 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
   
   string(CONCAT G "dft" ${ST} "_obj")                       # G is "dftdp_obj"
   string(CONCAT S "dispatch" ${ST} ".h")                    # S is "dispatchdp.h"
-  add_library(${G} OBJECT dft.c dftcommon.h ${S})
+  add_library(${G} OBJECT dft.cpp dftcommon.hpp ${S})
   string(CONCAT SG ${S} "_generated")                       # SG is "dispatchdp.h_generated"
   add_dependencies(${G} ${SG} ${TARGET_HEADERS})
   set_target_properties(${G} PROPERTIES ${COMMON_TARGET_PROPERTIES})

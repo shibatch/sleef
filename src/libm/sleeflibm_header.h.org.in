@@ -16,6 +16,11 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #if defined (__GNUC__) || defined (__clang__) || defined(__INTEL_COMPILER)
 #define SLEEF_CONST __attribute__((const))
 #define SLEEF_INLINE __attribute__((always_inline))
@@ -191,11 +196,6 @@ typedef union {
   };
   Sleef_quad s[2];
 } Sleef_quad2;
-#endif
-
-#ifdef __cplusplus
-extern "C"
-{
 #endif
 
 SLEEF_PRAGMA_OMP_SIMD_DP SLEEF_IMPORT SLEEF_CONST double Sleef_sin_u35(double);

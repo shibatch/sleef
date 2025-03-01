@@ -22,10 +22,12 @@
 
 #define IMPORT_IS_EXPORT
 #include "sleefdft.h"
+extern "C" {
 #include "dispatchparam.h"
-#include "dftcommon.h"
-#include "common.h"
 #include "arraymap.h"
+}
+#include "dftcommon.hpp"
+#include "common.h"
 
 #define MAGIC_FLOAT 0x31415926
 #define MAGIC_DOUBLE 0x27182818
@@ -210,7 +212,7 @@ EXPORT void SleefDFT_setPlanFilePath(const char *path, const char *arch, uint64_
 
   if (dftPlanFilePath != NULL) free(dftPlanFilePath);
   if (path != NULL) {
-    dftPlanFilePath = malloc(strlen(path)+10);
+    dftPlanFilePath = (char *)malloc(strlen(path)+10);
     strcpy(dftPlanFilePath, path);
   } else {
     dftPlanFilePath = NULL;
@@ -218,7 +220,7 @@ EXPORT void SleefDFT_setPlanFilePath(const char *path, const char *arch, uint64_
 
   if (archID != NULL) free(archID);
   if (arch == NULL) arch = Sleef_getCpuIdString();
-  archID = malloc(strlen(arch)+10);
+  archID = (char *)malloc(strlen(arch)+10);
   strcpy(archID, arch);
 
   planMode = mode;
@@ -311,7 +313,7 @@ static uint64_t keyPathConfig(int baseTypeID, int log2len, int dir, int level, i
 }
 
 static uint64_t planMap_getU64(uint64_t key) {
-  char *s = ArrayMap_get(planMap, key);
+  char *s = (char *)ArrayMap_get(planMap, key);
   if (s == NULL) return 0;
   uint64_t ret;
   if (sscanf(s, "%" SCNx64, &ret) != 1) return 0;
@@ -319,9 +321,9 @@ static uint64_t planMap_getU64(uint64_t key) {
 }
 
 static void planMap_putU64(uint64_t key, uint64_t value) {
-  char *s = malloc(100);
+  char *s = (char *)malloc(100);
   sprintf(s, "%" PRIx64, value);
-  s = ArrayMap_put(planMap, key, s);
+  s = (char *)ArrayMap_put(planMap, key, s);
   if (s != NULL) free(s);
 }
 

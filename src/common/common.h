@@ -5,5 +5,16 @@
 
 #ifndef __COMMON_H__
 #define __COMMON_H__
-char *Sleef_getCpuIdString();
+
+#ifdef __cplusplus
+extern "C"
+{
 #endif
+
+char *Sleef_getCpuIdString();
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // #ifndef __COMMON_H__
