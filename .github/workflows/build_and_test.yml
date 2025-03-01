@@ -19,8 +19,6 @@ env:
     -DSLEEF_SHOW_CONFIG=1
     -DSLEEF_BUILD_GNUABI_LIBS=ON
     -DSLEEF_BUILD_INLINE_HEADERS=ON
-    -DSLEEF_BUILD_DFT=OFF
-    -DSLEEF_ENFORCE_DFT=OFF
     -DSLEEF_BUILD_QUAD=ON
     -DSLEEF_BUILD_SCALAR_LIB=ON
     -DSLEEF_BUILD_STATIC_TEST_BINS=ON
@@ -58,6 +56,7 @@ jobs:
         if: ${{ matrix.os == 'ubuntu-24.04' }}
         run: |
           sudo apt-get install -y -qq g++-${GCC_VERSION}
+          export EXTRA_CMAKE_FLAGS="-DSLEEF_BUILD_DFT=ON -DSLEEF_ENFORCE_DFT=ON "
 
       - name: Install llvm
         run: |
@@ -69,6 +68,7 @@ jobs:
         if: ${{ matrix.os == 'ubuntu-24.04' }}
         run: |
             export EXTRA_CMAKE_FLAGS="\
+	      $EXTRA_CMAKE_FLAGS \
               -DSLEEF_ENFORCE_SSE2=ON -DSLEEF_ENFORCE_SSE4=ON \
               -DSLEEF_ENFORCE_AVX=ON -DSLEEF_ENFORCE_AVX2=ON \
               -DSLEEF_ENFORCE_AVX512F=ON -DSLEEF_ENFORCE_FMA4=ON"
