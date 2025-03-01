@@ -213,7 +213,7 @@ EXPORT void SleefDFT_setPlanFilePath(const char *path, const char *arch, uint64_
   if (dftPlanFilePath != NULL) free(dftPlanFilePath);
   if (path != NULL) {
     dftPlanFilePath = (char *)malloc(strlen(path)+10);
-    strcpy(dftPlanFilePath, path);
+    strncpy(dftPlanFilePath, path, strlen(path)+1);
   } else {
     dftPlanFilePath = NULL;
   }
@@ -221,7 +221,7 @@ EXPORT void SleefDFT_setPlanFilePath(const char *path, const char *arch, uint64_
   if (archID != NULL) free(archID);
   if (arch == NULL) arch = Sleef_getCpuIdString();
   archID = (char *)malloc(strlen(arch)+10);
-  strcpy(archID, arch);
+  strncpy(archID, arch, strlen(arch)+1);
 
   planMode = mode;
   planFilePathSet = 1;
