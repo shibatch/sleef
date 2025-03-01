@@ -66,6 +66,7 @@ jobs:
             ninja:p
             openssl:p
             pkgconf:p
+	    llvm-openmp:p
 
       - uses: actions/checkout@v4.1.1
         with:
@@ -141,6 +142,7 @@ jobs:
             ninja:p
             openssl:p
             pkgconf:p
+	    llvm-openmp:p
 
       - uses: actions/checkout@v4.1.1
         with:

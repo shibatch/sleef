@@ -57,15 +57,17 @@ jobs:
       - name: Install gcc
         if: ${{ matrix.os == 'ubuntu-24.04' }}
         run: |
-          sudo apt-get install -y -qq gcc-${GCC_VERSION}
+          sudo apt-get install -y -qq g++-${GCC_VERSION}
 
       - name: Install llvm
         run: |
-          curl -o llvm.sh https://apt.llvm.org/llvm.sh
-          chmod u+x llvm.sh
-          sudo ./llvm.sh ${LLVM_VERSION}
-          sudo ln -srf $(which clang-${LLVM_VERSION}) /usr/bin/clang
-          rm llvm.sh
+          # curl -o llvm.sh https://apt.llvm.org/llvm.sh
+          # chmod u+x llvm.sh
+          # sudo ./llvm.sh ${LLVM_VERSION}
+          # sudo ln -srf $(which clang-${LLVM_VERSION}) /usr/bin/clang
+          # rm llvm.sh
+          sudo apt-get update -y -qq
+          sudo apt-get install -y -qq clang libomp-dev
         if: ${{ matrix.compiler == 'llvm' }}
 
       - name: Set x86_64 config
