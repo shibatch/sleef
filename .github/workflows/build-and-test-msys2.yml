@@ -14,8 +14,8 @@ permissions:
 
 env:
   COMMON_CMAKE_FLAGS: >
-    -DSLEEF_BUILD_DFT=ON
-    -DSLEEF_ENFORCE_DFT=TRUE
+    -DSLEEF_BUILD_DFT=True
+    -DSLEEF_ENFORCE_DFT=True
     -DSLEEF_BUILD_GNUABI_LIBS=ON
     -DSLEEF_BUILD_QUAD=ON
     -DSLEEF_BUILD_SCALAR_LIB=ON
@@ -66,7 +66,7 @@ jobs:
             ninja:p
             openssl:p
             pkgconf:p
-	    llvm-openmp:p
+            llvm-openmp:p
 
       - uses: actions/checkout@v4.1.1
         with:
@@ -142,7 +142,7 @@ jobs:
             ninja:p
             openssl:p
             pkgconf:p
-	    llvm-openmp:p
+            llvm-openmp:p
 
       - uses: actions/checkout@v4.1.1
         with:

@@ -92,6 +92,13 @@ option(SLEEF_ENFORCE_OPENMP "Build fails if OPENMP is not supported by the compi
 
 #
 
+if ((NOT "${CMAKE_C_COMPILER_ID}" STREQUAL "${CMAKE_CXX_COMPILER_ID}") OR
+    (NOT CMAKE_C_COMPILER_VERSION VERSION_EQUAL CMAKE_CXX_COMPILER_VERSION))
+  message(FATAL_ERROR "Different versions of C compiler and C++ compiler")
+endif()
+
+#
+
 if (SLEEF_BUILD_BENCH_REF)
   if (NOT SLEEF_BUILD_BENCH)
     message(FATAL_ERROR "SLEEF_BUILD_BENCH must be on when SLEEF_BUILD_BENCH_REF is enabled.")

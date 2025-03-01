@@ -20,7 +20,7 @@ env:
     -DSLEEF_BUILD_GNUABI_LIBS=ON
     -DSLEEF_BUILD_INLINE_HEADERS=ON
     -DSLEEF_BUILD_DFT=ON
-    -DSLEEF_ENFORCE_DFT=TRUE
+    -DSLEEF_BUILD_ENFORCE_DFT=ON
     -DSLEEF_BUILD_QUAD=ON
     -DSLEEF_BUILD_SCALAR_LIB=ON
     -DSLEEF_BUILD_STATIC_TEST_BINS=ON
@@ -49,7 +49,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update -y -qq
-          sudo apt-get install -y -qq build-essential cmake curl ninja-build libgmp-dev libmpfr-dev libssl-dev
+          sudo apt-get install -y -qq build-essential cmake ninja-build libgmp-dev libmpfr-dev libssl-dev
 
       # Needed for llvm builds as well for target libraries
       # Use default gcc version on Arm-hosted runners, ie. gcc 11,
@@ -61,12 +61,6 @@ jobs:
 
       - name: Install llvm
         run: |
-          # curl -o llvm.sh https://apt.llvm.org/llvm.sh
-          # chmod u+x llvm.sh
-          # sudo ./llvm.sh ${LLVM_VERSION}
-          # sudo ln -srf $(which clang-${LLVM_VERSION}) /usr/bin/clang
-          # rm llvm.sh
-          sudo apt-get update -y -qq
           sudo apt-get install -y -qq clang libomp-dev
         if: ${{ matrix.compiler == 'llvm' }}
 
@@ -121,7 +115,7 @@ jobs:
           persist-credentials: false
 
       - name: Install dependencies
-        run: sudo apt-get update -y -qq && sudo apt-get install -y -qq cmake libgmp-dev libmpfr-dev libssl-dev
+        run: sudo apt-get update -y -qq && sudo apt-get install -y -qq cmake libgmp-dev libmpfr-dev libssl-dev libomp-dev
 
       - name: Print host CPU info
         run: |
