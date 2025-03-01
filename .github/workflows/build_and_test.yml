@@ -56,7 +56,6 @@ jobs:
         if: ${{ matrix.os == 'ubuntu-24.04' }}
         run: |
           sudo apt-get install -y -qq g++-${GCC_VERSION}
-          export EXTRA_CMAKE_FLAGS="-DSLEEF_BUILD_DFT=ON -DSLEEF_ENFORCE_DFT=ON "
 
       - name: Install llvm
         run: |
@@ -68,7 +67,6 @@ jobs:
         if: ${{ matrix.os == 'ubuntu-24.04' }}
         run: |
             export EXTRA_CMAKE_FLAGS="\
-	      $EXTRA_CMAKE_FLAGS \
               -DSLEEF_ENFORCE_SSE2=ON -DSLEEF_ENFORCE_SSE4=ON \
               -DSLEEF_ENFORCE_AVX=ON -DSLEEF_ENFORCE_AVX2=ON \
               -DSLEEF_ENFORCE_AVX512F=ON -DSLEEF_ENFORCE_FMA4=ON"
