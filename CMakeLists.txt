@@ -23,6 +23,9 @@ option(SLEEF_BUILD_BENCH "Bench will be built." OFF)
 option(SLEEF_BUILD_BENCH_REF "Benchmark script for reference (e.g. system libm) will be built." OFF)
 option(SLEEF_BUILD_INLINE_HEADERS "Build header for inlining whole SLEEF functions" OFF)
 
+option(SLEEF_ENFORCE_DFT "Build fails if DFT is not built" OFF)
+option(SLEEFDFT_ENABLE_STREAM "Streaming instructions are utilized in DFT." OFF)
+
 option(SLEEF_TEST_ALL_IUT "Perform tests on implementations with all vector extensions" OFF)
 option(SLEEF_SHOW_CONFIG "Show SLEEF configuration status messages." ON)
 option(SLEEF_SHOW_ERROR_LOG "Show cmake error log." OFF)
@@ -60,7 +63,7 @@ option(SLEEF_DISABLE_SSE2 "Disable SSE2" OFF)
 option(SLEEF_ENFORCE_SSE2 "Build fails if SSE2 is not supported by the compiler" OFF)
 option(SLEEF_DISABLE_SSE4 "Disable SSE4" OFF)
 option(SLEEF_ENFORCE_SSE4 "Build fails if SSE4 is not supported by the compiler" OFF)
-option(SLEEF_ENFORCE_AVX "Disable AVX" OFF)
+option(SLEEF_DISABLE_AVX "Disable AVX" OFF)
 option(SLEEF_ENFORCE_AVX "Build fails if AVX is not supported by the compiler" OFF)
 option(SLEEF_DISABLE_FMA4 "Disable FMA4" OFF)
 option(SLEEF_ENFORCE_FMA4 "Build fails if FMA4 is not supported by the compiler" OFF)
@@ -87,6 +90,13 @@ option(SLEEF_ENFORCE_CUDA "Build fails if CUDA is not supported" OFF)
 
 option(SLEEF_DISABLE_OPENMP "Disable OPENMP" OFF)
 option(SLEEF_ENFORCE_OPENMP "Build fails if OPENMP is not supported by the compiler" OFF)
+
+#
+
+if ((NOT "${CMAKE_C_COMPILER_ID}" STREQUAL "${CMAKE_CXX_COMPILER_ID}") OR
+    (NOT CMAKE_C_COMPILER_VERSION VERSION_EQUAL CMAKE_CXX_COMPILER_VERSION))
+  message(FATAL_ERROR "Different versions of C compiler and C++ compiler")
+endif()
 
 #
 

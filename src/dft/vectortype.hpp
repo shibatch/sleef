@@ -6,6 +6,10 @@
 #ifndef __VECTORTYPE_H__
 #define __VECTORTYPE_H__
 
+#if defined(__GNUC__)
+#pragma GCC diagnostic ignored "-Wattributes"
+#endif
+
 #include <math.h>
 #include "sleef.h"
 
@@ -55,10 +59,6 @@
 
 #ifdef ENABLE_VXE2
 #include "helpers390x_128.h"
-#endif
-
-#ifdef ENABLE_VECEXT
-#include "helpervecext.h"
 #endif
 
 #ifdef ENABLE_PUREC

@@ -14,11 +14,11 @@
 
 int main(int argc, char **argv) {
   if (argc < 3) {
-    fprintf(stderr, "Usage : %s <basetype> <unrollmax> <unrollmax2> <maxbutwidth> <isa> ...\n", argv[0]);
+    fprintf(stderr, "Usage : %s <base type> <unrollmax> <unrollmax2> <maxbutwidth> <isa> ...\n", argv[0]);
     exit(-1);
   }
 
-  const char *basetype = argv[1];
+  const char *baseType = argv[1];
   const int maxbutwidth = atoi(argv[2]);
   const int isastart = 3;
   const int isamax = argc - isastart;
@@ -32,7 +32,7 @@ int main(int argc, char **argv) {
   printf("#define MAXBUTWIDTH %d\n", maxbutwidth);
   printf("\n");
 
-  if (strcmp(basetype, "paramonly") == 0) exit(0);
+  if (strcmp(baseType, "paramonly") == 0) exit(0);
 
   printf("#define ISAMAX %d\n", isamax);
   printf("#define CONFIGMAX 4\n");
@@ -43,23 +43,23 @@ int main(int argc, char **argv) {
       if ((config & 1) != 0) continue;
 #endif
       for(int j=1;j<=maxbutwidth;j++) {
-	printf("void dft%df_%d_%s(real *, const real *, const int);\n", 1 << j, config, argv[k]);
-	printf("void dft%db_%d_%s(real *, const real *, const int);\n", 1 << j, config, argv[k]);
-	printf("void tbut%df_%d_%s(real *, uint32_t *, const real *, const int, const real *, const int);\n", 1 << j, config, argv[k]);
-	printf("void tbut%db_%d_%s(real *, uint32_t *, const real *, const int, const real *, const int);\n", 1 << j, config, argv[k]);
-	printf("void but%df_%d_%s(real *, uint32_t *, const int, const real *, const int, const real *, const int);\n", 1 << j, config, argv[k]);
-	printf("void but%db_%d_%s(real *, uint32_t *, const int, const real *, const int, const real *, const int);\n", 1 << j, config, argv[k]);
+	printf("void dft%df_%d_%s(%s *, const %s *, const int);\n", 1 << j, config, argv[k], baseType, baseType);
+	printf("void dft%db_%d_%s(%s *, const %s *, const int);\n", 1 << j, config, argv[k], baseType, baseType);
+	printf("void tbut%df_%d_%s(%s *, uint32_t *, const %s *, const int, const %s *, const int);\n", 1 << j, config, argv[k], baseType, baseType, baseType);
+	printf("void tbut%db_%d_%s(%s *, uint32_t *, const %s *, const int, const %s *, const int);\n", 1 << j, config, argv[k], baseType, baseType, baseType);
+	printf("void but%df_%d_%s(%s *, uint32_t *, const int, const %s *, const int, const %s *, const int);\n", 1 << j, config, argv[k], baseType, baseType, baseType);
+	printf("void but%db_%d_%s(%s *, uint32_t *, const int, const %s *, const int, const %s *, const int);\n", 1 << j, config, argv[k], baseType, baseType, baseType);
       }
     }
-    printf("void realSub0_%s(real *, const real *, const int, const real *, const real *);\n", argv[k]);
-    printf("void realSub1_%s(real *, const real *, const int, const real *, const real *, const int);\n", argv[k]);
+    printf("void realSub0_%s(%s *, const %s *, const int, const %s *, const %s *);\n", argv[k], baseType, baseType, baseType, baseType);
+    printf("void realSub1_%s(%s *, const %s *, const int, const %s *, const %s *, const int);\n", argv[k], baseType, baseType, baseType, baseType);
     printf("int getInt_%s(int);\n", argv[k]);
     printf("const void *getPtr_%s(int);\n", argv[k]);
   }
 
   printf("\n");
 
-  printf("void (*dftf_%s[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, const real *, const int) = {\n", basetype);
+  printf("void (*dftf_%s[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(%s *, const %s *, const int) = {\n", baseType, baseType, baseType);
   for(int config=0;config<4;config++) {
     printf("  {\n");
     for(int k=isastart;k<argc;k++) {
@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
   }
   printf("};\n\n");
 
-  printf("void (*dftb_%s[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, const real *, const int) = {\n", basetype);
+  printf("void (*dftb_%s[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(%s *, const %s *, const int) = {\n", baseType, baseType, baseType);
   for(int config=0;config<4;config++) {
     printf("  {\n");
     for(int k=isastart;k<argc;k++) {
@@ -99,7 +99,7 @@ int main(int argc, char **argv) {
   }
   printf("};\n\n");
 
-  printf("void (*tbutf_%s[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const real *, const int, const real *, const int) = {\n", basetype);
+  printf("void (*tbutf_%s[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(%s *, uint32_t *, const %s *, const int, const %s *, const int) = {\n", baseType, baseType, baseType, baseType);
   for(int config=0;config<4;config++) {
     printf("  {\n");
     for(int k=isastart;k<argc;k++) {
@@ -117,7 +117,7 @@ int main(int argc, char **argv) {
   }
   printf("};\n\n");
 
-  printf("void (*tbutb_%s[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const real *, const int, const real *, const int) = {\n", basetype);
+  printf("void (*tbutb_%s[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(%s *, uint32_t *, const %s *, const int, const %s *, const int) = {\n", baseType, baseType, baseType, baseType);
   for(int config=0;config<4;config++) {
     printf("  {\n");
     for(int k=isastart;k<argc;k++) {
@@ -135,7 +135,7 @@ int main(int argc, char **argv) {
   }
   printf("};\n\n");
 
-  printf("void (*butf_%s[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const int, const real *, const int, const real *, const int) = {\n", basetype);
+  printf("void (*butf_%s[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(%s *, uint32_t *, const int, const %s *, const int, const %s *, const int) = {\n", baseType, baseType, baseType, baseType);
   for(int config=0;config<4;config++) {
     printf("  {\n");
     for(int k=isastart;k<argc;k++) {
@@ -153,7 +153,7 @@ int main(int argc, char **argv) {
   }
   printf("};\n\n");
 
-  printf("void (*butb_%s[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const int, const real *, const int, const real *, const int) = {\n", basetype);
+  printf("void (*butb_%s[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(%s *, uint32_t *, const int, const %s *, const int, const %s *, const int) = {\n", baseType, baseType, baseType, baseType);
   for(int config=0;config<4;config++) {
     printf("  {\n");
     for(int k=isastart;k<argc;k++) {
@@ -173,20 +173,20 @@ int main(int argc, char **argv) {
 
   //
 
-  printf("void (*realSub0_%s[ISAMAX])(real *, const real *, const int, const real *, const real *) = {\n  ", basetype);
+  printf("void (*realSub0_%s[ISAMAX])(%s *, const %s *, const int, const %s *, const %s *) = {\n  ", baseType, baseType, baseType, baseType, baseType);
   for(int k=isastart;k<argc;k++) printf("realSub0_%s, ", argv[k]);
   printf("\n};\n\n");
 
-  printf("void (*realSub1_%s[ISAMAX])(real *, const real *, const int, const real *, const real *, const int) = {\n  ", basetype);
+  printf("void (*realSub1_%s[ISAMAX])(%s *, const %s *, const int, const %s *, const %s *, const int) = {\n  ", baseType, baseType, baseType, baseType, baseType);
   for(int k=isastart;k<argc;k++) printf("realSub1_%s, ", argv[k]);
   printf("\n};\n\n");
 
-  printf("int (*getInt_%s[16])(int) = {\n  ", basetype);
+  printf("int (*getInt_%s[16])(int) = {\n  ", baseType);
   for(int k=isastart;k<argc;k++) printf("getInt_%s, ", argv[k]);
   for(int k=0;k<16-(argc-isastart);k++) printf("NULL, ");
   printf("\n};\n\n");
 
-  printf("const void *(*getPtr_%s[16])(int) = {\n  ", basetype);
+  printf("const void *(*getPtr_%s[16])(int) = {\n  ", baseType);
   for(int k=isastart;k<argc;k++) printf("getPtr_%s, ", argv[k]);
   for(int k=0;k<16-(argc-isastart);k++) printf("NULL, ");
   printf("\n};\n\n");

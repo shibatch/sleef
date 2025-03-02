@@ -581,7 +581,6 @@ endif()
 
 # AVX512F
 
-
 if(SLEEF_ARCH_X86 AND NOT SLEEF_DISABLE_AVX512F)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_AVX512F}")
   CHECK_C_SOURCE_COMPILES("
@@ -800,6 +799,7 @@ endif()
 # OpenMP
 
 if(NOT SLEEF_DISABLE_OPENMP)
+  set(CMAKE_REQUIRED_FLAGS)
   find_package(OpenMP)
   # Check if compilation with OpenMP really succeeds
   # It might not succeed even though find_package(OpenMP) succeeds.
@@ -929,10 +929,6 @@ if(SLEEF_SHOW_ERROR_LOG)
     message("")
   endif()
 endif(SLEEF_SHOW_ERROR_LOG)
-
-if (MSVC OR SLEEF_CLANG_ON_WINDOWS)
-  set(COMPILER_SUPPORTS_OPENMP FALSE)   # At this time, OpenMP is not supported on MSVC
-endif()
 
 ##
 

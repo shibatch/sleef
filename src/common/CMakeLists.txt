@@ -32,12 +32,14 @@ else()
   target_link_libraries(test_psha ${SLEEF_OPENSSL_LIBRARIES})
   target_include_directories(test_psha PRIVATE ${SLEEF_OPENSSL_INCLUDE_DIR})
   add_test(NAME test_psha COMMAND test_psha)
+  set_tests_properties(test_psha PROPERTIES COST 2.0)
 
   add_executable(test_psha_capi test_psha2.cpp)
   target_compile_definitions(test_psha_capi PRIVATE TEST_CAPI=1)
   target_link_libraries(test_psha_capi ${SLEEF_OPENSSL_LIBRARIES})
   target_include_directories(test_psha_capi PRIVATE ${SLEEF_OPENSSL_INCLUDE_DIR})
   add_test(NAME test_psha_capi COMMAND test_psha_capi)
+  set_tests_properties(test_psha_capi PROPERTIES COST 2.0)
 endif()
 
 # Target TARGET_TESTERUTIL_OBJ

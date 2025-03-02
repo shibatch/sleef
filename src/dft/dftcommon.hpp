@@ -9,43 +9,41 @@
 
 #define MAXLOG2LEN 32
 
-typedef struct SleefDFT {
+struct SleefDFT {
   uint32_t magic;
   uint64_t mode, mode2, mode3;
   int baseTypeID;
   const void *in;
   void *out;
   
-  union {
-    struct {
-      uint32_t log2len;
+  //
 
-      void **tbl[MAXBUTWIDTH+1];
-      void *rtCoef0, *rtCoef1;
-      uint32_t **perm;
+  uint32_t log2len;
 
-      void **x0, **x1;
+  void **tbl[MAXBUTWIDTH+1];
+  void *rtCoef0, *rtCoef1;
+  uint32_t **perm;
 
-      int isa;
-      int planMode;
+  void **x0, **x1;
 
-      int vecwidth, log2vecwidth;
-      int nThread;
+  int isa;
+  int planMode;
+
+  int vecwidth, log2vecwidth;
+  int nThread;
   
-      uint64_t tm[CONFIGMAX][(MAXBUTWIDTH+1)*32];
-      uint64_t bestTime;
-      int16_t bestPath[32], bestPathConfig[32], pathLen;
-    };
+  uint64_t tm[CONFIGMAX][(MAXBUTWIDTH+1)*32];
+  uint64_t bestTime;
+  int16_t bestPath[32], bestPathConfig[32], pathLen;
 
-    struct {
-      int32_t hlen, vlen;
-      int32_t log2hlen, log2vlen;
-      uint64_t tmNoMT, tmMT;
-      struct SleefDFT *instH, *instV;
-      void *tBuf;
-    };
-  };
-} SleefDFT;
+  //
+
+  int32_t hlen, vlen;
+  int32_t log2hlen, log2vlen;
+  uint64_t tmNoMT, tmMT;
+  struct SleefDFT *instH, *instV;
+  void *tBuf;
+};
 
 #define SLEEF_MODE2_MT1D       (1 << 0)
 #define SLEEF_MODE3_MT2D       (1 << 0)
@@ -54,6 +52,9 @@ typedef struct SleefDFT {
 #define ENVVAR "SLEEFDFTPLAN"
 
 #define SLEEF_MODE_MEASUREBITS (3 << 20)
+
+int omp_thread_count();
+void startAllThreads(const int nth);
 
 void freeTables(SleefDFT *p);
 uint32_t ilog2(uint32_t q);

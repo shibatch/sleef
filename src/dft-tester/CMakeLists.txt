@@ -73,6 +73,22 @@ if((NOT MSVC) AND NOT SLEEF_CLANG_ON_WINDOWS)
   add_test_dft(${TARGET_NAIVETESTSP}_4 $<TARGET_FILE:${TARGET_NAIVETESTSP}> 4)
   add_test_dft(${TARGET_NAIVETESTSP}_5 $<TARGET_FILE:${TARGET_NAIVETESTSP}> 5)
   add_test_dft(${TARGET_NAIVETESTSP}_10 $<TARGET_FILE:${TARGET_NAIVETESTSP}> 10)
+
+  # Target executable measuredft
+  set(TARGET_MEASUREDFT "measuredft")
+  add_executable(${TARGET_MEASUREDFT} measuredft.c ${PROJECT_SOURCE_DIR}/include/sleefdft.h)
+  add_dependencies(${TARGET_MEASUREDFT} ${TARGET_HEADERS} ${TARGET_LIBSLEEF} ${TARGET_LIBDFT})
+  target_compile_definitions(${TARGET_MEASUREDFT} PRIVATE ${COMMON_TARGET_DEFINITIONS})
+  target_link_libraries(${TARGET_MEASUREDFT} ${COMMON_LINK_LIBRARIES})
+  set_target_properties(${TARGET_MEASUREDFT} PROPERTIES ${COMMON_TARGET_PROPERTIES})
+
+  # Target executable bench1d
+  set(TARGET_BENCH1D "bench1d")
+  add_executable(${TARGET_BENCH1D} bench1d.c ${PROJECT_SOURCE_DIR}/include/sleefdft.h)
+  add_dependencies(${TARGET_BENCH1D} ${TARGET_HEADERS} ${TARGET_LIBSLEEF} ${TARGET_LIBDFT})
+  target_compile_definitions(${TARGET_BENCH1D} PRIVATE ${COMMON_TARGET_DEFINITIONS})
+  target_link_libraries(${TARGET_BENCH1D} ${COMMON_LINK_LIBRARIES})
+  set_target_properties(${TARGET_BENCH1D} PROPERTIES ${COMMON_TARGET_PROPERTIES})
 endif()
 
 # Target executable roundtriptest1ddp

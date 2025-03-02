@@ -10,12 +10,8 @@
 #include <ctype.h>
 #include <inttypes.h>
 #include <assert.h>
-
 #include <math.h>
-
-#ifdef _OPENMP
 #include <omp.h>
-#endif
 
 #include "misc.h"
 #include "sleef.h"
@@ -23,9 +19,11 @@
 #define IMPORT_IS_EXPORT
 #include "sleefdft.h"
 #include "dispatchparam.h"
-#include "dftcommon.h"
-#include "common.h"
+extern "C" {
 #include "arraymap.h"
+}
+#include "dftcommon.hpp"
+#include "common.h"
 
 #define MAGIC_FLOAT 0x31415926
 #define MAGIC_DOUBLE 0x27182818
@@ -170,6 +168,30 @@ uint32_t ilog2(uint32_t q) {
   return r + tab[qq] * 4 + tab[q >> (tab[qq] * 4)] - 1;
 }
 
+// Utility functions
+
+int omp_thread_count() {
+  int n = 0;
+#pragma omp parallel reduction(+:n)
+  n += 1;
+  return n;
+}
+
+void startAllThreads(const int nth) {
+  volatile int8_t *state = (int8_t *)calloc(nth, 1);
+  int th=0;
+#pragma omp parallel for
+  for(th=0;th<nth;th++) {
+    state[th] = 1;
+    for(;;) {
+      int i;
+      for(i=0;i<nth;i++) if (state[i] == 0) break;
+      if (i == nth) break;
+    }
+  }
+  free((void *)state);
+}
+
 //
 
 char *dftPlanFilePath = NULL;
@@ -177,13 +199,10 @@ char *archID = NULL;
 uint64_t planMode = SLEEF_PLAN_REFERTOENVVAR;
 ArrayMap *planMap = NULL;
 int planFilePathSet = 0, planFileLoaded = 0;
-#ifdef _OPENMP
 omp_lock_t planMapLock;
 int planMapLockInitialized = 0;
-#endif
 
 static void initPlanMapLock() {
-#ifdef _OPENMP
 #pragma omp critical
   {
     if (!planMapLockInitialized) {
@@ -191,7 +210,6 @@ static void initPlanMapLock() {
       omp_init_lock(&planMapLock);
     }
   }
-#endif
 }
 
 static void planMap_clear() {
@@ -210,16 +228,16 @@ EXPORT void SleefDFT_setPlanFilePath(const char *path, const char *arch, uint64_
 
   if (dftPlanFilePath != NULL) free(dftPlanFilePath);
   if (path != NULL) {
-    dftPlanFilePath = malloc(strlen(path)+10);
-    strcpy(dftPlanFilePath, path);
+    dftPlanFilePath = (char *)malloc(strlen(path)+10);
+    strncpy(dftPlanFilePath, path, strlen(path)+1);
   } else {
     dftPlanFilePath = NULL;
   }
 
   if (archID != NULL) free(archID);
   if (arch == NULL) arch = Sleef_getCpuIdString();
-  archID = malloc(strlen(arch)+10);
-  strcpy(archID, arch);
+  archID = (char *)malloc(strlen(arch)+10);
+  strncpy(archID, arch, strlen(arch)+1);
 
   planMode = mode;
   planFilePathSet = 1;
@@ -311,7 +329,7 @@ static uint64_t keyPathConfig(int baseTypeID, int log2len, int dir, int level, i
 }
 
 static uint64_t planMap_getU64(uint64_t key) {
-  char *s = ArrayMap_get(planMap, key);
+  char *s = (char *)ArrayMap_get(planMap, key);
   if (s == NULL) return 0;
   uint64_t ret;
   if (sscanf(s, "%" SCNx64, &ret) != 1) return 0;
@@ -319,9 +337,9 @@ static uint64_t planMap_getU64(uint64_t key) {
 }
 
 static void planMap_putU64(uint64_t key, uint64_t value) {
-  char *s = malloc(100);
+  char *s = (char *)malloc(100);
   sprintf(s, "%" PRIx64, value);
-  s = ArrayMap_put(planMap, key, s);
+  s = (char *)ArrayMap_put(planMap, key, s);
   if (s != NULL) free(s);
 }
 
@@ -330,16 +348,13 @@ int PlanManager_loadMeasurementResultsP(SleefDFT *p, int pathCat) {
 
   initPlanMapLock();
 
-#ifdef _OPENMP
   omp_set_lock(&planMapLock);
-#endif
+
   if (!planFileLoaded) loadPlanFromFile();
 
   int stat = planMap_getU64(keyButStat(p->baseTypeID, p->log2len, p->mode, pathCat+10));
   if (stat == 0) {
-#ifdef _OPENMP
     omp_unset_lock(&planMapLock);
-#endif
     return 0;
   }
 
@@ -354,9 +369,7 @@ int PlanManager_loadMeasurementResultsP(SleefDFT *p, int pathCat) {
   p->pathLen = 0;
   for(int j = p->log2len;j >= 0;j--) if (p->bestPath[j] != 0) p->pathLen++;
   
-#ifdef _OPENMP
   omp_unset_lock(&planMapLock);
-#endif
   return ret;
 }
 
@@ -365,15 +378,11 @@ void PlanManager_saveMeasurementResultsP(SleefDFT *p, int pathCat) {
 
   initPlanMapLock();
 
-#ifdef _OPENMP
   omp_set_lock(&planMapLock);
-#endif
   if (!planFileLoaded) loadPlanFromFile();
 
   if (planMap_getU64(keyButStat(p->baseTypeID, p->log2len, p->mode, pathCat+10)) != 0) {
-#ifdef _OPENMP
     omp_unset_lock(&planMapLock);
-#endif
     return;
   }
   
@@ -386,9 +395,7 @@ void PlanManager_saveMeasurementResultsP(SleefDFT *p, int pathCat) {
 
   if ((planMode & SLEEF_PLAN_READONLY) == 0) savePlanToFile();
 
-#ifdef _OPENMP
   omp_unset_lock(&planMapLock);
-#endif
 }
 
 int PlanManager_loadMeasurementResultsT(SleefDFT *p) {
@@ -396,17 +403,13 @@ int PlanManager_loadMeasurementResultsT(SleefDFT *p) {
 
   initPlanMapLock();
 
-#ifdef _OPENMP
   omp_set_lock(&planMapLock);
-#endif
   if (!planFileLoaded) loadPlanFromFile();
 
   p->tmNoMT = planMap_getU64(keyTrans(p->baseTypeID, p->log2hlen, p->log2vlen, 0));
   p->tmMT   = planMap_getU64(keyTrans(p->baseTypeID, p->log2hlen, p->log2vlen, 1));
   
-#ifdef _OPENMP
   omp_unset_lock(&planMapLock);
-#endif
   return p->tmNoMT != 0;
 }
 
@@ -415,9 +418,7 @@ void PlanManager_saveMeasurementResultsT(SleefDFT *p) {
 
   initPlanMapLock();
 
-#ifdef _OPENMP
   omp_set_lock(&planMapLock);
-#endif
   if (!planFileLoaded) loadPlanFromFile();
 
   planMap_putU64(keyTrans(p->baseTypeID, p->log2hlen, p->log2vlen, 0), p->tmNoMT);
@@ -425,7 +426,5 @@ void PlanManager_saveMeasurementResultsT(SleefDFT *p) {
   
   if ((planMode & SLEEF_PLAN_READONLY) == 0) savePlanToFile();
 
-#ifdef _OPENMP
   omp_unset_lock(&planMapLock);
-#endif
 }

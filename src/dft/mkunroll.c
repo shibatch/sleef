@@ -46,7 +46,6 @@ int main(int argc, char **argv) {
     exit(-1);
   }
 
-  const char *baseType = argv[1];
   const int isastart = 2;
 
   for(int config=0;config<CONFIGMAX;config++) {
@@ -60,11 +59,9 @@ int main(int argc, char **argv) {
       
       FILE *fpin = fopen("unroll0.org", "r");
 
-      sprintf(line, "unroll_%d_%s.c", config, isaString);
+      sprintf(line, "unroll_%d_%s.cpp", config, isaString);
       FILE *fpout = fopen(line, "w");
-      fputs("#include \"vectortype.h\"\n\n", fpout);
-      fprintf(fpout, "extern %s ctbl_%s[];\n", baseType, baseType);
-      fprintf(fpout, "#define ctbl ctbl_%s\n\n", baseType);
+      fputs("#include \"vectortype.hpp\"\n\n", fpout);
 
       for(;;) {
 	if (fgets(line, LEN, fpin) == NULL) break;
