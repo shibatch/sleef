@@ -11,8 +11,6 @@ if (SLEEFDFT_MAXBUTWIDTH GREATER 7)
   message(FATAL_ERROR "SLEEFDFT_MAXBUTWIDTH has to be smaller than 8." )
 endif()
 
-option(SLEEFDFT_ENABLE_STREAM "Streaming instructions are utilized in DFT." OFF)
-
 # Settings
 
 # Constants definition
@@ -266,7 +264,7 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
   list(GET LISTLONGTYPENAME ${T} LT)                        # LT is "double"
   list(GET LISTTYPEID ${T} ID)                              # ID is 1
   
-  string(CONCAT S "dispatch" ${ST} ".h")                    # S is dispatchdp.h
+  string(CONCAT S "dispatch" ${ST} ".hpp")                  # S is dispatchdp.hpp
   add_custom_command(OUTPUT ${S}
     COMMENT "Generating ${S}"
     COMMAND $<TARGET_FILE:${TARGET_MKDISPATCH}> ${LT} ${SLEEFDFT_MAXBUTWIDTH} ${ISALIST_${CST}} > ${S}
@@ -274,7 +272,7 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
 
-  string(CONCAT G ${S} "_generated")                        # G is dispatchdp.h_generated
+  string(CONCAT G ${S} "_generated")                        # G is dispatchdp.hpp_generated
   add_custom_target(${G} SOURCES ${S})
 endforeach()
 
@@ -292,9 +290,9 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
   list(GET LISTSHORTTYPENAME ${T} ST)                       # ST is "dp", for example
   
   string(CONCAT G "dft" ${ST} "_obj")                       # G is "dftdp_obj"
-  string(CONCAT S "dispatch" ${ST} ".h")                    # S is "dispatchdp.h"
+  string(CONCAT S "dispatch" ${ST} ".hpp")                  # S is "dispatchdp.h"
   add_library(${G} OBJECT dft.cpp dftcommon.hpp ${S})
-  string(CONCAT SG ${S} "_generated")                       # SG is "dispatchdp.h_generated"
+  string(CONCAT SG ${S} "_generated")                       # SG is "dispatchdp.hpp_generated"
   add_dependencies(${G} ${SG} ${TARGET_HEADERS})
   set_target_properties(${G} PROPERTIES ${COMMON_TARGET_PROPERTIES})
   list(GET LISTTYPEID ${T} ID)                              # ID is 1
@@ -308,7 +306,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/unroll0.org
   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/unroll0.org)
 add_custom_target(unroll0.org.copied DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/unroll0.org)
 
-# Target unroll*.c
+# Target unroll*.cpp
 
 foreach(T ${LIST_SUPPORTED_FPTYPE})
   list(GET LISTSHORTTYPENAME ${T} ST)                       # ST is "dp", for example
@@ -317,7 +315,7 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
 
   foreach(E ${ISALIST_${CST}})                              # E is "sse2dp"
     foreach(N ${NLIST})
-      string(CONCAT UC unroll_ ${N} _ ${E} ".c")            # UC is "unroll_0_sse2dp.c"
+      string(CONCAT UC unroll_ ${N} _ ${E} ".cpp")          # UC is "unroll_0_sse2dp.cpp"
       set(UNROLL_TARGET_${CST} ${UNROLL_TARGET_${CST}} ${UC})
     endforeach()
   endforeach()
@@ -345,7 +343,7 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
     foreach(N ${NLIST})
       string(CONCAT U unroll_ ${N} _ ${E})                  # U is "unroll_0_sse2dp"
       string(CONCAT UG ${U} "_obj")                         # UG is "unroll_0_sse2dp_obj"
-      string(CONCAT UC ${U} ".c")                           # UC is "unroll_0_sse2dp.c"
+      string(CONCAT UC ${U} ".cpp")                         # UC is "unroll_0_sse2dp.cpp"
       add_library(${UG} OBJECT ${UC})
       set_target_properties(${UG} PROPERTIES ${COMMON_TARGET_PROPERTIES})
       target_include_directories(${UG} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})

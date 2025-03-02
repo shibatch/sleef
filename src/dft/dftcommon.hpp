@@ -53,6 +53,9 @@ struct SleefDFT {
 
 #define SLEEF_MODE_MEASUREBITS (3 << 20)
 
+int omp_thread_count();
+void startAllThreads(const int nth);
+
 void freeTables(SleefDFT *p);
 uint32_t ilog2(uint32_t q);
 

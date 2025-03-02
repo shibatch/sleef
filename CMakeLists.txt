@@ -24,6 +24,7 @@ option(SLEEF_BUILD_BENCH_REF "Benchmark script for reference (e.g. system libm) 
 option(SLEEF_BUILD_INLINE_HEADERS "Build header for inlining whole SLEEF functions" OFF)
 
 option(SLEEF_ENFORCE_DFT "Build fails if DFT is not built" OFF)
+option(SLEEFDFT_ENABLE_STREAM "Streaming instructions are utilized in DFT." OFF)
 
 option(SLEEF_TEST_ALL_IUT "Perform tests on implementations with all vector extensions" OFF)
 option(SLEEF_SHOW_CONFIG "Show SLEEF configuration status messages." ON)

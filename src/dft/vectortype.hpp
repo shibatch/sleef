@@ -6,6 +6,10 @@
 #ifndef __VECTORTYPE_H__
 #define __VECTORTYPE_H__
 
+#if defined(__GNUC__)
+#pragma GCC diagnostic ignored "-Wattributes"
+#endif
+
 #include <math.h>
 #include "sleef.h"
 

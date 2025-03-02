@@ -18,8 +18,8 @@
 
 #define IMPORT_IS_EXPORT
 #include "sleefdft.h"
-extern "C" {
 #include "dispatchparam.h"
+extern "C" {
 #include "arraymap.h"
 }
 #include "dftcommon.hpp"
@@ -166,6 +166,30 @@ uint32_t ilog2(uint32_t q) {
   qq = ((qq & 0x10) >> 4) | ((qq & 0x100) >> 7) | ((qq & 0x1000) >> 10);
 
   return r + tab[qq] * 4 + tab[q >> (tab[qq] * 4)] - 1;
+}
+
+// Utility functions
+
+int omp_thread_count() {
+  int n = 0;
+#pragma omp parallel reduction(+:n)
+  n += 1;
+  return n;
+}
+
+void startAllThreads(const int nth) {
+  volatile int8_t *state = (int8_t *)calloc(nth, 1);
+  int th=0;
+#pragma omp parallel for
+  for(th=0;th<nth;th++) {
+    state[th] = 1;
+    for(;;) {
+      int i;
+      for(i=0;i<nth;i++) if (state[i] == 0) break;
+      if (i == nth) break;
+    }
+  }
+  free((void *)state);
 }
 
 //
