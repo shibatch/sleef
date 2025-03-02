@@ -11,6 +11,7 @@
 #include <signal.h>
 #include <setjmp.h>
 #include <math.h>
+#include <omp.h>
 
 #include "sleef.h"
 
@@ -18,19 +19,8 @@
 #include "common.h"
 #include "arraymap.h"
 #include "dftcommon.hpp"
-
-#include <omp.h>
-
-#if BASETYPEID == 1
-typedef double real;
 #include "dispatchdp.hpp"
-#elif BASETYPEID == 2
-typedef float real;
 #include "dispatchsp.hpp"
-#else
-#error No BASETYPEID specified
-#endif
-
 
 #define IMPORT_IS_EXPORT
 #include "sleefdft.h"
@@ -59,12 +49,12 @@ static sigjmp_buf sigjmp;
 
 static void sighandler(int signum) { LONGJMP(sigjmp, 1); }
 
-template<int (*GETINT_[16])(int)>
+template<int (*GETINT_[16])(int), int BASETYPEID_>
 static int checkISAAvailability(int isa) {
   signal(SIGILL, sighandler);
 
   if (SETJMP(sigjmp) == 0) {
-    int ret = GETINT_[isa] != NULL && (*GETINT_[isa])(BASETYPEID);
+    int ret = GETINT_[isa] != NULL && (*GETINT_[isa])(BASETYPEID_);
     signal(SIGILL, SIG_DFL);
     return ret;
   }
@@ -1043,7 +1033,7 @@ static SleefDFT *SleefDFT_init1d(uint32_t n, const real *in, real *out, uint64_t
   p->isa = -1;
 
   for(int i=0;i<ISAMAX;i++) {
-    if (checkISAAvailability<GETINT_>(i) && bestPriority < (*GETINT_[i])(GETINT_DFTPRIORITY) && n >= (uint32_t)((*GETINT_[i])(GETINT_VECWIDTH) * (*GETINT_[i])(GETINT_VECWIDTH))) {
+    if (checkISAAvailability<GETINT_, BASETYPEID_>(i) && bestPriority < (*GETINT_[i])(GETINT_DFTPRIORITY) && n >= (uint32_t)((*GETINT_[i])(GETINT_VECWIDTH) * (*GETINT_[i])(GETINT_VECWIDTH))) {
       bestPriority = (*GETINT_[i])(GETINT_DFTPRIORITY);
       p->isa = i;
     }
@@ -1348,58 +1338,30 @@ static void SleefDFT_execute(SleefDFT *p, const real *s0, real *d0) {
 
 //
 
-#if BASETYPEID == 1
-typedef Sleef_double2 sc_t;
-#define BASETYPESTRING "double"
-#define MAGIC 0x27182818
-#define MAGIC2D 0x17320508
-#define INIT SleefDFT_double_init1d
-#define EXECUTE SleefDFT_double_execute
-#define INIT2D SleefDFT_double_init2d
-#define REALSUB0 realSub0_double
-#define REALSUB1 realSub1_double
-#define GETINT getInt_double
-#define GETPTR getPtr_double
-#define DFTF dftf_double
-#define DFTB dftb_double
-#define TBUTF tbutf_double
-#define TBUTB tbutb_double
-#define BUTF butf_double
-#define BUTB butb_double
-#define SINCOSPI Sleef_sincospi_u05
-#elif BASETYPEID == 2
-typedef Sleef_float2 sc_t;
-#define BASETYPESTRING "float"
-#define MAGIC 0x31415926
-#define MAGIC2D 0x22360679
-#define INIT SleefDFT_float_init1d
-#define EXECUTE SleefDFT_float_execute
-#define INIT2D SleefDFT_float_init2d
-#define REALSUB0 realSub0_float
-#define REALSUB1 realSub1_float
-#define GETINT getInt_float
-#define GETPTR getPtr_float
-#define DFTF dftf_float
-#define DFTB dftb_float
-#define TBUTF tbutf_float
-#define TBUTB tbutb_float
-#define BUTF butf_float
-#define BUTB butb_float
-#define SINCOSPI Sleef_sincospif_u05
-#else
-#error No BASETYPEID specified
-#endif
-
-EXPORT SleefDFT *INIT(uint32_t n, const real *in, real *out, uint64_t mode) {
-  return SleefDFT_init1d<real, sc_t, BASETYPEID, MAGIC, GETINT, GETPTR, SINCOSPI,
-			 DFTF, DFTB, TBUTF, TBUTB, BUTF, BUTB>(n, in, out, mode, BASETYPESTRING);
+EXPORT SleefDFT *SleefDFT_double_init1d(uint32_t n, const double *in, double *out, uint64_t mode) {
+  return SleefDFT_init1d<double, Sleef_double2, 1, 0x27182818, getInt_double, getPtr_double, Sleef_sincospi_u05,
+			 dftf_double, dftb_double, tbutf_double, tbutb_double, butf_double, butb_double>(n, in, out, mode, "double");
 }
 
-EXPORT SleefDFT *INIT2D(uint32_t vlen, uint32_t hlen, const real *in, real *out, uint64_t mode) {
-  return SleefDFT_init2d<real, sc_t, BASETYPEID, MAGIC, MAGIC2D, GETINT, GETPTR, SINCOSPI,
-			 DFTF, DFTB, TBUTF, TBUTB, BUTF, BUTB>(vlen, hlen, in, out, mode, BASETYPESTRING);
+EXPORT SleefDFT *SleefDFT_double_init2d(uint32_t vlen, uint32_t hlen, const double *in, double *out, uint64_t mode) {
+  return SleefDFT_init2d<double, Sleef_double2, 1, 0x27182818, 0x17320508, getInt_double, getPtr_double, Sleef_sincospi_u05,
+			 dftf_double, dftb_double, tbutf_double, tbutb_double, butf_double, butb_double>(vlen, hlen, in, out, mode, "double");
 }
 
-EXPORT void EXECUTE(SleefDFT *p, const real *s0, real *d0) {
-  SleefDFT_execute<real, MAGIC, MAGIC2D, DFTF, DFTB, TBUTF, TBUTB, BUTF, BUTB, REALSUB0, REALSUB1>(p, s0, d0);
+EXPORT void SleefDFT_double_execute(SleefDFT *p, const double *s0, double *d0) {
+  SleefDFT_execute<double, 0x27182818, 0x17320508, dftf_double, dftb_double, tbutf_double, tbutb_double, butf_double, butb_double, realSub0_double, realSub1_double>(p, s0, d0);
+}
+
+EXPORT SleefDFT *SleefDFT_float_init1d(uint32_t n, const float *in, float *out, uint64_t mode) {
+  return SleefDFT_init1d<float, Sleef_float2, 2, 0x31415926, getInt_float, getPtr_float, Sleef_sincospif_u05,
+			 dftf_float, dftb_float, tbutf_float, tbutb_float, butf_float, butb_float>(n, in, out, mode, "float");
+}
+
+EXPORT SleefDFT *SleefDFT_float_init2d(uint32_t vlen, uint32_t hlen, const float *in, float *out, uint64_t mode) {
+  return SleefDFT_init2d<float, Sleef_float2, 2, 0x31415926, 0x22360679, getInt_float, getPtr_float, Sleef_sincospif_u05,
+			 dftf_float, dftb_float, tbutf_float, tbutb_float, butf_float, butb_float>(vlen, hlen, in, out, mode, "float");
+}
+
+EXPORT void SleefDFT_float_execute(SleefDFT *p, const float *s0, float *d0) {
+  SleefDFT_execute<float, 0x31415926, 0x22360679, dftf_float, dftb_float, tbutf_float, tbutb_float, butf_float, butb_float, realSub0_float, realSub1_float>(p, s0, d0);
 }

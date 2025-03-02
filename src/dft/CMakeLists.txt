@@ -284,20 +284,12 @@ set_source_files_properties(${sleef_BINARY_DIR}/include/sleef.h PROPERTIES GENER
 set_target_properties(dftcommon_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
 target_compile_definitions(dftcommon_obj PRIVATE ${COMMON_TARGET_DEFINITIONS})
 
-# Target dft*.o
+# Target dft.o
 
-foreach(T ${LIST_SUPPORTED_FPTYPE})
-  list(GET LISTSHORTTYPENAME ${T} ST)                       # ST is "dp", for example
-  
-  string(CONCAT G "dft" ${ST} "_obj")                       # G is "dftdp_obj"
-  string(CONCAT S "dispatch" ${ST} ".hpp")                  # S is "dispatchdp.h"
-  add_library(${G} OBJECT dft.cpp dftcommon.hpp ${S})
-  string(CONCAT SG ${S} "_generated")                       # SG is "dispatchdp.hpp_generated"
-  add_dependencies(${G} ${SG} ${TARGET_HEADERS})
-  set_target_properties(${G} PROPERTIES ${COMMON_TARGET_PROPERTIES})
-  list(GET LISTTYPEID ${T} ID)                              # ID is 1
-  target_compile_definitions(${G} PRIVATE BASETYPEID=${ID} ${COMMON_TARGET_DEFINITIONS})
-endforeach()
+add_library(dft_obj OBJECT dft.cpp dftcommon.hpp)
+add_dependencies(dft_obj "dispatchdp.hpp_generated" "dispatchsp.hpp_generated" ${TARGET_HEADERS})
+set_target_properties(dft_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
+target_compile_definitions(dft_obj PRIVATE ${COMMON_TARGET_DEFINITIONS})
 
 # Copy unroll0.org to ${CMAKE_CURRENT_BINARY_DIR}
 
@@ -356,15 +348,8 @@ endforeach()
 
 # Target libdft
 
-add_library(${TARGET_LIBDFT} $<TARGET_OBJECTS:dftcommon_obj> $<TARGET_OBJECTS:${TARGET_LIBARRAYMAP_OBJ}>)
+add_library(${TARGET_LIBDFT} $<TARGET_OBJECTS:dftcommon_obj> $<TARGET_OBJECTS:dft_obj> $<TARGET_OBJECTS:${TARGET_LIBARRAYMAP_OBJ}>)
 target_link_libraries(${TARGET_LIBDFT} ${TARGET_LIBSLEEF} ${LIBM})
-
-foreach(T ${LIST_SUPPORTED_FPTYPE})
-  list(GET LISTSHORTTYPENAME ${T} ST)                       # ST is "dp", for example
-  
-  string(CONCAT G "dft" ${ST} "_obj")                       # G is "dftdp_obj"
-  target_sources(${TARGET_LIBDFT} PRIVATE $<TARGET_OBJECTS:${G}>)
-endforeach()
 
 foreach(T ${LIST_SUPPORTED_FPTYPE})
   list(GET LISTSHORTTYPENAME ${T} ST)                       # ST is "dp", for example
