@@ -17,7 +17,6 @@
 
 #include "misc.h"
 #include "common.h"
-#include "arraymap.h"
 #include "dftcommon.hpp"
 #include "dispatchdp.hpp"
 #include "dispatchsp.hpp"

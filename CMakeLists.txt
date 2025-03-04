@@ -301,7 +301,6 @@ set(TARGET_MKALIAS "mkalias")
 # Generates static library common
 # Defined in src/common/CMakeLists.txt via command add_library
 set(TARGET_LIBCOMMON_OBJ "common")
-set(TARGET_LIBARRAYMAP_OBJ "arraymap")
 set(TARGET_PSHA_OBJ "psha_obj")
 set(TARGET_TESTERUTIL_OBJ "testerutil_obj")
 set(TARGET_QTESTERUTIL_OBJ "qtesterutil_obj")

@@ -1,5 +1,7 @@
 == SLEEF - SIMD Library for Evaluating Elementary Functions
 
+image:http://img.shields.io/badge/DOI-10.1109/TPDS.2019.2960333-blue.svg[TPDS, link=https://ieeexplore.ieee.org/document/8936472]
+
 SLEEF is a library that implements vectorized versions of C standard
 math functions. This library also includes DFT subroutines.
 

@@ -19,11 +19,9 @@
 #define IMPORT_IS_EXPORT
 #include "sleefdft.h"
 #include "dispatchparam.h"
-extern "C" {
-#include "arraymap.h"
-}
 #include "dftcommon.hpp"
 #include "common.h"
+#include "serializer.hpp"
 
 #define MAGIC_FLOAT 0x31415926
 #define MAGIC_DOUBLE 0x27182818
@@ -197,7 +195,7 @@ void startAllThreads(const int nth) {
 char *dftPlanFilePath = NULL;
 char *archID = NULL;
 uint64_t planMode = SLEEF_PLAN_REFERTOENVVAR;
-ArrayMap *planMap = NULL;
+unordered_map<uint64_t, uint64_t> planMap;
 int planFilePathSet = 0, planFileLoaded = 0;
 omp_lock_t planMapLock;
 int planMapLockInitialized = 0;
@@ -212,16 +210,11 @@ static void initPlanMapLock() {
   }
 }
 
-static void planMap_clear() {
-  if (planMap != NULL) ArrayMap_dispose(planMap);
-  planMap = NULL;
-}
-
 EXPORT void SleefDFT_setPlanFilePath(const char *path, const char *arch, uint64_t mode) {
   initPlanMapLock();
 
   if ((mode & SLEEF_PLAN_RESET) != 0) {
-    planMap_clear();
+    planMap.clear();
     planFileLoaded = 0;
     planFilePathSet = 0;
   }
@@ -249,13 +242,17 @@ static void loadPlanFromFile() {
     if (s != NULL) SleefDFT_setPlanFilePath(s, NULL, planMode);
   }
 
-  if (planMap != NULL) ArrayMap_dispose(planMap);
+  planMap.clear();
   
   if (dftPlanFilePath != NULL && (planMode & SLEEF_PLAN_RESET) == 0) {
-    planMap = ArrayMap_load(dftPlanFilePath, archID, PLANFILEID, (planMode & SLEEF_PLAN_NOLOCK) == 0);
+    //planMap = ArrayMap_load(dftPlanFilePath, archID, PLANFILEID, (planMode & SLEEF_PLAN_NOLOCK) == 0);
+    FILE *fp = fopen(dftPlanFilePath, "rb");
+    if (fp) {
+      FileDeserializer d(fp);
+      d >> planMap;
+      fclose(fp);
+    }
   }
-
-  if (planMap == NULL) planMap = initArrayMap();
 
   planFileLoaded = 1;
 }
@@ -263,7 +260,13 @@ static void loadPlanFromFile() {
 static void savePlanToFile() {
   assert(planFileLoaded);
   if ((planMode & SLEEF_PLAN_READONLY) == 0 && dftPlanFilePath != NULL) {
-    ArrayMap_save(planMap, dftPlanFilePath, archID, PLANFILEID);
+    //ArrayMap_save(planMap, dftPlanFilePath, archID, PLANFILEID);
+    FILE *fp = fopen(dftPlanFilePath, "wb");
+    if (fp) {
+      FileSerializer s(fp);
+      s << planMap;
+      fclose(fp);
+    }
   }
 }
 
@@ -329,18 +332,12 @@ static uint64_t keyPathConfig(int baseTypeID, int log2len, int dir, int level, i
 }
 
 static uint64_t planMap_getU64(uint64_t key) {
-  char *s = (char *)ArrayMap_get(planMap, key);
-  if (s == NULL) return 0;
-  uint64_t ret;
-  if (sscanf(s, "%" SCNx64, &ret) != 1) return 0;
-  return ret;
+  if (!planMap.count(key)) return 0;
+  return planMap.at(key);
 }
 
 static void planMap_putU64(uint64_t key, uint64_t value) {
-  char *s = (char *)malloc(100);
-  sprintf(s, "%" PRIx64, value);
-  s = (char *)ArrayMap_put(planMap, key, s);
-  if (s != NULL) free(s);
+  planMap[key] = value;
 }
 
 int PlanManager_loadMeasurementResultsP(SleefDFT *p, int pathCat) {
