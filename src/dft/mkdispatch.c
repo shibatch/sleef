@@ -30,12 +30,11 @@ int main(int argc, char **argv) {
 #endif
 
   printf("#define MAXBUTWIDTH %d\n", maxbutwidth);
+  printf("#define ISAMAX %d\n", isamax);
+  printf("#define CONFIGMAX 4\n");
   printf("\n");
 
   if (strcmp(baseType, "paramonly") == 0) exit(0);
-
-  printf("#define ISAMAX %d\n", isamax);
-  printf("#define CONFIGMAX 4\n");
   
   for(int k=isastart;k<argc;k++) {
     for(int config=0;config<4;config++) {
