@@ -38,8 +38,7 @@ struct SleefDFTXX {
   uint64_t bestTime;
   int16_t bestPath[32], bestPathConfig[32], pathLen;
 
-  SleefDFTXX(uint32_t n, const real *in, real *out, uint64_t mode, const char *baseTypeString,
-	     int BASETYPEID_, int MAGIC_,
+  SleefDFTXX(uint32_t n, const real *in, real *out, uint64_t mode, const char *baseTypeString, int BASETYPEID_, int MAGIC_,
 	     int (*GETINT_[16])(int), const void *(*GETPTR_[16])(int), real2 (*SINCOSPI_)(real),
 	     void (*DFTF_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, const real *, const int),
 	     void (*DFTB_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, const real *, const int),
@@ -49,6 +48,16 @@ struct SleefDFTXX {
 	     void (*BUTB_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const int, const real *, const int, const real *, const int));
 
   ~SleefDFTXX();
+
+  void execute(const real *s0, real *d0, int MAGIC_, int MAGIC2D_,
+	       void (*DFTF_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, const real *, const int),
+	       void (*DFTB_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, const real *, const int),
+	       void (*TBUTF_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const real *, const int, const real *, const int),
+	       void (*TBUTB_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const real *, const int, const real *, const int),
+	       void (*BUTF_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const int, const real *, const int, const real *, const int),
+	       void (*BUTB_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const int, const real *, const int, const real *, const int),
+	       void (*REALSUB0_[ISAMAX])(real *, const real *, const int, const real *, const real *),
+	       void (*REALSUB1_[ISAMAX])(real *, const real *, const int, const real *, const real *, const int));
 };
 
 template<typename real, typename real2>
@@ -79,6 +88,16 @@ struct SleefDFT2DXX {
 	       void (*BUTB_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const int, const real *, const int, const real *, const int));
 
   ~SleefDFT2DXX();
+
+  void execute(const real *s0, real *d0, int MAGIC_, int MAGIC2D_,
+	       void (*DFTF_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, const real *, const int),
+	       void (*DFTB_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, const real *, const int),
+	       void (*TBUTF_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const real *, const int, const real *, const int),
+	       void (*TBUTB_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const real *, const int, const real *, const int),
+	       void (*BUTF_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const int, const real *, const int, const real *, const int),
+	       void (*BUTB_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const int, const real *, const int, const real *, const int),
+	       void (*REALSUB0_[ISAMAX])(real *, const real *, const int, const real *, const real *),
+	       void (*REALSUB1_[ISAMAX])(real *, const real *, const int, const real *, const real *, const int));
 };
 
 struct SleefDFT {
