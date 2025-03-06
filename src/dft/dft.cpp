@@ -569,7 +569,7 @@ static void searchForBestPath(SleefDFTXX<real> *p) {
 
     const int tn = omp_get_thread_num();
 
-    real *t[] = { (real *)p->x1[tn], (real *)p->x0[tn], d };
+    real *t[] = { p->x1[tn], p->x0[tn], d };
 
     for(int mt=0;mt<2;mt++) {
       for(int i=q->nPaths-1;i>=0;i--) {
@@ -947,7 +947,7 @@ static int measure(SleefDFTXX<real> *p, int randomize) {
 }
 
 template<typename real>
-static void measureTranspose(SleefDFTXX<real> *p) {
+static void measureTranspose(SleefDFT2DXX<real> *p) {
   if (PlanManager_loadMeasurementResultsT<real>(p)) {
     if ((p->mode & SLEEF_MODE_VERBOSE) != 0) printf("transpose NoMT(loaded): %lld\n", (long long int)p->tmNoMT);
     if ((p->mode & SLEEF_MODE_VERBOSE) != 0) printf("transpose   MT(loaded): %lld\n", (long long int)p->tmMT);
@@ -974,8 +974,8 @@ static void measureTranspose(SleefDFTXX<real> *p) {
 
   tm = Sleef_currentTimeMicros();
   for(int i=0;i<niter;i++) {
-    transpose<real>(tBuf2, (real *)p->tBuf, p->log2hlen, p->log2vlen);
-    transpose<real>(tBuf2, (real *)p->tBuf, p->log2vlen, p->log2hlen);
+    transpose<real>(tBuf2, p->tBuf, p->log2hlen, p->log2vlen);
+    transpose<real>(tBuf2, p->tBuf, p->log2vlen, p->log2hlen);
   }
   p->tmNoMT = Sleef_currentTimeMicros() - tm + 1;
 
@@ -983,8 +983,8 @@ static void measureTranspose(SleefDFTXX<real> *p) {
 
   tm = Sleef_currentTimeMicros();
   for(int i=0;i<niter;i++) {
-    transposeMT<real>(tBuf2, (real *)p->tBuf, p->log2hlen, p->log2vlen);
-    transposeMT<real>(tBuf2, (real *)p->tBuf, p->log2vlen, p->log2hlen);
+    transposeMT<real>(tBuf2, p->tBuf, p->log2hlen, p->log2vlen);
+    transposeMT<real>(tBuf2, p->tBuf, p->log2vlen, p->log2hlen);
   }
   p->tmMT = Sleef_currentTimeMicros() - tm + 1;
 
@@ -1070,14 +1070,14 @@ static SleefDFTXX<real> *SleefDFTXX_init1d(uint32_t n, const real *in, real *out
     if ((mode & SLEEF_MODE_BACKWARD) == 0) {
       for(uint32_t i=0;i<n/2;i++) {
 	real2 sc = SINCOSPI_(i*((real)-1.0/n));
-	((real *)p->rtCoef0)[i*2+0] = ((real *)p->rtCoef0)[i*2+1] = (real)0.5 - (real)0.5 * sc.x;
-	((real *)p->rtCoef1)[i*2+0] = ((real *)p->rtCoef1)[i*2+1] = (real)0.5*sc.y;
+	p->rtCoef0[i*2+0] = p->rtCoef0[i*2+1] = (real)0.5 - (real)0.5 * sc.x;
+	p->rtCoef1[i*2+0] = p->rtCoef1[i*2+1] = (real)0.5*sc.y;
       }
     } else {
       for(uint32_t i=0;i<n/2;i++) {
 	real2 sc = SINCOSPI_(i*((real)-1.0/n));
-	((real *)p->rtCoef0)[i*2+0] = ((real *)p->rtCoef0)[i*2+1] = (real)0.5 + (real)0.5 * sc.x;
-	((real *)p->rtCoef1)[i*2+0] = ((real *)p->rtCoef1)[i*2+1] = (real)0.5*sc.y;
+	p->rtCoef0[i*2+0] = p->rtCoef0[i*2+1] = (real)0.5 + (real)0.5 * sc.x;
+	p->rtCoef1[i*2+0] = p->rtCoef1[i*2+1] = (real)0.5*sc.y;
       }
     }
   }
@@ -1090,7 +1090,7 @@ static SleefDFTXX<real> *SleefDFTXX_init1d(uint32_t n, const real *in, real *out
   p->log2vecwidth = ilog2(p->vecwidth);
 
   for(int i=1;i<=MAXBUTWIDTH;i++) {
-    ((real ***)p->tbl)[i] = makeTable<real, real2, SINCOSPI_>(sign, p->vecwidth, p->log2len, i, constK[i]);
+    p->tbl[i] = makeTable<real, real2, SINCOSPI_>(sign, p->vecwidth, p->log2len, i, constK[i]);
   }
 
   if (!measure<real, DFTF_, DFTB_, TBUTF_, TBUTB_, BUTF_, BUTB_>(p, (mode & SLEEF_MODE_DEBUG))) {
@@ -1102,7 +1102,7 @@ static SleefDFTXX<real> *SleefDFTXX_init1d(uint32_t n, const real *in, real *out
     p->log2vecwidth = ilog2(p->vecwidth);
 
     for(int i=1;i<=MAXBUTWIDTH;i++) {
-      ((real ***)p->tbl)[i] = makeTable<real, real2, SINCOSPI_>(sign, p->vecwidth, p->log2len, i, constK[i]);
+      p->tbl[i] = makeTable<real, real2, SINCOSPI_>(sign, p->vecwidth, p->log2len, i, constK[i]);
     }
 
     for(int level = p->log2len;level >= 1;) {
@@ -1152,8 +1152,8 @@ template<typename real, typename real2, int BASETYPEID_, int MAGIC_, int MAGIC2D
 	 void (*TBUTB_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const real *, const int, const real *, const int),
 	 void (*BUTF_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const int, const real *, const int, const real *, const int),
 	 void (*BUTB_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const int, const real *, const int, const real *, const int)>
-static SleefDFTXX<real> *SleefDFTXX_init2d(uint32_t vlen, uint32_t hlen, const real *in, real *out, uint64_t mode, const char *baseTypeString) {
-  SleefDFTXX<real> *p = (SleefDFTXX<real> *)calloc(1, sizeof(SleefDFTXX<real>));
+static SleefDFT2DXX<real> *SleefDFT2DXX_init2d(uint32_t vlen, uint32_t hlen, const real *in, real *out, uint64_t mode, const char *baseTypeString) {
+  SleefDFT2DXX<real> *p = (SleefDFT2DXX<real> *)calloc(1, sizeof(SleefDFT2DXX<real>));
   p->magic = MAGIC2D_;
   p->mode = mode;
   p->baseTypeID = BASETYPEID_;
@@ -1193,50 +1193,10 @@ template<typename real, int MAGIC_, int MAGIC2D_,
          void (*REALSUB0_[ISAMAX])(real *, const real *, const int, const real *, const real *),
          void (*REALSUB1_[ISAMAX])(real *, const real *, const int, const real *, const real *, const int)>
 static void SleefDFTXX_execute(SleefDFTXX<real> *p, const real *s0, real *d0) {
-  assert(p != NULL && (p->magic == MAGIC_ || p->magic == MAGIC2D_));
+  assert(p != NULL && p->magic == MAGIC_);
 
   const real *s = s0 == NULL ? (const real *)p->in : s0;
-  real *d = d0 == NULL ? (real *)p->out : d0;
-
-  if (p->magic == MAGIC2D_) {
-  // S -> T -> D -> T -> D
-
-    real *tBuf = (real *)(p->tBuf);
-
-    if ((p->mode3 & SLEEF_MODE3_MT2D) != 0 &&
-	(((p->mode & SLEEF_MODE_DEBUG) == 0 && p->tmMT < p->tmNoMT) ||
-	 ((p->mode & SLEEF_MODE_DEBUG) != 0 && (rand() & 1))))
-      {
-	int y=0;
-#pragma omp parallel for
-	for(y=0;y<p->vlen;y++) {
-	  SleefDFTXX_execute<real, MAGIC_, MAGIC2D_, DFTF_, DFTB_, TBUTF_, TBUTB_, BUTF_, BUTB_, REALSUB0_, REALSUB1_>(p->instH, &s[p->hlen*2*y], &tBuf[p->hlen*2*y]);
-	}
-
-	transposeMT<real>(d, tBuf, p->log2vlen, p->log2hlen);
-
-#pragma omp parallel for
-	for(y=0;y<p->hlen;y++) {
-	  SleefDFTXX_execute<real, MAGIC_, MAGIC2D_, DFTF_, DFTB_, TBUTF_, TBUTB_, BUTF_, BUTB_, REALSUB0_, REALSUB1_>(p->instV, &d[p->vlen*2*y], &tBuf[p->vlen*2*y]);
-	}
-
-	transposeMT<real>(d, tBuf, p->log2hlen, p->log2vlen);
-      } else {
-	for(int y=0;y<p->vlen;y++) {
-	  SleefDFTXX_execute<real, MAGIC_, MAGIC2D_, DFTF_, DFTB_, TBUTF_, TBUTB_, BUTF_, BUTB_, REALSUB0_, REALSUB1_>(p->instH, &s[p->hlen*2*y], &tBuf[p->hlen*2*y]);
-	}
-
-	transpose<real>(d, tBuf, p->log2vlen, p->log2hlen);
-
-	for(int y=0;y<p->hlen;y++) {
-	  SleefDFTXX_execute<real, MAGIC_, MAGIC2D_, DFTF_, DFTB_, TBUTF_, TBUTB_, BUTF_, BUTB_, REALSUB0_, REALSUB1_>(p->instV, &d[p->vlen*2*y], &tBuf[p->vlen*2*y]);
-	}
-
-	transpose<real>(d, tBuf, p->log2hlen, p->log2vlen);
-      }
-
-    return;
-  }
+  real *d = d0 == NULL ? p->out : d0;
   
   if (p->log2len <= 1) {
     if ((p->mode & SLEEF_MODE_REAL) == 0) {
@@ -1301,7 +1261,7 @@ static void SleefDFTXX_execute(SleefDFTXX<real> *p, const real *s0, real *d0) {
   //
 
   const int tn = omp_get_thread_num();
-  real *t[] = { (real *)p->x1[tn], (real *)p->x0[tn], d };
+  real *t[] = { p->x1[tn], p->x0[tn], d };
   
   const real *lb = s;
   int nb = 0;
@@ -1338,6 +1298,60 @@ static void SleefDFTXX_execute(SleefDFTXX<real> *p, const real *s0, real *d0) {
   }
 }
 
+template<typename real, int MAGIC_, int MAGIC2D_,
+	 void (*DFTF_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, const real *, const int),
+	 void (*DFTB_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, const real *, const int),
+	 void (*TBUTF_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const real *, const int, const real *, const int),
+	 void (*TBUTB_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const real *, const int, const real *, const int),
+	 void (*BUTF_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const int, const real *, const int, const real *, const int),
+         void (*BUTB_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const int, const real *, const int, const real *, const int),
+         void (*REALSUB0_[ISAMAX])(real *, const real *, const int, const real *, const real *),
+         void (*REALSUB1_[ISAMAX])(real *, const real *, const int, const real *, const real *, const int)>
+static void SleefDFT2DXX_execute(SleefDFT2DXX<real> *p, const real *s0, real *d0) {
+  assert(p != NULL p->magic == MAGIC2D_);
+
+  const real *s = s0 == NULL ? (const real *)p->in : s0;
+  real *d = d0 == NULL ? p->out : d0;
+
+  // S -> T -> D -> T -> D
+
+  real *tBuf = p->tBuf;
+
+  if ((p->mode3 & SLEEF_MODE3_MT2D) != 0 &&
+      (((p->mode & SLEEF_MODE_DEBUG) == 0 && p->tmMT < p->tmNoMT) ||
+       ((p->mode & SLEEF_MODE_DEBUG) != 0 && (rand() & 1))))
+    {
+      int y=0;
+#pragma omp parallel for
+      for(y=0;y<p->vlen;y++) {
+	SleefDFTXX_execute<real, MAGIC_, MAGIC2D_, DFTF_, DFTB_, TBUTF_, TBUTB_, BUTF_, BUTB_, REALSUB0_, REALSUB1_>(p->instH, &s[p->hlen*2*y], &tBuf[p->hlen*2*y]);
+      }
+
+      transposeMT<real>(d, tBuf, p->log2vlen, p->log2hlen);
+
+#pragma omp parallel for
+      for(y=0;y<p->hlen;y++) {
+	SleefDFTXX_execute<real, MAGIC_, MAGIC2D_, DFTF_, DFTB_, TBUTF_, TBUTB_, BUTF_, BUTB_, REALSUB0_, REALSUB1_>(p->instV, &d[p->vlen*2*y], &tBuf[p->vlen*2*y]);
+      }
+
+      transposeMT<real>(d, tBuf, p->log2hlen, p->log2vlen);
+    } else {
+    for(int y=0;y<p->vlen;y++) {
+      SleefDFTXX_execute<real, MAGIC_, MAGIC2D_, DFTF_, DFTB_, TBUTF_, TBUTB_, BUTF_, BUTB_, REALSUB0_, REALSUB1_>(p->instH, &s[p->hlen*2*y], &tBuf[p->hlen*2*y]);
+    }
+
+    transpose<real>(d, tBuf, p->log2vlen, p->log2hlen);
+
+    for(int y=0;y<p->hlen;y++) {
+      SleefDFTXX_execute<real, MAGIC_, MAGIC2D_, DFTF_, DFTB_, TBUTF_, TBUTB_, BUTF_, BUTB_, REALSUB0_, REALSUB1_>(p->instV, &d[p->vlen*2*y], &tBuf[p->vlen*2*y]);
+    }
+
+    transpose<real>(d, tBuf, p->log2hlen, p->log2vlen);
+  }
+
+  return;
+}
+  
 //
 
 EXPORT SleefDFT *SleefDFT_double_init1d(uint32_t n, const double *in, double *out, uint64_t mode) {
@@ -1350,14 +1364,23 @@ EXPORT SleefDFT *SleefDFT_double_init1d(uint32_t n, const double *in, double *ou
 
 EXPORT SleefDFT *SleefDFT_double_init2d(uint32_t vlen, uint32_t hlen, const double *in, double *out, uint64_t mode) {
   SleefDFT *p = (SleefDFT *)calloc(1, sizeof(SleefDFT));
-  p->double_ = SleefDFTXX_init2d<double, Sleef_double2, 1, 0x27182818, 0x17320508, getInt_double, getPtr_double, Sleef_sincospi_u05,
-				 dftf_double, dftb_double, tbutf_double, tbutb_double, butf_double, butb_double>(vlen, hlen, in, out, mode, "double");
-  p->magic = p->double_->magic;
+  p->double2d_ = SleefDFT2DXX_init2d<double, Sleef_double2, 1, 0x27182818, 0x17320508, getInt_double, getPtr_double, Sleef_sincospi_u05,
+				     dftf_double, dftb_double, tbutf_double, tbutb_double, butf_double, butb_double>(vlen, hlen, in, out, mode, "double");
+  p->magic = p->double2d_->magic;
   return p;
 }
 
 EXPORT void SleefDFT_double_execute(SleefDFT *p, const double *s0, double *d0) {
-  SleefDFTXX_execute<double, 0x27182818, 0x17320508, dftf_double, dftb_double, tbutf_double, tbutb_double, butf_double, butb_double, realSub0_double, realSub1_double>(p->double_, s0, d0);
+  switch(p->magic) {
+  case 0x27182818:
+    SleefDFTXX_execute<double, 0x27182818, 0x17320508, dftf_double, dftb_double, tbutf_double, tbutb_double, butf_double, butb_double, realSub0_double, realSub1_double>(p->double_, s0, d0);
+    break;
+  case 0x17320508:
+    SleefDFT2DXX_execute<double, 0x27182818, 0x17320508, dftf_double, dftb_double, tbutf_double, tbutb_double, butf_double, butb_double, realSub0_double, realSub1_double>(p->double2d_, s0, d0);
+    break;
+  default:
+    abort();
+  }
 }
 
 EXPORT SleefDFT *SleefDFT_float_init1d(uint32_t n, const float *in, float *out, uint64_t mode) {
@@ -1370,12 +1393,21 @@ EXPORT SleefDFT *SleefDFT_float_init1d(uint32_t n, const float *in, float *out, 
 
 EXPORT SleefDFT *SleefDFT_float_init2d(uint32_t vlen, uint32_t hlen, const float *in, float *out, uint64_t mode) {
   SleefDFT *p = (SleefDFT *)calloc(1, sizeof(SleefDFT));
-  p->float_ = SleefDFTXX_init2d<float, Sleef_float2, 2, 0x31415926, 0x22360679, getInt_float, getPtr_float, Sleef_sincospif_u05,
-				dftf_float, dftb_float, tbutf_float, tbutb_float, butf_float, butb_float>(vlen, hlen, in, out, mode, "float");
-  p->magic = p->float_->magic;
+  p->float2d_ = SleefDFT2DXX_init2d<float, Sleef_float2, 2, 0x31415926, 0x22360679, getInt_float, getPtr_float, Sleef_sincospif_u05,
+				    dftf_float, dftb_float, tbutf_float, tbutb_float, butf_float, butb_float>(vlen, hlen, in, out, mode, "float");
+  p->magic = p->float2d_->magic;
   return p;
 }
 
 EXPORT void SleefDFT_float_execute(SleefDFT *p, const float *s0, float *d0) {
-  SleefDFTXX_execute<float, 0x31415926, 0x22360679, dftf_float, dftb_float, tbutf_float, tbutb_float, butf_float, butb_float, realSub0_float, realSub1_float>(p->float_, s0, d0);
+  switch(p->magic) {
+  case 0x31415926:
+    SleefDFTXX_execute<float, 0x31415926, 0x22360679, dftf_float, dftb_float, tbutf_float, tbutb_float, butf_float, butb_float, realSub0_float, realSub1_float>(p->float_, s0, d0);
+    break;
+  case 0x22360679:
+    SleefDFT2DXX_execute<float, 0x31415926, 0x22360679, dftf_float, dftb_float, tbutf_float, tbutb_float, butf_float, butb_float, realSub0_float, realSub1_float>(p->float2d_, s0, d0);
+    break;
+  default:
+    abort();
+  }
 }

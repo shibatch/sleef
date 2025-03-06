@@ -37,14 +37,24 @@ struct SleefDFTXX {
   uint64_t tm[CONFIGMAX][(MAXBUTWIDTH+1)*32];
   uint64_t bestTime;
   int16_t bestPath[32], bestPathConfig[32], pathLen;
+};
 
+template<typename real>
+struct SleefDFT2DXX {
+  uint32_t magic;
+  uint64_t mode, mode2, mode3;
+  int baseTypeID;
+  const real *in;
+  real *out;
+  
   //
 
   int32_t hlen, vlen;
   int32_t log2hlen, log2vlen;
   uint64_t tmNoMT, tmMT;
-  struct SleefDFTXX<real> *instH, *instV;
   real *tBuf;
+
+  struct SleefDFTXX<real> *instH, *instV;
 };
 
 struct SleefDFT {
@@ -52,6 +62,8 @@ struct SleefDFT {
   union {
     SleefDFTXX<double> *double_;
     SleefDFTXX<float> *float_;
+    SleefDFT2DXX<double> *double2d_;
+    SleefDFT2DXX<float> *float2d_;
   };
 };
 
@@ -69,8 +81,8 @@ void startAllThreads(const int nth);
 template<typename real> void freeTables(SleefDFTXX<real> *p);
 uint32_t ilog2(uint32_t q);
 
-template<typename real> int PlanManager_loadMeasurementResultsT(SleefDFTXX<real> *p);
-template<typename real> void PlanManager_saveMeasurementResultsT(SleefDFTXX<real> *p);
+template<typename real> int PlanManager_loadMeasurementResultsT(SleefDFT2DXX<real> *p);
+template<typename real> void PlanManager_saveMeasurementResultsT(SleefDFT2DXX<real> *p);
 template<typename real> int PlanManager_loadMeasurementResultsP(SleefDFTXX<real> *p, int pathCat);
 template<typename real> void PlanManager_saveMeasurementResultsP(SleefDFTXX<real> *p, int pathCat);
 template<typename real> void freeTables(SleefDFTXX<real> *p);
