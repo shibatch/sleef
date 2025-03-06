@@ -67,7 +67,8 @@ static int parsePathStr(char *p, int *path, int *config, int pathLenMax, int log
   return pathLen;
 }
 
-EXPORT void SleefDFT_setPath(SleefDFT *p, char *pathStr) {
+template<typename real>
+static void SleefDFTXX_setPath(SleefDFTXX<real> *p, char *pathStr) {
   assert(p != NULL && (p->magic == MAGIC_FLOAT || p->magic == MAGIC_DOUBLE));
 
   int path[32], config[32];
@@ -97,10 +98,25 @@ EXPORT void SleefDFT_setPath(SleefDFT *p, char *pathStr) {
   }
 }
 
-void freeTables(SleefDFT *p) {
+EXPORT void SleefDFT_setPath(SleefDFT *p, char *pathStr) {
+  assert(p != NULL);
+  switch(p->magic) {
+  case MAGIC_DOUBLE:
+    SleefDFTXX_setPath<double>(p->double_, pathStr);
+    break;
+  case MAGIC_FLOAT:
+    SleefDFTXX_setPath<float>(p->float_, pathStr);
+    break;
+  default: assert(false);
+  }
+}
+
+template<typename real>
+void freeTables(SleefDFTXX<real> *p) {
   for(int N=1;N<=MAXBUTWIDTH;N++) {
     for(uint32_t level=N;level<=p->log2len;level++) {
       Sleef_free(p->tbl[N][level]);
+      p->tbl[N][level] = nullptr;
     }
     free(p->tbl[N]);
     p->tbl[N] = NULL;
@@ -108,18 +124,28 @@ void freeTables(SleefDFT *p) {
 
   for(int i=0;i<p->nThread;i++) {
     Sleef_free(p->x1[i]);
+    p->x1[i] = nullptr;
     Sleef_free(p->x0[i]);
+    p->x0[i] = nullptr;
   }
 
   free(p->x1);
+  p->x1 = nullptr;
   free(p->x0);
+  p->x0 = nullptr;
 }
 
-EXPORT void SleefDFT_dispose(SleefDFT *p) {
+template<typename real>
+static void SleefDFTXX_dispose(SleefDFTXX<real> *p) {
   if (p != NULL && (p->magic == MAGIC2D_FLOAT || p->magic == MAGIC2D_DOUBLE)) {
     Sleef_free(p->tBuf);
-    SleefDFT_dispose(p->instH);
-    if (p->hlen != p->vlen) SleefDFT_dispose(p->instV);
+    p->tBuf = nullptr;
+    SleefDFTXX_dispose(p->instH);
+    p->instH = nullptr;
+    if (p->hlen != p->vlen) {
+      SleefDFTXX_dispose(p->instV);
+      p->instV = nullptr;
+    }
   
     p->magic = 0;
     free(p);
@@ -136,20 +162,43 @@ EXPORT void SleefDFT_dispose(SleefDFT *p) {
   
   if ((p->mode & SLEEF_MODE_REAL) != 0) {
     Sleef_free(p->rtCoef1);
+    p->rtCoef1 = nullptr;
     Sleef_free(p->rtCoef0);
-    p->rtCoef0 = p->rtCoef1 = NULL;
+    p->rtCoef0 = nullptr;
   }
   
   for(int level = p->log2len;level >= 1;level--) {
     Sleef_free(p->perm[level]);
+    p->perm[level] = nullptr;
   }
   free(p->perm);
   p->perm = NULL;
 
-  freeTables(p);
+  freeTables<real>(p);
 
   p->magic = 0;
   free(p);
+}
+
+EXPORT void SleefDFT_dispose(SleefDFT *p) {
+  assert(p != NULL);
+  switch(p->magic) {
+  case MAGIC_DOUBLE:
+  case MAGIC2D_DOUBLE:
+    SleefDFTXX_dispose<double>(p->double_);
+    p->magic = 0;
+    p->double_ = nullptr;
+    free(p);
+    break;
+  case MAGIC_FLOAT:
+  case MAGIC2D_FLOAT:
+    SleefDFTXX_dispose<float>(p->float_);
+    p->magic = 0;
+    p->float_ = nullptr;
+    free(p);
+    break;
+  default: assert(false);
+  }
 }
 
 uint32_t ilog2(uint32_t q) {
@@ -340,7 +389,8 @@ static void planMap_putU64(uint64_t key, uint64_t value) {
   planMap[key] = value;
 }
 
-int PlanManager_loadMeasurementResultsP(SleefDFT *p, int pathCat) {
+template<typename real>
+int PlanManager_loadMeasurementResultsP(SleefDFTXX<real> *p, int pathCat) {
   assert(p != NULL && (p->magic == MAGIC_FLOAT || p->magic == MAGIC_DOUBLE));
 
   initPlanMapLock();
@@ -370,7 +420,8 @@ int PlanManager_loadMeasurementResultsP(SleefDFT *p, int pathCat) {
   return ret;
 }
 
-void PlanManager_saveMeasurementResultsP(SleefDFT *p, int pathCat) {
+template<typename real>
+void PlanManager_saveMeasurementResultsP(SleefDFTXX<real> *p, int pathCat) {
   assert(p != NULL && (p->magic == MAGIC_FLOAT || p->magic == MAGIC_DOUBLE));
 
   initPlanMapLock();
@@ -395,7 +446,8 @@ void PlanManager_saveMeasurementResultsP(SleefDFT *p, int pathCat) {
   omp_unset_lock(&planMapLock);
 }
 
-int PlanManager_loadMeasurementResultsT(SleefDFT *p) {
+template<typename real>
+int PlanManager_loadMeasurementResultsT(SleefDFTXX<real> *p) {
   assert(p != NULL && (p->magic == MAGIC2D_FLOAT || p->magic == MAGIC2D_DOUBLE));
 
   initPlanMapLock();
@@ -410,7 +462,8 @@ int PlanManager_loadMeasurementResultsT(SleefDFT *p) {
   return p->tmNoMT != 0;
 }
 
-void PlanManager_saveMeasurementResultsT(SleefDFT *p) {
+template<typename real>
+void PlanManager_saveMeasurementResultsT(SleefDFTXX<real> *p) {
   assert(p != NULL && (p->magic == MAGIC2D_FLOAT || p->magic == MAGIC2D_DOUBLE));
 
   initPlanMapLock();
@@ -425,3 +478,14 @@ void PlanManager_saveMeasurementResultsT(SleefDFT *p) {
 
   omp_unset_lock(&planMapLock);
 }
+
+template void freeTables(SleefDFTXX<double> *p);
+template void freeTables(SleefDFTXX<float> *p);
+template int PlanManager_loadMeasurementResultsP<double>(SleefDFTXX<double> *p, int pathCat);
+template int PlanManager_loadMeasurementResultsP<float>(SleefDFTXX<float> *p, int pathCat);
+template int PlanManager_loadMeasurementResultsT<double>(SleefDFTXX<double> *p);
+template int PlanManager_loadMeasurementResultsT<float>(SleefDFTXX<float> *p);
+template void PlanManager_saveMeasurementResultsP<double>(SleefDFTXX<double> *p, int pathCat);
+template void PlanManager_saveMeasurementResultsP<float>(SleefDFTXX<float> *p, int pathCat);
+template void PlanManager_saveMeasurementResultsT<double>(SleefDFTXX<double> *p);
+template void PlanManager_saveMeasurementResultsT<float>(SleefDFTXX<float> *p);

@@ -287,7 +287,7 @@ target_compile_definitions(dftcommon_obj PRIVATE ${COMMON_TARGET_DEFINITIONS})
 # Target dft.o
 
 add_library(dft_obj OBJECT dft.cpp dftcommon.hpp)
-add_dependencies(dft_obj "dispatchdp.hpp_generated" "dispatchsp.hpp_generated" ${TARGET_HEADERS})
+add_dependencies(dft_obj "dispatchdp.hpp_generated" "dispatchsp.hpp_generated" dispatchparam.h_generated ${TARGET_HEADERS})
 set_target_properties(dft_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
 target_compile_definitions(dft_obj PRIVATE ${COMMON_TARGET_DEFINITIONS})
 
