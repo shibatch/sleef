@@ -112,32 +112,35 @@ EXPORT void SleefDFT_setPath(SleefDFT *p, char *pathStr) {
 }
 
 template<typename real, typename real2>
-void freeTables(SleefDFTXX<real, real2> *p) {
+void SleefDFTXX<real, real2>::freeTables() {
   for(int N=1;N<=MAXBUTWIDTH;N++) {
-    for(uint32_t level=N;level<=p->log2len;level++) {
-      Sleef_free(p->tbl[N][level]);
-      p->tbl[N][level] = nullptr;
+    for(uint32_t level=N;level<=log2len;level++) {
+      Sleef_free(tbl[N][level]);
+      tbl[N][level] = nullptr;
     }
-    free(p->tbl[N]);
-    p->tbl[N] = NULL;
+    free(tbl[N]);
+    tbl[N] = NULL;
   }
 
-  for(int i=0;i<p->nThread;i++) {
-    Sleef_free(p->x1[i]);
-    p->x1[i] = nullptr;
-    Sleef_free(p->x0[i]);
-    p->x0[i] = nullptr;
+  for(int i=0;i<nThread;i++) {
+    Sleef_free(x1[i]);
+    x1[i] = nullptr;
+    Sleef_free(x0[i]);
+    x0[i] = nullptr;
   }
 
-  free(p->x1);
-  p->x1 = nullptr;
-  free(p->x0);
-  p->x0 = nullptr;
+  free(x1);
+  x1 = nullptr;
+  free(x0);
+  x0 = nullptr;
 }
+
+template void SleefDFTXX<double, Sleef_double2>::freeTables();
+template void SleefDFTXX<float, Sleef_float2>::freeTables();
 
 template<typename real, typename real2>
 SleefDFTXX<real, real2>::~SleefDFTXX() {
-  assert(magic == MAGIC_FLOAT || p->magic == MAGIC_DOUBLE);
+  assert(magic == MAGIC_FLOAT || magic == MAGIC_DOUBLE);
 
   if (log2len <= 1) {
     magic = 0;
@@ -158,7 +161,7 @@ SleefDFTXX<real, real2>::~SleefDFTXX() {
   free(perm);
   perm = NULL;
 
-  freeTables<real, real2>(this);
+  freeTables();
 
   magic = 0;
 }
@@ -405,8 +408,8 @@ static void planMap_putU64(uint64_t key, uint64_t value) {
 }
 
 template<typename real, typename real2>
-int PlanManager_loadMeasurementResultsP(SleefDFTXX<real, real2> *p, int pathCat) {
-  assert(p != NULL && (p->magic == MAGIC_FLOAT || p->magic == MAGIC_DOUBLE));
+int SleefDFTXX<real, real2>::loadMeasurementResults(int pathCat) {
+  assert(magic == MAGIC_FLOAT || magic == MAGIC_DOUBLE);
 
   initPlanMapLock();
 
@@ -414,7 +417,7 @@ int PlanManager_loadMeasurementResultsP(SleefDFTXX<real, real2> *p, int pathCat)
 
   if (!planFileLoaded) loadPlanFromFile();
 
-  int stat = planMap_getU64(keyButStat(p->baseTypeID, p->log2len, p->mode, pathCat+10));
+  int stat = planMap_getU64(keyButStat(baseTypeID, log2len, mode, pathCat+10));
   if (stat == 0) {
     omp_unset_lock(&planMapLock);
     return 0;
@@ -422,39 +425,39 @@ int PlanManager_loadMeasurementResultsP(SleefDFTXX<real, real2> *p, int pathCat)
 
   int ret = 1;
   
-  for(int j = p->log2len;j >= 0;j--) {
-    p->bestPath[j] = planMap_getU64(keyPath(p->baseTypeID, p->log2len, p->mode, j, pathCat));
-    p->bestPathConfig[j] = planMap_getU64(keyPathConfig(p->baseTypeID, p->log2len, p->mode, j, pathCat));
-    if (p->bestPath[j] > MAXBUTWIDTH) ret = 0;
+  for(int j = log2len;j >= 0;j--) {
+    bestPath[j] = planMap_getU64(keyPath(baseTypeID, log2len, mode, j, pathCat));
+    bestPathConfig[j] = planMap_getU64(keyPathConfig(baseTypeID, log2len, mode, j, pathCat));
+    if (bestPath[j] > MAXBUTWIDTH) ret = 0;
   }
 
-  p->pathLen = 0;
-  for(int j = p->log2len;j >= 0;j--) if (p->bestPath[j] != 0) p->pathLen++;
+  pathLen = 0;
+  for(int j = log2len;j >= 0;j--) if (bestPath[j] != 0) pathLen++;
   
   omp_unset_lock(&planMapLock);
   return ret;
 }
 
 template<typename real, typename real2>
-void PlanManager_saveMeasurementResultsP(SleefDFTXX<real, real2> *p, int pathCat) {
-  assert(p != NULL && (p->magic == MAGIC_FLOAT || p->magic == MAGIC_DOUBLE));
+void SleefDFTXX<real, real2>::saveMeasurementResults(int pathCat) {
+  assert(magic == MAGIC_FLOAT || magic == MAGIC_DOUBLE);
 
   initPlanMapLock();
 
   omp_set_lock(&planMapLock);
   if (!planFileLoaded) loadPlanFromFile();
 
-  if (planMap_getU64(keyButStat(p->baseTypeID, p->log2len, p->mode, pathCat+10)) != 0) {
+  if (planMap_getU64(keyButStat(baseTypeID, log2len, mode, pathCat+10)) != 0) {
     omp_unset_lock(&planMapLock);
     return;
   }
   
-  for(int j = p->log2len;j >= 0;j--) {
-    planMap_putU64(keyPath(p->baseTypeID, p->log2len, p->mode, j, pathCat), p->bestPath[j]);
-    planMap_putU64(keyPathConfig(p->baseTypeID, p->log2len, p->mode, j, pathCat), p->bestPathConfig[j]);
+  for(int j = log2len;j >= 0;j--) {
+    planMap_putU64(keyPath(baseTypeID, log2len, mode, j, pathCat), bestPath[j]);
+    planMap_putU64(keyPathConfig(baseTypeID, log2len, mode, j, pathCat), bestPathConfig[j]);
   }
 
-  planMap_putU64(keyButStat(p->baseTypeID, p->log2len, p->mode, pathCat+10), 1);
+  planMap_putU64(keyButStat(baseTypeID, log2len, mode, pathCat+10), 1);
 
   if ((planMode & SLEEF_PLAN_READONLY) == 0) savePlanToFile();
 
@@ -462,45 +465,43 @@ void PlanManager_saveMeasurementResultsP(SleefDFTXX<real, real2> *p, int pathCat
 }
 
 template<typename real, typename real2>
-int PlanManager_loadMeasurementResultsT(SleefDFT2DXX<real, real2> *p) {
-  assert(p != NULL && (p->magic == MAGIC2D_FLOAT || p->magic == MAGIC2D_DOUBLE));
+int SleefDFT2DXX<real, real2>::loadMeasurementResults() {
+  assert(magic == MAGIC2D_FLOAT || magic == MAGIC2D_DOUBLE);
 
   initPlanMapLock();
 
   omp_set_lock(&planMapLock);
   if (!planFileLoaded) loadPlanFromFile();
 
-  p->tmNoMT = planMap_getU64(keyTrans(p->baseTypeID, p->log2hlen, p->log2vlen, 0));
-  p->tmMT   = planMap_getU64(keyTrans(p->baseTypeID, p->log2hlen, p->log2vlen, 1));
+  tmNoMT = planMap_getU64(keyTrans(baseTypeID, log2hlen, log2vlen, 0));
+  tmMT   = planMap_getU64(keyTrans(baseTypeID, log2hlen, log2vlen, 1));
   
   omp_unset_lock(&planMapLock);
-  return p->tmNoMT != 0;
+  return tmNoMT != 0;
 }
 
 template<typename real, typename real2>
-void PlanManager_saveMeasurementResultsT(SleefDFT2DXX<real, real2> *p) {
-  assert(p != NULL && (p->magic == MAGIC2D_FLOAT || p->magic == MAGIC2D_DOUBLE));
+void SleefDFT2DXX<real, real2>::saveMeasurementResults() {
+  assert(magic == MAGIC2D_FLOAT || magic == MAGIC2D_DOUBLE);
 
   initPlanMapLock();
 
   omp_set_lock(&planMapLock);
   if (!planFileLoaded) loadPlanFromFile();
 
-  planMap_putU64(keyTrans(p->baseTypeID, p->log2hlen, p->log2vlen, 0), p->tmNoMT);
-  planMap_putU64(keyTrans(p->baseTypeID, p->log2hlen, p->log2vlen, 1), p->tmMT  );
+  planMap_putU64(keyTrans(baseTypeID, log2hlen, log2vlen, 0), tmNoMT);
+  planMap_putU64(keyTrans(baseTypeID, log2hlen, log2vlen, 1), tmMT  );
   
   if ((planMode & SLEEF_PLAN_READONLY) == 0) savePlanToFile();
 
   omp_unset_lock(&planMapLock);
 }
 
-template void freeTables(SleefDFTXX<double, Sleef_double2> *p);
-template void freeTables(SleefDFTXX<float, Sleef_float2> *p);
-template int PlanManager_loadMeasurementResultsP<double, Sleef_double2>(SleefDFTXX<double, Sleef_double2> *p, int pathCat);
-template int PlanManager_loadMeasurementResultsP<float, Sleef_float2>(SleefDFTXX<float, Sleef_float2> *p, int pathCat);
-template int PlanManager_loadMeasurementResultsT<double, Sleef_double2>(SleefDFT2DXX<double, Sleef_double2> *p);
-template int PlanManager_loadMeasurementResultsT<float, Sleef_float2>(SleefDFT2DXX<float, Sleef_float2> *p);
-template void PlanManager_saveMeasurementResultsP<double, Sleef_double2>(SleefDFTXX<double, Sleef_double2> *p, int pathCat);
-template void PlanManager_saveMeasurementResultsP<float, Sleef_float2>(SleefDFTXX<float, Sleef_float2> *p, int pathCat);
-template void PlanManager_saveMeasurementResultsT<double, Sleef_double2>(SleefDFT2DXX<double, Sleef_double2> *p);
-template void PlanManager_saveMeasurementResultsT<float, Sleef_float2>(SleefDFT2DXX<float, Sleef_float2> *p);
+template int SleefDFTXX<double, Sleef_double2>::loadMeasurementResults(int pathCat);
+template int SleefDFTXX<float, Sleef_float2>::loadMeasurementResults(int pathCat);
+template void SleefDFTXX<double, Sleef_double2>::saveMeasurementResults(int pathCat);
+template void SleefDFTXX<float, Sleef_float2>::saveMeasurementResults(int pathCat);
+template int SleefDFT2DXX<double, Sleef_double2>::loadMeasurementResults();
+template int SleefDFT2DXX<float, Sleef_float2>::loadMeasurementResults();
+template void SleefDFT2DXX<double, Sleef_double2>::saveMeasurementResults();
+template void SleefDFT2DXX<float, Sleef_float2>::saveMeasurementResults();
