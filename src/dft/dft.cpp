@@ -985,7 +985,7 @@ SleefDFTXX<real, real2>::SleefDFTXX(uint32_t n, const real *in_, real *out_, uin
     void (*REALSUB0_[ISAMAX])(real *, const real *, const int, const real *, const real *),
     void (*REALSUB1_[ISAMAX])(real *, const real *, const int, const real *, const real *, const int)) :
   magic(MAGIC_), baseTypeID(BASETYPEID_), in(in_), out(out_), nThread(omp_thread_count()),
-  mode((mode_ & SLEEF_MODE_ALT) ? mode_ ^ SLEEF_MODE_BACKWARD : mode_), log2len((mode & SLEEF_MODE_REAL) ? ilog2(n)-1 : ilog2(n)),
+  log2len((mode_ & SLEEF_MODE_REAL) ? ilog2(n)-1 : ilog2(n)), mode(((mode_ & SLEEF_MODE_ALT) && log2len > 1) ? mode_ ^ SLEEF_MODE_BACKWARD : mode_),
   DFTF(DFTF_), DFTB(DFTB_), TBUTF(TBUTF_), TBUTB(TBUTB_), BUTF(BUTF_), BUTB(BUTB_), REALSUB0(REALSUB0_), REALSUB1(REALSUB1_) {
   
   // Mode

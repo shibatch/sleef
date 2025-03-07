@@ -17,8 +17,8 @@ struct SleefDFTXX {
   const real * const in;
   real * const out;
   const int nThread;
-  const uint64_t mode;
   const uint32_t log2len;
+  const uint64_t mode;
 
   uint64_t mode2 = 0, mode3 = 0;
   
