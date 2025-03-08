@@ -346,7 +346,7 @@ int SleefDFTXX<real, real2>::searchForRandomPathRecurse(int level, int *path, in
 
 // Planner
 
-#define NSHORTESTPATHS 15
+#define NSHORTESTPATHS 48
 #define MAXPATHLEN (MAXLOG2LEN+1)
 #define POSMAX (CONFIGMAX * MAXLOG2LEN * (MAXBUTWIDTH+1))
 
@@ -838,14 +838,14 @@ void SleefDFTXX<real, real2>::estimateBut() {
 }
 
 template<typename real, typename real2>
-int SleefDFTXX<real, real2>::measure(int randomize) {
+bool SleefDFTXX<real, real2>::measure(bool randomize) {
   if (log2len == 1) {
     bestTime = 1ULL << 60;
 
     pathLen = 1;
     bestPath[1] = 1;
 
-    return 1;
+    return true;
   }
 
   if (loadMeasurementResults((mode & SLEEF_MODE_NO_MT) != 0 ? 1 : 0)) {
@@ -855,10 +855,10 @@ int SleefDFTXX<real, real2>::measure(int randomize) {
       printf("\n");
     }
     
-    return 1;
+    return true;
   }
   
-  int toBeSaved = 0;
+  bool toBeSaved = false;
 
   for(uint32_t level = log2len;level >= 1;level--) {
     for(uint32_t N=1;N<=MAXBUTWIDTH;N++) {
@@ -870,17 +870,17 @@ int SleefDFTXX<real, real2>::measure(int randomize) {
   
   if (((mode & SLEEF_MODE_MEASURE) != 0 || (planFilePathSet && (mode & SLEEF_MODE_MEASUREBITS) == 0)) && !randomize) {
     measureBut();
-    toBeSaved = 1;
+    toBeSaved = true;
   } else {
     estimateBut();
   }
 
-  int executable = 0;
+  bool executable = false;
   for(int i=1;i<=MAXBUTWIDTH && !executable;i++) {
-    if (tm[0][log2len*(MAXBUTWIDTH+1)+i] < (1ULL << 60)) executable = 1;
+    if (tm[0][log2len*(MAXBUTWIDTH+1)+i] < (1ULL << 60)) executable = true;
   }
 
-  if (!executable) return 0;
+  if (!executable) return false;
 
   bestTime = 1ULL << 60;
 
@@ -899,7 +899,7 @@ int SleefDFTXX<real, real2>::measure(int randomize) {
     } while(bestTime == 1ULL << 60 && nTrial >= 0);
   }
 
-  if (bestPath[log2len] == 0) return 0;
+  if (bestPath[log2len] == 0) return false;
   
   pathLen = 0;
   for(int j = log2len;j >= 0;j--) if (bestPath[j] != 0) pathLen++;
@@ -918,7 +918,7 @@ int SleefDFTXX<real, real2>::measure(int randomize) {
     saveMeasurementResults((mode & SLEEF_MODE_NO_MT) != 0 ? 1 : 0);
   }
   
-  return 1;
+  return true;
 }
 
 template<typename real, typename real2>

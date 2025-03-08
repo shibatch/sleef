@@ -62,17 +62,16 @@ struct SleefDFTXX {
   ~SleefDFTXX();
 
   void dispatch(const int N, real *d, const real *s, const int level, const int config);
-
   void execute(const real *s0, real *d0, int MAGIC_, int MAGIC2D_);
-
+  void freeTables();
   int searchForRandomPathRecurse(int level, int *path, int *pathConfig, uint64_t tm, int nTrial);
   void searchForBestPath();
   void measureBut();
   void estimateBut();
-  int measure(int randomize);
-  void freeTables();
+  bool measure(bool randomize);
   int loadMeasurementResults(int pathCat);
   void saveMeasurementResults(int pathCat);
+  void setPath(const char *pathStr);
 };
 
 template<typename real, typename real2>
