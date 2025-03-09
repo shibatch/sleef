@@ -275,7 +275,7 @@ ALIGNED(8192) void tbut4b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const
   }
 }
 
-#if MAXBUTWIDTH >= 3
+#if MAXBUTWIDTH%TYPEID% >= 3
 ALIGNED(8192) void dft8f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
   int i=0;
@@ -585,7 +585,7 @@ ALIGNED(8192) void tbut8b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const
 }
 #endif
 
-#if MAXBUTWIDTH >= 4
+#if MAXBUTWIDTH%TYPEID% >= 4
 ALIGNED(8192) void dft16f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
   int i=0;
@@ -1251,7 +1251,7 @@ ALIGNED(8192) void tbut16b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, cons
 }
 #endif
 
-#if MAXBUTWIDTH >= 5
+#if MAXBUTWIDTH%TYPEID% >= 5
 ALIGNED(8192) void dft32f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
   int i=0;
@@ -2761,7 +2761,7 @@ ALIGNED(8192) void tbut32b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, cons
 }
 #endif
 
-#if MAXBUTWIDTH >= 6
+#if MAXBUTWIDTH%TYPEID% >= 6
 ALIGNED(8192) void dft64f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
   int i=0;
@@ -6225,7 +6225,7 @@ ALIGNED(8192) void tbut64b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, cons
 
 //
 
-#if MAXBUTWIDTH >= 7
+#if MAXBUTWIDTH%TYPEID% >= 7
 ALIGNED(8192) void dft128f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
   int i=0;

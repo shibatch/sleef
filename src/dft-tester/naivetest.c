@@ -102,6 +102,11 @@ int check_cf(int n) {
   cmpl *ts = (cmpl *)malloc(sizeof(cmpl)*n);
   cmpl *fs = (cmpl *)malloc(sizeof(cmpl)*n);
 
+  if (!sx || !sy || !ts || !fs) {
+    fprintf(stderr, "Memory allocation failed");
+    exit(-1);
+  }
+
   //
 
   for(i=0;i<n;i++) {
@@ -158,6 +163,11 @@ int check_cb(int n) {
   cmpl *ts = (cmpl *)malloc(sizeof(cmpl)*n);
   cmpl *fs = (cmpl *)malloc(sizeof(cmpl)*n);
 
+  if (!sx || !sy || !ts || !fs) {
+    fprintf(stderr, "Memory allocation failed");
+    exit(-1);
+  }
+
   //
 
   for(i=0;i<n;i++) {
@@ -212,6 +222,11 @@ int check_rf(int n) {
   cmpl *ts = (cmpl *)malloc(sizeof(cmpl)*n);
   cmpl *fs = (cmpl *)malloc(sizeof(cmpl)*n);
 
+  if (!sx || !sy || !ts || !fs) {
+    fprintf(stderr, "Memory allocation failed");
+    exit(-1);
+  }
+
   //
 
   for(i=0;i<n;i++) {
@@ -262,6 +277,11 @@ int check_rb(int n) {
   cmpl *ts = (cmpl *)malloc(sizeof(cmpl)*n);
   cmpl *fs = (cmpl *)malloc(sizeof(cmpl)*n);
 
+  if (!ts || !fs) {
+    fprintf(stderr, "Memory allocation failed");
+    exit(-1);
+  }
+
   //
 
   for(i=0;i<n/2;i++) {
@@ -276,6 +296,11 @@ int check_rb(int n) {
 
   real *sx = (real *)Sleef_malloc((n/2+1) * sizeof(real)*2);
   real *sy = (real *)Sleef_malloc(sizeof(real)*n);
+
+  if (!sx || !sy) {
+    fprintf(stderr, "Memory allocation failed");
+    exit(-1);
+  }
 
   for(i=0;i<n/2+1;i++) {
     sx[2*i+0] = creal(fs[i]);
@@ -331,6 +356,11 @@ int check_arf(int n) {
 
   cmpl *ts = (cmpl *)malloc(sizeof(cmpl)*n);
   cmpl *fs = (cmpl *)malloc(sizeof(cmpl)*n);
+
+  if (!sx || !sy || !ts || !fs) {
+    fprintf(stderr, "Memory allocation failed");
+    exit(-1);
+  }
 
   //
 
@@ -388,6 +418,11 @@ int check_arb(int n) {
 
   cmpl *ts = (cmpl *)malloc(sizeof(cmpl)*n);
   cmpl *fs = (cmpl *)malloc(sizeof(cmpl)*n);
+
+  if (!sx || !sy || !ts || !fs) {
+    fprintf(stderr, "Memory allocation failed");
+    exit(-1);
+  }
 
   //
 

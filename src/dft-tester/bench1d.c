@@ -57,7 +57,7 @@ int main(int argc, char **argv) {
   fftw_complex *in  = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * n);
   fftw_complex *out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * n);
 
-#if 0
+#ifdef MULTITHREAD
   int fftw_init_threads(void);
   fftw_plan_with_nthreads(omp_get_max_threads());
 #endif
@@ -76,7 +76,11 @@ int main(int argc, char **argv) {
   real *in  = (real *)Sleef_malloc(n*2 * sizeof(real));
   real *out = (real *)Sleef_malloc(n*2 * sizeof(real));
 
-  int mode = SLEEF_MODE_MEASURE | SLEEF_MODE_VERBOSE; // | SLEEF_MODE_NO_MT;
+#ifdef MULTITHREAD
+  int mode = SLEEF_MODE_MEASURE | SLEEF_MODE_VERBOSE;
+#else
+  int mode = SLEEF_MODE_MEASURE | SLEEF_MODE_VERBOSE | SLEEF_MODE_NO_MT;
+#endif
   if (argc >= 3) mode = SLEEF_MODE_VERBOSE | SLEEF_MODE_ESTIMATE;
 
   if (backward) mode |= SLEEF_MODE_BACKWARD;

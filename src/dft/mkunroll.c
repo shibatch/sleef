@@ -42,11 +42,12 @@ char line[LEN+10];
 
 int main(int argc, char **argv) {
   if (argc < 2) {
-    fprintf(stderr, "Usage : %s <Base type> <ISA> ...\n", argv[0]);
+    fprintf(stderr, "Usage : %s <Base type> <Base type ID> <ISA> ...\n", argv[0]);
     exit(-1);
   }
 
-  const int isastart = 2;
+  const char *baseTypeID = argv[2];
+  const int isastart = 3;
 
   for(int config=0;config<CONFIGMAX;config++) {
 #if ENABLE_STREAM == 0
@@ -86,6 +87,12 @@ int main(int argc, char **argv) {
 
 	if (config == 0) {
 	  char *s0 = replaceAll(s, "#undef EMITREALSUB", "#define EMITREALSUB");
+	  free(s);
+	  s = s0;
+	}
+
+	{
+	  char *s0 = replaceAll(s, "%TYPEID%", baseTypeID);
 	  free(s);
 	  s = s0;
 	}

@@ -43,6 +43,11 @@ double check_c(int n) {
   real *sy = (real *)Sleef_malloc(n*2 * sizeof(real));
   real *sz = (real *)Sleef_malloc(n*2 * sizeof(real));
 
+  if (!sx || !sy || !sz) {
+    fprintf(stderr, "Memory allocation failed");
+    exit(-1);
+  }
+
   for(int i=0;i<n*2;i++) sx[i] = (real)(2.0 * (rand() / (double)RAND_MAX) - 1);
 
   //
