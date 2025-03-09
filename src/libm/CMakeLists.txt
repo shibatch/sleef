@@ -183,6 +183,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/include/)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 set(CMAKE_C_FLAGS "${ORG_CMAKE_C_FLAGS} ${SLEEF_C_FLAGS}")
+set(CMAKE_CXX_FLAGS "${ORG_CMAKE_C_FLAGS} ${SLEEF_C_FLAGS}")
 
 # --------------------------------------------------------------------
 # sleef.h

@@ -18,7 +18,6 @@
 
 #define IMPORT_IS_EXPORT
 #include "sleefdft.h"
-#include "dispatchparam.h"
 #include "dftcommon.hpp"
 #include "common.h"
 #include "serializer.hpp"
@@ -45,7 +44,7 @@ static int parsePathStr(const char *p, int *path, int *config, int pathLenMax, i
     int n = 0;
     while(isdigit((int)*p)) n = n * 10 + *p++ - '0';
 
-    if (n > MAXBUTWIDTH) return -6;
+    if (n > MAXBUTWIDTHALL) return -6;
     path[pathLen-1] = n;
     l2l += n;
     config[pathLen-1] = 0;
@@ -67,8 +66,8 @@ static int parsePathStr(const char *p, int *path, int *config, int pathLenMax, i
   return pathLen;
 }
 
-template<typename real, typename real2>
-void SleefDFTXX<real, real2>::setPath(const char *pathStr) {
+template<typename real, typename real2, int MAXBUTWIDTH>
+void SleefDFTXX<real, real2, MAXBUTWIDTH>::setPath(const char *pathStr) {
   assert(magic == MAGIC_FLOAT || magic == MAGIC_DOUBLE);
 
   int path[32], config[32];
@@ -111,8 +110,8 @@ EXPORT void SleefDFT_setPath(SleefDFT *p, char *pathStr) {
   }
 }
 
-template<typename real, typename real2>
-void SleefDFTXX<real, real2>::freeTables() {
+template<typename real, typename real2, int MAXBUTWIDTH>
+void SleefDFTXX<real, real2, MAXBUTWIDTH>::freeTables() {
   for(int N=1;N<=MAXBUTWIDTH;N++) {
     for(uint32_t level=N;level<=log2len;level++) {
       Sleef_free(tbl[N][level]);
@@ -135,11 +134,11 @@ void SleefDFTXX<real, real2>::freeTables() {
   x0 = nullptr;
 }
 
-template void SleefDFTXX<double, Sleef_double2>::freeTables();
-template void SleefDFTXX<float, Sleef_float2>::freeTables();
+template void SleefDFTXX<double, Sleef_double2, MAXBUTWIDTHDP>::freeTables();
+template void SleefDFTXX<float, Sleef_float2, MAXBUTWIDTHSP>::freeTables();
 
-template<typename real, typename real2>
-SleefDFTXX<real, real2>::~SleefDFTXX() {
+template<typename real, typename real2, int MAXBUTWIDTH>
+SleefDFTXX<real, real2, MAXBUTWIDTH>::~SleefDFTXX() {
   assert(magic == MAGIC_FLOAT || magic == MAGIC_DOUBLE);
 
   if (log2len <= 1) {
@@ -166,11 +165,11 @@ SleefDFTXX<real, real2>::~SleefDFTXX() {
   magic = 0;
 }
 
-template SleefDFTXX<double, Sleef_double2>::~SleefDFTXX();
-template SleefDFTXX<float, Sleef_float2>::~SleefDFTXX();
+template SleefDFTXX<double, Sleef_double2, MAXBUTWIDTHDP>::~SleefDFTXX();
+template SleefDFTXX<float, Sleef_float2, MAXBUTWIDTHSP>::~SleefDFTXX();
 
-template<typename real, typename real2>
-SleefDFT2DXX<real, real2>::~SleefDFT2DXX() {
+template<typename real, typename real2, int MAXBUTWIDTH>
+SleefDFT2DXX<real, real2, MAXBUTWIDTH>::~SleefDFT2DXX() {
   assert(magic == MAGIC2D_FLOAT || magic == MAGIC2D_DOUBLE);
 
   Sleef_free(tBuf);
@@ -185,8 +184,8 @@ SleefDFT2DXX<real, real2>::~SleefDFT2DXX() {
   magic = 0;
 }
 
-template SleefDFT2DXX<double, Sleef_double2>::~SleefDFT2DXX();
-template SleefDFT2DXX<float, Sleef_float2>::~SleefDFT2DXX();
+template SleefDFT2DXX<double, Sleef_double2, MAXBUTWIDTHDP>::~SleefDFT2DXX();
+template SleefDFT2DXX<float, Sleef_float2, MAXBUTWIDTHSP>::~SleefDFT2DXX();
 
 EXPORT void SleefDFT_dispose(SleefDFT *p) {
   assert(p != NULL);
@@ -393,8 +392,8 @@ static void planMap_putU64(uint64_t key, uint64_t value) {
   planMap[key] = value;
 }
 
-template<typename real, typename real2>
-int SleefDFTXX<real, real2>::loadMeasurementResults(int pathCat) {
+template<typename real, typename real2, int MAXBUTWIDTH>
+int SleefDFTXX<real, real2, MAXBUTWIDTH>::loadMeasurementResults(int pathCat) {
   assert(magic == MAGIC_FLOAT || magic == MAGIC_DOUBLE);
 
   if (!planFileLoaded) loadPlanFromFile();
@@ -416,8 +415,8 @@ int SleefDFTXX<real, real2>::loadMeasurementResults(int pathCat) {
   return ret;
 }
 
-template<typename real, typename real2>
-void SleefDFTXX<real, real2>::saveMeasurementResults(int pathCat) {
+template<typename real, typename real2, int MAXBUTWIDTH>
+void SleefDFTXX<real, real2, MAXBUTWIDTH>::saveMeasurementResults(int pathCat) {
   assert(magic == MAGIC_FLOAT || magic == MAGIC_DOUBLE);
 
   if (!planFileLoaded) loadPlanFromFile();
@@ -436,8 +435,8 @@ void SleefDFTXX<real, real2>::saveMeasurementResults(int pathCat) {
   if ((planMode & SLEEF_PLAN_READONLY) == 0) savePlanToFile();
 }
 
-template<typename real, typename real2>
-int SleefDFT2DXX<real, real2>::loadMeasurementResults() {
+template<typename real, typename real2, int MAXBUTWIDTH>
+int SleefDFT2DXX<real, real2, MAXBUTWIDTH>::loadMeasurementResults() {
   assert(magic == MAGIC2D_FLOAT || magic == MAGIC2D_DOUBLE);
 
   if (!planFileLoaded) loadPlanFromFile();
@@ -448,8 +447,8 @@ int SleefDFT2DXX<real, real2>::loadMeasurementResults() {
   return tmNoMT != 0;
 }
 
-template<typename real, typename real2>
-void SleefDFT2DXX<real, real2>::saveMeasurementResults() {
+template<typename real, typename real2, int MAXBUTWIDTH>
+void SleefDFT2DXX<real, real2, MAXBUTWIDTH>::saveMeasurementResults() {
   assert(magic == MAGIC2D_FLOAT || magic == MAGIC2D_DOUBLE);
 
   if (!planFileLoaded) loadPlanFromFile();
@@ -460,11 +459,11 @@ void SleefDFT2DXX<real, real2>::saveMeasurementResults() {
   if ((planMode & SLEEF_PLAN_READONLY) == 0) savePlanToFile();
 }
 
-template int SleefDFTXX<double, Sleef_double2>::loadMeasurementResults(int pathCat);
-template int SleefDFTXX<float, Sleef_float2>::loadMeasurementResults(int pathCat);
-template void SleefDFTXX<double, Sleef_double2>::saveMeasurementResults(int pathCat);
-template void SleefDFTXX<float, Sleef_float2>::saveMeasurementResults(int pathCat);
-template int SleefDFT2DXX<double, Sleef_double2>::loadMeasurementResults();
-template int SleefDFT2DXX<float, Sleef_float2>::loadMeasurementResults();
-template void SleefDFT2DXX<double, Sleef_double2>::saveMeasurementResults();
-template void SleefDFT2DXX<float, Sleef_float2>::saveMeasurementResults();
+template int SleefDFTXX<double, Sleef_double2, MAXBUTWIDTHDP>::loadMeasurementResults(int pathCat);
+template int SleefDFTXX<float, Sleef_float2, MAXBUTWIDTHSP>::loadMeasurementResults(int pathCat);
+template void SleefDFTXX<double, Sleef_double2, MAXBUTWIDTHDP>::saveMeasurementResults(int pathCat);
+template void SleefDFTXX<float, Sleef_float2, MAXBUTWIDTHSP>::saveMeasurementResults(int pathCat);
+template int SleefDFT2DXX<double, Sleef_double2, MAXBUTWIDTHDP>::loadMeasurementResults();
+template int SleefDFT2DXX<float, Sleef_float2, MAXBUTWIDTHSP>::loadMeasurementResults();
+template void SleefDFT2DXX<double, Sleef_double2, MAXBUTWIDTHDP>::saveMeasurementResults();
+template void SleefDFT2DXX<float, Sleef_float2, MAXBUTWIDTHSP>::saveMeasurementResults();

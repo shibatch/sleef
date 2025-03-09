@@ -14,13 +14,14 @@
 
 int main(int argc, char **argv) {
   if (argc < 3) {
-    fprintf(stderr, "Usage : %s <base type> <unrollmax> <unrollmax2> <maxbutwidth> <isa> ...\n", argv[0]);
+    fprintf(stderr, "Usage : %s <base type> <base type ID> <maxbutwidth> <isa> ...\n", argv[0]);
     exit(-1);
   }
 
   const char *baseType = argv[1];
-  const int maxbutwidth = atoi(argv[2]);
-  const int isastart = 3;
+  const char *baseTypeID = argv[2];
+  const int maxbutwidth = atoi(argv[3]);
+  const int isastart = 4;
   const int isamax = argc - isastart;
 
 #if ENABLE_STREAM == 1
@@ -29,9 +30,9 @@ int main(int argc, char **argv) {
   const int enable_stream = 0;
 #endif
 
-  printf("#define MAXBUTWIDTH %d\n", maxbutwidth);
-  printf("#define ISAMAX %d\n", isamax);
+  printf("#define MAXBUTWIDTH%s %d\n", baseTypeID, maxbutwidth);
   printf("#define CONFIGMAX 4\n");
+  printf("#define ISAMAX %d\n", isamax);
   printf("\n");
 
   if (strcmp(baseType, "paramonly") == 0) exit(0);
@@ -58,7 +59,7 @@ int main(int argc, char **argv) {
 
   printf("\n");
 
-  printf("void (*dftf_%s[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(%s *, const %s *, const int) = {\n", baseType, baseType, baseType);
+  printf("void (*dftf_%s[CONFIGMAX][ISAMAX][MAXBUTWIDTH%s+1])(%s *, const %s *, const int) = {\n", baseType, baseTypeID, baseType, baseType);
   for(int config=0;config<4;config++) {
     printf("  {\n");
     for(int k=isastart;k<argc;k++) {
@@ -76,7 +77,7 @@ int main(int argc, char **argv) {
   }
   printf("};\n\n");
 
-  printf("void (*dftb_%s[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(%s *, const %s *, const int) = {\n", baseType, baseType, baseType);
+  printf("void (*dftb_%s[CONFIGMAX][ISAMAX][MAXBUTWIDTH%s+1])(%s *, const %s *, const int) = {\n", baseType, baseTypeID, baseType, baseType);
   for(int config=0;config<4;config++) {
     printf("  {\n");
     for(int k=isastart;k<argc;k++) {
@@ -98,7 +99,7 @@ int main(int argc, char **argv) {
   }
   printf("};\n\n");
 
-  printf("void (*tbutf_%s[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(%s *, uint32_t *, const %s *, const int, const %s *, const int) = {\n", baseType, baseType, baseType, baseType);
+  printf("void (*tbutf_%s[CONFIGMAX][ISAMAX][MAXBUTWIDTH%s+1])(%s *, uint32_t *, const %s *, const int, const %s *, const int) = {\n", baseType, baseTypeID, baseType, baseType, baseType);
   for(int config=0;config<4;config++) {
     printf("  {\n");
     for(int k=isastart;k<argc;k++) {
@@ -116,7 +117,7 @@ int main(int argc, char **argv) {
   }
   printf("};\n\n");
 
-  printf("void (*tbutb_%s[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(%s *, uint32_t *, const %s *, const int, const %s *, const int) = {\n", baseType, baseType, baseType, baseType);
+  printf("void (*tbutb_%s[CONFIGMAX][ISAMAX][MAXBUTWIDTH%s+1])(%s *, uint32_t *, const %s *, const int, const %s *, const int) = {\n", baseType, baseTypeID, baseType, baseType, baseType);
   for(int config=0;config<4;config++) {
     printf("  {\n");
     for(int k=isastart;k<argc;k++) {
@@ -134,7 +135,7 @@ int main(int argc, char **argv) {
   }
   printf("};\n\n");
 
-  printf("void (*butf_%s[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(%s *, uint32_t *, const int, const %s *, const int, const %s *, const int) = {\n", baseType, baseType, baseType, baseType);
+  printf("void (*butf_%s[CONFIGMAX][ISAMAX][MAXBUTWIDTH%s+1])(%s *, uint32_t *, const int, const %s *, const int, const %s *, const int) = {\n", baseType, baseTypeID, baseType, baseType, baseType);
   for(int config=0;config<4;config++) {
     printf("  {\n");
     for(int k=isastart;k<argc;k++) {
@@ -152,7 +153,7 @@ int main(int argc, char **argv) {
   }
   printf("};\n\n");
 
-  printf("void (*butb_%s[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(%s *, uint32_t *, const int, const %s *, const int, const %s *, const int) = {\n", baseType, baseType, baseType, baseType);
+  printf("void (*butb_%s[CONFIGMAX][ISAMAX][MAXBUTWIDTH%s+1])(%s *, uint32_t *, const int, const %s *, const int, const %s *, const int) = {\n", baseType, baseTypeID, baseType, baseType, baseType);
   for(int config=0;config<4;config++) {
     printf("  {\n");
     for(int k=isastart;k<argc;k++) {
