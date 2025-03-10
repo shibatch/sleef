@@ -49,6 +49,7 @@ IMPORT void SleefDFT_float_execute(struct SleefDFT *ptr, const float *in, float 
 IMPORT void SleefDFT_dispose(struct SleefDFT *ptr);
 
 IMPORT void SleefDFT_setPath(struct SleefDFT *ptr, char *pathStr);
+IMPORT int SleefDFT_getPath(struct SleefDFT *ptr, char *pathStr, int pathStrSize);
 
 //
 

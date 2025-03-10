@@ -14,15 +14,15 @@
 #include <omp.h>
 
 #include "sleef.h"
+#define IMPORT_IS_EXPORT
+#include "sleefdft.h"
 
 #include "misc.h"
 #include "common.h"
+
 #include "dftcommon.hpp"
 #include "dispatchdp.hpp"
 #include "dispatchsp.hpp"
-
-#define IMPORT_IS_EXPORT
-#include "sleefdft.h"
 
 //
 
@@ -33,8 +33,6 @@
 static const int constK[] = { 0, 2, 6, 14, 38, 94, 230, 542, 1254 };
 
 extern const char *configStr[];
-
-extern int planFilePathSet;
 
 #if defined(_MSC_VER) || defined(__MINGW32__) || defined(__MINGW64__)
 static jmp_buf sigjmp;
@@ -387,6 +385,18 @@ struct ks_t {
     free(heap);
   }
 
+  void showHeap() {
+#ifdef DEBUG
+    printf("Heap:\n");
+    for(int i=0;i<nPathsInHeap;i++) {
+      printf("%d: ", i);
+      for(int j=0;j<heapLen[i];j++) printf("%d/%d/%d ", pos2config(heap[i*MAXPATHLEN + j]), pos2level(heap[i*MAXPATHLEN + j]), pos2N(heap[i*MAXPATHLEN + j]));
+      printf(": %lld\n", (long long)heapCost[i]);
+    }
+    printf("\n");
+#endif
+  }
+
   /** returns the number of paths in the heap */
   int ksSize() { return nPathsInHeap; }
 
@@ -508,6 +518,8 @@ void SleefDFTXX<real, real2, MAXBUTWIDTH>::searchForBestPath() {
   }
 
   while(q->ksSize() != 0) {
+    if ((mode & SLEEF_MODE_VERBOSE) != 0) q->showHeap();
+
     uint64_t bestCost = 1ULL << 60;
     int bestPathNum = -1;
 
@@ -517,6 +529,7 @@ void SleefDFTXX<real, real2, MAXBUTWIDTH>::searchForBestPath() {
 	bestPathNum = i;
       }
     }
+
     if (bestPathNum == -1) break;
 
     int path[MAXPATHLEN];
@@ -545,7 +558,7 @@ void SleefDFTXX<real, real2, MAXBUTWIDTH>::searchForBestPath() {
 
   for(int j = log2len;j >= 0;j--) bestPath[j] = 0;
 
-  if (((mode & SLEEF_MODE_MEASURE) != 0 || (planFilePathSet && (mode & SLEEF_MODE_MEASUREBITS) == 0))) {
+  if (((mode & SLEEF_MODE_MEASURE) != 0 || (planManager.planFilePathSet() && (mode & SLEEF_MODE_MEASUREBITS) == 0))) {
     uint64_t besttm = 1ULL << 62;
     int bestPath_ = -1;
     const int niter =  1 + 5000000 / ((1 << log2len) + 1);
@@ -873,7 +886,7 @@ bool SleefDFTXX<real, real2, MAXBUTWIDTH>::measure(bool randomize) {
     }
   }
   
-  if (((mode & SLEEF_MODE_MEASURE) != 0 || (planFilePathSet && (mode & SLEEF_MODE_MEASUREBITS) == 0)) && !randomize) {
+  if (((mode & SLEEF_MODE_MEASURE) != 0 || (planManager.planFilePathSet() && (mode & SLEEF_MODE_MEASUREBITS) == 0)) && !randomize) {
     measureBut();
     toBeSaved = true;
   } else {
@@ -934,7 +947,7 @@ void SleefDFT2DXX<real, real2, MAXBUTWIDTH>::measureTranspose() {
     return;
   }
 
-  if ((mode & SLEEF_MODE_MEASURE) == 0 && (!planFilePathSet || (mode & SLEEF_MODE_MEASUREBITS) != 0)) {
+  if ((mode & SLEEF_MODE_MEASURE) == 0 && (!planManager.planFilePathSet() || (mode & SLEEF_MODE_MEASUREBITS) != 0)) {
     if (log2hlen + log2vlen >= 14) {
       tmNoMT = 20;
       tmMT = 10;
@@ -992,6 +1005,10 @@ SleefDFTXX<real, real2, MAXBUTWIDTH>::SleefDFTXX(uint32_t n, const real *in_, re
   magic(MAGIC_), baseTypeID(BASETYPEID_), in(in_), out(out_), nThread(omp_thread_count()),
   log2len((mode_ & SLEEF_MODE_REAL) ? ilog2(n)-1 : ilog2(n)), mode(((mode_ & SLEEF_MODE_ALT) && log2len > 1) ? mode_ ^ SLEEF_MODE_BACKWARD : mode_),
   DFTF(DFTF_), DFTB(DFTB_), TBUTF(TBUTF_), TBUTB(TBUTB_), BUTF(BUTF_), BUTB(BUTB_), REALSUB0(REALSUB0_), REALSUB1(REALSUB1_) {
+
+  memset(tm, 0, sizeof(tm));
+  memset(bestPath, 0, sizeof(bestPath));
+  memset(bestPathConfig, 0, sizeof(bestPathConfig));
   
   // Mode
 
@@ -1273,23 +1290,22 @@ void SleefDFT2DXX<real, real2, MAXBUTWIDTH>::execute(const real *s0, real *d0, i
 
   if ((mode3 & SLEEF_MODE3_MT2D) != 0 &&
       (((mode & SLEEF_MODE_DEBUG) == 0 && tmMT < tmNoMT) ||
-       ((mode & SLEEF_MODE_DEBUG) != 0 && (rand() & 1))))
-    {
-      int y=0;
+       ((mode & SLEEF_MODE_DEBUG) != 0 && (rand() & 1)))) {
+    int y=0;
 #pragma omp parallel for
-      for(y=0;y<vlen;y++) {
-	instH->execute(&s[hlen*2*y], &tBuf[hlen*2*y], MAGIC_, MAGIC2D_);
-      }
+    for(y=0;y<vlen;y++) {
+      instH->execute(&s[hlen*2*y], &tBuf[hlen*2*y], MAGIC_, MAGIC2D_);
+    }
 
-      transposeMT<real, real2, MAXBUTWIDTH>(d, tBuf, log2vlen, log2hlen);
+    transposeMT<real, real2, MAXBUTWIDTH>(d, tBuf, log2vlen, log2hlen);
 
 #pragma omp parallel for
-      for(y=0;y<hlen;y++) {
-	instV->execute(&d[vlen*2*y], &tBuf[vlen*2*y], MAGIC_, MAGIC2D_);
-      }
+    for(y=0;y<hlen;y++) {
+      instV->execute(&d[vlen*2*y], &tBuf[vlen*2*y], MAGIC_, MAGIC2D_);
+    }
 
-      transposeMT<real, real2, MAXBUTWIDTH>(d, tBuf, log2hlen, log2vlen);
-    } else {
+    transposeMT<real, real2, MAXBUTWIDTH>(d, tBuf, log2hlen, log2vlen);
+  } else {
     for(int y=0;y<vlen;y++) {
       instH->execute(&s[hlen*2*y], &tBuf[hlen*2*y], MAGIC_, MAGIC2D_);
     }

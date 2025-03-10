@@ -3,6 +3,9 @@
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
+#include <unordered_map>
+#include <mutex>
+
 #include "dispatchparam.h"
 
 #define CONFIG_STREAM 1
@@ -72,6 +75,7 @@ struct SleefDFTXX {
   int loadMeasurementResults(int pathCat);
   void saveMeasurementResults(int pathCat);
   void setPath(const char *pathStr);
+  size_t getPath(char *pathStr, size_t pathStrSize);
 };
 
 template<typename real, typename real2, int MAXBUTWIDTH>
@@ -136,3 +140,40 @@ uint32_t ilog2(uint32_t q);
 
 #define GETINT_VECWIDTH 100
 #define GETINT_DFTPRIORITY 101
+
+class PlanManager {
+  static const int CATBIT = 8;
+  static const int BASETYPEIDBIT = 2;
+  static const int LOG2LENBIT = 8;
+  static const int DIRBIT = 1;
+  static const int BUTSTATBIT = 16;
+  static const int LEVELBIT = LOG2LENBIT;
+  static const int BUTCONFIGBIT = 8;
+  static const int TRANSCONFIGBIT = 8;
+
+  char *dftPlanFilePath = nullptr;
+  char *archID = nullptr;
+  std::unordered_map<uint64_t, uint64_t> planMap;
+  uint64_t planMode_ = SLEEF_PLAN_REFERTOENVVAR;
+  int planFilePathSet_ = 0, planFileLoaded_ = 0;
+
+public:
+  std::mutex mtx;
+
+  static uint64_t keyButStat(int baseTypeID, int log2len, int dir, int butStat);
+  static uint64_t keyTrans(int baseTypeID, int hlen, int vlen, int transConfig);
+  static uint64_t keyPath(int baseTypeID, int log2len, int dir, int level, int config);
+  static uint64_t keyPathConfig(int baseTypeID, int log2len, int dir, int level, int config);
+
+  uint64_t planMode() { return planMode_; }
+  int planFilePathSet() { return planFilePathSet_; }
+  int planFileLoaded() { return planFileLoaded_; }
+
+  void setPlanFilePath(const char *path, const char *arch, uint64_t mode);
+  void loadPlanFromFile();
+  void savePlanToFile();
+  uint64_t getU64(uint64_t key);
+  void putU64(uint64_t key, uint64_t value);
+};
+
+extern PlanManager planManager;

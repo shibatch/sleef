@@ -3,18 +3,15 @@
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#define _DEFAULT_SOURCE
-#define _XOPEN_SOURCE 700
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <assert.h>
-#include <math.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstdint>
+#include <cstring>
+#include <cassert>
+#include <cmath>
 #include <complex.h>
-#include <time.h>
-#include <unistd.h>
-#include <sys/time.h>
+#include <ctime>
+#include <chrono>
 
 #ifdef USEFFTW
 #include <fftw3.h>
@@ -27,16 +24,19 @@
 typedef double real;
 
 static uint64_t gettime() {
-  struct timespec tp;
-  clock_gettime(CLOCK_MONOTONIC, &tp);
-  return (uint64_t)tp.tv_sec * 1000000000 + ((uint64_t)tp.tv_nsec);
+  return std::chrono::duration_cast<std::chrono::nanoseconds>
+    (std::chrono::system_clock::now() - std::chrono::system_clock::from_time_t(0)).count();
 }
 
 #define REPEAT 8
 
 int main(int argc, char **argv) {
   if (argc == 1) {
+#ifdef USEFFTW
     fprintf(stderr, "%s <log2n>\n", argv[0]);
+#else
+    fprintf(stderr, "%s <log2n> <plan file name> <plan string>\n", argv[0]);
+#endif
     exit(-1);
   }
 
@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
   }
 
   const int n = 1 << log2n;
-  const int64_t niter = (int)(100000000000.0 / n / log2n);
+  const int64_t niter = (int64_t)(100000000000.0 / n / log2n);
 
   printf("Number of iterations = %lld\n", (long long int)niter);
 
@@ -66,12 +66,16 @@ int main(int argc, char **argv) {
   //fftw_plan w = fftw_plan_dft_1d(n, in, out, backward ? FFTW_BACKWARD : FFTW_FORWARD, FFTW_PATIENT);
 
   for(int i=0;i<n;i++) {
-    in[i] = (2.0 * (rand() / (double)RAND_MAX) - 1) + (2.0 * (rand() / (double)RAND_MAX) - 1) * _Complex_I;
+    auto a = (2.0 * (rand() / (double)RAND_MAX) - 1) + (2.0 * (rand() / (double)RAND_MAX) - 1) * _Complex_I;
+    in[i][0] = creal(a);
+    in[i][1] = cimag(a);
   }
 
   for(int64_t i=0;i<niter/2;i++) fftw_execute(w);
 #else
-  SleefDFT_setPlanFilePath(NULL, NULL, SLEEF_PLAN_RESET);
+  const char *planfn = (argc < 3 || strcmp(argv[2], "-") == 0) ? NULL : argv[2];
+
+  SleefDFT_setPlanFilePath(planfn, NULL, SLEEF_PLAN_AUTOMATIC);
 
   real *in  = (real *)Sleef_malloc(n*2 * sizeof(real));
   real *out = (real *)Sleef_malloc(n*2 * sizeof(real));
@@ -81,12 +85,12 @@ int main(int argc, char **argv) {
 #else
   int mode = SLEEF_MODE_MEASURE | SLEEF_MODE_VERBOSE | SLEEF_MODE_NO_MT;
 #endif
-  if (argc >= 3) mode = SLEEF_MODE_VERBOSE | SLEEF_MODE_ESTIMATE;
+  if (argc >= 4) mode = SLEEF_MODE_VERBOSE | SLEEF_MODE_ESTIMATE;
 
   if (backward) mode |= SLEEF_MODE_BACKWARD;
   struct SleefDFT *p = SleefDFT_double_init1d(n, in, out, mode);
 
-  if (argc >= 3) SleefDFT_setPath(p, argv[2]);
+  if (argc >= 4) SleefDFT_setPath(p, argv[3]);
 
   for(int i=0;i<n*2;i++) {
     in[i] = (2.0 * (rand() / (double)RAND_MAX) - 1);

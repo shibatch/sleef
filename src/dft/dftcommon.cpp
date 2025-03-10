@@ -12,7 +12,9 @@
 #include <assert.h>
 #include <math.h>
 #include <omp.h>
+#include <vector>
 
+#include "flockcompat.h"
 #include "misc.h"
 #include "sleef.h"
 
@@ -97,6 +99,19 @@ void SleefDFTXX<real, real2, MAXBUTWIDTH>::setPath(const char *pathStr) {
   }
 }
 
+template<typename real, typename real2, int MAXBUTWIDTH>
+size_t SleefDFTXX<real, real2, MAXBUTWIDTH>::getPath(char *pathStr, size_t pathStrSize) {
+  assert(magic == MAGIC_FLOAT || magic == MAGIC_DOUBLE);
+  string s = "";
+  for(int j = log2len;j >= 0;j--) {
+    vector<char> buf(1024);
+    if (bestPath[j] != 0) snprintf(buf.data(), buf.size(), "%d(%s) ", bestPath[j], configStr[bestPathConfig[j]]);
+    s += buf.data();
+  }
+  strncpy(pathStr, s.c_str(), pathStrSize);
+  return MIN(pathStrSize-1, s.size());
+}
+
 EXPORT void SleefDFT_setPath(SleefDFT *p, char *pathStr) {
   assert(p != NULL);
   switch(p->magic) {
@@ -106,6 +121,17 @@ EXPORT void SleefDFT_setPath(SleefDFT *p, char *pathStr) {
   case MAGIC_FLOAT:
     p->float_->setPath(pathStr);
     break;
+  default: abort();
+  }
+}
+
+EXPORT int SleefDFT_getPath(SleefDFT *p, char *pathStr, int pathStrSize) {
+  assert(p != NULL);
+  switch(p->magic) {
+  case MAGIC_DOUBLE:
+    return (int)p->double_->getPath(pathStr, pathStrSize);
+  case MAGIC_FLOAT:
+    return (int)p->float_->getPath(pathStr, pathStrSize);
   default: abort();
   }
 }
@@ -133,9 +159,6 @@ void SleefDFTXX<real, real2, MAXBUTWIDTH>::freeTables() {
   free(x0);
   x0 = nullptr;
 }
-
-template void SleefDFTXX<double, Sleef_double2, MAXBUTWIDTHDP>::freeTables();
-template void SleefDFTXX<float, Sleef_float2, MAXBUTWIDTHSP>::freeTables();
 
 template<typename real, typename real2, int MAXBUTWIDTH>
 SleefDFTXX<real, real2, MAXBUTWIDTH>::~SleefDFTXX() {
@@ -165,9 +188,6 @@ SleefDFTXX<real, real2, MAXBUTWIDTH>::~SleefDFTXX() {
   magic = 0;
 }
 
-template SleefDFTXX<double, Sleef_double2, MAXBUTWIDTHDP>::~SleefDFTXX();
-template SleefDFTXX<float, Sleef_float2, MAXBUTWIDTHSP>::~SleefDFTXX();
-
 template<typename real, typename real2, int MAXBUTWIDTH>
 SleefDFT2DXX<real, real2, MAXBUTWIDTH>::~SleefDFT2DXX() {
   assert(magic == MAGIC2D_FLOAT || magic == MAGIC2D_DOUBLE);
@@ -183,9 +203,6 @@ SleefDFT2DXX<real, real2, MAXBUTWIDTH>::~SleefDFT2DXX() {
   
   magic = 0;
 }
-
-template SleefDFT2DXX<double, Sleef_double2, MAXBUTWIDTHDP>::~SleefDFT2DXX();
-template SleefDFT2DXX<float, Sleef_float2, MAXBUTWIDTHSP>::~SleefDFT2DXX();
 
 EXPORT void SleefDFT_dispose(SleefDFT *p) {
   assert(p != NULL);
@@ -256,19 +273,63 @@ void startAllThreads(const int nth) {
   free((void *)state);
 }
 
-//
+// PlanManager
 
-char *dftPlanFilePath = NULL;
-char *archID = NULL;
-uint64_t planMode = SLEEF_PLAN_REFERTOENVVAR;
-unordered_map<uint64_t, uint64_t> planMap;
-int planFilePathSet = 0, planFileLoaded = 0;
+uint64_t PlanManager::keyButStat(int baseTypeID, int log2len, int dir, int butStat) {
+  dir = (dir & SLEEF_MODE_BACKWARD) == 0;
+  int cat = 0;
+  uint64_t k = 0;
+  k = (k << BUTSTATBIT) | (butStat & ~(~(uint64_t)0 << BUTSTATBIT));
+  k = (k << LOG2LENBIT) | (log2len & ~(~(uint64_t)0 << LOG2LENBIT));
+  k = (k << DIRBIT) | (dir & ~(~(uint64_t)0 << LOG2LENBIT));
+  k = (k << BASETYPEIDBIT) | (baseTypeID & ~(~(uint64_t)0 << BASETYPEIDBIT));
+  k = (k << CATBIT) | (cat & ~(~(uint64_t)0 << CATBIT));
+  return k;
+}
 
-EXPORT void SleefDFT_setPlanFilePath(const char *path, const char *arch, uint64_t mode) {
+uint64_t PlanManager::keyTrans(int baseTypeID, int hlen, int vlen, int transConfig) {
+  int max = MAX(hlen, vlen), min = MIN(hlen, vlen);
+  int cat = 2;
+  uint64_t k = 0;
+  k = (k << TRANSCONFIGBIT) | (transConfig & ~(~(uint64_t)0 << TRANSCONFIGBIT));
+  k = (k << LOG2LENBIT) | (max & ~(~(uint64_t)0 << LOG2LENBIT));
+  k = (k << LOG2LENBIT) | (min & ~(~(uint64_t)0 << LOG2LENBIT));
+  k = (k << BASETYPEIDBIT) | (baseTypeID & ~(~(uint64_t)0 << BASETYPEIDBIT));
+  k = (k << CATBIT) | (cat & ~(~(uint64_t)0 << CATBIT));
+  return k;
+}
+
+uint64_t PlanManager::keyPath(int baseTypeID, int log2len, int dir, int level, int config) {
+  dir = (dir & SLEEF_MODE_BACKWARD) == 0;
+  int cat = 3;
+  uint64_t k = 0;
+  k = (k << BUTCONFIGBIT) | (config & ~(~(uint64_t)0 << BUTCONFIGBIT));
+  k = (k << LEVELBIT) | (level & ~(~(uint64_t)0 << LEVELBIT));
+  k = (k << LOG2LENBIT) | (log2len & ~(~(uint64_t)0 << LOG2LENBIT));
+  k = (k << DIRBIT) | (dir & ~(~(uint64_t)0 << LOG2LENBIT));
+  k = (k << BASETYPEIDBIT) | (baseTypeID & ~(~(uint64_t)0 << BASETYPEIDBIT));
+  k = (k << CATBIT) | (cat & ~(~(uint64_t)0 << CATBIT));
+  return k;
+}
+
+uint64_t PlanManager::keyPathConfig(int baseTypeID, int log2len, int dir, int level, int config) {
+  dir = (dir & SLEEF_MODE_BACKWARD) == 0;
+  int cat = 4;
+  uint64_t k = 0;
+  k = (k << BUTCONFIGBIT) | (config & ~(~(uint64_t)0 << BUTCONFIGBIT));
+  k = (k << LEVELBIT) | (level & ~(~(uint64_t)0 << LEVELBIT));
+  k = (k << LOG2LENBIT) | (log2len & ~(~(uint64_t)0 << LOG2LENBIT));
+  k = (k << DIRBIT) | (dir & ~(~(uint64_t)0 << LOG2LENBIT));
+  k = (k << BASETYPEIDBIT) | (baseTypeID & ~(~(uint64_t)0 << BASETYPEIDBIT));
+  k = (k << CATBIT) | (cat & ~(~(uint64_t)0 << CATBIT));
+  return k;
+}
+
+void PlanManager::setPlanFilePath(const char *path, const char *arch, uint64_t mode) {
   if ((mode & SLEEF_PLAN_RESET) != 0) {
     planMap.clear();
-    planFileLoaded = 0;
-    planFilePathSet = 0;
+    planFileLoaded_ = 0;
+    planFilePathSet_ = 0;
   }
 
   if (dftPlanFilePath != NULL) free(dftPlanFilePath);
@@ -284,128 +345,77 @@ EXPORT void SleefDFT_setPlanFilePath(const char *path, const char *arch, uint64_
   archID = (char *)malloc(strlen(arch)+10);
   strncpy(archID, arch, strlen(arch)+1);
 
-  planMode = mode;
-  planFilePathSet = 1;
+  planMode_ = mode;
+  planFilePathSet_ = 1;
 }
 
-static void loadPlanFromFile() {
-  if (planFilePathSet == 0 && (planMode & SLEEF_PLAN_REFERTOENVVAR) != 0) {
-    char *s = getenv(ENVVAR);
-    if (s != NULL) SleefDFT_setPlanFilePath(s, NULL, planMode);
+void PlanManager::loadPlanFromFile() {
+  if (planFilePathSet_ == 0 && (planMode_ & SLEEF_PLAN_REFERTOENVVAR) != 0) {
+    char *s = std::getenv(ENVVAR);
+    if (s != NULL) SleefDFT_setPlanFilePath(s, NULL, planMode_);
   }
 
   planMap.clear();
   
-  if (dftPlanFilePath != NULL && (planMode & SLEEF_PLAN_RESET) == 0) {
-    //planMap = ArrayMap_load(dftPlanFilePath, archID, PLANFILEID, (planMode & SLEEF_PLAN_NOLOCK) == 0);
+  if (dftPlanFilePath != NULL && (planMode_ & SLEEF_PLAN_RESET) == 0) {
+    //planMap = ArrayMap_load(dftPlanFilePath, archID, PLANFILEID, (planMode_ & SLEEF_PLAN_NOLOCK) == 0);
     FILE *fp = fopen(dftPlanFilePath, "rb");
     if (fp) {
+      if (!(planMode_ & SLEEF_PLAN_NOLOCK)) FLOCK(fp);
       FileDeserializer d(fp);
       d >> planMap;
+      if (!(planMode_ & SLEEF_PLAN_NOLOCK)) FUNLOCK(fp);
       fclose(fp);
     }
   }
 
-  planFileLoaded = 1;
+  planFileLoaded_ = 1;
 }
 
-static void savePlanToFile() {
-  assert(planFileLoaded);
-  if ((planMode & SLEEF_PLAN_READONLY) == 0 && dftPlanFilePath != NULL) {
+void PlanManager::savePlanToFile() {
+  assert(planFileLoaded_);
+  if ((planMode_ & SLEEF_PLAN_READONLY) == 0 && dftPlanFilePath != NULL) {
     //ArrayMap_save(planMap, dftPlanFilePath, archID, PLANFILEID);
     FILE *fp = fopen(dftPlanFilePath, "wb");
     if (fp) {
+      FLOCK(fp);
       FileSerializer s(fp);
       s << planMap;
+      FUNLOCK(fp);
       fclose(fp);
     }
   }
 }
 
-#define CATBIT 8
-#define BASETYPEIDBIT 2
-#define LOG2LENBIT 8
-#define DIRBIT 1
-
-#define BUTSTATBIT 16
-
-static uint64_t keyButStat(int baseTypeID, int log2len, int dir, int butStat) {
-  dir = (dir & SLEEF_MODE_BACKWARD) == 0;
-  int cat = 0;
-  uint64_t k = 0;
-  k = (k << BUTSTATBIT) | (butStat & ~(~(uint64_t)0 << BUTSTATBIT));
-  k = (k << LOG2LENBIT) | (log2len & ~(~(uint64_t)0 << LOG2LENBIT));
-  k = (k << DIRBIT) | (dir & ~(~(uint64_t)0 << LOG2LENBIT));
-  k = (k << BASETYPEIDBIT) | (baseTypeID & ~(~(uint64_t)0 << BASETYPEIDBIT));
-  k = (k << CATBIT) | (cat & ~(~(uint64_t)0 << CATBIT));
-  return k;
-}
-
-#define LEVELBIT LOG2LENBIT
-#define BUTCONFIGBIT 8
-#define TRANSCONFIGBIT 8
-
-static uint64_t keyTrans(int baseTypeID, int hlen, int vlen, int transConfig) {
-  int max = MAX(hlen, vlen), min = MIN(hlen, vlen);
-  int cat = 2;
-  uint64_t k = 0;
-  k = (k << TRANSCONFIGBIT) | (transConfig & ~(~(uint64_t)0 << TRANSCONFIGBIT));
-  k = (k << LOG2LENBIT) | (max & ~(~(uint64_t)0 << LOG2LENBIT));
-  k = (k << LOG2LENBIT) | (min & ~(~(uint64_t)0 << LOG2LENBIT));
-  k = (k << BASETYPEIDBIT) | (baseTypeID & ~(~(uint64_t)0 << BASETYPEIDBIT));
-  k = (k << CATBIT) | (cat & ~(~(uint64_t)0 << CATBIT));
-  return k;
-}
-
-static uint64_t keyPath(int baseTypeID, int log2len, int dir, int level, int config) {
-  dir = (dir & SLEEF_MODE_BACKWARD) == 0;
-  int cat = 3;
-  uint64_t k = 0;
-  k = (k << BUTCONFIGBIT) | (config & ~(~(uint64_t)0 << BUTCONFIGBIT));
-  k = (k << LEVELBIT) | (level & ~(~(uint64_t)0 << LEVELBIT));
-  k = (k << LOG2LENBIT) | (log2len & ~(~(uint64_t)0 << LOG2LENBIT));
-  k = (k << DIRBIT) | (dir & ~(~(uint64_t)0 << LOG2LENBIT));
-  k = (k << BASETYPEIDBIT) | (baseTypeID & ~(~(uint64_t)0 << BASETYPEIDBIT));
-  k = (k << CATBIT) | (cat & ~(~(uint64_t)0 << CATBIT));
-  return k;
-}
-
-static uint64_t keyPathConfig(int baseTypeID, int log2len, int dir, int level, int config) {
-  dir = (dir & SLEEF_MODE_BACKWARD) == 0;
-  int cat = 4;
-  uint64_t k = 0;
-  k = (k << BUTCONFIGBIT) | (config & ~(~(uint64_t)0 << BUTCONFIGBIT));
-  k = (k << LEVELBIT) | (level & ~(~(uint64_t)0 << LEVELBIT));
-  k = (k << LOG2LENBIT) | (log2len & ~(~(uint64_t)0 << LOG2LENBIT));
-  k = (k << DIRBIT) | (dir & ~(~(uint64_t)0 << LOG2LENBIT));
-  k = (k << BASETYPEIDBIT) | (baseTypeID & ~(~(uint64_t)0 << BASETYPEIDBIT));
-  k = (k << CATBIT) | (cat & ~(~(uint64_t)0 << CATBIT));
-  return k;
-}
-
-static uint64_t planMap_getU64(uint64_t key) {
+uint64_t PlanManager::getU64(uint64_t key) {
   if (!planMap.count(key)) return 0;
   return planMap.at(key);
 }
 
-static void planMap_putU64(uint64_t key, uint64_t value) {
+void PlanManager::putU64(uint64_t key, uint64_t value) {
   planMap[key] = value;
+}
+
+EXPORT void SleefDFT_setPlanFilePath(const char *path, const char *arch, uint64_t mode) {
+  planManager.setPlanFilePath(path, arch, mode);
 }
 
 template<typename real, typename real2, int MAXBUTWIDTH>
 int SleefDFTXX<real, real2, MAXBUTWIDTH>::loadMeasurementResults(int pathCat) {
   assert(magic == MAGIC_FLOAT || magic == MAGIC_DOUBLE);
 
-  if (!planFileLoaded) loadPlanFromFile();
+  std::unique_lock<mutex> lock(planManager.mtx);
 
-  int stat = planMap_getU64(keyButStat(baseTypeID, log2len, mode, pathCat+10));
+  if (!planManager.planFileLoaded()) planManager.loadPlanFromFile();
+
+  int stat = planManager.getU64(PlanManager::keyButStat(baseTypeID, log2len, mode, pathCat+10));
   if (stat == 0) return 0;
 
   int ret = 1;
   
   for(int j = log2len;j >= 0;j--) {
-    bestPath[j] = planMap_getU64(keyPath(baseTypeID, log2len, mode, j, pathCat));
-    bestPathConfig[j] = planMap_getU64(keyPathConfig(baseTypeID, log2len, mode, j, pathCat));
+    bestPath[j] = planManager.getU64(PlanManager::keyPath(baseTypeID, log2len, mode, j, pathCat));
+    bestPathConfig[j] = planManager.getU64(PlanManager::keyPathConfig(baseTypeID, log2len, mode, j, pathCat));
     if (bestPath[j] > MAXBUTWIDTH) ret = 0;
   }
 
@@ -419,30 +429,34 @@ template<typename real, typename real2, int MAXBUTWIDTH>
 void SleefDFTXX<real, real2, MAXBUTWIDTH>::saveMeasurementResults(int pathCat) {
   assert(magic == MAGIC_FLOAT || magic == MAGIC_DOUBLE);
 
-  if (!planFileLoaded) loadPlanFromFile();
+  std::unique_lock<mutex> lock(planManager.mtx);
 
-  if (planMap_getU64(keyButStat(baseTypeID, log2len, mode, pathCat+10)) != 0) {
+  if (!planManager.planFileLoaded()) planManager.loadPlanFromFile();
+
+  if (planManager.getU64(PlanManager::keyButStat(baseTypeID, log2len, mode, pathCat+10)) != 0) {
     return;
   }
   
   for(int j = log2len;j >= 0;j--) {
-    planMap_putU64(keyPath(baseTypeID, log2len, mode, j, pathCat), bestPath[j]);
-    planMap_putU64(keyPathConfig(baseTypeID, log2len, mode, j, pathCat), bestPathConfig[j]);
+    planManager.putU64(PlanManager::keyPath(baseTypeID, log2len, mode, j, pathCat), bestPath[j]);
+    planManager.putU64(PlanManager::keyPathConfig(baseTypeID, log2len, mode, j, pathCat), bestPathConfig[j]);
   }
 
-  planMap_putU64(keyButStat(baseTypeID, log2len, mode, pathCat+10), 1);
+  planManager.putU64(PlanManager::keyButStat(baseTypeID, log2len, mode, pathCat+10), 1);
 
-  if ((planMode & SLEEF_PLAN_READONLY) == 0) savePlanToFile();
+  if ((planManager.planMode() & SLEEF_PLAN_READONLY) == 0) planManager.savePlanToFile();
 }
 
 template<typename real, typename real2, int MAXBUTWIDTH>
 int SleefDFT2DXX<real, real2, MAXBUTWIDTH>::loadMeasurementResults() {
   assert(magic == MAGIC2D_FLOAT || magic == MAGIC2D_DOUBLE);
 
-  if (!planFileLoaded) loadPlanFromFile();
+  std::unique_lock<mutex> lock(planManager.mtx);
 
-  tmNoMT = planMap_getU64(keyTrans(baseTypeID, log2hlen, log2vlen, 0));
-  tmMT   = planMap_getU64(keyTrans(baseTypeID, log2hlen, log2vlen, 1));
+  if (!planManager.planFileLoaded()) planManager.loadPlanFromFile();
+
+  tmNoMT = planManager.getU64(PlanManager::keyTrans(baseTypeID, log2hlen, log2vlen, 0));
+  tmMT   = planManager.getU64(PlanManager::keyTrans(baseTypeID, log2hlen, log2vlen, 1));
   
   return tmNoMT != 0;
 }
@@ -451,13 +465,24 @@ template<typename real, typename real2, int MAXBUTWIDTH>
 void SleefDFT2DXX<real, real2, MAXBUTWIDTH>::saveMeasurementResults() {
   assert(magic == MAGIC2D_FLOAT || magic == MAGIC2D_DOUBLE);
 
-  if (!planFileLoaded) loadPlanFromFile();
+  std::unique_lock<mutex> lock(planManager.mtx);
 
-  planMap_putU64(keyTrans(baseTypeID, log2hlen, log2vlen, 0), tmNoMT);
-  planMap_putU64(keyTrans(baseTypeID, log2hlen, log2vlen, 1), tmMT  );
+  if (!planManager.planFileLoaded()) planManager.loadPlanFromFile();
+
+  planManager.putU64(PlanManager::keyTrans(baseTypeID, log2hlen, log2vlen, 0), tmNoMT);
+  planManager.putU64(PlanManager::keyTrans(baseTypeID, log2hlen, log2vlen, 1), tmMT  );
   
-  if ((planMode & SLEEF_PLAN_READONLY) == 0) savePlanToFile();
+  if ((planManager.planMode() & SLEEF_PLAN_READONLY) == 0) planManager.savePlanToFile();
 }
+
+// Instantiation
+
+template void SleefDFTXX<double, Sleef_double2, MAXBUTWIDTHDP>::freeTables();
+template void SleefDFTXX<float, Sleef_float2, MAXBUTWIDTHSP>::freeTables();
+template SleefDFTXX<double, Sleef_double2, MAXBUTWIDTHDP>::~SleefDFTXX();
+template SleefDFTXX<float, Sleef_float2, MAXBUTWIDTHSP>::~SleefDFTXX();
+template SleefDFT2DXX<double, Sleef_double2, MAXBUTWIDTHDP>::~SleefDFT2DXX();
+template SleefDFT2DXX<float, Sleef_float2, MAXBUTWIDTHSP>::~SleefDFT2DXX();
 
 template int SleefDFTXX<double, Sleef_double2, MAXBUTWIDTHDP>::loadMeasurementResults(int pathCat);
 template int SleefDFTXX<float, Sleef_float2, MAXBUTWIDTHSP>::loadMeasurementResults(int pathCat);
@@ -467,3 +492,5 @@ template int SleefDFT2DXX<double, Sleef_double2, MAXBUTWIDTHDP>::loadMeasurement
 template int SleefDFT2DXX<float, Sleef_float2, MAXBUTWIDTHSP>::loadMeasurementResults();
 template void SleefDFT2DXX<double, Sleef_double2, MAXBUTWIDTHDP>::saveMeasurementResults();
 template void SleefDFT2DXX<float, Sleef_float2, MAXBUTWIDTHSP>::saveMeasurementResults();
+
+PlanManager planManager;
