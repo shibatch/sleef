@@ -58,7 +58,15 @@ if(SLEEF_BUILD_WITH_LIBM)
 endif()
 find_library(LIBGMP gmp)
 find_library(LIBRT rt)
+
 find_library(LIBFFTW3 fftw3)
+find_library(LIBFFTW3F fftw3f)
+find_library(LIBFFTW3_OMP fftw3_omp)
+find_library(LIBFFTW3F_OMP fftw3f_omp)
+
+if (LIBFFTW3 AND LIBFFTW3F AND LIBFFTW3_OMP AND LIBFFTW3F_OMP)
+  set(SLEEF_LIBFFTW3_LIBRARIES ${LIBFFTW3} ${LIBFFTW3F} ${LIBFFTW3_OMP} ${LIBFFTW3F_OMP})
+endif()
 
 if (LIB_MPFR)
   find_path(MPFR_INCLUDE_DIR
@@ -70,7 +78,7 @@ if (LIBFFTW3)
   find_path(FFTW3_INCLUDE_DIR
     NAMES fftw3.h
     ONLY_CMAKE_FIND_ROOT_PATH)
-endif(LIBFFTW3)
+endif()
 
 if (NOT LIBM)
   set(LIBM "")

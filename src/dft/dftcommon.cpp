@@ -14,7 +14,7 @@
 #include <omp.h>
 #include <vector>
 
-#include "flockcompat.h"
+#include "compat.h"
 #include "misc.h"
 #include "sleef.h"
 
@@ -76,7 +76,7 @@ void SleefDFTXX<real, real2, MAXBUTWIDTH>::setPath(const char *pathStr) {
   int pathLen = parsePathStr(pathStr, path, config, 31, log2len);
 
   if (pathLen < 0) {
-    if ((mode & SLEEF_MODE_VERBOSE) != 0) printf("Error %d in parsing path string : %s\n", pathLen, pathStr);
+    if ((mode & SLEEF_MODE_VERBOSE) != 0) fprintf(verboseFP, "Error %d in parsing path string : %s\n", pathLen, pathStr);
     return;
   }
 
@@ -93,9 +93,9 @@ void SleefDFTXX<real, real2, MAXBUTWIDTH>::setPath(const char *pathStr) {
   for(int j = log2len;j >= 0;j--) if (bestPath[j] != 0) pathLen++;
 
   if ((mode & SLEEF_MODE_VERBOSE) != 0) {
-    printf("Set path : ");
-    for(int j = log2len;j >= 0;j--) if (bestPath[j] != 0) printf("%d(%s) ", bestPath[j], configStr[bestPathConfig[j]]);
-    printf("\n");
+    fprintf(verboseFP, "Set path : ");
+    for(int j = log2len;j >= 0;j--) if (bestPath[j] != 0) fprintf(verboseFP, "%d(%s) ", bestPath[j], configStr[bestPathConfig[j]]);
+    fprintf(verboseFP, "\n");
   }
 }
 
@@ -494,3 +494,9 @@ template void SleefDFT2DXX<double, Sleef_double2, MAXBUTWIDTHDP>::saveMeasuremen
 template void SleefDFT2DXX<float, Sleef_float2, MAXBUTWIDTHSP>::saveMeasurementResults();
 
 PlanManager planManager;
+
+FILE *defaultVerboseFP = stdout;
+
+EXPORT void SleefDFT_setDefaultVerboseFP(FILE *fp) {
+  defaultVerboseFP = fp;
+}

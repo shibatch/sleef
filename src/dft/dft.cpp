@@ -387,13 +387,13 @@ struct ks_t {
 
   void showHeap() {
 #ifdef DEBUG
-    printf("Heap:\n");
+    fprintf(p->verboseFP, "Heap:\n");
     for(int i=0;i<nPathsInHeap;i++) {
-      printf("%d: ", i);
-      for(int j=0;j<heapLen[i];j++) printf("%d/%d/%d ", pos2config(heap[i*MAXPATHLEN + j]), pos2level(heap[i*MAXPATHLEN + j]), pos2N(heap[i*MAXPATHLEN + j]));
-      printf(": %lld\n", (long long)heapCost[i]);
+      fprintf(p->verboseFP, "%d: ", i);
+      for(int j=0;j<heapLen[i];j++) fprintf(p->verboseFP, "%d/%d/%d ", pos2config(heap[i*MAXPATHLEN + j]), pos2level(heap[i*MAXPATHLEN + j]), pos2N(heap[i*MAXPATHLEN + j]));
+      fprintf(p->verboseFP, ": %lld\n", (long long)heapCost[i]);
     }
-    printf("\n");
+    fprintf(p->verboseFP, "\n");
 #endif
   }
 
@@ -584,7 +584,7 @@ void SleefDFTXX<real, real2, MAXBUTWIDTH>::searchForBestPath() {
 	    uint64_t t1 = q->p->tm[config | 1][level*(MAXBUTWIDTH+1) + N];
 	    config = t0 < t1 ? config : (config | 1);
 
-	    if (N != 0) printf("%d(%s) ", N, configStr[config]);
+	    if (N != 0) fprintf(verboseFP, "%d(%s) ", N, configStr[config]);
 	  }
 	}
 
@@ -632,7 +632,7 @@ void SleefDFTXX<real, real2, MAXBUTWIDTH>::searchForBestPath() {
 	  double nlog2n = ldexp(log2len, log2len);
 	  double timeus0 = double(tm1 - tm0) / niter;
 	  double timeus1 = double(tm2 - tm1) / niter;
-	  printf(" : %g %g\n", 5 * nlog2n / timeus0, 5 * nlog2n / timeus1);
+	  fprintf(verboseFP, " : %g %g\n", 5 * nlog2n / timeus0, 5 * nlog2n / timeus1);
 	}
 	if ((tm1 - tm0) < besttm) {
 	  bestPath_ = i;
@@ -778,40 +778,40 @@ void SleefDFTXX<real, real2, MAXBUTWIDTH>::measureBut() {
 	if (level < N || log2len <= N) continue;
 	if (level == N) {
 	  if ((int)log2len - (int)level < log2vecwidth) continue;
-	  printf("bot %d, %d, %d, ", log2len, level, N);
+	  fprintf(verboseFP, "bot %d, %d, %d, ", log2len, level, N);
 	  for(int config=0;config<CONFIGMAX;config++) {
 	    if (tm[config][level*(MAXBUTWIDTH+1)+N] == 1ULL << 60) {
-	      printf("N/A, ");
+	      fprintf(verboseFP, "N/A, ");
 	    } else {
-	      printf("%lld, ", (long long int)tm[config][level*(MAXBUTWIDTH+1)+N]);
+	      fprintf(verboseFP, "%lld, ", (long long int)tm[config][level*(MAXBUTWIDTH+1)+N]);
 	    }
 	  }
-	  printf("\n");
+	  fprintf(verboseFP, "\n");
 	} else if (level == log2len) {
 	  if (tbl[N] == NULL || tbl[N][level] == NULL) continue;
 	  if (vecwidth > (1 << N)) continue;
-	  printf("top %d, %d, %d, ", log2len, level, N);
+	  fprintf(verboseFP, "top %d, %d, %d, ", log2len, level, N);
 	  for(int config=0;config<CONFIGMAX;config++) {
 	    if (tm[config][level*(MAXBUTWIDTH+1)+N] == 1ULL << 60) {
-	      printf("N/A, ");
+	      fprintf(verboseFP, "N/A, ");
 	    } else {
-	      printf("%lld, ", (long long int)tm[config][level*(MAXBUTWIDTH+1)+N]);
+	      fprintf(verboseFP, "%lld, ", (long long int)tm[config][level*(MAXBUTWIDTH+1)+N]);
 	    }
 	  }
-	  printf("\n");
+	  fprintf(verboseFP, "\n");
 	} else {
 	  if (tbl[N] == NULL || tbl[N][level] == NULL) continue;
 	  if (vecwidth > 2 && log2len <= N+2) continue;
 	  if ((int)log2len - (int)level < log2vecwidth) continue;
-	  printf("mid %d, %d, %d, ", log2len, level, N);
+	  fprintf(verboseFP, "mid %d, %d, %d, ", log2len, level, N);
 	  for(int config=0;config<CONFIGMAX;config++) {
 	    if (tm[config][level*(MAXBUTWIDTH+1)+N] == 1ULL << 60) {
-	      printf("N/A, ");
+	      fprintf(verboseFP, "N/A, ");
 	    } else {
-	      printf("%lld, ", (long long int)tm[config][level*(MAXBUTWIDTH+1)+N]);
+	      fprintf(verboseFP, "%lld, ", (long long int)tm[config][level*(MAXBUTWIDTH+1)+N]);
 	    }
 	  }
-	  printf("\n");
+	  fprintf(verboseFP, "\n");
 	}
       }
     }
@@ -868,9 +868,9 @@ bool SleefDFTXX<real, real2, MAXBUTWIDTH>::measure(bool randomize) {
 
   if (loadMeasurementResults((mode & SLEEF_MODE_NO_MT) != 0 ? 1 : 0)) {
     if ((mode & SLEEF_MODE_VERBOSE) != 0) {
-      printf("Path(loaded) : ");
-      for(int j = log2len;j >= 0;j--) if (bestPath[j] != 0) printf("%d(%s) ", bestPath[j], configStr[bestPathConfig[j]]);
-      printf("\n");
+      fprintf(verboseFP, "Path(loaded) : ");
+      for(int j = log2len;j >= 0;j--) if (bestPath[j] != 0) fprintf(verboseFP, "%d(%s) ", bestPath[j], configStr[bestPathConfig[j]]);
+      fprintf(verboseFP, "\n");
     }
     
     return true;
@@ -923,13 +923,13 @@ bool SleefDFTXX<real, real2, MAXBUTWIDTH>::measure(bool randomize) {
   for(int j = log2len;j >= 0;j--) if (bestPath[j] != 0) pathLen++;
 
   if ((mode & SLEEF_MODE_VERBOSE) != 0) {
-    printf("Path");
-    if (randomize) printf("(random) :");
-    else if (toBeSaved) printf("(measured) :");
-    else printf("(estimated) :");
+    fprintf(verboseFP, "Path");
+    if (randomize) fprintf(verboseFP, "(random) :");
+    else if (toBeSaved) fprintf(verboseFP, "(measured) :");
+    else fprintf(verboseFP, "(estimated) :");
 
-    for(int j = log2len;j >= 0;j--) if (bestPath[j] != 0) printf("%d(%s) ", bestPath[j], configStr[bestPathConfig[j]]);
-    printf("\n");
+    for(int j = log2len;j >= 0;j--) if (bestPath[j] != 0) fprintf(verboseFP, "%d(%s) ", bestPath[j], configStr[bestPathConfig[j]]);
+    fprintf(verboseFP, "\n");
   }
 
   if (toBeSaved) {
@@ -942,8 +942,8 @@ bool SleefDFTXX<real, real2, MAXBUTWIDTH>::measure(bool randomize) {
 template<typename real, typename real2, int MAXBUTWIDTH>
 void SleefDFT2DXX<real, real2, MAXBUTWIDTH>::measureTranspose() {
   if (loadMeasurementResults()) {
-    if ((mode & SLEEF_MODE_VERBOSE) != 0) printf("transpose NoMT(loaded): %lld\n", (long long int)tmNoMT);
-    if ((mode & SLEEF_MODE_VERBOSE) != 0) printf("transpose   MT(loaded): %lld\n", (long long int)tmMT);
+    if ((mode & SLEEF_MODE_VERBOSE) != 0) fprintf(verboseFP, "transpose NoMT(loaded): %lld\n", (long long int)tmNoMT);
+    if ((mode & SLEEF_MODE_VERBOSE) != 0) fprintf(verboseFP, "transpose   MT(loaded): %lld\n", (long long int)tmMT);
     return;
   }
 
@@ -951,11 +951,11 @@ void SleefDFT2DXX<real, real2, MAXBUTWIDTH>::measureTranspose() {
     if (log2hlen + log2vlen >= 14) {
       tmNoMT = 20;
       tmMT = 10;
-      if ((mode & SLEEF_MODE_VERBOSE) != 0) printf("transpose : selected MT(estimated)\n");
+      if ((mode & SLEEF_MODE_VERBOSE) != 0) fprintf(verboseFP, "transpose : selected MT(estimated)\n");
     } else {
       tmNoMT = 10;
       tmMT = 20;
-      if ((mode & SLEEF_MODE_VERBOSE) != 0) printf("transpose : selected NoMT(estimated)\n");
+      if ((mode & SLEEF_MODE_VERBOSE) != 0) fprintf(verboseFP, "transpose : selected NoMT(estimated)\n");
     }
     return;
   }
@@ -972,7 +972,7 @@ void SleefDFT2DXX<real, real2, MAXBUTWIDTH>::measureTranspose() {
   }
   tmNoMT = Sleef_currentTimeMicros() - tm + 1;
 
-  if ((mode & SLEEF_MODE_VERBOSE) != 0) printf("transpose NoMT(measured): %lld\n", (long long int)tmNoMT);
+  if ((mode & SLEEF_MODE_VERBOSE) != 0) fprintf(verboseFP, "transpose NoMT(measured): %lld\n", (long long int)tmNoMT);
 
   tm = Sleef_currentTimeMicros();
   for(int i=0;i<niter;i++) {
@@ -981,7 +981,7 @@ void SleefDFT2DXX<real, real2, MAXBUTWIDTH>::measureTranspose() {
   }
   tmMT = Sleef_currentTimeMicros() - tm + 1;
 
-  if ((mode & SLEEF_MODE_VERBOSE) != 0) printf("transpose   MT(measured): %lld\n", (long long int)tmMT);
+  if ((mode & SLEEF_MODE_VERBOSE) != 0) fprintf(verboseFP, "transpose   MT(measured): %lld\n", (long long int)tmMT);
   
   Sleef_free(tBuf2);
 
@@ -1005,6 +1005,8 @@ SleefDFTXX<real, real2, MAXBUTWIDTH>::SleefDFTXX(uint32_t n, const real *in_, re
   magic(MAGIC_), baseTypeID(BASETYPEID_), in(in_), out(out_), nThread(omp_thread_count()),
   log2len((mode_ & SLEEF_MODE_REAL) ? ilog2(n)-1 : ilog2(n)), mode(((mode_ & SLEEF_MODE_ALT) && log2len > 1) ? mode_ ^ SLEEF_MODE_BACKWARD : mode_),
   DFTF(DFTF_), DFTB(DFTB_), TBUTF(TBUTF_), TBUTB(TBUTB_), BUTF(BUTF_), BUTB(BUTB_), REALSUB0(REALSUB0_), REALSUB1(REALSUB1_) {
+
+  verboseFP = defaultVerboseFP;
 
   memset(tm, 0, sizeof(tm));
   memset(bestPath, 0, sizeof(bestPath));
@@ -1031,7 +1033,7 @@ SleefDFTXX<real, real2, MAXBUTWIDTH>::SleefDFTXX(uint32_t n, const real *in_, re
   }
 
   if (isa == -1) {
-    if ((mode & SLEEF_MODE_VERBOSE) != 0) printf("ISA not available\n");
+    if ((mode & SLEEF_MODE_VERBOSE) != 0) fprintf(verboseFP, "ISA not available\n");
     magic = 0;
     return;
   }
@@ -1107,7 +1109,7 @@ SleefDFTXX<real, real2, MAXBUTWIDTH>::SleefDFTXX(uint32_t n, const real *in_, re
     }  
 
     if (!measure(mode & SLEEF_MODE_DEBUG)) {
-      if ((mode & SLEEF_MODE_VERBOSE) != 0) printf("Suitable ISA not found. This should not happen.\n");
+      if ((mode & SLEEF_MODE_VERBOSE) != 0) fprintf(verboseFP, "Suitable ISA not found. This should not happen.\n");
       abort();
     }
   }
@@ -1125,7 +1127,7 @@ SleefDFTXX<real, real2, MAXBUTWIDTH>::SleefDFTXX(uint32_t n, const real *in_, re
     level -= N;
   }  
   
-  if ((mode & SLEEF_MODE_VERBOSE) != 0) printf("ISA : %s %d bit %s\n", (char *)(*GETPTR_[isa])(0), (int)(GETINT_[isa](GETINT_VECWIDTH) * sizeof(real) * 16), baseTypeString);
+  if ((mode & SLEEF_MODE_VERBOSE) != 0) fprintf(verboseFP, "ISA : %s %d bit %s\n", (char *)(*GETPTR_[isa])(0), (int)(GETINT_[isa](GETINT_VECWIDTH) * sizeof(real) * 16), baseTypeString);
 }
 
 // Implementation of SleefDFT_*_init2d
@@ -1150,6 +1152,8 @@ SleefDFT2DXX<real, real2, MAXBUTWIDTH>::SleefDFT2DXX(uint32_t vlen_, uint32_t hl
   log2hlen = ilog2(hlen_);
   vlen = vlen_;
   log2vlen = ilog2(vlen_);
+
+  verboseFP = stdout;
   
   uint64_t mode1D = mode;
   mode1D |= SLEEF_MODE_NO_MT;
@@ -1378,6 +1382,25 @@ EXPORT void SleefDFT_float_execute(SleefDFT *p, const float *s0, float *d0) {
     break;
   case 0x22360679:
     p->float2d_->execute(s0, d0, 0x31415926, 0x22360679);
+    break;
+  default:
+    abort();
+  }
+}
+
+EXPORT void SleefDFT_execute(SleefDFT *p, const void *s0, void *d0) {
+  switch(p->magic) {
+  case 0x27182818:
+    p->double_->execute((const double *)s0, (double *)d0, 0x27182818, 0x17320508);
+    break;
+  case 0x17320508:
+    p->double2d_->execute((const double *)s0, (double *)d0, 0x27182818, 0x17320508);
+    break;
+  case 0x31415926:
+    p->float_->execute((const float *)s0, (float *)d0, 0x31415926, 0x22360679);
+    break;
+  case 0x22360679:
+    p->float2d_->execute((const float *)s0, (float *)d0, 0x31415926, 0x22360679);
     break;
   default:
     abort();
