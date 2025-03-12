@@ -42,6 +42,8 @@ struct SleefDFTXX {
   uint64_t bestTime = 0;
   int16_t bestPath[32], bestPathConfig[32], pathLen = 0;
 
+  FILE *verboseFP = NULL;
+
   void (*(* const DFTF)[ISAMAX][MAXBUTWIDTH+1])(real *, const real *, const int);
   void (*(* const DFTB)[ISAMAX][MAXBUTWIDTH+1])(real *, const real *, const int);
   void (*(* const TBUTF)[ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const real *, const int, const real *, const int);
@@ -94,6 +96,8 @@ struct SleefDFT2DXX {
   real *tBuf;
 
   SleefDFTXX<real, real2, MAXBUTWIDTH> *instH, *instV;
+
+  FILE *verboseFP = NULL;
 
   SleefDFT2DXX(uint32_t vlen, uint32_t hlen, const real *in, real *out, uint64_t mode, const char *baseTypeString,
     int BASETYPEID_, int MAGIC_, int MAGIC2D_,
@@ -177,3 +181,4 @@ public:
 };
 
 extern PlanManager planManager;
+extern FILE *defaultVerboseFP;
