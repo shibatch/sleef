@@ -506,7 +506,7 @@ struct ks_t {
 //
 
 template<typename real, typename real2, int MAXBUTWIDTH>
-void SleefDFTXX<real, real2, MAXBUTWIDTH>::searchForBestPath() {
+void SleefDFTXX<real, real2, MAXBUTWIDTH>::searchForBestPath(int nPaths) {
   ks_t<real, real2, MAXBUTWIDTH> *q = new ks_t<real, real2, MAXBUTWIDTH>(this);
 
   for(int i=0;;i++) {
@@ -538,18 +538,18 @@ void SleefDFTXX<real, real2, MAXBUTWIDTH>::searchForBestPath() {
     q->ksRemove(bestPathNum);
 
     int lastPos = path[pathLen-1];
-    if (q->ksCountu(lastPos) >= NSHORTESTPATHS) continue;
+    if (q->ksCountu(lastPos) >= nPaths) continue;
     q->ksSetCountu(lastPos, q->ksCountu(lastPos)+1);
 
     if (q->ksIsDest(lastPos)) {
-      if (q->ksAddBestPath(path, pathLen, cost) >= NSHORTESTPATHS) break;
+      if (q->ksAddBestPath(path, pathLen, cost) >= nPaths) break;
       continue;
     }
 
     for(int i=0;;i++) {
       int v = q->ksAdjacent(lastPos, i);
       if (v == -1) break;
-      assert(0 <= pos2N(v) && pos2N(v) <= q->p->log2len);
+      assert(0 <= pos2N(v) && pos2N(v) <= (int)q->p->log2len);
       uint64_t c = q->ksAdjacentCost(lastPos, i);
       path[pathLen] = v;
       q->ksAddPath(path, pathLen+1, cost + c);
@@ -560,7 +560,7 @@ void SleefDFTXX<real, real2, MAXBUTWIDTH>::searchForBestPath() {
 
   if (((mode & SLEEF_MODE_MEASURE) != 0 || (planManager.planFilePathSet() && (mode & SLEEF_MODE_MEASUREBITS) == 0))) {
     uint64_t besttm = 1ULL << 62;
-    int bestPath_ = -1;
+    int bestPath_ = -1, bestPathLen = q->pathLen[0];
     const int niter =  1 + 5000000 / ((1 << log2len) + 1);
 
     real *s2 = NULL, *d2 = NULL;
@@ -572,8 +572,9 @@ void SleefDFTXX<real, real2, MAXBUTWIDTH>::searchForBestPath() {
     real *t[] = { x1[tn], x0[tn], d };
 
     for(int mt=0;mt<2;mt++) {
-      for(int i=q->nPaths-1;i>=0;i--) {
+      for(int i=0;i<q->nPaths;i++) {
 	if (((pos2config(q->path[i][0]) & CONFIG_MT) != 0) != mt) continue;
+	if (q->pathLen[i] > bestPathLen * 10) continue;
 
 	if ((mode & SLEEF_MODE_VERBOSE) != 0) {
 	  for(int j=0;j<q->pathLen[i];j++) {
@@ -636,10 +637,12 @@ void SleefDFTXX<real, real2, MAXBUTWIDTH>::searchForBestPath() {
 	}
 	if ((tm1 - tm0) < besttm) {
 	  bestPath_ = i;
+	  bestPathLen = q->pathLen[bestPath_];
 	  besttm = tm1 - tm0;
 	}
 	if ((tm2 - tm1) < besttm) {
 	  bestPath_ = i;
+	  bestPathLen = q->pathLen[bestPath_];
 	  besttm = tm2 - tm1;
 	}
       }
@@ -905,7 +908,7 @@ bool SleefDFTXX<real, real2, MAXBUTWIDTH>::measure(bool randomize) {
   bestPath[log2len] = 0;
   
   if (!randomize) {
-    searchForBestPath();
+    searchForBestPath((mode & SLEEF_MODE_MEASURE) != 0 ? NSHORTESTPATHS : 1);
   } else {
     int path[MAXLOG2LEN+1];
     int pathConfig[MAXLOG2LEN+1];
@@ -1133,7 +1136,7 @@ SleefDFTXX<real, real2, MAXBUTWIDTH>::SleefDFTXX(uint32_t n, const real *in_, re
 // Implementation of SleefDFT_*_init2d
 
 template<typename real, typename real2, int MAXBUTWIDTH>
-SleefDFT2DXX<real, real2, MAXBUTWIDTH>::SleefDFT2DXX(uint32_t vlen_, uint32_t hlen_, const real *in_, real *out_, uint64_t mode, const char *baseTypeString,
+SleefDFT2DXX<real, real2, MAXBUTWIDTH>::SleefDFT2DXX(uint32_t vlen_, uint32_t hlen_, const real *in_, real *out_, uint64_t mode_, const char *baseTypeString,
     int BASETYPEID_, int MAGIC_, int MAGIC2D_,
     int (*GETINT_[16])(int), const void *(*GETPTR_[16])(int), real2 (*SINCOSPI_)(real),
     void (*DFTF_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, const real *, const int),
@@ -1152,6 +1155,9 @@ SleefDFT2DXX<real, real2, MAXBUTWIDTH>::SleefDFT2DXX(uint32_t vlen_, uint32_t hl
   log2hlen = ilog2(hlen_);
   vlen = vlen_;
   log2vlen = ilog2(vlen_);
+  mode = mode_;
+  mode2 = 0;
+  mode3 = 0;
 
   verboseFP = stdout;
   

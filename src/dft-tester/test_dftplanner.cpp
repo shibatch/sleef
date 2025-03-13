@@ -31,10 +31,18 @@ int main(int argc, char **argv) {
   float *fin  = (float *)Sleef_malloc(1024*2 * sizeof(double));
   float *fout = (float *)Sleef_malloc(1024*2 * sizeof(double));
 
+#ifdef MEASURE
 #ifdef MULTITHREAD
   int mode = SLEEF_MODE_MEASURE | SLEEF_MODE_VERBOSE;
 #else
   int mode = SLEEF_MODE_MEASURE | SLEEF_MODE_VERBOSE | SLEEF_MODE_NO_MT;
+#endif
+#else
+#ifdef MULTITHREAD
+  int mode = SLEEF_MODE_ESTIMATE | SLEEF_MODE_VERBOSE;
+#else
+  int mode = SLEEF_MODE_ESTIMATE | SLEEF_MODE_VERBOSE | SLEEF_MODE_NO_MT;
+#endif
 #endif
 
   SleefDFT *p;
