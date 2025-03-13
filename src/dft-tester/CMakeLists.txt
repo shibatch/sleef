@@ -87,11 +87,21 @@ endif()
 set(TARGET_TEST_DFTPLANNER "test_dftplanner")
 add_executable(${TARGET_TEST_DFTPLANNER} test_dftplanner.cpp ${PROJECT_SOURCE_DIR}/include/sleefdft.h)
 add_dependencies(${TARGET_TEST_DFTPLANNER} ${TARGET_HEADERS} ${TARGET_LIBSLEEF} ${TARGET_LIBDFT})
-target_compile_definitions(${TARGET_TEST_DFTPLANNER} PRIVATE ${COMMON_TARGET_DEFINITIONS})
+target_compile_definitions(${TARGET_TEST_DFTPLANNER} PRIVATE ${COMMON_TARGET_DEFINITIONS} MEASURE=1)
 target_link_libraries(${TARGET_TEST_DFTPLANNER} ${COMMON_LINK_LIBRARIES})
 set_target_properties(${TARGET_TEST_DFTPLANNER} PROPERTIES ${COMMON_TARGET_PROPERTIES})
 add_test(NAME ${TARGET_TEST_DFTPLANNER} COMMAND $<TARGET_FILE:${TARGET_TEST_DFTPLANNER}> ${PROJECT_BINARY_DIR}/test.plan)
 set_tests_properties(${TARGET_TEST_DFTPLANNER} PROPERTIES COST 2)
+
+# Target executable test_dftplannerest
+set(TARGET_TEST_DFTPLANNEREST "test_dftplannerest")
+add_executable(${TARGET_TEST_DFTPLANNEREST} test_dftplanner.cpp ${PROJECT_SOURCE_DIR}/include/sleefdft.h)
+add_dependencies(${TARGET_TEST_DFTPLANNEREST} ${TARGET_HEADERS} ${TARGET_LIBSLEEF} ${TARGET_LIBDFT})
+target_compile_definitions(${TARGET_TEST_DFTPLANNEREST} PRIVATE ${COMMON_TARGET_DEFINITIONS})
+target_link_libraries(${TARGET_TEST_DFTPLANNEREST} ${COMMON_LINK_LIBRARIES})
+set_target_properties(${TARGET_TEST_DFTPLANNEREST} PROPERTIES ${COMMON_TARGET_PROPERTIES})
+add_test(NAME ${TARGET_TEST_DFTPLANNEREST} COMMAND $<TARGET_FILE:${TARGET_TEST_DFTPLANNEREST}> ${PROJECT_BINARY_DIR}/test.plan)
+set_tests_properties(${TARGET_TEST_DFTPLANNEREST} PROPERTIES COST 2)
 
 # Target executable roundtriptest1ddp
 set(TARGET_ROUNDTRIPTEST1DDP "roundtriptest1ddp")
@@ -181,17 +191,17 @@ if (LIBFFTW3 AND NOT SLEEF_DISABLE_FFTW)
   add_test_dft(${TARGET_FFTWTEST2DSP}_5_15 $<TARGET_FILE:${TARGET_FFTWTEST2DSP}> 5 15)
 
   if (SLEEF_LIBFFTW3_LIBRARIES)
-    # Target executable dftbench1ddp
-    set(TARGET_BENCH1DDP "dftbench1ddp")
-    add_executable(${TARGET_BENCH1DDP} bench1d.cpp ${PROJECT_SOURCE_DIR}/include/sleefdft.h)
+    # Target executable dftbenchdp
+    set(TARGET_BENCH1DDP "dftbenchdp")
+    add_executable(${TARGET_BENCH1DDP} dftbench.cpp ${PROJECT_SOURCE_DIR}/include/sleefdft.h)
     add_dependencies(${TARGET_BENCH1DDP} ${TARGET_HEADERS} ${TARGET_LIBSLEEF} ${TARGET_LIBDFT})
     target_compile_definitions(${TARGET_BENCH1DDP} PRIVATE ${COMMON_TARGET_DEFINITIONS} BASETYPEID=1)
     target_link_libraries(${TARGET_BENCH1DDP} ${COMMON_LINK_LIBRARIES} ${SLEEF_LIBFFTW3_LIBRARIES})
     set_target_properties(${TARGET_BENCH1DDP} PROPERTIES ${COMMON_TARGET_PROPERTIES})
 
-    # Target executable dftbench1dsp
-    set(TARGET_BENCH1DSP "dftbench1dsp")
-    add_executable(${TARGET_BENCH1DSP} bench1d.cpp ${PROJECT_SOURCE_DIR}/include/sleefdft.h)
+    # Target executable dftbenchsp
+    set(TARGET_BENCH1DSP "dftbenchsp")
+    add_executable(${TARGET_BENCH1DSP} dftbench.cpp ${PROJECT_SOURCE_DIR}/include/sleefdft.h)
     add_dependencies(${TARGET_BENCH1DSP} ${TARGET_HEADERS} ${TARGET_LIBSLEEF} ${TARGET_LIBDFT})
     target_compile_definitions(${TARGET_BENCH1DSP} PRIVATE ${COMMON_TARGET_DEFINITIONS} BASETYPEID=2)
     target_link_libraries(${TARGET_BENCH1DSP} ${COMMON_LINK_LIBRARIES} ${SLEEF_LIBFFTW3_LIBRARIES})

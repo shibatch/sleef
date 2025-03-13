@@ -15,7 +15,7 @@
 
 template<typename real, typename real2, int MAXBUTWIDTH>
 struct SleefDFTXX {
-  uint32_t magic;
+  int magic;
   const int baseTypeID;
   const real * const in;
   real * const out;
@@ -70,7 +70,7 @@ struct SleefDFTXX {
   void execute(const real *s0, real *d0, int MAGIC_, int MAGIC2D_);
   void freeTables();
   int searchForRandomPathRecurse(int level, int *path, int *pathConfig, uint64_t tm, int nTrial);
-  void searchForBestPath();
+  void searchForBestPath(int nPaths);
   void measureBut();
   void estimateBut();
   bool measure(bool randomize);
@@ -82,7 +82,7 @@ struct SleefDFTXX {
 
 template<typename real, typename real2, int MAXBUTWIDTH>
 struct SleefDFT2DXX {
-  uint32_t magic;
+  int magic;
   uint64_t mode, mode2, mode3;
   int baseTypeID;
   const real *in;
