@@ -199,6 +199,11 @@ if (LIBFFTW3 AND NOT SLEEF_DISABLE_FFTW)
     target_link_libraries(${TARGET_BENCH1DDP} ${COMMON_LINK_LIBRARIES} ${SLEEF_LIBFFTW3_LIBRARIES})
     set_target_properties(${TARGET_BENCH1DDP} PROPERTIES ${COMMON_TARGET_PROPERTIES})
 
+    #add_test_dft("dftbenchdp1d" $<TARGET_FILE:${TARGET_BENCH1DDP}> 8 0 1000 1)
+    #set_tests_properties("dftbenchdp1d" PROPERTIES COST 3)
+    add_test_dft("dftbenchdp2d" $<TARGET_FILE:${TARGET_BENCH1DDP}> 8 8 1000 1)
+    set_tests_properties("dftbenchdp2d" PROPERTIES COST 3)
+
     # Target executable dftbenchsp
     set(TARGET_BENCH1DSP "dftbenchsp")
     add_executable(${TARGET_BENCH1DSP} dftbench.cpp ${PROJECT_SOURCE_DIR}/include/sleefdft.h)
@@ -206,6 +211,11 @@ if (LIBFFTW3 AND NOT SLEEF_DISABLE_FFTW)
     target_compile_definitions(${TARGET_BENCH1DSP} PRIVATE ${COMMON_TARGET_DEFINITIONS} BASETYPEID=2)
     target_link_libraries(${TARGET_BENCH1DSP} ${COMMON_LINK_LIBRARIES} ${SLEEF_LIBFFTW3_LIBRARIES})
     set_target_properties(${TARGET_BENCH1DSP} PROPERTIES ${COMMON_TARGET_PROPERTIES})
+
+    #add_test_dft("dftbenchsp1d" $<TARGET_FILE:${TARGET_BENCH1DSP}> 8 0 1000 1)
+    #set_tests_properties("dftbenchsp1d" PROPERTIES COST 3)
+    add_test_dft("dftbenchsp2d" $<TARGET_FILE:${TARGET_BENCH1DSP}> 8 8 1000 1)
+    set_tests_properties("dftbenchsp2d" PROPERTIES COST 3)
   endif()
 else(LIBFFTW3 AND NOT SLEEF_DISABLE_FFTW)
   if(MSVC OR SLEEF_CLANG_ON_WINDOWS)
