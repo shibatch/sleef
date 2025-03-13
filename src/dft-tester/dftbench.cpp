@@ -157,30 +157,31 @@ public:
 
 int main(int argc, char **argv) {
   if (argc == 1) {
-    fprintf(stderr, "%s <log2n> <log2m> <measurement time in ms>\n", argv[0]);
+    fprintf(stderr, "%s <log2n> <log2m> <measurement time in ms> <nrepeat>\n", argv[0]);
     exit(-1);
   }
 
   fftw_init_threads();
 
   double measureTimeMillis = 3000;
-  if (argc > 4) measureTimeMillis = atof(argv[3]);
+  if (argc >= 4) measureTimeMillis = atof(argv[3]);
 
-  const int nrepeat = 4;
-  int backward = 0;
+  bool forward = true;
 
   int log2n = atoi(argv[1]);
   if (log2n < 0) {
-    backward = 1;
+    forward = false;
     log2n = -log2n;
   }
 
   const int n = 1 << log2n;
 
-  const int log2m = atoi(argv[2]);
+  const int log2m = argc >= 3 ? atoi(argv[2]) : 0;
   const int m = 1 << log2m;
 
-  cerr << "n = " << n << ", m = " << m << endl;
+  cerr << "n = " << n << ", m = " << m << ", " << (forward ? "forward" : "backward") << endl;
+
+  const int nrepeat = argc >= 5 ? atoi(argv[4]) : 4;
 
   vector<double> mflops_sleefdftst, mflops_fftwst, mflops_sleefdftmt, mflops_fftwmt;
 
@@ -190,10 +191,10 @@ int main(int argc, char **argv) {
   }
 
   {
-    // Test if we are really computing the same values
+    // Check if we are really computing the same values
 
-    auto sleefdft = make_shared<FWSleefDFT<complex<xreal>>>(n, m, true, false, true);
-    auto fftw     = make_shared<FWFFTW3   <complex<xreal>>>(n, m, true, false, true);
+    auto sleefdft = make_shared<FWSleefDFT<complex<xreal>>>(n, m, forward, false, true);
+    auto fftw     = make_shared<FWFFTW3   <complex<xreal>>>(n, m, forward, false, true);
 
     complex<xreal> *in0  = sleefdft->getInPtr();
     complex<xreal> *out0 = sleefdft->getOutPtr();
@@ -228,7 +229,7 @@ int main(int argc, char **argv) {
 
     {
       cerr << "Planning SleefDFT ST" << endl;
-      auto sleefdftst = make_shared<FWSleefDFT<complex<xreal>>>(n, m, true, false, false);
+      auto sleefdftst = make_shared<FWSleefDFT<complex<xreal>>>(n, m, forward, false, false);
 
       complex<xreal> *in0  = sleefdftst->getInPtr();
       for(int i=0;i<n * m;i++) in0[i] = v[i];
@@ -255,7 +256,7 @@ int main(int argc, char **argv) {
 
     {
       cerr << "Planning FFTW ST" << endl;
-      auto fftwst = make_shared<FWFFTW3<complex<xreal>>>(n, m, true, false, false);
+      auto fftwst = make_shared<FWFFTW3<complex<xreal>>>(n, m, forward, false, false);
 
       complex<xreal> *in0  = fftwst->getInPtr();
       for(int i=0;i<n * m;i++) in0[i] = v[i];
@@ -282,7 +283,7 @@ int main(int argc, char **argv) {
 
     {
       cerr << "Planning SleefDFT MT" << endl;
-      auto sleefdftmt = make_shared<FWSleefDFT<complex<xreal>>>(n, m, true, true, false);
+      auto sleefdftmt = make_shared<FWSleefDFT<complex<xreal>>>(n, m, forward, true, false);
 
       complex<xreal> *in0  = sleefdftmt->getInPtr();
       for(int i=0;i<n * m;i++) in0[i] = v[i];
@@ -309,7 +310,7 @@ int main(int argc, char **argv) {
 
     {
       cerr << "Planning FFTW MT" << endl;
-      auto fftwmt = make_shared<FWFFTW3<complex<xreal>>>(n, m, true, true, false);
+      auto fftwmt = make_shared<FWFFTW3<complex<xreal>>>(n, m, forward, true, false);
 
       complex<xreal> *in0  = fftwmt->getInPtr();
       for(int i=0;i<n * m;i++) in0[i] = v[i];
