@@ -114,7 +114,11 @@ public:
     }
   }
 
-  ~FWSleefDFT() { SleefDFT_dispose(plan); }
+  ~FWSleefDFT() {
+    SleefDFT_dispose(plan);
+    Sleef_free(out);
+    Sleef_free(in);
+  }
 
   cplx* getInPtr () { return in ; }
   cplx* getOutPtr() { return out; }
