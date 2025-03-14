@@ -338,6 +338,8 @@ int main(int argc, char **argv) {
     }
   }
 
+  cerr << endl;
+
   cout << log2n << ", " << log2m << ", ";
 
   {

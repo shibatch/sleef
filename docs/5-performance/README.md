@@ -7,6 +7,8 @@ permalink: /5-performance/
 
 <h1>Performance</h1>
 
+<h2>Vectorized math lib</h2>
+
 These graphs show comparison of the execution time between
 [SLEEF](https://github.com/shibatch/sleef)-3.2 compiled with GCC-7.2 and Intel
 SVML included in Intel C Compiler 18.0.1.
@@ -72,3 +74,38 @@ measurement.
   Fig. 6.4: Execution time of single precision log, exp, pow and inverse trigonometric functions
 </p>
 
+
+<h2>Discrete Fourier transform</h2>
+
+Below is the result of performance comparison between SleefDFT and FFTW3.
+
+The graphs show the performance of complex transform by both
+libraries, with the following settings.
+
+* Compiler : gcc version 14.2.0 (Ubuntu 14.2.0-4ubuntu2~24.04)
+* CPU : Ryzen 9 7950X (clock frequency fixed at 4.5GHz)
+* SLEEF build option : -DSLEEF_BUILD_DFT=True -DSLEEFDFT_ENABLE_STREAM=True -DSLEEFDFT_MAXBUTWIDTH=7
+* FFTW version 3.3.10-1ubuntu3
+
+The vertical axis represents the performance in Mflops calculated in
+the way indicated in the FFTW web site. The horizontal axis represents
+log2 of the size of transform.
+
+Execution plans were made with SLEEF_MODE_MEASURE mode and
+FFTW_MEASURE mode, respectively.
+
+<p style="text-align:center; margin-bottom:2cm;">
+  <a class="nothing" href="../img/dftzen4dp.png">
+    <img src="../img/dftzen4dp.png" alt="Performance graph for DP DFT"/>
+  </a>
+  <br />
+  Fig. 6.5: Performance of transform in double precision
+</p>
+
+<p style="text-align:center; margin-bottom:2cm;">
+  <a class="nothing" href="../img/dftzen4sp.png">
+    <img src="../img/dftzen4sp.png" alt="Performance graph for SP DFT"/>
+  </a>
+  <br />
+  Fig. 6.6: Performance of transform in single precision
+</p>
