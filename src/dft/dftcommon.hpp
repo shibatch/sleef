@@ -13,7 +13,7 @@
 
 #define MAXLOG2LEN 32
 
-template<typename real, typename real2, int MAXBUTWIDTH>
+template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
 struct SleefDFTXX {
   int magic;
   const int baseTypeID;
@@ -53,6 +53,11 @@ struct SleefDFTXX {
   void (** const REALSUB0)(real *, const real *, const int, const real *, const real *);
   void (** const REALSUB1)(real *, const real *, const int, const real *, const real *, const int);
 
+  void (*(* const DFTFS)[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, const real *);
+  void (*(* const DFTBS)[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, const real *);
+  void (*(* const TBUTFS)[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const real *, const real *, const int);
+  void (*(* const TBUTBS)[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const real *, const real *, const int);
+
   SleefDFTXX(uint32_t n, const real *in, real *out, uint64_t mode, const char *baseTypeString, int BASETYPEID_, int MAGIC_,
     int (*GETINT_[16])(int), const void *(*GETPTR_[16])(int), real2 (*SINCOSPI_)(real),
     void (*DFTF_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, const real *, const int),
@@ -62,7 +67,13 @@ struct SleefDFTXX {
     void (*BUTF_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const int, const real *, const int, const real *, const int),
     void (*BUTB_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const int, const real *, const int, const real *, const int),
     void (*REALSUB0_[ISAMAX])(real *, const real *, const int, const real *, const real *),
-    void (*REALSUB1_[ISAMAX])(real *, const real *, const int, const real *, const real *, const int));
+    void (*REALSUB1_[ISAMAX])(real *, const real *, const int, const real *, const real *, const int), 
+
+    void (*DFTFS_[MAXSHIFT][CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, const real *),
+    void (*DFTBS_[MAXSHIFT][CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, const real *),
+    void (*TBUTFS_[MAXSHIFT][CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const real *, const real *, const int),
+    void (*TBUTBS_[MAXSHIFT][CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const real *, const real *, const int)
+  );
 
   ~SleefDFTXX();
 
@@ -80,7 +91,7 @@ struct SleefDFTXX {
   size_t getPath(char *pathStr, size_t pathStrSize);
 };
 
-template<typename real, typename real2, int MAXBUTWIDTH>
+template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
 struct SleefDFT2DXX {
   int magic;
   uint64_t mode, mode2, mode3;
@@ -95,7 +106,7 @@ struct SleefDFT2DXX {
   uint64_t tmNoMT, tmMT;
   real *tBuf;
 
-  SleefDFTXX<real, real2, MAXBUTWIDTH> *instH, *instV;
+  SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH> *instH, *instV;
 
   FILE *verboseFP = NULL;
 
@@ -109,7 +120,13 @@ struct SleefDFT2DXX {
     void (*BUTF_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const int, const real *, const int, const real *, const int),
     void (*BUTB_[CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const int, const real *, const int, const real *, const int),
     void (*REALSUB0_[ISAMAX])(real *, const real *, const int, const real *, const real *),
-    void (*REALSUB1_[ISAMAX])(real *, const real *, const int, const real *, const real *, const int));
+    void (*REALSUB1_[ISAMAX])(real *, const real *, const int, const real *, const real *, const int),
+
+    void (*DFTFS_[MAXSHIFT][CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, const real *),
+    void (*DFTBS_[MAXSHIFT][CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, const real *),
+    void (*TBUTFS_[MAXSHIFT][CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const real *, const real *, const int),
+    void (*TBUTBS_[MAXSHIFT][CONFIGMAX][ISAMAX][MAXBUTWIDTH+1])(real *, uint32_t *, const real *, const real *, const int)
+  );
 
   ~SleefDFT2DXX();
 
@@ -122,10 +139,10 @@ struct SleefDFT2DXX {
 struct SleefDFT {
   uint32_t magic;
   union {
-    SleefDFTXX<double, Sleef_double2, MAXBUTWIDTHDP> *double_;
-    SleefDFTXX<float, Sleef_float2, MAXBUTWIDTHSP> *float_;
-    SleefDFT2DXX<double, Sleef_double2, MAXBUTWIDTHDP> *double2d_;
-    SleefDFT2DXX<float, Sleef_float2, MAXBUTWIDTHSP> *float2d_;
+    SleefDFTXX<double, Sleef_double2, MAXSHIFTDP, MAXBUTWIDTHDP> *double_;
+    SleefDFTXX<float, Sleef_float2, MAXSHIFTSP, MAXBUTWIDTHSP> *float_;
+    SleefDFT2DXX<double, Sleef_double2, MAXSHIFTDP, MAXBUTWIDTHDP> *double2d_;
+    SleefDFT2DXX<float, Sleef_float2, MAXSHIFTSP, MAXBUTWIDTHSP> *float2d_;
   };
 };
 

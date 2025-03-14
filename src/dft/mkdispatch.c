@@ -14,14 +14,15 @@
 
 int main(int argc, char **argv) {
   if (argc < 3) {
-    fprintf(stderr, "Usage : %s <base type> <base type ID> <maxbutwidth> <isa> ...\n", argv[0]);
+    fprintf(stderr, "Usage : %s <base type> <base type ID> <maxbutwidth> <maxshift> <isa> ...\n", argv[0]);
     exit(-1);
   }
 
   const char *baseType = argv[1];
   const char *baseTypeID = argv[2];
   const int maxbutwidth = atoi(argv[3]);
-  const int isastart = 4;
+  const int maxshift = atoi(argv[4]);
+  const int isastart = 5;
   const int isamax = argc - isastart;
 
 #if ENABLE_STREAM == 1
@@ -31,6 +32,7 @@ int main(int argc, char **argv) {
 #endif
 
   printf("#define MAXBUTWIDTH%s %d\n", baseTypeID, maxbutwidth);
+  printf("#define MAXSHIFT%s %d\n", baseTypeID, maxshift);
   printf("#define CONFIGMAX 4\n");
   printf("#define ISAMAX %d\n", isamax);
   printf("\n");
@@ -49,6 +51,13 @@ int main(int argc, char **argv) {
 	printf("void tbut%db_%d_%s(%s *, uint32_t *, const %s *, const int, const %s *, const int);\n", 1 << j, config, argv[k], baseType, baseType, baseType);
 	printf("void but%df_%d_%s(%s *, uint32_t *, const int, const %s *, const int, const %s *, const int);\n", 1 << j, config, argv[k], baseType, baseType, baseType);
 	printf("void but%db_%d_%s(%s *, uint32_t *, const int, const %s *, const int, const %s *, const int);\n", 1 << j, config, argv[k], baseType, baseType, baseType);
+
+	for(int s=0;s<maxshift;s++) {
+	  printf("void dft%df_%d_%d_%s(%s *, const %s *);\n", 1 << j, s, config, argv[k], baseType, baseType);
+	  printf("void dft%db_%d_%d_%s(%s *, const %s *);\n", 1 << j, s, config, argv[k], baseType, baseType);
+	  printf("void tbut%df_%d_%d_%s(%s *, uint32_t *, const %s *, const %s *, const int);\n", 1 << j, s, config, argv[k], baseType, baseType, baseType);
+	  printf("void tbut%db_%d_%d_%s(%s *, uint32_t *, const %s *, const %s *, const int);\n", 1 << j, s, config, argv[k], baseType, baseType, baseType);
+	}
       }
     }
     printf("void realSub0_%s(%s *, const %s *, const int, const %s *, const %s *);\n", argv[k], baseType, baseType, baseType, baseType);
@@ -168,6 +177,100 @@ int main(int argc, char **argv) {
       printf("},\n");
     }
     printf("},\n");
+  }
+  printf("};\n\n");
+
+  //
+
+  printf("void (*dftfs_%s[MAXSHIFT%s][CONFIGMAX][ISAMAX][MAXBUTWIDTH%s+1])(%s *, const %s *) = {\n", baseType, baseTypeID, baseTypeID, baseType, baseType);
+  for(int s=0;s<maxshift;s++) {
+    printf("  {\n");
+    for(int config=0;config<4;config++) {
+      printf("    {\n");
+      for(int k=isastart;k<argc;k++) {
+	printf("      {NULL, ");
+	for(int i=1;i<=maxbutwidth;i++) {
+	  if (enable_stream || (config & 1) == 0) {
+	    printf("dft%df_%d_%d_%s, ", 1 << i, s, config, argv[k]);
+	  } else {
+	    printf("NULL, ");
+	  }
+	}
+	printf("},\n");
+      }
+      printf("    },\n");
+    }
+    printf("  },\n");
+  }
+  printf("};\n\n");
+
+  printf("void (*dftbs_%s[MAXSHIFT%s][CONFIGMAX][ISAMAX][MAXBUTWIDTH%s+1])(%s *, const %s *) = {\n", baseType, baseTypeID, baseTypeID, baseType, baseType);
+  for(int s=0;s<maxshift;s++) {
+    printf("  {\n");
+    for(int config=0;config<4;config++) {
+      printf("    {\n");
+      for(int k=isastart;k<argc;k++) {
+	printf("      {NULL, ");
+	for(int i=1;i<=maxbutwidth;i++) {
+	  if (enable_stream || (config & 1) == 0) {
+	    if (i == 1) {
+	      printf("dft%df_%d_%d_%s, ", 1 << i, s, config, argv[k]);
+	    } else {
+	      printf("dft%db_%d_%d_%s, ", 1 << i, s, config, argv[k]);
+	    }
+	  } else {
+	    printf("NULL, ");
+	  }
+	}
+	printf("},\n");
+      }
+      printf("    },\n");
+    }
+    printf("  },\n");
+  }
+  printf("};\n\n");
+
+  printf("void (*tbutfs_%s[MAXSHIFT%s][CONFIGMAX][ISAMAX][MAXBUTWIDTH%s+1])(%s *, uint32_t *, const %s *, const %s *, const int) = {\n", baseType, baseTypeID, baseTypeID, baseType, baseType, baseType);
+  for(int s=0;s<maxshift;s++) {
+    printf("  {\n");
+    for(int config=0;config<4;config++) {
+      printf("    {\n");
+      for(int k=isastart;k<argc;k++) {
+	printf("      {NULL, ");
+	for(int i=1;i<=maxbutwidth;i++) {
+	  if (enable_stream || (config & 1) == 0) {
+	    printf("tbut%df_%d_%d_%s, ", 1 << i, s, config, argv[k]);
+	  } else {
+	    printf("NULL, ");
+	  }
+	}
+	printf("},\n");
+      }
+      printf("    },\n");
+    }
+    printf("  },\n");
+  }
+  printf("};\n\n");
+
+  printf("void (*tbutbs_%s[MAXSHIFT%s][CONFIGMAX][ISAMAX][MAXBUTWIDTH%s+1])(%s *, uint32_t *, const %s *, const %s *, const int) = {\n", baseType, baseTypeID, baseTypeID, baseType, baseType, baseType);
+  for(int s=0;s<maxshift;s++) {
+    printf("  {\n");
+    for(int config=0;config<4;config++) {
+      printf("    {\n");
+      for(int k=isastart;k<argc;k++) {
+	printf("      {NULL, ");
+	for(int i=1;i<=maxbutwidth;i++) {
+	  if (enable_stream || (config & 1) == 0) {
+	    printf("tbut%db_%d_%d_%s, ", 1 << i, s, config, argv[k]);
+	  } else {
+	    printf("NULL, ");
+	  }
+	}
+	printf("},\n");
+      }
+      printf("    },\n");
+    }
+    printf("  },\n");
   }
   printf("};\n\n");
 
