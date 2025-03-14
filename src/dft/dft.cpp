@@ -79,9 +79,9 @@ template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
 void SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::dispatch(const int N, real *d, const real *s, const int level, const int config) {
   const int K = constK[N];
   if (level == N) {
+    const int shift = log2len-N - log2vecwidth;
     if ((mode & SLEEF_MODE_BACKWARD) == 0) {
-      const int shift = log2len-N - log2vecwidth;
-      if (shift >= MAXSHIFTDP) {
+      if (shift >= MAXSHIFT) {
 	void (*func)(real *, const real *, const int) = DFTF[config][isa][N];
 	(*func)(d, s, log2len-N);
       } else {
@@ -89,24 +89,29 @@ void SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::dispatch(const int N, real 
 	(*func)(d, s);
       }
     } else {
-      void (*func)(real *, const real *, const int) = DFTB[config][isa][N];
-      (*func)(d, s, log2len-N);
+      if (shift >= MAXSHIFT) {
+	void (*func)(real *, const real *, const int) = DFTB[config][isa][N];
+	(*func)(d, s, log2len-N);
+      } else {
+	void (*func)(real *, const real *) = DFTBS[shift][config][isa][N];
+	(*func)(d, s);
+      }
     }
   } else if (level == (int)log2len) {
     assert(vecwidth <= (1 << N));
     const int shift = log2len-N - log2vecwidth;
-    if (shift >= MAXSHIFTDP) {
-      if ((mode & SLEEF_MODE_BACKWARD) == 0) {
+    if ((mode & SLEEF_MODE_BACKWARD) == 0) {
+      if (shift >= MAXSHIFT) {
 	void (*func)(real *, uint32_t *, const real *, const int, const real *, const int) = TBUTF[config][isa][N];
 	(*func)(d, perm[level], s, log2len-N, tbl[N][level], K);
       } else {
-	void (*func)(real *, uint32_t *, const real *, const int, const real *, const int) = TBUTB[config][isa][N];
-	(*func)(d, perm[level], s, log2len-N, tbl[N][level], K);
-      }
-    } else {
-      if ((mode & SLEEF_MODE_BACKWARD) == 0) {
 	void (*func)(real *, uint32_t *, const real *, const real *, const int) = TBUTFS[shift][config][isa][N];
 	(*func)(d, perm[level], s, tbl[N][level], K);
+      }
+    } else {
+      if (shift >= MAXSHIFT) {
+	void (*func)(real *, uint32_t *, const real *, const int, const real *, const int) = TBUTB[config][isa][N];
+	(*func)(d, perm[level], s, log2len-N, tbl[N][level], K);
       } else {
 	void (*func)(real *, uint32_t *, const real *, const real *, const int) = TBUTBS[shift][config][isa][N];
 	(*func)(d, perm[level], s, tbl[N][level], K);
