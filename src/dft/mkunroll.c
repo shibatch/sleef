@@ -42,12 +42,17 @@ char line[LEN+10];
 
 int main(int argc, char **argv) {
   if (argc < 2) {
-    fprintf(stderr, "Usage : %s <Base type> <Base type ID> <ISA> ...\n", argv[0]);
+    fprintf(stderr, "Usage : %s <file name> <Base type> <Base type ID> <shift> <ISA> ...\n", argv[0]);
     exit(-1);
   }
 
-  const char *baseTypeID = argv[2];
-  const int isastart = 3;
+  const char *fn = argv[1];
+  const char *baseTypeID = argv[3];
+  const int shift = atoi(argv[4]);
+  const int isastart = 5;
+
+  char shiftstr[21];
+  snprintf(shiftstr, 20, "%d", shift);
 
   for(int config=0;config<CONFIGMAX;config++) {
 #if ENABLE_STREAM == 0
@@ -58,9 +63,13 @@ int main(int argc, char **argv) {
       char configString[100];
       sprintf(configString, "%d", config);
       
-      FILE *fpin = fopen("unroll0.org", "r");
+      FILE *fpin = fopen(fn, "r");
 
-      sprintf(line, "unroll_%d_%s.cpp", config, isaString);
+      if (shift >= 0) {
+	sprintf(line, "unroll_%d_%s_%d.cpp", config, isaString, shift);
+      } else {
+	sprintf(line, "unroll_%d_%s.cpp", config, isaString);
+      }
       FILE *fpout = fopen(line, "w");
       fputs("#include \"vectortype.hpp\"\n\n", fpout);
 
@@ -80,7 +89,7 @@ int main(int argc, char **argv) {
 	}
 
 	if ((config & 2) == 0) {
-	  char *s0 = replaceAll(s, "#pragma", "//");
+	  char *s0 = replaceAll(s, "#pragma", "//pragma");
 	  free(s);
 	  s = s0;
 	}
@@ -93,6 +102,12 @@ int main(int argc, char **argv) {
 
 	{
 	  char *s0 = replaceAll(s, "%TYPEID%", baseTypeID);
+	  free(s);
+	  s = s0;
+	}
+
+	{
+	  char *s0 = replaceAll(s, "%SHIFT%", shiftstr);
 	  free(s);
 	  s = s0;
 	}
