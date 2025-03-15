@@ -41,15 +41,22 @@ char *replaceAll(const char *in, const char *pat, const char *replace) {
 char line[LEN+10];
 
 int main(int argc, char **argv) {
-  if (argc < 2) {
+  if (argc < 5) {
     fprintf(stderr, "Usage : %s <file name> <Base type> <Base type ID> <shift> <ISA> ...\n", argv[0]);
     exit(-1);
   }
 
   const char *fn = argv[1];
   const char *baseTypeID = argv[3];
-  const int shift = atoi(argv[4]);
+  int shift = atoi(argv[4]);
   const int isastart = 5;
+  int mode = 1;
+  if (strcmp(argv[4], "-") == 0) {
+    mode = 0;
+  } else if (shift <= 0) {
+    mode = 2;
+    shift = -shift;
+  }
 
   char shiftstr[21];
   snprintf(shiftstr, 20, "%d", shift);
@@ -65,11 +72,18 @@ int main(int argc, char **argv) {
       
       FILE *fpin = fopen(fn, "r");
 
-      if (shift >= 0) {
-	sprintf(line, "unroll_%d_%s_%d.cpp", config, isaString, shift);
-      } else {
+      switch(mode) {
+      case 0:
 	sprintf(line, "unroll_%d_%s.cpp", config, isaString);
+	break;
+      case 1:
+	sprintf(line, "unroll_%d_%s_%d.cpp", config, isaString, shift);
+	break;
+      case 2:
+	sprintf(line, "unroll2_%d_%s_%d.cpp", config, isaString, shift);
+	break;
       }
+
       FILE *fpout = fopen(line, "w");
       fputs("#include \"vectortype.hpp\"\n\n", fpout);
 
