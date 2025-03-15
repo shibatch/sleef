@@ -11,12 +11,29 @@ if (SLEEFDFT_MAXBUTWIDTH GREATER 7)
   message(FATAL_ERROR "SLEEFDFT_MAXBUTWIDTH has to be smaller than 8." )
 endif()
 
-set(SLEEFDFT_MAXSHIFT 2 CACHE STRING "Max hardcoded shift")
+set(SLEEFDFT_MINSHIFT 1 CACHE STRING "Min hardcoded shift")
+set(SLEEFDFT_MAXSHIFT 1 CACHE STRING "Max hardcoded shift")
+
+if ((${SLEEFDFT_MINSHIFT} GREATER ${SLEEFDFT_MAXSHIFT}) OR (${SLEEFDFT_MINSHIFT} LESS 1))
+  message(FATAL_ERROR "SLEEFDFT_MINSHIFT, SLEEFDFT_MAXSHIFT range error")
+endif()
 
 math(EXPR SLEEFDFT_MAXSHIFT_MINUS_1 "${SLEEFDFT_MAXSHIFT} - 1")
-foreach(J RANGE 0 ${SLEEFDFT_MAXSHIFT_MINUS_1})
-  list(APPEND LISTSHIFTSTR ${J})
-endforeach()
+if (${SLEEFDFT_MINSHIFT} LESS ${SLEEFDFT_MAXSHIFT})
+  foreach(J RANGE ${SLEEFDFT_MINSHIFT} ${SLEEFDFT_MAXSHIFT_MINUS_1})
+    list(APPEND LISTSHIFTSTR ${J})
+  endforeach()
+else()
+  set(LISTSHIFTSTR)
+endif()
+
+if (1 LESS ${SLEEFDFT_MAXSHIFT})
+  foreach(J RANGE 1 ${SLEEFDFT_MAXSHIFT_MINUS_1})
+    list(APPEND LISTSHIFTSTR2 ${J})
+  endforeach()
+else()
+  set(LISTSHIFTSTR2)
+endif()
 
 # Settings
 
@@ -30,6 +47,10 @@ set(MACRODEF_purecdp BASETYPEID=1 ENABLE_PUREC CONFIG=1)
 set(CFLAGS_purecdp ${FLAGS_ENABLE_PUREC})
 set(MACRODEF_purecsp BASETYPEID=2 ENABLE_PUREC CONFIG=1)
 set(CFLAGS_purecsp ${FLAGS_ENABLE_PUREC})
+if(CMAKE_C_COMPILER_ID MATCHES "Clang")
+set(CFLAGS_purecdp ${FLAGS_ENABLE_PUREC} -O0)
+set(CFLAGS_purecsp ${FLAGS_ENABLE_PUREC} -O0)
+endif()
 set(MACRODEF_purecld BASETYPEID=3 ENABLE_PUREC CONFIG=1)
 set(CFLAGS_purecld ${FLAGS_ENABLE_PUREC})
 set(MACRODEF_purecqp BASETYPEID=4 ENABLE_PUREC CONFIG=1)
@@ -215,7 +236,8 @@ endif()
 
 set(COMMON_TARGET_DEFINITIONS ${COMMON_TARGET_DEFINITIONS}
   MAXBUTWIDTHDP=${SLEEFDFT_MAXBUTWIDTH} MAXBUTWIDTHSP=${SLEEFDFT_MAXBUTWIDTH}
-  MAXSHIFTDP=${SLEEFDFT_MAXSHIFT} MAXSHIFTSP=${SLEEFDFT_MAXSHIFT}
+  MINSHIFTDP=${SLEEFDFT_MINSHIFT} MAXSHIFTDP=${SLEEFDFT_MAXSHIFT}
+  MINSHIFTSP=${SLEEFDFT_MINSHIFT} MAXSHIFTSP=${SLEEFDFT_MAXSHIFT}
 )
 
 if (SLEEFDFT_ENABLE_STREAM)
@@ -253,7 +275,7 @@ endif()
 
 add_custom_command(OUTPUT dispatchparam.h
   COMMENT "Generating dispatchparam.h"
-  COMMAND $<TARGET_FILE:${TARGET_MKDISPATCH}> paramonly ALL ${SLEEFDFT_MAXBUTWIDTH} ${SLEEFDFT_MAXSHIFT} ${ISALIST_SP} > ${CMAKE_CURRENT_BINARY_DIR}/dispatchparam.h
+  COMMAND $<TARGET_FILE:${TARGET_MKDISPATCH}> paramonly ALL ${SLEEFDFT_MAXBUTWIDTH} ${SLEEFDFT_MINSHIFT} ${SLEEFDFT_MAXSHIFT} ${ISALIST_SP} > ${CMAKE_CURRENT_BINARY_DIR}/dispatchparam.h
   DEPENDS ${TARGET_MKDISPATCH}
   )
 add_custom_target(dispatchparam.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/dispatchparam.h)
@@ -269,7 +291,7 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
   string(CONCAT S "dispatch" ${ST} ".hpp")                  # S is dispatchdp.hpp
   add_custom_command(OUTPUT ${S}
     COMMENT "Generating ${S}"
-    COMMAND $<TARGET_FILE:${TARGET_MKDISPATCH}> ${LT} ${CST} ${SLEEFDFT_MAXBUTWIDTH} ${SLEEFDFT_MAXSHIFT} ${ISALIST_${CST}} > ${S}
+    COMMAND $<TARGET_FILE:${TARGET_MKDISPATCH}> ${LT} ${CST} ${SLEEFDFT_MAXBUTWIDTH} ${SLEEFDFT_MINSHIFT} ${SLEEFDFT_MAXSHIFT} ${ISALIST_${CST}} > ${S}
     DEPENDS ${TARGET_MKDISPATCH}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
@@ -305,6 +327,11 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/unroll1.cpp.in
   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/unroll1.cpp.in)
 add_custom_target(unroll1.cpp.in.copied DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/unroll1.cpp.in)
 
+add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/unroll2.cpp.in
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/unroll2.cpp.in ${CMAKE_CURRENT_BINARY_DIR}
+  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/unroll2.cpp.in)
+add_custom_target(unroll2.cpp.in.copied DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/unroll2.cpp.in)
+
 # Target unroll*.cpp
 
 foreach(T ${LIST_SUPPORTED_FPTYPE})
@@ -323,7 +350,7 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
   if(UNROLL_TARGET_${CST})
     add_custom_command(OUTPUT ${UNROLL_TARGET_${CST}}
       COMMENT "Generating ${UNROLL_TARGET_${CST}}"
-      COMMAND $<TARGET_FILE:${TARGET_MKUNROLL}> unroll0.cpp.in ${LT} ${CST} -1 ${ISALIST_${CST}}
+      COMMAND $<TARGET_FILE:${TARGET_MKUNROLL}> unroll0.cpp.in ${LT} ${CST} - ${ISALIST_${CST}}
       WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
       DEPENDS ${TARGET_MKUNROLL} unroll0.cpp.in.copied
       )
@@ -348,6 +375,26 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
       )
       add_custom_target(unroll_target_${ST}_${I} DEPENDS ${UNROLL_TARGET_${CST}_${I}})
     endforeach()
+
+    #
+
+    foreach(I ${LISTSHIFTSTR2})
+      foreach(E ${ISALIST_${CST}})                              # E is "sse2dp"
+	foreach(N ${NLIST})
+	  string(CONCAT UC unroll2_ ${N} _ ${E} _ ${I} ".cpp")  # UC is "unroll2_0_sse2dp_1.cpp"
+	  set(UNROLL2_TARGET_${CST}_${I} ${UNROLL2_TARGET_${CST}_${I}} ${UC})
+	endforeach()
+      endforeach()
+      message(STATUS "Unroll2 target for ${CST}_${I} : ${UNROLL2_TARGET_${CST}_${I}}")
+
+      add_custom_command(OUTPUT ${UNROLL2_TARGET_${CST}_${I}}
+      	COMMENT "Generating ${UNROLL2_TARGET_${CST}_${I}}"
+      	COMMAND $<TARGET_FILE:${TARGET_MKUNROLL}> unroll2.cpp.in ${LT} ${CST} -${I} ${ISALIST_${CST}}
+      	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+      	DEPENDS ${TARGET_MKUNROLL} unroll2.cpp.in.copied
+      )
+      add_custom_target(unroll2_target_${ST}_${I} DEPENDS ${UNROLL2_TARGET_${CST}_${I}})
+    endforeach()
   endif()
 endforeach()
 
@@ -360,7 +407,7 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
 
   foreach(E ${ISALIST_${CST}})                              # E is "sse2dp"
     foreach(N ${NLIST})
-      string(CONCAT U unroll_ ${N} _ ${E})                  # U is "unroll_0_sse2dp"
+      string(CONCAT U unroll_ ${N} _ ${E})                  # U  is "unroll_0_sse2dp"
       string(CONCAT UG ${U} "_obj")                         # UG is "unroll_0_sse2dp_obj"
       string(CONCAT UC ${U} ".cpp")                         # UC is "unroll_0_sse2dp.cpp"
       add_library(${UG} OBJECT ${UC})
@@ -372,7 +419,7 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
       list(APPEND UNROLL_OBJECTS $<TARGET_OBJECTS:${UG}>)
 
       foreach(I ${LISTSHIFTSTR})
-	string(CONCAT U unroll_ ${N} _ ${E} _ ${I})         # U is "unroll_0_sse2dp_1"
+	string(CONCAT U unroll_ ${N} _ ${E} _ ${I})         # U  is "unroll_0_sse2dp_1"
 	string(CONCAT UG ${U} "_obj")                       # UG is "unroll_0_sse2dp_1_obj"
 	string(CONCAT UC ${U} ".cpp")                       # UC is "unroll_0_sse2dp_1.cpp"
 	add_library(${UG} OBJECT ${UC})
@@ -380,7 +427,20 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
 	target_include_directories(${UG} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 	target_compile_definitions(${UG} PRIVATE ${COMMON_TARGET_DEFINITIONS} ${MACRODEF_${E}})
 	target_compile_options(${UG} PRIVATE ${CFLAGS_${E}})
-	add_dependencies(${UG} ${TARGET_HEADERS} unroll_target_${ST})
+	add_dependencies(${UG} ${TARGET_HEADERS} unroll_target_${ST}_${I})
+	list(APPEND UNROLL_OBJECTS $<TARGET_OBJECTS:${UG}>)
+      endforeach()
+
+      foreach(I ${LISTSHIFTSTR2})
+	string(CONCAT U unroll2_ ${N} _ ${E} _ ${I})        # U  is "unroll2_0_sse2dp_1"
+	string(CONCAT UG ${U} "_obj")                       # UG is "unroll2_0_sse2dp_1_obj"
+	string(CONCAT UC ${U} ".cpp")                       # UC is "unroll2_0_sse2dp_1.cpp"
+	add_library(${UG} OBJECT ${UC})
+	set_target_properties(${UG} PROPERTIES ${COMMON_TARGET_PROPERTIES})
+	target_include_directories(${UG} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+	target_compile_definitions(${UG} PRIVATE ${COMMON_TARGET_DEFINITIONS} ${MACRODEF_${E}})
+	target_compile_options(${UG} PRIVATE ${CFLAGS_${E}})
+	add_dependencies(${UG} ${TARGET_HEADERS} unroll2_target_${ST}_${I})
 	list(APPEND UNROLL_OBJECTS $<TARGET_OBJECTS:${UG}>)
       endforeach()
     endforeach()
