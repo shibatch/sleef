@@ -27,14 +27,6 @@ else()
   set(LISTSHIFTSTR)
 endif()
 
-if (1 LESS ${SLEEFDFT_MAXSHIFT})
-  foreach(J RANGE 1 ${SLEEFDFT_MAXSHIFT_MINUS_1})
-    list(APPEND LISTSHIFTSTR2 ${J})
-  endforeach()
-else()
-  set(LISTSHIFTSTR2)
-endif()
-
 # Settings
 
 # Constants definition
@@ -375,26 +367,6 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
       )
       add_custom_target(unroll_target_${ST}_${I} DEPENDS ${UNROLL_TARGET_${CST}_${I}})
     endforeach()
-
-    #
-
-    foreach(I ${LISTSHIFTSTR2})
-      foreach(E ${ISALIST_${CST}})                              # E is "sse2dp"
-	foreach(N ${NLIST})
-	  string(CONCAT UC unroll2_ ${N} _ ${E} _ ${I} ".cpp")  # UC is "unroll2_0_sse2dp_1.cpp"
-	  set(UNROLL2_TARGET_${CST}_${I} ${UNROLL2_TARGET_${CST}_${I}} ${UC})
-	endforeach()
-      endforeach()
-      message(STATUS "Unroll2 target for ${CST}_${I} : ${UNROLL2_TARGET_${CST}_${I}}")
-
-      add_custom_command(OUTPUT ${UNROLL2_TARGET_${CST}_${I}}
-      	COMMENT "Generating ${UNROLL2_TARGET_${CST}_${I}}"
-      	COMMAND $<TARGET_FILE:${TARGET_MKUNROLL}> unroll2.cpp.in ${LT} ${CST} -${I} ${ISALIST_${CST}}
-      	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      	DEPENDS ${TARGET_MKUNROLL} unroll2.cpp.in.copied
-      )
-      add_custom_target(unroll2_target_${ST}_${I} DEPENDS ${UNROLL2_TARGET_${CST}_${I}})
-    endforeach()
   endif()
 endforeach()
 
@@ -428,19 +400,6 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
 	target_compile_definitions(${UG} PRIVATE ${COMMON_TARGET_DEFINITIONS} ${MACRODEF_${E}})
 	target_compile_options(${UG} PRIVATE ${CFLAGS_${E}})
 	add_dependencies(${UG} ${TARGET_HEADERS} unroll_target_${ST}_${I})
-	list(APPEND UNROLL_OBJECTS $<TARGET_OBJECTS:${UG}>)
-      endforeach()
-
-      foreach(I ${LISTSHIFTSTR2})
-	string(CONCAT U unroll2_ ${N} _ ${E} _ ${I})        # U  is "unroll2_0_sse2dp_1"
-	string(CONCAT UG ${U} "_obj")                       # UG is "unroll2_0_sse2dp_1_obj"
-	string(CONCAT UC ${U} ".cpp")                       # UC is "unroll2_0_sse2dp_1.cpp"
-	add_library(${UG} OBJECT ${UC})
-	set_target_properties(${UG} PROPERTIES ${COMMON_TARGET_PROPERTIES})
-	target_include_directories(${UG} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-	target_compile_definitions(${UG} PRIVATE ${COMMON_TARGET_DEFINITIONS} ${MACRODEF_${E}})
-	target_compile_options(${UG} PRIVATE ${CFLAGS_${E}})
-	add_dependencies(${UG} ${TARGET_HEADERS} unroll2_target_${ST}_${I})
 	list(APPEND UNROLL_OBJECTS $<TARGET_OBJECTS:${UG}>)
       endforeach()
     endforeach()

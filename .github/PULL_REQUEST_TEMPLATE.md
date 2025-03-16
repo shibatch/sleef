@@ -7,7 +7,10 @@ Our project collects a fee from you to approve your PR. The specific
 amount you need to pay will be determined by negotiation, depending on
 the nature of the PR and your project. We will not charge a fee if you
 are not making a profit from the deliverables of this project, or for
-minor bug fixes that do not involve specification changes.
+minor bug fixes that do not involve specification changes. If a
+significant percentage of those who will benefit from your patch are
+considered to be direct or indirect customers of your company, you
+will be required to pay a fee.
 
 The fee you pay is for the review and does not include the cost of any
 future maintenance of your code. Your code added by this PR may be

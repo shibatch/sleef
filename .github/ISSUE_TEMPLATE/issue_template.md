@@ -14,7 +14,10 @@ charge.
 
 If you want us to process your issue, you will need to pay a fee. The
 specific amount you need to pay will be determined by negotiation,
-depending on the nature of the issue and your project.
+depending on the nature of the issue and your project. If a
+significant percentage of those who will benefit from the change you
+want to make are considered to be direct or indirect customers of your
+company, you will be required to pay a fee.
 
 By becoming a sponsor of our project, you will receive a substantial
 discount on the cost of processing your issue.
