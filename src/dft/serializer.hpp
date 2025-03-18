@@ -7,21 +7,9 @@
 #include <cstdio>
 #include <vector>
 #include <unordered_map>
+#include <tuple>
 
 using namespace std;
-
-template <>
-struct std::hash<vector<char>> {
-  size_t operator()(const vector<char> &v) const {
-    size_t u = 0;
-    for(size_t i=0;i<v.size();i++) {
-      int b = (v.data()[i] + i) & ((sizeof(u)*8)-1);
-      u = (u << b) | (u >> ((sizeof(u)*8)-b));
-      u += v.data()[i] + i;
-    }
-    return u;
-  }
-};
 
 class Serializer {
 public:
@@ -125,5 +113,33 @@ Deserializer& operator>>(Deserializer &d, unordered_map<KT, VT>& m) {
     d >> value;
     m[key] = value;
   }
+  return d;
+}
+
+template<class tupletype, uint32_t idx=0>
+static void serialize_tuple(Serializer &s, const tupletype& t) {
+  if constexpr (idx < tuple_size_v<tupletype>) {
+    s << get<idx>(t);
+    serialize_tuple<tupletype, idx + 1>(s, t);
+  }
+}
+
+template<typename ...Ts>
+Serializer& operator<<(Serializer &s, const tuple<Ts...>& t) {
+  serialize_tuple(s, t);
+  return s;
+}
+
+template<class tupletype, uint32_t idx=0>
+static void deserialize_tuple(Deserializer &d, tupletype& t) {
+  if constexpr (idx < tuple_size_v<tupletype>) {
+    d >> get<idx>(t);
+    deserialize_tuple<tupletype, idx + 1>(d, t);
+  }
+}
+
+template<typename ...Ts>
+Deserializer& operator>>(Deserializer &d, tuple<Ts...> &t) {
+  deserialize_tuple(d, t);
   return d;
 }

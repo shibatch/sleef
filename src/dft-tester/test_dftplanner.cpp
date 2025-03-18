@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
   vector<char> pathd1024(1024);
   SleefDFT_getPath(p, pathd1024.data(), pathd1024.size());
 
-  cout << "Path (1024) : " << pathd1024.data() << endl;
+  cout << "Path (D1024) : " << pathd1024.data() << endl;
 
   SleefDFT_dispose(p);
 
@@ -62,10 +62,10 @@ int main(int argc, char **argv) {
 
   p = SleefDFT_double_init1d(512, din, dout, mode);
 
-  vector<char> pathd512(512);
+  vector<char> pathd512(1024);
   SleefDFT_getPath(p, pathd512.data(), pathd512.size());
 
-  cout << "Path (512) : " << pathd512.data() << endl;
+  cout << "Path (D512) : " << pathd512.data() << endl;
 
   SleefDFT_dispose(p);
 
@@ -76,7 +76,7 @@ int main(int argc, char **argv) {
   vector<char> pathf1024(1024);
   SleefDFT_getPath(p, pathf1024.data(), pathf1024.size());
 
-  cout << "Path (1024) : " << pathf1024.data() << endl;
+  cout << "Path (F1024) : " << pathf1024.data() << endl;
 
   SleefDFT_dispose(p);
 
@@ -84,21 +84,69 @@ int main(int argc, char **argv) {
 
   p = SleefDFT_float_init1d(512, fin, fout, mode);
 
-  vector<char> pathf512(512);
+  vector<char> pathf512(1024);
   SleefDFT_getPath(p, pathf512.data(), pathf512.size());
 
-  cout << "Path (512) : " << pathf512.data() << endl;
+  cout << "Path (F512) : " << pathf512.data() << endl;
+
+  SleefDFT_dispose(p);
+
+
+  //
+
+
+  p = SleefDFT_double_init2d(128, 128, din, dout, mode);
+
+  vector<char> pathd128x128(1024);
+  SleefDFT_getPath(p, pathd128x128.data(), pathd128x128.size());
+
+  cout << "Path (D128x128) : " << pathd128x128.data() << endl;
 
   SleefDFT_dispose(p);
 
   //
+
+  p = SleefDFT_double_init2d(64, 64, din, dout, mode);
+
+  vector<char> pathd64x64(1024);
+  SleefDFT_getPath(p, pathd64x64.data(), pathd64x64.size());
+
+  cout << "Path (D64x64) : " << pathd64x64.data() << endl;
+
+  SleefDFT_dispose(p);
+
+  //
+
+  p = SleefDFT_float_init2d(128, 128, fin, fout, mode);
+
+  vector<char> pathf128x128(1024);
+  SleefDFT_getPath(p, pathf128x128.data(), pathf128x128.size());
+
+  cout << "Path (F128x128) : " << pathf128x128.data() << endl;
+
+  SleefDFT_dispose(p);
+
+  //
+
+  p = SleefDFT_float_init2d(64, 64, fin, fout, mode);
+
+  vector<char> pathf64x64(1024);
+  SleefDFT_getPath(p, pathf64x64.data(), pathf64x64.size());
+
+  cout << "Path (F64x64) : " << pathf64x64.data() << endl;
+
+  SleefDFT_dispose(p);
+
+
+  //
+
 
   p = SleefDFT_double_init1d(1024, din, dout, mode);
 
   vector<char> pathd1024_2(1024);
   SleefDFT_getPath(p, pathd1024_2.data(), pathd1024_2.size());
 
-  cout << "Path2 (1024) : " << pathd1024_2.data() << endl;
+  cout << "Path2 (D1024) : " << pathd1024_2.data() << endl;
 
   SleefDFT_dispose(p);
 
@@ -111,10 +159,10 @@ int main(int argc, char **argv) {
 
   p = SleefDFT_double_init1d(512, din, dout, mode);
 
-  vector<char> pathd512_2(512);
+  vector<char> pathd512_2(1024);
   SleefDFT_getPath(p, pathd512_2.data(), pathd512_2.size());
 
-  cout << "Path2 (512) : " << pathd512_2.data() << endl;
+  cout << "Path2 (D512) : " << pathd512_2.data() << endl;
 
   SleefDFT_dispose(p);
 
@@ -130,7 +178,7 @@ int main(int argc, char **argv) {
   vector<char> pathf1024_2(1024);
   SleefDFT_getPath(p, pathf1024_2.data(), pathf1024_2.size());
 
-  cout << "Path2 (1024) : " << pathf1024_2.data() << endl;
+  cout << "Path2 (F1024) : " << pathf1024_2.data() << endl;
 
   SleefDFT_dispose(p);
 
@@ -143,14 +191,79 @@ int main(int argc, char **argv) {
 
   p = SleefDFT_float_init1d(512, fin, fout, mode);
 
-  vector<char> pathf512_2(512);
+  vector<char> pathf512_2(1024);
   SleefDFT_getPath(p, pathf512_2.data(), pathf512_2.size());
 
-  cout << "Path2 (512) : " << pathf512_2.data() << endl;
+  cout << "Path2 (F512) : " << pathf512_2.data() << endl;
 
   SleefDFT_dispose(p);
 
   if (pathf512.size() != pathf512_2.size() || memcmp(pathf512.data(), pathf512_2.data(), pathf512.size()) != 0) {
+    cerr << "Paths do not match" << endl;
+    exit(-1);
+  }
+
+  //
+
+
+  p = SleefDFT_double_init2d(128, 128, din, dout, mode);
+
+  vector<char> pathd128x128_2(1024);
+  SleefDFT_getPath(p, pathd128x128_2.data(), pathd128x128_2.size());
+
+  cout << "Path2 (D128x128) : " << pathd128x128_2.data() << endl;
+
+  SleefDFT_dispose(p);
+
+  if (pathd128x128.size() != pathd128x128_2.size() || memcmp(pathd128x128.data(), pathd128x128_2.data(), pathd128x128.size()) != 0) {
+    cerr << "Paths do not match" << endl;
+    exit(-1);
+  }
+
+  //
+
+  p = SleefDFT_double_init2d(64, 64, din, dout, mode);
+
+  vector<char> pathd64x64_2(1024);
+  SleefDFT_getPath(p, pathd64x64_2.data(), pathd64x64_2.size());
+
+  cout << "Path2 (D64x64) : " << pathd64x64_2.data() << endl;
+
+  SleefDFT_dispose(p);
+
+  if (pathd64x64.size() != pathd64x64_2.size() || memcmp(pathd64x64.data(), pathd64x64_2.data(), pathd64x64.size()) != 0) {
+    cerr << "Paths do not match" << endl;
+    exit(-1);
+  }
+
+  //
+
+  p = SleefDFT_float_init2d(128, 128, fin, fout, mode);
+
+  vector<char> pathf128x128_2(1024);
+  SleefDFT_getPath(p, pathf128x128_2.data(), pathf128x128_2.size());
+
+  cout << "Path2 (F128x128) : " << pathf128x128_2.data() << endl;
+
+  SleefDFT_dispose(p);
+
+  if (pathf128x128.size() != pathf128x128_2.size() || memcmp(pathf128x128.data(), pathf128x128_2.data(), pathf128x128.size()) != 0) {
+    cerr << "Paths do not match" << endl;
+    exit(-1);
+  }
+
+  //
+
+  p = SleefDFT_float_init2d(64, 64, fin, fout, mode);
+
+  vector<char> pathf64x64_2(1024);
+  SleefDFT_getPath(p, pathf64x64_2.data(), pathf64x64_2.size());
+
+  cout << "Path2 (F64x64) : " << pathf64x64_2.data() << endl;
+
+  SleefDFT_dispose(p);
+
+  if (pathf64x64.size() != pathf64x64_2.size() || memcmp(pathf64x64.data(), pathf64x64_2.data(), pathf64x64.size()) != 0) {
     cerr << "Paths do not match" << endl;
     exit(-1);
   }

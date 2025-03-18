@@ -59,7 +59,7 @@ typedef float xreal;
 
 static uint64_t timens() {
   return std::chrono::duration_cast<std::chrono::nanoseconds>
-    (std::chrono::system_clock::now() - std::chrono::system_clock::from_time_t(0)).count();
+    (std::chrono::high_resolution_clock::now() - std::chrono::high_resolution_clock::from_time_t(0)).count();
 }
 
 template<typename cplx>
@@ -185,7 +185,7 @@ int main(int argc, char **argv) {
 
   cerr << "n = " << n << ", m = " << m << ", " << (forward ? "forward" : "backward") << endl;
 
-  const int nrepeat = argc >= 5 ? atoi(argv[4]) : 4;
+  const int nrepeat = argc >= 5 ? atoi(argv[4]) : 1;
 
   vector<double> mflops_sleefdftst, mflops_fftwst, mflops_sleefdftmt, mflops_fftwmt;
 
@@ -197,7 +197,7 @@ int main(int argc, char **argv) {
   {
     // Check if we are really computing the same values
 
-    auto sleefdft = make_shared<FWSleefDFT<complex<xreal>>>(n, m, forward, false, true);
+    auto sleefdft = make_shared<FWSleefDFT<complex<xreal>>>(n, m, forward, true , true);
     auto fftw     = make_shared<FWFFTW3   <complex<xreal>>>(n, m, forward, false, true);
 
     complex<xreal> *in0  = sleefdft->getInPtr();
@@ -233,7 +233,10 @@ int main(int argc, char **argv) {
 
     {
       cerr << "Planning SleefDFT ST" << endl;
+      int64_t ptm0 = timens();
       auto sleefdftst = make_shared<FWSleefDFT<complex<xreal>>>(n, m, forward, false, false);
+      int64_t ptm1 = timens();
+      cerr << ((ptm1 - ptm0) / 1000.0 / 1000.0) << "ms" << endl;
 
       complex<xreal> *in0  = sleefdftst->getInPtr();
       for(int i=0;i<n * m;i++) in0[i] = v[i];
@@ -260,7 +263,10 @@ int main(int argc, char **argv) {
 
     {
       cerr << "Planning FFTW ST" << endl;
+      int64_t ptm0 = timens();
       auto fftwst = make_shared<FWFFTW3<complex<xreal>>>(n, m, forward, false, false);
+      int64_t ptm1 = timens();
+      cerr << ((ptm1 - ptm0) / 1000.0 / 1000.0) << "ms" << endl;
 
       complex<xreal> *in0  = fftwst->getInPtr();
       for(int i=0;i<n * m;i++) in0[i] = v[i];
@@ -287,7 +293,10 @@ int main(int argc, char **argv) {
 
     {
       cerr << "Planning SleefDFT MT" << endl;
+      int64_t ptm0 = timens();
       auto sleefdftmt = make_shared<FWSleefDFT<complex<xreal>>>(n, m, forward, true, false);
+      int64_t ptm1 = timens();
+      cerr << ((ptm1 - ptm0) / 1000.0 / 1000.0) << "ms" << endl;
 
       complex<xreal> *in0  = sleefdftmt->getInPtr();
       for(int i=0;i<n * m;i++) in0[i] = v[i];
@@ -314,7 +323,10 @@ int main(int argc, char **argv) {
 
     {
       cerr << "Planning FFTW MT" << endl;
+      int64_t ptm0 = timens();
       auto fftwmt = make_shared<FWFFTW3<complex<xreal>>>(n, m, forward, true, false);
+      int64_t ptm1 = timens();
+      cerr << ((ptm1 - ptm0) / 1000.0 / 1000.0) << "ms" << endl;
 
       complex<xreal> *in0  = fftwmt->getInPtr();
       for(int i=0;i<n * m;i++) in0[i] = v[i];
