@@ -684,7 +684,7 @@ void SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::searchForRandomPath() {
   int level = log2len;
   while(level > 0) {
     int config = 0;
-    int N = rand() % MIN(level, NMAX) + 1;
+    int N = rand() % MIN(level, NMAX-1) + 1;
     if (!executable[config][level][N]) continue;
 
     path.push_back(Action(config, level, N));
