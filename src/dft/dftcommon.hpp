@@ -129,7 +129,7 @@ struct SleefDFTXX {
   void freeTables();
   void generatePerm(const vector<Action> &);
 
-  uint64_t measurePath(const vector<Action> &path, uint64_t niter);
+  uint64_t measurePath(const vector<Action> &path, uint64_t niter, uint64_t nrepeat);
   void searchForBestPath(int nPaths);
   void searchForRandomPath();
   bool measure(bool randomize);

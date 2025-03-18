@@ -442,67 +442,74 @@ public:
 };
 
 template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
-uint64_t SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::measurePath(const vector<Action> &path, uint64_t niter) {
+uint64_t SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::measurePath(const vector<Action> &path, uint64_t niter, uint64_t nrepeat) {
   real *s2 = NULL, *d2 = NULL;
   const real *s = in  == NULL ? (s2 = (real *)memset(Sleef_malloc((2 << log2len) * sizeof(real)), 0, sizeof(real) * (2 << log2len))) : in;
   real       *d = out == NULL ? (d2 = (real *)memset(Sleef_malloc((2 << log2len) * sizeof(real)), 0, sizeof(real) * (2 << log2len))) : out;
 
-  const int tn = omp_get_thread_num();
-  real *t[] = { x1[tn], x0[tn], d };
+  uint64_t tm = UINT64_MAX;
 
-  if ((path[0].config & CONFIG_MT) != 0) startAllThreads(nThread);
+  for(uint64_t r=0;r<nrepeat;r++) {
+    const int tn = omp_get_thread_num();
+    real *t[] = { x1[tn], x0[tn], d };
 
-  auto tm0 = chrono::high_resolution_clock::now();
+    if ((path[0].config & CONFIG_MT) != 0) startAllThreads(nThread);
 
-  for(uint64_t i=0;i<niter;i++) {
-    const real *lb = s;
-    int nb = 0;
+    auto tm0 = chrono::high_resolution_clock::now();
 
-    if ((mode & SLEEF_MODE_REAL) != 0 && (path.size() & 1) == 0 &&
-	((mode & SLEEF_MODE_BACKWARD) != 0) != ((mode & SLEEF_MODE_ALT) != 0)) nb = -1;
-    if ((mode & SLEEF_MODE_REAL) == 0 && (path.size() & 1) == 1) nb = -1;
+    for(uint64_t i=0;i<niter;i++) {
+      const real *lb = s;
+      int nb = 0;
+
+      if ((mode & SLEEF_MODE_REAL) != 0 && (path.size() & 1) == 0 &&
+	  ((mode & SLEEF_MODE_BACKWARD) != 0) != ((mode & SLEEF_MODE_ALT) != 0)) nb = -1;
+      if ((mode & SLEEF_MODE_REAL) == 0 && (path.size() & 1) == 1) nb = -1;
   
-    if ((mode & SLEEF_MODE_REAL) != 0 &&
-	((mode & SLEEF_MODE_BACKWARD) != 0) != ((mode & SLEEF_MODE_ALT) != 0)) {
-      (*REALSUB1[isa])(t[nb+1], s, log2len, rtCoef0, rtCoef1, (mode & SLEEF_MODE_ALT) == 0);
-      if (( mode & SLEEF_MODE_ALT) == 0) t[nb+1][(1 << log2len)+1] = -s[(1 << log2len)+1] * 2;
-      lb = t[nb+1];
-      nb = (nb + 1) & 1;
-    }
-
-    int level = log2len;
-    for(unsigned j=0;j<path.size();j++) {
-      if (path[j].level == 0) {
-	assert(j == path.size()-1);
-	break;
+      if ((mode & SLEEF_MODE_REAL) != 0 &&
+	  ((mode & SLEEF_MODE_BACKWARD) != 0) != ((mode & SLEEF_MODE_ALT) != 0)) {
+	(*REALSUB1[isa])(t[nb+1], s, log2len, rtCoef0, rtCoef1, (mode & SLEEF_MODE_ALT) == 0);
+	if (( mode & SLEEF_MODE_ALT) == 0) t[nb+1][(1 << log2len)+1] = -s[(1 << log2len)+1] * 2;
+	lb = t[nb+1];
+	nb = (nb + 1) & 1;
       }
-      int N = path[j].N, config = path[j].config;
-      dispatch(N, t[nb+1], lb, level, config);
-      level -= N;
-      lb = t[nb+1];
-      nb = (nb + 1) & 1;
-    }
 
-    if (path[path.size()-1].level != 0) continue;
+      int level = log2len;
+      for(unsigned j=0;j<path.size();j++) {
+	if (path[j].level == 0) {
+	  assert(j == path.size()-1);
+	  break;
+	}
+	int N = path[j].N, config = path[j].config;
+	dispatch(N, t[nb+1], lb, level, config);
+	level -= N;
+	lb = t[nb+1];
+	nb = (nb + 1) & 1;
+      }
 
-    if ((mode & SLEEF_MODE_REAL) != 0 && 
-	((mode & SLEEF_MODE_BACKWARD) == 0) != ((mode & SLEEF_MODE_ALT) != 0)) {
-      (*REALSUB0[isa])(d, lb, log2len, rtCoef0, rtCoef1);
-      if ((mode & SLEEF_MODE_ALT) == 0) {
-	d[(1 << log2len)+1] = -d[(1 << log2len)+1];
-	d[(2 << log2len)+0] =  d[1];
-	d[(2 << log2len)+1] =  0;
-	d[1] = 0;
+      if (path[path.size()-1].level != 0) continue;
+
+      if ((mode & SLEEF_MODE_REAL) != 0 && 
+	  ((mode & SLEEF_MODE_BACKWARD) == 0) != ((mode & SLEEF_MODE_ALT) != 0)) {
+	(*REALSUB0[isa])(d, lb, log2len, rtCoef0, rtCoef1);
+	if ((mode & SLEEF_MODE_ALT) == 0) {
+	  d[(1 << log2len)+1] = -d[(1 << log2len)+1];
+	  d[(2 << log2len)+0] =  d[1];
+	  d[(2 << log2len)+1] =  0;
+	  d[1] = 0;
+	}
       }
     }
+
+    auto tm1 = chrono::high_resolution_clock::now();
+
+    uint64_t tm2 = chrono::duration_cast<std::chrono::nanoseconds>(tm1 - tm0).count();
+    if (tm2 < tm) tm = tm2;
   }
-
-  auto tm1 = chrono::high_resolution_clock::now();
 
   if (d2 != NULL) Sleef_free(d2);
   if (s2 != NULL) Sleef_free(s2);
 
-  return chrono::duration_cast<std::chrono::nanoseconds>(tm1 - tm0).count();
+  return tm;
 }
 
 template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
@@ -553,12 +560,8 @@ public:
     inst.generatePerm(path);
     uint64_t niter = 1;
     for(;;) {
-      uint64_t t = inst.measurePath(path, niter);
-      if (t >= 100000) {
-	double m0 = double(t) / niter;
-	double m1 = double(inst.measurePath(path, niter)) / niter;
-	return m0 < m1 ? m0 : m1;
-      }
+      uint64_t t = inst.measurePath(path, niter, 2);
+      if (t >= 100000) return double(t) / niter;
       niter *= 2;
     }
   }
@@ -658,11 +661,9 @@ void SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::searchForBestPath(int nPath
 
     uint64_t niter = 1;
     for(;;) {
-      uint64_t t = measurePath(p, niter);
+      uint64_t t = measurePath(p, niter, 2);
       if (t >= 1000000) {
-	double m0 = double(t) / niter;
-	double m1 = double(measurePath(p, niter)) / niter;
-	tm = m0 < m1 ? m0 : m1;
+	tm = double(t) / niter;
 	break;
       }
       niter *= 2;
