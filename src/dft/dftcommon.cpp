@@ -52,7 +52,7 @@ vector<Action> SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::parsePathStr(cons
     if (*p == '(') {
       p++;
 
-      for(config=4;config>=0;config--) {
+      for(config=3;config>=0;config--) {
 	if (strncmp(p, configStr[config], strlen(configStr[config])) == 0) break;
       }
       if (config == -1) throw(runtime_error("Unknown config"));
