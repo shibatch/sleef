@@ -3,8 +3,15 @@
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
+#include <iostream>
+#include <string>
+#include <vector>
+#include <climits>
 #include <unordered_map>
+#include <tuple>
 #include <mutex>
+
+using namespace std;
 
 #include "dispatchparam.h"
 
@@ -12,6 +19,52 @@
 #define CONFIG_MT 2
 
 #define MAXLOG2LEN 32
+
+#define INFINITY_ (1e+300 * 1e+300)
+
+class Action {
+public:
+  int config, level, N;
+
+  Action(const Action& a) = default;
+
+  Action(int config_, int level_, int N_) : config(config_), level(level_), N(N_) {}
+
+  bool operator==(const Action& rhs) const {
+    return config == rhs.config && level == rhs.level && N == rhs.N;
+  }
+  bool operator!=(const Action& rhs) const { return !(*this == rhs); }
+
+  friend ostream& operator<<(ostream &os, const Action &ac) {
+    return os << "[" << ac.config << ", " << ac.level << ", " << ac.N << "]";
+  }
+};
+
+template <>
+struct std::hash<Action> {
+  size_t operator()(const Action &a) const {
+    size_t u = 0;
+    u ^= a.config;
+    u = (u << 7) | (u >> ((sizeof(u)*8)-7));
+    u ^= a.level;
+    u = (u << 7) | (u >> ((sizeof(u)*8)-7));
+    u ^= a.N;
+    return u;
+  }
+};
+
+template <>
+struct std::hash<vector<Action>> {
+  size_t operator()(const vector<Action> &v) const {
+    size_t u = 0;
+    for(auto a : v) {
+      hash<Action> hash;
+      u ^= hash(a);
+      u = (u << 19) | (u >> ((sizeof(u)*8)-19));
+    }
+    return u;
+  }
+};
 
 template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
 struct SleefDFTXX {
@@ -39,9 +92,8 @@ struct SleefDFTXX {
 
   int vecwidth, log2vecwidth;
   
-  uint64_t tm[CONFIGMAX][(MAXBUTWIDTH+1)*32];
-  uint64_t bestTime = 0;
-  int16_t bestPath[32], bestPathConfig[32], pathLen = 0;
+  bool executable[CONFIGMAX][MAXLOG2LEN][MAXLOG2LEN];
+  vector<Action> bestPath;
 
   FILE *verboseFP = NULL;
 
@@ -75,15 +127,20 @@ struct SleefDFTXX {
   void dispatch(const int N, real *d, const real *s, const int level, const int config);
   void execute(const real *s0, real *d0, int MAGIC_, int MAGIC2D_);
   void freeTables();
-  int searchForRandomPathRecurse(int level, int *path, int *pathConfig, uint64_t tm, int nTrial);
+  void generatePerm(const vector<Action> &);
+
+  uint64_t measurePath(const vector<Action> &path, uint64_t niter);
   void searchForBestPath(int nPaths);
-  void measureBut();
-  void estimateBut();
+  void searchForRandomPath();
   bool measure(bool randomize);
-  int loadMeasurementResults(int pathCat);
-  void saveMeasurementResults(int pathCat);
+
+  vector<Action> parsePathStr(const char *);
+
+  string planKeyString(string = "");
+  bool loadMeasurementResults();
+  void saveMeasurementResults();
   void setPath(const char *pathStr);
-  size_t getPath(char *pathStr, size_t pathStrSize);
+  string getPath();
 };
 
 template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
@@ -98,7 +155,7 @@ struct SleefDFT2DXX {
 
   int32_t hlen, vlen;
   int32_t log2hlen, log2vlen;
-  uint64_t tmNoMT, tmMT;
+  unsigned long long tmNoMT, tmMT;
   real *tBuf;
 
   SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH> *instH, *instV;
@@ -124,7 +181,9 @@ struct SleefDFT2DXX {
 
   void execute(const real *s0, real *d0, int MAGIC_, int MAGIC2D_);
   void measureTranspose();
-  int loadMeasurementResults();
+
+  string planKeyString(string = "");
+  bool loadMeasurementResults();
   void saveMeasurementResults();
 };
 
@@ -141,7 +200,7 @@ struct SleefDFT {
 #define SLEEF_MODE2_MT1D       (1 << 0)
 #define SLEEF_MODE3_MT2D       (1 << 0)
 
-#define PLANFILEID "SLEEFDFT0\n"
+#define PLANFILEID "SLEEFDFT1"
 #define ENVVAR "SLEEFDFTPLAN"
 
 #define SLEEF_MODE_MEASUREBITS (3 << 20)
@@ -155,28 +214,17 @@ uint32_t ilog2(uint32_t q);
 #define GETINT_DFTPRIORITY 101
 
 class PlanManager {
-  static const int CATBIT = 8;
-  static const int BASETYPEIDBIT = 2;
-  static const int LOG2LENBIT = 8;
-  static const int DIRBIT = 1;
-  static const int BUTSTATBIT = 16;
-  static const int LEVELBIT = LOG2LENBIT;
-  static const int BUTCONFIGBIT = 8;
-  static const int TRANSCONFIGBIT = 8;
-
-  char *dftPlanFilePath = nullptr;
-  char *archID = nullptr;
-  std::unordered_map<uint64_t, uint64_t> planMap;
+  string dftPlanFilePath;
+  bool planFilePathSet_ = 0, planFileLoaded_ = 0;
   uint64_t planMode_ = SLEEF_PLAN_REFERTOENVVAR;
-  int planFilePathSet_ = 0, planFileLoaded_ = 0;
+
+  string planID;
+  tuple<unordered_map<string, unordered_map<string, string>>, string> thePlan;
 
 public:
-  std::mutex mtx;
+  PlanManager();
 
-  static uint64_t keyButStat(int baseTypeID, int log2len, int dir, int butStat);
-  static uint64_t keyTrans(int baseTypeID, int hlen, int vlen, int transConfig);
-  static uint64_t keyPath(int baseTypeID, int log2len, int dir, int level, int config);
-  static uint64_t keyPathConfig(int baseTypeID, int log2len, int dir, int level, int config);
+  recursive_mutex mtx;
 
   uint64_t planMode() { return planMode_; }
   int planFilePathSet() { return planFilePathSet_; }
@@ -185,8 +233,9 @@ public:
   void setPlanFilePath(const char *path, const char *arch, uint64_t mode);
   void loadPlanFromFile();
   void savePlanToFile();
-  uint64_t getU64(uint64_t key);
-  void putU64(uint64_t key, uint64_t value);
+
+  string get(const string& key);
+  void put(const string& key, const string& value);
 };
 
 extern PlanManager planManager;

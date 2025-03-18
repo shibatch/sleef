@@ -3,6 +3,10 @@
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
+#include <memory>
+#include <unordered_map>
+#include <sstream>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -23,6 +27,8 @@
 #include "dftcommon.hpp"
 #include "dispatchdp.hpp"
 #include "dispatchsp.hpp"
+
+using namespace std;
 
 //
 
@@ -73,12 +79,25 @@ static uint32_t uperm(int nbits, uint32_t k, int s, int d) {
     ((((k >> s) | (r & (-1 << (nbits-s)))) << d) & ~(-1 << nbits));
 }
 
+static void showPath(ostream &os, const string &mes, const vector<Action>& path) {
+  os << mes;
+  for(auto e : path) os << e << " ";
+  os << endl;
+}
+
+static void showPath(FILE *fp, const string &mes, const vector<Action>& path) {
+  ostringstream s;
+  showPath(s, mes, path);
+  fputs(s.str().c_str(), fp);
+}
+
 // Dispatcher
 
 template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
 void SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::dispatch(const int N, real *d, const real *s, const int level, const int config) {
   const int K = constK[N];
   if (level == N) {
+    // Last
     if ((mode & SLEEF_MODE_BACKWARD) == 0) {
       void (*func)(real *, const real *, const int) = DFTF[config][isa][N];
       (*func)(d, s, log2len-N);
@@ -87,6 +106,7 @@ void SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::dispatch(const int N, real 
       (*func)(d, s, log2len-N);
     }
   } else if (level == (int)log2len) {
+    // First
     assert(vecwidth <= (1 << N));
     const int shift = log2len-N - log2vecwidth;
     if ((mode & SLEEF_MODE_BACKWARD) == 0) {
@@ -311,580 +331,383 @@ static real **makeTable(int sign, int vecwidth, int log2len, const int N, const 
   return tbl;
 }
 
-// Random planner (for debugging)
-
 template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
-int SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::searchForRandomPathRecurse(int level, int *path, int *pathConfig, uint64_t tm_, int nTrial) {
-  if (level == 0) {
-    bestTime = tm_;
-    for(uint32_t j = 0;j < log2len+1;j++) {
-      bestPathConfig[j] = pathConfig[j];
-      bestPath[j] = path[j];
+void SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::generatePerm(const vector<Action> &path) {
+  for(unsigned i=0;i<path.size();i++) {
+    int level = path[i].level;
+    if (level == 0) break;
+    int N = path[i].N;
+
+    int i1 = 0;
+    for(int i0=0;i0 < (1 << (log2len-N));i0+=vecwidth, i1++) {
+      perm[level][i1] = 2*uperm(log2len, i0, log2len-level, log2len-(level-N));
     }
-    return nTrial;
-  }
-
-  if (level < 1) return nTrial-1;
-  
-  for(int i=0;i<10;i++) {
-    int N;
-
-    do {
-      N = 1 + rand() % MAXBUTWIDTH;
-    } while(tm[0][level*(MAXBUTWIDTH+1)+N] >= 1ULL << 60);
-
-    if (vecwidth > (1 << N) || N == (int)log2len) continue;
-
-    path[level] = N;
-    for(;;) {
-      pathConfig[level] = rand() % CONFIGMAX;
-#if ENABLE_STREAM == 0
-      pathConfig[level] &= ~1;
-#endif
-      if ((mode2 & SLEEF_MODE2_MT1D) == 0 && (pathConfig[level] & CONFIG_MT) != 0) continue;
-      break;
-    }
-    for(int j = level-1;j >= 0;j--) path[j] = 0;
-    nTrial = searchForRandomPathRecurse(level - N, path, pathConfig, 0, nTrial);
-    if (nTrial <= 0) break;
-    if (bestTime < 1ULL << 60) break;
-  }
-
-  return nTrial - 1;
+    for(;i1 < (1 << log2len) + 8;i1++) perm[level][i1] = 0;
+  }  
 }
 
 // Planner
 
-#define NSHORTESTPATHS 48
-#define MAXPATHLEN (MAXLOG2LEN+1)
-#define POSMAX (CONFIGMAX * MAXLOG2LEN * (MAXBUTWIDTHALL+1))
+template<typename T>
+class KShortest {
+  vector<vector<T>> heap;
+  vector<double> heapCost;
+  unordered_map<T, size_t> reached;
 
-static int cln2pos(int config, int level, int N) { return (config * MAXLOG2LEN + level) * MAXBUTWIDTHALL + N; }
-static int pos2config(int pos) { return pos == -1 ? -1 : ((pos - 1) / (MAXBUTWIDTHALL * MAXLOG2LEN)); }
-static int pos2level(int pos) { return pos == -1 ? -1 : (((pos - 1) / MAXBUTWIDTHALL) % MAXLOG2LEN); }
-static int pos2N(int pos) { return pos == -1 ? -1 : ((pos - 1) % MAXBUTWIDTHALL + 1); }
-
-template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
-struct ks_t {
-  SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH> *p;
-
-  int countu[POSMAX];
-  int path[NSHORTESTPATHS][MAXPATHLEN];
-  int pathLen[NSHORTESTPATHS];
-  uint64_t cost[NSHORTESTPATHS];
-  int nPaths;
-
-  int heapSize, nPathsInHeap;
-  int *heap;
-  uint64_t *heapCost;
-  int *heapLen;
-
-  ks_t(SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH> *p_) :
-    p(p_), nPaths(0), heapSize(10), nPathsInHeap(0),
-    heap((int *)calloc(heapSize, sizeof(int)*MAXPATHLEN)),
-    heapCost((uint64_t *)calloc(heapSize, sizeof(uint64_t))), 
-    heapLen((int *)calloc(heapSize, sizeof(int))) {
-    memset(countu, 0, sizeof(countu));
-    memset(path, 0, sizeof(path));
-    memset(pathLen, 0, sizeof(pathLen));
-    memset(cost, 0, sizeof(cost));
+  /** Remove the n-th path in the heap */
+  void remove(unsigned n) {
+    assert(n < heap.size());
+    heap.erase(heap.begin() + n);
+    heapCost.erase(heapCost.begin() + n);
+    assert(heap.size() == heapCost.size());
   }
 
-  ~ks_t() {
-    free(heapCost);
-    free(heapLen);
-    free(heap);
+public:
+  size_t limit = 0;
+
+  virtual ~KShortest() {}
+
+  /** Add a path to the heap */
+  size_t addPath(vector<T> &p, double cost) {
+    heap.push_back(p);
+    heapCost.push_back(cost);
+    assert(heap.size() == heapCost.size());
+    if (p.size()) reached[p[p.size()-1]]++;
+    return heap.size();
   }
 
-  void showHeap() {
+  void showHeap(ostream &os) const {
+    os << "Heap :" << endl;
+    int i = 0;
+    for(auto a : heap) {
+      os << i << " : ";
+      for(auto e : a) os << e << " ";
+      os << ": " << heapCost[i] << endl;
+      i++;
+    }
+    os << endl;
+  }
+
+  /** Return the n-th path in the heap */
+  vector<T> getPath(unsigned n) const {
+    assert(n < heap.size());
+    return heap[n];
+  }
+
+  /** Return if pos is a destination */
+  virtual bool isDestination(const T& pos) = 0;
+
+  /** Return next nodes after the path */
+  virtual vector<T> next(const vector<T>& path) = 0;
+
+  /** Return the cost to travel the path */
+  virtual double cost(const vector<T>& path) = 0;
+
+  /** Compute and return the next-best path */
+  vector<T> execute() {
+    for(;;) {
 #ifdef DEBUG
-    fprintf(p->verboseFP, "Heap:\n");
-    for(int i=0;i<nPathsInHeap;i++) {
-      fprintf(p->verboseFP, "%d: ", i);
-      for(int j=0;j<heapLen[i];j++) fprintf(p->verboseFP, "%d/%d/%d ", pos2config(heap[i*MAXPATHLEN + j]), pos2level(heap[i*MAXPATHLEN + j]), pos2N(heap[i*MAXPATHLEN + j]));
-      fprintf(p->verboseFP, ": %lld\n", (long long)heapCost[i]);
-    }
-    fprintf(p->verboseFP, "\n");
+      showHeap(cout);
 #endif
-  }
 
-  /** returns the number of paths in the heap */
-  int ksSize() { return nPathsInHeap; }
+      double bestCost = INFINITY_;
+      unsigned bestNum = UINT_MAX;
 
-  /** returns the cost of n-th paths in the heap */
-  uint64_t ksCost(int n) {
-    assert(0 <= n && n < nPathsInHeap);
-    return heapCost[n];
-  }
+      for(unsigned i=0;i<heap.size();i++) {
+	double c = heapCost[i];
+	if (c < bestCost) {
+	  bestCost = c;
+	  bestNum = (int)i;
+	}
+      }
 
-  /** adds a path to the heap */
-  void ksAddPath(int *path, int pathLen, uint64_t cost) {
-    assert(pathLen <= MAXPATHLEN);
+      if (bestNum == UINT_MAX) return vector<T>();
 
-    if (nPathsInHeap == heapSize) {
-      heapSize *= 2;
-      heap = (int *)realloc(heap, heapSize * sizeof(int)*MAXPATHLEN);
-      heapCost = (uint64_t *)realloc(heapCost, heapSize * sizeof(uint64_t));
-      heapLen = (int *)realloc(heapLen, heapSize * sizeof(int));
+      vector<T> best = getPath(bestNum);
+
+      remove(bestNum);
+
+      if (isDestination(best[best.size()-1])) return best;
+
+      auto adj = next(best);
+
+      for(auto a : adj) {
+	if (limit != 0 && reached[a] >= limit) continue;
+	vector<T> p(best);
+	p.push_back(a);
+	addPath(p, cost(p));
+      }
     }
-
-    for(int i=0;i<pathLen;i++) heap[nPathsInHeap * MAXPATHLEN + i] = path[i];
-    heapLen[nPathsInHeap] = pathLen;
-    heapCost[nPathsInHeap] = cost;
-    nPathsInHeap++;
-  }
-
-  /** copies the n-th paths in the heap to path, returns its length */
-  int ksGetPath(int *path, int n) {
-    assert(0 <= n && n < nPathsInHeap);
-    int len = heapLen[n];
-    for(int i=0;i<len;i++) path[i] = heap[n * MAXPATHLEN + i];
-    return len;
-  }
-
-  /** removes the n-th paths in the heap */
-  void ksRemove(int n) {
-    assert(0 <= n && n < nPathsInHeap);
-
-    for(int i=n;i<nPathsInHeap-1;i++) {
-      int len = heapLen[i+1];
-      assert(len < MAXPATHLEN);
-      for(int j=0;j<len;j++) heap[i * MAXPATHLEN + j] = heap[(i+1) * MAXPATHLEN + j];
-      heapLen[i] = heapLen[i+1];
-      heapCost[i] = heapCost[i+1];
-    }
-    nPathsInHeap--;
-  }
-
-  /** returns the countu value at pos */
-  int ksCountu(int pos) {
-    assert(0 <= pos && pos < POSMAX);
-    return countu[pos];
-  }
-
-  /** set the countu value at pos to n */
-  void ksSetCountu(int pos, int n) {
-    assert(0 <= pos && pos < POSMAX);
-    countu[pos] = n;
-  }
-
-  /** adds a path as one of the best k paths, returns the number best paths */
-  int ksAddBestPath(int *path_, int pathLen_, uint64_t cost_) {
-    assert(pathLen_ <= MAXPATHLEN);
-    assert(nPaths < NSHORTESTPATHS);
-    for(int i=0;i<pathLen_;i++) path[nPaths][i] = path_[i];
-    pathLen[nPaths] = pathLen_;
-    cost[nPaths] = cost_;
-    nPaths++;
-    return nPaths;
-  }
-
-  /** returns if pos is a destination */
-  int ksIsDest(int pos) { return pos2level(pos) == 0; }
-
-  /** returns n-th adjacent nodes at pos */
-  int ksAdjacent(int pos, int n) {
-    if (pos != -1 && pos2level(pos) == 0) return -1;
-
-    int NMAX = MIN(MIN(p->log2len, MAXBUTWIDTH+1), p->log2len - p->log2vecwidth + 1);
-
-    if (pos == -1) {
-      int N = n / 2 + MAX(p->log2vecwidth, 1);
-      if (N >= NMAX) return -1;
-      return cln2pos((n & 1) * CONFIG_MT, p->log2len, N);
-    }
-
-    int config = (pos2config(pos) & CONFIG_MT);
-    int N = n + 1;
-    int level = pos2level(pos) - pos2N(pos);
-
-    if (level < 0 || N >= NMAX) return -1;
-    if (level == 0) return n == 0 ? cln2pos(0, 0, 0) : -1;
-
-    return cln2pos(config, level, N);
-  }
-
-  uint64_t ksAdjacentCost(int pos, int n) {
-    int nxpos = ksAdjacent(pos, n);
-    if (nxpos == -1) return 0;
-    int config = pos2config(nxpos), level = pos2level(nxpos), N = pos2N(nxpos);
-    uint64_t ret0 = p->tm[config | 0][level*(MAXBUTWIDTH+1) + N];
-    uint64_t ret1 = p->tm[config | 1][level*(MAXBUTWIDTH+1) + N];
-    return MIN(ret0, ret1);
   }
 };
 
-//
+template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
+uint64_t SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::measurePath(const vector<Action> &path, uint64_t niter) {
+  real *s2 = NULL, *d2 = NULL;
+  const real *s = in  == NULL ? (s2 = (real *)memset(Sleef_malloc((2 << log2len) * sizeof(real)), 0, sizeof(real) * (2 << log2len))) : in;
+  real       *d = out == NULL ? (d2 = (real *)memset(Sleef_malloc((2 << log2len) * sizeof(real)), 0, sizeof(real) * (2 << log2len))) : out;
+
+  const int tn = omp_get_thread_num();
+  real *t[] = { x1[tn], x0[tn], d };
+
+  if ((path[0].config & CONFIG_MT) != 0) startAllThreads(nThread);
+
+  auto tm0 = chrono::high_resolution_clock::now();
+
+  for(uint64_t i=0;i<niter;i++) {
+    const real *lb = s;
+    int nb = 0;
+
+    if ((mode & SLEEF_MODE_REAL) != 0 && (path.size() & 1) == 0 &&
+	((mode & SLEEF_MODE_BACKWARD) != 0) != ((mode & SLEEF_MODE_ALT) != 0)) nb = -1;
+    if ((mode & SLEEF_MODE_REAL) == 0 && (path.size() & 1) == 1) nb = -1;
+  
+    if ((mode & SLEEF_MODE_REAL) != 0 &&
+	((mode & SLEEF_MODE_BACKWARD) != 0) != ((mode & SLEEF_MODE_ALT) != 0)) {
+      (*REALSUB1[isa])(t[nb+1], s, log2len, rtCoef0, rtCoef1, (mode & SLEEF_MODE_ALT) == 0);
+      if (( mode & SLEEF_MODE_ALT) == 0) t[nb+1][(1 << log2len)+1] = -s[(1 << log2len)+1] * 2;
+      lb = t[nb+1];
+      nb = (nb + 1) & 1;
+    }
+
+    int level = log2len;
+    for(unsigned j=0;j<path.size();j++) {
+      if (path[j].level == 0) {
+	assert(j == path.size()-1);
+	break;
+      }
+      int N = path[j].N, config = path[j].config;
+      dispatch(N, t[nb+1], lb, level, config);
+      level -= N;
+      lb = t[nb+1];
+      nb = (nb + 1) & 1;
+    }
+
+    if (path[path.size()-1].level != 0) continue;
+
+    if ((mode & SLEEF_MODE_REAL) != 0 && 
+	((mode & SLEEF_MODE_BACKWARD) == 0) != ((mode & SLEEF_MODE_ALT) != 0)) {
+      (*REALSUB0[isa])(d, lb, log2len, rtCoef0, rtCoef1);
+      if ((mode & SLEEF_MODE_ALT) == 0) {
+	d[(1 << log2len)+1] = -d[(1 << log2len)+1];
+	d[(2 << log2len)+0] =  d[1];
+	d[(2 << log2len)+1] =  0;
+	d[1] = 0;
+      }
+    }
+  }
+
+  auto tm1 = chrono::high_resolution_clock::now();
+
+  if (d2 != NULL) Sleef_free(d2);
+  if (s2 != NULL) Sleef_free(s2);
+
+  return chrono::duration_cast<std::chrono::nanoseconds>(tm1 - tm0).count();
+}
+
+template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
+class QuickFinder : public KShortest<Action> {
+  SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH> &inst;
+
+public:
+  QuickFinder(SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH> &inst_, const vector<Action> &startPoints, size_t limit_) :
+    inst(inst_) {
+    limit = limit_;
+    for(auto a : startPoints) {
+      vector<Action> v { a };
+      addPath(v, cost(v));
+    }
+  }
+
+  ~QuickFinder() {}
+
+  virtual bool isDestination(const Action& pos) {
+    return pos.level == pos.N;
+  }
+
+  virtual vector<Action> next(const vector<Action>& path) {
+    const int NMAX = MIN(MIN(inst.log2len, MAXBUTWIDTH+1), inst.log2len - inst.log2vecwidth + 1);
+
+    vector<Action> v;
+
+    Action last = path[path.size()-1];
+
+    int level = last.level - last.N;
+
+    assert(level > 0);
+
+    for(int config = 0;config < CONFIGMAX;config++) {
+      if ((config & CONFIG_MT) != (last.config & CONFIG_MT)) continue;
+
+      for(int N=1;N<NMAX && N <= level;N++) {
+	if (!inst.executable[config][level][N]) continue;
+	Action a(config, level, N);
+	v.push_back(a);
+      }
+    }
+
+    return v;
+  }
+
+  virtual double cost(const vector<Action>& path) {
+    inst.generatePerm(path);
+    uint64_t niter = 1;
+    for(;;) {
+      uint64_t t = inst.measurePath(path, niter);
+      if (t >= 100000) {
+	double m0 = double(t) / niter;
+	double m1 = double(inst.measurePath(path, niter)) / niter;
+	return m0 < m1 ? m0 : m1;
+      }
+      niter *= 2;
+    }
+  }
+};
+
+template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
+class PathEstimator : public KShortest<Action> {
+  SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH> &inst;
+
+public:
+  PathEstimator(SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH> &inst_, const vector<Action> &startPoints) :
+    inst(inst_) {
+    limit = 1;
+    for(auto a : startPoints) {
+      vector<Action> v { a };
+      addPath(v, cost(v));
+    }
+  }
+
+  ~PathEstimator() {}
+
+  virtual bool isDestination(const Action& pos) {
+    return pos.level == pos.N;
+  }
+
+  virtual vector<Action> next(const vector<Action>& path) {
+    const int NMAX = MIN(MIN(inst.log2len, MAXBUTWIDTH+1), inst.log2len - inst.log2vecwidth + 1);
+
+    vector<Action> v;
+
+    Action last = path[path.size()-1];
+
+    if (last.level == 0) return v;
+
+    int level = last.level - last.N;
+
+    assert(level > 0);
+
+    for(int config = 0;config < CONFIGMAX;config++) {
+      if ((config & CONFIG_MT) != (last.config & CONFIG_MT)) continue;
+
+      for(int N=1;N<NMAX && N <= level;N++) {
+	if (!inst.executable[config][level][N]) continue;
+	v.push_back(Action(config, level, N));
+      }
+    }
+
+    return v;
+  }
+
+  static uint64_t estimate(int log2len, int config, int level, int N) {
+    uint64_t ret = N * 1000 + ABS(N-3) * 1000;
+    if (log2len >= 14 && (config & CONFIG_MT) != 0) ret /= 2;
+    return ret;
+  }
+
+  virtual double cost(const vector<Action>& path) {
+    uint64_t t = 0;
+    for(auto a : path) {
+      if (!inst.executable[a.config][a.level][a.N]) return INFINITY_;
+      t += estimate(inst.log2len, a.config, a.level, a.N);
+    }
+    return t;
+  }
+};
 
 template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
 void SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::searchForBestPath(int nPaths) {
-  ks_t<real, real2, MAXSHIFT, MAXBUTWIDTH> *q = new ks_t<real, real2, MAXSHIFT, MAXBUTWIDTH>(this);
+  const int NMAX = MIN(MIN(log2len, MAXBUTWIDTH+1), log2len - log2vecwidth + 1);
 
-  for(int i=0;;i++) {
-    int v = q->ksAdjacent(-1, i);
-    if (v == -1) break;
-    uint64_t c = q->ksAdjacentCost(-1, i);
-    int path[1] = { v };
-    q->ksAddPath(path, 1, c);
+  vector<Action> sp;
+
+  for(int config = 0;config < CONFIGMAX;config++) {
+    for(int N=1;N<NMAX;N++) {
+      if (!executable[config][log2len][N]) continue;
+      sp.push_back(Action(config, log2len, N));
+    }
   }
 
-  while(q->ksSize() != 0) {
-    if ((mode & SLEEF_MODE_VERBOSE) != 0) q->showHeap();
+  if (nPaths == 0) {
+    auto pf = make_shared<PathEstimator<real, real2, MAXSHIFT, MAXBUTWIDTH>>(*this, sp);
+    bestPath = pf->execute();
+    return;
+  }
 
-    uint64_t bestCost = 1ULL << 60;
-    int bestPathNum = -1;
+  auto pf = make_shared<QuickFinder<real, real2, MAXSHIFT, MAXBUTWIDTH>>(*this, sp, 1);
 
-    for(int i=0;i<q->ksSize();i++) {
-      if (q->ksCost(i) < bestCost) {
-	bestCost = q->ksCost(i);
-	bestPathNum = i;
+  double bestTime = INFINITY_;
+
+  for(int i=0;i<nPaths;i++) {
+    auto p = pf->execute();
+
+    if (p.size() == 0) break;
+
+    double tm;
+    generatePerm(p);
+
+    uint64_t niter = 1;
+    for(;;) {
+      uint64_t t = measurePath(p, niter);
+      if (t >= 1000000) {
+	double m0 = double(t) / niter;
+	double m1 = double(measurePath(p, niter)) / niter;
+	tm = m0 < m1 ? m0 : m1;
+	break;
       }
+      niter *= 2;
     }
 
-    if (bestPathNum == -1) break;
-
-    int path[MAXPATHLEN];
-    int pathLen = q->ksGetPath(path, bestPathNum);
-    uint64_t cost = q->ksCost(bestPathNum);
-    q->ksRemove(bestPathNum);
-
-    int lastPos = path[pathLen-1];
-    if (q->ksCountu(lastPos) >= nPaths) continue;
-    q->ksSetCountu(lastPos, q->ksCountu(lastPos)+1);
-
-    if (q->ksIsDest(lastPos)) {
-      if (q->ksAddBestPath(path, pathLen, cost) >= nPaths) break;
-      continue;
-    }
-
-    for(int i=0;;i++) {
-      int v = q->ksAdjacent(lastPos, i);
-      if (v == -1) break;
-      assert(0 <= pos2N(v) && pos2N(v) <= (int)q->p->log2len);
-      uint64_t c = q->ksAdjacentCost(lastPos, i);
-      path[pathLen] = v;
-      q->ksAddPath(path, pathLen+1, cost + c);
+    if (tm < bestTime) {
+      bestPath = p;
+      bestTime = tm;
     }
   }
+}
 
-  for(int j = log2len;j >= 0;j--) bestPath[j] = 0;
+template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
+void SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::searchForRandomPath() {
+  const int NMAX = MIN(MIN(log2len, MAXBUTWIDTH+1), log2len - log2vecwidth + 1);
 
-  if (((mode & SLEEF_MODE_MEASURE) != 0 || (planManager.planFilePathSet() && (mode & SLEEF_MODE_MEASUREBITS) == 0))) {
-    uint64_t besttm = 1ULL << 62;
-    int bestPath_ = -1, bestPathLen = q->pathLen[0];
-    const int niter =  1 + 5000000 / ((1 << log2len) + 1);
+  vector<Action> path;
 
-    real *s2 = NULL, *d2 = NULL;
-    const real *s = in  == NULL ? (s2 = (real *)memset(Sleef_malloc((2 << log2len) * sizeof(real)), 0, sizeof(real) * (2 << log2len))) : in;
-    real       *d = out == NULL ? (d2 = (real *)memset(Sleef_malloc((2 << log2len) * sizeof(real)), 0, sizeof(real) * (2 << log2len))) : out;
+  int level = log2len;
+  while(level > 0) {
+    int config = 0;
+    int N = rand() % MIN(level, NMAX) + 1;
+    if (!executable[config][level][N]) continue;
 
-    const int tn = omp_get_thread_num();
-
-    real *t[] = { x1[tn], x0[tn], d };
-
-    for(int mt=0;mt<2;mt++) {
-      for(int i=0;i<q->nPaths;i++) {
-	if (((pos2config(q->path[i][0]) & CONFIG_MT) != 0) != mt) continue;
-	if (q->pathLen[i] > bestPathLen * 10) continue;
-
-	if ((mode & SLEEF_MODE_VERBOSE) != 0) {
-	  for(int j=0;j<q->pathLen[i];j++) {
-	    int N = pos2N(q->path[i][j]);
-	    int level = pos2level(q->path[i][j]);
-	    int config = pos2config(q->path[i][j]) & ~1;
-	    uint64_t t0 = q->p->tm[config | 0][level*(MAXBUTWIDTH+1) + N];
-	    uint64_t t1 = q->p->tm[config | 1][level*(MAXBUTWIDTH+1) + N];
-	    config = t0 < t1 ? config : (config | 1);
-
-	    if (N != 0) fprintf(verboseFP, "%d(%s) ", N, configStr[config]);
-	  }
-	}
-
-	if (mt) startAllThreads(nThread);
-
-	uint64_t tm0 = Sleef_currentTimeMicros();
-	for(int k=0;k<niter;k++) {
-	  int nb = 0;
-	  const real *lb = s;
-	  if ((pathLen & 1) == 1) nb = -1;
-	  for(int level = log2len, j=0;level >= 1;j++) {
-	    assert(pos2level(q->path[i][j]) == level);
-	    int N = pos2N(q->path[i][j]);
-	    int config = pos2config(q->path[i][j]) & ~1;
-	    uint64_t t0 = q->p->tm[config | 0][level*(MAXBUTWIDTH+1) + N];
-	    uint64_t t1 = q->p->tm[config | 1][level*(MAXBUTWIDTH+1) + N];
-	    config = t0 < t1 ? config : (config | 1);
-	    dispatch(N, t[nb+1], lb, level, config);
-	    level -= N;
-	    lb = t[nb+1];
-	    nb = (nb + 1) & 1;
-	  }
-	}
-	uint64_t tm1 = Sleef_currentTimeMicros();
-	for(int k=0;k<niter;k++) {
-	  int nb = 0;
-	  const real *lb = s;
-	  if ((pathLen & 1) == 1) nb = -1;
-	  for(int level = log2len, j=0;level >= 1;j++) {
-	    assert(pos2level(q->path[i][j]) == level);
-	    int N = pos2N(q->path[i][j]);
-	    int config = pos2config(q->path[i][j]) & ~1;
-	    uint64_t t0 = q->p->tm[config | 0][level*(MAXBUTWIDTH+1) + N];
-	    uint64_t t1 = q->p->tm[config | 1][level*(MAXBUTWIDTH+1) + N];
-	    config = t0 < t1 ? config : (config | 1);
-	    dispatch(N, t[nb+1], lb, level, config);
-	    level -= N;
-	    lb = t[nb+1];
-	    nb = (nb + 1) & 1;
-	  }
-	}
-	uint64_t tm2 = Sleef_currentTimeMicros();
-
-	if ((mode & SLEEF_MODE_VERBOSE) != 0) {
-	  double nlog2n = ldexp(log2len, log2len);
-	  double timeus0 = double(tm1 - tm0) / niter;
-	  double timeus1 = double(tm2 - tm1) / niter;
-	  fprintf(verboseFP, " : %g %g\n", 5 * nlog2n / timeus0, 5 * nlog2n / timeus1);
-	}
-	if ((tm1 - tm0) < besttm) {
-	  bestPath_ = i;
-	  bestPathLen = q->pathLen[bestPath_];
-	  besttm = tm1 - tm0;
-	}
-	if ((tm2 - tm1) < besttm) {
-	  bestPath_ = i;
-	  bestPathLen = q->pathLen[bestPath_];
-	  besttm = tm2 - tm1;
-	}
-      }
-    }
-
-    for(int level = log2len, j=0;level >= 1;j++) {
-      assert(pos2level(q->path[bestPath_][j]) == level);
-      int N = pos2N(q->path[bestPath_][j]);
-
-      int config = pos2config(q->path[bestPath_][j]) & ~1;
-      uint64_t t0 = q->p->tm[config | 0][level*(MAXBUTWIDTH+1) + N];
-      uint64_t t1 = q->p->tm[config | 1][level*(MAXBUTWIDTH+1) + N];
-      config = t0 < t1 ? config : (config | 1);
-
-      bestPath[level] = N;
-      bestPathConfig[level] = config;
-      level -= N;
-    }
-
-    if (d2 != NULL) Sleef_free(d2);
-    if (s2 != NULL) Sleef_free(s2);
-  } else {
-    for(int level = log2len, j=0;level >= 1;j++) {
-      int bestPath_ = 0;
-      assert(pos2level(q->path[bestPath_][j]) == level);
-      int N = pos2N(q->path[bestPath_][j]);
-      int config = pos2config(q->path[bestPath_][j]);
-      bestPath[level] = N;
-      bestPathConfig[level] = config;
-      level -= N;
-    }
+    path.push_back(Action(config, level, N));
+    level -= N;
   }
 
-  delete q;
+  bestPath = path;
 }
 
 //
-
-static uint64_t estimate(int log2len, int level, int N, int config) {
-  uint64_t ret = N * 1000 + ABS(N-3) * 1000;
-  if (log2len >= 14 && (config & CONFIG_MT) != 0) ret /= 2;
-  return ret;
-}
-
-template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
-void SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::measureBut() {
-  if (x0 == NULL) return;
-
-  //
-
-  const int tn = omp_get_thread_num();
-
-  real *s = (real *)memset(x0[tn], 0, sizeof(real) * (2 << log2len));
-  real *d = (real *)memset(x1[tn], 0, sizeof(real) * (2 << log2len));
-
-  const int niter =  1 + 100000 / ((1 << log2len) + 1);
-
-#define MEASURE_REPEAT 4
-
-  for(int rep=1;rep<=MEASURE_REPEAT;rep++) {
-    for(int config=0;config<CONFIGMAX;config++) {
-#if ENABLE_STREAM == 0
-      if ((config & 1) != 0) continue;
-#endif
-      if ((mode2 & SLEEF_MODE2_MT1D) == 0 && (config & CONFIG_MT) != 0) continue;
-      for(uint32_t level = log2len;level >= 1;level--) {
-	for(uint32_t N=1;N<=MAXBUTWIDTH;N++) {
-	  if (level < N || log2len <= N) continue;
-	  if (level == N) {
-	    if ((int)log2len - (int)level < log2vecwidth) continue;
-
-	    uint64_t tm_ = Sleef_currentTimeMicros();
-	    for(int i=0;i<niter*2;i++) {
-	      dispatch(N, d, s, level, config);
-	    }
-	    tm_ = Sleef_currentTimeMicros() - tm_ + 1;
-	    tm[config][level*(MAXBUTWIDTH+1)+N] = MIN(tm[config][level*(MAXBUTWIDTH+1)+N], tm_);
-	  } else if (level == log2len) {
-	    if (tbl[N] == NULL || tbl[N][level] == NULL) continue;
-	    if (vecwidth > (1 << N)) continue;
-	    if ((config & CONFIG_MT) != 0) {
-	      int i1=0;
-
-#pragma omp parallel for
-	      for(i1=0;i1 < (1 << (log2len-N-log2vecwidth));i1++) {
-		int i0 = i1 << log2vecwidth;
-		perm[level][i1] = 2*uperm(log2len, i0, log2len-level, log2len-(level-N));
-	      }
-	    } else {
-	      for(int i0=0, i1=0;i0 < (1 << (log2len-N));i0+=vecwidth, i1++) {
-		perm[level][i1] = 2*uperm(log2len, i0, log2len-level, log2len-(level-N));
-	      }
-	    }
-
-	    uint64_t tm_ = Sleef_currentTimeMicros();
-	    for(int i=0;i<niter;i++) {
-	      dispatch(N, d, s, level, config);
-	      dispatch(N, s, d, level, config);
-	    }
-	    tm_ = Sleef_currentTimeMicros() - tm_ + 1;
-	    tm[config][level*(MAXBUTWIDTH+1)+N] = MIN(tm[config][level*(MAXBUTWIDTH+1)+N], tm_);
-	  } else {
-	    if (tbl[N] == NULL || tbl[N][level] == NULL) continue;
-	    if (vecwidth > 2 && log2len <= N+2) continue;
-	    if ((int)log2len - (int)level < log2vecwidth) continue;
-	    if ((config & CONFIG_MT) != 0) {
-	      int i1=0;
-
-#pragma omp parallel for
-	      for(i1=0;i1 < (1 << (log2len-N-log2vecwidth));i1++) {
-		int i0 = i1 << log2vecwidth;
-		perm[level][i1] = 2*uperm(log2len, i0, log2len-level, log2len-(level-N));
-	      }
-	    } else {
-	      for(int i0=0, i1=0;i0 < (1 << (log2len-N));i0+=vecwidth, i1++) {
-		perm[level][i1] = 2*uperm(log2len, i0, log2len-level, log2len-(level-N));
-	      }
-	    }
-
-	    uint64_t tm_ = Sleef_currentTimeMicros();
-	    for(int i=0;i<niter;i++) {
-	      dispatch(N, d, s, level, config);
-	      dispatch(N, s, d, level, config);
-	    }
-	    tm_ = Sleef_currentTimeMicros() - tm_ + 1;
-	    tm[config][level*(MAXBUTWIDTH+1)+N] = MIN(tm[config][level*(MAXBUTWIDTH+1)+N], tm_);
-	  }
-	}
-      }
-    }
-  }
-
-  if ((mode & SLEEF_MODE_VERBOSE) != 0) {
-    for(uint32_t level = log2len;level >= 1;level--) {
-      for(uint32_t N=1;N<=MAXBUTWIDTH;N++) {
-	if (level < N || log2len <= N) continue;
-	if (level == N) {
-	  if ((int)log2len - (int)level < log2vecwidth) continue;
-	  fprintf(verboseFP, "bot %d, %d, %d, ", log2len, level, N);
-	  for(int config=0;config<CONFIGMAX;config++) {
-	    if (tm[config][level*(MAXBUTWIDTH+1)+N] == 1ULL << 60) {
-	      fprintf(verboseFP, "N/A, ");
-	    } else {
-	      fprintf(verboseFP, "%lld, ", (long long int)tm[config][level*(MAXBUTWIDTH+1)+N]);
-	    }
-	  }
-	  fprintf(verboseFP, "\n");
-	} else if (level == log2len) {
-	  if (tbl[N] == NULL || tbl[N][level] == NULL) continue;
-	  if (vecwidth > (1 << N)) continue;
-	  fprintf(verboseFP, "top %d, %d, %d, ", log2len, level, N);
-	  for(int config=0;config<CONFIGMAX;config++) {
-	    if (tm[config][level*(MAXBUTWIDTH+1)+N] == 1ULL << 60) {
-	      fprintf(verboseFP, "N/A, ");
-	    } else {
-	      fprintf(verboseFP, "%lld, ", (long long int)tm[config][level*(MAXBUTWIDTH+1)+N]);
-	    }
-	  }
-	  fprintf(verboseFP, "\n");
-	} else {
-	  if (tbl[N] == NULL || tbl[N][level] == NULL) continue;
-	  if (vecwidth > 2 && log2len <= N+2) continue;
-	  if ((int)log2len - (int)level < log2vecwidth) continue;
-	  fprintf(verboseFP, "mid %d, %d, %d, ", log2len, level, N);
-	  for(int config=0;config<CONFIGMAX;config++) {
-	    if (tm[config][level*(MAXBUTWIDTH+1)+N] == 1ULL << 60) {
-	      fprintf(verboseFP, "N/A, ");
-	    } else {
-	      fprintf(verboseFP, "%lld, ", (long long int)tm[config][level*(MAXBUTWIDTH+1)+N]);
-	    }
-	  }
-	  fprintf(verboseFP, "\n");
-	}
-      }
-    }
-  }
-}
-
-template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
-void SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::estimateBut() {
-  for(uint32_t level = log2len;level >= 1;level--) {
-    for(uint32_t N=1;N<=MAXBUTWIDTH;N++) {
-      if (level < N || log2len <= N) continue;
-      if (level == N) {
-	if ((int)log2len - (int)level < log2vecwidth) continue;
-	for(int config=0;config<CONFIGMAX;config++) {
-#if ENABLE_STREAM == 0
-	  if ((config & 1) != 0) continue;
-#endif
-	  tm[config][level*(MAXBUTWIDTH+1)+N] = estimate(log2len, level, N, config);
-	}
-      } else if (level == log2len) {
-	if (tbl[N] == NULL || tbl[N][level] == NULL) continue;
-	if (vecwidth > (1 << N)) continue;
-	for(int config=0;config<CONFIGMAX;config++) {
-#if ENABLE_STREAM == 0
-	  if ((config & 1) != 0) continue;
-#endif
-	  tm[config][level*(MAXBUTWIDTH+1)+N] = estimate(log2len, level, N, config);
-	}
-      } else {
-	if (tbl[N] == NULL || tbl[N][level] == NULL) continue;
-	if (vecwidth > 2 && log2len <= N+2) continue;
-	if ((int)log2len - (int)level < log2vecwidth) continue;
-	for(int config=0;config<CONFIGMAX;config++) {
-#if ENABLE_STREAM == 0
-	  if ((config & 1) != 0) continue;
-#endif
-	  tm[config][level*(MAXBUTWIDTH+1)+N] = estimate(log2len, level, N, config);
-	}
-      }
-    }
-  }
-}
 
 template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
 bool SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::measure(bool randomize) {
   if (log2len == 1) {
-    bestTime = 1ULL << 60;
-
-    pathLen = 1;
-    bestPath[1] = 1;
+    bestPath.clear();
+    bestPath.push_back(Action(0, 1, 1));
 
     return true;
   }
 
-  if (loadMeasurementResults((mode & SLEEF_MODE_NO_MT) != 0 ? 1 : 0)) {
+  if (loadMeasurementResults()) {
     if ((mode & SLEEF_MODE_VERBOSE) != 0) {
-      fprintf(verboseFP, "Path(loaded) : ");
-      for(int j = log2len;j >= 0;j--) if (bestPath[j] != 0) fprintf(verboseFP, "%d(%s) ", bestPath[j], configStr[bestPathConfig[j]]);
-      fprintf(verboseFP, "\n");
+      showPath(verboseFP, "Loaded : ", bestPath);
     }
     
     return true;
@@ -892,62 +715,71 @@ bool SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::measure(bool randomize) {
   
   bool toBeSaved = false;
 
-  for(uint32_t level = log2len;level >= 1;level--) {
-    for(uint32_t N=1;N<=MAXBUTWIDTH;N++) {
-      for(int config=0;config<CONFIGMAX;config++) {
-	tm[config][level*(MAXBUTWIDTH+1)+N] = 1ULL << 60;
+  for(int config=0;config<CONFIGMAX;config++) {
+    for(uint32_t level = log2len;level >= 1;level--) {
+      for(uint32_t N=1;N<=MAXBUTWIDTH;N++) {
+	executable[config][level][N] = false;
       }
     }
   }
-  
+
+  for(int config=0;config<CONFIGMAX;config++) {
+#if ENABLE_STREAM == 0
+    if ((config & CONFIG_STREAM) != 0) continue;
+#endif
+    if ((mode2 & SLEEF_MODE2_MT1D) == 0 && (config & CONFIG_MT) != 0) continue;
+    for(uint32_t level = log2len;level >= 1;level--) {
+      for(uint32_t N=1;N<=MAXBUTWIDTH;N++) {
+	if (level < N || log2len <= N) continue;
+	if (level == N) {
+	  executable[config][level][N] = true;
+	} else if (level == log2len) {
+	  if (tbl[N] == NULL || tbl[N][level] == NULL) continue;
+	  if (vecwidth > (1 << N)) continue;
+	  executable[config][level][N] = true;
+	} else {
+	  if (tbl[N] == NULL || tbl[N][level] == NULL) continue;
+	  if (vecwidth > 2 && log2len <= N+2) continue;
+	  if ((int)log2len - (int)level < log2vecwidth) continue;
+	  executable[config][level][N] = true;
+	}
+      }
+    }
+  }
+
+  //
+
   if (((mode & SLEEF_MODE_MEASURE) != 0 || (planManager.planFilePathSet() && (mode & SLEEF_MODE_MEASUREBITS) == 0)) && !randomize) {
-    measureBut();
     toBeSaved = true;
-  } else {
-    estimateBut();
   }
 
-  bool executable = false;
-  for(int i=1;i<=MAXBUTWIDTH && !executable;i++) {
-    if (tm[0][log2len*(MAXBUTWIDTH+1)+i] < (1ULL << 60)) executable = true;
+  {
+    bool executable_ = false;
+    for(int i=1;i<=MAXBUTWIDTH && !executable_;i++) {
+      if (executable[0][log2len][i]) executable_ = true;
+    }
+
+    if (!executable_) return false;
   }
-
-  if (!executable) return false;
-
-  bestTime = 1ULL << 60;
-
-  bestPath[log2len] = 0;
   
   if (!randomize) {
-    searchForBestPath((mode & SLEEF_MODE_MEASURE) != 0 ? NSHORTESTPATHS : 1);
+    searchForBestPath((mode & SLEEF_MODE_MEASURE) != 0 ? 32 : 0);
+    if ((mode & SLEEF_MODE_VERBOSE) != 0) {
+      if ((mode & SLEEF_MODE_MEASURE) != 0) {
+	showPath(verboseFP, "Measure : ", bestPath);
+      } else {
+	showPath(verboseFP, "Estimate : ", bestPath);
+      }
+    }
   } else {
-    int path[MAXLOG2LEN+1];
-    int pathConfig[MAXLOG2LEN+1];
-    for(int j = log2len;j >= 0;j--) path[j] = pathConfig[j] = 0;
-
-    int nTrial = 100000;
-    do {
-      nTrial = searchForRandomPathRecurse(log2len, path, pathConfig, 0, nTrial);
-    } while(bestTime == 1ULL << 60 && nTrial >= 0);
-  }
-
-  if (bestPath[log2len] == 0) return false;
-  
-  pathLen = 0;
-  for(int j = log2len;j >= 0;j--) if (bestPath[j] != 0) pathLen++;
-
-  if ((mode & SLEEF_MODE_VERBOSE) != 0) {
-    fprintf(verboseFP, "Path");
-    if (randomize) fprintf(verboseFP, "(random) :");
-    else if (toBeSaved) fprintf(verboseFP, "(measured) :");
-    else fprintf(verboseFP, "(estimated) :");
-
-    for(int j = log2len;j >= 0;j--) if (bestPath[j] != 0) fprintf(verboseFP, "%d(%s) ", bestPath[j], configStr[bestPathConfig[j]]);
-    fprintf(verboseFP, "\n");
+    searchForRandomPath();
+    if ((mode & SLEEF_MODE_VERBOSE) != 0) {
+      showPath(verboseFP, "Random path : ", bestPath);
+    }
   }
 
   if (toBeSaved) {
-    saveMeasurementResults((mode & SLEEF_MODE_NO_MT) != 0 ? 1 : 0);
+    saveMeasurementResults();
   }
   
   return true;
@@ -1027,10 +859,6 @@ SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::SleefDFTXX(uint32_t n, const rea
   TBUTFS(TBUTFS_), TBUTBS(TBUTBS_) {
 
   verboseFP = defaultVerboseFP;
-
-  memset(tm, 0, sizeof(tm));
-  memset(bestPath, 0, sizeof(bestPath));
-  memset(bestPathConfig, 0, sizeof(bestPathConfig));
   
   // Mode
 
@@ -1059,7 +887,7 @@ SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::SleefDFTXX(uint32_t n, const rea
   }
 
   // Generate tables
-  
+
   perm = (uint32_t **)calloc(sizeof(uint32_t *), log2len+1);
   for(int level = log2len;level >= 1;level--) {
     perm[level] = (uint32_t *)Sleef_malloc(sizeof(uint32_t) * ((1 << log2len) + 8));
@@ -1095,7 +923,7 @@ SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::SleefDFTXX(uint32_t n, const rea
   //
   
   int sign = (mode & SLEEF_MODE_BACKWARD) != 0 ? -1 : 1;
-  
+
   vecwidth = (*GETINT_[isa])(GETINT_VECWIDTH);
   log2vecwidth = ilog2(vecwidth);
 
@@ -1115,38 +943,16 @@ SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::SleefDFTXX(uint32_t n, const rea
       tbl[i] = makeTable<real, real2, MAXSHIFT, MAXBUTWIDTH>(sign, vecwidth, log2len, i, constK[i], SINCOSPI_);
     }
 
-    for(int level = log2len;level >= 1;) {
-      int N = ABS(bestPath[level]);
-      if (level == N) { level -= N; continue; }
-
-      int i1 = 0;
-      for(int i0=0;i0 < (1 << (log2len-N));i0+=vecwidth, i1++) {
-	perm[level][i1] = 2*uperm(log2len, i0, log2len-level, log2len-(level-N));
-      }
-      for(;i1 < (1 << log2len) + 8;i1++) perm[level][i1] = 0;
-
-      level -= N;
-    }  
+    generatePerm(bestPath);
 
     if (!measure(mode & SLEEF_MODE_DEBUG)) {
       if ((mode & SLEEF_MODE_VERBOSE) != 0) fprintf(verboseFP, "Suitable ISA not found. This should not happen.\n");
       abort();
     }
   }
-  
-  for(int level = log2len;level >= 1;) {
-    int N = ABS(bestPath[level]);
-    if (level == N) { level -= N; continue; }
 
-    int i1 = 0;
-    for(int i0=0;i0 < (1 << (log2len-N));i0+=vecwidth, i1++) {
-      perm[level][i1] = 2*uperm(log2len, i0, log2len-level, log2len-(level-N));
-    }
-    for(;i1 < (1 << log2len) + 8;i1++) perm[level][i1] = 0;
+  generatePerm(bestPath);
 
-    level -= N;
-  }  
-  
   if ((mode & SLEEF_MODE_VERBOSE) != 0) fprintf(verboseFP, "ISA : %s %d bit %s\n", (char *)(*GETPTR_[isa])(0), (int)(GETINT_[isa](GETINT_VECWIDTH) * sizeof(real) * 16), baseTypeString);
 }
 
@@ -1279,9 +1085,9 @@ void SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::execute(const real *s0, rea
   const real *lb = s;
   int nb = 0;
 
-  if ((mode & SLEEF_MODE_REAL) != 0 && (pathLen & 1) == 0 &&
+  if ((mode & SLEEF_MODE_REAL) != 0 && (bestPath.size() & 1) == 0 &&
       ((mode & SLEEF_MODE_BACKWARD) != 0) != ((mode & SLEEF_MODE_ALT) != 0)) nb = -1;
-  if ((mode & SLEEF_MODE_REAL) == 0 && (pathLen & 1) == 1) nb = -1;
+  if ((mode & SLEEF_MODE_REAL) == 0 && (bestPath.size() & 1) == 1) nb = -1;
   
   if ((mode & SLEEF_MODE_REAL) != 0 &&
       ((mode & SLEEF_MODE_BACKWARD) != 0) != ((mode & SLEEF_MODE_ALT) != 0)) {
@@ -1291,8 +1097,13 @@ void SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::execute(const real *s0, rea
     nb = (nb + 1) & 1;
   }
 
-  for(int level = log2len;level >= 1;) {
-    int N = ABS(bestPath[level]), config = bestPathConfig[level];
+  int level = log2len;
+  for(unsigned j=0;j<bestPath.size();j++) {
+    if (bestPath[j].level == 0) {
+      assert(j == bestPath.size()-1);
+      break;
+    }
+    int N = bestPath[j].N, config = bestPath[j].config;
     dispatch(N, t[nb+1], lb, level, config);
     level -= N;
     lb = t[nb+1];
