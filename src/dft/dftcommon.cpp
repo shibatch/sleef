@@ -27,8 +27,8 @@
 #define MAGIC_FLOAT 0x31415926
 #define MAGIC_DOUBLE 0x27182818
 
-#define MAGIC2D_FLOAT 0x22360679
-#define MAGIC2D_DOUBLE 0x17320508
+#define MAGIC2D_FLOAT 0x53589793
+#define MAGIC2D_DOUBLE 0x28459045
 
 const char *configStr[] = { "ST", "ST stream", "MT", "MT stream" };
 
@@ -93,9 +93,38 @@ void SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::setPath(const char *pathStr
 }
 
 template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
+void SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::setPath(const char *pathStr) {
+  assert(magic == MAGIC2D_FLOAT || magic == MAGIC2D_DOUBLE);
+  unsigned long long tmNoMT_ = 0, tmMT_ = 0;
+  if (sscanf(pathStr, "%llu,%llu", &tmNoMT_, &tmMT_) != 2) return;
+
+  string pathH = pathStr;
+  size_t cpos = pathH.find_first_of(':');
+  if (cpos == string::npos) return;
+  pathH = pathH.substr(cpos + 1);
+
+  cpos = pathH.find_first_of(',');
+  if (cpos == string::npos) return;
+  string pathV = pathH.substr(cpos+1);
+  pathH = pathH.substr(0, cpos);
+
+  tmNoMT = tmNoMT_;
+  tmMT = tmMT_;
+  instH->setPath(pathH.c_str());
+  instV->setPath(pathV.c_str());
+}
+
+template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
 string SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::getPath() {
   assert(magic == MAGIC_FLOAT || magic == MAGIC_DOUBLE);
   return to_string(bestPath);
+}
+
+template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
+string SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::getPath() {
+  assert(magic == MAGIC2D_FLOAT || magic == MAGIC2D_DOUBLE);
+  return to_string(tmNoMT) + "," + to_string(tmMT) + ":" +
+    instH->getPath() + "," + instV->getPath();
 }
 
 EXPORT void SleefDFT_setPath(SleefDFT *p, char *pathStr) {
@@ -106,6 +135,12 @@ EXPORT void SleefDFT_setPath(SleefDFT *p, char *pathStr) {
     break;
   case MAGIC_FLOAT:
     p->float_->setPath(pathStr);
+    break;
+  case MAGIC2D_DOUBLE:
+    p->double2d_->setPath(pathStr);
+    break;
+  case MAGIC2D_FLOAT:
+    p->float2d_->setPath(pathStr);
     break;
   default: abort();
   }
@@ -123,12 +158,10 @@ EXPORT int SleefDFT_getPath(SleefDFT *p, char *pathStr, int pathStrSize) {
     str = p->float_->getPath();
     break;
   case MAGIC2D_DOUBLE:
-    str = to_string(p->double2d_->tmNoMT) + "," + to_string(p->double2d_->tmMT) + "," +
-      p->double2d_->instH->getPath() + "," + p->double2d_->instV->getPath();
+    str = p->double2d_->getPath();
     break;
   case MAGIC2D_FLOAT:
-    str = to_string(p->float2d_->tmNoMT) + "," + to_string(p->float2d_->tmMT) + "," +
-      p->float2d_->instH->getPath() + "," + p->float2d_->instV->getPath();
+    str = p->float2d_->getPath();
     break;
   default: abort();
   }
@@ -399,6 +432,19 @@ void PlanManager::put(const string& key, const string& value) {
 //
 
 template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
+void SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::saveMeasurementResults() {
+  assert(magic == MAGIC_FLOAT || magic == MAGIC_DOUBLE);
+
+  unique_lock<recursive_mutex> lock(planManager.mtx);
+
+  if (!planManager.planFileLoaded()) planManager.loadPlanFromFile();
+
+  planManager.put(planKeyString(), to_string(bestPath));
+  
+  if ((planManager.planMode() & SLEEF_PLAN_READONLY) == 0) planManager.savePlanToFile();
+}
+
+template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
 bool SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::loadMeasurementResults() {
   assert(magic == MAGIC_FLOAT || magic == MAGIC_DOUBLE);
 
@@ -421,15 +467,15 @@ bool SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::loadMeasurementResults() {
 }
 
 template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
-void SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::saveMeasurementResults() {
-  assert(magic == MAGIC_FLOAT || magic == MAGIC_DOUBLE);
+void SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::saveMeasurementResults() {
+  assert(magic == MAGIC2D_FLOAT || magic == MAGIC2D_DOUBLE);
 
-  unique_lock<recursive_mutex> lock(planManager.mtx);
+  std::unique_lock<recursive_mutex> lock(planManager.mtx);
 
   if (!planManager.planFileLoaded()) planManager.loadPlanFromFile();
 
-  planManager.put(planKeyString(), to_string(bestPath));
-  
+  planManager.put(planKeyString(), getPath());
+
   if ((planManager.planMode() & SLEEF_PLAN_READONLY) == 0) planManager.savePlanToFile();
 }
 
@@ -441,31 +487,12 @@ bool SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::loadMeasurementResults() 
 
   if (!planManager.planFileLoaded()) planManager.loadPlanFromFile();
 
-  string mtstring = planManager.get(planKeyString());
-  if (mtstring == "") return false;
+  string path = planManager.get(planKeyString());
+  if (path == "") return false;
 
-  if (sscanf(mtstring.c_str(), "%llu,%llu", &tmNoMT, &tmMT) != 2) return false;
-
-  if (!instH->loadMeasurementResults()) return false;
-  if (instH != instV && !instH->loadMeasurementResults()) return false;
+  setPath(path.c_str());
 
   return true;
-}
-
-template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
-void SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::saveMeasurementResults() {
-  assert(magic == MAGIC2D_FLOAT || magic == MAGIC2D_DOUBLE);
-
-  std::unique_lock<recursive_mutex> lock(planManager.mtx);
-
-  if (!planManager.planFileLoaded()) planManager.loadPlanFromFile();
-
-  vector<char> str(1000);
-  snprintf(str.data(), str.size(), "%llu,%llu", tmNoMT, tmMT);
-  planManager.put(planKeyString(), str.data());
-
-  instH->saveMeasurementResults();
-  if (instH != instV) instV->saveMeasurementResults();
 }
 
 // Instantiation

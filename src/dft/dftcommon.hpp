@@ -9,6 +9,7 @@
 #include <climits>
 #include <unordered_map>
 #include <tuple>
+#include <utility>
 #include <mutex>
 
 using namespace std;
@@ -129,7 +130,8 @@ struct SleefDFTXX {
   void freeTables();
   void generatePerm(const vector<Action> &);
 
-  uint64_t measurePath(const vector<Action> &path, uint64_t niter, uint64_t nrepeat);
+  void measurementRun(real *d, const real *s, const vector<Action> &path, uint64_t niter);
+  double measurePath(const vector<Action> &path, uint64_t minTime);
   void searchForBestPath(int nPaths);
   void searchForRandomPath();
   bool measure(bool randomize);
@@ -181,10 +183,15 @@ struct SleefDFT2DXX {
 
   void execute(const real *s0, real *d0, int MAGIC_, int MAGIC2D_);
   void measureTranspose();
+  double measurePath(SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH> *inst, bool mt,
+		     const vector<Action> &path, uint32_t hlen, uint32_t vlen, uint64_t minTime);
+  pair<vector<Action>, double> searchForBestPath(SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH> *inst, bool mt, uint32_t hlen, uint32_t vlen, int nPaths);
 
   string planKeyString(string = "");
   bool loadMeasurementResults();
   void saveMeasurementResults();
+  void setPath(const char *pathStr);
+  string getPath();
 };
 
 struct SleefDFT {
@@ -203,7 +210,9 @@ struct SleefDFT {
 #define PLANFILEID "SLEEFDFT1"
 #define ENVVAR "SLEEFDFTPLAN"
 
-#define SLEEF_MODE_MEASUREBITS (3 << 20)
+#define SLEEF_MODE_MEASUREBITS (7 << 20)
+
+#define SLEEF_MODE_INTERNAL_2D (1ULL << 40)
 
 int omp_thread_count();
 void startAllThreads(const int nth);

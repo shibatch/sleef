@@ -25,11 +25,11 @@ int main(int argc, char **argv) {
 
   SleefDFT_setPlanFilePath(argv[1], NULL, SLEEF_PLAN_AUTOMATIC);
 
-  double *din  = (double *)Sleef_malloc(1024*2 * sizeof(double));
-  double *dout = (double *)Sleef_malloc(1024*2 * sizeof(double));
+  double *din  = (double *)Sleef_malloc(2048*64*2 * sizeof(double));
+  double *dout = (double *)Sleef_malloc(2048*64*2 * sizeof(double));
 
-  float *fin  = (float *)Sleef_malloc(1024*2 * sizeof(double));
-  float *fout = (float *)Sleef_malloc(1024*2 * sizeof(double));
+  float *fin  = (float *)Sleef_malloc(2048*64*2 * sizeof(double));
+  float *fout = (float *)Sleef_malloc(2048*64*2 * sizeof(double));
 
 #ifdef MEASURE
 #ifdef MULTITHREAD
@@ -95,7 +95,7 @@ int main(int argc, char **argv) {
   //
 
 
-  p = SleefDFT_double_init2d(128, 128, din, dout, mode);
+  p = SleefDFT_double_init2d(2048, 64, din, dout, mode);
 
   vector<char> pathd128x128(1024);
   SleefDFT_getPath(p, pathd128x128.data(), pathd128x128.size());
@@ -117,7 +117,7 @@ int main(int argc, char **argv) {
 
   //
 
-  p = SleefDFT_float_init2d(128, 128, fin, fout, mode);
+  p = SleefDFT_float_init2d(2048, 64, fin, fout, mode);
 
   vector<char> pathf128x128(1024);
   SleefDFT_getPath(p, pathf128x128.data(), pathf128x128.size());
@@ -152,6 +152,8 @@ int main(int argc, char **argv) {
 
   if (pathd1024.size() != pathd1024_2.size() || memcmp(pathd1024.data(), pathd1024_2.data(), pathd1024.size()) != 0) {
     cerr << "Paths do not match" << endl;
+    cerr << pathd1024.data() << endl;
+    cerr << pathd1024_2.data() << endl;
     exit(-1);
   }
 
@@ -168,6 +170,8 @@ int main(int argc, char **argv) {
 
   if (pathd512.size() != pathd512_2.size() || memcmp(pathd512.data(), pathd512_2.data(), pathd512.size()) != 0) {
     cerr << "Paths do not match" << endl;
+    cerr << pathd512.data() << endl;
+    cerr << pathd512_2.data() << endl;
     exit(-1);
   }
 
@@ -184,6 +188,8 @@ int main(int argc, char **argv) {
 
   if (pathf1024.size() != pathf1024_2.size() || memcmp(pathf1024.data(), pathf1024_2.data(), pathf1024.size()) != 0) {
     cerr << "Paths do not match" << endl;
+    cerr << pathf1024.data() << endl;
+    cerr << pathf1024_2.data() << endl;
     exit(-1);
   }
 
@@ -200,13 +206,15 @@ int main(int argc, char **argv) {
 
   if (pathf512.size() != pathf512_2.size() || memcmp(pathf512.data(), pathf512_2.data(), pathf512.size()) != 0) {
     cerr << "Paths do not match" << endl;
+    cerr << pathf512.data() << endl;
+    cerr << pathf512_2.data() << endl;
     exit(-1);
   }
 
   //
 
 
-  p = SleefDFT_double_init2d(128, 128, din, dout, mode);
+  p = SleefDFT_double_init2d(2048, 64, din, dout, mode);
 
   vector<char> pathd128x128_2(1024);
   SleefDFT_getPath(p, pathd128x128_2.data(), pathd128x128_2.size());
@@ -217,6 +225,8 @@ int main(int argc, char **argv) {
 
   if (pathd128x128.size() != pathd128x128_2.size() || memcmp(pathd128x128.data(), pathd128x128_2.data(), pathd128x128.size()) != 0) {
     cerr << "Paths do not match" << endl;
+    cerr << pathd128x128.data() << endl;
+    cerr << pathd128x128_2.data() << endl;
     exit(-1);
   }
 
@@ -233,12 +243,14 @@ int main(int argc, char **argv) {
 
   if (pathd64x64.size() != pathd64x64_2.size() || memcmp(pathd64x64.data(), pathd64x64_2.data(), pathd64x64.size()) != 0) {
     cerr << "Paths do not match" << endl;
+    cerr << pathd64x64.data() << endl;
+    cerr << pathd64x64_2.data() << endl;
     exit(-1);
   }
 
   //
 
-  p = SleefDFT_float_init2d(128, 128, fin, fout, mode);
+  p = SleefDFT_float_init2d(2048, 64, fin, fout, mode);
 
   vector<char> pathf128x128_2(1024);
   SleefDFT_getPath(p, pathf128x128_2.data(), pathf128x128_2.size());
@@ -249,6 +261,8 @@ int main(int argc, char **argv) {
 
   if (pathf128x128.size() != pathf128x128_2.size() || memcmp(pathf128x128.data(), pathf128x128_2.data(), pathf128x128.size()) != 0) {
     cerr << "Paths do not match" << endl;
+    cerr << pathf128x128.data() << endl;
+    cerr << pathf128x128_2.data() << endl;
     exit(-1);
   }
 
@@ -265,6 +279,8 @@ int main(int argc, char **argv) {
 
   if (pathf64x64.size() != pathf64x64_2.size() || memcmp(pathf64x64.data(), pathf64x64_2.data(), pathf64x64.size()) != 0) {
     cerr << "Paths do not match" << endl;
+    cerr << pathf64x64.data() << endl;
+    cerr << pathf64x64_2.data() << endl;
     exit(-1);
   }
 
