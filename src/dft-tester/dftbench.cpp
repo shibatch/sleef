@@ -99,6 +99,11 @@ public:
     in  = (cplx*)Sleef_malloc(sizeof(cplx) * n * m);
     out = (cplx*)Sleef_malloc(sizeof(cplx) * n * m);
 
+    if (!in || !out) {
+      cerr << "Sleef_malloc failed" << endl;
+      exit(-1);
+    }
+
     uint64_t mode = check ? SLEEF_MODE_ESTIMATE : SLEEF_MODE_MEASURE;
     mode |= forward ? SLEEF_MODE_FORWARD : SLEEF_MODE_BACKWARD;
     mode |= mt ? 0 : SLEEF_MODE_NO_MT;
@@ -106,12 +111,15 @@ public:
 
     if (m == 1) {
       plan = SLEEFDFT_INIT1D(n, (xreal*)in, (xreal*)out, mode);
-      vector<char> pathstr(1024);
-      SleefDFT_getPath(plan, pathstr.data(), pathstr.size());
-      cerr << pathstr.data() << endl;
     } else {
       plan = SLEEFDFT_INIT2D(n, m, (xreal*)in, (xreal*)out, mode);
     }
+  }
+
+  string getPath() {
+    vector<char> pathstr(1024);
+    SleefDFT_getPath(plan, pathstr.data(), pathstr.size());
+    return pathstr.data();
   }
 
   ~FWSleefDFT() {
@@ -232,11 +240,13 @@ int main(int argc, char **argv) {
     //
 
     {
-      cerr << "Planning SleefDFT ST" << endl;
+      cerr << "Planning SleefDFT ST ... ";
       int64_t ptm0 = timens();
       auto sleefdftst = make_shared<FWSleefDFT<complex<xreal>>>(n, m, forward, false, false);
       int64_t ptm1 = timens();
       cerr << ((ptm1 - ptm0) / 1000.0 / 1000.0) << "ms" << endl;
+
+      cerr << sleefdftst->getPath() << endl;
 
       complex<xreal> *in0  = sleefdftst->getInPtr();
       for(int i=0;i<n * m;i++) in0[i] = v[i];
@@ -262,7 +272,7 @@ int main(int argc, char **argv) {
     //
 
     {
-      cerr << "Planning FFTW ST" << endl;
+      cerr << "Planning FFTW ST ... ";
       int64_t ptm0 = timens();
       auto fftwst = make_shared<FWFFTW3<complex<xreal>>>(n, m, forward, false, false);
       int64_t ptm1 = timens();
@@ -292,11 +302,13 @@ int main(int argc, char **argv) {
     //
 
     {
-      cerr << "Planning SleefDFT MT" << endl;
+      cerr << "Planning SleefDFT MT ... ";
       int64_t ptm0 = timens();
       auto sleefdftmt = make_shared<FWSleefDFT<complex<xreal>>>(n, m, forward, true, false);
       int64_t ptm1 = timens();
       cerr << ((ptm1 - ptm0) / 1000.0 / 1000.0) << "ms" << endl;
+
+      cerr << sleefdftmt->getPath() << endl;
 
       complex<xreal> *in0  = sleefdftmt->getInPtr();
       for(int i=0;i<n * m;i++) in0[i] = v[i];
@@ -322,7 +334,7 @@ int main(int argc, char **argv) {
     //
 
     {
-      cerr << "Planning FFTW MT" << endl;
+      cerr << "Planning FFTW MT ... ";
       int64_t ptm0 = timens();
       auto fftwmt = make_shared<FWFFTW3<complex<xreal>>>(n, m, forward, true, false);
       int64_t ptm1 = timens();

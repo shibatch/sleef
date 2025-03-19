@@ -442,63 +442,84 @@ public:
 };
 
 template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
-uint64_t SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::measurePath(const vector<Action> &path, uint64_t niter, uint64_t nrepeat) {
+void SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::measurementRun(real *d, const real *s, const vector<Action> &path, uint64_t niter) {
+  const int tn = omp_get_thread_num();
+  real *t[] = { x1[tn], x0[tn], d };
+
+  for(uint64_t i=0;i<niter;i++) {
+    const real *lb = s;
+    int nb = 0;
+
+    if ((mode & SLEEF_MODE_REAL) != 0 && (path.size() & 1) == 0 &&
+	((mode & SLEEF_MODE_BACKWARD) != 0) != ((mode & SLEEF_MODE_ALT) != 0)) nb = -1;
+    if ((mode & SLEEF_MODE_REAL) == 0 && (path.size() & 1) == 1) nb = -1;
+  
+    if ((mode & SLEEF_MODE_REAL) != 0 &&
+	((mode & SLEEF_MODE_BACKWARD) != 0) != ((mode & SLEEF_MODE_ALT) != 0)) {
+      (*REALSUB1[isa])(t[nb+1], s, log2len, rtCoef0, rtCoef1, (mode & SLEEF_MODE_ALT) == 0);
+      if (( mode & SLEEF_MODE_ALT) == 0) t[nb+1][(1 << log2len)+1] = -s[(1 << log2len)+1] * 2;
+      lb = t[nb+1];
+      nb = (nb + 1) & 1;
+    }
+
+    int level = log2len;
+    for(unsigned j=0;j<path.size();j++) {
+      if (path[j].level == 0) {
+	assert(j == path.size()-1);
+	break;
+      }
+      int N = path[j].N, config = path[j].config;
+      dispatch(N, t[nb+1], lb, level, config);
+      level -= N;
+      lb = t[nb+1];
+      nb = (nb + 1) & 1;
+    }
+
+    if (path[path.size()-1].level != 0) continue;
+
+    if ((mode & SLEEF_MODE_REAL) != 0 && 
+	((mode & SLEEF_MODE_BACKWARD) == 0) != ((mode & SLEEF_MODE_ALT) != 0)) {
+      (*REALSUB0[isa])(d, lb, log2len, rtCoef0, rtCoef1);
+      if ((mode & SLEEF_MODE_ALT) == 0) {
+	d[(1 << log2len)+1] = -d[(1 << log2len)+1];
+	d[(2 << log2len)+0] =  d[1];
+	d[(2 << log2len)+1] =  0;
+	d[1] = 0;
+      }
+    }
+  }
+}
+
+template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
+double SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::measurePath(const vector<Action> &path, uint64_t minTime) {
   real *s2 = NULL, *d2 = NULL;
   const real *s = in  == NULL ? (s2 = (real *)memset(Sleef_malloc((2 << log2len) * sizeof(real)), 0, sizeof(real) * (2 << log2len))) : in;
   real       *d = out == NULL ? (d2 = (real *)memset(Sleef_malloc((2 << log2len) * sizeof(real)), 0, sizeof(real) * (2 << log2len))) : out;
 
-  uint64_t tm = UINT64_MAX;
+  generatePerm(path);
 
-  for(uint64_t r=0;r<nrepeat;r++) {
-    const int tn = omp_get_thread_num();
-    real *t[] = { x1[tn], x0[tn], d };
+  uint64_t tm = UINT64_MAX, niter = 1;
 
-    if ((path[0].config & CONFIG_MT) != 0) startAllThreads(nThread);
+  if ((path[0].config & CONFIG_MT) != 0) startAllThreads(nThread);
 
+  for(;;) {
     auto tm0 = chrono::high_resolution_clock::now();
 
-    for(uint64_t i=0;i<niter;i++) {
-      const real *lb = s;
-      int nb = 0;
+    measurementRun(d, s, path, niter);
 
-      if ((mode & SLEEF_MODE_REAL) != 0 && (path.size() & 1) == 0 &&
-	  ((mode & SLEEF_MODE_BACKWARD) != 0) != ((mode & SLEEF_MODE_ALT) != 0)) nb = -1;
-      if ((mode & SLEEF_MODE_REAL) == 0 && (path.size() & 1) == 1) nb = -1;
-  
-      if ((mode & SLEEF_MODE_REAL) != 0 &&
-	  ((mode & SLEEF_MODE_BACKWARD) != 0) != ((mode & SLEEF_MODE_ALT) != 0)) {
-	(*REALSUB1[isa])(t[nb+1], s, log2len, rtCoef0, rtCoef1, (mode & SLEEF_MODE_ALT) == 0);
-	if (( mode & SLEEF_MODE_ALT) == 0) t[nb+1][(1 << log2len)+1] = -s[(1 << log2len)+1] * 2;
-	lb = t[nb+1];
-	nb = (nb + 1) & 1;
-      }
+    auto tm1 = chrono::high_resolution_clock::now();
 
-      int level = log2len;
-      for(unsigned j=0;j<path.size();j++) {
-	if (path[j].level == 0) {
-	  assert(j == path.size()-1);
-	  break;
-	}
-	int N = path[j].N, config = path[j].config;
-	dispatch(N, t[nb+1], lb, level, config);
-	level -= N;
-	lb = t[nb+1];
-	nb = (nb + 1) & 1;
-      }
+    tm = chrono::duration_cast<std::chrono::nanoseconds>(tm1 - tm0).count();
 
-      if (path[path.size()-1].level != 0) continue;
+    if (tm >= minTime)  break;
 
-      if ((mode & SLEEF_MODE_REAL) != 0 && 
-	  ((mode & SLEEF_MODE_BACKWARD) == 0) != ((mode & SLEEF_MODE_ALT) != 0)) {
-	(*REALSUB0[isa])(d, lb, log2len, rtCoef0, rtCoef1);
-	if ((mode & SLEEF_MODE_ALT) == 0) {
-	  d[(1 << log2len)+1] = -d[(1 << log2len)+1];
-	  d[(2 << log2len)+0] =  d[1];
-	  d[(2 << log2len)+1] =  0;
-	  d[1] = 0;
-	}
-      }
-    }
+    niter *= 2;
+  }
+
+  {
+    auto tm0 = chrono::high_resolution_clock::now();
+
+    measurementRun(d, s, path, niter);
 
     auto tm1 = chrono::high_resolution_clock::now();
 
@@ -509,7 +530,84 @@ uint64_t SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::measurePath(const vecto
   if (d2 != NULL) Sleef_free(d2);
   if (s2 != NULL) Sleef_free(s2);
 
-  return tm;
+  return double(tm) / niter;
+}
+
+template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
+double SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::measurePath(SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH> *inst, bool mt,
+								     const vector<Action> &path, uint32_t hlen, uint32_t vlen, uint64_t minTime) {
+  real *s2 = NULL;
+  const size_t z = (2 << (log2hlen + log2vlen)) * sizeof(real);
+  const real *s = in  == NULL ? (s2 = (real *)memset(Sleef_malloc(z), 0, z)) : in;
+  double scale = 1;
+
+  if (mt) {
+    if ((int)vlen > inst->nThread * 2) {
+      scale = vlen / (inst->nThread * 2);
+      vlen = inst->nThread * 2;
+    }
+  } else {
+    if (vlen > 2) {
+      scale = vlen / 2;
+      vlen = 2;
+    }
+  }
+
+  inst->generatePerm(path);
+
+  uint64_t tm = UINT64_MAX, niter = 1;
+
+  if (mt) startAllThreads(inst->nThread);
+
+  for(;;) {
+    auto tm0 = chrono::high_resolution_clock::now();
+    unsigned y=0;
+
+    if (mt) {
+#pragma omp parallel for
+      for(y=0;y<vlen;y++) {
+	inst->measurementRun(&tBuf[hlen*2*y], &s[hlen*2*y], path, niter);
+      }
+    } else {
+      for(y=0;y<vlen;y++) {
+	inst->measurementRun(&tBuf[hlen*2*y], &s[hlen*2*y], path, niter);
+      }
+    }
+
+    auto tm1 = chrono::high_resolution_clock::now();
+
+    tm = chrono::duration_cast<std::chrono::nanoseconds>(tm1 - tm0).count();
+
+    if (tm >= minTime)  break;
+
+    niter *= 2;
+  }
+
+  {
+    auto tm0 = chrono::high_resolution_clock::now();
+
+    unsigned y=0;
+
+    if (mt) {
+#pragma omp parallel for
+      for(y=0;y<vlen;y++) {
+	inst->measurementRun(&tBuf[hlen*2*y], &s[hlen*2*y], path, niter);
+      }
+    } else {
+      for(y=0;y<vlen;y++) {
+	inst->measurementRun(&tBuf[hlen*2*y], &s[hlen*2*y], path, niter);
+      }
+    }
+
+    auto tm1 = chrono::high_resolution_clock::now();
+
+    uint64_t tm2 = chrono::duration_cast<std::chrono::nanoseconds>(tm1 - tm0).count();
+    if (tm2 < tm) tm = tm2;
+  }
+
+  if (s2 != NULL) Sleef_free(s2);
+
+  return double(tm) * scale / niter;
 }
 
 template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
@@ -557,13 +655,61 @@ public:
   }
 
   virtual double cost(const vector<Action>& path) {
-    inst.generatePerm(path);
-    uint64_t niter = 1;
-    for(;;) {
-      uint64_t t = inst.measurePath(path, niter, 2);
-      if (t >= 100000) return double(t) / niter;
-      niter *= 2;
+    return inst.measurePath(path, 100000);
+  }
+};
+
+template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
+class QuickFinder2 : public KShortest<Action> {
+  SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH> &inst2d;
+  SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH> *inst1d;
+  const bool mt;
+  const uint32_t hlen, vlen;
+
+public:
+  QuickFinder2(SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH> &inst2d_,
+	       SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH> *inst1d_, bool mt_,
+	       const vector<Action> &startPoints, uint32_t hlen_, uint32_t vlen_, size_t limit_) :
+    inst2d(inst2d_), inst1d(inst1d_), mt(mt_), hlen(hlen_), vlen(vlen_) {
+    limit = limit_;
+    for(auto a : startPoints) {
+      vector<Action> v { a };
+      addPath(v, cost(v));
     }
+  }
+
+  ~QuickFinder2() {}
+
+  virtual bool isDestination(const Action& pos) {
+    return pos.level == pos.N;
+  }
+
+  virtual vector<Action> next(const vector<Action>& path) {
+    const int NMAX = MIN(MIN(inst1d->log2len, MAXBUTWIDTH+1), inst1d->log2len - inst1d->log2vecwidth + 1);
+
+    vector<Action> v;
+
+    Action last = path[path.size()-1];
+
+    int level = last.level - last.N;
+
+    assert(level > 0);
+
+    for(int config = 0;config < CONFIGMAX;config++) {
+      if ((config & CONFIG_MT) != (last.config & CONFIG_MT)) continue;
+
+      for(int N=1;N<NMAX && N <= level;N++) {
+	if (!inst1d->executable[config][level][N]) continue;
+	Action a(config, level, N);
+	v.push_back(a);
+      }
+    }
+
+    return v;
+  }
+
+  virtual double cost(const vector<Action>& path) {
+    return inst2d.measurePath(inst1d, mt, path, hlen, vlen, 100000);
   }
 };
 
@@ -656,18 +802,7 @@ void SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::searchForBestPath(int nPath
 
     if (p.size() == 0) break;
 
-    double tm;
-    generatePerm(p);
-
-    uint64_t niter = 1;
-    for(;;) {
-      uint64_t t = measurePath(p, niter, 2);
-      if (t >= 1000000) {
-	tm = double(t) / niter;
-	break;
-      }
-      niter *= 2;
-    }
+    double tm = measurePath(p, 1000000);
 
     if (tm < bestTime) {
       bestPath = p;
@@ -695,6 +830,43 @@ void SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::searchForRandomPath() {
   bestPath = path;
 }
 
+template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
+pair<vector<Action>, double> SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::searchForBestPath(SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH> *inst,
+												 bool mt, uint32_t hlen, uint32_t vlen, int nPaths) {
+  assert(nPaths != 0);
+
+  const int NMAX = MIN(MIN(inst->log2len, MAXBUTWIDTH+1), inst->log2len - inst->log2vecwidth + 1);
+
+  vector<Action> sp;
+
+  for(int config = 0;config < CONFIGMAX;config++) {
+    for(int N=1;N<NMAX;N++) {
+      if (!inst->executable[config][inst->log2len][N]) continue;
+      sp.push_back(Action(config, inst->log2len, N));
+    }
+  }
+
+  auto qf2 = QuickFinder2<real, real2, MAXSHIFT, MAXBUTWIDTH>(*this, inst, mt, sp, hlen, vlen, 1);
+
+  vector<Action> bestPath;
+  double bestTime = INFINITY_;
+
+  for(int i=0;i<nPaths;i++) {
+    auto p = qf2.execute();
+
+    if (p.size() == 0) break;
+
+    double tm = measurePath(inst, mt, p, hlen, vlen, 1000000);
+
+    if (tm < bestTime) {
+      bestPath = p;
+      bestTime = tm;
+    }
+  }
+
+  return pair<vector<Action>, double>(bestPath, bestTime);
+}
+
 //
 
 template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
@@ -706,7 +878,7 @@ bool SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::measure(bool randomize) {
     return true;
   }
 
-  if (loadMeasurementResults()) {
+  if ((mode & SLEEF_MODE_INTERNAL_2D) == 0 && loadMeasurementResults()) {
     if ((mode & SLEEF_MODE_VERBOSE) != 0) {
       showPath(verboseFP, "Loaded : ", bestPath);
     }
@@ -779,21 +951,13 @@ bool SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::measure(bool randomize) {
     }
   }
 
-  if (toBeSaved) {
-    saveMeasurementResults();
-  }
+  if (toBeSaved) saveMeasurementResults();
   
   return true;
 }
 
 template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
 void SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::measureTranspose() {
-  if (loadMeasurementResults()) {
-    if ((mode & SLEEF_MODE_VERBOSE) != 0) fprintf(verboseFP, "transpose NoMT(loaded): %lld\n", (long long int)tmNoMT);
-    if ((mode & SLEEF_MODE_VERBOSE) != 0) fprintf(verboseFP, "transpose   MT(loaded): %lld\n", (long long int)tmMT);
-    return;
-  }
-
   if ((mode & SLEEF_MODE_MEASURE) == 0 && (!planManager.planFilePathSet() || (mode & SLEEF_MODE_MEASUREBITS) != 0)) {
     if (log2hlen + log2vlen >= 14) {
       tmNoMT = 20;
@@ -810,29 +974,33 @@ void SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::measureTranspose() {
   real *tBuf2 = (real *)Sleef_malloc(sizeof(real)*2*hlen*vlen);
 
   const int niter =  1 + 5000000 / (hlen * vlen + 1);
-  uint64_t tm;
 
-  tm = Sleef_currentTimeMicros();
+  auto tm0 = chrono::high_resolution_clock::now();
   for(int i=0;i<niter;i++) {
     transpose<real, real2, MAXSHIFT, MAXBUTWIDTH>(tBuf2, tBuf, log2hlen, log2vlen);
     transpose<real, real2, MAXSHIFT, MAXBUTWIDTH>(tBuf2, tBuf, log2vlen, log2hlen);
   }
-  tmNoMT = Sleef_currentTimeMicros() - tm + 1;
+  auto tm1 = chrono::high_resolution_clock::now();
+  tmNoMT = chrono::duration_cast<std::chrono::nanoseconds>(tm1 - tm0).count();
 
   if ((mode & SLEEF_MODE_VERBOSE) != 0) fprintf(verboseFP, "transpose NoMT(measured): %lld\n", (long long int)tmNoMT);
 
-  tm = Sleef_currentTimeMicros();
+  tm0 = chrono::high_resolution_clock::now();
   for(int i=0;i<niter;i++) {
     transposeMT<real, real2, MAXSHIFT, MAXBUTWIDTH>(tBuf2, tBuf, log2hlen, log2vlen);
     transposeMT<real, real2, MAXSHIFT, MAXBUTWIDTH>(tBuf2, tBuf, log2vlen, log2hlen);
   }
-  tmMT = Sleef_currentTimeMicros() - tm + 1;
+  tm1 = chrono::high_resolution_clock::now();
+  tmMT = chrono::duration_cast<std::chrono::nanoseconds>(tm1 - tm0).count();
 
   if ((mode & SLEEF_MODE_VERBOSE) != 0) fprintf(verboseFP, "transpose   MT(measured): %lld\n", (long long int)tmMT);
   
   Sleef_free(tBuf2);
 
-  saveMeasurementResults();
+  tmMT /= niter;
+  tmNoMT /= niter;
+
+  return;
 }
 
 // Implementation of SleefDFT_*_init1d
@@ -982,14 +1150,14 @@ SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::SleefDFT2DXX(uint32_t vlen_, u
   log2hlen = ilog2(hlen_);
   vlen = vlen_;
   log2vlen = ilog2(vlen_);
-  mode = mode_;
+  mode = mode_ | SLEEF_MODE_INTERNAL_2D;
+
   mode2 = 0;
   mode3 = 0;
 
   verboseFP = stdout;
   
-  uint64_t mode1D = mode;
-  mode1D |= SLEEF_MODE_NO_MT;
+  uint64_t mode1D = (mode & ~SLEEF_MODE_MEASUREBITS) | SLEEF_MODE_ESTIMATE | SLEEF_MODE_NO_MT;
 
   if ((mode & SLEEF_MODE_NO_MT) == 0) mode3 |= SLEEF_MODE3_MT2D;
   
@@ -1007,6 +1175,52 @@ SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::SleefDFT2DXX(uint32_t vlen_, u
   tBuf = (real *)Sleef_malloc(sizeof(real)*2*hlen*vlen);
 
   measureTranspose();
+
+  if (loadMeasurementResults()) {
+    if ((mode & SLEEF_MODE_VERBOSE) != 0) fprintf(verboseFP, "transpose NoMT(loaded): %lld\n", (long long int)tmNoMT);
+    if ((mode & SLEEF_MODE_VERBOSE) != 0) fprintf(verboseFP, "transpose   MT(loaded): %lld\n", (long long int)tmMT);
+  } else if ((mode & SLEEF_MODE_MEASURE) != 0) {
+    pair<vector<Action>, double> noMT_H, MT_H, noMT_V, MT_V;
+
+    const bool mt = (mode & SLEEF_MODE_NO_MT) == 0;
+
+    if (instH == instV) {
+      noMT_H  = searchForBestPath(instH, false, hlen, vlen, 8);
+      tmNoMT += noMT_H.second * 2;
+
+      if (mt) {
+	MT_H  = searchForBestPath(instH, true, hlen, vlen, 8);
+	tmMT += MT_H.second * 2;
+      }
+    } else {
+      noMT_H  = searchForBestPath(instH, false, hlen, vlen, 8);
+      noMT_V  = searchForBestPath(instV, false, vlen, hlen, 8);
+      tmNoMT += noMT_H.second + noMT_V.second;
+
+      if (mt) {
+	MT_H  = searchForBestPath(instH, true, hlen, vlen, 8);
+	MT_V  = searchForBestPath(instV, true, vlen, hlen, 8);
+	tmMT += MT_H.second + MT_V.second;
+      }
+    }
+
+    if (!mt) tmMT = ULLONG_MAX;
+
+    if (tmMT < tmNoMT) {
+      instH->bestPath = MT_H.first;
+      if (instH != instV) instV->bestPath = MT_V.first;
+    } else {
+      instH->bestPath = noMT_H.first;
+      if (instH != instV) instV->bestPath = noMT_V.first;
+    }
+
+    if ((mode & SLEEF_MODE_MEASURE) != 0 || (planManager.planFilePathSet() && (mode & SLEEF_MODE_MEASUREBITS) == 0)) {
+      saveMeasurementResults();
+    }
+  }
+
+  instH->generatePerm(instH->bestPath);
+  if (instH != instV) instV->generatePerm(instV->bestPath);
 }
 
 // Implementation of SleefDFT_*_execute
@@ -1182,7 +1396,7 @@ EXPORT SleefDFT *SleefDFT_double_init1d(uint32_t n, const double *in, double *ou
 EXPORT SleefDFT *SleefDFT_double_init2d(uint32_t vlen, uint32_t hlen, const double *in, double *out, uint64_t mode) {
   SleefDFT *p = (SleefDFT *)calloc(1, sizeof(SleefDFT));
   p->double2d_ = new SleefDFT2DXX<double, Sleef_double2, MAXSHIFTDP, MAXBUTWIDTHDP>(vlen, hlen, in, out, mode, "double",
-    1, 0x27182818, 0x17320508, MINSHIFTDP, getInt_double, getPtr_double, Sleef_sincospi_u05,
+    1, 0x27182818, 0x28459045, MINSHIFTDP, getInt_double, getPtr_double, Sleef_sincospi_u05,
     dftf_double, dftb_double, tbutf_double, tbutb_double, butf_double, butb_double,
     realSub0_double, realSub1_double, tbutfs_double, tbutbs_double
   );
@@ -1193,10 +1407,10 @@ EXPORT SleefDFT *SleefDFT_double_init2d(uint32_t vlen, uint32_t hlen, const doub
 EXPORT void SleefDFT_double_execute(SleefDFT *p, const double *s0, double *d0) {
   switch(p->magic) {
   case 0x27182818:
-    p->double_->execute(s0, d0, 0x27182818, 0x17320508);
+    p->double_->execute(s0, d0, 0x27182818, 0x28459045);
     break;
-  case 0x17320508:
-    p->double2d_->execute(s0, d0, 0x27182818, 0x17320508);
+  case 0x28459045:
+    p->double2d_->execute(s0, d0, 0x27182818, 0x28459045);
     break;
   default:
     abort();
@@ -1217,7 +1431,7 @@ EXPORT SleefDFT *SleefDFT_float_init1d(uint32_t n, const float *in, float *out, 
 EXPORT SleefDFT *SleefDFT_float_init2d(uint32_t vlen, uint32_t hlen, const float *in, float *out, uint64_t mode) {
   SleefDFT *p = (SleefDFT *)calloc(1, sizeof(SleefDFT));
   p->float2d_ = new SleefDFT2DXX<float, Sleef_float2, MAXSHIFTSP, MAXBUTWIDTHSP>(vlen, hlen, in, out, mode, "float",
-    2, 0x31415926, 0x22360679, MINSHIFTSP, getInt_float, getPtr_float, Sleef_sincospif_u05,
+    2, 0x31415926, 0x53589793, MINSHIFTSP, getInt_float, getPtr_float, Sleef_sincospif_u05,
     dftf_float, dftb_float, tbutf_float, tbutb_float, butf_float, butb_float,
     realSub0_float, realSub1_float, tbutfs_float, tbutbs_float
   );
@@ -1228,10 +1442,10 @@ EXPORT SleefDFT *SleefDFT_float_init2d(uint32_t vlen, uint32_t hlen, const float
 EXPORT void SleefDFT_float_execute(SleefDFT *p, const float *s0, float *d0) {
   switch(p->magic) {
   case 0x31415926:
-    p->float_->execute(s0, d0, 0x31415926, 0x22360679);
+    p->float_->execute(s0, d0, 0x31415926, 0x53589793);
     break;
-  case 0x22360679:
-    p->float2d_->execute(s0, d0, 0x31415926, 0x22360679);
+  case 0x53589793:
+    p->float2d_->execute(s0, d0, 0x31415926, 0x53589793);
     break;
   default:
     abort();
@@ -1241,16 +1455,16 @@ EXPORT void SleefDFT_float_execute(SleefDFT *p, const float *s0, float *d0) {
 EXPORT void SleefDFT_execute(SleefDFT *p, const void *s0, void *d0) {
   switch(p->magic) {
   case 0x27182818:
-    p->double_->execute((const double *)s0, (double *)d0, 0x27182818, 0x17320508);
+    p->double_->execute((const double *)s0, (double *)d0, 0x27182818, 0x28459045);
     break;
-  case 0x17320508:
-    p->double2d_->execute((const double *)s0, (double *)d0, 0x27182818, 0x17320508);
+  case 0x28459045:
+    p->double2d_->execute((const double *)s0, (double *)d0, 0x27182818, 0x28459045);
     break;
   case 0x31415926:
-    p->float_->execute((const float *)s0, (float *)d0, 0x31415926, 0x22360679);
+    p->float_->execute((const float *)s0, (float *)d0, 0x31415926, 0x53589793);
     break;
-  case 0x22360679:
-    p->float2d_->execute((const float *)s0, (float *)d0, 0x31415926, 0x22360679);
+  case 0x53589793:
+    p->float2d_->execute((const float *)s0, (float *)d0, 0x31415926, 0x53589793);
     break;
   default:
     abort();
