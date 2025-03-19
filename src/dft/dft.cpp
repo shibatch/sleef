@@ -561,15 +561,15 @@ double SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::measurePath(SleefDFTXX<
 
   for(;;) {
     auto tm0 = chrono::high_resolution_clock::now();
-    unsigned y=0;
+    int y=0;
 
     if (mt) {
 #pragma omp parallel for
-      for(y=0;y<vlen;y++) {
+      for(y=0;y<(int)vlen;y++) {
 	inst->measurementRun(&tBuf[hlen*2*y], &s[hlen*2*y], path, niter);
       }
     } else {
-      for(y=0;y<vlen;y++) {
+      for(y=0;y<(int)vlen;y++) {
 	inst->measurementRun(&tBuf[hlen*2*y], &s[hlen*2*y], path, niter);
       }
     }
@@ -586,15 +586,15 @@ double SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::measurePath(SleefDFTXX<
   {
     auto tm0 = chrono::high_resolution_clock::now();
 
-    unsigned y=0;
+    int y=0;
 
     if (mt) {
 #pragma omp parallel for
-      for(y=0;y<vlen;y++) {
+      for(y=0;y<(int)vlen;y++) {
 	inst->measurementRun(&tBuf[hlen*2*y], &s[hlen*2*y], path, niter);
       }
     } else {
-      for(y=0;y<vlen;y++) {
+      for(y=0;y<(int)vlen;y++) {
 	inst->measurementRun(&tBuf[hlen*2*y], &s[hlen*2*y], path, niter);
       }
     }
