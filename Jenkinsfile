@@ -4,15 +4,15 @@ pipeline {
     stages {
         stage('Preamble') {
             parallel {
-                stage('x86_64 linux clang-18') {
+                stage('x86_64 linux clang-19') {
             	     agent { label 'x86_64 && ubuntu24 && avx512f' }
                      options { skipDefaultCheckout() }
             	     steps {
                          cleanWs()
                          checkout scm
 	    	     	 sh '''
-                	 echo "x86_64 clang-18 on" `hostname`
-			 export CC=clang-18
+                	 echo "x86_64 clang-19 on" `hostname`
+			 export CC=clang-19
 			 export CXX=clang++-18
 			 export CUDACXX=/opt/cuda-12.6/bin/nvcc
  			 mkdir build
