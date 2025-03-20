@@ -990,19 +990,6 @@ bool SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::measure(bool randomize) {
 template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
 pair<uint64_t, uint64_t> SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::measureTranspose() {
   uint64_t tmMT, tmNoMT;
-
-  if ((mode & SLEEF_MODE_MEASURE) == 0 && (!planManager.planFilePathSet() || (mode & SLEEF_MODE_MEASUREBITS) != 0)) {
-    if (log2hlen + log2vlen >= 14) {
-      tmNoMT = 20;
-      tmMT = 10;
-      if ((mode & SLEEF_MODE_VERBOSE) != 0) fprintf(verboseFP, "transpose : selected MT(estimated)\n");
-    } else {
-      tmNoMT = 10;
-      tmMT = 20;
-      if ((mode & SLEEF_MODE_VERBOSE) != 0) fprintf(verboseFP, "transpose : selected NoMT(estimated)\n");
-    }
-    return pair<uint64_t, uint64_t>(tmMT, tmNoMT);
-  }
   
   real *tBuf2 = (real *)Sleef_malloc(sizeof(real)*2*hlen*vlen);
 
@@ -1188,7 +1175,7 @@ SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::SleefDFT2DXX(uint32_t vlen_, u
   mode2 = 0;
   mode3 = 0;
 
-  configMT = false;
+  planMT = false;
 
   verboseFP = stdout;
   
@@ -1209,52 +1196,54 @@ SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::SleefDFT2DXX(uint32_t vlen_, u
 
   tBuf = (real *)Sleef_malloc(sizeof(real)*2*hlen*vlen);
 
-  uint64_t tmMT, tmNoMT;
-  {
-    auto a = measureTranspose();
-    tmMT = a.first;
-    tmNoMT = a.second;
-  }
+  if (!loadMeasurementResults()) {
+    if ((mode & SLEEF_MODE_MEASURE) != 0) {
+      uint64_t tmMT, tmNoMT;
+      auto a = measureTranspose();
+      tmMT = a.first;
+      tmNoMT = a.second;
+      planMT = tmMT < tmNoMT;
 
-  if (!loadMeasurementResults() && (mode & SLEEF_MODE_MEASURE) != 0) {
-    pair<vector<Action>, double> noMT_H, MT_H, noMT_V, MT_V;
+      pair<vector<Action>, double> noMT_H, MT_H, noMT_V, MT_V;
 
-    const bool mt = (mode & SLEEF_MODE_NO_MT) == 0;
+      const bool mt = (mode & SLEEF_MODE_NO_MT) == 0;
 
-    if (instH == instV) {
-      noMT_H  = searchForBestPath(instH, false, hlen, vlen, 8);
-      tmNoMT += noMT_H.second * 2;
+      if (instH == instV) {
+	noMT_H  = searchForBestPath(instH, false, hlen, vlen, 8);
+	tmNoMT += noMT_H.second * 2;
 
-      if (mt) {
-	MT_H  = searchForBestPath(instH, true, hlen, vlen, 8);
-	tmMT += MT_H.second * 2;
+	if (mt) {
+	  MT_H  = searchForBestPath(instH, true, hlen, vlen, 8);
+	  tmMT += MT_H.second * 2;
+	}
+      } else {
+	noMT_H  = searchForBestPath(instH, false, hlen, vlen, 8);
+	noMT_V  = searchForBestPath(instV, false, vlen, hlen, 8);
+	tmNoMT += noMT_H.second + noMT_V.second;
+
+	if (mt) {
+	  MT_H  = searchForBestPath(instH, true, hlen, vlen, 8);
+	  MT_V  = searchForBestPath(instV, true, vlen, hlen, 8);
+	  tmMT += MT_H.second + MT_V.second;
+	}
       }
-    } else {
-      noMT_H  = searchForBestPath(instH, false, hlen, vlen, 8);
-      noMT_V  = searchForBestPath(instV, false, vlen, hlen, 8);
-      tmNoMT += noMT_H.second + noMT_V.second;
 
-      if (mt) {
-	MT_H  = searchForBestPath(instH, true, hlen, vlen, 8);
-	MT_V  = searchForBestPath(instV, true, vlen, hlen, 8);
-	tmMT += MT_H.second + MT_V.second;
+      if (!mt) tmMT = ULLONG_MAX;
+
+      if (tmMT < tmNoMT) {
+	planMT = true;
+	instH->bestPath = MT_H.first;
+	if (instH != instV) instV->bestPath = MT_V.first;
+      } else {
+	planMT = false;
+	instH->bestPath = noMT_H.first;
+	if (instH != instV) instV->bestPath = noMT_V.first;
       }
-    }
 
-    if (!mt) tmMT = ULLONG_MAX;
-
-    if (tmMT < tmNoMT) {
-      configMT = true;
-      instH->bestPath = MT_H.first;
-      if (instH != instV) instV->bestPath = MT_V.first;
+      if (planManager.planFilePathSet()) saveMeasurementResults();
     } else {
-      configMT = false;
-      instH->bestPath = noMT_H.first;
-      if (instH != instV) instV->bestPath = noMT_V.first;
-    }
-
-    if ((mode & SLEEF_MODE_MEASURE) != 0 || (planManager.planFilePathSet() && (mode & SLEEF_MODE_MEASUREBITS) == 0)) {
-      saveMeasurementResults();
+      planMT = log2hlen + log2vlen >= 14;
+      // When the paths are to be estimated, the paths set in the constructors are used
     }
   }
 
@@ -1388,7 +1377,7 @@ void SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::execute(const real *s0, r
   // S -> T -> D -> T -> D
 
   if ((mode3 & SLEEF_MODE3_MT2D) != 0 &&
-      (((mode & SLEEF_MODE_DEBUG) == 0 && configMT) ||
+      (((mode & SLEEF_MODE_DEBUG) == 0 && planMT) ||
        ((mode & SLEEF_MODE_DEBUG) != 0 && (rand() & 1)))) {
     int y=0;
 #pragma omp parallel for

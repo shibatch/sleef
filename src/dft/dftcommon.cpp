@@ -90,9 +90,9 @@ void SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::setPath(const char *pathStr
 template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
 void SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::setPath(const char *pathStr) {
   assert(magic == MAGIC2D_FLOAT || magic == MAGIC2D_DOUBLE);
-  int configMT_ = 0;
-  if (sscanf(pathStr, "%d", &configMT_) != 1) return;
-  configMT = configMT_;
+  int planMT_ = 0;
+  if (sscanf(pathStr, "%d", &planMT_) != 1) return;
+  planMT = planMT_;
 
   string pathH = pathStr;
   size_t cpos = pathH.find_first_of(':');
@@ -117,7 +117,7 @@ string SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::getPath() {
 template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
 string SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::getPath() {
   assert(magic == MAGIC2D_FLOAT || magic == MAGIC2D_DOUBLE);
-  return to_string((int)configMT) + ":" +
+  return to_string((int)planMT) + ":" +
     instH->getPath() + "," + instV->getPath();
 }
 
@@ -350,10 +350,9 @@ void PlanManager::loadPlanFromFile() {
       if (!(planMode_ & SLEEF_PLAN_NOLOCK)) FUNLOCK(fp);
       fclose(fp);
       if (std::get<1>(plan) == PLANFILEID) thePlan = plan;
+      planFileLoaded_ = true;
     }
   }
-
-  planFileLoaded_ = true;
 }
 
 void PlanManager::savePlanToFile() {

@@ -161,7 +161,7 @@ struct SleefDFT2DXX {
 
   int32_t hlen, vlen;
   int32_t log2hlen, log2vlen;
-  bool configMT;
+  bool planMT;
   real *tBuf;
 
   SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH> *instH, *instV;
