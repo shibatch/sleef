@@ -262,6 +262,9 @@ typedef struct {
 #else // #if defined(SLEEF_GENHEADER)
 
 #define INLINE __forceinline
+#ifdef CONST
+#undef CONST
+#endif
 #define CONST
 #ifndef SLEEF_STATIC_LIBS
 #define EXPORT __declspec(dllexport)

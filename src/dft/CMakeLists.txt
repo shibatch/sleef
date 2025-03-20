@@ -218,6 +218,11 @@ endif()
 
 set(CMAKE_C_FLAGS "${ORG_CMAKE_C_FLAGS} ${DFT_C_FLAGS} ${OpenMP_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "${ORG_CMAKE_C_FLAGS} ${DFT_C_FLAGS} ${OpenMP_C_FLAGS}")
+
+if(MSVC)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
+endif()
+
 set(COMMON_TARGET_PROPERTIES 
   C_STANDARD 99                  # -std=gnu99
   )

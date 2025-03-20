@@ -3,14 +3,15 @@
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <ctype.h>
-#include <inttypes.h>
-#include <assert.h>
-#include <math.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstdint>
+#include <cstring>
+#include <cctype>
+#include <cinttypes>
+#include <cassert>
+#include <cmath>
+
 #include <omp.h>
 #include <vector>
 
@@ -23,12 +24,6 @@
 #include "dftcommon.hpp"
 #include "common.h"
 #include "serializer.hpp"
-
-#define MAGIC_FLOAT 0x31415926
-#define MAGIC_DOUBLE 0x27182818
-
-#define MAGIC2D_FLOAT 0x53589793
-#define MAGIC2D_DOUBLE 0x28459045
 
 const char *configStr[] = { "ST", "ST stream", "MT", "MT stream" };
 
@@ -95,8 +90,9 @@ void SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::setPath(const char *pathStr
 template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
 void SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::setPath(const char *pathStr) {
   assert(magic == MAGIC2D_FLOAT || magic == MAGIC2D_DOUBLE);
-  unsigned long long tmNoMT_ = 0, tmMT_ = 0;
-  if (sscanf(pathStr, "%llu,%llu", &tmNoMT_, &tmMT_) != 2) return;
+  int configMT_ = 0;
+  if (sscanf(pathStr, "%d", &configMT_) != 1) return;
+  configMT = configMT_;
 
   string pathH = pathStr;
   size_t cpos = pathH.find_first_of(':');
@@ -108,8 +104,6 @@ void SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::setPath(const char *pathS
   string pathV = pathH.substr(cpos+1);
   pathH = pathH.substr(0, cpos);
 
-  tmNoMT = tmNoMT_;
-  tmMT = tmMT_;
   instH->setPath(pathH.c_str());
   instV->setPath(pathV.c_str());
 }
@@ -123,7 +117,7 @@ string SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::getPath() {
 template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
 string SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::getPath() {
   assert(magic == MAGIC2D_FLOAT || magic == MAGIC2D_DOUBLE);
-  return to_string(tmNoMT) + "," + to_string(tmMT) + ":" +
+  return to_string((int)configMT) + ":" +
     instH->getPath() + "," + instV->getPath();
 }
 
@@ -294,44 +288,6 @@ EXPORT void SleefDFT_dispose(SleefDFT *p) {
     break;
   default: abort();
   }
-}
-
-uint32_t ilog2(uint32_t q) {
-  static const uint32_t tab[] = {0,1,2,2,3,3,3,3,4,4,4,4,4,4,4,4};
-  uint32_t r = 0,qq;
-
-  if (q & 0xffff0000) r = 16;
-
-  q >>= r;
-  qq = q | (q >> 1);
-  qq |= (qq >> 2);
-  qq = ((qq & 0x10) >> 4) | ((qq & 0x100) >> 7) | ((qq & 0x1000) >> 10);
-
-  return r + tab[qq] * 4 + tab[q >> (tab[qq] * 4)] - 1;
-}
-
-// Utility functions
-
-int omp_thread_count() {
-  int n = 0;
-#pragma omp parallel reduction(+:n)
-  n += 1;
-  return n;
-}
-
-void startAllThreads(const int nth) {
-  volatile int8_t *state = (int8_t *)calloc(nth, 1);
-  int th=0;
-#pragma omp parallel for
-  for(th=0;th<nth;th++) {
-    state[th] = 1;
-    for(;;) {
-      int i;
-      for(i=0;i<nth;i++) if (state[i] == 0) break;
-      if (i == nth) break;
-    }
-  }
-  free((void *)state);
 }
 
 // PlanManager
