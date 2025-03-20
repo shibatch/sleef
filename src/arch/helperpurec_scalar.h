@@ -54,7 +54,7 @@
 #define ENABLE_FMA_SP
 //@#define ENABLE_FMA_SP
 
-#if defined(__AVX2__) || defined(__aarch64__) || defined(__arm__) || defined(__powerpc64__) || defined(__zarch__) || defined(__riscv) || CONFIG == 3
+#if defined(__AVX2__) || defined(__aarch64__) || defined(__arm__) || defined(__powerpc64__) || defined(__zarch__) || defined(__riscv) || defined(__loongarch64) || CONFIG == 3
 #ifndef FP_FAST_FMA
 //@#ifndef FP_FAST_FMA
 #define FP_FAST_FMA
