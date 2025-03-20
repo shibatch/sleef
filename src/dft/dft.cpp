@@ -7,15 +7,16 @@
 #include <unordered_map>
 #include <sstream>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <assert.h>
-#include <signal.h>
-#include <setjmp.h>
-#include <math.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstdint>
+#include <cstring>
+#include <cassert>
+#include <cmath>
+
 #include <omp.h>
+
+#include "compat.h"
 
 #include "sleef.h"
 #define IMPORT_IS_EXPORT
@@ -40,19 +41,13 @@ static const int constK[] = { 0, 2, 6, 14, 38, 94, 230, 542, 1254 };
 
 extern const char *configStr[];
 
-#if defined(_MSC_VER) || defined(__MINGW32__) || defined(__MINGW64__)
-static jmp_buf sigjmp;
-#define SETJMP(x) setjmp(x)
-#define LONGJMP longjmp
-#else
-static sigjmp_buf sigjmp;
-#define SETJMP(x) sigsetjmp(x, 1)
-#define LONGJMP siglongjmp
-#endif
-
 static void sighandler(int signum) { LONGJMP(sigjmp, 1); }
 
 static int checkISAAvailability(int isa, int (*GETINT_[16])(int), int BASETYPEID_) {
+  static mutex mtx;
+
+  unique_lock<mutex> lock(mtx);
+
   signal(SIGILL, sighandler);
 
   if (SETJMP(sigjmp) == 0) {
@@ -63,6 +58,42 @@ static int checkISAAvailability(int isa, int (*GETINT_[16])(int), int BASETYPEID
 
   signal(SIGILL, SIG_DFL);
   return 0;
+}
+
+static int omp_thread_count() {
+  int n = 0;
+#pragma omp parallel reduction(+:n)
+  n += 1;
+  return n;
+}
+
+static void startAllThreads(const int nth) {
+  volatile int8_t *state = (int8_t *)calloc(nth, 1);
+  int th=0;
+#pragma omp parallel for
+  for(th=0;th<nth;th++) {
+    state[th] = 1;
+    for(;;) {
+      int i;
+      for(i=0;i<nth;i++) if (state[i] == 0) break;
+      if (i == nth) break;
+    }
+  }
+  free((void *)state);
+}
+
+static uint32_t ilog2(uint32_t q) {
+  static const uint32_t tab[] = {0,1,2,2,3,3,3,3,4,4,4,4,4,4,4,4};
+  uint32_t r = 0,qq;
+
+  if (q & 0xffff0000) r = 16;
+
+  q >>= r;
+  qq = q | (q >> 1);
+  qq |= (qq >> 2);
+  qq = ((qq & 0x10) >> 4) | ((qq & 0x100) >> 7) | ((qq & 0x1000) >> 10);
+
+  return r + tab[qq] * 4 + tab[q >> (tab[qq] * 4)] - 1;
 }
 
 static uint32_t uperm(int nbits, uint32_t k, int s, int d) {
@@ -140,8 +171,8 @@ void SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::dispatch(const int N, real 
 // Transposer
 
 #define LOG2BS 4
-
 #define BS (1 << LOG2BS)
+
 #define TRANSPOSE_BLOCK(y2) do {					\
     for(int x2=y2+1;x2<BS;x2++) {					\
       element_t r = *(element_t *)&row[y2].r[x2*2+0];			\
@@ -957,19 +988,8 @@ bool SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::measure(bool randomize) {
 }
 
 template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
-void SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::measureTranspose() {
-  if ((mode & SLEEF_MODE_MEASURE) == 0 && (!planManager.planFilePathSet() || (mode & SLEEF_MODE_MEASUREBITS) != 0)) {
-    if (log2hlen + log2vlen >= 14) {
-      tmNoMT = 20;
-      tmMT = 10;
-      if ((mode & SLEEF_MODE_VERBOSE) != 0) fprintf(verboseFP, "transpose : selected MT(estimated)\n");
-    } else {
-      tmNoMT = 10;
-      tmMT = 20;
-      if ((mode & SLEEF_MODE_VERBOSE) != 0) fprintf(verboseFP, "transpose : selected NoMT(estimated)\n");
-    }
-    return;
-  }
+pair<uint64_t, uint64_t> SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::measureTranspose() {
+  uint64_t tmMT, tmNoMT;
   
   real *tBuf2 = (real *)Sleef_malloc(sizeof(real)*2*hlen*vlen);
 
@@ -1000,7 +1020,7 @@ void SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::measureTranspose() {
   tmMT /= niter;
   tmNoMT /= niter;
 
-  return;
+  return pair<uint64_t, uint64_t>(tmMT, tmNoMT);
 }
 
 // Implementation of SleefDFT_*_init1d
@@ -1155,6 +1175,8 @@ SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::SleefDFT2DXX(uint32_t vlen_, u
   mode2 = 0;
   mode3 = 0;
 
+  planMT = false;
+
   verboseFP = stdout;
   
   uint64_t mode1D = (mode & ~SLEEF_MODE_MEASUREBITS) | SLEEF_MODE_ESTIMATE | SLEEF_MODE_NO_MT;
@@ -1174,48 +1196,54 @@ SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::SleefDFT2DXX(uint32_t vlen_, u
 
   tBuf = (real *)Sleef_malloc(sizeof(real)*2*hlen*vlen);
 
-  measureTranspose();
+  if (!loadMeasurementResults()) {
+    if ((mode & SLEEF_MODE_MEASURE) != 0) {
+      uint64_t tmMT, tmNoMT;
+      auto a = measureTranspose();
+      tmMT = a.first;
+      tmNoMT = a.second;
+      planMT = tmMT < tmNoMT;
 
-  if (loadMeasurementResults()) {
-    if ((mode & SLEEF_MODE_VERBOSE) != 0) fprintf(verboseFP, "transpose NoMT(loaded): %lld\n", (long long int)tmNoMT);
-    if ((mode & SLEEF_MODE_VERBOSE) != 0) fprintf(verboseFP, "transpose   MT(loaded): %lld\n", (long long int)tmMT);
-  } else if ((mode & SLEEF_MODE_MEASURE) != 0) {
-    pair<vector<Action>, double> noMT_H, MT_H, noMT_V, MT_V;
+      pair<vector<Action>, double> noMT_H, MT_H, noMT_V, MT_V;
 
-    const bool mt = (mode & SLEEF_MODE_NO_MT) == 0;
+      const bool mt = (mode & SLEEF_MODE_NO_MT) == 0;
 
-    if (instH == instV) {
-      noMT_H  = searchForBestPath(instH, false, hlen, vlen, 8);
-      tmNoMT += noMT_H.second * 2;
+      if (instH == instV) {
+	noMT_H  = searchForBestPath(instH, false, hlen, vlen, 8);
+	tmNoMT += noMT_H.second * 2;
 
-      if (mt) {
-	MT_H  = searchForBestPath(instH, true, hlen, vlen, 8);
-	tmMT += MT_H.second * 2;
+	if (mt) {
+	  MT_H  = searchForBestPath(instH, true, hlen, vlen, 8);
+	  tmMT += MT_H.second * 2;
+	}
+      } else {
+	noMT_H  = searchForBestPath(instH, false, hlen, vlen, 8);
+	noMT_V  = searchForBestPath(instV, false, vlen, hlen, 8);
+	tmNoMT += noMT_H.second + noMT_V.second;
+
+	if (mt) {
+	  MT_H  = searchForBestPath(instH, true, hlen, vlen, 8);
+	  MT_V  = searchForBestPath(instV, true, vlen, hlen, 8);
+	  tmMT += MT_H.second + MT_V.second;
+	}
       }
-    } else {
-      noMT_H  = searchForBestPath(instH, false, hlen, vlen, 8);
-      noMT_V  = searchForBestPath(instV, false, vlen, hlen, 8);
-      tmNoMT += noMT_H.second + noMT_V.second;
 
-      if (mt) {
-	MT_H  = searchForBestPath(instH, true, hlen, vlen, 8);
-	MT_V  = searchForBestPath(instV, true, vlen, hlen, 8);
-	tmMT += MT_H.second + MT_V.second;
+      if (!mt) tmMT = ULLONG_MAX;
+
+      if (tmMT < tmNoMT) {
+	planMT = true;
+	instH->bestPath = MT_H.first;
+	if (instH != instV) instV->bestPath = MT_V.first;
+      } else {
+	planMT = false;
+	instH->bestPath = noMT_H.first;
+	if (instH != instV) instV->bestPath = noMT_V.first;
       }
-    }
 
-    if (!mt) tmMT = ULLONG_MAX;
-
-    if (tmMT < tmNoMT) {
-      instH->bestPath = MT_H.first;
-      if (instH != instV) instV->bestPath = MT_V.first;
+      if (planManager.planFilePathSet()) saveMeasurementResults();
     } else {
-      instH->bestPath = noMT_H.first;
-      if (instH != instV) instV->bestPath = noMT_V.first;
-    }
-
-    if ((mode & SLEEF_MODE_MEASURE) != 0 || (planManager.planFilePathSet() && (mode & SLEEF_MODE_MEASUREBITS) == 0)) {
-      saveMeasurementResults();
+      planMT = log2hlen + log2vlen >= 14;
+      // When the paths are to be estimated, the paths set in the constructors are used
     }
   }
 
@@ -1349,7 +1377,7 @@ void SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::execute(const real *s0, r
   // S -> T -> D -> T -> D
 
   if ((mode3 & SLEEF_MODE3_MT2D) != 0 &&
-      (((mode & SLEEF_MODE_DEBUG) == 0 && tmMT < tmNoMT) ||
+      (((mode & SLEEF_MODE_DEBUG) == 0 && planMT) ||
        ((mode & SLEEF_MODE_DEBUG) != 0 && (rand() & 1)))) {
     int y=0;
 #pragma omp parallel for
@@ -1385,7 +1413,7 @@ void SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::execute(const real *s0, r
 EXPORT SleefDFT *SleefDFT_double_init1d(uint32_t n, const double *in, double *out, uint64_t mode) {
   SleefDFT *p = (SleefDFT *)calloc(1, sizeof(SleefDFT));
   p->double_ = new SleefDFTXX<double, Sleef_double2, MAXSHIFTDP, MAXBUTWIDTHDP>(n, in, out, mode, "double",
-    1, 0x27182818, MINSHIFTDP, getInt_double, getPtr_double, Sleef_sincospi_u05,
+    1, MAGIC_DOUBLE, MINSHIFTDP, getInt_double, getPtr_double, Sleef_sincospi_u05,
     dftf_double, dftb_double, tbutf_double, tbutb_double, butf_double, butb_double,
     realSub0_double, realSub1_double, tbutfs_double, tbutbs_double
   );
@@ -1396,7 +1424,7 @@ EXPORT SleefDFT *SleefDFT_double_init1d(uint32_t n, const double *in, double *ou
 EXPORT SleefDFT *SleefDFT_double_init2d(uint32_t vlen, uint32_t hlen, const double *in, double *out, uint64_t mode) {
   SleefDFT *p = (SleefDFT *)calloc(1, sizeof(SleefDFT));
   p->double2d_ = new SleefDFT2DXX<double, Sleef_double2, MAXSHIFTDP, MAXBUTWIDTHDP>(vlen, hlen, in, out, mode, "double",
-    1, 0x27182818, 0x28459045, MINSHIFTDP, getInt_double, getPtr_double, Sleef_sincospi_u05,
+    1, MAGIC_DOUBLE, MAGIC2D_DOUBLE, MINSHIFTDP, getInt_double, getPtr_double, Sleef_sincospi_u05,
     dftf_double, dftb_double, tbutf_double, tbutb_double, butf_double, butb_double,
     realSub0_double, realSub1_double, tbutfs_double, tbutbs_double
   );
@@ -1406,11 +1434,11 @@ EXPORT SleefDFT *SleefDFT_double_init2d(uint32_t vlen, uint32_t hlen, const doub
 
 EXPORT void SleefDFT_double_execute(SleefDFT *p, const double *s0, double *d0) {
   switch(p->magic) {
-  case 0x27182818:
-    p->double_->execute(s0, d0, 0x27182818, 0x28459045);
+  case MAGIC_DOUBLE:
+    p->double_->execute(s0, d0, MAGIC_DOUBLE, MAGIC2D_DOUBLE);
     break;
-  case 0x28459045:
-    p->double2d_->execute(s0, d0, 0x27182818, 0x28459045);
+  case MAGIC2D_DOUBLE:
+    p->double2d_->execute(s0, d0, MAGIC_DOUBLE, MAGIC2D_DOUBLE);
     break;
   default:
     abort();
@@ -1420,7 +1448,7 @@ EXPORT void SleefDFT_double_execute(SleefDFT *p, const double *s0, double *d0) {
 EXPORT SleefDFT *SleefDFT_float_init1d(uint32_t n, const float *in, float *out, uint64_t mode) {
   SleefDFT *p = (SleefDFT *)calloc(1, sizeof(SleefDFT));
   p->float_ = new SleefDFTXX<float, Sleef_float2, MAXSHIFTSP, MAXBUTWIDTHSP>(n, in, out, mode, "float",
-    2, 0x31415926, MINSHIFTSP, getInt_float, getPtr_float, Sleef_sincospif_u05,
+    2, MAGIC_FLOAT, MINSHIFTSP, getInt_float, getPtr_float, Sleef_sincospif_u05,
     dftf_float, dftb_float, tbutf_float, tbutb_float, butf_float, butb_float,
     realSub0_float, realSub1_float, tbutfs_float, tbutbs_float
   );
@@ -1431,7 +1459,7 @@ EXPORT SleefDFT *SleefDFT_float_init1d(uint32_t n, const float *in, float *out, 
 EXPORT SleefDFT *SleefDFT_float_init2d(uint32_t vlen, uint32_t hlen, const float *in, float *out, uint64_t mode) {
   SleefDFT *p = (SleefDFT *)calloc(1, sizeof(SleefDFT));
   p->float2d_ = new SleefDFT2DXX<float, Sleef_float2, MAXSHIFTSP, MAXBUTWIDTHSP>(vlen, hlen, in, out, mode, "float",
-    2, 0x31415926, 0x53589793, MINSHIFTSP, getInt_float, getPtr_float, Sleef_sincospif_u05,
+    2, MAGIC_FLOAT, MAGIC2D_FLOAT, MINSHIFTSP, getInt_float, getPtr_float, Sleef_sincospif_u05,
     dftf_float, dftb_float, tbutf_float, tbutb_float, butf_float, butb_float,
     realSub0_float, realSub1_float, tbutfs_float, tbutbs_float
   );
@@ -1441,11 +1469,11 @@ EXPORT SleefDFT *SleefDFT_float_init2d(uint32_t vlen, uint32_t hlen, const float
 
 EXPORT void SleefDFT_float_execute(SleefDFT *p, const float *s0, float *d0) {
   switch(p->magic) {
-  case 0x31415926:
-    p->float_->execute(s0, d0, 0x31415926, 0x53589793);
+  case MAGIC_FLOAT:
+    p->float_->execute(s0, d0, MAGIC_FLOAT, MAGIC2D_FLOAT);
     break;
-  case 0x53589793:
-    p->float2d_->execute(s0, d0, 0x31415926, 0x53589793);
+  case MAGIC2D_FLOAT:
+    p->float2d_->execute(s0, d0, MAGIC_FLOAT, MAGIC2D_FLOAT);
     break;
   default:
     abort();
@@ -1454,17 +1482,17 @@ EXPORT void SleefDFT_float_execute(SleefDFT *p, const float *s0, float *d0) {
 
 EXPORT void SleefDFT_execute(SleefDFT *p, const void *s0, void *d0) {
   switch(p->magic) {
-  case 0x27182818:
-    p->double_->execute((const double *)s0, (double *)d0, 0x27182818, 0x28459045);
+  case MAGIC_DOUBLE:
+    p->double_->execute((const double *)s0, (double *)d0, MAGIC_DOUBLE, MAGIC2D_DOUBLE);
     break;
-  case 0x28459045:
-    p->double2d_->execute((const double *)s0, (double *)d0, 0x27182818, 0x28459045);
+  case MAGIC2D_DOUBLE:
+    p->double2d_->execute((const double *)s0, (double *)d0, MAGIC_DOUBLE, MAGIC2D_DOUBLE);
     break;
-  case 0x31415926:
-    p->float_->execute((const float *)s0, (float *)d0, 0x31415926, 0x53589793);
+  case MAGIC_FLOAT:
+    p->float_->execute((const float *)s0, (float *)d0, MAGIC_FLOAT, MAGIC2D_FLOAT);
     break;
-  case 0x53589793:
-    p->float2d_->execute((const float *)s0, (float *)d0, 0x31415926, 0x53589793);
+  case MAGIC2D_FLOAT:
+    p->float2d_->execute((const float *)s0, (float *)d0, MAGIC_FLOAT, MAGIC2D_FLOAT);
     break;
   default:
     abort();

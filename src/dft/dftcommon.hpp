@@ -16,8 +16,25 @@ using namespace std;
 
 #include "dispatchparam.h"
 
+#define MAGIC_FLOAT 0x31415926
+#define MAGIC_DOUBLE 0x27182818
+#define MAGIC2D_FLOAT 0x53589793
+#define MAGIC2D_DOUBLE 0x28459045
+
 #define CONFIG_STREAM 1
 #define CONFIG_MT 2
+
+#define SLEEF_MODE2_MT1D       (1 << 0)
+#define SLEEF_MODE3_MT2D       (1 << 0)
+
+#define PLANFILEID "SLEEFDFT1"
+#define ENVVAR "SLEEFDFTPLAN"
+
+#define SLEEF_MODE_MEASUREBITS (7 << 20)
+#define SLEEF_MODE_INTERNAL_2D (1ULL << 40)
+
+#define GETINT_VECWIDTH 100
+#define GETINT_DFTPRIORITY 101
 
 #define MAXLOG2LEN 32
 
@@ -50,19 +67,6 @@ struct std::hash<Action> {
     u ^= a.level;
     u = (u << 7) | (u >> ((sizeof(u)*8)-7));
     u ^= a.N;
-    return u;
-  }
-};
-
-template <>
-struct std::hash<vector<Action>> {
-  size_t operator()(const vector<Action> &v) const {
-    size_t u = 0;
-    for(auto a : v) {
-      hash<Action> hash;
-      u ^= hash(a);
-      u = (u << 19) | (u >> ((sizeof(u)*8)-19));
-    }
     return u;
   }
 };
@@ -157,7 +161,7 @@ struct SleefDFT2DXX {
 
   int32_t hlen, vlen;
   int32_t log2hlen, log2vlen;
-  unsigned long long tmNoMT, tmMT;
+  bool planMT;
   real *tBuf;
 
   SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH> *instH, *instV;
@@ -182,7 +186,7 @@ struct SleefDFT2DXX {
   ~SleefDFT2DXX();
 
   void execute(const real *s0, real *d0, int MAGIC_, int MAGIC2D_);
-  void measureTranspose();
+  pair<uint64_t, uint64_t> measureTranspose();
   double measurePath(SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH> *inst, bool mt,
 		     const vector<Action> &path, uint32_t hlen, uint32_t vlen, uint64_t minTime);
   pair<vector<Action>, double> searchForBestPath(SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH> *inst, bool mt, uint32_t hlen, uint32_t vlen, int nPaths);
@@ -203,24 +207,6 @@ struct SleefDFT {
     SleefDFT2DXX<float, Sleef_float2, MAXSHIFTSP, MAXBUTWIDTHSP> *float2d_;
   };
 };
-
-#define SLEEF_MODE2_MT1D       (1 << 0)
-#define SLEEF_MODE3_MT2D       (1 << 0)
-
-#define PLANFILEID "SLEEFDFT1"
-#define ENVVAR "SLEEFDFTPLAN"
-
-#define SLEEF_MODE_MEASUREBITS (7 << 20)
-
-#define SLEEF_MODE_INTERNAL_2D (1ULL << 40)
-
-int omp_thread_count();
-void startAllThreads(const int nth);
-
-uint32_t ilog2(uint32_t q);
-
-#define GETINT_VECWIDTH 100
-#define GETINT_DFTPRIORITY 101
 
 class PlanManager {
   string dftPlanFilePath;

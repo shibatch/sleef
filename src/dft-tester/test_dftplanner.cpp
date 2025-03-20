@@ -140,6 +140,7 @@ int main(int argc, char **argv) {
 
   //
 
+  cout << endl;
 
   p = SleefDFT_double_init1d(1024, din, dout, mode);
 
