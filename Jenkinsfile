@@ -13,7 +13,7 @@ pipeline {
 	    	     	 sh '''
                 	 echo "x86_64 clang-19 on" `hostname`
 			 export CC=clang-19
-			 export CXX=clang++-18
+			 export CXX=clang++-19
 			 export CUDACXX=/opt/cuda-12.6/bin/nvcc
  			 mkdir build
 			 cd build
