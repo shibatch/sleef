@@ -96,7 +96,7 @@ FFTW_MEASURE mode, respectively.
 
 <p style="text-align:center; margin-bottom:2cm;">
   <a class="nothing" href="../img/dftzen4dp.png">
-    <img src="../img/dftzen4dp.png" alt="Performance graph for DP DFT"/>
+    <img src="../img/dftzen4dp.png" alt="Performance graph for DP DFT on Ryzen 9 7950X"/>
   </a>
   <br />
   Fig. 6.5: Performance of transform in double precision
@@ -104,8 +104,31 @@ FFTW_MEASURE mode, respectively.
 
 <p style="text-align:center; margin-bottom:2cm;">
   <a class="nothing" href="../img/dftzen4sp.png">
-    <img src="../img/dftzen4sp.png" alt="Performance graph for SP DFT"/>
+    <img src="../img/dftzen4sp.png" alt="Performance graph for SP DFT on Ryzen 9 7950X"/>
   </a>
   <br />
   Fig. 6.6: Performance of transform in single precision
+</p>
+
+Below is the result of comparison on M1 MacBook Pro with the following
+settings.
+
+* OS : Ubuntu 24.04, Linux 6.8.0-1011-asahi-arm
+* Compiler : Ubuntu clang version 19.1.1 (1ubuntu1~24.04.2)
+* FFTW version 3.3.10-1ubuntu3
+
+<p style="text-align:center; margin-bottom:2cm;">
+  <a class="nothing" href="../img/dftm1dp.png">
+    <img src="../img/dftm1dp.png" alt="Performance graph for DP DFT on M1"/>
+  </a>
+  <br />
+  Fig. 6.7: Performance of transform in double precision
+</p>
+
+<p style="text-align:center; margin-bottom:2cm;">
+  <a class="nothing" href="../img/dftm1sp.png">
+    <img src="../img/dftm1sp.png" alt="Performance graph for SP DFTon M1"/>
+  </a>
+  <br />
+  Fig. 6.8: Performance of transform in single precision
 </p>
