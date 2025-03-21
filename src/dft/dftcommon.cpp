@@ -326,7 +326,7 @@ void PlanManager::setPlanFilePath(const char *path, const char *arch, uint64_t m
   if (arch != NULL) planID = arch;
   planID = getPlanIdPrefix() + planID;
 
-  if ((mode & SLEEF_PLAN_RESET) != 0) get<0>(thePlan)[planID].clear();
+  if ((mode & SLEEF_PLAN_RESET) != 0) std::get<0>(thePlan)[planID].clear();
 }
 
 void PlanManager::loadPlanFromFile() {
@@ -346,7 +346,7 @@ void PlanManager::loadPlanFromFile() {
       } catch(exception &ex) {}
       if (!(planMode_ & SLEEF_PLAN_NOLOCK)) FUNLOCK(fp);
       fclose(fp);
-      if (get<1>(plan) == PLANFILEID) thePlan = plan;
+      if (std::get<1>(plan) == PLANFILEID) thePlan = plan;
     }
   }
 }
@@ -357,7 +357,7 @@ bool PlanManager::savePlanToFile(const string &fn) {
     if (fp) {
       FLOCK(fp);
       FileSerializer s(fp);
-      get<1>(thePlan) = PLANFILEID;
+      std::get<1>(thePlan) = PLANFILEID;
       s << thePlan;
       FUNLOCK(fp);
       fclose(fp);
@@ -391,11 +391,11 @@ bool PlanManager::loadAndPutToFile(const string& key, const string& value) {
  	try {
 	  d >> plan;
 	} catch(exception &ex) {}
-	if (get<1>(plan) == PLANFILEID) thePlan = plan;
+	if (std::get<1>(plan) == PLANFILEID) thePlan = plan;
       }
 
-      get<0>(thePlan)[planID][key] = value;
-      get<1>(thePlan) = PLANFILEID;
+      std::get<0>(thePlan)[planID][key] = value;
+      std::get<1>(thePlan) = PLANFILEID;
       fseek(fp, 0, SEEK_SET);
       FileSerializer s(fp);
       s << thePlan;
@@ -417,13 +417,13 @@ EXPORT int SleefDFT_savePlan(const char *pathStr) {
 }
 
 string PlanManager::get(const string& key) {
-  if (get<0>(thePlan)[planID].count(key) == 0) return "";
+  if (std::get<0>(thePlan)[planID].count(key) == 0) return "";
 
-  return get<0>(thePlan)[planID].at(key);
+  return std::get<0>(thePlan)[planID].at(key);
 }
 
 void PlanManager::put(const string& key, const string& value) {
-  get<0>(thePlan)[planID][key] = value;
+  std::get<0>(thePlan)[planID][key] = value;
 }
 
 //
