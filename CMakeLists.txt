@@ -15,7 +15,7 @@ option(SLEEF_BUILD_STATIC_TEST_BINS "Build statically linked test executables" O
 option(SLEEF_ENABLE_LTO "Enable LTO on GCC or ThinLTO on clang" OFF)
 option(SLEEF_BUILD_LIBM "libsleef will be built." ON)
 option(SLEEF_BUILD_DFT "libsleefdft will be built." OFF)
-option(SLEEF_BUILD_QUAD "libsleefquad will be built." ON)
+option(SLEEF_BUILD_QUAD "libsleefquad will be built." OFF)
 option(SLEEF_BUILD_GNUABI_LIBS "libsleefgnuabi will be built." ON)
 option(SLEEF_BUILD_SCALAR_LIB "libsleefscalar will be built." OFF)
 option(SLEEF_BUILD_TESTS "Tests will be built." ON)
