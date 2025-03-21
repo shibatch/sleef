@@ -4,17 +4,38 @@ pipeline {
     stages {
         stage('Preamble') {
             parallel {
-                stage('x86_64 linux clang-19') {
+                stage('x86_64 linux clang-19-lto') {
             	     agent { label 'x86_64 && ubuntu24 && avx512f' }
                      options { skipDefaultCheckout() }
             	     steps {
                          cleanWs()
                          checkout scm
 	    	     	 sh '''
-                	 echo "x86_64 clang-19 on" `hostname`
+                	 echo "x86_64 clang-19 with LTO on" `hostname`
 			 export CC=clang-19
 			 export CXX=clang++-19
-			 export CUDACXX=/opt/cuda-12.6/bin/nvcc
+ 			 mkdir build
+			 cd build
+			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=../../install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_DFT=TRUE -DSLEEF_ENFORCE_DFT=TRUE -DSLEEFDFT_ENABLE_STREAM=True -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_INLINE_HEADERS=TRUE -DSLEEF_ENFORCE_SSE2=TRUE -DSLEEF_ENFORCE_SSE4=TRUE -DSLEEF_ENFORCE_AVX=TRUE -DSLEEF_ENFORCE_AVX2=TRUE -DSLEEF_ENFORCE_AVX512F=TRUE -DSLEEF_ENFORCE_TESTER4=True -DSLEEF_ENABLE_TESTER=True -DSLEEF_ENFORCE_TESTER=True -DSLEEF_ENABLE_LTO=True -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=lld-19"
+			 cmake -E time ninja
+			 export OMP_WAIT_POLICY=passive
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j `nproc`
+		         ninja install
+			 '''
+            	     }
+                }
+
+                stage('x86_64 linux clang-19-asan') {
+            	     agent { label 'x86_64 && ubuntu24 && avx512f' }
+                     options { skipDefaultCheckout() }
+            	     steps {
+                         cleanWs()
+                         checkout scm
+	    	     	 sh '''
+                	 echo "x86_64 clang-19 with ASAN on" `hostname`
+			 export CC=clang-19
+			 export CXX=clang++-19
  			 mkdir build
 			 cd build
 			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=../../install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_DFT=TRUE -DSLEEF_ENFORCE_DFT=TRUE -DSLEEFDFT_ENABLE_STREAM=True -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_INLINE_HEADERS=TRUE -DSLEEF_ENFORCE_SSE2=TRUE -DSLEEF_ENFORCE_SSE4=TRUE -DSLEEF_ENFORCE_AVX=TRUE -DSLEEF_ENFORCE_AVX2=TRUE -DSLEEF_ENFORCE_AVX512F=TRUE -DSLEEF_ENFORCE_TESTER4=True -DSLEEF_ENABLE_TESTER=True -DSLEEF_ENFORCE_TESTER=True -DSLEEF_ASAN=True
@@ -130,26 +151,6 @@ pipeline {
             	     }
                 }
 
-                stage('aarch64 linux gcc-14') {
-            	     agent { label 'aarch64 && ubuntu24 && apple' }
-                     options { skipDefaultCheckout() }
-            	     steps {
-                         cleanWs()
-                         checkout scm
-	    	     	 sh '''
-                	 echo "aarch64 gcc-14 on" `hostname`
-			 export CC=gcc-14
-			 export CXX=g++-14
- 			 mkdir build
-			 cd build
-			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=../../install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_DFT=TRUE -DSLEEF_ENFORCE_DFT=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_INLINE_HEADERS=TRUE -DSLEEF_ENFORCE_SVE=TRUE -DEMULATOR=qemu-aarch64-static -DSLEEF_ENFORCE_TESTER4=True -DSLEEF_ENABLE_TESTER=False
-			 cmake -E time ninja
-		         export CTEST_OUTPUT_ON_FAILURE=TRUE
-		         ctest -j `nproc`
-			 '''
-            	     }
-                }
-
                 stage('aarch64 linux clang-18') {
             	     agent { label 'aarch64 && ubuntu24 && apple' }
                      options { skipDefaultCheckout() }
@@ -163,7 +164,27 @@ pipeline {
  			 mkdir build
 			 cd build
 			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=../../install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_DFT=TRUE -DSLEEF_ENFORCE_DFT=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_INLINE_HEADERS=TRUE -DSLEEF_ENFORCE_SVE=TRUE -DEMULATOR=qemu-aarch64-static -DSLEEF_ENFORCE_TESTER4=True -DSLEEF_ENABLE_TESTER=False
-			 cmake -E time ninja
+			 cmake -E time oomstaller ninja -j `nproc`
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j `nproc`
+			 '''
+            	     }
+                }
+
+                stage('aarch64 linux gcc-14') {
+            	     agent { label 'aarch64 && ubuntu24 && apple' }
+                     options { skipDefaultCheckout() }
+            	     steps {
+                         cleanWs()
+                         checkout scm
+	    	     	 sh '''
+                	 echo "aarch64 gcc-14 on" `hostname`
+			 export CC=gcc-14
+			 export CXX=g++-14
+ 			 mkdir build
+			 cd build
+			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=../../install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_DFT=TRUE -DSLEEF_ENFORCE_DFT=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_INLINE_HEADERS=TRUE -DSLEEF_ENFORCE_SVE=TRUE -DEMULATOR=qemu-aarch64-static -DSLEEF_ENFORCE_TESTER4=True -DSLEEF_ENABLE_TESTER=False
+			 cmake -E time oomstaller ninja -j `nproc`
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
 		         ctest -j `nproc`
 			 '''
