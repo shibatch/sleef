@@ -26,14 +26,14 @@ pipeline {
             	     }
                 }
 
-                stage('x86_64 linux clang-19') {
+                stage('x86_64 linux clang-19-asan') {
             	     agent { label 'x86_64 && ubuntu24 && avx512f' }
                      options { skipDefaultCheckout() }
             	     steps {
                          cleanWs()
                          checkout scm
 	    	     	 sh '''
-                	 echo "x86_64 clang-19 on" `hostname`
+                	 echo "x86_64 clang-19 with ASAN on" `hostname`
 			 export CC=clang-19
 			 export CXX=clang++-19
  			 mkdir build
@@ -164,7 +164,7 @@ pipeline {
  			 mkdir build
 			 cd build
 			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=../../install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_DFT=TRUE -DSLEEF_ENFORCE_DFT=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_INLINE_HEADERS=TRUE -DSLEEF_ENFORCE_SVE=TRUE -DEMULATOR=qemu-aarch64-static -DSLEEF_ENFORCE_TESTER4=True -DSLEEF_ENABLE_TESTER=False -DSLEEF_ENABLE_LTO=True -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=lld-18"
-			 cmake -E time ninja
+			 cmake -E time oomstaller ninja -j `nproc`
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
 		         ctest -j `nproc`
 			 '''
@@ -184,7 +184,7 @@ pipeline {
  			 mkdir build
 			 cd build
 			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=../../install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_DFT=TRUE -DSLEEF_ENFORCE_DFT=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_INLINE_HEADERS=TRUE -DSLEEF_ENFORCE_SVE=TRUE -DEMULATOR=qemu-aarch64-static -DSLEEF_ENFORCE_TESTER4=True -DSLEEF_ENABLE_TESTER=False
-			 cmake -E time ninja
+			 cmake -E time oomstaller ninja -j `nproc`
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
 		         ctest -j `nproc`
 			 '''
