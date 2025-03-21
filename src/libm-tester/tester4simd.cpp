@@ -1562,13 +1562,13 @@ int main2(int argc, char **argv) {
 				    -1000, 1000, 0.2, 1.0, false) && success;
 
   cout << "copysign" << endl;
-  success = check_d_d_d<tlfloat_quad>("copysign", xcopysign, tlfloat_copysignq,
-				      ad, sizeof(ad)/sizeof(ad[0]), ad, sizeof(ad)/sizeof(ad[0]),
-				      0.0, true) && success;
-  success = check_d_d_d<tlfloat_quad>("copysign", xcopysign, tlfloat_copysignq,
-				      -10, 10, 0.15, -10, 10, 0.15, 0.0, false) && success;
-  success = check_d_d_d<tlfloat_quad>("copysign", xcopysign, tlfloat_copysignq,
-				      -1e+10, 1e+10, 1.51e+8, -1e+10, 1e+10, 1.51e+8, 0.0, false) && success;
+  success = check_d_d_d<double>("copysign", xcopysign, tlfloat_copysign,
+				ad, sizeof(ad)/sizeof(ad[0]), ad, sizeof(ad)/sizeof(ad[0]),
+				0.0, true) && success;
+  success = check_d_d_d<double>("copysign", xcopysign, tlfloat_copysign,
+				-10, 10, 0.15, -10, 10, 0.15, 0.0, false) && success;
+  success = check_d_d_d<double>("copysign", xcopysign, tlfloat_copysign,
+				-1e+10, 1e+10, 1.51e+8, -1e+10, 1e+10, 1.51e+8, 0.0, false) && success;
 
   cout << "fmax" << endl;
   success = check_d_d_d<tlfloat_quad>("fmax", xfmax, tlfloat_fmaxq,
