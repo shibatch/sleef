@@ -77,9 +77,8 @@ and multiple cores can be utilized for efficient computation. It has an API
 similar to that of FFTW for easy migration. The subroutines can utilize long
 vectors up to 2048 bits. The helper files for abstracting SIMD intrinsics are
 shared with SLEEF libm, and thus it is easy to port the DFT subroutines to other
-architectures. [Preliminary results of
-benchmark](https://github.com/shibatch/sleef/wiki/DFT-Performance) are now
-available.
+architectures. [Benchmark results of the DFT subroutines](5-performance) are
+now available.
 
 <h2 id="environment">Supported environments</h2>
 
