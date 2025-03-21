@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
 
 #include <cstdio>
 #include <cstdlib>
@@ -17,19 +18,86 @@
 
 using namespace std;
 
-int main(int argc, char **argv) {
-  if (argc == 1) {
-    fprintf(stderr, "%s <plan file name>\n", argv[0]);
-    exit(-1);
-  }
-
-  SleefDFT_setPlanFilePath(argv[1], NULL, SLEEF_PLAN_AUTOMATIC);
+vector<string> doTransform(int mode) {
+  SleefDFT *p;
+  vector<string> v;
+  vector<char> s(1024);
 
   double *din  = (double *)Sleef_malloc(2048*64*2 * sizeof(double));
   double *dout = (double *)Sleef_malloc(2048*64*2 * sizeof(double));
 
   float *fin  = (float *)Sleef_malloc(2048*64*2 * sizeof(double));
   float *fout = (float *)Sleef_malloc(2048*64*2 * sizeof(double));
+
+  //
+
+  p = SleefDFT_double_init1d(1024, din, dout, mode);
+  SleefDFT_getPath(p, s.data(), s.size());
+  v.push_back("1d double 1024 : " + string(s.data()));
+  SleefDFT_dispose(p);
+
+  p = SleefDFT_double_init1d(512, din, dout, mode);
+  SleefDFT_getPath(p, s.data(), s.size());
+  v.push_back("1d double 512 : " + string(s.data()));
+  SleefDFT_dispose(p);
+
+  p = SleefDFT_float_init1d(1024, fin, fout, mode);
+  SleefDFT_getPath(p, s.data(), s.size());
+  v.push_back("1d float 1024 : " + string(s.data()));
+  SleefDFT_dispose(p);
+
+  p = SleefDFT_float_init1d(512, fin, fout, mode);
+  SleefDFT_getPath(p, s.data(), s.size());
+  v.push_back("1d float 512 : " + string(s.data()));
+  SleefDFT_dispose(p);
+
+  p = SleefDFT_double_init2d(2048, 64, din, dout, mode);
+  SleefDFT_getPath(p, s.data(), s.size());
+  v.push_back("2d double 2048x64 : " + string(s.data()));
+  SleefDFT_dispose(p);
+
+  p = SleefDFT_double_init2d(128, 128, din, dout, mode);
+  SleefDFT_getPath(p, s.data(), s.size());
+  v.push_back("2d double 128x128 : " + string(s.data()));
+  SleefDFT_dispose(p);
+
+  p = SleefDFT_float_init2d(2048, 64, fin, fout, mode);
+  SleefDFT_getPath(p, s.data(), s.size());
+  v.push_back("2d float 2048x64 : " + string(s.data()));
+  SleefDFT_dispose(p);
+
+  p = SleefDFT_float_init2d(128, 128, fin, fout, mode);
+  SleefDFT_getPath(p, s.data(), s.size());
+  v.push_back("2d float 128x128 : " + string(s.data()));
+  SleefDFT_dispose(p);
+
+  Sleef_free(din);
+  Sleef_free(dout);
+  Sleef_free(fin);
+  Sleef_free(fout);
+
+  return v;
+}
+
+void compare(vector<string> &runa, vector<string> &runb) {
+  if (runa.size() != runb.size()) {
+    cerr << "Lengths do not match" << endl;
+    exit(-1);
+  }
+  for(size_t i=0;i<runa.size();i++) {
+    if (runa[i] != runb[i]) {
+      cerr << "Paths do not match" << endl;
+      cerr << runa[i] << endl;
+      cerr << runb[i] << endl;
+      exit(-1);
+    }
+  }
+}
+
+int main(int argc, char **argv) {
+  if (argc < 3) exit(-1);
+
+  string fn1 = argv[1], fn2 = argv[2];
 
 #ifdef MEASURE
 #ifdef MULTITHREAD
@@ -45,252 +113,54 @@ int main(int argc, char **argv) {
 #endif
 #endif
 
-  SleefDFT *p;
+  int planMode = argc == 1 ? 0 : SLEEF_PLAN_AUTOMATIC;
 
   //
 
-  p = SleefDFT_double_init1d(1024, din, dout, mode);
+  cerr << "Run 0" << endl;
 
-  vector<char> pathd1024(1024);
-  SleefDFT_getPath(p, pathd1024.data(), pathd1024.size());
+  SleefDFT_setPlanFilePath(fn1.c_str(), NULL, planMode);
 
-  cout << "Path (D1024) : " << pathd1024.data() << endl;
+  auto run0 = doTransform(mode);
 
-  SleefDFT_dispose(p);
+  cerr << endl << "Run 1" << endl;
 
-  //
+  SleefDFT_setPlanFilePath(NULL, NULL, SLEEF_PLAN_RESET);
+  SleefDFT_setPlanFilePath(fn2.c_str(), NULL, planMode);
 
-  p = SleefDFT_double_init1d(512, din, dout, mode);
+  auto run1 = doTransform(mode);
 
-  vector<char> pathd512(1024);
-  SleefDFT_getPath(p, pathd512.data(), pathd512.size());
+  cerr << endl << "Run 2" << endl;
 
-  cout << "Path (D512) : " << pathd512.data() << endl;
+  SleefDFT_setPlanFilePath(fn1.c_str(), NULL, planMode);
 
-  SleefDFT_dispose(p);
+  auto run2 = doTransform(mode);
 
-  //
+  compare(run0, run2);
 
-  p = SleefDFT_float_init1d(1024, fin, fout, mode);
+#ifdef MEASURE
+  SleefDFT_savePlan("manual.plan");
+#endif
 
-  vector<char> pathf1024(1024);
-  SleefDFT_getPath(p, pathf1024.data(), pathf1024.size());
+  cerr << endl << "Run 3" << endl;
 
-  cout << "Path (F1024) : " << pathf1024.data() << endl;
+  SleefDFT_setPlanFilePath(NULL, NULL, SLEEF_PLAN_RESET);
+  SleefDFT_setPlanFilePath(fn2.c_str(), NULL, planMode);
 
-  SleefDFT_dispose(p);
+  auto run3 = doTransform(mode);
 
-  //
+  compare(run1, run3);
 
-  p = SleefDFT_float_init1d(512, fin, fout, mode);
+#ifdef MEASURE
+  cerr << endl << "Run 4" << endl;
 
-  vector<char> pathf512(1024);
-  SleefDFT_getPath(p, pathf512.data(), pathf512.size());
+  SleefDFT_setPlanFilePath(NULL, NULL, SLEEF_PLAN_RESET);
+  SleefDFT_setPlanFilePath("manual.plan", NULL, planMode);
 
-  cout << "Path (F512) : " << pathf512.data() << endl;
+  auto run4 = doTransform(mode);
 
-  SleefDFT_dispose(p);
-
-
-  //
-
-
-  p = SleefDFT_double_init2d(2048, 64, din, dout, mode);
-
-  vector<char> pathd128x128(1024);
-  SleefDFT_getPath(p, pathd128x128.data(), pathd128x128.size());
-
-  cout << "Path (D128x128) : " << pathd128x128.data() << endl;
-
-  SleefDFT_dispose(p);
-
-  //
-
-  p = SleefDFT_double_init2d(64, 64, din, dout, mode);
-
-  vector<char> pathd64x64(1024);
-  SleefDFT_getPath(p, pathd64x64.data(), pathd64x64.size());
-
-  cout << "Path (D64x64) : " << pathd64x64.data() << endl;
-
-  SleefDFT_dispose(p);
-
-  //
-
-  p = SleefDFT_float_init2d(2048, 64, fin, fout, mode);
-
-  vector<char> pathf128x128(1024);
-  SleefDFT_getPath(p, pathf128x128.data(), pathf128x128.size());
-
-  cout << "Path (F128x128) : " << pathf128x128.data() << endl;
-
-  SleefDFT_dispose(p);
-
-  //
-
-  p = SleefDFT_float_init2d(64, 64, fin, fout, mode);
-
-  vector<char> pathf64x64(1024);
-  SleefDFT_getPath(p, pathf64x64.data(), pathf64x64.size());
-
-  cout << "Path (F64x64) : " << pathf64x64.data() << endl;
-
-  SleefDFT_dispose(p);
-
-
-  //
-
-  cout << endl;
-
-  p = SleefDFT_double_init1d(1024, din, dout, mode);
-
-  vector<char> pathd1024_2(1024);
-  SleefDFT_getPath(p, pathd1024_2.data(), pathd1024_2.size());
-
-  cout << "Path2 (D1024) : " << pathd1024_2.data() << endl;
-
-  SleefDFT_dispose(p);
-
-  if (pathd1024.size() != pathd1024_2.size() || memcmp(pathd1024.data(), pathd1024_2.data(), pathd1024.size()) != 0) {
-    cerr << "Paths do not match" << endl;
-    cerr << pathd1024.data() << endl;
-    cerr << pathd1024_2.data() << endl;
-    exit(-1);
-  }
-
-  //
-
-  p = SleefDFT_double_init1d(512, din, dout, mode);
-
-  vector<char> pathd512_2(1024);
-  SleefDFT_getPath(p, pathd512_2.data(), pathd512_2.size());
-
-  cout << "Path2 (D512) : " << pathd512_2.data() << endl;
-
-  SleefDFT_dispose(p);
-
-  if (pathd512.size() != pathd512_2.size() || memcmp(pathd512.data(), pathd512_2.data(), pathd512.size()) != 0) {
-    cerr << "Paths do not match" << endl;
-    cerr << pathd512.data() << endl;
-    cerr << pathd512_2.data() << endl;
-    exit(-1);
-  }
-
-  //
-
-  p = SleefDFT_float_init1d(1024, fin, fout, mode);
-
-  vector<char> pathf1024_2(1024);
-  SleefDFT_getPath(p, pathf1024_2.data(), pathf1024_2.size());
-
-  cout << "Path2 (F1024) : " << pathf1024_2.data() << endl;
-
-  SleefDFT_dispose(p);
-
-  if (pathf1024.size() != pathf1024_2.size() || memcmp(pathf1024.data(), pathf1024_2.data(), pathf1024.size()) != 0) {
-    cerr << "Paths do not match" << endl;
-    cerr << pathf1024.data() << endl;
-    cerr << pathf1024_2.data() << endl;
-    exit(-1);
-  }
-
-  //
-
-  p = SleefDFT_float_init1d(512, fin, fout, mode);
-
-  vector<char> pathf512_2(1024);
-  SleefDFT_getPath(p, pathf512_2.data(), pathf512_2.size());
-
-  cout << "Path2 (F512) : " << pathf512_2.data() << endl;
-
-  SleefDFT_dispose(p);
-
-  if (pathf512.size() != pathf512_2.size() || memcmp(pathf512.data(), pathf512_2.data(), pathf512.size()) != 0) {
-    cerr << "Paths do not match" << endl;
-    cerr << pathf512.data() << endl;
-    cerr << pathf512_2.data() << endl;
-    exit(-1);
-  }
-
-  //
-
-
-  p = SleefDFT_double_init2d(2048, 64, din, dout, mode);
-
-  vector<char> pathd128x128_2(1024);
-  SleefDFT_getPath(p, pathd128x128_2.data(), pathd128x128_2.size());
-
-  cout << "Path2 (D128x128) : " << pathd128x128_2.data() << endl;
-
-  SleefDFT_dispose(p);
-
-  if (pathd128x128.size() != pathd128x128_2.size() || memcmp(pathd128x128.data(), pathd128x128_2.data(), pathd128x128.size()) != 0) {
-    cerr << "Paths do not match" << endl;
-    cerr << pathd128x128.data() << endl;
-    cerr << pathd128x128_2.data() << endl;
-    exit(-1);
-  }
-
-  //
-
-  p = SleefDFT_double_init2d(64, 64, din, dout, mode);
-
-  vector<char> pathd64x64_2(1024);
-  SleefDFT_getPath(p, pathd64x64_2.data(), pathd64x64_2.size());
-
-  cout << "Path2 (D64x64) : " << pathd64x64_2.data() << endl;
-
-  SleefDFT_dispose(p);
-
-  if (pathd64x64.size() != pathd64x64_2.size() || memcmp(pathd64x64.data(), pathd64x64_2.data(), pathd64x64.size()) != 0) {
-    cerr << "Paths do not match" << endl;
-    cerr << pathd64x64.data() << endl;
-    cerr << pathd64x64_2.data() << endl;
-    exit(-1);
-  }
-
-  //
-
-  p = SleefDFT_float_init2d(2048, 64, fin, fout, mode);
-
-  vector<char> pathf128x128_2(1024);
-  SleefDFT_getPath(p, pathf128x128_2.data(), pathf128x128_2.size());
-
-  cout << "Path2 (F128x128) : " << pathf128x128_2.data() << endl;
-
-  SleefDFT_dispose(p);
-
-  if (pathf128x128.size() != pathf128x128_2.size() || memcmp(pathf128x128.data(), pathf128x128_2.data(), pathf128x128.size()) != 0) {
-    cerr << "Paths do not match" << endl;
-    cerr << pathf128x128.data() << endl;
-    cerr << pathf128x128_2.data() << endl;
-    exit(-1);
-  }
-
-  //
-
-  p = SleefDFT_float_init2d(64, 64, fin, fout, mode);
-
-  vector<char> pathf64x64_2(1024);
-  SleefDFT_getPath(p, pathf64x64_2.data(), pathf64x64_2.size());
-
-  cout << "Path2 (F64x64) : " << pathf64x64_2.data() << endl;
-
-  SleefDFT_dispose(p);
-
-  if (pathf64x64.size() != pathf64x64_2.size() || memcmp(pathf64x64.data(), pathf64x64_2.data(), pathf64x64.size()) != 0) {
-    cerr << "Paths do not match" << endl;
-    cerr << pathf64x64.data() << endl;
-    cerr << pathf64x64_2.data() << endl;
-    exit(-1);
-  }
-
-  //
-
-  Sleef_free(din);
-  Sleef_free(dout);
-  Sleef_free(fin);
-  Sleef_free(fout);
+  compare(run0, run4);
+#endif
 
   cerr << "OK" << endl;
 

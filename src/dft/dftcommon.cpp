@@ -233,32 +233,6 @@ SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::~SleefDFT2DXX() {
   magic = 0;
 }
 
-template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
-string SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::planKeyString(string suffix) {
-  string s;
-  s += baseTypeID == 1 ? "D" : "S";
-  s += (mode & SLEEF_MODE_REAL) ? "r" : "c";
-  s += (mode & SLEEF_MODE_BACKWARD) ? "b" : "f";
-  s += (mode & SLEEF_MODE_ALT) ? "o" : "w";
-  s += (mode & SLEEF_MODE_NO_MT) ? "s" : "m";
-  s += to_string(log2len) + "," + "0";
-  if (suffix != "") s += ":" + suffix;
-  return s;
-}
-
-template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
-string SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::planKeyString(string suffix) {
-  string s;
-  s += baseTypeID == 1 ? "D" : "S";
-  s += (mode & SLEEF_MODE_REAL) ? "r" : "c";
-  s += (mode & SLEEF_MODE_BACKWARD) ? "b" : "f";
-  s += (mode & SLEEF_MODE_ALT) ? "o" : "w";
-  s += (mode & SLEEF_MODE_NO_MT) ? "s" : "m";
-  s += to_string(log2hlen) + "," + to_string(log2vlen);
-  if (suffix != "") s += ":" + suffix;
-  return s;
-}
-
 EXPORT void SleefDFT_dispose(SleefDFT *p) {
   assert(p != NULL);
   switch(p->magic) {
@@ -292,6 +266,32 @@ EXPORT void SleefDFT_dispose(SleefDFT *p) {
 
 // PlanManager
 
+template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
+string SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::planKeyString(string suffix) {
+  string s;
+  s += baseTypeID == 1 ? "D" : "S";
+  s += (mode & SLEEF_MODE_REAL) ? "r" : "c";
+  s += (mode & SLEEF_MODE_BACKWARD) ? "b" : "f";
+  s += (mode & SLEEF_MODE_ALT) ? "o" : "w";
+  s += (mode & SLEEF_MODE_NO_MT) ? "s" : "m";
+  s += to_string(log2len) + "," + "0";
+  if (suffix != "") s += ":" + suffix;
+  return s;
+}
+
+template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
+string SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::planKeyString(string suffix) {
+  string s;
+  s += baseTypeID == 1 ? "D" : "S";
+  s += (mode & SLEEF_MODE_REAL) ? "r" : "c";
+  s += (mode & SLEEF_MODE_BACKWARD) ? "b" : "f";
+  s += (mode & SLEEF_MODE_ALT) ? "o" : "w";
+  s += (mode & SLEEF_MODE_NO_MT) ? "s" : "m";
+  s += to_string(log2hlen) + "," + to_string(log2vlen);
+  if (suffix != "") s += ":" + suffix;
+  return s;
+}
+
 static string getPlanIdPrefix() {
   string s;
 
@@ -317,11 +317,7 @@ PlanManager::PlanManager() {
 }
 
 void PlanManager::setPlanFilePath(const char *path, const char *arch, uint64_t mode) {
-  if ((mode & SLEEF_PLAN_RESET) != 0) {
-    std::get<0>(thePlan)[planID].clear();
-    planFileLoaded_ = false;
-    planFilePathSet_ = false;
-  }
+  planMode_ = mode;
 
   dftPlanFilePath = "";
   if (path != NULL) dftPlanFilePath = path;
@@ -330,58 +326,104 @@ void PlanManager::setPlanFilePath(const char *path, const char *arch, uint64_t m
   if (arch != NULL) planID = arch;
   planID = getPlanIdPrefix() + planID;
 
-  planMode_ = mode;
-  planFilePathSet_ = true;
+  if ((mode & SLEEF_PLAN_RESET) != 0) get<0>(thePlan)[planID].clear();
 }
 
 void PlanManager::loadPlanFromFile() {
-  if (!planFilePathSet_ && (planMode_ & SLEEF_PLAN_REFERTOENVVAR) != 0) {
+  if ((planMode_ & SLEEF_PLAN_REFERTOENVVAR) != 0) {
     char *s = std::getenv(ENVVAR);
     if (s != NULL) SleefDFT_setPlanFilePath(s, NULL, planMode_);
   }
-  
-  if (dftPlanFilePath != "" && (planMode_ & SLEEF_PLAN_RESET) == 0) {
+
+  if (dftPlanFilePath != "") {
     FILE *fp = fopen(dftPlanFilePath.c_str(), "rb");
     if (fp) {
       if (!(planMode_ & SLEEF_PLAN_NOLOCK)) FLOCK(fp);
       FileDeserializer d(fp);
       tuple<unordered_map<string, unordered_map<string, string>>, string> plan;
-      d >> plan;
+      try {
+	d >> plan;
+      } catch(exception &ex) {}
       if (!(planMode_ & SLEEF_PLAN_NOLOCK)) FUNLOCK(fp);
       fclose(fp);
-      if (std::get<1>(plan) == PLANFILEID) thePlan = plan;
-      planFileLoaded_ = true;
+      if (get<1>(plan) == PLANFILEID) thePlan = plan;
     }
   }
 }
 
-void PlanManager::savePlanToFile() {
-  assert(planFileLoaded_);
-  if ((planMode_ & SLEEF_PLAN_READONLY) == 0 && dftPlanFilePath != "") {
-    FILE *fp = fopen(dftPlanFilePath.c_str(), "wb");
+bool PlanManager::savePlanToFile(const string &fn) {
+  if (fn != "") {
+    FILE *fp = fopen(fn.c_str(), "wb");
     if (fp) {
       FLOCK(fp);
       FileSerializer s(fp);
-      std::get<1>(thePlan) = PLANFILEID;
+      get<1>(thePlan) = PLANFILEID;
       s << thePlan;
       FUNLOCK(fp);
       fclose(fp);
+      return true;
     }
   }
+  return false;
+}
+
+bool PlanManager::savePlanToFile() {
+  if ((planMode_ & SLEEF_PLAN_READONLY) != 0) return false;
+  return savePlanToFile(dftPlanFilePath);
+}
+
+bool PlanManager::loadAndPutToFile(const string& key, const string& value) {
+  if ((planMode_ & SLEEF_PLAN_REFERTOENVVAR) != 0) {
+    char *s = std::getenv(ENVVAR);
+    if (s != NULL) SleefDFT_setPlanFilePath(s, NULL, planMode_);
+  }
+
+  if (dftPlanFilePath != "") {
+    FILE *fp = fopen(dftPlanFilePath.c_str(), "r+b");
+    if (!fp) fp = fopen(dftPlanFilePath.c_str(), "w+b");
+    if (fp) {
+      if (!(planMode_ & SLEEF_PLAN_NOLOCK)) FLOCK(fp);
+      fseek(fp, 0, SEEK_END);
+      if (ftell(fp) != 0) {
+	fseek(fp, 0, SEEK_SET);
+	FileDeserializer d(fp);
+	tuple<unordered_map<string, unordered_map<string, string>>, string> plan;
+ 	try {
+	  d >> plan;
+	} catch(exception &ex) {}
+	if (get<1>(plan) == PLANFILEID) thePlan = plan;
+      }
+
+      get<0>(thePlan)[planID][key] = value;
+      get<1>(thePlan) = PLANFILEID;
+      fseek(fp, 0, SEEK_SET);
+      FileSerializer s(fp);
+      s << thePlan;
+      if (!(planMode_ & SLEEF_PLAN_NOLOCK)) FUNLOCK(fp);
+      fclose(fp);
+      return true;
+    }
+  }
+
+  return false;
 }
 
 EXPORT void SleefDFT_setPlanFilePath(const char *path, const char *arch, uint64_t mode) {
   planManager.setPlanFilePath(path, arch, mode);
 }
 
-string PlanManager::get(const string& key) {
-  if (std::get<0>(thePlan)[planID].count(key) == 0) return "";
+EXPORT int SleefDFT_savePlan(const char *pathStr) {
+  return (int)planManager.savePlanToFile(pathStr);
+}
 
-  return std::get<0>(thePlan)[planID].at(key);
+string PlanManager::get(const string& key) {
+  if (get<0>(thePlan)[planID].count(key) == 0) return "";
+
+  return get<0>(thePlan)[planID].at(key);
 }
 
 void PlanManager::put(const string& key, const string& value) {
-  std::get<0>(thePlan)[planID][key] = value;
+  get<0>(thePlan)[planID][key] = value;
 }
 
 //
@@ -392,55 +434,53 @@ void SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::saveMeasurementResults() {
 
   unique_lock<recursive_mutex> lock(planManager.mtx);
 
-  if (!planManager.planFileLoaded()) planManager.loadPlanFromFile();
-
-  planManager.put(planKeyString(), to_string(bestPath));
-  
-  if ((planManager.planMode() & SLEEF_PLAN_READONLY) == 0) planManager.savePlanToFile();
-}
-
-template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
-bool SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::loadMeasurementResults() {
-  assert(magic == MAGIC_FLOAT || magic == MAGIC_DOUBLE);
-
-  std::unique_lock<recursive_mutex> lock(planManager.mtx);
-
-  if (!planManager.planFileLoaded()) planManager.loadPlanFromFile();
-
-  string path = planManager.get(planKeyString());
-  if (path == "") return false;
-
-  try {
-    bestPath = parsePathStr(path.c_str());
-  } catch(exception &ex) {
-    if ((mode & SLEEF_MODE_VERBOSE) != 0)
-      fprintf(verboseFP, "SleefDFTXX::loadMeasurementResults : %s\n", ex.what());
-    return false;
+  if ((planManager.planMode() & SLEEF_PLAN_AUTOMATIC) != 0) {
+    if (planManager.loadAndPutToFile(planKeyString(), getPath()) && (mode & SLEEF_MODE_VERBOSE) != 0) {
+      fprintf(verboseFP, "Saving plan to file\n");
+    }
+  } else {
+    planManager.put(planKeyString(), getPath());
   }
-
-  return true;
 }
 
 template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
 void SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::saveMeasurementResults() {
   assert(magic == MAGIC2D_FLOAT || magic == MAGIC2D_DOUBLE);
 
-  std::unique_lock<recursive_mutex> lock(planManager.mtx);
+  unique_lock<recursive_mutex> lock(planManager.mtx);
 
-  if (!planManager.planFileLoaded()) planManager.loadPlanFromFile();
+  if ((planManager.planMode() & SLEEF_PLAN_AUTOMATIC) != 0) {
+    if (planManager.loadAndPutToFile(planKeyString(), getPath()) && (mode & SLEEF_MODE_VERBOSE) != 0) {
+      fprintf(verboseFP, "Saving plan to file\n");
+    }
+  } else {
+    planManager.put(planKeyString(), getPath());
+  }
+}
 
-  planManager.put(planKeyString(), getPath());
+template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
+bool SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::loadMeasurementResults() {
+  assert(magic == MAGIC_FLOAT || magic == MAGIC_DOUBLE);
 
-  if ((planManager.planMode() & SLEEF_PLAN_READONLY) == 0) planManager.savePlanToFile();
+  unique_lock<recursive_mutex> lock(planManager.mtx);
+
+  planManager.loadPlanFromFile();
+
+  string path = planManager.get(planKeyString());
+  if (path == "") return false;
+
+  setPath(path.c_str());
+
+  return true;
 }
 
 template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
 bool SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::loadMeasurementResults() {
   assert(magic == MAGIC2D_FLOAT || magic == MAGIC2D_DOUBLE);
 
-  std::unique_lock<recursive_mutex> lock(planManager.mtx);
+  unique_lock<recursive_mutex> lock(planManager.mtx);
 
-  if (!planManager.planFileLoaded()) planManager.loadPlanFromFile();
+  planManager.loadPlanFromFile();
 
   string path = planManager.get(planKeyString());
   if (path == "") return false;

@@ -210,7 +210,6 @@ struct SleefDFT {
 
 class PlanManager {
   string dftPlanFilePath;
-  bool planFilePathSet_ = 0, planFileLoaded_ = 0;
   uint64_t planMode_ = SLEEF_PLAN_REFERTOENVVAR;
 
   string planID;
@@ -222,12 +221,13 @@ public:
   recursive_mutex mtx;
 
   uint64_t planMode() { return planMode_; }
-  int planFilePathSet() { return planFilePathSet_; }
-  int planFileLoaded() { return planFileLoaded_; }
 
   void setPlanFilePath(const char *path, const char *arch, uint64_t mode);
   void loadPlanFromFile();
-  void savePlanToFile();
+  bool savePlanToFile(const string &fn);
+  bool savePlanToFile();
+
+  bool loadAndPutToFile(const string& key, const string& value);
 
   string get(const string& key);
   void put(const string& key, const string& value);

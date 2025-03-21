@@ -59,13 +59,12 @@ IMPORT void SleefDFT_setDefaultVerboseFP(FILE *fp);
 //
 
 IMPORT void SleefDFT_setPlanFilePath(const char *path, const char *arch, uint64_t mode);
+IMPORT int SleefDFT_savePlan(const char *pathStr);
 
-#define SLEEF_PLAN_AUTOMATIC 0
 #define SLEEF_PLAN_READONLY (1 << 0)
 #define SLEEF_PLAN_RESET (1 << 1)
-#define SLEEF_PLAN_BUILDALLPLAN (1 << 2)
+#define SLEEF_PLAN_AUTOMATIC (1 << 2)
 #define SLEEF_PLAN_NOLOCK (1 << 3)
-#define SLEEF_PLAN_MEASURE (1 << 29)
 #define SLEEF_PLAN_REFERTOENVVAR (1 << 30)
 
 #undef IMPORT
