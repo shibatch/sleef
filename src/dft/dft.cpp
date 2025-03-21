@@ -908,17 +908,7 @@ bool SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::measure(bool randomize) {
 
     return true;
   }
-
-  if ((mode & SLEEF_MODE_INTERNAL_2D) == 0 && loadMeasurementResults()) {
-    if ((mode & SLEEF_MODE_VERBOSE) != 0) {
-      showPath(verboseFP, "Loaded : ", bestPath);
-    }
-    
-    return true;
-  }
   
-  bool toBeSaved = false;
-
   for(int config=0;config<CONFIGMAX;config++) {
     for(uint32_t level = log2len;level >= 1;level--) {
       for(uint32_t N=1;N<=MAXBUTWIDTH;N++) {
@@ -953,10 +943,6 @@ bool SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::measure(bool randomize) {
 
   //
 
-  if (((mode & SLEEF_MODE_MEASURE) != 0 || (planManager.planFilePathSet() && (mode & SLEEF_MODE_MEASUREBITS) == 0)) && !randomize) {
-    toBeSaved = true;
-  }
-
   {
     bool executable_ = false;
     for(int i=1;i<=MAXBUTWIDTH && !executable_;i++) {
@@ -971,10 +957,12 @@ bool SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::measure(bool randomize) {
     if ((mode & SLEEF_MODE_VERBOSE) != 0) {
       if ((mode & SLEEF_MODE_MEASURE) != 0) {
 	showPath(verboseFP, "Measure : ", bestPath);
-      } else {
+      } else if ((mode & SLEEF_MODE_INTERNAL_2D) == 0) {
 	showPath(verboseFP, "Estimate : ", bestPath);
       }
     }
+
+    if ((mode & SLEEF_MODE_MEASURE) != 0) saveMeasurementResults();
   } else {
     searchForRandomPath();
     if ((mode & SLEEF_MODE_VERBOSE) != 0) {
@@ -982,8 +970,6 @@ bool SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::measure(bool randomize) {
     }
   }
 
-  if (toBeSaved) saveMeasurementResults();
-  
   return true;
 }
 
@@ -1120,7 +1106,11 @@ SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::SleefDFTXX(uint32_t n, const rea
     tbl[i] = makeTable<real, real2, MAXSHIFT, MAXBUTWIDTH>(sign, vecwidth, log2len, i, constK[i], SINCOSPI_);
   }
 
-  if (!measure(mode & SLEEF_MODE_DEBUG)) {
+  if (loadMeasurementResults()) {
+    if ((mode & SLEEF_MODE_VERBOSE) != 0) {
+      showPath(verboseFP, "Loaded : ", bestPath);
+    }
+  } else if (!measure(mode & SLEEF_MODE_DEBUG)) {
     // Fall back to the first ISA
     freeTables();
     isa = 0;
@@ -1240,7 +1230,7 @@ SleefDFT2DXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::SleefDFT2DXX(uint32_t vlen_, u
 	if (instH != instV) instV->bestPath = noMT_V.first;
       }
 
-      if (planManager.planFilePathSet()) saveMeasurementResults();
+      saveMeasurementResults();
     } else {
       planMT = log2hlen + log2vlen >= 14;
       // When the paths are to be estimated, the paths set in the constructors are used
