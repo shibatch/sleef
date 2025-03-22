@@ -55,6 +55,9 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "s390x")
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "riscv64")
   set(TEST3_CINZ purec_scalar rvvm1nofma rvvm2nofma)
   set(TEST3_FINZ purecfma_scalar rvvm1 rvvm2)
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "loongarch64")
+  set(TEST3_CINZ purec_scalar)
+  set(TEST3_FINZ purecfma_scalar)
 endif()
 
 #
