@@ -440,7 +440,7 @@ endif()
 
 if(NOT SLEEF_DISABLE_FLOAT128)
   CHECK_C_SOURCE_COMPILES("
-  int main() { __float128 r = 1;
+  int main() { _Float128 r = 1;
   }" COMPILER_SUPPORTS_FLOAT128)
 else()
   message(STATUS "Support for float128 disabled by CMake option")
@@ -453,7 +453,7 @@ endif()
 if(COMPILER_SUPPORTS_FLOAT128)
   CHECK_C_SOURCE_COMPILES("
   #include <quadmath.h>
-  int main() { __float128 r = 1;
+  int main() { _Float128 r = 1;
   }" COMPILER_SUPPORTS_QUADMATH)
 endif()
 
@@ -463,11 +463,12 @@ if(COMPILER_SUPPORTS_FLOAT128)
   endif()
   CHECK_CXX_SOURCE_COMPILES("
 #include <bit>
+#include <stdfloat>
 struct s { long long x, y; };
 int main(int argc, char **argv) {
-  constexpr s a = std::bit_cast<s>(__float128(0.1234)*__float128(56.789));
+  constexpr s a = std::bit_cast<s>(std::float128_t(0.1234)*std::float128_t(56.789));
   static_assert((a.x ^ a.y) == 0xc7d695c93a4e2b71LL);
-  __float128 i = argc;
+  std::float128_t i = argc;
   return (int)i;
 }
 " SLEEF_FLOAT128_IS_IEEEQP)

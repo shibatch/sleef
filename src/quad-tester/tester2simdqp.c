@@ -1033,7 +1033,7 @@ int main(int argc,char **argv)
 #if defined(ENABLEFLOAT128)
     switch(cnt & 31) {
     case 0: {
-      memrand(&q0, sizeof(__float128));
+      memrand(&q0, sizeof(_Float128));
       q0 = q0 * M_PI_2Q;
     }
       break;

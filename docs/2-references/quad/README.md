@@ -40,11 +40,11 @@ are provided to load to or store from variables in vector QP data types.
 ### `Sleef_quad`
 
 `Sleef_quad` is a data type for retaining a single QP FP number. If the
-compiler natively supports IEEE 754 quad precision FP type, then `Sleef_quad`
-is an alias of that data type.
+compiler natively supports IEEE 754 quad precision FP type through ISO 60559 standard's
+extensions, then `Sleef_quad` is an alias of that data type.
 
 ```c
-typedef __float128 Sleef_quad;
+typedef _Float128 Sleef_quad;
 typedef long double Sleef_quad;    // On AArch64 and System/390 systems
 ```
 
@@ -1229,7 +1229,7 @@ Below is [a source code](../../src/machinx86.c) for computing &pi; with
 [Machin's formula](https://en.wikipedia.org/wiki/Machin-like_formula) on x86
 GNU systems. This formula has two terms with arc tangent which can be
 independently calculated. In this example, these two terms are computed using
-vector functions. `__float128` data type is defined on x86,
+vector functions. `_Float128` data type is defined on x86,
 and you can use literals in this type to initialize the variables. Variables
 `q0`, q1`, q2` and `q3` retain two QP FP values each. At line 5, 8 and 11, QP
 values in arrays are loaded into these variables with
@@ -1245,13 +1245,13 @@ can be built with clang, on which libquadmath is not available.
 #include <sleefquad.h>
 
 int main(int argc, char **argv) {
-__float128 a0[] = { 5, 239 };
+_Float128 a0[] = { 5, 239 };
 Sleef_quadx2 q0 = Sleef_loadq2_sse2(a0);
 
-__float128 a1[] = { 1, 1 };
+_Float128 a1[] = { 1, 1 };
 Sleef_quadx2 q1 = Sleef_loadq2_sse2(a1);
 
-__float128 a2[] = { 16, 4 };
+_Float128 a2[] = { 16, 4 };
 Sleef_quadx2 q2 = Sleef_loadq2_sse2(a2);
 
 Sleef_quadx2 q3;
@@ -1259,7 +1259,7 @@ q3 = Sleef_divq2_u05sse2(q1, q0);
 q3 = Sleef_atanq2_u10sse2(q3);
 q3 = Sleef_mulq2_u05sse2(q3, q2);
 
-__float128 pi = Sleef_getq2_sse2(q3, 0) - Sleef_getq2_sse2(q3, 1);
+_Float128 pi = Sleef_getq2_sse2(q3, 0) - Sleef_getq2_sse2(q3, 1);
 
 Sleef_printf("%.40Pg\n", &pi);
 }
@@ -1268,7 +1268,7 @@ Sleef_printf("%.40Pg\n", &pi);
 Fig. 4.1: <a href="../../src/machinx86.c">Example source code for x86 computers</a>
 </p>
 
-`__float128` data type is not defined on MSVC, and thus we cannot use literals
+`_Float128` data type is not defined on MSVC, and thus we cannot use literals
 of this type to initialize QP variables. Sleef provides various conversion
 functions for this purpose. In [the following source
 code](../../src/machinx86.c),

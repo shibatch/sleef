@@ -236,20 +236,20 @@ char *sprintfr(mpfr_t fr) {
 
 #if MPFR_VERSION_MAJOR >= 4 && defined(SLEEF_FLOAT128_IS_IEEEQP) && !defined(__PPC64__) && !defined(__i386__) && !(defined(__APPLE__) && defined(__MACH__))
 void mpfr_set_f128(mpfr_t frx, Sleef_quad q, mpfr_rnd_t rnd) {
-  int mpfr_set_float128(mpfr_t rop, __float128 op, mpfr_rnd_t rnd);
+  int mpfr_set_float128(mpfr_t rop, _Float128 op, mpfr_rnd_t rnd);
   union {
     Sleef_quad q;
-    __float128 f;
+    _Float128 f;
   } c;
   c.q = q;
   mpfr_set_float128(frx, c.f, rnd);
 }
 
 Sleef_quad mpfr_get_f128(mpfr_t m, mpfr_rnd_t rnd) {
-  __float128 mpfr_get_float128(mpfr_t op, mpfr_rnd_t rnd);
+  _Float128 mpfr_get_float128(mpfr_t op, mpfr_rnd_t rnd);
   union {
     Sleef_quad q;
-    __float128 f;
+    _Float128 f;
   } c;
   c.f = mpfr_get_float128(m, rnd);
   return c.q;

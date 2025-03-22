@@ -22,7 +22,8 @@ devices cannot directly compute with the QP FP data type. Thus, you have to use
 `Sleef_quadx1` data type to retain a QP FP value in CUDA device codes. This
 data type has the same structure as the QP FP data type, and you can directly
 access the number by casting the pointer to the QP FP data type supported by
-the compiler. Beware of the strict-aliasing rule in this case.
+the compiler. The supported types include ISO 60559 standard's `_Float128` in C 
+and `std::float128_t` in C++. Beware of the strict-aliasing rule in this case.
 
 ```c
 
@@ -48,11 +49,11 @@ int main(void) {
   cudaMallocManaged(&xd, N*sizeof(Sleef_quadx1));
   cudaMallocManaged(&yd, N*sizeof(Sleef_quadx1));
 
-  __float128 *r = (__float128 *)rd, *x = (__float128 *)xd, *y = (__float128 *)yd;
+  _Float128 *r = (_Float128 *)rd, *x = (_Float128 *)xd, *y = (_Float128 *)yd;
 
   for (int i = 0; i < N; i++) {
     r[i] = 0.0;
-    x[i] = 1.00001Q;
+    x[i] = 1.00001f128;
     y[i] = i;
   }
   pow_gpu<<<1, 256>>> (N, rd, xd, yd);

@@ -167,7 +167,7 @@ int main(int argc, char **argv)
     mpfr_t a, b;
     mpfr_inits(a, b, NULL);
 
-    __float128 x = M_PI;
+    _Float128 x = M_PI;
     mpfr_set_f128(a, x, GMP_RNDN);
     x = nextafterq(x, 100);
     x = nextafterq(x, 100);

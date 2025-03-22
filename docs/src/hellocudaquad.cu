@@ -20,11 +20,11 @@ int main(void) {
   cudaMallocManaged(&xd, N*sizeof(Sleef_quadx1));
   cudaMallocManaged(&yd, N*sizeof(Sleef_quadx1));
 
-  __float128 *r = (__float128 *)rd, *x = (__float128 *)xd, *y = (__float128 *)yd;
+  _Float128 *r = (_Float128 *)rd, *x = (_Float128 *)xd, *y = (_Float128 *)yd;
 
   for (int i = 0; i < N; i++) {
     r[i] = 0.0;
-    x[i] = 1.00001Q;
+    x[i] = 1.00001f128;
     y[i] = i;
   }
 

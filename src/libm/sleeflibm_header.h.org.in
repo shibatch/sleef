@@ -179,7 +179,7 @@ typedef struct { uint64_t x, y; } Sleef_uint64_2t;
 #undef SLEEF_FLOAT128_IS_IEEEQP
 #endif
 #if defined(SLEEF_FLOAT128_IS_IEEEQP) || defined(ENABLEFLOAT128)
-typedef __float128 Sleef_quad;
+typedef _Float128 Sleef_quad;
 #define SLEEF_QUAD_C(x) (x ## Q)
 #elif defined(SLEEF_LONGDOUBLE_IS_IEEEQP)
 typedef long double Sleef_quad;
