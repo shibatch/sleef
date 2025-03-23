@@ -1,0 +1,87 @@
+p.funcname { 
+    font-family: "Times New Roman", times, serif; 
+    font-size:1.2em; 
+    font-weight: normal; 
+
+    margin-top: 0.3cm; 
+    margin-bottom: 0.3cm; 
+
+    margin-left: 0.0cm;
+    text-indent:0pt;
+}
+
+p.header { 
+    font-family: arial, sansserif;  
+    font-size:1.1em; 
+    font-weight: bold; 
+    margin-top: 1.0cm; 
+    margin-bottom: 0.3cm; 
+
+    margin-left: 0.0cm;
+    text-indent:0pt;
+}
+
+p.synopsis { 
+    font-family: Ubuntu, arial, sansserif;  
+    font-size:1.0em; 
+    font-weight: normal; 
+    margin-top: 0.3cm; 
+    margin-bottom: 0.3cm; 
+    margin-left: 0.6cm; 
+    margin-right: 0.2cm; 
+    padding-left: 0.1cm; 
+    padding-right: 0.1cm; 
+    text-indent:0pt;
+}
+
+p.footer { 
+    color:#808080;
+    font-family: "Times New Roman", times, serif; 
+    font-weight: normal;
+    font-style: normal;
+    font-size:0.7em;
+
+    text-align:center;
+    margin-top: 1.6cm; 
+}
+
+pre.command {
+    font-family: Consolas, Courier, sansserif;  
+    font-size: 12pt;
+    background-color:#000000;
+    color:#d0d0d0;
+    margin: 1.5em 0.5cm 2.5em 0.5cm; 
+    padding: 0.1cm 0.2cm 0.1cm 0.2cm; 
+    box-shadow: 2px 2px 2px #888;
+    white-space: pre-wrap;
+}
+
+pre.white {
+    background-color:white;
+    color:black;
+    font-family: Ubuntu, arial, sansserif;
+}
+
+i.var {
+    font-family: "Times New Roman", times, serif; 
+    font-weight: bold;
+    color:#a00000;
+}
+
+i.math {
+    font-family: "Times New Roman", times, serif; 
+    font-weight: normal; 
+    font-style:normal; 
+}
+
+b.func {
+    font-family: Ubuntu, arial, sansserif; 
+    font-weight: normal; 
+    color:#008040; 
+}
+
+b.type {
+    font-family: Ubuntu, arial, sansserif; 
+    font-weight: normal; 
+    color:#0050a0;
+}
