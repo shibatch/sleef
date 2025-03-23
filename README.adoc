@@ -90,14 +90,13 @@ cmake --build build -j --clean-first
 ctest --test-dir build -j
 ....
 
-For more detailed build instructions please refer to the
-link:./docs/1-user-guide/build-with-cmake[dedicated section on CMake] or
-to https://sleef.org/1-user-guide/#preliminaries[our web page].
+For more detailed build instructions please refer to
+https://sleef.org/compile.xhtml#preliminaries[our web page].
 
 == How to cross-compile SLEEF
 
 For more detailed please refer to
-link:./docs/1-user-guide#cross_linux[cross-compile SLEEF]
+https://sleef.org/compile.xhtml#cross[cross-compile SLEEF]
 
 == Install SLEEF
 
