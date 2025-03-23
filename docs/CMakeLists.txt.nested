@@ -1,0 +1,27 @@
+cmake_minimum_required(VERSION 3.4.3)
+
+project(MyProject)
+
+set(sleef_SOURCE_DIR ${CMAKE_SOURCE_DIR}/sleef)
+set(sleef_BINARY_DIR ${CMAKE_BINARY_DIR}/sleef)
+
+add_subdirectory("sleef")
+
+include_directories(${sleef_BINARY_DIR}/include)
+include_directories(${sleef_SOURCE_DIR}/include)
+link_directories(${sleef_BINARY_DIR}/lib)
+
+add_executable(hellox86 hellox86.c)
+set_target_properties(hellox86 PROPERTIES C_STANDARD 99)
+add_dependencies(hellox86 sleef)
+target_link_libraries(hellox86 sleef)
+
+#
+
+if (SLEEF_BUILD_DFT)
+  add_executable(dfttutorial tutorial.c)
+  set_target_properties(dfttutorial PROPERTIES C_STANDARD 99)
+  add_dependencies(dfttutorial sleef)
+  find_library(LIBM m)
+  target_link_libraries(dfttutorial sleef sleefdft sleefscalar ${LIBM} -fopenmp)
+endif()
