@@ -66,7 +66,7 @@ introductions in the wiki</a>.
 
 <p class="noindent">
 You will find quick start instructions in the sources or via GitHub in the
-<a class="underlined" href="https://github.com/shibatch/sleef/blob/master/README.md">README.md</a>
+<a class="underlined" href="https://github.com/shibatch/sleef/blob/master/README.adoc">README.adoc</a>
 file.
 </p>
 
@@ -80,9 +80,9 @@ file.
   Please change the directory to sleef-3.X and run the following commands.
 
 <pre class="command">$ sudo apt-get install libmpfr-dev libssl-dev libfftw3-dev
-$ cmake -S . -B build/ ..
-$ cmake --build build/ --clean-first -j
-$ ctest --test-dir build/ -j
+$ cmake -S . -B build/
+$ cmake --build build/ --clean-first -j `nproc`
+$ ctest --test-dir build/ -j `nproc`
 $ sudo cmake --install build/ --prefix /path/to/install/dir
 </pre>
 </p>
@@ -95,7 +95,7 @@ $ sudo cmake --install build/ --prefix /path/to/install/dir
 
 <h3 id="lto">Building the library with LTO support</h3>
 
-<p>
+<p class="noindent">
   You can build the library with <a class="underlined"
   href="additional.xhtml#lto">link time opimization(LTO)</a> support
   with the following commands. Note that you can only build static
@@ -111,12 +111,12 @@ $ sudo cmake --install build/ --prefix /path/to/install/dir
   clang compiler.
 </p>
 
-<pre class="command">$ CC=clang-19 CXX=clang++-19 cmake -DBUILD_SHARED_LIBS=FALSE -DSLEEF_ENABLE_LTO=TRUE -DSLEEF_LLVM_AR_COMMAND=llvm-ar-19 ..</pre>
+<pre class="command">$ CC=clang-19 CXX=clang++-19 cmake -DBUILD_SHARED_LIBS=FALSE -DSLEEF_ENABLE_LTO=TRUE -DSLEEF_LLVM_AR_COMMAND=llvm-ar-19 -DCMAKE_EXE_LINKER_FLAGS=-fuse-ld=lld-19 ..</pre>
 
 
 <h3 id="inline">Building the header files for inlining the whole SLEEF functions</h3>
 
-<p>
+<p class="noindent">
   <a class="underlined" href="additional.xhtml#inline">Header files
   for inlining the whole SLEEF functions</a> can be built with the
   following commands. With these header files, it may be easier to
@@ -130,11 +130,10 @@ $ sudo cmake --install build/ --prefix /path/to/install/dir
 <h2 id="MSVC">Compiling the library with Microsoft Visual C++</h2>
 
 <p class="noindent">
-  You need Visual Studio 2022. Open developer command prompt for
-  VS2022 and change directory to sleef-3.X. You can use the
-  accompanying batch file named winbuild-msvc.bat to build the
-  library. You can specify cmake options as the options for this batch
-  file.
+  Open developer command prompt for VS2022 and change directory to
+  sleef-3.X. You can use the accompanying batch file named
+  winbuild-msvc.bat to build the library. The arguments of this batch
+  file are passed to cmake.
 </p>
 
 <p>
@@ -149,12 +148,20 @@ $ sudo cmake --install build/ --prefix /path/to/install/dir
 <h3 id="cow">Compiling the library with Clang on Windows</h3>
 
 <p class="noindent">
-  You need Visual Studio 2022. Install ninja and clang via VS2022
-  installer.  Below is an example of commands for building SLEEF with
-  Clang on Windows.
+  Install ninja and clang via VS2022 installer.  Below is an example
+  of commands for building SLEEF with Clang on Windows.
 </p>
 
 <pre class="command">D:\sleef-3.X> winbuild-clang -DCMAKE_BUILD_TYPE=Release -DSLEEF_BUILD_DFT=True -DSLEEF_BUILD_QUAD=True
+</pre>
+
+<p>
+  You can choose your own installation of LLVM executable by setting
+  CLANGINSTALLDIR environment variable.
+</p>
+
+<pre class="command">D:\sleef-3.X> set CLANGINSTALLDIR=C:\Program Files\LLVM
+D:\sleef-3.X> winbuild-clang -DCMAKE_BUILD_TYPE=Release -DSLEEF_BUILD_DFT=True -DSLEEF_BUILD_QUAD=True
 </pre>
 
 

@@ -127,51 +127,51 @@
 <div style="margin-top: 1.0cm;"></div>
 
 <p>
-  As shown in the first line, you can compile the source code with the
-  following command, after you install the library. Note that you need
-  to link with libstdc++.
+  You can compile the source code with the following command. Note
+  that you need to link with libstdc++.
 </p>
 
 <pre class="command">$ gcc tutorial.c -lsleef -lsleefdft -lm -lstdc++
 </pre>
 
 <p>
-  This program takes one integer argument <i class="var">n</i>. It executes
-  forward complex transform with size 2<sup><i class="var">n</i></sup> using a
-  naive transform and the library. If the two results match, it prints
-  OK.
+  This program takes one integer argument <i class="var">n</i>, and
+  executes forward complex transform with size
+  2<sup><i class="var">n</i></sup>. It then compares the results of a
+  naive transform and the transform performed by the library. If the
+  two results match, it prints OK.
 </p>
 
 <p>
   For the first execution, this program takes a few seconds to
-  finish. This is because the library measures computation speed with
-  many different configurations to find the best execution plan. The
-  best plan is saved to "tut.plan", as specified in line 30. Later
-  executions will finish instantly as the library reads the plan from
-  this file. Instead of specifying the file name in the program, the
-  file can be specified by SLEEFDFTPLAN environment variable. Instead
-  of constructing or loading a plan, the library can estimate a
-  modestly good configuration, if SLEEF_MODE_ESTIMATE flag is
-  specified at line 30.
+  finish. This is because the library constructs an execution plan by
+  measuring computation time with many different configurations. The
+  best plan is saved to "tut.plan", which is specified at line
+  30. Later executions will finish instantly as the library reads the
+  plan from this file. Instead of specifying the file name in the
+  program, the file can be specified by SLEEFDFTPLAN environment
+  variable. Instead of constructing a plan, the library can estimate a
+  modestly good configuration, if you specify SLEEF_MODE_ESTIMATE flag
+  at line 30.
 </p>
 
 <p>
   This library executes transforms using the most suitable SIMD
-  instructions available on the computer, in addition to
-  multi-threading. In order to make the computation efficient, the
-  library requires the input and output arrays to be aligned to some
-  boundaries so that the data can be accessed with SIMD
-  instructions. By using <b class="func">Sleef_malloc</b>, as seen in
-  line 32 and 33, this alignment is ensured. Memory allocated
-  with <b class="func">Sleef_malloc</b> has to be freed
-  with <b class="func">Sleef_free</b>, as seen in line 70.  When a
-  transform is executed, you need to pass the pointer returned
-  by <b class="func">Sleef_malloc</b>. You can allocate an aligned
-  memory region yourself, and pass the pointer to the library.
+  instructions available on the computer and utilizing
+  multi-threading. The library requires the input and output arrays to
+  be aligned to certain boundaries so that the data in the arrays can
+  be accessed efficiently by SIMD instructions. You can allocate arrays with
+  <b class="func">Sleef_malloc</b> to make them aligned to the
+  boundaries, as seen in line 32 and 33. Arrays allocated
+  with <b class="func">Sleef_malloc</b> have to be freed
+  with <b class="func">Sleef_free</b>, as seen in line 70. Instead of
+  allocating arrays with <b class="func">Sleef_malloc</b>, you can
+  allocate an aligned memory region yourself, and pass the pointer to
+  the library.
 </p>
 
 <p>
-  The real and imaginary parts of the <i>k</i>th number
+  The real and imaginary parts of the <i>k</i>-th number
   are stored in (2<i>k</i>)-th and
   (2<i>k</i>+1)-th elements of the input and output array,
   respectively. At line 56, the transform is executed by the
@@ -181,10 +181,10 @@
 <p>
   Under src/dft-tester directory, there are other examples showing how
   to execute transforms in a way that you get equivalent results to
-  other libraries.
+  other libraries. The API of this library is designed to be easy to
+  migrate from FFTW, and you do not need to change the contents of the
+  input or output arrays upon migration.
 </p>
-
-<!--<h2 id="compatibility">Compatibility with other libraries</h2>-->
 
 
 <h2 id="reference">Function reference</h2>
@@ -205,9 +205,10 @@ Link with -lsleef.
 <p class="header">Description</p>
 
 <p class="noindent">
-  <b class="func">Sleef_malloc</b> allocates <i class="var">z</i> bytes of aligned
-  memory region, and return the pointer to that region. The returned
-  pointer points an address that can be accessed by all SIMD load and
+  <b class="func">Sleef_malloc</b> allocates <i class="var">z</i>
+  bytes of aligned memory region, and return the pointer to the
+  allocated region. The returned pointer points the address of a
+  memory region that can be effciently accessed by all SIMD load and
   store instructions available on that computer. Memory regions
   allocated by <b class="func">Sleef_malloc</b> have to be freed
   with <b class="func">Sleef_free</b>.
@@ -255,12 +256,13 @@ Link with -lsleefdft -lsleef.
 
 <p class="noindent">
 File name for storing execution plan can be specified by this
-function. If NULL is specified as <i class="var">path</i>, the file name is read
-from SLEEFDFTPLAN environment variable. A string for identifying
-system micro architecture can be also given. The library will
-automatically detect the marchitecture if NULL is given
-as <i class="var">arch</i>. Management options for the plan file can be specified
-by the <i class="var">mode</i> parameter, as shown below.
+function. If NULL is specified as <i class="var">path</i>, the file
+name is read from SLEEFDFTPLAN environment variable. A string for
+identifying system micro architecture can be also given. The library
+will try to automatically detect the micro architecture if NULL is
+given as <i class="var">arch</i>. Management options for the plan file
+can be specified by the <i class="var">mode</i> parameter, as shown
+below.
 </p>
 
 <div style="margin-top: 1.0cm;"></div>
@@ -318,10 +320,10 @@ Link with -lsleefdft -lsleef.
 <p class="header">Description</p>
 
 <p class="noindent">
-  By calling this function, you can save the generated plan to the
-  file specified by <i class="var">path</i>. You can use this function
-  to save the plan when SLEEF_PLAN_AUTOMATIC is not specified as the
-  mode with <b class="func">SleefDFT_setPlanFilePath</b>.
+  By calling this function, the generated plan is saved to the file
+  specified by <i class="var">path</i>. You can use this function to
+  manually save the plan when SLEEF_PLAN_AUTOMATIC is not specified as
+  the mode with <b class="func">SleefDFT_setPlanFilePath</b>.
 </p>
 
 <hr/>
@@ -343,11 +345,11 @@ Link with -lsleefdft -lsleef.
 <p class="header">Description</p>
 
 <p class="noindent">
-  These functions generates and initializes the tables that is used for
-  1D transform, and returns the pointer. Size of transform can be
-  specified by <i class="var">n</i>. Currently, power-of-two sizes can be only
-  specified. The list of the flags that can be passed to <i class="var">mode</i>
-  is shown below.
+  These functions generate and initialize the tables that are used for
+  1D transform, and return the pointer. The size of transform can be
+  specified by <i class="var">n</i>. Currently, power-of-two sizes can
+  be only specified. The list of the flags that can be passed
+  to <i class="var">mode</i> is shown below.
 </p>
 
 <div style="margin-top: 1.0cm;"></div>
@@ -438,12 +440,13 @@ Link with -lsleefdft -lsleef.
 <p class="header">Description</p>
 
 <p class="noindent">
-  These functions generates and initilizes the tables that is used for
-  2D transform, and returns the pointer. Size of transform can be
-  specified by <i class="var">n</i>. Currently, power-of-two sizes can
-  be only specified. The flags that can be passed
-  to <i class="var">mode</i> are the same as the ones listed in the
-  section for <b class="func">SleefDFT_double_init1d</b>.
+  These functions generate and initilize the tables that are used for
+  2D transform, and return the pointer. The size of transform can be
+  specified by <i class="var">n</i>
+  and <i class="var">m</i>. Currently, power-of-two sizes can be only
+  specified. The flags that can be passed to <i class="var">mode</i>
+  are the same as the flags listed in the section
+  for <b class="func">SleefDFT_double_init1d</b>.
 </p>
 
 <p class="header">Return value</p>
@@ -465,7 +468,7 @@ Link with -lsleefdft -lsleef.
 <br/>
 <b class="type">void</b> <b class="func">SleefDFT_double_execute</b>(<b class="type">struct SleefDFT *</b><i class="var">ptr</i>, <b class="type">const double *</b><i class="var">in</i>, <b class="type">double *</b><i class="var">out</i>);<br/>
 <b class="type">void</b> <b class="func">SleefDFT_float_execute</b>(<b class="type">struct SleefDFT *</b><i class="var">ptr</i>, <b class="type">const float *</b><i class="var">in</i>, <b class="type">float *</b><i class="var">out</i>);<br/>
-<b class="type">void</b> <b class="func">SleefDFT_execute</b>(<b class="type">struct SleefDFT *</b><i class="var">ptr</i>, <b class="type">const float *</b><i class="var">in</i>, <b class="type">float *</b><i class="var">out</i>);<br/>
+<b class="type">void</b> <b class="func">SleefDFT_execute</b>(<b class="type">struct SleefDFT *</b><i class="var">ptr</i>, <b class="type">const void *</b><i class="var">in</i>, <b class="type">void *</b><i class="var">out</i>);<br/>
 <br/>
 Link with -lsleefdft -lsleef.
 </p>
@@ -473,10 +476,12 @@ Link with -lsleefdft -lsleef.
 <p class="header">Description</p>
 
 <p class="noindent">
-  <i class="var">ptr</i> is a pointer to the
-plan. <i class="var">in</i> and <i class="var">out</i> must be
-pointers returned from Sleef_malloc function. You can specify the same
-pointer to <i class="var">in</i> and <i class="var">out</i>.
+By calling these functions, the transform with the plan specified by 
+<i class="var">ptr</i> is executed. If <i class="var">in</i>
+or <i class="var">out</i> is NULL, the pointer specified upon
+initialization is used. Otherwise, the pointers must be pointers
+returned from Sleef_malloc function. You can specify the same pointer
+to <i class="var">in</i> and <i class="var">out</i>.
 </p>
 
 <hr/>

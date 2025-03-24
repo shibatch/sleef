@@ -30,12 +30,11 @@
     <ul class="disc">
       <li><a href="#faq">Frequently asked questions</a></li>
       <li><a href="#vectorizing">Vectorizing calls to scalar functions</a></li>
-      <li><a href="#gnuabi">About the GNUABI version of the library</a></li>
+<!--      <li><a href="#gnuabi">About the GNUABI version of the library</a></li>-->
       <li><a href="#lto">Using link time optimization</a></li>
       <li><a href="#inline">Using header files of inlinable functions</a></li>
       <li><a href="#wasm">Utilizing SLEEF for WebAssembly</a></li>
       <li><a href="#dispatcher">How the dispatcher works</a></li>
-      <li><a href="#libsleefscalar">About libsleefscalar</a></li>
       <li><a href="#ulp">ULP, gradual underflow and flush-to-zero mode</a></li>
       <li><a href="#paynehanek">Explanatory source code for the modified Payne Hanek reduction method</a></li>
       <li><a href="#logo">About the logo</a></li>
@@ -162,6 +161,7 @@ code</a> can be vectorized by gcc-10.
 $ &block;
 </pre>
 
+<!--
 <h2 id="gnuabi">About the GNUABI version of the library</h2>
 
 <p class="noindent">
@@ -227,7 +227,7 @@ $ LD_LIBRARY_PATH=./lib ./a.out
 1.29127 1.29129
 $ &block;
 </pre>
-
+-->
 
 <h2 id="lto">Using link time optimization</h2>
 
@@ -453,23 +453,6 @@ $ &block;
   Fig. 7.1: Simplified code of our dispatcher
 </p>
 
-
-<h2 id="libsleefscalar">About libsleefscalar</h2>
-
-<p class="noindent">
-The scalar functions like <b class="func">Sleef_sin_u10</b> were the
-functions implemented in sleefdp.c and sleefsp.c. These functions are
-provided to make it easier to understand how each sleef function
-works. These functions are now moved to <b>libsleefscalar</b>, because
-they run slower than the scalar functions implemented in sleefsimddp.c
-and sleefsimdsp.c. As of version 3.6, the scalar functions whose names
-do not end with <b>purec</b> or <b>purecfma</b> are dispatchers that
-choose from the scalar functions whose names end with <b>purec</b>
-or <b>purecfma</b>. For example, <b class="func">Sleef_sin_u10</b>
-in <b>libsleef</b> is now a dispatcher that chooses
-from <b class="func">Sleef_sind1_u10purec</b>
-and <b class="func">Sleef_sind1_u10purecfma</b>.
-</p>
 
 
 <h2 id="ulp">ULP, gradual underflow and flush-to-zero mode</h2>
