@@ -42,6 +42,8 @@
   its own role.
 </p>
 
+<br/>
+
 <p>
   The first kind of testers consists of a tester and an IUT (which
   stands for Implementation Under Test.) The role for this tester is
@@ -57,6 +59,8 @@
   testing. It is also possible to perform a test over the network.
 </p>
 
+<br/>
+
 <p>
   The second kind of testers are designed to run continuously. It
   repeats randomly generating arguments for each function, and
@@ -68,12 +72,24 @@
   of <i class="math">&pi;</i>/2.
 </p>
 
+<br/>
+
 <p>
   The third kind of testers are for testing if bit-identical results
   are returned from the functions that are supposed to return such
   results. The MD5 hash value of all returned values from each
   function is calculated and checked if it matches the precomputed
   value.
+</p>
+
+<br/>
+
+<p>
+The fourth kind of testers have the same role as the first kind of
+testers, but uses <a class="underlined"
+href="https://github.com/shibatch/tlfloat"> TLFloat</a> instead of
+MPFR.  It allows for post-build testing in a wider range of
+environments than the first tester.
 </p>
 
 

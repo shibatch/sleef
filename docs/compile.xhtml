@@ -70,14 +70,6 @@ You will find quick start instructions in the sources or via GitHub in the
 file.
 </p>
 
-<p class="noindent">
-A more detailed description of CMake usage is provided in the
-<a class="underlined" href="https://github.com/shibatch/sleef/blob/master/docs/build-with-cmake.md">docs/build-with-cmake.md</a>
-file, along with
-<a class="underlined" href="https://github.com/shibatch/sleef/blob/master/docs/build-with-cmake.md#sleef-variables">a list of CMake variables</a>
-relevant to users.
-</p>
-
 <h2 id="linux">Compiling and installing the library on Linux</h2>
 
 <p class="noindent">
@@ -111,7 +103,7 @@ $ sudo cmake --install build/ --prefix /path/to/install/dir
   with the same version to build the library and other source codes.
 </p>
 
-<pre class="command">$ CC=gcc cmake -DBUILD_SHARED_LIBS=FALSE -DSLEEF_ENABLE_LTO=TRUE ..</pre>
+<pre class="command">$ CC=gcc CXX=g++ cmake -DBUILD_SHARED_LIBS=FALSE -DSLEEF_ENABLE_LTO=TRUE ..</pre>
 
 <p>
   In order to build the library with thinLTO support with clang, you
@@ -119,7 +111,7 @@ $ sudo cmake --install build/ --prefix /path/to/install/dir
   clang compiler.
 </p>
 
-<pre class="command">$ CC=clang-9 cmake -DBUILD_SHARED_LIBS=FALSE -DSLEEF_ENABLE_LTO=TRUE -DSLEEF_LLVM_AR_COMMAND=llvm-ar-9 ..</pre>
+<pre class="command">$ CC=clang-19 CXX=clang++-19 cmake -DBUILD_SHARED_LIBS=FALSE -DSLEEF_ENABLE_LTO=TRUE -DSLEEF_LLVM_AR_COMMAND=llvm-ar-19 ..</pre>
 
 
 <h3 id="inline">Building the header files for inlining the whole SLEEF functions</h3>
@@ -138,12 +130,11 @@ $ sudo cmake --install build/ --prefix /path/to/install/dir
 <h2 id="MSVC">Compiling the library with Microsoft Visual C++</h2>
 
 <p class="noindent">
-  You need Visual Studio 2019. Open developer command prompt for
-  VS2019 and change directory to sleef-3.X. When configuring a build
-  with cmake, you need to use a specific generator: `cmake -G"Visual
-  Studio 16 2019" ..` This generator will create a proper solution
-  `SLEEF.sln` under the build directory. You can still use `cmake
-  --build .` to build the library without opening Visual Studio.
+  You need Visual Studio 2022. Open developer command prompt for
+  VS2022 and change directory to sleef-3.X. You can use the
+  accompanying batch file named winbuild-msvc.bat to build the
+  library. You can specify cmake options as the options for this batch
+  file.
 </p>
 
 <p>
@@ -151,25 +142,20 @@ $ sudo cmake --install build/ --prefix /path/to/install/dir
   Studio.
 </p>
 
-<pre class="command">D:\sleef-3.X> mkdir build
-D:\sleef-3.X> cd build
-D:\sleef-3.X\build> cmake -G"Visual Studio 15 2017 Win64" ..    &amp;:: If you are using VS2017
-D:\sleef-3.X\build> cmake -G"Visual Studio 16 2019" ..          &amp;:: If you are using VS2019
-D:\sleef-3.X\build> cmake --build . --config Release -- /maxcpucount:1</pre>
+<pre class="command">D:\sleef-3.X> winbuild-msvc -DCMAKE_BUILD_TYPE=Release -DSLEEF_BUILD_DFT=True -DSLEEF_BUILD_QUAD=True
+</pre>
 
 
 <h3 id="cow">Compiling the library with Clang on Windows</h3>
 
 <p class="noindent">
-  You need Visual Studio 2019. Install ninja via VS2019 installer.
-  Download and install clang on Windows from <a class="underlined"
-  href="https://releases.llvm.org/download.html">llvm.org</a>. Below
-  is an example of commands for building SLEEF with Clang on Windows.
+  You need Visual Studio 2022. Install ninja and clang via VS2022
+  installer.  Below is an example of commands for building SLEEF with
+  Clang on Windows.
 </p>
 
-<pre class="command">D:\sleef-3.X> "c:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
-D:\sleef-3.X> cmake -S . -B build -GNinja -DCMAKE_C_COMPILER:PATH="C:\Program Files\LLVM\bin\clang.exe" ..
-D:\sleef-3.X> cmake --build build --clean-first</pre>
+<pre class="command">D:\sleef-3.X> winbuild-clang -DCMAKE_BUILD_TYPE=Release -DSLEEF_BUILD_DFT=True -DSLEEF_BUILD_QUAD=True
+</pre>
 
 
 <h2 id="hello">Compiling and running "Hello SLEEF"</h2>

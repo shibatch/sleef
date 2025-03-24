@@ -37,14 +37,14 @@
 <h2 id="tutorial">Tutorial</h2>
 
 <p class="noindent">
-  I now explain how to use this DFT library by referring to an example
-  source code shown below. 
+  In this section, how to use the DFT library is explained with an
+  example source code shown below.
   <a class="underlined" href="tutorial.c">This source code</a> is
   included in the distribution package under src/dft-tester directory.
 </p>
 
 <pre class="code">
-<code>// gcc tutorial.c -lsleef -lsleefdft -lm</code>
+<code>// gcc tutorial.c -lsleef -lsleefdft -lm -lstdc++</code>
 <code>#include &lt;stdio.h&gt;</code>
 <code>#include &lt;stdlib.h&gt;</code>
 <code>#include &lt;stdint.h&gt;</code>
@@ -73,7 +73,7 @@
 <code>  int n = 256;</code>
 <code>  if (argc == 2) n = 1 &lt;&lt; atoi(argv[1]);</code>
 <code></code>
-<code>  SleefDFT_setPlanFilePath("plan.txt", NULL, SLEEF_PLAN_AUTOMATIC);</code>
+<code>  SleefDFT_setPlanFilePath("tut.plan", NULL, SLEEF_PLAN_AUTOMATIC);</code>
 <code></code>
 <code>  double *sx = (double *)Sleef_malloc(n*2 * sizeof(double));</code>
 <code>  double *sy = (double *)Sleef_malloc(n*2 * sizeof(double));</code>
@@ -128,10 +128,11 @@
 
 <p>
   As shown in the first line, you can compile the source code with the
-  following command, after you install the library.
+  following command, after you install the library. Note that you need
+  to link with libstdc++.
 </p>
 
-<pre class="command">$ gcc tutorial.c -lsleef -lsleefdft -lm
+<pre class="command">$ gcc tutorial.c -lsleef -lsleefdft -lm -lstdc++
 </pre>
 
 <p>
@@ -145,7 +146,7 @@
   For the first execution, this program takes a few seconds to
   finish. This is because the library measures computation speed with
   many different configurations to find the best execution plan. The
-  best plan is saved to "plan.txt", as specified in line 28. Later
+  best plan is saved to "tut.plan", as specified in line 30. Later
   executions will finish instantly as the library reads the plan from
   this file. Instead of specifying the file name in the program, the
   file can be specified by SLEEFDFTPLAN environment variable. Instead
@@ -161,9 +162,9 @@
   library requires the input and output arrays to be aligned to some
   boundaries so that the data can be accessed with SIMD
   instructions. By using <b class="func">Sleef_malloc</b>, as seen in
-  line 37 and 38, this alignment is ensured. Memory allocated
+  line 32 and 33, this alignment is ensured. Memory allocated
   with <b class="func">Sleef_malloc</b> has to be freed
-  with <b class="func">Sleef_free</b>, as seen in line 68.  When a
+  with <b class="func">Sleef_free</b>, as seen in line 70.  When a
   transform is executed, you need to pass the pointer returned
   by <b class="func">Sleef_malloc</b>. You can allocate an aligned
   memory region yourself, and pass the pointer to the library.
@@ -173,7 +174,7 @@
   The real and imaginary parts of the <i>k</i>th number
   are stored in (2<i>k</i>)-th and
   (2<i>k</i>+1)-th elements of the input and output array,
-  respectively. At line 54, the transform is executed by the
+  respectively. At line 56, the transform is executed by the
   library. You can specify the same array as the input and output.
 </p>
 
@@ -302,6 +303,29 @@ by the <i class="var">mode</i> parameter, as shown below.
 
 <hr/>
 
+<p class="funcname"><b class="func">SleefDFT_savePlan</b> - save plan to the specified file</p>
+
+<p class="header">Synopsis</p>
+
+<p class="synopsis">
+#include &lt;sleef.h&gt;<br/>
+<br/>
+<b class="type">void</b> <b class="func">SleefDFT_savePlan</b>(<b class="type">const char *</b><i class="var">path</i>);<br/>
+<br/>
+Link with -lsleefdft -lsleef.
+</p>
+
+<p class="header">Description</p>
+
+<p class="noindent">
+  By calling this function, you can save the generated plan to the
+  file specified by <i class="var">path</i>. You can use this function
+  to save the plan when SLEEF_PLAN_AUTOMATIC is not specified as the
+  mode with <b class="func">SleefDFT_setPlanFilePath</b>.
+</p>
+
+<hr/>
+
 <p class="funcname"><b class="func">SleefDFT_double_init1d</b>, <b class="func">SleefDFT_float_init1d</b> - initialize the tables for 1D transform</p>
 
 <p class="header">Synopsis</p>
@@ -416,9 +440,10 @@ Link with -lsleefdft -lsleef.
 <p class="noindent">
   These functions generates and initilizes the tables that is used for
   2D transform, and returns the pointer. Size of transform can be
-  specified by <i class="var">n</i>. Currently, power-of-two sizes can be only
-  specified. The list of the flags that can be passed to <i class="var">mode</i>
-  is shown below.
+  specified by <i class="var">n</i>. Currently, power-of-two sizes can
+  be only specified. The flags that can be passed
+  to <i class="var">mode</i> are the same as the ones listed in the
+  section for <b class="func">SleefDFT_double_init1d</b>.
 </p>
 
 <p class="header">Return value</p>
@@ -430,7 +455,7 @@ Link with -lsleefdft -lsleef.
 
 <hr/>
 
-<p class="funcname"><b class="func">SleefDFT_double_execute</b>, <b class="func">SleefDFT_float_execute</b> - execute a transform</p>
+<p class="funcname"><b class="func">SleefDFT_double_execute</b>, <b class="func">SleefDFT_float_execute</b>, <b class="func">SleefDFT_execute</b> - execute a transform</p>
 
 <p class="header">Synopsis</p>
 
@@ -440,6 +465,7 @@ Link with -lsleefdft -lsleef.
 <br/>
 <b class="type">void</b> <b class="func">SleefDFT_double_execute</b>(<b class="type">struct SleefDFT *</b><i class="var">ptr</i>, <b class="type">const double *</b><i class="var">in</i>, <b class="type">double *</b><i class="var">out</i>);<br/>
 <b class="type">void</b> <b class="func">SleefDFT_float_execute</b>(<b class="type">struct SleefDFT *</b><i class="var">ptr</i>, <b class="type">const float *</b><i class="var">in</i>, <b class="type">float *</b><i class="var">out</i>);<br/>
+<b class="type">void</b> <b class="func">SleefDFT_execute</b>(<b class="type">struct SleefDFT *</b><i class="var">ptr</i>, <b class="type">const float *</b><i class="var">in</i>, <b class="type">float *</b><i class="var">out</i>);<br/>
 <br/>
 Link with -lsleefdft -lsleef.
 </p>

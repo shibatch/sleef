@@ -41,9 +41,8 @@ double check_c(int n, int m) {
 
   real *sx = (real *)Sleef_malloc(n*m*2 * sizeof(real));
   real *sy = (real *)Sleef_malloc(n*m*2 * sizeof(real));
-  real *sz = (real *)Sleef_malloc(n*m*2 * sizeof(real));
 
-  if (!sx || !sy || !sz) {
+  if (!sx || !sy) {
     fprintf(stderr, "Memory allocation failed");
     exit(-1);
   }
@@ -71,7 +70,7 @@ double check_c(int n, int m) {
     exit(-1);
   }
   
-  SleefDFT_execute(p, sy, sz);
+  SleefDFT_execute(p, sy, sy);
   SleefDFT_dispose(p);
 
   //
@@ -79,7 +78,7 @@ double check_c(int n, int m) {
   double rmsn = 0, rmsd = 0, scale = 1 / (n*(double)m);
   
   for(int i=0;i<n*m;i++) {
-    rmsn += squ(scale * sz[i*2+0] - sx[i*2+0]) + squ(scale * sz[i*2+1] - sx[i*2+1]);
+    rmsn += squ(scale * sy[i*2+0] - sx[i*2+0]) + squ(scale * sy[i*2+1] - sx[i*2+1]);
     rmsd += squ(                    sx[i*2+0]) + squ(                    sx[i*2+1]);
   }
 
@@ -87,7 +86,6 @@ double check_c(int n, int m) {
 
   Sleef_free(sx);
   Sleef_free(sy);
-  Sleef_free(sz);
 
   //
 

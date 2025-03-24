@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=0.4"/>
-<meta name="description" content="SLEEF implements vectorized C99 math functions. It utilizes vector extensions including SSE2, AVX, AVX2, AVX512F for x86, and Advanced SIMD for ARM processors." />
+<meta name="description" content="SLEEF implements vectorized C99 math functions." />
 <meta name="google" content="notranslate" />
 <link rel="canonical" href="https://sleef.org/" />
 <link rel="icon" href="favicon.png" />
@@ -63,9 +63,10 @@
 </p>
 
 <p>
-  Unlike closed-source commercial libraries, SLEEF is designed to work
-  with various architectures, operating systems and compilers. It is
-  distributed under <a class="underlined"
+  Unlike closed-source commercial libraries, which are often
+  assembly-optimized, SLEEF is designed to work with various
+  architectures, operating systems and compilers. It is distributed
+  under <a class="underlined"
   href="http://www.boost.org/users/license.html">the Boost Software
   License</a>, which is a permissive open source license. SLEEF can be
   easily ported to other architectures by writing a helper file, which
@@ -87,7 +88,8 @@
   files. In addition to the vectorized functions, SLEEF provides
   scalar functions. Calls to these scalar SLEEF functions can be
   <a class="underlined"
-  href="additional.xhtml#vectorizing">auto-vectorized</a> by GCC.
+  href="additional.xhtml#vectorizing">auto-vectorized</a> by GCC and
+  Clang.
 </p>
 
 <p>
@@ -97,7 +99,7 @@
   functions; for this subset there are versions with up to
   1 <a class="underlined" href="additional.xhtml#ulp">ULP</a> error
   (which is the maximum error, not the average) and even faster
-  versions with a few ULPs of error. For non-finite inputs and
+  versions with a few ULPs of error bounds. For non-finite inputs and
   outputs, the functions return correct results as specified in the
   C99 standard. All the functions in the library
   are <a class="underlined" href="misc.xhtml#testerlibm">thoroughly
@@ -107,18 +109,18 @@
 </p>
 
 <p>
-  As of version 3.6, SLEEF also includes a <a class="underlined"
+  SLEEF also includes a <a class="underlined"
   href="quad.xhtml">quad-precision math library</a>. This library
   includes fully vectorized IEEE 754 quadruple-precision (QP)
-  functions that correspond to the standard C math functions. It also
-  includes I/O functions for converting between QP numbers and
-  strings.
+  functions that correspond to the standard C math functions. I/O
+  functions for converting between QP numbers and strings are also
+  available.
 </p>
 
 <br/>
 
 <p>
-  SLEEF also includes a library of <a class="underlined"
+  SLEEF includes a library of <a class="underlined"
   href="dft.xhtml">discrete Fourier transform(DFT)</a>. It is fully
   vectorized, heavily unrolled, and parallelized in such a way that
   modern SIMD instructions and multiple cores can be utilized, and it
@@ -139,7 +141,7 @@
 <div><br/></div>
 
 <ul class="disc">
-  <li><a class="underlined" href="x86.xhtml">x86</a> - SSE2AVX2, AVX512F</li>
+  <li><a class="underlined" href="x86.xhtml">x86</a> - SSE2, AVX2, AVX512F</li>
   <li>RISC-V - RVV1, RVV2</li>
   <li><a class="underlined" href="ppc64.xhtml">PowerPC64</a> - VSX (POWER8), VSX-3 (POWER9)</li>
   <li><a class="underlined" href="s390x.xhtml">System/390</a> - VXE (z14), VXE2 (z15)</li>
