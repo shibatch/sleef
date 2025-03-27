@@ -149,10 +149,6 @@ int main(int argc, char **argv) {
       wdp = wsp = "x";
 
     char * vectorcc = "";
-#ifdef ENABLE_AAVPCS
-    if (strcmp(isaname, "advsimd") == 0)
-      vectorcc =" __attribute__((aarch64_vector_pcs))";
-#endif
 
     printf("#ifdef %s\n", architecture);
 
@@ -387,10 +383,6 @@ int main(int argc, char **argv) {
 	    }
 	  }
 	  break;
-	  // The two cases below should not use vector calling convention.
-	  // They do not have vector type as argument or return value.
-	  // Also, the corresponding definition (`getPtr` and `getInt`) in `sleefsimd*.c`
-	  // are not defined with `VECTOR_CC`. (Same for single precision case below)
 	case 7:
 	  printf("SLEEF_IMPORT SLEEF_CONST int Sleef_%sd%s%s%s(int);\n",
 		 funcList[i].name, wdp, isaub, isaname);

@@ -321,12 +321,6 @@ typedef struct {
 
 #endif // #ifndef __MISC_H__
 
-#ifdef ENABLE_AAVPCS
-#define VECTOR_CC __attribute__((aarch64_vector_pcs))
-#else
-#define VECTOR_CC
-#endif
-
 //
 
 #if defined (__GNUC__) && !defined(__INTEL_COMPILER)

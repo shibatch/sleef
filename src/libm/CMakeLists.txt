@@ -219,11 +219,6 @@ sleef_concat_files(
 # Helper executable: generates parts of the sleef header file
 add_host_executable(${TARGET_MKRENAME} mkrename.c)
 
-# Enable Vector PCS for Advanced SIMD (if supported)
-if(FORCE_AAVPCS)
-  host_target_AAVPCS_definitions(${TARGET_MKRENAME})
-endif()
-
 set(HEADER_FILES_GENERATED "")
 foreach(SIMD ${SLEEF_SUPPORTED_LIBM_EXTENSIONS})
   if(COMPILER_SUPPORTS_${SIMD})
@@ -323,9 +318,6 @@ add_custom_target(${TARGET_HEADERS} ALL
 # TARGET_MKALIAS
 # --------------------------------------------------------------------
 add_host_executable(${TARGET_MKALIAS} mkalias.c)
-if(FORCE_AAVPCS)
-  host_target_AAVPCS_definitions(${TARGET_MKALIAS})
-endif()
 
 # --------------------------------------------------------------------
 # TARGET_MKDISP
@@ -465,13 +457,6 @@ foreach(SIMD ${SLEEF_SUPPORTED_LIBM_EXTENSIONS})
 	${COMMON_TARGET_DEFINITIONS}
 	ALIAS_NO_EXT_SUFFIX=\"alias_${SIMDLC}.h\"
 	)
-    endif()
-
-    # Enable Vector PCS for Advanced SIMD (if supported)
-    if(FORCE_AAVPCS AND ${SIMD} STREQUAL "ADVSIMD")
-      target_compile_definitions(${OBJECT_${SIMD}} PRIVATE
-        ENABLE_AAVPCS=1
-      )
     endif()
 
     add_dependencies(${OBJECT_${SIMD}} rename${SIMD}.h_generated)
@@ -857,12 +842,6 @@ if(ENABLE_GNUABI)
           DORENAME=1
           ENABLE_GNUABI=1
 	  )
-
-        if(FORCE_AAVPCS AND ${SIMD} STREQUAL "ADVSIMD")
-          target_compile_definitions(${OBJECT_${SIMD}_${T}_GNUABI} PRIVATE
-            ENABLE_AAVPCS=1
-          )
-        endif()
 
 	if(SLEEF_ENABLE_ALTDIV)
 	  target_compile_definitions(${OBJECT_${SIMD}_${T}_GNUABI} PRIVATE SLEEF_ENABLE_ALTDIV=1)
