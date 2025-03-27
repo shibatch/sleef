@@ -68,80 +68,80 @@ static int cpuSupportsExt(void (*tryExt)()) {
  */
 
 #define DISPATCH_vf_vf(fptype, veclen, funcNameS, funcNameS2, funcName, pfn, dfn, funcExt0, funcExt1, funcExt2) \
-  static CONST VECTOR_CC fptype (*pfn)(fptype arg0);			\
-  static CONST VECTOR_CC fptype dfn(fptype arg0) {			\
-    fptype CONST VECTOR_CC (*p)(fptype arg0) = funcExt0;		\
+  static CONST fptype (*pfn)(fptype arg0);			\
+  static CONST fptype dfn(fptype arg0) {			\
+    fptype CONST (*p)(fptype arg0) = funcExt0;		\
     SUBST_IF_EXT1(funcExt1);						\
     SUBST_IF_EXT2(funcExt2);						\
     pfn = p;								\
     return (*pfn)(arg0);						\
   }									\
-  static CONST VECTOR_CC fptype (*pfn)(fptype arg0) = dfn;		\
-  EXPORT CONST VECTOR_CC fptype funcName(fptype arg0) { return (*pfn)(arg0); } \
+  static CONST fptype (*pfn)(fptype arg0) = dfn;		\
+  EXPORT CONST fptype funcName(fptype arg0) { return (*pfn)(arg0); } \
   VECALIAS_vf_vf(fptype, funcNameS, funcName, veclen)			\
   VECALIAS_vf_vf(fptype, funcNameS2, funcName, veclen)
 
 #define DISPATCH_vf_vf_vf(fptype, veclen, funcNameS, funcNameS2, funcName, pfn, dfn, funcExt0, funcExt1, funcExt2) \
-  static CONST VECTOR_CC fptype (*pfn)(fptype arg0, fptype arg1);	\
-  static CONST VECTOR_CC fptype dfn(fptype arg0, fptype arg1) {		\
-    fptype CONST VECTOR_CC (*p)(fptype arg0, fptype arg1) = funcExt0;	\
+  static CONST fptype (*pfn)(fptype arg0, fptype arg1);	\
+  static CONST fptype dfn(fptype arg0, fptype arg1) {		\
+    fptype CONST (*p)(fptype arg0, fptype arg1) = funcExt0;	\
     SUBST_IF_EXT1(funcExt1);						\
     SUBST_IF_EXT2(funcExt2);						\
     pfn = p;								\
     return (*pfn)(arg0, arg1);						\
   }									\
-  static CONST VECTOR_CC fptype (*pfn)(fptype arg0, fptype arg1) = dfn; \
-  EXPORT CONST VECTOR_CC fptype funcName(fptype arg0, fptype arg1) { return (*pfn)(arg0, arg1); } \
+  static CONST fptype (*pfn)(fptype arg0, fptype arg1) = dfn; \
+  EXPORT CONST fptype funcName(fptype arg0, fptype arg1) { return (*pfn)(arg0, arg1); } \
   VECALIAS_vf_vf_vf(fptype, funcNameS, funcName, veclen)		\
   VECALIAS_vf_vf_vf(fptype, funcNameS2, funcName, veclen)
 
 #define DISPATCH_vf2_vf(fptype, fptype2, veclen, funcNameS, funcNameS2, funcName, pfn, dfn, funcExt0, funcExt1, funcExt2) \
-  static CONST VECTOR_CC fptype2 (*pfn)(fptype arg0);			\
-  static CONST VECTOR_CC fptype2 dfn(fptype arg0) {			\
-    fptype2 CONST VECTOR_CC (*p)(fptype arg0) = funcExt0;		\
+  static CONST fptype2 (*pfn)(fptype arg0);			\
+  static CONST fptype2 dfn(fptype arg0) {			\
+    fptype2 CONST (*p)(fptype arg0) = funcExt0;		\
     SUBST_IF_EXT1(funcExt1);						\
     SUBST_IF_EXT2(funcExt2);						\
     pfn = p;								\
     return (*pfn)(arg0);						\
   }									\
-  static CONST VECTOR_CC fptype2 (*pfn)(fptype arg0) = dfn;		\
-  EXPORT CONST VECTOR_CC fptype2 funcName(fptype arg0) { return (*pfn)(arg0); }
+  static CONST fptype2 (*pfn)(fptype arg0) = dfn;		\
+  EXPORT CONST fptype2 funcName(fptype arg0) { return (*pfn)(arg0); }
 
 #define DISPATCH_vf_vf_vi(fptype, itype, veclen, funcNameS, funcNameS2, funcName, pfn, dfn, funcExt0, funcExt1, funcExt2) \
-  static CONST VECTOR_CC fptype (*pfn)(fptype arg0, itype arg1);	\
-  static CONST VECTOR_CC fptype dfn(fptype arg0, itype arg1) {		\
-    fptype CONST VECTOR_CC (*p)(fptype arg0, itype arg1) = funcExt0;	\
+  static CONST fptype (*pfn)(fptype arg0, itype arg1);	\
+  static CONST fptype dfn(fptype arg0, itype arg1) {		\
+    fptype CONST (*p)(fptype arg0, itype arg1) = funcExt0;	\
     SUBST_IF_EXT1(funcExt1);						\
     SUBST_IF_EXT2(funcExt2);						\
     pfn = p;								\
     return (*pfn)(arg0, arg1);						\
   }									\
-  static CONST VECTOR_CC fptype (*pfn)(fptype arg0, itype arg1) = dfn;	\
-  EXPORT CONST VECTOR_CC fptype funcName(fptype arg0, itype arg1) { return (*pfn)(arg0, arg1); }
+  static CONST fptype (*pfn)(fptype arg0, itype arg1) = dfn;	\
+  EXPORT CONST fptype funcName(fptype arg0, itype arg1) { return (*pfn)(arg0, arg1); }
 
 #define DISPATCH_vi_vf(fptype, itype, veclen, funcNameS, funcNameS2, funcName, pfn, dfn, funcExt0, funcExt1, funcExt2) \
-  static CONST VECTOR_CC itype (*pfn)(fptype arg0);			\
-  static CONST VECTOR_CC itype dfn(fptype arg0) {			\
-    itype CONST VECTOR_CC (*p)(fptype arg0) = funcExt0;			\
+  static CONST itype (*pfn)(fptype arg0);			\
+  static CONST itype dfn(fptype arg0) {			\
+    itype CONST (*p)(fptype arg0) = funcExt0;			\
     SUBST_IF_EXT1(funcExt1);						\
     SUBST_IF_EXT2(funcExt2);						\
     pfn = p;								\
     return (*pfn)(arg0);						\
   }									\
-  static CONST VECTOR_CC itype (*pfn)(fptype arg0) = dfn;		\
-  EXPORT CONST VECTOR_CC itype funcName(fptype arg0) { return (*pfn)(arg0); }
+  static CONST itype (*pfn)(fptype arg0) = dfn;		\
+  EXPORT CONST itype funcName(fptype arg0) { return (*pfn)(arg0); }
 
 #define DISPATCH_vf_vf_vf_vf(fptype, veclen, funcNameS, funcNameS2, funcName, pfn, dfn, funcExt0, funcExt1, funcExt2) \
-  static CONST VECTOR_CC fptype (*pfn)(fptype arg0, fptype arg1, fptype arg2); \
-  static CONST VECTOR_CC fptype dfn(fptype arg0, fptype arg1, fptype arg2) { \
-    fptype CONST VECTOR_CC (*p)(fptype arg0, fptype arg1, fptype arg2) = funcExt0; \
+  static CONST fptype (*pfn)(fptype arg0, fptype arg1, fptype arg2); \
+  static CONST fptype dfn(fptype arg0, fptype arg1, fptype arg2) { \
+    fptype CONST (*p)(fptype arg0, fptype arg1, fptype arg2) = funcExt0; \
     SUBST_IF_EXT1(funcExt1);						\
     SUBST_IF_EXT2(funcExt2);						\
     pfn = p;								\
     return (*pfn)(arg0, arg1, arg2);					\
   }									\
-  static CONST VECTOR_CC fptype (*pfn)(fptype arg0, fptype arg1, fptype arg2) = dfn; \
-  EXPORT CONST VECTOR_CC fptype funcName(fptype arg0, fptype arg1, fptype arg2) { return (*pfn)(arg0, arg1, arg2); } \
+  static CONST fptype (*pfn)(fptype arg0, fptype arg1, fptype arg2) = dfn; \
+  EXPORT CONST fptype funcName(fptype arg0, fptype arg1, fptype arg2) { return (*pfn)(arg0, arg1, arg2); } \
   VECALIAS_vf_vf_vf_vf(fptype, funcNameS, funcName, veclen)		\
   VECALIAS_vf_vf_vf_vf(fptype, funcNameS2, funcName, veclen)
 
