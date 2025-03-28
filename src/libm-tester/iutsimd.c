@@ -41,7 +41,7 @@
 #define __STDC__ 1
 #endif
 
-#if (defined(__GNUC__) || defined(__CLANG__)) && (defined(__i386__) || defined(__x86_64__))
+#if (defined(__GNUC__) || defined(__CLANG__)) && defined(__x86_64__)
 #include <x86intrin.h>
 #endif
 
@@ -163,12 +163,6 @@ typedef Sleef___m512_2 vfloat2;
 typedef Sleef___m512d_2 vdouble2;
 typedef Sleef___m512_2 vfloat2;
 #endif
-#endif
-
-#ifdef ENABLE_VECEXT
-#define CONFIG 1
-#include "helpervecext.h"
-#include "norename.h"
 #endif
 
 #ifdef ENABLE_PUREC
@@ -659,8 +653,6 @@ int main2(int argc, char **argv) {
 #endif
 #if defined(ENABLE_NEON32) || defined(ENABLE_NEON32VFPV4)
     k += 4; // flush to zero
-#elif defined(ENABLE_VECEXT)
-    if (vcast_f_vf(xpowf(vcast_vf_f(0.5f), vcast_vf_f(140))) == 0) k += 4;
 #endif
 #if defined(DETERMINISTIC)
     k += 8;

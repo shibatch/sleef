@@ -55,7 +55,7 @@ extern "C"
 #define SLEEF_IMPORT
 #endif // #if (defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)) && !defined(SLEEF_STATIC_LIBS)
 
-#if (defined(__GNUC__) || defined(__CLANG__)) && (defined(__i386__) || defined(__x86_64__))
+#if (defined(__GNUC__) || defined(__CLANG__)) && defined(__x86_64__)
 #include <x86intrin.h>
 #endif
 
@@ -133,7 +133,7 @@ SLEEF_IMPORT void *Sleef_malloc(size_t z);
 SLEEF_IMPORT void Sleef_free(void *ptr);
 SLEEF_IMPORT uint64_t Sleef_currentTimeMicros();
 
-#if defined(__i386__) || defined(__x86_64__) || defined(_MSC_VER)
+#if defined(__x86_64__) || defined(_MSC_VER)
 SLEEF_IMPORT void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
 #endif
 

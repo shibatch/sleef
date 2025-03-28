@@ -57,7 +57,7 @@ EXPORT void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx) {
   __cpuidex(out, eax, ecx);
 }
 #else
-#if defined(__x86_64__) || defined(__i386__)
+#if defined(__x86_64__)
 EXPORT void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx) {
   uint32_t a, b, c, d;
   __asm__ __volatile__ ("cpuid" : "=a" (a), "=b" (b), "=c" (c), "=d" (d) : "a" (eax), "c"(ecx));
@@ -66,7 +66,7 @@ EXPORT void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx) {
 #endif
 #endif
 
-#if defined(__i386__) || defined(__x86_64__) || defined(_MSC_VER)
+#if defined(__x86_64__) || defined(_MSC_VER)
 static char x86BrandString[256];
 
 EXPORT char *Sleef_getCpuIdString() {

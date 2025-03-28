@@ -281,7 +281,7 @@ typedef struct {
 #define LIKELY(condition) (condition)
 #define UNLIKELY(condition) (condition)
 
-#if (defined(__GNUC__) || defined(__CLANG__)) && (defined(__i386__) || defined(__x86_64__)) && !defined(SLEEF_GENHEADER)
+#if (defined(__GNUC__) || defined(__CLANG__)) && defined(__x86_64__) && !defined(SLEEF_GENHEADER)
 #include <x86intrin.h>
 #endif
 

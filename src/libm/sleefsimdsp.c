@@ -376,16 +376,6 @@ extern const float Sleef_rempitabsp[];
 
 // Generic
 
-#ifdef ENABLE_VECEXT
-#define CONFIG 1
-#if !defined(SLEEF_GENHEADER)
-#include "helpervecext.h"
-#endif
-#ifdef DORENAME
-#include "renamevecext.h"
-#endif
-#endif
-
 #ifdef ENABLE_PUREC
 #define CONFIG 1
 #if !defined(SLEEF_GENHEADER)
@@ -2092,12 +2082,6 @@ EXPORT CONST vfloat xsqrtf_u35(vfloat d) {
 
   return u;
 }
-#elif defined(ENABLE_VECEXT)
-EXPORT CONST vfloat xsqrtf_u35(vfloat d) {
-  vfloat q = vsqrt_vf_vf(d);
-  q = vsel_vf_vo_vf_vf(visnegzero_vo_vf(d), vcast_vf_f(-0.0), q);
-  return vsel_vf_vo_vf_vf(vispinf_vo_vf(d), vcast_vf_f(SLEEF_INFINITYf), q);
-}
 #else
 EXPORT CONST vfloat xsqrtf_u35(vfloat d) { return vsqrt_vf_vf(d); }
 #endif
@@ -2898,7 +2882,7 @@ EXPORT CONST vfloat xfabsf(vfloat x) { return vabs_vf_vf(x); }
 EXPORT CONST vfloat xcopysignf(vfloat x, vfloat y) { return vcopysign_vf_vf_vf(x, y); }
 
 EXPORT CONST vfloat xfmaxf(vfloat x, vfloat y) {
-#if (defined(__x86_64__) || defined(__i386__)) && !defined(ENABLE_VECEXT) && !defined(ENABLE_PUREC)
+#if defined(__x86_64__) && !defined(ENABLE_PUREC)
   return vsel_vf_vo_vf_vf(visnan_vo_vf(y), x, vmax_vf_vf_vf(x, y));
 #else
   return vsel_vf_vo_vf_vf(visnan_vo_vf(y), x, vsel_vf_vo_vf_vf(vgt_vo_vf_vf(x, y), x, y));
@@ -2906,7 +2890,7 @@ EXPORT CONST vfloat xfmaxf(vfloat x, vfloat y) {
 }
 
 EXPORT CONST vfloat xfminf(vfloat x, vfloat y) {
-#if (defined(__x86_64__) || defined(__i386__)) && !defined(ENABLE_VECEXT) && !defined(ENABLE_PUREC)
+#if defined(__x86_64__) && !defined(ENABLE_PUREC)
   return vsel_vf_vo_vf_vf(visnan_vo_vf(y), x, vmin_vf_vf_vf(x, y));
 #else
   return vsel_vf_vo_vf_vf(visnan_vo_vf(y), x, vsel_vf_vo_vf_vf(vgt_vo_vf_vf(y, x), x, y));
