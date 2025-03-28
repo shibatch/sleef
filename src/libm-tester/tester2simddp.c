@@ -87,12 +87,6 @@ typedef Sleef___m512d_2 vdouble2;
 typedef Sleef___m512_2 vfloat2;
 #endif
 
-#ifdef ENABLE_VECEXT
-#define CONFIG 1
-#include "helpervecext.h"
-#include "norename.h"
-#endif
-
 #ifdef ENABLE_PUREC
 #define CONFIG 1
 #include "helperpurec.h"

@@ -44,7 +44,7 @@
 #define __STDC__ 1
 #endif
 
-#if (defined(__GNUC__) || defined(__CLANG__)) && (defined(__i386__) || defined(__x86_64__))
+#if (defined(__GNUC__) || defined(__CLANG__)) && defined(__x86_64__)
 #include <x86intrin.h>
 #endif
 

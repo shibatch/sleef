@@ -260,14 +260,6 @@ extern const double Sleef_rempitabdp[];
 
 // Generic
 
-#ifdef ENABLE_VECEXT
-#define CONFIG 1
-#include "helpervecext.h"
-#ifdef DORENAME
-#include "renamevecext.h"
-#endif
-#endif
-
 #ifdef ENABLE_PUREC
 #define CONFIG 1
 #include "helperpurec.h"
@@ -3010,7 +3002,7 @@ EXPORT CONST vdouble xfabs(vdouble x) { return vabs_vd_vd(x); }
 EXPORT CONST vdouble xcopysign(vdouble x, vdouble y) { return vcopysign_vd_vd_vd(x, y); }
 
 EXPORT CONST vdouble xfmax(vdouble x, vdouble y) {
-#if (defined(__x86_64__) || defined(__i386__)) && !defined(ENABLE_VECEXT) && !defined(ENABLE_PUREC)
+#if defined(__x86_64__) && !defined(ENABLE_PUREC)
   return vsel_vd_vo_vd_vd(visnan_vo_vd(y), x, vmax_vd_vd_vd(x, y));
 #else
   return vsel_vd_vo_vd_vd(visnan_vo_vd(y), x, vsel_vd_vo_vd_vd(vgt_vo_vd_vd(x, y), x, y));
@@ -3018,7 +3010,7 @@ EXPORT CONST vdouble xfmax(vdouble x, vdouble y) {
 }
 
 EXPORT CONST vdouble xfmin(vdouble x, vdouble y) {
-#if (defined(__x86_64__) || defined(__i386__)) && !defined(ENABLE_VECEXT) && !defined(ENABLE_PUREC)
+#if defined(__x86_64__) && !defined(ENABLE_PUREC)
   return vsel_vd_vo_vd_vd(visnan_vo_vd(y), x, vmin_vd_vd_vd(x, y));
 #else
   return vsel_vd_vo_vd_vd(visnan_vo_vd(y), x, vsel_vd_vo_vd_vd(vgt_vo_vd_vd(y, x), x, y));

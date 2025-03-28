@@ -38,7 +38,7 @@ using namespace std;
 #define __STDC__ 1
 #endif
 
-#if (defined(__GNUC__) || defined(__CLANG__)) && (defined(__i386__) || defined(__x86_64__))
+#if (defined(__GNUC__) || defined(__CLANG__)) && defined(__x86_64__)
 #include <x86intrin.h>
 #endif
 
@@ -157,12 +157,6 @@ typedef Sleef___m512_2 vfloat2;
 typedef Sleef___m512d_2 vdouble2;
 typedef Sleef___m512_2 vfloat2;
 #endif
-#endif
-
-#ifdef ENABLE_VECEXT
-#define CONFIG 1
-#include "helpervecext.h"
-#include "norename.h"
 #endif
 
 #ifdef ENABLE_PUREC
