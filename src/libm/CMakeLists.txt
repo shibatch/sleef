@@ -29,15 +29,6 @@ elseif(SLEEF_ARCH_AARCH64)
     PURECFMA_SCALAR
     DSP_SCALAR
   )
-elseif(SLEEF_ARCH_AARCH32)
-  set(SLEEF_HEADER_LIST
-    NEON32_
-    NEON32
-    NEON32VFPV4
-    PUREC_SCALAR
-    PURECFMA_SCALAR
-    DSP_SCALAR
-  )
 elseif(SLEEF_ARCH_PPC64)
   set(SLEEF_HEADER_LIST
     VSX_
@@ -68,6 +59,12 @@ elseif(SLEEF_ARCH_RISCV64)
     RVVM2NOFMA
     PUREC_SCALAR
     PURECFMA_SCALAR
+    DSP_SCALAR
+    )
+else()
+  set(SLEEF_HEADER_LIST
+    PUREC_SCALAR
+    DSP_SCALAR
     )
 endif()
 
@@ -90,10 +87,6 @@ command_arguments(HEADER_PARAMS_ADVSIMD         finz_ 2 4 float64x2_t float32x4_
 command_arguments(HEADER_PARAMS_ADVSIMDNOFMA    cinz_ 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON advsimdnofma)
 command_arguments(HEADER_PARAMS_SVE             finz_ x x svfloat64_t svfloat32_t svint32_t svint32_t __ARM_FEATURE_SVE sve)
 command_arguments(HEADER_PARAMS_SVENOFMA        cinz_ x x svfloat64_t svfloat32_t svint32_t svint32_t __ARM_FEATURE_SVE svenofma)
-
-command_arguments(HEADER_PARAMS_NEON32_         -     2 4 - float32x4_t int32x2_t int32x4_t __ARM_NEON__)
-command_arguments(HEADER_PARAMS_NEON32          cinz_ 2 4 - float32x4_t int32x2_t int32x4_t __ARM_NEON__ neon)
-command_arguments(HEADER_PARAMS_NEON32VFPV4     finz_ 2 4 - float32x4_t int32x2_t int32x4_t __ARM_NEON__ neonvfpv4)
 
 command_arguments(HEADER_PARAMS_VSX_            -     2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VSX__)
 command_arguments(HEADER_PARAMS_VSX             finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VSX__ vsx)
@@ -128,8 +121,6 @@ command_arguments(RENAME_PARAMS_AVX512F         finz_ 8 16 avx512f)
 command_arguments(RENAME_PARAMS_AVX512FNOFMA    cinz_ 8 16 avx512fnofma)
 command_arguments(RENAME_PARAMS_ADVSIMD         finz_ 2 4 advsimd)
 command_arguments(RENAME_PARAMS_ADVSIMDNOFMA    cinz_ 2 4 advsimdnofma)
-command_arguments(RENAME_PARAMS_NEON32          cinz_ 2 4 neon)
-command_arguments(RENAME_PARAMS_NEON32VFPV4     finz_ 2 4 neonvfpv4)
 command_arguments(RENAME_PARAMS_VSX             finz_ 2 4 vsx)
 command_arguments(RENAME_PARAMS_VSXNOFMA        cinz_ 2 4 vsxnofma)
 command_arguments(RENAME_PARAMS_VSX3            finz_ 2 4 vsx3)
@@ -171,10 +162,7 @@ command_arguments(ALIAS_PARAMS_AVX512F_SP -16 __m512  __m512i e avx512f)
 command_arguments(ALIAS_PARAMS_ADVSIMD_DP  2 float64x2_t int32x2_t n advsimd)
 command_arguments(ALIAS_PARAMS_ADVSIMD_SP -4 float32x4_t int32x4_t n advsimd)
 
-command_arguments(ALIAS_PARAMS_NEON32_SP  -4 float32x4_t int32x4_t - neon)
-command_arguments(ALIAS_PARAMS_NEON32_DP   0)
-
-set(EXT_ENABLE_ALIAS AVX512F ADVSIMD NEON32)
+set(EXT_ENABLE_ALIAS AVX512F ADVSIMD)
 
 #
 
@@ -390,11 +378,7 @@ foreach(SIMD ${SLEEF_SUPPORTED_LIBM_EXTENSIONS})
     list(FIND EXT_ENABLE_ALIAS ${SIMD} INDEX_ALIAS)
     string(TOLOWER ${SIMD} SIMDLC)
 
-    if (${SIMD} STREQUAL "NEON32" OR ${SIMD} STREQUAL "NEON32VFPV4")
-      set(SIMD_SOURCES sleefsimdsp.c)
-    else()
-      set(SIMD_SOURCES sleefsimdsp.c sleefsimddp.c)
-    endif()
+    set(SIMD_SOURCES sleefsimdsp.c sleefsimddp.c)
 
     # Create a library
     add_library(${OBJECT_${SIMD}} OBJECT ${SIMD_SOURCES} ${HEADER_${SIMD}})    
@@ -702,7 +686,11 @@ add_custom_target(renamedspscalar.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR
 
 add_library(dispscalar_obj OBJECT dispscalar.c)
 set_target_properties(dispscalar_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
-target_compile_definitions(dispscalar_obj PRIVATE ${COMMON_TARGET_DEFINITIONS})
+if (COMPILER_SUPPORTS_PURECFMA_SCALAR)
+  target_compile_definitions(dispscalar_obj PRIVATE ${COMMON_TARGET_DEFINITIONS} ENABLE_PURECFMA=1)
+else()
+  target_compile_definitions(dispscalar_obj PRIVATE ${COMMON_TARGET_DEFINITIONS})
+endif()
 target_include_directories(dispscalar_obj PRIVATE ${sleef_BINARY_DIR}/include)
 add_dependencies(dispscalar_obj dispscalar.c_generated renamedspscalar.h_generated ${TARGET_HEADERS})
 target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:dispscalar_obj>)
@@ -920,11 +908,7 @@ if(CLANG_EXE_PATH AND SLEEF_ENABLE_LLVM_BITCODE)
 
   # Generate LLVM bitcode for SIMD SLEEF
   foreach(SIMD ${SLEEF_SUPPORTED_LIBM_EXTENSIONS})
-    if (${SIMD} STREQUAL "NEON32" OR ${SIMD} STREQUAL "NEON32VFPV4")
-      set(SIMD_SOURCES sleefsimdsp.c)
-    else()
-      set(SIMD_SOURCES sleefsimdsp.c sleefsimddp.c)
-    endif()
+    set(SIMD_SOURCES sleefsimdsp.c sleefsimddp.c)
 
     if(COMPILER_SUPPORTS_${SIMD})
       foreach(SIMD_SOURCE ${SIMD_SOURCES})

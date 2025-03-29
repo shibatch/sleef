@@ -30,9 +30,9 @@ using namespace std;
 #include <float.h>
 #include <limits.h>
 
-#if defined(__AVX2__) || defined(__aarch64__) || defined(__arm__) || defined(__powerpc64__)
-#ifndef FP_FAST_FMA
-#define FP_FAST_FMA
+#if defined(__AVX2__) || defined(__aarch64__) || defined(__powerpc64__)
+#ifndef __FMA__
+#define __FMA__
 #endif
 #endif
 

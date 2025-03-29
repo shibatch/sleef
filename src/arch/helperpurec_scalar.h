@@ -54,23 +54,17 @@
 #define ENABLE_FMA_SP
 //@#define ENABLE_FMA_SP
 
-#if defined(__AVX2__) || defined(__aarch64__) || defined(__arm__) || defined(__powerpc64__) || defined(__zarch__) || defined(__riscv) || CONFIG == 3
-#ifndef FP_FAST_FMA
-//@#ifndef FP_FAST_FMA
-#define FP_FAST_FMA
-//@#define FP_FAST_FMA
+#if defined(__AVX2__) || defined(__aarch64__) || defined(__powerpc64__) || defined(__zarch__) || defined(__riscv) || defined(__FP_FAST_FMA) || CONFIG == 3
+#ifndef __FMA__
+#define __FMA__
 #endif
-//@#endif
-#ifndef FP_FAST_FMAF
-//@#ifndef FP_FAST_FMAF
-#define FP_FAST_FMAF
-//@#define FP_FAST_FMAF
-#endif
+//@#ifndef __FMA__
+//@#define __FMA__
 //@#endif
 #endif
 
-#if (!defined(FP_FAST_FMA) || !defined(FP_FAST_FMAF)) && !defined(SLEEF_GENHEADER)
-#error FP_FAST_FMA or FP_FAST_FMAF not defined
+#if !defined(__FMA__) && !defined(SLEEF_GENHEADER)
+#error __FMA__ not defined
 #endif
 
 #define ISANAME "Pure C scalar with FMA"
