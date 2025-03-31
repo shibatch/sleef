@@ -408,14 +408,18 @@ endif()
 
 # FMA
 
-string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_PURECFMA_SCALAR}")
-CHECK_C_SOURCE_COMPILES("
-#if !defined(__FMA__) && (!defined(__FP_FAST_FMA) || !defined(__FP_FAST_FMAF))
-#error __FMA__ not defined
-#endif
-int main() {
-}" COMPILER_SUPPORTS_PURECFMA_SCALAR)
-set(CMAKE_REQUIRED_FLAGS)
+if (NOT MSVC)
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_PURECFMA_SCALAR}")
+  CHECK_C_SOURCE_COMPILES("
+#if !defined(__FMA__)
+  #error __FMA__ not defined
+  #endif
+  int main() {
+  }" COMPILER_SUPPORTS_PURECFMA_SCALAR)
+  set(CMAKE_REQUIRED_FLAGS)
+else()
+  set(COMPILER_SUPPORTS_PURECFMA_SCALAR True)
+endif()
 
 option(SLEEF_ENFORCE_PURECFMA_SCALAR "Build fails if purec fma is not supported by the compiler" ON)
 
@@ -549,25 +553,6 @@ endif()
 
 if (SLEEF_ENFORCE_AVX AND NOT COMPILER_SUPPORTS_AVX)
   message(FATAL_ERROR "SLEEF_ENFORCE_AVX is specified and that feature is disabled or not supported by the compiler")
-endif()
-
-# FMA4
-
-if(SLEEF_ARCH_X86 AND NOT SLEEF_DISABLE_FMA4)
-  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_FMA4}")
-  CHECK_C_SOURCE_COMPILES("
-  #if defined(_MSC_VER)
-  #include <intrin.h>
-  #else
-  #include <x86intrin.h>
-  #endif
-  int main() {
-    __m256d r = _mm256_macc_pd(_mm256_set1_pd(1), _mm256_set1_pd(2), _mm256_set1_pd(3)); }"
-    COMPILER_SUPPORTS_FMA4)
-endif()
-
-if (SLEEF_ENFORCE_FMA4 AND NOT COMPILER_SUPPORTS_FMA4)
-  message(FATAL_ERROR "SLEEF_ENFORCE_FMA4 is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # AVX2
