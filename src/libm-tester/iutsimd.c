@@ -31,9 +31,9 @@
 #include <float.h>
 #include <limits.h>
 
-#if defined(__AVX2__) || defined(__aarch64__) || defined(__arm__) || defined(__powerpc64__)
-#ifndef FP_FAST_FMA
-#define FP_FAST_FMA
+#if defined(__AVX2__) || defined(__aarch64__) || defined(__powerpc64__)
+#ifndef __FMA__
+#define __FMA__
 #endif
 #endif
 
@@ -169,24 +169,6 @@ typedef Sleef___m512_2 vfloat2;
 #define CONFIG 1
 #include "helperpurec.h"
 #include "norename.h"
-#endif
-
-#ifdef ENABLE_NEON32
-#include "renameneon32.h"
-#if !defined(USE_INLINE_HEADER)
-#define CONFIG 1
-#include "helperneon32.h"
-typedef Sleef_float32x4_t_2 vfloat2;
-#endif
-#endif
-
-#ifdef ENABLE_NEON32VFPV4
-#include "renameneon32vfpv4.h"
-#if !defined(USE_INLINE_HEADER)
-#define CONFIG 4
-#include "helperneon32.h"
-typedef Sleef_float32x4_t_2 vfloat2;
-#endif
 #endif
 
 #ifdef ENABLE_ADVSIMD
@@ -650,9 +632,6 @@ int main2(int argc, char **argv) {
 #endif
 #ifdef ENABLE_SP
     k += 2;
-#endif
-#if defined(ENABLE_NEON32) || defined(ENABLE_NEON32VFPV4)
-    k += 4; // flush to zero
 #endif
 #if defined(DETERMINISTIC)
     k += 8;

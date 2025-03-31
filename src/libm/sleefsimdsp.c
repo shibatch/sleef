@@ -175,26 +175,6 @@ extern const float Sleef_rempitabsp[];
 #endif
 #endif
 
-#ifdef ENABLE_NEON32
-#define CONFIG 1
-#if !defined(SLEEF_GENHEADER)
-#include "helperneon32.h"
-#endif
-#ifdef DORENAME
-#include "renameneon32.h"
-#endif
-#endif
-
-#ifdef ENABLE_NEON32VFPV4
-#define CONFIG 4
-#if !defined(SLEEF_GENHEADER)
-#include "helperneon32.h"
-#endif
-#ifdef DORENAME
-#include "renameneon32vfpv4.h"
-#endif
-#endif
-
 #ifdef ENABLE_SVE
 #define CONFIG 1
 #if !defined(SLEEF_GENHEADER)
@@ -869,14 +849,6 @@ EXPORT CONST vfloat xtanf(vfloat d) {
   o = veq_vo_vi2_vi2(vand_vi2_vi2_vi2(q, vcast_vi2_i(1)), vcast_vi2_i(1));
   x = vreinterpret_vf_vm(vxor_vm_vm_vm(vand_vm_vo32_vm(o, vreinterpret_vm_vf(vcast_vf_f(-0.0f))), vreinterpret_vm_vf(x)));
 
-#if defined(ENABLE_NEON32)
-  u = vcast_vf_f(0.00927245803177356719970703f);
-  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(0.00331984995864331722259521f));
-  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(0.0242998078465461730957031f));
-  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(0.0534495301544666290283203f));
-  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(0.133383005857467651367188f));
-  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(0.333331853151321411132812f));
-#else
   vfloat s2 = vmul_vf_vf_vf(s, s), s4 = vmul_vf_vf_vf(s2, s2);
   u = POLY6(s, s2, s4,
 	    0.00927245803177356719970703f,
@@ -885,7 +857,6 @@ EXPORT CONST vfloat xtanf(vfloat d) {
 	    0.0534495301544666290283203f,
 	    0.133383005857467651367188f,
 	    0.333331853151321411132812f);
-#endif
 
   u = vmla_vf_vf_vf_vf(s, vmul_vf_vf_vf(u, x), x);
 
@@ -936,14 +907,6 @@ EXPORT CONST vfloat xtanf(vfloat d) {
   o = veq_vo_vi2_vi2(vand_vi2_vi2_vi2(q, vcast_vi2_i(1)), vcast_vi2_i(1));
   x = vreinterpret_vf_vm(vxor_vm_vm_vm(vand_vm_vo32_vm(o, vreinterpret_vm_vf(vcast_vf_f(-0.0f))), vreinterpret_vm_vf(x)));
 
-#if defined(ENABLE_NEON32)
-  u = vcast_vf_f(0.00927245803177356719970703f);
-  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(0.00331984995864331722259521f));
-  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(0.0242998078465461730957031f));
-  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(0.0534495301544666290283203f));
-  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(0.133383005857467651367188f));
-  u = vmla_vf_vf_vf_vf(u, s, vcast_vf_f(0.333331853151321411132812f));
-#else
   vfloat s2 = vmul_vf_vf_vf(s, s), s4 = vmul_vf_vf_vf(s2, s2);
   u = POLY6(s, s2, s4,
 	    0.00927245803177356719970703f,
@@ -952,7 +915,6 @@ EXPORT CONST vfloat xtanf(vfloat d) {
 	    0.0534495301544666290283203f,
 	    0.133383005857467651367188f,
 	    0.333331853151321411132812f);
-#endif
 
   u = vmla_vf_vf_vf_vf(s, vmul_vf_vf_vf(u, x), x);
 
@@ -1765,10 +1727,6 @@ EXPORT CONST vfloat xatanf(vfloat d) {
 
   t = vreinterpret_vf_vm(vxor_vm_vm_vm(vand_vm_vo32_vm(veq_vo_vi2_vi2(vand_vi2_vi2_vi2(q, vcast_vi2_i(2)), vcast_vi2_i(2)), vreinterpret_vm_vf(vcast_vf_f(-0.0f))), vreinterpret_vm_vf(t)));
 
-#if defined(ENABLE_NEON32) || defined(ENABLE_NEON32VFPV4)
-  t = vsel_vf_vo_vf_vf(visinf_vo_vf(d), vmulsign_vf_vf_vf(vcast_vf_f(1.570796326794896557998982), d), t);
-#endif
-
   return t;
 }
 #endif // #if !defined(DETERMINISTIC)
@@ -2065,26 +2023,7 @@ static INLINE CONST vfloat expm1fk(vfloat d) {
   return u;
 }
 
-#if defined(ENABLE_NEON32) || defined(ENABLE_NEON32VFPV4)
-EXPORT CONST vfloat xsqrtf_u35(vfloat d) {
-  vfloat e = vreinterpret_vf_vi2(vadd_vi2_vi2_vi2(vcast_vi2_i(0x20000000), vand_vi2_vi2_vi2(vcast_vi2_i(0x7f000000), vsrl_vi2_vi2_i(vreinterpret_vi2_vf(d), 1))));
-  vfloat m = vreinterpret_vf_vi2(vadd_vi2_vi2_vi2(vcast_vi2_i(0x3f000000), vand_vi2_vi2_vi2(vcast_vi2_i(0x01ffffff), vreinterpret_vi2_vf(d))));
-  float32x4_t x = vrsqrteq_f32(m);
-  x = vmulq_f32(x, vrsqrtsq_f32(m, vmulq_f32(x, x)));
-  float32x4_t u = vmulq_f32(x, m);
-  u = vmlaq_f32(u, vmlsq_f32(m, u, u), vmulq_f32(x, vdupq_n_f32(0.5)));
-  e = vreinterpret_vf_vm(vandnot_vm_vo32_vm(veq_vo_vf_vf(d, vcast_vf_f(0)), vreinterpret_vm_vf(e)));
-  u = vmul_vf_vf_vf(e, u);
-
-  u = vsel_vf_vo_vf_vf(visinf_vo_vf(d), vcast_vf_f(SLEEF_INFINITYf), u);
-  u = vreinterpret_vf_vm(vor_vm_vo32_vm(vor_vo_vo_vo(visnan_vo_vf(d), vlt_vo_vf_vf(d, vcast_vf_f(0))), vreinterpret_vm_vf(u)));
-  u = vmulsign_vf_vf_vf(u, d);
-
-  return u;
-}
-#else
 EXPORT CONST vfloat xsqrtf_u35(vfloat d) { return vsqrt_vf_vf(d); }
-#endif
 
 #if !defined(DETERMINISTIC)
 EXPORT CONST vfloat xcbrtf(vfloat d) {
@@ -2352,10 +2291,6 @@ EXPORT CONST vfloat xpowf(vfloat x, vfloat y) {
   vopmask yisint = vor_vo_vo_vo(veq_vo_vf_vf(vtruncate_vf_vf(y), y), vgt_vo_vf_vf(vabs_vf_vf(y), vcast_vf_f(1 << 24)));
   vopmask yisodd = vand_vo_vo_vo(vand_vo_vo_vo(veq_vo_vi2_vi2(vand_vi2_vi2_vi2(vtruncate_vi2_vf(y), vcast_vi2_i(1)), vcast_vi2_i(1)), yisint),
 				 vlt_vo_vf_vf(vabs_vf_vf(y), vcast_vf_f(1 << 24)));
-
-#if defined(ENABLE_NEON32) || defined(ENABLE_NEON32VFPV4)
-  yisodd = vandnot_vm_vo32_vm(visinf_vo_vf(y), yisodd);
-#endif
 
   vfloat result = expkf(dfmul_vf2_vf2_vf(logkf(vabs_vf_vf(x)), y));
 
@@ -3169,9 +3104,6 @@ EXPORT CONST vfloat xfmodf(vfloat x, vfloat y) {
   de = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(de, vcast_vf_f(UINT64_C(1) << 25)), de);
   s  = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(s , vcast_vf_f(1.0f / (UINT64_C(1) << 25))), s);
   vfloat rde = vtoward0_vf_vf(vrec_vf_vf(de));
-#if defined(ENABLE_NEON32) || defined(ENABLE_NEON32VFPV4)
-  rde = vtoward0_vf_vf(rde);
-#endif
   vfloat2 r = vcast_vf2_vf_vf(nu, vcast_vf_f(0));
 
   for(int i=0;i<8;i++) { // ceil(log2(FLT_MAX) / 22)+1

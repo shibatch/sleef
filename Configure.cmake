@@ -200,12 +200,6 @@ elseif(SLEEF_TARGET_PROCESSOR MATCHES "aarch64|arm64")
   set(COMPILER_SUPPORTS_ADVSIMD 1)
   set(COMPILER_SUPPORTS_ADVSIMDNOFMA 1)
 
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
-  set(SLEEF_ARCH_AARCH32 ON CACHE INTERNAL "True for Aarch32 architecture.")
-  set(COMPILER_SUPPORTS_NEON32 1)
-  set(COMPILER_SUPPORTS_NEON32VFPV4 1)
-
-  set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mfpu=vfpv4")
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64" OR CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)")
   set(SLEEF_ARCH_PPC64 ON CACHE INTERNAL "True for PPC64 architecture.")
 
@@ -220,7 +214,6 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "riscv64")
 endif()
 
 set(COMPILER_SUPPORTS_PUREC_SCALAR 1)
-set(COMPILER_SUPPORTS_PURECFMA_SCALAR 1)
 
 # Compiler feature detection
 
@@ -244,10 +237,8 @@ set(CLANG_FLAGS_ENABLE_AVX "-mavx")
 set(CLANG_FLAGS_ENABLE_FMA4 "-mfma4")
 set(CLANG_FLAGS_ENABLE_AVX2 "-mavx2;-mfma")
 set(CLANG_FLAGS_ENABLE_AVX2128 "-mavx2;-mfma")
-set(CLANG_FLAGS_ENABLE_AVX512F "-mavx512f")
-set(CLANG_FLAGS_ENABLE_AVX512FNOFMA "-mavx512f")
-set(CLANG_FLAGS_ENABLE_NEON32 "--target=arm-linux-gnueabihf;-mcpu=cortex-a8")
-set(CLANG_FLAGS_ENABLE_NEON32VFPV4 "-march=armv7-a;-mfpu=neon-vfpv4")
+set(CLANG_FLAGS_ENABLE_AVX512F "-mavx512f;-mfma")
+set(CLANG_FLAGS_ENABLE_AVX512FNOFMA "-mavx512f;-mfma")
 # Arm AArch64 vector extensions.
 set(CLANG_FLAGS_ENABLE_SVE "-march=armv8-a+sve")
 set(CLANG_FLAGS_ENABLE_SVENOFMA "-march=armv8-a+sve")
@@ -296,7 +287,6 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang|QCC)")
     # "AVX vector return without AVX enabled changes the ABI" at
     # src/arch/helpervecext.h:88
     string(CONCAT FLAGS_WALL ${FLAGS_WALL} " -Wno-psabi")
-    set(FLAGS_ENABLE_NEON32 "-mfpu=neon")
   endif(CMAKE_C_COMPILER_ID MATCHES "(GNU|QCC)")
 
   if(CMAKE_C_COMPILER_ID MATCHES "Clang" AND SLEEF_ENABLE_LTO)
@@ -415,6 +405,27 @@ if(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64" AND CMAKE_C_COMPILER_ID MATCHES "GNU
 endif()
 
 # FEATURE DETECTION
+
+# FMA
+
+if (NOT MSVC)
+  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_PURECFMA_SCALAR}")
+  CHECK_C_SOURCE_COMPILES("
+  #if !defined(__FMA__) && (!defined(__FP_FAST_FMA) || !defined(__FP_FAST_FMAF))
+  #error __FMA__ not defined
+  #endif
+  int main() {
+  }" COMPILER_SUPPORTS_PURECFMA_SCALAR)
+  set(CMAKE_REQUIRED_FLAGS)
+else()
+  set(COMPILER_SUPPORTS_PURECFMA_SCALAR True)
+endif()
+
+option(SLEEF_ENFORCE_PURECFMA_SCALAR "Build fails if purec fma is not supported by the compiler" ON)
+
+if (SLEEF_ENFORCE_PURECFMA_SCALAR AND NOT COMPILER_SUPPORTS_PURECFMA_SCALAR)
+  message(FATAL_ERROR "SLEEF_ENFORCE_PURECFMA_SCALAR is specified and that feature is disabled or not supported by the compiler")
+endif()
 
 # Long double
 
@@ -542,25 +553,6 @@ endif()
 
 if (SLEEF_ENFORCE_AVX AND NOT COMPILER_SUPPORTS_AVX)
   message(FATAL_ERROR "SLEEF_ENFORCE_AVX is specified and that feature is disabled or not supported by the compiler")
-endif()
-
-# FMA4
-
-if(SLEEF_ARCH_X86 AND NOT SLEEF_DISABLE_FMA4)
-  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_FMA4}")
-  CHECK_C_SOURCE_COMPILES("
-  #if defined(_MSC_VER)
-  #include <intrin.h>
-  #else
-  #include <x86intrin.h>
-  #endif
-  int main() {
-    __m256d r = _mm256_macc_pd(_mm256_set1_pd(1), _mm256_set1_pd(2), _mm256_set1_pd(3)); }"
-    COMPILER_SUPPORTS_FMA4)
-endif()
-
-if (SLEEF_ENFORCE_FMA4 AND NOT COMPILER_SUPPORTS_FMA4)
-  message(FATAL_ERROR "SLEEF_ENFORCE_FMA4 is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # AVX2
@@ -858,7 +850,6 @@ CHECK_C_SOURCE_COMPILES("
   }"
   COMPILER_SUPPORTS_WEAK_ALIASES)
 if (COMPILER_SUPPORTS_WEAK_ALIASES AND
-    NOT CMAKE_SYSTEM_PROCESSOR MATCHES "arm" AND
     NOT CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64" AND
     NOT SLEEF_CLANG_ON_WINDOWS AND
     NOT MINGW AND SLEEF_BUILD_GNUABI_LIBS)

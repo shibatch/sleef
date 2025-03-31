@@ -29,10 +29,6 @@
 #include "helperavx512f.h"
 #endif
 
-#ifdef ENABLE_NEON32
-#include "helperneon32.h"
-#endif
-
 #ifdef ENABLE_ADVSIMD
 #include "helperadvsimd.h"
 #endif

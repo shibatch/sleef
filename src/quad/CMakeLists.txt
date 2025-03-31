@@ -59,12 +59,6 @@ elseif(SLEEF_ARCH_AARCH64)
     DSPX2_AARCH64
     )
   set(QMKDISP_PARAMS_X2 2 Sleef_quadx2 float64x2_t int32x2_t int64x2_t uint64x2_t advsimd x)
-elseif(SLEEF_ARCH_AARCH32)
-  set(SLEEF_HEADER_LIST
-    PUREC_SCALAR
-    PURECFMA_SCALAR
-    DSPSCALAR
-    )
 elseif(SLEEF_ARCH_PPC64)
   set(SLEEF_HEADER_LIST
     VSX
@@ -91,6 +85,11 @@ elseif(SLEEF_ARCH_RISCV64)
     RVVM2
     PUREC_SCALAR
     PURECFMA_SCALAR
+    DSPSCALAR
+    )
+else()
+  set(SLEEF_HEADER_LIST
+    PUREC_SCALAR
     DSPSCALAR
     )
 endif()
@@ -422,7 +421,11 @@ add_custom_target(qrenamedspscalar.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DI
 
 add_library(qdispscalar_obj OBJECT qdispscalar.c)
 set_target_properties(qdispscalar_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
-target_compile_definitions(qdispscalar_obj PRIVATE ${COMMON_TARGET_DEFINITIONS})
+if (COMPILER_SUPPORTS_PURECFMA_SCALAR)
+  target_compile_definitions(qdispscalar_obj PRIVATE ${COMMON_TARGET_DEFINITIONS} ENABLE_PURECFMA=1)
+else()
+  target_compile_definitions(qdispscalar_obj PRIVATE ${COMMON_TARGET_DEFINITIONS})
+endif()
 target_include_directories(qdispscalar_obj PRIVATE ${sleef_BINARY_DIR}/include)
 add_dependencies(qdispscalar_obj qdispscalar.c_generated qrenamedspscalar.h_generated
    sleefquad_headers ${TARGET_LIBSLEEF} ${TARGET_HEADERS})

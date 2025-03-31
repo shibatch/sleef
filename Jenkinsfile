@@ -121,7 +121,7 @@ pipeline {
  			 mkdir build
 			 cd build
 			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=../../install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_DFT=False -DSLEEF_ENFORCE_DFT=False -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_INLINE_HEADERS=TRUE -DSLEEF_ENFORCE_TESTER4=True -DSLEEF_ENABLE_TESTER=False -DSLEEF_ENFORCE_RVVM1=True -DSLEEF_ENFORCE_RVVM2=True
-			 cmake -E time oomstaller ninja -j `nproc`
+			 cmake -E time oomstaller --max-parallel `nproc` ninja -j `nproc`
 			 export OMP_WAIT_POLICY=passive
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
 		         ctest -j `nproc`
@@ -142,8 +142,8 @@ pipeline {
 			 export CXX=g++-12
  			 mkdir build
 			 cd build
-			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=../../install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_ENFORCE_TESTER4=True -DSLEEF_ENABLE_TESTER=False
-			 cmake -E time oomstaller ninja -j `nproc`
+			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=../../install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_ENFORCE_TESTER4=True -DSLEEF_ENABLE_TESTER=False -DSLEEF_ENFORCE_PURECFMA_SCALAR=False
+			 cmake -E time oomstaller --max-parallel `nproc` ninja -j `nproc`
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
 		         ctest -j `nproc`
 		         ninja install
@@ -164,7 +164,7 @@ pipeline {
  			 mkdir build
 			 cd build
 			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=../../install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_DFT=TRUE -DSLEEF_ENFORCE_DFT=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_INLINE_HEADERS=TRUE -DSLEEF_ENFORCE_SVE=TRUE -DEMULATOR=qemu-aarch64-static -DSLEEF_ENFORCE_TESTER4=True -DSLEEF_ENABLE_TESTER=False -DSLEEF_ENABLE_LTO=True -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=lld-19"
-			 cmake -E time oomstaller ninja -j `nproc`
+			 cmake -E time oomstaller --max-parallel `nproc` ninja -j `nproc`
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
 		         ctest -j `nproc`
 			 '''
@@ -184,7 +184,7 @@ pipeline {
  			 mkdir build
 			 cd build
 			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=../../install -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_DFT=TRUE -DSLEEF_ENFORCE_DFT=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_INLINE_HEADERS=TRUE -DSLEEF_ENFORCE_SVE=TRUE -DEMULATOR=qemu-aarch64-static -DSLEEF_ENFORCE_TESTER4=True -DSLEEF_ENABLE_TESTER=False
-			 cmake -E time oomstaller ninja -j `nproc`
+			 cmake -E time oomstaller --max-parallel `nproc` ninja -j `nproc`
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
 		         ctest -j `nproc`
 			 '''
