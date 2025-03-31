@@ -411,7 +411,7 @@ endif()
 if (NOT MSVC)
   string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_PURECFMA_SCALAR}")
   CHECK_C_SOURCE_COMPILES("
-#if !defined(__FMA__)
+  #if !defined(__FMA__) && (!defined(__FP_FAST_FMA) || !defined(__FP_FAST_FMAF))
   #error __FMA__ not defined
   #endif
   int main() {
