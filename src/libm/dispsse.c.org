@@ -13,16 +13,6 @@
 #define SLEEF_IMPORT_IS_EXPORT
 #include "sleef.h"
 
-static int cpuSupportsSSE4_1() {
-  static int ret = -1;
-  if (ret == -1) {
-    int32_t reg[4];
-    Sleef_x86CpuID(reg, 1, 0);
-    ret = (reg[2] & (1 << 19)) != 0;
-  }
-  return ret;
-}
-
 static int cpuSupportsAVX2() {
   static int ret = -1;
   if (ret == -1) {
@@ -43,13 +33,13 @@ static int cpuSupportsFMA() {
   return ret;
 }
 
-#define SUBST_IF_EXT1(funcsse4) if (cpuSupportsSSE4_1()) p = funcsse4;
-
 #ifdef ENABLE_AVX2
-#define SUBST_IF_EXT2(funcavx2) if (cpuSupportsAVX2() && cpuSupportsFMA()) p = funcavx2;
+#define SUBST_IF_EXT1(funcavx2) if (cpuSupportsAVX2() && cpuSupportsFMA()) p = funcavx2;
 #else
-#define SUBST_IF_EXT2(funcavx2)
+#define SUBST_IF_EXT1(funcavx2)
 #endif
+
+#define SUBST_IF_EXT2(funcExt2)
 
 #ifdef ENABLE_ALIAS
 #define VECALIAS_vf_vf(fptype, funcNameS, funcName, veclen)		\

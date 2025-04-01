@@ -232,9 +232,6 @@ endif()
 # As we might compile the lib with MSVC, but generates bitcode with CLANG
 # Intel vector extensions.
 set(CLANG_FLAGS_ENABLE_SSE2 "-msse2")
-set(CLANG_FLAGS_ENABLE_SSE4 "-msse4.1")
-set(CLANG_FLAGS_ENABLE_AVX "-mavx")
-set(CLANG_FLAGS_ENABLE_FMA4 "-mfma4")
 set(CLANG_FLAGS_ENABLE_AVX2 "-mavx2;-mfma")
 set(CLANG_FLAGS_ENABLE_AVX2128 "-mavx2;-mfma")
 set(CLANG_FLAGS_ENABLE_AVX512F "-mavx512f;-mfma")
@@ -319,18 +316,14 @@ elseif(MSVC)
   # Intel vector extensions.
   if (CMAKE_CL_64)
     set(FLAGS_ENABLE_SSE2 /D__SSE2__)
-    set(FLAGS_ENABLE_SSE4 /D__SSE2__ /D__SSE3__ /D__SSE4_1__)
   else()
     set(FLAGS_ENABLE_SSE2 /D__SSE2__ /arch:SSE2)
-    set(FLAGS_ENABLE_SSE4 /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /arch:SSE2)
   endif()
-  set(FLAGS_ENABLE_AVX  /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /arch:AVX)
-  set(FLAGS_ENABLE_FMA4 /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /D__FMA4__ /arch:AVX2)
-  set(FLAGS_ENABLE_AVX2 /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /arch:AVX2)
-  set(FLAGS_ENABLE_AVX2128 /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /arch:AVX2)
-  set(FLAGS_ENABLE_AVX512F /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /D__AVX512F__ /arch:AVX2)
-  set(FLAGS_ENABLE_AVX512FNOFMA /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /D__AVX512F__ /arch:AVX2)
-  set(FLAGS_ENABLE_PURECFMA_SCALAR /D__SSE2__ /D__SSE3__ /D__SSE4_1__ /D__AVX__ /D__AVX2__ /arch:AVX2)
+  set(FLAGS_ENABLE_AVX2 /D__SSE2__ /D__AVX2__ /arch:AVX2)
+  set(FLAGS_ENABLE_AVX2128 /D__SSE2__ /D__AVX2__ /arch:AVX2)
+  set(FLAGS_ENABLE_AVX512F /D__SSE2__ /D__AVX2__ /D__AVX512F__ /arch:AVX2)
+  set(FLAGS_ENABLE_AVX512FNOFMA /D__SSE2__ /D__AVX2__ /D__AVX512F__ /arch:AVX2)
+  set(FLAGS_ENABLE_PURECFMA_SCALAR /D__SSE2__ /D__AVX2__ /arch:AVX2)
   set(FLAGS_WALL "/D_CRT_SECURE_NO_WARNINGS /D_CRT_NONSTDC_NO_DEPRECATE")
 
   set(FLAGS_NO_ERRNO "")
@@ -341,8 +334,6 @@ elseif(MSVC)
   set(FLAG_DEFINE "/D")
 elseif(CMAKE_C_COMPILER_ID MATCHES "Intel")
   set(FLAGS_ENABLE_SSE2 "-msse2")
-  set(FLAGS_ENABLE_SSE4 "-msse4.1")
-  set(FLAGS_ENABLE_AVX "-mavx")
   set(FLAGS_ENABLE_AVX2 "-march=core-avx2")
   set(FLAGS_ENABLE_AVX2128 "-march=core-avx2")
   set(FLAGS_ENABLE_AVX512F "-xCOMMON-AVX512")
@@ -515,44 +506,6 @@ endif()
 
 if (SLEEF_ENFORCE_SSE2 AND NOT COMPILER_SUPPORTS_SSE2)
   message(FATAL_ERROR "SLEEF_ENFORCE_SSE2 is specified and that feature is disabled or not supported by the compiler")
-endif()
-
-# SSE 4.1
-
-if(SLEEF_ARCH_X86 AND NOT SLEEF_DISABLE_SSE4)
-  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_SSE4}")
-  CHECK_C_SOURCE_COMPILES("
-  #if defined(_MSC_VER)
-  #include <intrin.h>
-  #else
-  #include <x86intrin.h>
-  #endif
-  int main() {
-    __m128d r = _mm_floor_sd(_mm_set1_pd(1), _mm_set1_pd(2)); }"
-    COMPILER_SUPPORTS_SSE4)
-endif()
-
-if (SLEEF_ENFORCE_SSE4 AND NOT COMPILER_SUPPORTS_SSE4)
-  message(FATAL_ERROR "SLEEF_ENFORCE_SSE4 is specified and that feature is disabled or not supported by the compiler")
-endif()
-
-# AVX
-
-if(SLEEF_ARCH_X86 AND NOT SLEEF_DISABLE_AVX)
-  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_AVX}")
-  CHECK_C_SOURCE_COMPILES("
-  #if defined(_MSC_VER)
-  #include <intrin.h>
-  #else
-  #include <x86intrin.h>
-  #endif
-  int main() {
-    __m256d r = _mm256_add_pd(_mm256_set1_pd(1), _mm256_set1_pd(2));
-  }" COMPILER_SUPPORTS_AVX)
-endif()
-
-if (SLEEF_ENFORCE_AVX AND NOT COMPILER_SUPPORTS_AVX)
-  message(FATAL_ERROR "SLEEF_ENFORCE_AVX is specified and that feature is disabled or not supported by the compiler")
 endif()
 
 # AVX2

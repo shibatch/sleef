@@ -38,9 +38,6 @@ using namespace tlfloat;
 extern "C" {
 #endif
 
-extern int enableFlushToZero;
-double flushToZero(double y);
-
 int xisnumber(double x);
 int isPlusZero(double x);
 int isMinusZero(double x);

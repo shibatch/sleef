@@ -61,10 +61,6 @@ option(SLEEF_ENFORCE_FLOAT128 "Build fails if float128 is not supported by the c
 
 option(SLEEF_DISABLE_SSE2 "Disable SSE2" OFF)
 option(SLEEF_ENFORCE_SSE2 "Build fails if SSE2 is not supported by the compiler" OFF)
-option(SLEEF_DISABLE_SSE4 "Disable SSE4" OFF)
-option(SLEEF_ENFORCE_SSE4 "Build fails if SSE4 is not supported by the compiler" OFF)
-option(SLEEF_DISABLE_AVX "Disable AVX" OFF)
-option(SLEEF_ENFORCE_AVX "Build fails if AVX is not supported by the compiler" OFF)
 option(SLEEF_DISABLE_FMA4 "Disable FMA4" OFF)
 option(SLEEF_ENFORCE_FMA4 "Build fails if FMA4 is not supported by the compiler" OFF)
 option(SLEEF_DISABLE_AVX2 "Disable AVX2" OFF)
@@ -153,7 +149,7 @@ endfunction()
 # Settings
 
 set(SLEEF_ALL_SUPPORTED_EXTENSIONS
-  AVX512FNOFMA AVX512F AVX2 AVX2128 AVX SSE4 SSE2       # x86
+  AVX512FNOFMA AVX512F AVX2 AVX2128 SSE2                # x86
   SVENOFMA SVE ADVSIMDNOFMA ADVSIMD                     # Aarch64
   VSX VSXNOFMA VSX3 VSX3NOFMA                           # PPC64
   VXE VXENOFMA VXE2 VXE2NOFMA                           # IBM Z
@@ -163,7 +159,7 @@ set(SLEEF_ALL_SUPPORTED_EXTENSIONS
   )
 
 set(SLEEF_SUPPORTED_LIBM_EXTENSIONS
-  AVX512FNOFMA AVX512F AVX2 AVX2128 AVX SSE4 SSE2       # x86
+  AVX512FNOFMA AVX512F AVX2 AVX2128 SSE2                # x86
   SVENOFMA SVE ADVSIMDNOFMA ADVSIMD                     # Aarch64
   VSX VSXNOFMA VSX3 VSX3NOFMA                           # PPC64
   VXE VXENOFMA VXE2 VXE2NOFMA                           # IBM Z
@@ -172,7 +168,7 @@ set(SLEEF_SUPPORTED_LIBM_EXTENSIONS
   CACHE STRING "List of SIMD architectures supported by libsleef."
   )
 set(SLEEF_SUPPORTED_GNUABI_EXTENSIONS 
-  SSE2 AVX AVX2 AVX512F ADVSIMD SVE
+  SSE2 AVX2 AVX512F ADVSIMD SVE
   CACHE STRING "List of SIMD architectures supported by libsleef for GNU ABI."
 )
 
@@ -192,7 +188,6 @@ command_arguments(MKMASKED_PARAMS_GNUABI_SVE_sp sve s -4)
 set(COSTOVERRIDE_AVX512F 10)
 set(COSTOVERRIDE_AVX512FNOFMA 10)
 set(COSTOVERRIDE_AVX2 2)
-set(COSTOVERRIDE_AVX 2)
 set(COSTOVERRIDE_SVE 10)
 set(COSTOVERRIDE_SVENOFMA 10)
 set(COSTOVERRIDE_RVVM1 10)

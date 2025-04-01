@@ -4,9 +4,7 @@
 # TESTER3_DEFINITIONS
 
 set(TESTER3_DEFINITIONS_SSE2          ATR=cinz_ DPTYPE=__m128d SPTYPE=__m128 DPTYPESPEC=d2 SPTYPESPEC=f4  EXTSPEC=sse2)
-set(TESTER3_DEFINITIONS_SSE4          ATR=cinz_ DPTYPE=__m128d SPTYPE=__m128 DPTYPESPEC=d2 SPTYPESPEC=f4  EXTSPEC=sse4)
 set(TESTER3_DEFINITIONS_AVX2128       ATR=finz_ DPTYPE=__m128d SPTYPE=__m128 DPTYPESPEC=d2 SPTYPESPEC=f4  EXTSPEC=avx2128)
-set(TESTER3_DEFINITIONS_AVX           ATR=cinz_ DPTYPE=__m256d SPTYPE=__m256 DPTYPESPEC=d4 SPTYPESPEC=f8  EXTSPEC=avx)
 set(TESTER3_DEFINITIONS_FMA4          ATR=finz_ DPTYPE=__m256d SPTYPE=__m256 DPTYPESPEC=d4 SPTYPESPEC=f8  EXTSPEC=fma4)
 set(TESTER3_DEFINITIONS_AVX2          ATR=finz_ DPTYPE=__m256d SPTYPE=__m256 DPTYPESPEC=d4 SPTYPESPEC=f8  EXTSPEC=avx2)
 set(TESTER3_DEFINITIONS_AVX512F       ATR=finz_ DPTYPE=__m512d SPTYPE=__m512 DPTYPESPEC=d8 SPTYPESPEC=f16 EXTSPEC=avx512f)
@@ -485,15 +483,6 @@ if (SLEEF_ARCH_X86)
     add_dependencies(iutdsp128 ${TARGET_HEADERS} ${TARGET_LIBSLEEF})
     add_test_iut(iutdsp128 1.0)
     list(APPEND IUT_LIST iutdsp128)
-
-    # iutdsp256
-    add_executable(iutdsp256 ${IUT_SRC})
-    target_compile_definitions(iutdsp256 PRIVATE ENABLE_DSP256=1 ${COMMON_TARGET_DEFINITIONS})
-    target_compile_options(iutdsp256 PRIVATE ${FLAGS_ENABLE_AVX})
-    target_link_libraries(iutdsp256 ${TARGET_LIBSLEEF} ${LIBRT} ${TARGET_TESTERUTIL_OBJ} ${LIBM})
-    add_dependencies(iutdsp256 ${TARGET_HEADERS} ${TARGET_LIBSLEEF})
-    add_test_iut(iutdsp256 1.0)
-    list(APPEND IUT_LIST iutdsp256)
   endif(SLEEF_ENABLE_TESTER)
 
   if (SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
@@ -505,15 +494,6 @@ if (SLEEF_ARCH_X86)
     target_link_libraries(tester4dsp128 ${TARGET_LIBSLEEF} ${TLFLOAT_LIBRARIES} ${TARGET_TESTERUTIL_OBJ})
     add_dependencies(tester4dsp128 ${TARGET_HEADERS} ${TARGET_LIBSLEEF} ext_tlfloat)
     add_test_with_emu(1.0 tester4dsp128)
-
-    # tester4dsp256
-    add_executable(tester4dsp256 ${TESTER4_SRC})
-    target_compile_definitions(tester4dsp256 PRIVATE
-      ENABLE_DSP256=1 ${COMMON_TARGET_DEFINITIONS})
-    target_compile_options(tester4dsp256 PRIVATE ${FLAGS_ENABLE_AVX})
-    target_link_libraries(tester4dsp256 ${TARGET_LIBSLEEF} ${TLFLOAT_LIBRARIES} ${TARGET_TESTERUTIL_OBJ})
-    add_dependencies(tester4dsp256 ${TARGET_HEADERS} ${TARGET_LIBSLEEF} ext_tlfloat)
-    add_test_with_emu(1.0 tester4dsp256)
   endif(SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
 endif(SLEEF_ARCH_X86)
 

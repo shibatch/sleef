@@ -5,10 +5,6 @@ if (SLEEF_ARCH_X86)
   set(SLEEF_HEADER_LIST
     SSE_
     SSE2
-    SSE4
-    AVX_
-    AVX
-    FMA4
     AVX2
     AVX2128
     AVX512F_
@@ -72,10 +68,6 @@ endif()
 
 command_arguments(HEADER_PARAMS_SSE_            -     2 4 __m128d __m128 __m128i __m128i __SSE2__)
 command_arguments(HEADER_PARAMS_SSE2            cinz_ 2 4 __m128d __m128 __m128i __m128i __SSE2__ sse2)
-command_arguments(HEADER_PARAMS_SSE4            cinz_ 2 4 __m128d __m128 __m128i __m128i __SSE2__ sse4)
-command_arguments(HEADER_PARAMS_AVX_            -     4 8 __m256d __m256 __m128i "struct { __m128i x, y$<SEMICOLON> }" __AVX__)
-command_arguments(HEADER_PARAMS_AVX             cinz_ 4 8 __m256d __m256 __m128i "struct { __m128i x, y$<SEMICOLON> }" __AVX__ avx)
-command_arguments(HEADER_PARAMS_FMA4            finz_ 4 8 __m256d __m256 __m128i "struct { __m128i x, y$<SEMICOLON> }" __AVX__ fma4)
 command_arguments(HEADER_PARAMS_AVX2            finz_ 4 8 __m256d __m256 __m128i __m256i __AVX__ avx2)
 command_arguments(HEADER_PARAMS_AVX2128         finz_ 2 4 __m128d __m128 __m128i __m128i __SSE2__ avx2128)
 command_arguments(HEADER_PARAMS_AVX512F_        -     8 16 __m512d __m512 __m256i __m512i __AVX512F__)
@@ -112,9 +104,6 @@ command_arguments(HEADER_PARAMS_PURECFMA_SCALAR finz_ 1 1 double float int32_t i
 # RENAME_PARAMS
 
 command_arguments(RENAME_PARAMS_SSE2            cinz_ 2 4 sse2)
-command_arguments(RENAME_PARAMS_SSE4            cinz_ 2 4 sse4)
-command_arguments(RENAME_PARAMS_AVX             cinz_ 4 8 avx)
-command_arguments(RENAME_PARAMS_FMA4            finz_ 4 8 fma4)
 command_arguments(RENAME_PARAMS_AVX2            finz_ 4 8 avx2)
 command_arguments(RENAME_PARAMS_AVX2128         finz_ 2 4 avx2128)
 command_arguments(RENAME_PARAMS_AVX512F         finz_ 8 16 avx512f)
@@ -140,7 +129,6 @@ command_arguments(RENAME_PARAMS_SVE             finz_ x x sve)
 command_arguments(RENAME_PARAMS_SVENOFMA        cinz_ x x svenofma)
 
 command_arguments(RENAME_PARAMS_GNUABI_SSE2     sse2 b 2 4 _mm128d _mm128 _mm128i _mm128i __SSE2__)
-command_arguments(RENAME_PARAMS_GNUABI_AVX      avx c 4 8 __m256d __m256 __m128i "struct { __m128i x, y$<SEMICOLON> }" __AVX__)
 command_arguments(RENAME_PARAMS_GNUABI_AVX2     avx2 d 4 8 __m256d __m256 __m128i __m256i __AVX2__)
 command_arguments(RENAME_PARAMS_GNUABI_AVX512F  avx512f e 8 16 __m512d __m512 __m256i __m512i __AVX512F__)
 command_arguments(RENAME_PARAMS_GNUABI_ADVSIMD  advsimd n 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON)
@@ -156,13 +144,16 @@ command_arguments(RENAME_PARAMS_RVVM2NOFMA      cinz_ x x rvvm2nofma)
 
 # ALIAS_PARAMS
 
+command_arguments(ALIAS_PARAMS_AVX2_DP   4 __m256d __m128i d avx2)
+command_arguments(ALIAS_PARAMS_AVX2_SP  -8 __m256  __m256i d avx2)
+
 command_arguments(ALIAS_PARAMS_AVX512F_DP   8 __m512d __m256i e avx512f)
 command_arguments(ALIAS_PARAMS_AVX512F_SP -16 __m512  __m512i e avx512f)
 
 command_arguments(ALIAS_PARAMS_ADVSIMD_DP  2 float64x2_t int32x2_t n advsimd)
 command_arguments(ALIAS_PARAMS_ADVSIMD_SP -4 float32x4_t int32x4_t n advsimd)
 
-set(EXT_ENABLE_ALIAS AVX512F ADVSIMD)
+set(EXT_ENABLE_ALIAS AVX2 AVX512F ADVSIMD)
 
 #
 
@@ -720,22 +711,12 @@ function(sleef_generate_rename_simd simd)
 
 if (SLEEF_ARCH_X86)
   # Target dispsse.c
-  sleef_generate_disp_simd(sse 2 4 __m128d __m128 __m128i sse2 sse4 avx2128)
+  sleef_generate_disp_simd(sse 2 4 __m128d __m128 __m128i sse2 avx2128 x)
 
   # Target renamedsp128.h
   sleef_generate_rename_simd(sp128 - 2 4)
 
-  # Target dispavx.c
-  sleef_generate_disp_simd(avx 4 8 __m256d __m256 __m128i avx fma4 avx2)
-
-  # Target renamedsp256.h
-  sleef_generate_rename_simd(sp256 - 4 8)
-
   # Target dispsse_obj
-  if (COMPILER_SUPPORTS_FMA4)
-    set(DISPATCHER_DEFINITIONS ${DISPATCHER_DEFINITIONS} ENABLE_FMA4=1)
-  endif()
-
   if (COMPILER_SUPPORTS_AVX2)
     set(DISPATCHER_DEFINITIONS ${DISPATCHER_DEFINITIONS} ENABLE_AVX2=1)
   endif()
@@ -748,18 +729,6 @@ if (SLEEF_ARCH_X86)
     target_include_directories(dispsse_obj PRIVATE ${sleef_BINARY_DIR}/include)
     add_dependencies(dispsse_obj dispsse.c_generated renamedsp128.h_generated ${TARGET_HEADERS})
     target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:dispsse_obj>)
-  endif()
-
-  # Target dispavx_obj
-
-  if(COMPILER_SUPPORTS_AVX)
-    add_library(dispavx_obj OBJECT dispavx.c)
-    target_compile_options(dispavx_obj PRIVATE ${FLAGS_ENABLE_AVX})
-    set_target_properties(dispavx_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
-    target_compile_definitions(dispavx_obj PRIVATE ${COMMON_TARGET_DEFINITIONS} ${DISPATCHER_DEFINITIONS})
-    target_include_directories(dispavx_obj PRIVATE ${sleef_BINARY_DIR}/include)
-    add_dependencies(dispavx_obj dispavx.c_generated renamedsp256.h_generated ${TARGET_HEADERS})
-    target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:dispavx_obj>)
   endif()
 endif(SLEEF_ARCH_X86)
 
