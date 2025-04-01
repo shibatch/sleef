@@ -89,36 +89,6 @@ typedef Sleef___m128_2 vfloat2;
 #endif
 #endif
 
-#ifdef ENABLE_SSE4
-#include "renamesse4.h"
-#if !defined(USE_INLINE_HEADER)
-#define CONFIG 4
-#include "helpersse2.h"
-typedef Sleef___m128d_2 vdouble2;
-typedef Sleef___m128_2 vfloat2;
-#endif
-#endif
-
-#ifdef ENABLE_AVX
-#include "renameavx.h"
-#if !defined(USE_INLINE_HEADER)
-#define CONFIG 1
-#include "helperavx.h"
-typedef Sleef___m256d_2 vdouble2;
-typedef Sleef___m256_2 vfloat2;
-#endif
-#endif
-
-#ifdef ENABLE_FMA4
-#include "renamefma4.h"
-#if !defined(USE_INLINE_HEADER)
-#define CONFIG 4
-#include "helperavx.h"
-typedef Sleef___m256d_2 vdouble2;
-typedef Sleef___m256_2 vfloat2;
-#endif
-#endif
-
 #ifdef ENABLE_AVX2
 #include "renameavx2.h"
 #if !defined(USE_INLINE_HEADER)

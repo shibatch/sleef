@@ -23,7 +23,6 @@ The following table summarizes currently supported OSes and compilers.
 |AArch64   |&#x2714; |&#x2714; |&#x274c; |&#x274c; |&#x274c; |&#x274c; |&#x2714; |&#x2753;
 |POWER     |&#x2714; |&#x2753; |N/A      |N/A      |N/A      |N/A      |N/A      |N/A
 |S390X     |&#x2714; |&#x2753; |N/A      |N/A      |N/A      |N/A      |N/A      |N/A
-|AArch32   |&#x2714; |&#x2753; |N/A      |N/A      |N/A      |N/A      |N/A      |N/A
 |=== 
 
 &#x2714; : Tested on CI, &#x2753; : Not tested, &#x274c; : Not supported
@@ -125,5 +124,11 @@ The software is distributed under the Boost Software License, Version
 1.0. See accompanying file link:./LICENSE.txt[LICENSE.txt] or copy at
 http://www.boost.org/LICENSE_1_0.txt. Contributions to this project are
 accepted under the same license.
+
+The fact that this software is released under an open source license
+only means that you can use the current version of the software for
+free. If you want this software to be maintained, you need to
+financially support the project. Please see
+https://github.com/shibatch/nofreelunch?tab=coc-ov-file[CODE_OF_CONDUCT.md].
 
 Copyright © 2010-2025 SLEEF Project, Naoki Shibata and contributors.
