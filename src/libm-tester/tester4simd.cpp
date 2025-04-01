@@ -659,13 +659,13 @@ static bool check_f_f(const char *msg, vfloat (*vfunc)(vfloat), T (*tlfunc)(cons
   for(size_t i=0;i<z;i++) {
     memrand(s0, sizeof(s0));
     int idx = xrand() & (VECTLENSP-1);
-    float a = flushToZero(a0[i]);
+    float a = a0[i];
     s0[idx] = a;
     vfloat v0 = vloadu_vf_p(s0);
     v0 = (*vfunc)(v0);
     vstoreu_v_p_vf(s0, v0);
     double u = countULP<T>(s0[idx], (*tlfunc)(a), FLT_MANT_DIG,
-			   enableFlushToZero ? FLT_MIN : SLEEF_FLT_DENORM_MIN,
+			   SLEEF_FLT_DENORM_MIN,
 			   FLT_MAX, checkSignedZero);
     if (u > tol) {
       printf("%s : arg = %a (%g), ulp = %g, t = %.16g, ", msg, a, a, u, s0[idx]);
@@ -681,7 +681,7 @@ static bool check_f_f(const char *msg, vfloat (*vfunc)(vfloat), T (*tlfunc)(cons
 		      double start, double end, double step, double tol, bool checkSignedZero, double abound = 0.0) {
   float s0[VECTLENSP];
   for(size_t i=0;start + i * step <= end;i++) {
-    float a0 = flushToZero(start + i * step);
+    float a0 = start + i * step;
     memrand(s0, sizeof(s0));
     int idx = xrand() & (VECTLENSP-1);
     s0[idx] = a0;
@@ -689,7 +689,7 @@ static bool check_f_f(const char *msg, vfloat (*vfunc)(vfloat), T (*tlfunc)(cons
     v0 = (*vfunc)(v0);
     vstoreu_v_p_vf(s0, v0);
     double u = countULP<T>(s0[idx], (*tlfunc)(a0), FLT_MANT_DIG,
-			   enableFlushToZero ? FLT_MIN : SLEEF_FLT_DENORM_MIN,
+			   SLEEF_FLT_DENORM_MIN,
 			   FLT_MAX, checkSignedZero, abound);
     if (u > tol) {
       printf("%s : arg = %a (%g), ulp = %g, t = %.16g, ", msg, a0, a0, u, s0[idx]);
@@ -707,13 +707,13 @@ static bool checkX_f_f(const char *msg, vfloat2 (*vfunc)(vfloat), T (*tlfunc)(co
   for(size_t i=0;i<z;i++) {
     memrand(s0, sizeof(s0));
     int idx = xrand() & (VECTLENSP-1);
-    float a = flushToZero(a0[i]);
+    float a = a0[i];
     s0[idx] = a;
     vfloat v0 = vloadu_vf_p(s0);
     v0 = vf2getx_vf_vf2((*vfunc)(v0));
     vstoreu_v_p_vf(s0, v0);
     double u = countULP<T>(s0[idx], (*tlfunc)(a), FLT_MANT_DIG,
-			   enableFlushToZero ? FLT_MIN : SLEEF_FLT_DENORM_MIN,
+			   SLEEF_FLT_DENORM_MIN,
 			   FLT_MAX, checkSignedZero);
     if (u > tol) {
       printf("%s : arg = %a (%g), ulp = %g, t = %.16g, ", msg, a, a, u, s0[idx]);
@@ -729,7 +729,7 @@ static bool checkX_f_f(const char *msg, vfloat2 (*vfunc)(vfloat), T (*tlfunc)(co
 		      double start, double end, double step, double tol, bool checkSignedZero) {
   float s0[VECTLENSP];
   for(size_t i=0;start + i * step <= end;i++) {
-    float a0 = flushToZero(start + i * step);
+    float a0 = start + i * step;
     memrand(s0, sizeof(s0));
     int idx = xrand() & (VECTLENSP-1);
     s0[idx] = a0;
@@ -737,7 +737,7 @@ static bool checkX_f_f(const char *msg, vfloat2 (*vfunc)(vfloat), T (*tlfunc)(co
     v0 = vf2getx_vf_vf2((*vfunc)(v0));
     vstoreu_v_p_vf(s0, v0);
     double u = countULP<T>(s0[idx], (*tlfunc)(a0), FLT_MANT_DIG,
-			   enableFlushToZero ? FLT_MIN : SLEEF_FLT_DENORM_MIN,
+			   SLEEF_FLT_DENORM_MIN,
 			   FLT_MAX, checkSignedZero);
     if (u > tol) {
       printf("%s : arg = %a (%g), ulp = %g, t = %.16g, ", msg, a0, a0, u, s0[idx]);
@@ -755,13 +755,13 @@ static bool checkY_f_f(const char *msg, vfloat2 (*vfunc)(vfloat), T (*tlfunc)(co
   for(size_t i=0;i<z;i++) {
     memrand(s0, sizeof(s0));
     int idx = xrand() & (VECTLENSP-1);
-    float a = flushToZero(a0[i]);
+    float a = a0[i];
     s0[idx] = a;
     vfloat v0 = vloadu_vf_p(s0);
     v0 = vf2gety_vf_vf2((*vfunc)(v0));
     vstoreu_v_p_vf(s0, v0);
     double u = countULP<T>(s0[idx], (*tlfunc)(a), FLT_MANT_DIG,
-			   enableFlushToZero ? FLT_MIN : SLEEF_FLT_DENORM_MIN,
+			   SLEEF_FLT_DENORM_MIN,
 			   FLT_MAX, checkSignedZero);
     if (u > tol) {
       printf("%s : arg = %a (%g), ulp = %g, t = %.16g, ", msg, a, a, u, s0[idx]);
@@ -777,7 +777,7 @@ static bool checkY_f_f(const char *msg, vfloat2 (*vfunc)(vfloat), T (*tlfunc)(co
 		      double start, double end, double step, double tol, bool checkSignedZero) {
   float s0[VECTLENSP];
   for(size_t i=0;start + i * step <= end;i++) {
-    float a0 = flushToZero(start + i * step);
+    float a0 = start + i * step;
     memrand(s0, sizeof(s0));
     int idx = xrand() & (VECTLENSP-1);
     s0[idx] = a0;
@@ -785,7 +785,7 @@ static bool checkY_f_f(const char *msg, vfloat2 (*vfunc)(vfloat), T (*tlfunc)(co
     v0 = vf2gety_vf_vf2((*vfunc)(v0));
     vstoreu_v_p_vf(s0, v0);
     double u = countULP<T>(s0[idx], (*tlfunc)(a0), FLT_MANT_DIG,
-			   enableFlushToZero ? FLT_MIN : SLEEF_FLT_DENORM_MIN,
+			   SLEEF_FLT_DENORM_MIN,
 			   FLT_MAX, checkSignedZero);
     if (u > tol) {
       printf("%s : arg = %a (%g), ulp = %g, t = %.16g, ", msg, a0, a0, u, s0[idx]);
@@ -806,19 +806,19 @@ static bool check_f_f_f(const char *msg, vfloat (*vfunc)(vfloat, vfloat), T (*tl
       memrand(s0, sizeof(s0));
       memrand(s1, sizeof(s1));
       int idx = xrand() & (VECTLENSP-1);
-      s0[idx] = flushToZero(a0[i]);
-      s1[idx] = flushToZero(a1[j]);
+      s0[idx] = a0[i];
+      s1[idx] = a1[j];
       vfloat v0 = vloadu_vf_p(s0);
       vfloat v1 = vloadu_vf_p(s1);
       v0 = (*vfunc)(v0, v1);
       vstoreu_v_p_vf(s0, v0);
-      double u = countULP<T>(s0[idx], (*tlfunc)(flushToZero(a0[i]), flushToZero(a1[j])), FLT_MANT_DIG,
-			     enableFlushToZero ? FLT_MIN : SLEEF_FLT_DENORM_MIN,
+      double u = countULP<T>(s0[idx], (*tlfunc)(a0[i], a1[j]), FLT_MANT_DIG,
+			     SLEEF_FLT_DENORM_MIN,
 			     FLT_MAX, checkSignedZero);
       if (u > tol) {
 	printf("%s : arg0 = %a (%g), arg1 = %a (%g), ulp = %g, t = %.16g, ",
-	       msg, flushToZero(a0[i]), flushToZero(a0[i]), flushToZero(a1[j]), flushToZero(a1[j]), u, s0[idx]);
-	cout << "c = " << tlfloat::to_string((*tlfunc)(flushToZero(a0[i]), flushToZero(a1[j]))) << endl;
+	       msg, a0[i], a0[i], a1[j], a1[j], u, s0[idx]);
+	cout << "c = " << tlfloat::to_string((*tlfunc)(a0[i], a1[j])) << endl;
 	return false;
       }
     }
@@ -832,9 +832,9 @@ static bool check_f_f_f(const char *msg, vfloat (*vfunc)(vfloat, vfloat), T (*tl
 			double tol, bool checkSignedZero) {
   float s0[VECTLENSP], s1[VECTLENSP];
   for(size_t i=0;startx + i * stepx <= endx;i++) {
-    float a0 = flushToZero(startx + i * stepx);
+    float a0 = startx + i * stepx;
     for(size_t j=0;starty + j * stepy <= endy;j++) {
-      float a1 = flushToZero(starty + j * stepy);
+      float a1 = starty + j * stepy;
       memrand(s0, sizeof(s0));
       memrand(s1, sizeof(s1));
       int idx = xrand() & (VECTLENSP-1);
@@ -1949,10 +1949,8 @@ int main2(int argc, char **argv) {
 				0.0001, 10, 0.001, 1.0, false) && success;
     success = check_f_f<double>("logf_u1", xlogf_u1, tlfloat_log,
 				0.0001, 10000, 1.1, 1.0, false) && success;
-    if (!enableFlushToZero) {
-      success = check_f_f<double>("logf_u1", xlogf_u1, tlfloat_log,
-				  v.data(), v.size(), 1.0, false) && success;
-    }
+    success = check_f_f<double>("logf_u1", xlogf_u1, tlfloat_log,
+				v.data(), v.size(), 1.0, false) && success;
 
     cout << "log10f" << endl;
     success = check_f_f<double>("log10f", xlog10f, tlfloat_log10,
@@ -2057,18 +2055,13 @@ int main2(int argc, char **argv) {
   success = check_f_f_f<double>("powf", xpowf, tlfloat_pow,
 				af, sizeof(af)/sizeof(af[0]), af, sizeof(af)/sizeof(af[0]),
 				1.0, true) && success;
-  if (!enableFlushToZero) {
-    success = check_f_f_f<double>("powf", xpowf, tlfloat_pow,
-				  -100, 100, 0.6, 0.1, 100, 0.6, 1.0, false) && success;
-    vector<float> v, w;
-    for(double y = -1000;y < 1000;y += 0.1) v.push_back(y);
-    w.push_back(2.1);
-    success = check_f_f_f<double>("powf", xpowf, tlfloat_pow,
-				  w.data(), w.size(), v.data(), v.size(), 1.0, false) && success;
-  } else {
-    success = check_f_f_f<double>("powf", xpowf, tlfloat_pow,
-				  -100, 10, 0.06, 0.1, 10, 0.06, 1.0, false) && success;
-  }
+  success = check_f_f_f<double>("powf", xpowf, tlfloat_pow,
+				-100, 100, 0.6, 0.1, 100, 0.6, 1.0, false) && success;
+  vector<float> v, w;
+  for(double y = -1000;y < 1000;y += 0.1) v.push_back(y);
+  w.push_back(2.1);
+  success = check_f_f_f<double>("powf", xpowf, tlfloat_pow,
+				w.data(), w.size(), v.data(), v.size(), 1.0, false) && success;
 
   cout << "fastpowf_u3500" << endl;
   success = check_f_f_f<double>("fastpowf_u3500", xfastpowf_u3500, tlfloat_pow,
@@ -2121,47 +2114,23 @@ int main2(int argc, char **argv) {
 				v.data(), v.size(), 1.0, false) && success;
   }
 
-  if (!enableFlushToZero) {
-    cout << "hypotf_u35" << endl;
-    success = check_f_f_f<double>("hypotf_u35", xhypotf_u35, hypot,
-				  af, sizeof(af)/sizeof(af[0]), af, sizeof(af)/sizeof(af[0]),
-				  3.5, true) && success;
-    success = check_f_f_f<double>("hypotf_u35", xhypotf_u35, hypot,
-				  -10, 10, 0.15, -10, 10, 0.15, 3.5, false) && success;
-    success = check_f_f_f<double>("hypotf_u35", xhypotf_u35, hypot,
-				  -1e+10, 1e+10, 1.51e+8, -1e+10, 1e+10, 1.51e+8, 3.5, false) && success;
+  cout << "hypotf_u35" << endl;
+  success = check_f_f_f<double>("hypotf_u35", xhypotf_u35, hypot,
+				af, sizeof(af)/sizeof(af[0]), af, sizeof(af)/sizeof(af[0]),
+				3.5, true) && success;
+  success = check_f_f_f<double>("hypotf_u35", xhypotf_u35, hypot,
+				-10, 10, 0.15, -10, 10, 0.15, 3.5, false) && success;
+  success = check_f_f_f<double>("hypotf_u35", xhypotf_u35, hypot,
+				-1e+10, 1e+10, 1.51e+8, -1e+10, 1e+10, 1.51e+8, 3.5, false) && success;
 
-    cout << "hypotf_u05" << endl;
-    success = check_f_f_f<double>("hypotf_u05", xhypotf_u05, hypot,
-				  af, sizeof(af)/sizeof(af[0]), af, sizeof(af)/sizeof(af[0]),
-				  0.5, true) && success;
-    success = check_f_f_f<double>("hypotf_u05", xhypotf_u05, hypot,
-				  -10, 10, 0.15, -10, 10, 0.15, 0.5, false) && success;
-    success = check_f_f_f<double>("hypotf_u05", xhypotf_u05, hypot,
-				  -1e+10, 1e+10, 1.51e+8, -1e+10, 1e+10, 1.51e+8, 0.5, false) && success;
-  } else {
-    static const float af2[] = {
-      +0.0, -0.0, +1, -1, +1e+10, -1e+10, INFINITY, -INFINITY, NAN
-    };
-
-    cout << "hypotf_u35" << endl;
-    success = check_f_f_f<double>("hypotf_u35", xhypotf_u35, hypot,
-				  af2, sizeof(af2)/sizeof(af2[0]), af2, sizeof(af2)/sizeof(af2[0]),
-				  3.5, true) && success;
-    success = check_f_f_f<double>("hypotf_u35", xhypotf_u35, hypot,
-				  -10, 10, 0.15, -10, 10, 0.15, 3.5, false) && success;
-    success = check_f_f_f<double>("hypotf_u35", xhypotf_u35, hypot,
-				  -1e+10, 1e+10, 1.51e+8, -1e+10, 1e+10, 1.51e+8, 3.5, false) && success;
-
-    cout << "hypotf_u05" << endl;
-    success = check_f_f_f<double>("hypotf_u05", xhypotf_u05, hypot,
-				  af2, sizeof(af2)/sizeof(af2[0]), af2, sizeof(af2)/sizeof(af2[0]),
-				  0.5, true) && success;
-    success = check_f_f_f<double>("hypotf_u05", xhypotf_u05, hypot,
-				  -10, 10, 0.15, -10, 10, 0.15, 0.5, false) && success;
-    success = check_f_f_f<double>("hypotf_u05", xhypotf_u05, hypot,
-				  -1e+10, 1e+10, 1.51e+8, -1e+10, 1e+10, 1.51e+8, 0.5, false) && success;
-  }
+  cout << "hypotf_u05" << endl;
+  success = check_f_f_f<double>("hypotf_u05", xhypotf_u05, hypot,
+				af, sizeof(af)/sizeof(af[0]), af, sizeof(af)/sizeof(af[0]),
+				0.5, true) && success;
+  success = check_f_f_f<double>("hypotf_u05", xhypotf_u05, hypot,
+				-10, 10, 0.15, -10, 10, 0.15, 0.5, false) && success;
+  success = check_f_f_f<double>("hypotf_u05", xhypotf_u05, hypot,
+				-1e+10, 1e+10, 1.51e+8, -1e+10, 1e+10, 1.51e+8, 0.5, false) && success;
   
   cout << "asinf" << endl;
   success = check_f_f<double>("asinf", xasinf, tlfloat_asin,
@@ -2203,51 +2172,23 @@ int main2(int argc, char **argv) {
   success = check_f_f<double>("atanf_u1", xatanf_u1, tlfloat_atan,
 			      -10000, 10000, 2.1, 1.0, false) && success;
 
-  if (!enableFlushToZero) {
-    cout << "atan2f" << endl;
-    success = check_f_f_f<double>("atan2f", xatan2f, tlfloat_atan2,
-				  af, sizeof(af)/sizeof(af[0]), af, sizeof(af)/sizeof(af[0]),
-				  3.5, true) && success;
-    success = check_f_f_f<double>("atan2f", xatan2f, tlfloat_atan2,
-				  -10, 10, 0.15, -10, 10, 0.15, 3.5, false) && success;
-    success = check_f_f_f<double>("atan2f", xatan2f, tlfloat_atan2,
-				  -100, 100, 1.51, -100, 100, 1.51, 3.5, false) && success;
+  cout << "atan2f" << endl;
+  success = check_f_f_f<double>("atan2f", xatan2f, tlfloat_atan2,
+				af, sizeof(af)/sizeof(af[0]), af, sizeof(af)/sizeof(af[0]),
+				3.5, true) && success;
+  success = check_f_f_f<double>("atan2f", xatan2f, tlfloat_atan2,
+				-10, 10, 0.15, -10, 10, 0.15, 3.5, false) && success;
+  success = check_f_f_f<double>("atan2f", xatan2f, tlfloat_atan2,
+				-100, 100, 1.51, -100, 100, 1.51, 3.5, false) && success;
 
-    cout << "atan2f_u1" << endl;
-    success = check_f_f_f<double>("atan2f_u1", xatan2f_u1, tlfloat_atan2,
-				  af, sizeof(af)/sizeof(af[0]), af, sizeof(af)/sizeof(af[0]),
-				  1.0, true) && success;
-    success = check_f_f_f<double>("atan2f_u1", xatan2f_u1, tlfloat_atan2,
-				  -10, 10, 0.15, -10, 10, 0.15, 1.0, false) && success;
-    success = check_f_f_f<double>("atan2f_u1", xatan2f_u1, tlfloat_atan2,
-				  -100, 100, 1.51, -100, 100, 1.51, 1.0, false) && success;
-  } else {
-    static const float af2[] = {
-      NAN, -INFINITY, -SLEEF_FLT_DENORM_MIN, -0.0, +0.0, SLEEF_FLT_DENORM_MIN, +INFINITY,
-      -M_PI*2, -M_PI, -M_PI/2, -M_PI/4, M_PI/4, M_PI/2, M_PI, M_PI*2,
-      -1e+10, -100001, -100000.5, -100000, -7.0, -5.0, -4.0, -3.0, -2.5, -2.0, -1.5, -1.0, -0.999, -0.5,
-      +0.5, +0.999, +1.0, +1.5, +2.0, +2.5, +3.0, +4.0, +5.0, +7.0, +100000, +100000.5, +100001, +1e+10,
-      nextafterf(-1, -2), nextafterf(+1, +2)
-    };
-
-    cout << "atan2f" << endl;
-    success = check_f_f_f<double>("atan2f", xatan2f, tlfloat_atan2,
-				  af2, sizeof(af2)/sizeof(af2[0]), af2, sizeof(af2)/sizeof(af2[0]),
-				  3.5, true) && success;
-    success = check_f_f_f<double>("atan2f", xatan2f, tlfloat_atan2,
-				  -10, 10, 0.15, -10, 10, 0.15, 3.5, false) && success;
-    success = check_f_f_f<double>("atan2f", xatan2f, tlfloat_atan2,
-				  -100, 100, 1.51, -100, 100, 1.51, 3.5, false) && success;
-
-    cout << "atan2f_u1" << endl;
-    success = check_f_f_f<double>("atan2f_u1", xatan2f_u1, tlfloat_atan2,
-				  af2, sizeof(af2)/sizeof(af2[0]), af2, sizeof(af2)/sizeof(af2[0]),
-				  1.0, true) && success;
-    success = check_f_f_f<double>("atan2f_u1", xatan2f_u1, tlfloat_atan2,
-				  -10, 10, 0.15, -10, 10, 0.15, 1.0, false) && success;
-    success = check_f_f_f<double>("atan2f_u1", xatan2f_u1, tlfloat_atan2,
-				  -100, 100, 1.51, -100, 100, 1.51, 1.0, false) && success;
-  }
+  cout << "atan2f_u1" << endl;
+  success = check_f_f_f<double>("atan2f_u1", xatan2f_u1, tlfloat_atan2,
+				af, sizeof(af)/sizeof(af[0]), af, sizeof(af)/sizeof(af[0]),
+				1.0, true) && success;
+  success = check_f_f_f<double>("atan2f_u1", xatan2f_u1, tlfloat_atan2,
+				-10, 10, 0.15, -10, 10, 0.15, 1.0, false) && success;
+  success = check_f_f_f<double>("atan2f_u1", xatan2f_u1, tlfloat_atan2,
+				-100, 100, 1.51, -100, 100, 1.51, 1.0, false) && success;
     
   cout << "sinhf" << endl;
   success = check_f_f<double>("sinhf", xsinhf, tlfloat_sinh,
@@ -2274,24 +2215,13 @@ int main2(int argc, char **argv) {
 			      -1000, 1000, 0.2, 1.0, false) && success;
 
   cout << "sinhf_u35" << endl;
-  if (!enableFlushToZero) {
-    success = check_f_f<double>("sinhf_u35", xsinhf_u35, tlfloat_sinh,
-				af, sizeof(af)/sizeof(af[0]), 3.5, true) && success;
+  success = check_f_f<double>("sinhf_u35", xsinhf_u35, tlfloat_sinh,
+			      af, sizeof(af)/sizeof(af[0]), 3.5, true) && success;
 
-    success = check_f_f<double>("sinhf_u35", xsinhf_u35, tlfloat_sinh,
-				-10, 10, 0.002, 3.5, false) && success;
-    success = check_f_f<double>("sinhf_u35", xsinhf_u35, tlfloat_sinh,
-				-88, 88, 0.2, 3.5, false) && success;
-  } else {
-    static const float af2[] = {
-      +0.0, -0.0, +1, -1, +1e+7, -1e+7, FLT_MAX, -FLT_MAX, INFINITY, -INFINITY, NAN
-    };
-    success = check_f_f<double>("sinhf_u35", xsinhf_u35, tlfloat_sinh,
-				af, sizeof(af2)/sizeof(af2[0]), 3.5, true) && success;
-
-    success = check_f_f<double>("sinhf_u35", xsinhf_u35, tlfloat_sinh,
-				-10, 10, 0.002, 3.5, false) && success;
-  }
+  success = check_f_f<double>("sinhf_u35", xsinhf_u35, tlfloat_sinh,
+			      -10, 10, 0.002, 3.5, false) && success;
+  success = check_f_f<double>("sinhf_u35", xsinhf_u35, tlfloat_sinh,
+			      -88, 88, 0.2, 3.5, false) && success;
 
   cout << "coshf_u35" << endl;
   success = check_f_f<double>("coshf_u35", xcoshf_u35, tlfloat_cosh,
@@ -2375,72 +2305,36 @@ int main2(int argc, char **argv) {
   success = check_f_f_f<double>("fdimf", xfdimf, tlfloat_fdim,
 				-1e+7, 1e+7, 1.51e+5, -1e+7, 1e+7, 1.51e+5, 0.5, false) && success;
 
-  if (!enableFlushToZero) {
-    cout << "fmodf" << endl;
-    for(int i=0;i<int(sizeof(af)/sizeof(af[0]));i++) {
-      for(int j=0;j<int(sizeof(af)/sizeof(af[0]));j++) {
-	if (fabs_(af[i] / af[j]) > 1e+300) continue;
-	success = check_f_f_f<double>("fmodf", xfmodf, tlfloat_fmod,
-				      &af[i], 1, &af[j], 1, 0.5, true) && success;
-      }
+  cout << "fmodf" << endl;
+  for(int i=0;i<int(sizeof(af)/sizeof(af[0]));i++) {
+    for(int j=0;j<int(sizeof(af)/sizeof(af[0]));j++) {
+      if (fabs_(af[i] / af[j]) > 1e+300) continue;
+      success = check_f_f_f<double>("fmodf", xfmodf, tlfloat_fmod,
+				    &af[i], 1, &af[j], 1, 0.5, true) && success;
     }
-    success = check_f_f_f<double>("fmodf", xfmodf, tlfloat_fmod,
-				  -10, 10, 0.15, -10, 10, 0.15, 0.5, false) && success;
-    success = check_f_f_f<double>("fmodf", xfmodf, tlfloat_fmod,
-				  -1e+7, 1e+7, 1.51e+5, -1e+7, 1e+7, 1.51e+5, 0.5, false) && success;
-
-    cout << "remainderf" << endl;
-    for(int i=0;i<int(sizeof(af)/sizeof(af[0]));i++) {
-      for(int j=0;j<int(sizeof(af)/sizeof(af[0]));j++) {
-	if (fabs_(af[i] / af[j]) > 1e+300) continue;
-	success = check_f_f_f<double>("remainderf", xremainderf, tlfloat_remainder,
-				      &af[i], 1, &af[j], 1, 0.5, true) && success;
-      }
-    }
-    {
-      float af3x = 11114942644092928.0, af3y = 224544296009728.0;
-      success = check_f_f_f<double>("remainderf", xremainderf, tlfloat_remainder,
-				    &af3x, 1, &af3y, 1, 0.5, false) && success;
-    }
-    success = check_f_f_f<double>("remainderf", xremainderf, tlfloat_remainder,
-				  -10, 10, 0.15, -10, 10, 0.15, 0.5, false) && success;
-    success = check_f_f_f<double>("remainderf", xremainderf, tlfloat_remainder,
-				  -1e+7, 1e+7, 1.51e+5, -1e+7, 1e+7, 1.51e+5, 0.5, false) && success;
-  } else {
-    float xa[] = { +0.0, -0.0, +1, -1, +1e+30, -1e+30, FLT_MAX, -FLT_MAX, +INFINITY, -INFINITY, NAN };
-    float ya[] = { +0.0, -0.0, +1, -1, +INFINITY, -INFINITY, NAN };
-
-    cout << "fmodf" << endl;
-    for(int i=0;i<int(sizeof(xa)/sizeof(xa[0]));i++) {
-      for(int j=0;j<int(sizeof(ya)/sizeof(ya[0]));j++) {
-	if (fabs_(xa[i] / ya[j]) > 1e+300) continue;
-	success = check_f_f_f<double>("fmodf", xfmodf, tlfloat_fmod,
-				      &xa[i], 1, &ya[j], 1, 0.5, true) && success;
-      }
-    }
-    success = check_f_f_f<double>("fmodf", xfmodf, tlfloat_fmod,
-				  -10, 10, 0.15, -10, 10, 0.15, 0.5, false) && success;
-    success = check_f_f_f<double>("fmodf", xfmodf, tlfloat_fmod,
-				  -1e+7, 1e+7, 1.51e+5, -1e+7, 1e+7, 1.51e+5, 0.5, false) && success;
-
-    cout << "remainderf" << endl;
-    for(int i=0;i<int(sizeof(xa)/sizeof(xa[0]));i++) {
-      for(int j=0;j<int(sizeof(ya)/sizeof(ya[0]));j++) {
-	if (fabs_(xa[i] / ya[j]) > 1e+300) continue;
-	success = check_f_f_f<double>("remainderf", xremainderf, tlfloat_remainder,
-				      &xa[i], 1, &ya[j], 1, 0.5, true) && success;
-      }
-    }
-    {
-      float af3x = 11114942644092928.0, af3y = 224544296009728.0;
-      success = check_f_f_f<double>("remainderf", xremainderf, tlfloat_remainder,
-				    &af3x, 1, &af3y, 1, 0.5, false) && success;
-    }
-    success = check_f_f_f<double>("remainderf", xremainderf, tlfloat_remainder,
-				  -10, 10, 0.15, -10, 10, 0.15, 0.5, false) && success;
-    success = check_f_f_f<double>("remainderf", xremainderf, tlfloat_remainder,
-				  -1e+7, 1e+7, 1.51e+5, -1e+7, 1e+7, 1.51e+5, 0.5, false) && success;
   }
+  success = check_f_f_f<double>("fmodf", xfmodf, tlfloat_fmod,
+				-10, 10, 0.15, -10, 10, 0.15, 0.5, false) && success;
+  success = check_f_f_f<double>("fmodf", xfmodf, tlfloat_fmod,
+				-1e+7, 1e+7, 1.51e+5, -1e+7, 1e+7, 1.51e+5, 0.5, false) && success;
+
+  cout << "remainderf" << endl;
+  for(int i=0;i<int(sizeof(af)/sizeof(af[0]));i++) {
+    for(int j=0;j<int(sizeof(af)/sizeof(af[0]));j++) {
+      if (fabs_(af[i] / af[j]) > 1e+300) continue;
+      success = check_f_f_f<double>("remainderf", xremainderf, tlfloat_remainder,
+				    &af[i], 1, &af[j], 1, 0.5, true) && success;
+    }
+  }
+  {
+    float af3x = 11114942644092928.0, af3y = 224544296009728.0;
+    success = check_f_f_f<double>("remainderf", xremainderf, tlfloat_remainder,
+				  &af3x, 1, &af3y, 1, 0.5, false) && success;
+  }
+  success = check_f_f_f<double>("remainderf", xremainderf, tlfloat_remainder,
+				-10, 10, 0.15, -10, 10, 0.15, 0.5, false) && success;
+  success = check_f_f_f<double>("remainderf", xremainderf, tlfloat_remainder,
+				-1e+7, 1e+7, 1.51e+5, -1e+7, 1e+7, 1.51e+5, 0.5, false) && success;
     
   {
     vector<float> v;
@@ -2516,16 +2410,8 @@ int main2(int argc, char **argv) {
 			      -100, 100, 0.02, 1.0, false) && success;
 
   cout << "erfcf_u15" << endl;
-  if (!enableFlushToZero) {
-    success = check_f_f<double>("erfcf_u15", xerfcf_u15, tlfloat_erfc,
-				af, sizeof(af)/sizeof(af[0]), 1.5, true) && success;
-  } else {
-    static const float af2[] = {
-      -1, +0.0, -0.0, +1, +1e+10, -1e+10, INFINITY, -INFINITY, NAN 
-    };
-    success = check_f_f<double>("erfcf_u15", xerfcf_u15, tlfloat_erfc,
-				af2, sizeof(af2)/sizeof(af2[0]), 1.5, true) && success;
-  }
+  success = check_f_f<double>("erfcf_u15", xerfcf_u15, tlfloat_erfc,
+			      af, sizeof(af)/sizeof(af[0]), 1.5, true) && success;
 
   success = check_f_f<double>("erfcf_u15", xerfcf_u15, tlfloat_erfc,
 			      -1, 8, 0.001, 1.5, false) && success;

@@ -50,13 +50,6 @@ int isMinusZerof(float x) { return x == 0 && copysignf(1, x) == -1; }
 float signf(float d) { return d < 0 ? -1 : 1; }
 int xisnanf(float x) { return x != x; }
 
-int enableFlushToZero = 0;
-
-double flushToZero(double y) {
-  if (enableFlushToZero && fabs(y) < FLT_MIN) y = copysign(0.0, y);
-  return y;
-}
-
 //
 
 int readln(int fd, char *buf, int cnt) {
@@ -122,8 +115,6 @@ void memrand(void *p, int size) {
 
 int cmpDenormsp(float x, mpfr_t fry) {
   float y = mpfr_get_d(fry, GMP_RNDN);
-  x = flushToZero(x);
-  y = flushToZero(y);
   if (xisnanf(x) && xisnanf(y)) return 1;
   if (xisnanf(x) || xisnanf(y)) return 0;
   if (isinf(x) != isinf(y)) return 0;
@@ -253,8 +244,7 @@ double countULP2dp(double d, mpfr_t c) {
 double countULPsp(float d, mpfr_t c0) {
   double c = mpfr_get_d(c0, GMP_RNDN);
 
-  d = flushToZero(d);
-  float c2 = flushToZero(c);
+  float c2 = c;
   if (c2 == 0 && d != 0) return 10000;
   if (isnan(c2) && isnan(d)) return 0;
   if (isnan(c2) || isnan(d)) return 10001;
@@ -280,8 +270,7 @@ double countULPsp(float d, mpfr_t c0) {
 double countULP2sp(float d, mpfr_t c0) {
   double c = mpfr_get_d(c0, GMP_RNDN);
 
-  d = flushToZero(d);
-  float c2 = flushToZero(c);
+  float c2 = c;
   if (c2 == 0 && d != 0) return 10000;
   if (isnan(c2) && isnan(d)) return 0;
   if (isnan(c2) || isnan(d)) return 10001;
