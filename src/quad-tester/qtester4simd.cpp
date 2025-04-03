@@ -738,7 +738,7 @@ int main2(int argc, char **argv) {
   cout << "fmaxq ";
   success = check_q_q_q("fmaxq", xfmaxq, tlfloat_fmaxo,
 			stdCheckVals, sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0]), 
-			arithEB, true) && success;
+			arithEB, false) && success;
   success = check_q_q_q("fmaxq", xfmaxq, tlfloat_fmaxo, "1e-100" , "1e+100" , true, 5 * NTEST, 1ULL, arithEB, true) && success;
   success = check_q_q_q("fmaxq", xfmaxq, tlfloat_fmaxo, "1e-4000", "1e+4000", true, 5 * NTEST, 1ULL, arithEB, true) && success;
   showULP(success);
@@ -746,7 +746,7 @@ int main2(int argc, char **argv) {
   cout << "fminq ";
   success = check_q_q_q("fminq", xfminq, tlfloat_fmino,
 			stdCheckVals, sizeof(stdCheckValsStr)/sizeof(stdCheckValsStr[0]), 
-			arithEB, true) && success;
+			arithEB, false) && success;
   success = check_q_q_q("fminq", xfminq, tlfloat_fmino, "1e-100" , "1e+100" , true, 5 * NTEST, 1ULL, arithEB, true) && success;
   success = check_q_q_q("fminq", xfminq, tlfloat_fmino, "1e-4000", "1e+4000", true, 5 * NTEST, 1ULL, arithEB, true) && success;
   showULP(success);

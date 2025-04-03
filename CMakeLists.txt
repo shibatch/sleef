@@ -16,7 +16,6 @@ option(SLEEF_ENABLE_LTO "Enable LTO on GCC or ThinLTO on clang" OFF)
 option(SLEEF_BUILD_LIBM "libsleef will be built." ON)
 option(SLEEF_BUILD_DFT "libsleefdft will be built." OFF)
 option(SLEEF_BUILD_QUAD "libsleefquad will be built." OFF)
-option(SLEEF_BUILD_GNUABI_LIBS "libsleefgnuabi will be built." ON)
 option(SLEEF_BUILD_SCALAR_LIB "libsleefscalar will be built." OFF)
 option(SLEEF_BUILD_TESTS "Tests will be built." ON)
 option(SLEEF_BUILD_BENCH "Bench will be built." OFF)
@@ -167,21 +166,9 @@ set(SLEEF_SUPPORTED_LIBM_EXTENSIONS
   PUREC_SCALAR PURECFMA_SCALAR                          # Generic type
   CACHE STRING "List of SIMD architectures supported by libsleef."
   )
-set(SLEEF_SUPPORTED_GNUABI_EXTENSIONS 
-  SSE2 AVX2 AVX512F ADVSIMD SVE
-  CACHE STRING "List of SIMD architectures supported by libsleef for GNU ABI."
-)
 
 set(SLEEF_SUPPORTED_QUAD_EXTENSIONS
   PUREC_SCALAR PURECFMA_SCALAR SSE2 AVX2128 AVX2 AVX512F ADVSIMD SVE VSX VSX3 VXE VXE2 RVVM1 RVVM2)
-
-# MKMASKED_PARAMS
-
-command_arguments(MKMASKED_PARAMS_GNUABI_AVX512F_dp avx512f e 8)
-command_arguments(MKMASKED_PARAMS_GNUABI_AVX512F_sp avx512f e -16)
-
-command_arguments(MKMASKED_PARAMS_GNUABI_SVE_dp sve s 2)
-command_arguments(MKMASKED_PARAMS_GNUABI_SVE_sp sve s -4)
 
 #
 
@@ -269,7 +256,6 @@ include_directories(AFTER "${PROJECT_BINARY_DIR}/include")
 # Generates object file (shared library) `libsleef`
 # Defined in src/libm/CMakeLists.txt via command add_library
 set(TARGET_LIBSLEEF "sleef")
-set(TARGET_LIBSLEEFGNUABI "sleefgnuabi")
 # Generates the sleef.h headers and all the rename headers
 # Defined in src/libm/CMakeLists.txt via custom commands and a custom target
 set(TARGET_HEADERS "headers")
@@ -284,8 +270,6 @@ set(TARGET_IUT "iut")
 set(TARGET_LLVM_BITCODE "llvm-bitcode")
 # Generates the helper executable file mkrename needed to write the sleef header
 set(TARGET_MKRENAME "mkrename")
-set(TARGET_MKRENAME_GNUABI "mkrename_gnuabi")
-set(TARGET_MKMASKED_GNUABI "mkmasked_gnuabi")
 # Generates the helper executable file mkdisp needed to write the sleef header
 set(TARGET_MKDISP "mkdisp")
 set(TARGET_MKALIAS "mkalias")
@@ -393,9 +377,6 @@ if(SLEEF_SHOW_CONFIG)
     message(STATUS "SED : " ${SED_COMMAND})
   endif()
   message(STATUS "COMPILER_SUPPORTS_OPENMP : " ${COMPILER_SUPPORTS_OPENMP})
-  if(ENABLE_GNUABI)
-    message(STATUS "A version of SLEEF compatible  with libm and libmvec in GNU libc will be produced (${TARGET_LIBSLEEFGNUABI}.so)")
-  endif()
   if (COMPILER_SUPPORTS_SVE)
     message(STATUS "Building SLEEF with VLA SVE support")
     if (ARMIE_COMMAND)

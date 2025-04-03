@@ -424,53 +424,6 @@ foreach(SIMD ${SLEEF_SUPPORTED_LIBM_EXTENSIONS})
   test_extension(${SIMD})
 endforeach()
 
-function(add_gnuabi_compatibility_test SIMD MASKED)
-  if (MASKED)
-    set(GNUABI_COMPATIBILITY_TEST gnuabi_compatibility_${SIMD}_masked)
-  else(MASKED)
-    set(GNUABI_COMPATIBILITY_TEST gnuabi_compatibility_${SIMD})
-  endif(MASKED)
-  add_executable(${GNUABI_COMPATIBILITY_TEST} gnuabi_compatibility.c ${sleef_SOURCE_DIR}/src/common/main_checkfeature.c)
-  set_target_properties(${GNUABI_COMPATIBILITY_TEST} PROPERTIES ${COMMON_TARGET_PROPERTIES})
-  target_compile_options(${GNUABI_COMPATIBILITY_TEST}
-    PRIVATE ${FLAGS_ENABLE_${SIMD}})
-  if (MASKED)
-    target_compile_definitions(${GNUABI_COMPATIBILITY_TEST}
-      PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS} MASKED_GNUABI=1)
-  else(MASKED)
-    target_compile_definitions(${GNUABI_COMPATIBILITY_TEST}
-      PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS})
-  endif(MASKED)
-  target_link_libraries(${GNUABI_COMPATIBILITY_TEST} ${TARGET_LIBSLEEFGNUABI} ${LIBM})
-  # These are linker tests that don't really need to be executed,
-  # but seeing them in the report of ctest gives an idea of what
-  # has been built for testing.
-  if (EMULATOR)
-    add_test(NAME ${GNUABI_COMPATIBILITY_TEST}
-      COMMAND ${EMULATOR} $<TARGET_FILE:${GNUABI_COMPATIBILITY_TEST}>
-      WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-  elseif(SDE_COMMAND)
-    add_test(NAME ${GNUABI_COMPATIBILITY_TEST}
-      COMMAND ${SDE_COMMAND} "--" $<TARGET_FILE:${GNUABI_COMPATIBILITY_TEST}>)
-  else()
-    add_test(NAME ${GNUABI_COMPATIBILITY_TEST}
-      COMMAND $<TARGET_FILE:${GNUABI_COMPATIBILITY_TEST}>)
-  endif(EMULATOR)
-endfunction(add_gnuabi_compatibility_test)
-
-if(ENABLE_GNUABI)
-  foreach(SIMD ${SLEEF_SUPPORTED_GNUABI_EXTENSIONS})
-    if(COMPILER_SUPPORTS_${SIMD})
-      # GNUABI compatibility for the unmasked symbols.
-      add_gnuabi_compatibility_test(${SIMD} OFF)
-      # GNUABI compatibility for the masked symbols.
-      if (MKMASKED_PARAMS_GNUABI_${SIMD}_sp)
-	add_gnuabi_compatibility_test(${SIMD} ON)
-      endif(MKMASKED_PARAMS_GNUABI_${SIMD}_sp)
-    endif (COMPILER_SUPPORTS_${SIMD})
-  endforeach(SIMD ${SLEEF_SUPPORTED_GNUABI_EXTENSIONS})
-endif(ENABLE_GNUABI)
-
 #
 
 if (SLEEF_ARCH_X86)
@@ -588,49 +541,6 @@ if(LIB_MPFR AND NOT MINGW)
     endif()
   endif()
 endif(LIB_MPFR AND NOT MINGW)
-
-if(ENABLE_GNUABI AND COMPILER_SUPPORTS_OMP_SIMD AND NOT SLEEF_TARGET_PROCESSOR MATCHES "^i.86$")
-  # Build tester for vectorabi
-  add_executable(testervecabi testervecabi.c)
-  target_compile_definitions(testervecabi PRIVATE ${COMMON_TARGET_DEFINITIONS})
-  target_compile_options(testervecabi PRIVATE ${OpenMP_C_FLAGS})
-  target_link_libraries(testervecabi ${TARGET_LIBSLEEF} ${OpenMP_C_FLAGS})
-  set_target_properties(testervecabi PROPERTIES C_STANDARD 99)
-  add_test(NAME testervecabi COMMAND ${EMULATOR} testervecabi
-    WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-endif()
-
-# mveclibtest
-
-if (ENABLE_GNUABI AND SLEEF_ARCH_X86 AND CMAKE_C_COMPILER_ID MATCHES "GNU" AND CMAKE_C_COMPILER_VERSION VERSION_GREATER 7.99)
-  add_executable(mveclibtest-sse2 mveclibtest.c ${sleef_SOURCE_DIR}/src/common/main_checkfeature.c)
-  set_target_properties(mveclibtest-sse2 PROPERTIES C_STANDARD 99)
-  target_compile_options(mveclibtest-sse2 PRIVATE ${FLAGS_FASTMATH} "-O3")
-  target_link_libraries(mveclibtest-sse2 ${TARGET_LIBSLEEF} ${TARGET_LIBSLEEFGNUABI})
-  add_dependencies(mveclibtest-sse2 ${TARGET_HEADERS})
-  add_test(NAME mveclibtest-sse2 COMMAND mveclibtest-sse2)
-
-  add_executable(mveclibtest-avx mveclibtest.c ${sleef_SOURCE_DIR}/src/common/main_checkfeature.c)
-  set_target_properties(mveclibtest-avx PROPERTIES C_STANDARD 99)
-  target_compile_options(mveclibtest-avx PRIVATE ${FLAGS_FASTMATH} ${FLAGS_ENABLE_AVX} "-O3")
-  target_link_libraries(mveclibtest-avx ${TARGET_LIBSLEEF} ${TARGET_LIBSLEEFGNUABI})
-  add_dependencies(mveclibtest-avx ${TARGET_HEADERS})
-  add_test(NAME mveclibtest-avx COMMAND mveclibtest-avx)
-
-  add_executable(mveclibtest-avx2 mveclibtest.c ${sleef_SOURCE_DIR}/src/common/main_checkfeature.c)
-  set_target_properties(mveclibtest-avx2 PROPERTIES C_STANDARD 99)
-  target_compile_options(mveclibtest-avx2 PRIVATE ${FLAGS_FASTMATH} ${FLAGS_ENABLE_AVX2} "-O3")
-  target_link_libraries(mveclibtest-avx2 ${TARGET_LIBSLEEF} ${TARGET_LIBSLEEFGNUABI})
-  add_dependencies(mveclibtest-avx2 ${TARGET_HEADERS})
-  add_test(NAME mveclibtest-avx2 COMMAND mveclibtest-avx2)
-
-  add_executable(mveclibtest-avx512f mveclibtest.c ${sleef_SOURCE_DIR}/src/common/main_checkfeature.c)
-  set_target_properties(mveclibtest-avx512f PROPERTIES C_STANDARD 99)
-  target_compile_options(mveclibtest-avx512f PRIVATE ${FLAGS_FASTMATH} ${FLAGS_ENABLE_AVX512F} "-O3")
-  target_link_libraries(mveclibtest-avx512f ${TARGET_LIBSLEEF} ${TARGET_LIBSLEEFGNUABI})
-  add_dependencies(mveclibtest-avx512f ${TARGET_HEADERS})
-  add_test(NAME mveclibtest-avx512f COMMAND mveclibtest-avx512f)
-endif()
 
 #
 

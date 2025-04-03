@@ -30,7 +30,6 @@
     <ul class="disc">
       <li><a href="#faq">Frequently asked questions</a></li>
       <li><a href="#vectorizing">Vectorizing calls to scalar functions</a></li>
-<!--      <li><a href="#gnuabi">About the GNUABI version of the library</a></li>-->
       <li><a href="#lto">Using link time optimization</a></li>
       <li><a href="#inline">Using header files of inlinable functions</a></li>
       <li><a href="#wasm">Utilizing SLEEF for WebAssembly</a></li>
@@ -160,74 +159,6 @@ code</a> can be vectorized by gcc-10.
         call    _ZGVdN4vv_Sleef_pow_u10@PLT
 $ &block;
 </pre>
-
-<!--
-<h2 id="gnuabi">About the GNUABI version of the library</h2>
-
-<p class="noindent">
-  The GNUABI version of the library (libsleefgnuabi.so) is built for
-  x86 and aarch64 architectectures. This library provides an API
-  compatible with <a class="underlined"
-  href="https://sourceware.org/glibc/wiki/libmvec">libmvec</a> in
-  glibc, and the API comforms to the <a class="underlined"
-  href="https://sourceware.org/glibc/wiki/libmvec?action=AttachFile&amp;do=view&amp;target=VectorABI.txt">x86
-  vector ABI</a>, <a class="underlined"
-  href="https://developer.arm.com/docs/101129/latest">AArch64 vector
-  ABI</a> and <a class="underlined"
-  href="https://github.com/power8-abi-doc/vector-function-abi/">Power
-  Vector ABI</a>. The auto-vectorizer in x86_64 gcc is capable of
-  vectorizing calls to the standard math functions and generates calls
-  to <a class="underlined"
-  href="https://sourceware.org/glibc/wiki/libmvec">libmvec</a>. The
-  GNUABI version of SLEEF library can be used as a substitute for
-  libmvec.
-</p>
-
-<pre class="code">
-<code>#include &lt;stdio.h&gt;</code>
-<code>#include &lt;math.h&gt;</code>
-<code></code>
-<code>#define N 65536</code>
-<code>#define M (N + 3)</code>
-<code></code>
-<code>static double func(double x) { return pow(x, -x); }</code>
-<code></code>
-<code>double int_simpson(double a, double b) {</code>
-<code>   double h = (b - a) / M;</code>
-<code>   double sum_odd = 0.0, sum_even = 0.0;</code>
-<code>   for(int i = 1;i &lt;= M-3;i += 2) {</code>
-<code>     sum_odd  += func(a + h * i);</code>
-<code>     sum_even += func(a + h * (i + 1));</code>
-<code>   }</code>
-<code>   return h / 3 * (func(a) + 4 * sum_odd + 2 * sum_even + 4 * func(b - h) + func(b));</code>
-<code>}</code>
-<code></code>
-<code>int main() {</code>
-<code>  double sum = 0;</code>
-<code>  for(int i=1;i&lt;N;i++) sum += pow(i, -i);</code>
-<code>  printf(&quot;%g %g&#92;n&quot;, int_simpson(0, 1), sum);</code>
-<code>}</code>
-</pre>
-
-<p>
-  For example, <a class="underlined" href="sophomore2.c">the above
-  code</a> can be linked against libsleefgnuabi as shown below. You
-  have to specify <b>-lsleefgnuabi</b> compiler option
-  before <b>-lm</b> option.
-</p>
-
-<pre class="command">$ gcc-10 -ffast-math -O3 sophomore2.c -lsleefgnuabi -lm -L./lib
-$ ldd a.out
-        linux-vdso.so.1 (0x00007ffd0c5ff000)
-        libsleefgnuabi.so.3 => not found
-        libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007f73f5f98000)
-        libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f73f5da6000)
-        /lib64/ld-linux-x86-64.so.2 (0x00007f73f60fb000)
-$ LD_LIBRARY_PATH=./lib ./a.out
-1.29127 1.29129
-$ &block;
-</pre>
--->
 
 <h2 id="lto">Using link time optimization</h2>
 
