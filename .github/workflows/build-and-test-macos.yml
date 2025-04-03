@@ -60,15 +60,8 @@ jobs:
       - name: Build ${{ matrix.os }}-${{ matrix.arch }}
         shell: bash -ex -o pipefail {0}
         run: |
-          EXTRA_CMAKE_FLAGS=""
-          if [[ ${{ matrix.arch }} = "aarch64" ]]; then
-            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS}"
-          fi
-
           cmake -S . -B _build-${{ matrix.os }}-${{ matrix.arch }} -GNinja \
-            -DCMAKE_INSTALL_PREFIX=$(pwd)/_install-${{ matrix.os }}-${{ matrix.arch }} \
-            ${COMMON_CMAKE_FLAGS} \
-            ${EXTRA_CMAKE_FLAGS}
+            -DCMAKE_INSTALL_PREFIX=$(pwd)/_install-${{ matrix.os }}-${{ matrix.arch }} ${COMMON_CMAKE_FLAGS}
           cmake --build _build-${{ matrix.os }}-${{ matrix.arch }}
           cmake --install _build-${{ matrix.os }}-${{ matrix.arch }}
 
