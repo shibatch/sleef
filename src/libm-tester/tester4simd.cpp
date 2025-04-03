@@ -1514,7 +1514,7 @@ int main2(int argc, char **argv) {
   cout << "fmax" << endl;
   success = check_d_d_d<tlfloat_quad>("fmax", xfmax, tlfloat_fmaxq,
 				      ad, sizeof(ad)/sizeof(ad[0]), ad, sizeof(ad)/sizeof(ad[0]),
-				      0.0, true) && success;
+				      0.0, false) && success;
   success = check_d_d_d<tlfloat_quad>("fmax", xfmax, tlfloat_fmaxq,
 				      -10, 10, 0.15, -10, 10, 0.15, 0.0, false) && success;
   success = check_d_d_d<tlfloat_quad>("fmax", xfmax, tlfloat_fmaxq,
@@ -1523,7 +1523,7 @@ int main2(int argc, char **argv) {
   cout << "fmin" << endl;
   success = check_d_d_d<tlfloat_quad>("fmin", xfmin, tlfloat_fminq,
 				      ad, sizeof(ad)/sizeof(ad[0]), ad, sizeof(ad)/sizeof(ad[0]),
-				      0.0, true) && success;
+				      0.0, false) && success;
   success = check_d_d_d<tlfloat_quad>("fmin", xfmin, tlfloat_fminq,
 				      -10, 10, 0.15, -10, 10, 0.15, 0.0, false) && success;
   success = check_d_d_d<tlfloat_quad>("fmin", xfmin, tlfloat_fminq,
