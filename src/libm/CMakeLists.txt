@@ -128,15 +128,6 @@ command_arguments(RENAME_PARAMS_CUDA            finz_ 1 1 cuda)
 command_arguments(RENAME_PARAMS_SVE             finz_ x x sve)
 command_arguments(RENAME_PARAMS_SVENOFMA        cinz_ x x svenofma)
 
-command_arguments(RENAME_PARAMS_GNUABI_SSE2     sse2 b 2 4 _mm128d _mm128 _mm128i _mm128i __SSE2__)
-command_arguments(RENAME_PARAMS_GNUABI_AVX2     avx2 d 4 8 __m256d __m256 __m128i __m256i __AVX2__)
-command_arguments(RENAME_PARAMS_GNUABI_AVX512F  avx512f e 8 16 __m512d __m512 __m256i __m512i __AVX512F__)
-command_arguments(RENAME_PARAMS_GNUABI_ADVSIMD  advsimd n 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON)
-# The vector length parameters in SVE, for SP and DP, are chosen for
-# the smallest SVE vector size (128-bit). The name is generated using
-# the "x" token of VLA SVE vector functions.
-command_arguments(RENAME_PARAMS_GNUABI_SVE sve s x x svfloat64_t svfloat32_t svint32_t svint32_t __ARM_SVE)
-
 command_arguments(RENAME_PARAMS_RVVM1           finz_ x x rvvm1)
 command_arguments(RENAME_PARAMS_RVVM1NOFMA      cinz_ x x rvvm1nofma)
 command_arguments(RENAME_PARAMS_RVVM2           finz_ x x rvvm2)
@@ -230,67 +221,12 @@ add_custom_command(OUTPUT ${HEADER_CUDA}
 add_custom_target(renameCUDA.h_generated DEPENDS ${HEADER_CUDA})
 
 # --------------------------------------------------------------------
-# TARGET_MKRENAME_GNUABI
-# renameXXX_gnuabi.h for each SIMD GNU Abi
-# --------------------------------------------------------------------
-# Helper executable: generates parts of the sleef header file gnu_abi
-add_host_executable(${TARGET_MKRENAME_GNUABI} mkrename_gnuabi.c)
-
-set(HEADER_GNUABI_FILES_GENERATED "")
-if(ENABLE_GNUABI)
-  foreach(SIMD ${SLEEF_SUPPORTED_GNUABI_EXTENSIONS})
-    if(COMPILER_SUPPORTS_${SIMD})
-      string(TOLOWER ${SIMD} vecarch)
-      set(OBJECT_${SIMD}_dp_GNUABI "sleefgnuabi${vecarch}dp")
-      set(OBJECT_${SIMD}_sp_GNUABI "sleefgnuabi${vecarch}sp")
-      set(HEADER_${SIMD}_GNUABI ${CMAKE_CURRENT_BINARY_DIR}/include/rename${vecarch}_gnuabi.h)
-      list(APPEND HEADER_GNUABI_FILES_GENERATED ${HEADER_${SIMD}_GNUABI})
-
-      # Generate mkrename_gnuabi commands
-      add_custom_command(OUTPUT ${HEADER_${SIMD}_GNUABI}
-        COMMAND echo Generating rename${vecarch}_gnuabi.h: ${TARGET_MKRENAME_GNUABI} ${RENAME_PARAMS_GNUABI_${SIMD}}
-        COMMAND $<TARGET_FILE:${TARGET_MKRENAME_GNUABI}> ${RENAME_PARAMS_GNUABI_${SIMD}} > ${HEADER_${SIMD}_GNUABI}
-        DEPENDS ${TARGET_MKRENAME_GNUABI}
-      )
-      # set_source_files_properties(${HEADER_${SIMD}_GNUABI} PROPERTIES GENERATED TRUE)
-    endif()
-  endforeach()
-endif()
-
-# --------------------------------------------------------------------
-
-# TARGET_MKMASKED_GNUABI
-add_host_executable(${TARGET_MKMASKED_GNUABI} mkmasked_gnuabi.c)
-
-# maskedXXX_YY_gnuabi.h
-if(ENABLE_GNUABI)
-  foreach(SIMD ${SLEEF_SUPPORTED_GNUABI_EXTENSIONS})
-    if(COMPILER_SUPPORTS_${SIMD} AND MKMASKED_PARAMS_GNUABI_${SIMD}_sp)
-      string(TOLOWER ${SIMD} vecarch)
-
-      set(HEADER_GENERATED "")
-      foreach(T dp sp)
-	set(HEADER_MASKED_${SIMD}_${T}_GNUABI ${CMAKE_CURRENT_BINARY_DIR}/include/masked_${vecarch}_${T}_gnuabi.h)
-	list(APPEND HEADER_GENERATED ${HEADER_MASKED_${SIMD}_${T}_GNUABI})
-
-	add_custom_command(OUTPUT ${HEADER_MASKED_${SIMD}_${T}_GNUABI}
-          COMMAND $<TARGET_FILE:${TARGET_MKMASKED_GNUABI}> ${MKMASKED_PARAMS_GNUABI_${SIMD}_${T}} > ${HEADER_MASKED_${SIMD}_${T}_GNUABI}
-          DEPENDS ${TARGET_MKMASKED_GNUABI}
-	  )
-      endforeach()
-      add_custom_target(masked${SIMD}_generated DEPENDS ${HEADER_GENERATED})
-    endif()
-  endforeach()
-endif()
-
-# --------------------------------------------------------------------
 # TARGET_HEADERS
 # --------------------------------------------------------------------
 add_custom_target(${TARGET_HEADERS} ALL
   DEPENDS
     ${SLEEF_INCLUDE_HEADER}            # Output only
     ${HEADER_FILES_GENERATED}          # Output only
-    ${HEADER_GNUABI_FILES_GENERATED}   # Output only
 )
 
 # --------------------------------------------------------------------
@@ -306,8 +242,7 @@ add_host_executable(${TARGET_MKDISP} mkdisp.c)
 
 # Set C standard requirement (-std=gnu99 for gcc)
 set_target_properties(
-  ${TARGET_MKRENAME} ${TARGET_MKRENAME_GNUABI} ${TARGET_MKDISP}
-  ${TARGET_MKALIAS} ${TARGET_MKMASKED_GNUABI}
+  ${TARGET_MKRENAME} ${TARGET_MKDISP} ${TARGET_MKALIAS}
   PROPERTIES C_STANDARD 99
 )
 
@@ -781,73 +716,6 @@ if (SLEEF_ARCH_S390X)
 endif(SLEEF_ARCH_S390X)
 
 # --------------------------------------------------------------------
-# TARGET_LIBSLEEFGNUABI
-# Compile SIMD versions for GNU Abi
-# --------------------------------------------------------------------
-# Build gnuabi version from just simd object files
-if(ENABLE_GNUABI)
-  set(TARGET_LIBSLEEFGNUABI_OBJECTS "")
-  foreach(SIMD ${SLEEF_SUPPORTED_GNUABI_EXTENSIONS})
-    if(COMPILER_SUPPORTS_${SIMD})
-      # Need lowercase string for rename header
-      string(TOLOWER ${SIMD} vecarch)
-
-      foreach(T dp sp)
-	add_library(${OBJECT_${SIMD}_${T}_GNUABI} OBJECT sleefsimd${T}.c ${HEADER_${SIMD}_GNUABI})
-	target_compile_definitions(${OBJECT_${SIMD}_${T}_GNUABI} PRIVATE
-          ENABLE_${SIMD}=1
-          DORENAME=1
-          ENABLE_GNUABI=1
-	  )
-
-	if(SLEEF_ENABLE_ALTDIV)
-	  target_compile_definitions(${OBJECT_${SIMD}_${T}_GNUABI} PRIVATE SLEEF_ENABLE_ALTDIV=1)
-	endif()
-
-	if(SLEEF_ENABLE_ALTSQRT)
-	  target_compile_definitions(${OBJECT_${SIMD}_${T}_GNUABI} PRIVATE SLEEF_ENABLE_ALTSQRT=1)
-	endif()
-
-	set_target_properties(${OBJECT_${SIMD}_${T}_GNUABI} PROPERTIES
-          ${COMMON_TARGET_PROPERTIES}
-	  )
-
-	target_compile_options(${OBJECT_${SIMD}_${T}_GNUABI} PRIVATE ${FLAGS_ENABLE_${SIMD}})
-	if (COMPILER_SUPPORTS_WEAK_ALIASES)
-          target_compile_options(${OBJECT_${SIMD}_${T}_GNUABI} PRIVATE -DENABLE_GNUABI=1)
-	endif(COMPILER_SUPPORTS_WEAK_ALIASES)
-	list(APPEND TARGET_LIBSLEEFGNUABI_OBJECTS $<TARGET_OBJECTS:${OBJECT_${SIMD}_${T}_GNUABI}>)
-
-	if(MKMASKED_PARAMS_GNUABI_${SIMD}_${T})
-	  target_compile_definitions(${OBJECT_${SIMD}_${T}_GNUABI} PRIVATE
-	    HEADER_MASKED=\"masked_${vecarch}_${T}_gnuabi.h\")
-	  add_dependencies(${OBJECT_${SIMD}_${T}_GNUABI} masked${SIMD}_generated)
-	endif()
-      endforeach()
-    endif(COMPILER_SUPPORTS_${SIMD})
-  endforeach()
-
-  # Create library 
-  add_library(${TARGET_LIBSLEEFGNUABI} ${TARGET_LIBSLEEFGNUABI_OBJECTS} rempitab.c)
-  
-  # Library properties
-  set_target_properties(${TARGET_LIBSLEEFGNUABI} PROPERTIES
-    VERSION ${SLEEF_VERSION_MAJOR}.${SLEEF_VERSION_MINOR}
-    SOVERSION ${SLEEF_SOVERSION}
-    POSITION_INDEPENDENT_CODE ON   # -fPIC
-    C_STANDARD 99                  # -std=gnu99
-    LINKER_LANGUAGE C
-  )
-
-# On some systems we need to explicitly link libsleefgnuabi against
-# libm to use some of the math functions used in the scalar code (for
-# example sqrt).
-if(LIBM AND NOT COMPILER_SUPPORTS_BUILTIN_MATH)
-  target_link_libraries(${TARGET_LIBSLEEFGNUABI} ${LIBM})
-endif()
-endif(ENABLE_GNUABI)
-
-# --------------------------------------------------------------------
 # TARGET_LLVM_BITCODE
 # Generate LLVM bitcode
 # --------------------------------------------------------------------
@@ -975,20 +843,3 @@ install(
     DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
     COMPONENT sleef_Development
 )
-
-if(ENABLE_GNUABI)
-  install(
-      TARGETS ${TARGET_LIBSLEEFGNUABI}
-      EXPORT sleefTargets
-      LIBRARY #
-      DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-      COMPONENT sleef_Runtime
-      NAMELINK_COMPONENT sleef_Development
-      ARCHIVE #
-      DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-      COMPONENT sleef_Development
-      RUNTIME #
-      DESTINATION "${CMAKE_INSTALL_BINDIR}"
-      COMPONENT sleef_Runtime
-  )
-endif()

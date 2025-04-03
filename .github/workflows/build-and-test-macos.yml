@@ -15,7 +15,6 @@ permissions:
 env:
   COMMON_CMAKE_FLAGS: >
     -DSLEEF_SHOW_CONFIG=1
-    -DSLEEF_BUILD_GNUABI_LIBS=ON
     -DSLEEF_BUILD_INLINE_HEADERS=ON
     -DSLEEF_BUILD_DFT=OFF
     -DSLEEF_BUILD_QUAD=ON
@@ -38,9 +37,6 @@ jobs:
           - "macos-13"
           - "macos-14"
         include:
-          - os: "macos-13"
-            arch: "x86_64"
-            xcode: "Xcode_15.2"
           - os: "macos-14"
             arch: "aarch64"
             xcode: "Xcode_15.4"
@@ -67,8 +63,6 @@ jobs:
           EXTRA_CMAKE_FLAGS=""
           if [[ ${{ matrix.arch }} = "aarch64" ]]; then
             EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS}"
-          elif [[ ${{ matrix.arch }} = "x86_64" ]]; then
-            EXTRA_CMAKE_FLAGS="${EXTRA_CMAKE_FLAGS} -DSLEEF_ENFORCE_SSE2=ON -DSLEEF_ENFORCE_SSE4=ON -DSLEEF_ENFORCE_AVX=ON -DSLEEF_ENFORCE_AVX2=ON"
           fi
 
           cmake -S . -B _build-${{ matrix.os }}-${{ matrix.arch }} -GNinja \
@@ -97,9 +91,6 @@ jobs:
           - "macos-13"
           - "macos-14"
         include:
-          - os: "macos-13"
-            arch: "x86_64"
-            xcode: "Xcode_15.2"
           - os: "macos-14"
             arch: "aarch64"
             xcode: "Xcode_15.4"

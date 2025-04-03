@@ -786,29 +786,6 @@ if (SLEEF_ENFORCE_OPENMP AND NOT COMPILER_SUPPORTS_OPENMP)
   message(FATAL_ERROR "SLEEF_ENFORCE_OPENMP is specified and that feature is disabled or not supported by the compiler")
 endif()
 
-# Weak aliases
-
-CHECK_C_SOURCE_COMPILES("
-#if defined(__CYGWIN__)
-#define EXPORT __stdcall __declspec(dllexport)
-#else
-#define EXPORT
-#endif
-  EXPORT int f(int a) {
-   return a + 2;
-  }
-  EXPORT int g(int a) __attribute__((weak, alias(\"f\")));
-  int main(void) {
-    return g(2);
-  }"
-  COMPILER_SUPPORTS_WEAK_ALIASES)
-if (COMPILER_SUPPORTS_WEAK_ALIASES AND
-    NOT CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64" AND
-    NOT SLEEF_CLANG_ON_WINDOWS AND
-    NOT MINGW AND SLEEF_BUILD_GNUABI_LIBS)
-  set(ENABLE_GNUABI ${COMPILER_SUPPORTS_WEAK_ALIASES})
-endif()
-
 # Built-in math functions
 
 CHECK_C_SOURCE_COMPILES("
