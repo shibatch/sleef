@@ -265,10 +265,6 @@ endif()
 
 # Original sleef sources
 set(STANDARD_SOURCES rempitab.c)
-# Check for different precision support and add sources accordingly
-if(COMPILER_SUPPORTS_LONG_DOUBLE)
-  list(APPEND STANDARD_SOURCES sleefld.c)
-endif()
 
 add_library(${TARGET_LIBSLEEF} ${STANDARD_SOURCES})
 add_dependencies(${TARGET_LIBSLEEF} ${TARGET_HEADERS})
@@ -284,8 +280,6 @@ target_compile_definitions(${TARGET_LIBSLEEF}
 )
 
 if(COMPILER_SUPPORTS_FLOAT128)
-  # TODO: Not supported for LLVM bitcode gen as it has a specific compilation flags
-  target_sources(${TARGET_LIBSLEEF} PRIVATE sleefqp.c)
   target_compile_definitions(${TARGET_LIBSLEEF}
     PRIVATE ENABLEFLOAT128=1 ${COMMON_TARGET_DEFINITIONS})
 endif()
@@ -773,44 +767,6 @@ if(CLANG_EXE_PATH AND SLEEF_ENABLE_LLVM_BITCODE)
       FILES ${LLVM_BITCODE_OUTPUTS}
       DESTINATION "${CMAKE_INSTALL_LIBDIR}"
       COMPONENT sleef_Development
-  )
-endif()
-
-# --------------------------------------------------------------------
-# TARGET_LIBSLEEFSCALAR
-# --------------------------------------------------------------------
-# Build scalar-only library from sleefdp.c and sleefsp.c
-if(SLEEF_BUILD_SCALAR_LIB)
-  add_library(sleefscalar sleefdp.c sleefsp.c rempitab.c)
-  add_dependencies(sleefscalar ${TARGET_HEADERS})
-  set_target_properties(sleefscalar PROPERTIES
-    VERSION ${SLEEF_VERSION}
-    SOVERSION ${SLEEF_SOVERSION}
-    PUBLIC_HEADER ${SLEEF_INCLUDE_HEADER}
-    ${COMMON_TARGET_PROPERTIES}
-  )
-
-  target_compile_definitions(sleefscalar
-    PRIVATE DORENAME=1 ${COMMON_TARGET_DEFINITIONS}
-  )
-
-  if(COMPILER_SUPPORTS_BUILTIN_MATH)
-    target_compile_definitions(sleefscalar PRIVATE ENABLE_BUILTIN_MATH=1)
-  endif()
-
-  install(
-      TARGETS sleefscalar
-      EXPORT sleefTargets
-      LIBRARY #
-      DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-      COMPONENT sleef_Runtime
-      NAMELINK_COMPONENT sleef_Development
-      ARCHIVE #
-      DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-      COMPONENT sleef_Development
-      RUNTIME #
-      DESTINATION "${CMAKE_INSTALL_BINDIR}"
-      COMPONENT sleef_Runtime
   )
 endif()
 

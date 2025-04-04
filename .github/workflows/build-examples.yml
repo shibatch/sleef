@@ -19,7 +19,6 @@ env:
     -DSLEEF_BUILD_DFT=ON
     -DSLEEF_ENFORCE_DFT=ON
     -DSLEEF_BUILD_QUAD=OFF
-    -DSLEEF_BUILD_SCALAR_LIB=ON
     -DSLEEF_BUILD_SHARED_LIBS=OFF
 
 jobs:
@@ -92,7 +91,7 @@ jobs:
       - name: DFT example native
         shell: bash -ex -o pipefail {0}
         run: |
-          gcc docs/src/tutorial.c -static -o _examples-native/dft -I_install-native/include -L_install-native/lib -lsleef -lsleefdft -lsleefscalar -lm -fopenmp -lstdc++
+          gcc docs/src/tutorial.c -static -o _examples-native/dft -I_install-native/include -L_install-native/lib -lsleefdft -lsleef -lm -fopenmp -lstdc++
           ./_examples-native/dft
           ./_examples-native/dft
 

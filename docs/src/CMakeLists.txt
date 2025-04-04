@@ -7,7 +7,7 @@ option(SLEEF_BUILD_DFT_TUTORIAL "Build DFT tutorial" OFF)
 
 ExternalProject_Add(libsleef
   GIT_REPOSITORY https://github.com/shibatch/sleef
-  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/contrib -DSLEEF_BUILD_DFT=${SLEEF_BUILD_DFT_TUTORIAL} -DSLEEF_BUILD_SCALAR_LIB=ON -DSLEEF_BUILD_TESTS=OFF
+  CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/contrib -DSLEEF_BUILD_DFT=${SLEEF_BUILD_DFT_TUTORIAL} -DSLEEF_BUILD_TESTS=OFF
 )
 
 include_directories(${CMAKE_BINARY_DIR}/contrib/include)
@@ -23,5 +23,5 @@ if (SLEEF_BUILD_DFT_TUTORIAL)
   add_executable(dfttutorial tutorial.c)
   add_dependencies(dfttutorial libsleef)
   find_library(LIBM m)
-  target_link_libraries(dfttutorial sleef sleefdft sleefscalar ${LIBM} -fopenmp -lstdc++)
+  target_link_libraries(dfttutorial sleefdft sleef ${LIBM} -fopenmp -lstdc++)
 endif()
