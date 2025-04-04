@@ -41,42 +41,6 @@ extern const float Sleef_rempitabsp[];
 #endif
 #endif
 
-#ifdef ENABLE_SSE4
-#define CONFIG 4
-#if !defined(SLEEF_GENHEADER)
-#include "helpersse2.h"
-#else
-#include "macroonlySSE4.h"
-#endif
-#ifdef DORENAME
-#include "renamesse4.h"
-#endif
-#endif
-
-#ifdef ENABLE_AVX
-#define CONFIG 1
-#if !defined(SLEEF_GENHEADER)
-#include "helperavx.h"
-#else
-#include "macroonlyAVX.h"
-#endif
-#ifdef DORENAME
-#include "renameavx.h"
-#endif
-#endif
-
-#ifdef ENABLE_FMA4
-#define CONFIG 4
-#if !defined(SLEEF_GENHEADER)
-#include "helperavx.h"
-#else
-#include "macroonlyFMA4.h"
-#endif
-#ifdef DORENAME
-#include "renamefma4.h"
-#endif
-#endif
-
 #ifdef ENABLE_AVX2
 #define CONFIG 1
 #if !defined(SLEEF_GENHEADER)

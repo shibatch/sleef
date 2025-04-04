@@ -71,13 +71,8 @@ function(add_test_iut IUT C)
       else()
 	set(FLAGS_SDE)
       endif()
-      if (ARMIE_COMMAND)
-        set(FLAGS_ARMIE ${ARMIE_COMMAND} -msve-vector-bits=${SVE_VECTOR_BITS})
-      else()
-        set(FLAGS_ARMIE)
-      endif()
       add_test(NAME ${IUT}
-	COMMAND ${QTESTER} ${FLAGS_SDE} ${FLAGS_ARMIE} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${IUT}
+	COMMAND ${QTESTER} ${FLAGS_SDE} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${IUT}
 	WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
       set_tests_properties(${IUT} PROPERTIES COST ${C})
     else()
@@ -145,7 +140,8 @@ macro(test_extension SIMD)
     # The iut programs whose names begin with "qiuti" are the iut for the
     # inline version of quad functions.
 
-    if (SLEEF_BUILD_INLINE_HEADERS AND SED_COMMAND)
+    list(FIND SLEEF_SUPPORTED_INLINE_QUAD_EXTENSIONS ${SIMD} INDEX_INLINE)
+    if (SLEEF_BUILD_INLINE_HEADERS AND SED_COMMAND AND NOT INDEX_INLINE EQUAL -1)
       if (MSVC AND NOT SLEEF_CLANG_ON_WINDOWS)
 	message(STATUS "Quad inline headers are not tested with MSVC")
       else(MSVC AND NOT SLEEF_CLANG_ON_WINDOWS)
@@ -203,7 +199,7 @@ macro(test_extension SIMD)
 	endif(SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
 
       endif(MSVC AND NOT SLEEF_CLANG_ON_WINDOWS)
-    endif(SLEEF_BUILD_INLINE_HEADERS AND SED_COMMAND)
+    endif()
 
     #
 

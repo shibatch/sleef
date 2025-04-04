@@ -9,9 +9,7 @@ set(COMMON_TARGET_PROPERTIES
 #
 
 function(add_test_dft TESTNAME)
-  if (ARMIE_COMMAND)
-    add_test(NAME ${TESTNAME} COMMAND ${ARMIE_COMMAND} -msve-vector-bits=${SVE_VECTOR_BITS} ${ARGN})
-  elseif (NOT EMULATOR AND NOT SDE_COMMAND)
+  if (NOT EMULATOR AND NOT SDE_COMMAND)
     add_test(NAME ${TESTNAME} COMMAND ${ARGN})
   elseif(NOT EMULATOR)
     add_test(NAME ${TESTNAME} COMMAND ${SDE_COMMAND} "--" ${ARGN})

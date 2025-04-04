@@ -21,7 +21,7 @@ extern "C"
 {
 #endif
 
-#if defined (__GNUC__) || defined (__clang__) || defined(__INTEL_COMPILER)
+#if defined (__GNUC__) || defined (__clang__)
 #define SLEEF_CONST __attribute__((const))
 #define SLEEF_INLINE __attribute__((always_inline))
 #elif defined(_MSC_VER)
@@ -93,7 +93,7 @@ typedef __vector unsigned long long SLEEF_VECTOR_ULONGLONG;
 
 //
 
-#if defined(SLEEF_ENABLE_OMP_SIMD) && (defined(__GNUC__) || defined(__CLANG__)) && !defined(__INTEL_COMPILER)
+#if defined(SLEEF_ENABLE_OMP_SIMD) && (defined(__GNUC__) || defined(__CLANG__))
 #if defined(__aarch64__)
 //#define SLEEF_PRAGMA_OMP_SIMD_DP _Pragma ("omp declare simd simdlen(2) notinbranch")
 //#define SLEEF_PRAGMA_OMP_SIMD_SP _Pragma ("omp declare simd simdlen(4) notinbranch")

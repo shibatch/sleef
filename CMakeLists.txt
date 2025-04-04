@@ -16,10 +16,7 @@ option(SLEEF_ENABLE_LTO "Enable LTO on GCC or ThinLTO on clang" OFF)
 option(SLEEF_BUILD_LIBM "libsleef will be built." ON)
 option(SLEEF_BUILD_DFT "libsleefdft will be built." OFF)
 option(SLEEF_BUILD_QUAD "libsleefquad will be built." OFF)
-option(SLEEF_BUILD_SCALAR_LIB "libsleefscalar will be built." OFF)
 option(SLEEF_BUILD_TESTS "Tests will be built." ON)
-option(SLEEF_BUILD_BENCH "Bench will be built." OFF)
-option(SLEEF_BUILD_BENCH_REF "Benchmark script for reference (e.g. system libm) will be built." OFF)
 option(SLEEF_BUILD_INLINE_HEADERS "Build header for inlining whole SLEEF functions" OFF)
 
 option(SLEEF_ENFORCE_DFT "Build fails if DFT is not built" OFF)
@@ -60,8 +57,6 @@ option(SLEEF_ENFORCE_FLOAT128 "Build fails if float128 is not supported by the c
 
 option(SLEEF_DISABLE_SSE2 "Disable SSE2" OFF)
 option(SLEEF_ENFORCE_SSE2 "Build fails if SSE2 is not supported by the compiler" OFF)
-option(SLEEF_DISABLE_FMA4 "Disable FMA4" OFF)
-option(SLEEF_ENFORCE_FMA4 "Build fails if FMA4 is not supported by the compiler" OFF)
 option(SLEEF_DISABLE_AVX2 "Disable AVX2" OFF)
 option(SLEEF_ENFORCE_AVX2 "Build fails if AVX2 is not supported by the compiler" OFF)
 option(SLEEF_DISABLE_AVX512F "Disable AVX512F" OFF)
@@ -94,15 +89,6 @@ if ((NOT "${CMAKE_C_COMPILER_ID}" STREQUAL "${CMAKE_CXX_COMPILER_ID}") OR
 endif()
 
 #
-
-if (SLEEF_BUILD_BENCH_REF)
-  if (NOT SLEEF_BUILD_BENCH)
-    message(FATAL_ERROR "SLEEF_BUILD_BENCH must be on when SLEEF_BUILD_BENCH_REF is enabled.")
-  endif ()
-  if(NOT CMAKE_SYSTEM_NAME MATCHES Linux)
-     message(FATAL_ERROR "Libm benchmarking not supported in this OS.")
-  endif()
-endif ()
 
 if (DEFINED SLEEF_BUILD_SHARED_LIBS)
   set(BUILD_SHARED_LIBS ${SLEEF_BUILD_SHARED_LIBS})
@@ -167,8 +153,21 @@ set(SLEEF_SUPPORTED_LIBM_EXTENSIONS
   CACHE STRING "List of SIMD architectures supported by libsleef."
   )
 
+set(SLEEF_SUPPORTED_INLINE_LIBM_EXTENSIONS
+  AVX512FNOFMA AVX512F AVX2 AVX2128                     # x86
+  SVENOFMA SVE ADVSIMDNOFMA ADVSIMD                     # Aarch64
+  VSX VSXNOFMA VSX3 VSX3NOFMA                           # PPC64
+  VXE VXENOFMA VXE2 VXE2NOFMA                           # IBM Z
+  RVVM1NOFMA RVVM1 RVVM2NOFMA RVVM2                     # RISC-V Vectors
+  PUREC_SCALAR PURECFMA_SCALAR                          # Generic type
+  CACHE STRING "List of SIMD architectures supported by the inline headers."
+  )
+
 set(SLEEF_SUPPORTED_QUAD_EXTENSIONS
   PUREC_SCALAR PURECFMA_SCALAR SSE2 AVX2128 AVX2 AVX512F ADVSIMD SVE VSX VSX3 VXE VXE2 RVVM1 RVVM2)
+
+set(SLEEF_SUPPORTED_INLINE_QUAD_EXTENSIONS
+  PUREC_SCALAR PURECFMA_SCALAR AVX2128 AVX2 AVX512F ADVSIMD SVE VSX VSX3 VXE VXE2 RVVM1 RVVM2)
 
 #
 
@@ -379,10 +378,6 @@ if(SLEEF_SHOW_CONFIG)
   message(STATUS "COMPILER_SUPPORTS_OPENMP : " ${COMPILER_SUPPORTS_OPENMP})
   if (COMPILER_SUPPORTS_SVE)
     message(STATUS "Building SLEEF with VLA SVE support")
-    if (ARMIE_COMMAND)
-      message(STATUS "Arm Instruction Emulator found at ${ARMIE_COMMAND}")
-      message(STATUS "SVE testing is done with ${SVE_VECTOR_BITS}-bits vectors.")
-    endif()
   endif()
 endif(SLEEF_SHOW_CONFIG)
 

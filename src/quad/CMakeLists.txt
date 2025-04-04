@@ -228,15 +228,13 @@ if(LIBM AND ((NOT COMPILER_SUPPORTS_BUILTIN_MATH) OR (SLEEF_ARCH_32BIT AND SLEEF
   target_link_libraries(sleefquad ${LIBM})
 endif()
 
+target_link_libraries(sleefquad ${TARGET_LIBSLEEF})
+
 # --------------------------------------------------------------------
 # Inline headers
 # --------------------------------------------------------------------
 
 if(SLEEF_BUILD_INLINE_HEADERS)
-  if(CMAKE_C_COMPILER_ID MATCHES "Intel")
-    message(FATAL_ERROR "SLEEF_BUILD_INLINE_HEADERS is not supported with Intel Compiler")
-  endif()
-
   file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/include/)
   set(INLINE_HEADER_FILES_GENERATED "")
 
@@ -244,7 +242,7 @@ if(SLEEF_BUILD_INLINE_HEADERS)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/sleefquadinline_cuda_header.h.org.in ${CMAKE_CURRENT_BINARY_DIR}/sleefquadinline_cuda_header.h.org)
 
   if (SED_COMMAND)
-    foreach(SIMD ${SLEEF_SUPPORTED_QUAD_EXTENSIONS} CUDA)
+    foreach(SIMD ${SLEEF_SUPPORTED_INLINE_QUAD_EXTENSIONS} CUDA)
       if(COMPILER_SUPPORTS_${SIMD} OR "${SIMD}" STREQUAL "CUDA")
 	string(TOLOWER ${SIMD} SIMDLC)
 

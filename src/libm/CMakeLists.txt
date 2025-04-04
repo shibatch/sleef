@@ -67,7 +67,7 @@ endif()
 # HEADER_PARAMS
 
 command_arguments(HEADER_PARAMS_SSE_            -     2 4 __m128d __m128 __m128i __m128i __SSE2__)
-command_arguments(HEADER_PARAMS_SSE2            cinz_ 2 4 __m128d __m128 __m128i __m128i __SSE2__ sse2)
+command_arguments(HEADER_PARAMS_SSE2            finz_ 2 4 __m128d __m128 __m128i __m128i __SSE2__ sse2)
 command_arguments(HEADER_PARAMS_AVX2            finz_ 4 8 __m256d __m256 __m128i __m256i __AVX__ avx2)
 command_arguments(HEADER_PARAMS_AVX2128         finz_ 2 4 __m128d __m128 __m128i __m128i __SSE2__ avx2128)
 command_arguments(HEADER_PARAMS_AVX512F_        -     8 16 __m512d __m512 __m256i __m512i __AVX512F__)
@@ -103,7 +103,7 @@ command_arguments(HEADER_PARAMS_PURECFMA_SCALAR finz_ 1 1 double float int32_t i
 
 # RENAME_PARAMS
 
-command_arguments(RENAME_PARAMS_SSE2            cinz_ 2 4 sse2)
+command_arguments(RENAME_PARAMS_SSE2            finz_ 2 4 sse2)
 command_arguments(RENAME_PARAMS_AVX2            finz_ 4 8 avx2)
 command_arguments(RENAME_PARAMS_AVX2128         finz_ 2 4 avx2128)
 command_arguments(RENAME_PARAMS_AVX512F         finz_ 8 16 avx512f)
@@ -264,10 +264,10 @@ if (SLEEF_ENABLE_LTO)
 endif()
 
 # Original sleef sources
-set(STANDARD_SOURCES rempitab.c)
+set(STANDARD_SOURCES rempitab.c sleeffma.cpp)
 
 add_library(${TARGET_LIBSLEEF} ${STANDARD_SOURCES})
-add_dependencies(${TARGET_LIBSLEEF} ${TARGET_HEADERS})
+add_dependencies(${TARGET_LIBSLEEF} ${TARGET_HEADERS} ext_tlfloat)
 set_target_properties(${TARGET_LIBSLEEF} PROPERTIES
   VERSION ${SLEEF_VERSION}
   SOVERSION ${SLEEF_SOVERSION}
@@ -301,8 +301,8 @@ foreach(SIMD ${SLEEF_SUPPORTED_LIBM_EXTENSIONS})
     set(SIMD_SOURCES sleefsimdsp.c sleefsimddp.c)
 
     # Create a library
-    add_library(${OBJECT_${SIMD}} OBJECT ${SIMD_SOURCES} ${HEADER_${SIMD}})    
-    add_library(${OBJECTDET_${SIMD}} OBJECT ${SIMD_SOURCES} ${HEADER_${SIMD}})    
+    add_library(${OBJECT_${SIMD}} OBJECT ${SIMD_SOURCES} ${HEADER_${SIMD}})
+    add_library(${OBJECTDET_${SIMD}} OBJECT ${SIMD_SOURCES} ${HEADER_${SIMD}})
     target_compile_definitions(${OBJECTDET_${SIMD}} PRIVATE DETERMINISTIC=1)
 
     if(COMPILER_SUPPORTS_BUILTIN_MATH)
@@ -387,17 +387,13 @@ endforeach()
 #
 
 if(SLEEF_BUILD_INLINE_HEADERS)
-  if(CMAKE_C_COMPILER_ID MATCHES "Intel")
-    message(FATAL_ERROR "SLEEF_BUILD_INLINE_HEADERS is not supported with Intel Compiler")
-  endif()
-
   file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/include/)
   set(INLINE_HEADER_FILES_GENERATED "")
 
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/sleefinline_header.h.org.in ${CMAKE_CURRENT_BINARY_DIR}/sleefinline_header.h.org)
 
   if (SED_COMMAND)
-    foreach(SIMD ${SLEEF_SUPPORTED_LIBM_EXTENSIONS} CUDA)
+    foreach(SIMD ${SLEEF_SUPPORTED_INLINE_LIBM_EXTENSIONS} CUDA)
       if(COMPILER_SUPPORTS_${SIMD} OR ${SIMD} STREQUAL "CUDA")
 	string(TOLOWER ${SIMD} SIMDLC)
 
@@ -708,67 +704,6 @@ if (SLEEF_ARCH_S390X)
   target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:disps390x_128_obj>)
 
 endif(SLEEF_ARCH_S390X)
-
-# --------------------------------------------------------------------
-# TARGET_LLVM_BITCODE
-# Generate LLVM bitcode
-# --------------------------------------------------------------------
-if(CLANG_EXE_PATH AND SLEEF_ENABLE_LLVM_BITCODE)
-  set(SLEEP_LLVM_BITCODE_INCLUDES "")
-  get_property(SLEEP_LLVM_BITCODE_INCLUDES_LIST DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
-  foreach(INCLUDE_DIRECTORY ${SLEEP_LLVM_BITCODE_INCLUDES_LIST})
-    set(SLEEP_LLVM_BITCODE_INCLUDES "${SLEEP_LLVM_BITCODE_INCLUDES} -I ${INCLUDE_DIRECTORY}")
-  endforeach()
-
-  separate_arguments(SLEEP_LLVM_BITCODE_INCLUDES_CLANG WINDOWS_COMMAND "${SLEEP_LLVM_BITCODE_INCLUDES}")
-  set(SLEEF_CLANG_LLVM_BITCODE_OPTIONS -O3 -S -emit-llvm -D NDEBUG -D DORENAME=1)
-  set(LLVM_BITCODE_OUTPUTS "")
-
-  # Generate LLVM bitcode for regular SLEEF
-  foreach(STANDARD_SOURCE ${STANDARD_SOURCES})
-    get_filename_component(SRC_WITHOUT_EXT ${STANDARD_SOURCE} NAME_WE)
-    set(LLVM_BITCODE_INPUT ${CMAKE_CURRENT_SOURCE_DIR}/${SRC_WITHOUT_EXT}.c)
-    set(LLVM_BITCODE_OUTPUT ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${SRC_WITHOUT_EXT}.ll)
-    add_custom_command(OUTPUT ${LLVM_BITCODE_OUTPUT}
-      COMMAND ${CLANG_EXE_PATH} ${SLEEF_CLANG_LLVM_BITCODE_OPTIONS} -o ${LLVM_BITCODE_OUTPUT} ${LLVM_BITCODE_INPUT} ${SLEEP_LLVM_BITCODE_INCLUDES_CLANG}
-      DEPENDS
-        ${LLVM_BITCODE_INPUT}
-    )
-    list(APPEND LLVM_BITCODE_OUTPUTS ${LLVM_BITCODE_OUTPUT})
-  endforeach()
-
-  # Generate LLVM bitcode for SIMD SLEEF
-  foreach(SIMD ${SLEEF_SUPPORTED_LIBM_EXTENSIONS})
-    set(SIMD_SOURCES sleefsimdsp.c sleefsimddp.c)
-
-    if(COMPILER_SUPPORTS_${SIMD})
-      foreach(SIMD_SOURCE ${SIMD_SOURCES})
-        get_filename_component(SIMD_SOURCE_WITHOUT_EXT ${SIMD_SOURCE} NAME_WE)
-        set(LLVM_BITCODE_INPUT ${CMAKE_CURRENT_SOURCE_DIR}/${SIMD_SOURCE})
-        set(LLVM_BITCODE_OUTPUT ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${SIMD_SOURCE_WITHOUT_EXT}_${SIMD}.ll)
-        add_custom_command(OUTPUT ${LLVM_BITCODE_OUTPUT}
-          COMMAND  ${CLANG_EXE_PATH} ${CLANG_FLAGS_ENABLE_${SIMD}} ${SLEEF_CLANG_LLVM_BITCODE_OPTIONS} -D ENABLE_${SIMD}=1 -o ${LLVM_BITCODE_OUTPUT} ${LLVM_BITCODE_INPUT} ${SLEEP_LLVM_BITCODE_INCLUDES_CLANG}
-          DEPENDS
-            ${LLVM_BITCODE_INPUT}
-        )
-        list(APPEND LLVM_BITCODE_OUTPUTS ${LLVM_BITCODE_OUTPUT})
-      endforeach()
-    endif()
-  endforeach()
-
-  file(MAKE_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
-  add_custom_target(${TARGET_LLVM_BITCODE} ALL
-    DEPENDS
-      ${LLVM_BITCODE_OUTPUTS}
-  )
-  add_dependencies(${TARGET_LLVM_BITCODE} ${TARGET_HEADERS})
-
-  install(
-      FILES ${LLVM_BITCODE_OUTPUTS}
-      DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-      COMPONENT sleef_Development
-  )
-endif()
 
 # --------------------------------------------------------------------
 # Install

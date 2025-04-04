@@ -112,7 +112,7 @@ if (SLEEF_ENABLE_TLFLOAT)
   set(TLFLOAT_SOURCE_DIR "${PROJECT_SOURCE_DIR}/submodules/tlfloat")
   set(TLFLOAT_INSTALL_DIR "${SLEEF_SUBMODULE_INSTALL_DIR}/tlfloat")
 
-  set(TLFLOAT_CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${TLFLOAT_INSTALL_DIR} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DBUILD_LIBS=True -DBUILD_UTILS=False -DBUILD_TESTS=False)
+  set(TLFLOAT_CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${TLFLOAT_INSTALL_DIR} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DBUILD_LIBS=True -DBUILD_UTILS=False -DBUILD_TESTS=False -DCMAKE_POSITION_INDEPENDENT_CODE=ON)
 
   if (CMAKE_C_COMPILER)
     list(APPEND TLFLOAT_CMAKE_ARGS -DCMAKE_C_COMPILER:PATH=${CMAKE_C_COMPILER})
@@ -332,30 +332,6 @@ elseif(MSVC)
   set(FLAG_PRESERVE_COMMENTS "/C")
   set(FLAG_INCLUDE "/I")
   set(FLAG_DEFINE "/D")
-elseif(CMAKE_C_COMPILER_ID MATCHES "Intel")
-  set(FLAGS_ENABLE_SSE2 "-msse2")
-  set(FLAGS_ENABLE_AVX2 "-march=core-avx2")
-  set(FLAGS_ENABLE_AVX2128 "-march=core-avx2")
-  set(FLAGS_ENABLE_AVX512F "-xCOMMON-AVX512")
-  set(FLAGS_ENABLE_AVX512FNOFMA "-xCOMMON-AVX512")
-  set(FLAGS_ENABLE_PURECFMA_SCALAR "-march=core-avx2;-fno-strict-aliasing")
-  set(FLAGS_ENABLE_FMA4 "-msse2")  # This is a dummy flag
-  if(CMAKE_C_COMPILER_ID MATCHES "IntelLLVM")
-    set(FLAGS_STRICTMATH "-fp-model strict -Qoption,cpp,--extended_float_types")
-    set(FLAGS_FASTMATH "-fp-model fast -Qoption,cpp,--extended_float_types")
-  else()
-    set(FLAGS_STRICTMATH "-fp-model strict -Qoption,cpp,--extended_float_type")
-    set(FLAGS_FASTMATH "-fp-model fast=2 -Qoption,cpp,--extended_float_type")
-  endif()
-  set(FLAGS_NOSTRICTALIASING "-fno-strict-aliasing")
-  set(FLAGS_WALL "-fmax-errors=3 -Wall -Wno-unused -Wno-attributes")
-
-  set(FLAGS_NO_ERRNO "")
-
-  set(FLAG_PREPROCESS "-E")
-  set(FLAG_PRESERVE_COMMENTS "-C")
-  set(FLAG_INCLUDE "-I")
-  set(FLAG_DEFINE "-D")
 endif()
 
 set(SLEEF_C_FLAGS "${FLAGS_WALL} ${FLAGS_STRICTMATH} ${FLAGS_OTHERS}")
@@ -825,13 +801,6 @@ set(ORG_CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 find_program(SDE_COMMAND sde64)
 if (NOT SDE_COMMAND)
   find_program(SDE_COMMAND sde)
-endif()
-
-# Check if armie command is available
-
-find_program(ARMIE_COMMAND armie)
-if (NOT SVE_VECTOR_BITS)
-  set(SVE_VECTOR_BITS 128)
 endif()
 
 #
