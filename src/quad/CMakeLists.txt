@@ -200,9 +200,6 @@ foreach(SIMD ${SLEEF_SUPPORTED_QUAD_EXTENSIONS})
     set(OBJECT "sleefquad${SIMDLC}_obj")
     add_library(${OBJECT} OBJECT sleefsimdqp.c ${HEADER_${SIMD}})    
 
-    target_include_directories(${OBJECT} PRIVATE ${PROJECT_BINARY_DIR}/include)
-    add_dependencies(${OBJECT} ext_tlfloat)
-
     if(COMPILER_SUPPORTS_BUILTIN_MATH)
       target_compile_definitions(${OBJECT} PRIVATE ENABLE_BUILTIN_MATH=1)
     endif()
@@ -231,7 +228,7 @@ if(LIBM AND ((NOT COMPILER_SUPPORTS_BUILTIN_MATH) OR (SLEEF_ARCH_32BIT AND SLEEF
   target_link_libraries(sleefquad ${LIBM})
 endif()
 
-target_link_libraries(sleefquad ${TLFLOAT_LIBRARIES})
+target_link_libraries(sleefquad ${TARGET_LIBSLEEF})
 
 # --------------------------------------------------------------------
 # Inline headers

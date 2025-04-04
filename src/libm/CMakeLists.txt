@@ -264,10 +264,10 @@ if (SLEEF_ENABLE_LTO)
 endif()
 
 # Original sleef sources
-set(STANDARD_SOURCES rempitab.c)
+set(STANDARD_SOURCES rempitab.c sleeffma.cpp)
 
 add_library(${TARGET_LIBSLEEF} ${STANDARD_SOURCES})
-add_dependencies(${TARGET_LIBSLEEF} ${TARGET_HEADERS})
+add_dependencies(${TARGET_LIBSLEEF} ${TARGET_HEADERS} ext_tlfloat)
 set_target_properties(${TARGET_LIBSLEEF} PROPERTIES
   VERSION ${SLEEF_VERSION}
   SOVERSION ${SLEEF_SOVERSION}
@@ -304,12 +304,6 @@ foreach(SIMD ${SLEEF_SUPPORTED_LIBM_EXTENSIONS})
     add_library(${OBJECT_${SIMD}} OBJECT ${SIMD_SOURCES} ${HEADER_${SIMD}})
     add_library(${OBJECTDET_${SIMD}} OBJECT ${SIMD_SOURCES} ${HEADER_${SIMD}})
     target_compile_definitions(${OBJECTDET_${SIMD}} PRIVATE DETERMINISTIC=1)
-
-    target_include_directories(${OBJECT_${SIMD}} PRIVATE ${PROJECT_BINARY_DIR}/include)
-    add_dependencies(${OBJECT_${SIMD}} ext_tlfloat)
-
-    target_include_directories(${OBJECTDET_${SIMD}} PRIVATE ${PROJECT_BINARY_DIR}/include)
-    add_dependencies(${OBJECTDET_${SIMD}} ext_tlfloat)
 
     if(COMPILER_SUPPORTS_BUILTIN_MATH)
       target_compile_definitions(${OBJECT_${SIMD}} PRIVATE ENABLE_BUILTIN_MATH=1)
@@ -576,8 +570,6 @@ if(LIBM AND NOT COMPILER_SUPPORTS_BUILTIN_MATH)
   target_link_libraries(${TARGET_LIBSLEEF} ${LIBM})
 endif()
 
-target_link_libraries(${TARGET_LIBSLEEF} ${TLFLOAT_LIBRARIES})
-
 target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:${TARGET_LIBCOMMON_OBJ}>)
 
 # --------------------------------------------------------------------
@@ -712,67 +704,6 @@ if (SLEEF_ARCH_S390X)
   target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:disps390x_128_obj>)
 
 endif(SLEEF_ARCH_S390X)
-
-# --------------------------------------------------------------------
-# TARGET_LLVM_BITCODE
-# Generate LLVM bitcode
-# --------------------------------------------------------------------
-if(CLANG_EXE_PATH AND SLEEF_ENABLE_LLVM_BITCODE)
-  set(SLEEP_LLVM_BITCODE_INCLUDES "")
-  get_property(SLEEP_LLVM_BITCODE_INCLUDES_LIST DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
-  foreach(INCLUDE_DIRECTORY ${SLEEP_LLVM_BITCODE_INCLUDES_LIST})
-    set(SLEEP_LLVM_BITCODE_INCLUDES "${SLEEP_LLVM_BITCODE_INCLUDES} -I ${INCLUDE_DIRECTORY}")
-  endforeach()
-
-  separate_arguments(SLEEP_LLVM_BITCODE_INCLUDES_CLANG WINDOWS_COMMAND "${SLEEP_LLVM_BITCODE_INCLUDES}")
-  set(SLEEF_CLANG_LLVM_BITCODE_OPTIONS -O3 -S -emit-llvm -D NDEBUG -D DORENAME=1)
-  set(LLVM_BITCODE_OUTPUTS "")
-
-  # Generate LLVM bitcode for regular SLEEF
-  foreach(STANDARD_SOURCE ${STANDARD_SOURCES})
-    get_filename_component(SRC_WITHOUT_EXT ${STANDARD_SOURCE} NAME_WE)
-    set(LLVM_BITCODE_INPUT ${CMAKE_CURRENT_SOURCE_DIR}/${SRC_WITHOUT_EXT}.c)
-    set(LLVM_BITCODE_OUTPUT ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${SRC_WITHOUT_EXT}.ll)
-    add_custom_command(OUTPUT ${LLVM_BITCODE_OUTPUT}
-      COMMAND ${CLANG_EXE_PATH} ${SLEEF_CLANG_LLVM_BITCODE_OPTIONS} -o ${LLVM_BITCODE_OUTPUT} ${LLVM_BITCODE_INPUT} ${SLEEP_LLVM_BITCODE_INCLUDES_CLANG}
-      DEPENDS
-        ${LLVM_BITCODE_INPUT}
-    )
-    list(APPEND LLVM_BITCODE_OUTPUTS ${LLVM_BITCODE_OUTPUT})
-  endforeach()
-
-  # Generate LLVM bitcode for SIMD SLEEF
-  foreach(SIMD ${SLEEF_SUPPORTED_LIBM_EXTENSIONS})
-    set(SIMD_SOURCES sleefsimdsp.c sleefsimddp.c)
-
-    if(COMPILER_SUPPORTS_${SIMD})
-      foreach(SIMD_SOURCE ${SIMD_SOURCES})
-        get_filename_component(SIMD_SOURCE_WITHOUT_EXT ${SIMD_SOURCE} NAME_WE)
-        set(LLVM_BITCODE_INPUT ${CMAKE_CURRENT_SOURCE_DIR}/${SIMD_SOURCE})
-        set(LLVM_BITCODE_OUTPUT ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${SIMD_SOURCE_WITHOUT_EXT}_${SIMD}.ll)
-        add_custom_command(OUTPUT ${LLVM_BITCODE_OUTPUT}
-          COMMAND  ${CLANG_EXE_PATH} ${CLANG_FLAGS_ENABLE_${SIMD}} ${SLEEF_CLANG_LLVM_BITCODE_OPTIONS} -D ENABLE_${SIMD}=1 -o ${LLVM_BITCODE_OUTPUT} ${LLVM_BITCODE_INPUT} ${SLEEP_LLVM_BITCODE_INCLUDES_CLANG}
-          DEPENDS
-            ${LLVM_BITCODE_INPUT}
-        )
-        list(APPEND LLVM_BITCODE_OUTPUTS ${LLVM_BITCODE_OUTPUT})
-      endforeach()
-    endif()
-  endforeach()
-
-  file(MAKE_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
-  add_custom_target(${TARGET_LLVM_BITCODE} ALL
-    DEPENDS
-      ${LLVM_BITCODE_OUTPUTS}
-  )
-  add_dependencies(${TARGET_LLVM_BITCODE} ${TARGET_HEADERS})
-
-  install(
-      FILES ${LLVM_BITCODE_OUTPUTS}
-      DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-      COMPONENT sleef_Development
-  )
-endif()
 
 # --------------------------------------------------------------------
 # Install
