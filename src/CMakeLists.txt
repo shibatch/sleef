@@ -7,10 +7,6 @@ if (SLEEF_BUILD_TESTS AND NOT MINGW)
 endif()
 add_subdirectory("common")
 
-if (SLEEF_BUILD_BENCH)
-#  add_subdirectory("libm-benchmarks")
-endif()
-
 if (SLEEF_BUILD_DFT AND COMPILER_SUPPORTS_OPENMP)
   add_subdirectory("dft")
   if (SLEEF_BUILD_TESTS)

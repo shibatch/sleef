@@ -3,7 +3,7 @@
 
 # TESTER3_DEFINITIONS
 
-set(TESTER3_DEFINITIONS_SSE2          ATR=cinz_ DPTYPE=__m128d SPTYPE=__m128 DPTYPESPEC=d2 SPTYPESPEC=f4  EXTSPEC=sse2)
+set(TESTER3_DEFINITIONS_SSE2          ATR=finz_ DPTYPE=__m128d SPTYPE=__m128 DPTYPESPEC=d2 SPTYPESPEC=f4  EXTSPEC=sse2)
 set(TESTER3_DEFINITIONS_AVX2128       ATR=finz_ DPTYPE=__m128d SPTYPE=__m128 DPTYPESPEC=d2 SPTYPESPEC=f4  EXTSPEC=avx2128)
 set(TESTER3_DEFINITIONS_FMA4          ATR=finz_ DPTYPE=__m256d SPTYPE=__m256 DPTYPESPEC=d4 SPTYPESPEC=f8  EXTSPEC=fma4)
 set(TESTER3_DEFINITIONS_AVX2          ATR=finz_ DPTYPE=__m256d SPTYPE=__m256 DPTYPESPEC=d4 SPTYPESPEC=f8  EXTSPEC=avx2)
@@ -36,8 +36,8 @@ set(TESTER3_DEFINITIONS_PURECFMA_SCALAR ATR=finz_ DPTYPE=double SPTYPE=float DPT
 #
 
 if (SLEEF_ARCH_X86)
-  set(TEST3_CINZ purec_scalar sse2 sse4 avx avx512fnofma)
-  set(TEST3_FINZ purecfma_scalar avx2128 avx2 avx512f)
+  set(TEST3_CINZ purec_scalar avx512fnofma)
+  set(TEST3_FINZ purecfma_scalar sse2 avx2128 avx2 avx512f)
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
   set(TEST3_CINZ purec_scalar advsimdnofma svenofma)
   set(TEST3_FINZ purecfma_scalar advsimd sve)
@@ -130,13 +130,8 @@ function(add_test_iut IUT C)
       else()
 	set(FLAGS_SDE)
       endif()
-      if (ARMIE_COMMAND)
-        set(FLAGS_ARMIE ${ARMIE_COMMAND} -msve-vector-bits=${SVE_VECTOR_BITS})
-      else()
-        set(FLAGS_ARMIE)
-      endif()
       add_test(NAME ${IUT}
-	COMMAND ${TESTER} ${FLAGS_SDE} ${FLAGS_ARMIE} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${IUT}
+	COMMAND ${TESTER} ${FLAGS_SDE} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${IUT}
 	WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
       set_tests_properties(${IUT} PROPERTIES COST ${C})
     else()
@@ -227,7 +222,8 @@ macro(test_extension SIMD)
       # The iut programs whose names begin with "iuti" are the iut for the
       # inline version of functions.
 
-      if (SLEEF_BUILD_INLINE_HEADERS AND SED_COMMAND)
+      list(FIND SLEEF_SUPPORTED_INLINE_LIBM_EXTENSIONS ${SIMD} INDEX_INLINE)
+      if (SLEEF_BUILD_INLINE_HEADERS AND SED_COMMAND AND NOT INDEX_INLINE EQUAL -1)
 	string(CONCAT IUTINAME "iuti" ${LCSIMD})
 	add_executable(${IUTINAME} ${IUT_SRC})
 	target_compile_options(${IUTINAME} PRIVATE ${FLAGS_ENABLE_${SIMD}})
@@ -247,7 +243,7 @@ macro(test_extension SIMD)
 	  add_test_iut(${IUTINAME} 1.0)
 	endif()
 	list(APPEND IUT_LIST ${IUTINAME})
-      endif(SLEEF_BUILD_INLINE_HEADERS AND SED_COMMAND)
+      endif()
     endif(SLEEF_ENABLE_TESTER)
 
     #
@@ -296,7 +292,8 @@ macro(test_extension SIMD)
 
       #
 
-      if (SLEEF_BUILD_INLINE_HEADERS)
+      list(FIND SLEEF_SUPPORTED_INLINE_LIBM_EXTENSIONS ${SIMD} INDEX_INLINE)
+      if (SLEEF_BUILD_INLINE_HEADERS AND NOT INDEX_INLINE EQUAL -1)
 	string(CONCAT TARGET_TESTER4I_${SIMD} "tester4i" ${LCSIMD})
 
 	add_executable(${TARGET_TESTER4I_${SIMD}} ${TESTER4_SRC})
@@ -321,7 +318,7 @@ macro(test_extension SIMD)
 	else()
 	  add_test_with_emu(1.0 ${TARGET_TESTER4I_${SIMD}})
 	endif()
-      endif(SLEEF_BUILD_INLINE_HEADERS)
+      endif()
     endif(SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
 
     #

@@ -67,7 +67,7 @@ endif()
 # HEADER_PARAMS
 
 command_arguments(HEADER_PARAMS_SSE_            -     2 4 __m128d __m128 __m128i __m128i __SSE2__)
-command_arguments(HEADER_PARAMS_SSE2            cinz_ 2 4 __m128d __m128 __m128i __m128i __SSE2__ sse2)
+command_arguments(HEADER_PARAMS_SSE2            finz_ 2 4 __m128d __m128 __m128i __m128i __SSE2__ sse2)
 command_arguments(HEADER_PARAMS_AVX2            finz_ 4 8 __m256d __m256 __m128i __m256i __AVX__ avx2)
 command_arguments(HEADER_PARAMS_AVX2128         finz_ 2 4 __m128d __m128 __m128i __m128i __SSE2__ avx2128)
 command_arguments(HEADER_PARAMS_AVX512F_        -     8 16 __m512d __m512 __m256i __m512i __AVX512F__)
@@ -103,7 +103,7 @@ command_arguments(HEADER_PARAMS_PURECFMA_SCALAR finz_ 1 1 double float int32_t i
 
 # RENAME_PARAMS
 
-command_arguments(RENAME_PARAMS_SSE2            cinz_ 2 4 sse2)
+command_arguments(RENAME_PARAMS_SSE2            finz_ 2 4 sse2)
 command_arguments(RENAME_PARAMS_AVX2            finz_ 4 8 avx2)
 command_arguments(RENAME_PARAMS_AVX2128         finz_ 2 4 avx2128)
 command_arguments(RENAME_PARAMS_AVX512F         finz_ 8 16 avx512f)
@@ -301,9 +301,15 @@ foreach(SIMD ${SLEEF_SUPPORTED_LIBM_EXTENSIONS})
     set(SIMD_SOURCES sleefsimdsp.c sleefsimddp.c)
 
     # Create a library
-    add_library(${OBJECT_${SIMD}} OBJECT ${SIMD_SOURCES} ${HEADER_${SIMD}})    
-    add_library(${OBJECTDET_${SIMD}} OBJECT ${SIMD_SOURCES} ${HEADER_${SIMD}})    
+    add_library(${OBJECT_${SIMD}} OBJECT ${SIMD_SOURCES} ${HEADER_${SIMD}})
+    add_library(${OBJECTDET_${SIMD}} OBJECT ${SIMD_SOURCES} ${HEADER_${SIMD}})
     target_compile_definitions(${OBJECTDET_${SIMD}} PRIVATE DETERMINISTIC=1)
+
+    target_include_directories(${OBJECT_${SIMD}} PRIVATE ${PROJECT_BINARY_DIR}/include)
+    add_dependencies(${OBJECT_${SIMD}} ext_tlfloat)
+
+    target_include_directories(${OBJECTDET_${SIMD}} PRIVATE ${PROJECT_BINARY_DIR}/include)
+    add_dependencies(${OBJECTDET_${SIMD}} ext_tlfloat)
 
     if(COMPILER_SUPPORTS_BUILTIN_MATH)
       target_compile_definitions(${OBJECT_${SIMD}} PRIVATE ENABLE_BUILTIN_MATH=1)
@@ -387,17 +393,13 @@ endforeach()
 #
 
 if(SLEEF_BUILD_INLINE_HEADERS)
-  if(CMAKE_C_COMPILER_ID MATCHES "Intel")
-    message(FATAL_ERROR "SLEEF_BUILD_INLINE_HEADERS is not supported with Intel Compiler")
-  endif()
-
   file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/include/)
   set(INLINE_HEADER_FILES_GENERATED "")
 
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/sleefinline_header.h.org.in ${CMAKE_CURRENT_BINARY_DIR}/sleefinline_header.h.org)
 
   if (SED_COMMAND)
-    foreach(SIMD ${SLEEF_SUPPORTED_LIBM_EXTENSIONS} CUDA)
+    foreach(SIMD ${SLEEF_SUPPORTED_INLINE_LIBM_EXTENSIONS} CUDA)
       if(COMPILER_SUPPORTS_${SIMD} OR ${SIMD} STREQUAL "CUDA")
 	string(TOLOWER ${SIMD} SIMDLC)
 
@@ -573,6 +575,8 @@ endif(SLEEF_BUILD_INLINE_HEADERS)
 if(LIBM AND NOT COMPILER_SUPPORTS_BUILTIN_MATH)
   target_link_libraries(${TARGET_LIBSLEEF} ${LIBM})
 endif()
+
+target_link_libraries(${TARGET_LIBSLEEF} ${TLFLOAT_LIBRARIES})
 
 target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:${TARGET_LIBCOMMON_OBJ}>)
 
