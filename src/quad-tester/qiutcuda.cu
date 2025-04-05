@@ -16,7 +16,7 @@
 #include <cuda.h>
 
 #include "sleefquadinline_cuda.h"
-#include "sleefquadinline_purec_scalar.h"
+#include "sleefquadinline_purecfma_scalar.h"
 
 #define STDIN_FILENO 0
 
@@ -384,7 +384,7 @@ int main(int argc, char **argv) {
     xmulq_u05<<<1, 1>>>(r, a0, a1);
     cudaDeviceSynchronize();
     Sleef_quad v0 = Sleef_getq1_cuda(*r, 0);
-    if (Sleef_icmpneq1_purec(v0, sleef_q(+0x1114580b45d47LL, 0x49e6108579a2d0caULL, 3))) {
+    if (Sleef_icmpneq1_purecfma(v0, sleef_q(+0x1114580b45d47LL, 0x49e6108579a2d0caULL, 3))) {
       fprintf(stderr, "Testing with Sleef_mulq1_u05cuda failed\n");
       exit(-1);
     }

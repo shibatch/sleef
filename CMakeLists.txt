@@ -134,32 +134,32 @@ endfunction()
 # Settings
 
 set(SLEEF_ALL_SUPPORTED_EXTENSIONS
-  AVX512FNOFMA AVX512F AVX2 AVX2128 SSE2                # x86
-  SVENOFMA SVE ADVSIMDNOFMA ADVSIMD                     # Aarch64
-  VSX VSXNOFMA VSX3 VSX3NOFMA                           # PPC64
-  VXE VXENOFMA VXE2 VXE2NOFMA                           # IBM Z
-  RVVM1NOFMA RVVM1 RVVM2NOFMA RVVM2                     # RISC-V Vectors
-  PUREC_SCALAR PURECFMA_SCALAR                          # Generic type
+  AVX512F AVX2 AVX2128 SSE2          # x86
+  SVE ADVSIMD                        # Aarch64
+  VSX VSX3                           # PPC64
+  VXE VXE2                           # IBM Z
+  RVVM1 RVVM2                        # RISC-V Vectors
+  PUREC_SCALAR PURECFMA_SCALAR       # Generic type
   CACHE STRING "List of SIMD architectures supported by libsleef."
   )
 
 set(SLEEF_SUPPORTED_LIBM_EXTENSIONS
-  AVX512FNOFMA AVX512F AVX2 AVX2128 SSE2                # x86
-  SVENOFMA SVE ADVSIMDNOFMA ADVSIMD                     # Aarch64
-  VSX VSXNOFMA VSX3 VSX3NOFMA                           # PPC64
-  VXE VXENOFMA VXE2 VXE2NOFMA                           # IBM Z
-  RVVM1NOFMA RVVM1 RVVM2NOFMA RVVM2                     # RISC-V Vectors
-  PUREC_SCALAR PURECFMA_SCALAR                          # Generic type
+  AVX512F AVX2 AVX2128 SSE2          # x86
+  SVE ADVSIMD                        # Aarch64
+  VSX VSX3                           # PPC64
+  VXE VXE2                           # IBM Z
+  RVVM1 RVVM2                        # RISC-V Vectors
+  PUREC_SCALAR PURECFMA_SCALAR       # Generic type
   CACHE STRING "List of SIMD architectures supported by libsleef."
   )
 
 set(SLEEF_SUPPORTED_INLINE_LIBM_EXTENSIONS
-  AVX512FNOFMA AVX512F AVX2 AVX2128                     # x86
-  SVENOFMA SVE ADVSIMDNOFMA ADVSIMD                     # Aarch64
-  VSX VSXNOFMA VSX3 VSX3NOFMA                           # PPC64
-  VXE VXENOFMA VXE2 VXE2NOFMA                           # IBM Z
-  RVVM1NOFMA RVVM1 RVVM2NOFMA RVVM2                     # RISC-V Vectors
-  PUREC_SCALAR PURECFMA_SCALAR                          # Generic type
+  AVX512F AVX2 AVX2128               # x86
+  SVE ADVSIMD                        # Aarch64
+  VSX VSX3                           # PPC64
+  VXE VXE2                           # IBM Z
+  RVVM1 RVVM2                        # RISC-V Vectors
+  PURECFMA_SCALAR                    # Generic type
   CACHE STRING "List of SIMD architectures supported by the inline headers."
   )
 
@@ -167,19 +167,16 @@ set(SLEEF_SUPPORTED_QUAD_EXTENSIONS
   PUREC_SCALAR PURECFMA_SCALAR SSE2 AVX2128 AVX2 AVX512F ADVSIMD SVE VSX VSX3 VXE VXE2 RVVM1 RVVM2)
 
 set(SLEEF_SUPPORTED_INLINE_QUAD_EXTENSIONS
-  PUREC_SCALAR PURECFMA_SCALAR AVX2128 AVX2 AVX512F ADVSIMD SVE VSX VSX3 VXE VXE2 RVVM1 RVVM2)
+  PURECFMA_SCALAR AVX2128 AVX2 AVX512F ADVSIMD SVE VSX VSX3 VXE VXE2 RVVM1 RVVM2)
 
 #
 
-set(COSTOVERRIDE_AVX512F 10)
-set(COSTOVERRIDE_AVX512FNOFMA 10)
-set(COSTOVERRIDE_AVX2 2)
-set(COSTOVERRIDE_SVE 10)
-set(COSTOVERRIDE_SVENOFMA 10)
-set(COSTOVERRIDE_RVVM1 10)
-set(COSTOVERRIDE_RVVM1NOFMA 10)
-set(COSTOVERRIDE_RVVM2 20)
-set(COSTOVERRIDE_RVVM2NOFMA 20)
+set(COSTOVERRIDE_AVX512F 3)
+set(COSTOVERRIDE_SSE2 10)
+set(COSTOVERRIDE_PUREC_SCALAR 3)
+set(COSTOVERRIDE_SVE 3)
+set(COSTOVERRIDE_RVVM1 3)
+set(COSTOVERRIDE_RVVM2 3)
 
 #
 

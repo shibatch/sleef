@@ -3312,7 +3312,7 @@ EXPORT CONST vargquad xsplatq(Sleef_quad p) {
 }
 #endif // #ifndef ENABLE_SVE
 
-#ifdef ENABLE_PUREC_SCALAR
+#ifdef ENABLE_PURECFMA_SCALAR
 #if !defined(SLEEF_GENHEADER)
 #include <stdio.h>
 #include <stdlib.h>
@@ -4151,7 +4151,7 @@ EXPORT void Sleef_unregisterPrintfHook() {
 }
 #endif // #if __GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ > 13)
 
-#endif // #ifdef ENABLE_PUREC_SCALAR
+#endif // #ifdef ENABLE_PURECFMA_SCALAR
 
 // Functions for debugging ------------------------------------------------------------------------------------------------------------
 

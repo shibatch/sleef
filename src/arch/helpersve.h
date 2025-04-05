@@ -16,6 +16,10 @@
 #include "misc.h"
 #endif // #if !defined(SLEEF_GENHEADER)
 
+#if defined(__clang__)
+#pragma clang diagnostic ignored "-Wvla-cxx-extension"
+#endif
+
 #if defined(VECTLENDP) || defined(VECTLENSP)
 #error VECTLENDP or VECTLENSP already defined
 #endif
