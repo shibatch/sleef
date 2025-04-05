@@ -72,10 +72,6 @@ float Sleef_fmaf_internal(const float x, const float y, const float z);
 //@#endif
 #endif
 
-#if !defined(__FMA__) && !defined(SLEEF_GENHEADER)
-#error __FMA__ not defined
-#endif
-
 #define ISANAME "Pure C scalar with FMA"
 
 #else // #if CONFIG == 2 || CONFIG == 3
