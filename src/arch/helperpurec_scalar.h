@@ -7,6 +7,13 @@
 #include <stdint.h>
 #endif
 
+#ifndef CONFIG
+#error CONFIG macro not defined
+#endif
+
+double Sleef_fma_internal(const double x, const double y, const double z);
+float Sleef_fmaf_internal(const float x, const float y, const float z);
+
 #ifndef ENABLE_BUILTIN_MATH
 
 #if !defined(SLEEF_GENHEADER)
@@ -35,25 +42,27 @@
 
 #endif
 
-#if !defined(SLEEF_GENHEADER)
-#include "misc.h"
+#if CONFIG == 1
+#undef FMA
+#define FMA Sleef_fma_internal
+#undef FMAF
+#define FMAF Sleef_fmaf_internal
 #endif
 
-#ifndef CONFIG
-#error CONFIG macro not defined
+#if !defined(SLEEF_GENHEADER)
+#include "misc.h"
 #endif
 
 #define ENABLE_DP
 //@#define ENABLE_DP
 #define ENABLE_SP
 //@#define ENABLE_SP
-
-#if CONFIG == 2 || CONFIG == 3
 #define ENABLE_FMA_DP
 //@#define ENABLE_FMA_DP
 #define ENABLE_FMA_SP
 //@#define ENABLE_FMA_SP
 
+#if CONFIG == 2 || CONFIG == 3
 #if defined(__AVX2__) || defined(__aarch64__) || defined(__powerpc64__) || defined(__zarch__) || defined(__riscv) || defined(__FP_FAST_FMA) || CONFIG == 3
 #ifndef __FMA__
 #define __FMA__
@@ -85,7 +94,7 @@
 #define ACCURATE_SQRT
 //@#define ACCURATE_SQRT
 
-#if defined(__SSE4_1__) || defined(__aarch64__) || CONFIG == 3
+#if defined(__aarch64__) || CONFIG == 3
 #define FULL_FP_ROUNDING
 //@#define FULL_FP_ROUNDING
 #endif
@@ -227,11 +236,6 @@ static INLINE vdouble vneg_vd_vd(vdouble d) { return -d; }
 static INLINE vdouble vmax_vd_vd_vd(vdouble x, vdouble y) { return x > y ? x : y; }
 static INLINE vdouble vmin_vd_vd_vd(vdouble x, vdouble y) { return x < y ? x : y; }
 
-#ifndef ENABLE_FMA_DP
-static INLINE vdouble vmla_vd_vd_vd_vd  (vdouble x, vdouble y, vdouble z) { return x * y + z; }
-static INLINE vdouble vmlapn_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return x * y - z; }
-static INLINE vdouble vmlanp_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return -x * y + z; }
-#else
 static INLINE vdouble vmla_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return FMA(x, y, z); }
 static INLINE vdouble vmlapn_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return FMA(x, y, -z); }
 static INLINE vdouble vmlanp_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return FMA(-x, y, z); }
@@ -240,7 +244,6 @@ static INLINE vdouble vfmapp_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { retu
 static INLINE vdouble vfmapn_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return FMA(x, y, -z); }
 static INLINE vdouble vfmanp_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return FMA(-x, y, z); }
 static INLINE vdouble vfmann_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return FMA(-x, y, -z); }
-#endif
 
 static INLINE vopmask veq_vo_vd_vd(vdouble x, vdouble y)  { return x == y ? ~(uint32_t)0 : 0; }
 static INLINE vopmask vneq_vo_vd_vd(vdouble x, vdouble y) { return x != y ? ~(uint32_t)0 : 0; }
@@ -339,11 +342,6 @@ static INLINE vfloat vneg_vf_vf(vfloat x) { return -x; }
 static INLINE vfloat vmax_vf_vf_vf(vfloat x, vfloat y) { return x > y ? x : y; }
 static INLINE vfloat vmin_vf_vf_vf(vfloat x, vfloat y) { return x < y ? x : y; }
 
-#ifndef ENABLE_FMA_SP
-static INLINE vfloat vmla_vf_vf_vf_vf  (vfloat x, vfloat y, vfloat z) { return x * y + z; }
-static INLINE vfloat vmlanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return - x * y + z; }
-static INLINE vfloat vmlapn_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return x * y - z; }
-#else
 static INLINE vfloat vmla_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return FMAF(x, y, z); }
 static INLINE vfloat vmlapn_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return FMAF(x, y, -z); }
 static INLINE vfloat vmlanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return FMAF(-x, y, z); }
@@ -352,7 +350,6 @@ static INLINE vfloat vfmapp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return F
 static INLINE vfloat vfmapn_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return FMAF(x, y, -z); }
 static INLINE vfloat vfmanp_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return FMAF(-x, y, z); }
 static INLINE vfloat vfmann_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return FMAF(-x, y, -z); }
-#endif
 
 static INLINE vopmask veq_vo_vf_vf(vfloat x, vfloat y)  { return x == y ? ~(uint32_t)0 : 0; }
 static INLINE vopmask vneq_vo_vf_vf(vfloat x, vfloat y) { return x != y ? ~(uint32_t)0 : 0; }

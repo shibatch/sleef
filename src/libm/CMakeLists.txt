@@ -9,7 +9,6 @@ if (SLEEF_ARCH_X86)
     AVX2128
     AVX512F_
     AVX512F
-    AVX512FNOFMA
     PUREC_SCALAR
     PURECFMA_SCALAR
     DSP_SCALAR
@@ -18,9 +17,7 @@ elseif(SLEEF_ARCH_AARCH64)
   set(SLEEF_HEADER_LIST
     ADVSIMD_
     ADVSIMD
-    ADVSIMDNOFMA
     SVE
-    SVENOFMA
     PUREC_SCALAR
     PURECFMA_SCALAR
     DSP_SCALAR
@@ -29,9 +26,7 @@ elseif(SLEEF_ARCH_PPC64)
   set(SLEEF_HEADER_LIST
     VSX_
     VSX
-    VSXNOFMA
     VSX3
-    VSX3NOFMA
     PUREC_SCALAR
     PURECFMA_SCALAR
     DSP_SCALAR
@@ -40,9 +35,7 @@ elseif(SLEEF_ARCH_S390X)
   set(SLEEF_HEADER_LIST
     VXE_
     VXE
-    VXENOFMA
     VXE2
-    VXE2NOFMA
     PUREC_SCALAR
     PURECFMA_SCALAR
     DSP_SCALAR
@@ -50,9 +43,7 @@ elseif(SLEEF_ARCH_S390X)
 elseif(SLEEF_ARCH_RISCV64)
   set(SLEEF_HEADER_LIST
     RVVM1
-    RVVM1NOFMA
     RVVM2
-    RVVM2NOFMA
     PUREC_SCALAR
     PURECFMA_SCALAR
     DSP_SCALAR
@@ -60,6 +51,7 @@ elseif(SLEEF_ARCH_RISCV64)
 else()
   set(SLEEF_HEADER_LIST
     PUREC_SCALAR
+    PURECFMA_SCALAR
     DSP_SCALAR
     )
 endif()
@@ -72,33 +64,24 @@ command_arguments(HEADER_PARAMS_AVX2            finz_ 4 8 __m256d __m256 __m128i
 command_arguments(HEADER_PARAMS_AVX2128         finz_ 2 4 __m128d __m128 __m128i __m128i __SSE2__ avx2128)
 command_arguments(HEADER_PARAMS_AVX512F_        -     8 16 __m512d __m512 __m256i __m512i __AVX512F__)
 command_arguments(HEADER_PARAMS_AVX512F         finz_ 8 16 __m512d __m512 __m256i __m512i __AVX512F__ avx512f)
-command_arguments(HEADER_PARAMS_AVX512FNOFMA    cinz_ 8 16 __m512d __m512 __m256i __m512i __AVX512F__ avx512fnofma)
 
 command_arguments(HEADER_PARAMS_ADVSIMD_        -     2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON)
 command_arguments(HEADER_PARAMS_ADVSIMD         finz_ 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON advsimd)
-command_arguments(HEADER_PARAMS_ADVSIMDNOFMA    cinz_ 2 4 float64x2_t float32x4_t int32x2_t int32x4_t __ARM_NEON advsimdnofma)
 command_arguments(HEADER_PARAMS_SVE             finz_ x x svfloat64_t svfloat32_t svint32_t svint32_t __ARM_FEATURE_SVE sve)
-command_arguments(HEADER_PARAMS_SVENOFMA        cinz_ x x svfloat64_t svfloat32_t svint32_t svint32_t __ARM_FEATURE_SVE svenofma)
 
 command_arguments(HEADER_PARAMS_VSX_            -     2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VSX__)
 command_arguments(HEADER_PARAMS_VSX             finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VSX__ vsx)
-command_arguments(HEADER_PARAMS_VSXNOFMA        cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VSX__ vsxnofma)
 command_arguments(HEADER_PARAMS_VSX3            finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VSX__ vsx3)
-command_arguments(HEADER_PARAMS_VSX3NOFMA       cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VSX__ vsx3nofma)
 
 command_arguments(HEADER_PARAMS_VXE_            -     2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__)
 command_arguments(HEADER_PARAMS_VXE             finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ vxe)
-command_arguments(HEADER_PARAMS_VXENOFMA        cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ vxenofma)
 command_arguments(HEADER_PARAMS_VXE2            finz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ vxe2)
-command_arguments(HEADER_PARAMS_VXE2NOFMA       cinz_ 2 4 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_FLOAT" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_INT" __VEC__ vxe2nofma)
 
 command_arguments(HEADER_PARAMS_RVVM1           finz_ x x vfloat64m1_t vfloat32m1_t vint32mf2_t vint32m1_t __riscv_v rvvm1)
-command_arguments(HEADER_PARAMS_RVVM1NOFMA      cinz_ x x vfloat64m1_t vfloat32m1_t vint32mf2_t vint32m1_t __riscv_v rvvm1nofma)
 command_arguments(HEADER_PARAMS_RVVM2           finz_ x x vfloat64m2_t vfloat32m2_t vint32m1_t vint32m2_t __riscv_v rvvm2)
-command_arguments(HEADER_PARAMS_RVVM2NOFMA      cinz_ x x vfloat64m2_t vfloat32m2_t vint32m1_t vint32m2_t __riscv_v rvvm2nofma)
 
 command_arguments(HEADER_PARAMS_DSP_SCALAR      -     1 1 double float int32_t int32_t __STDC__)
-command_arguments(HEADER_PARAMS_PUREC_SCALAR    cinz_ 1 1 double float int32_t int32_t __STDC__ purec)
+command_arguments(HEADER_PARAMS_PUREC_SCALAR    finz_ 1 1 double float int32_t int32_t __STDC__ purec)
 command_arguments(HEADER_PARAMS_PURECFMA_SCALAR finz_ 1 1 double float int32_t int32_t __STDC__ purecfma)
 
 # RENAME_PARAMS
@@ -107,18 +90,12 @@ command_arguments(RENAME_PARAMS_SSE2            finz_ 2 4 sse2)
 command_arguments(RENAME_PARAMS_AVX2            finz_ 4 8 avx2)
 command_arguments(RENAME_PARAMS_AVX2128         finz_ 2 4 avx2128)
 command_arguments(RENAME_PARAMS_AVX512F         finz_ 8 16 avx512f)
-command_arguments(RENAME_PARAMS_AVX512FNOFMA    cinz_ 8 16 avx512fnofma)
 command_arguments(RENAME_PARAMS_ADVSIMD         finz_ 2 4 advsimd)
-command_arguments(RENAME_PARAMS_ADVSIMDNOFMA    cinz_ 2 4 advsimdnofma)
 command_arguments(RENAME_PARAMS_VSX             finz_ 2 4 vsx)
-command_arguments(RENAME_PARAMS_VSXNOFMA        cinz_ 2 4 vsxnofma)
 command_arguments(RENAME_PARAMS_VSX3            finz_ 2 4 vsx3)
-command_arguments(RENAME_PARAMS_VSX3NOFMA       cinz_ 2 4 vsx3nofma)
 command_arguments(RENAME_PARAMS_VXE             finz_ 2 4 vxe)
-command_arguments(RENAME_PARAMS_VXENOFMA        cinz_ 2 4 vxenofma)
 command_arguments(RENAME_PARAMS_VXE2            finz_ 2 4 vxe2)
-command_arguments(RENAME_PARAMS_VXE2NOFMA       cinz_ 2 4 vxe2nofma)
-command_arguments(RENAME_PARAMS_PUREC_SCALAR    cinz_ 1 1 purec)
+command_arguments(RENAME_PARAMS_PUREC_SCALAR    finz_ 1 1 purec)
 command_arguments(RENAME_PARAMS_PURECFMA_SCALAR finz_ 1 1 purecfma)
 command_arguments(RENAME_PARAMS_CUDA            finz_ 1 1 cuda)
 
@@ -126,12 +103,9 @@ command_arguments(RENAME_PARAMS_CUDA            finz_ 1 1 cuda)
 # the smallest SVE vector size (128-bit). The name is generated using
 # the "x" token of VLA SVE vector functions.
 command_arguments(RENAME_PARAMS_SVE             finz_ x x sve)
-command_arguments(RENAME_PARAMS_SVENOFMA        cinz_ x x svenofma)
 
 command_arguments(RENAME_PARAMS_RVVM1           finz_ x x rvvm1)
-command_arguments(RENAME_PARAMS_RVVM1NOFMA      cinz_ x x rvvm1nofma)
 command_arguments(RENAME_PARAMS_RVVM2           finz_ x x rvvm2)
-command_arguments(RENAME_PARAMS_RVVM2NOFMA      cinz_ x x rvvm2nofma)
 
 # ALIAS_PARAMS
 

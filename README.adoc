@@ -8,6 +8,7 @@ math functions. This library also includes DFT subroutines.
 * *Web Page:* https://sleef.org/
 * *Sources:* https://github.com/shibatch/sleef
 
+
 == Supported environment
 
 === Test matrix
@@ -125,10 +126,15 @@ The software is distributed under the Boost Software License, Version
 http://www.boost.org/LICENSE_1_0.txt. Contributions to this project are
 accepted under the same license.
 
-The fact that this software is released under an open source license
-only means that you can use the current version of the software for
-free. If you want this software to be maintained, you need to
-financially support the project. Please see
+SLEEF project aims to serve society as a whole, not just specific
+companies or organizations. We do not necessarily welcome you
+submitting a patch that is only convenient for your company.
+
+The fact that our software is released under an open source license
+only means that you can use the current and older versions of the
+software for free. If you want us to continue maintaining our
+software, you need to financially support our project. Please see
 https://github.com/shibatch/nofreelunch?tab=coc-ov-file[CODE_OF_CONDUCT.md].
+
 
 Copyright © 2010-2025 SLEEF Project, Naoki Shibata and contributors.

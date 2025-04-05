@@ -90,6 +90,7 @@ elseif(SLEEF_ARCH_RISCV64)
 else()
   set(SLEEF_HEADER_LIST
     PUREC_SCALAR
+    PURECFMA_SCALAR
     DSPSCALAR
     )
 endif()

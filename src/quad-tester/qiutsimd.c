@@ -78,8 +78,8 @@
 #include USE_INLINE_HEADER
 #include MACRO_ONLY_HEADER
 
-#ifndef ENABLE_PUREC_SCALAR
-#include "sleefquadinline_purec_scalar.h"
+#ifndef ENABLE_PURECFMA_SCALAR
+#include "sleefquadinline_purecfma_scalar.h"
 #endif
 
 #endif // #if !defined(USE_INLINE_HEADER)
@@ -699,7 +699,7 @@ int main2(int argc, char **argv) {
   {
     VARGQUAD v0 = xsplatq(SLEEF_QUAD_C(3.141592653589793238462643383279502884));
     VARGQUAD v1 = xsplatq(sleef_q(+0x1921fb54442d1LL, 0x8469898cc51701b8ULL, 1));
-    if (Sleef_icmpneq1_purec(xgetq(v0, 0), xgetq(v1, 0))) {
+    if (Sleef_icmpneq1_purecfma(xgetq(v0, 0), xgetq(v1, 0))) {
       fprintf(stderr, "Testing on SLEEF_QUAD_C failed\n");
       exit(-1);
     }
@@ -712,7 +712,7 @@ int main2(int argc, char **argv) {
     VARGQUAD v0 = xsplatq(SLEEF_M_PIq);
     VARGQUAD v1 = xsplatq(Sleef_strtoq("2.718281828459045235360287471352662498", NULL));
     Sleef_quad q = xgetq(xmulq_u05(v0, v1), 0);
-    if (Sleef_icmpneq1_purec(q, Sleef_strtoq("8.539734222673567065463550869546573820", NULL))) {
+    if (Sleef_icmpneq1_purecfma(q, Sleef_strtoq("8.539734222673567065463550869546573820", NULL))) {
       fprintf(stderr, "Testing with xgetq failed\n");
       exit(-1);
     }
