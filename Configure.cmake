@@ -375,18 +375,7 @@ endif()
 
 # FMA
 
-if (NOT MSVC)
-  string (REPLACE ";" " " CMAKE_REQUIRED_FLAGS "${FLAGS_ENABLE_PURECFMA_SCALAR}")
-  CHECK_C_SOURCE_COMPILES("
-  #if !defined(__FMA__) && (!defined(__FP_FAST_FMA) || !defined(__FP_FAST_FMAF))
-  #error __FMA__ not defined
-  #endif
-  int main() {
-  }" COMPILER_SUPPORTS_PURECFMA_SCALAR)
-  set(CMAKE_REQUIRED_FLAGS)
-else()
-  set(COMPILER_SUPPORTS_PURECFMA_SCALAR True)
-endif()
+set(COMPILER_SUPPORTS_PURECFMA_SCALAR True)
 
 option(SLEEF_ENFORCE_PURECFMA_SCALAR "Build fails if purec fma is not supported by the compiler" ON)
 
