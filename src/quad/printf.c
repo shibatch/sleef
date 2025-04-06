@@ -7,11 +7,9 @@
 #include "sleef.h"
 #include "misc.h"
 
-typedef Sleef_quad vargquad;
-
-EXPORT vargquad Sleef_strtoq(const char *str, const char **endptr) {
+EXPORT Sleef_quad Sleef_strtoq(const char *str, const char **endptr) {
   tlfloat_quad q = tlfloat_strtoq(str, endptr);
-  vargquad a;
+  Sleef_quad a;
   memcpy(&a, &q, sizeof(a));
   return a;
 }

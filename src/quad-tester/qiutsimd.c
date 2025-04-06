@@ -301,7 +301,7 @@
 #define SLEEF_IMPORT
 #endif // #if (defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)) && !defined(SLEEF_STATIC_LIBS)
 
-SLEEF_IMPORT vargquad Sleef_strtoq(const char *str, char **endptr);
+SLEEF_IMPORT Sleef_quad Sleef_strtoq(const char *str, char **endptr);
 SLEEF_IMPORT int Sleef_fprintf(FILE *fp, const char *fmt, ...);
 SLEEF_IMPORT int Sleef_vfprintf(FILE *fp, const char *fmt, va_list ap);
 SLEEF_IMPORT int Sleef_printf(const char *fmt, ...);
