@@ -46,7 +46,7 @@ static void testem(EVP_MD_CTX *ctx, Sleef_quad val, char *types) {
 		     types);
 
 	    r = Sleef_snprintf(buf, 99, fmt, &val);
-	    EVP_DigestUpdate(ctx, buf, r < 0 ? 0 : r);
+	    EVP_DigestUpdate(ctx, buf, r < 0 ? 0 : strlen(buf));
 	    q = Sleef_strtoq(buf, NULL);
 	    convertEndianness(&q, sizeof(q));
 	    EVP_DigestUpdate(ctx, &q, sizeof(Sleef_quad));
@@ -61,7 +61,7 @@ static void testem(EVP_MD_CTX *ctx, Sleef_quad val, char *types) {
 		       width, types);
 
 	      r = Sleef_snprintf(buf, 99, fmt, &val);
-	      EVP_DigestUpdate(ctx, buf, r < 0 ? 0 : r);
+	      EVP_DigestUpdate(ctx, buf, r < 0 ? 0 : strlen(buf));
 	      q = Sleef_strtoq(buf, NULL);
 	      convertEndianness(&q, sizeof(q));
 	      EVP_DigestUpdate(ctx, &q, sizeof(Sleef_quad));
@@ -78,7 +78,7 @@ static void testem(EVP_MD_CTX *ctx, Sleef_quad val, char *types) {
 			 width, prec, types);
 
 		r = Sleef_snprintf(buf, 99, fmt, &val);
-		EVP_DigestUpdate(ctx, buf, r < 0 ? 0 : r);
+		EVP_DigestUpdate(ctx, buf, r < 0 ? 0 : strlen(buf));
 		q = Sleef_strtoq(buf, NULL);
 		convertEndianness(&q, sizeof(q));
 		EVP_DigestUpdate(ctx, &q, sizeof(Sleef_quad));
@@ -93,7 +93,7 @@ static void testem(EVP_MD_CTX *ctx, Sleef_quad val, char *types) {
 		       prec, types);
 
 	      r = Sleef_snprintf(buf, 99, fmt, &val);
-	      EVP_DigestUpdate(ctx, buf, r < 0 ? 0 : r);
+	      EVP_DigestUpdate(ctx, buf, r < 0 ? 0 : strlen(buf));
 	      q = Sleef_strtoq(buf, NULL);
 	      convertEndianness(&q, sizeof(q));
 	      EVP_DigestUpdate(ctx, &q, sizeof(Sleef_quad));
