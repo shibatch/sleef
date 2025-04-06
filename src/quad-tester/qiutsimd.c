@@ -286,8 +286,6 @@
 #define vreinterpret_vm_vd CONCAT_SIMD_SUFFIX(vreinterpret_vm_vd, SIMD_SUFFIX)
 #define vreinterpret_vd_vm CONCAT_SIMD_SUFFIX(vreinterpret_vd_vm, SIMD_SUFFIX)
 
-#else // #ifdef USE_INLINE_HEADER
-
 #if (defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)) && !defined(SLEEF_STATIC_LIBS)
 #ifdef SLEEF_IMPORT_IS_EXPORT
 #define SLEEF_IMPORT __declspec(dllexport)
