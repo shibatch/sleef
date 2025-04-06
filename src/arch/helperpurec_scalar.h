@@ -5,14 +5,12 @@
 
 #if !defined(SLEEF_GENHEADER)
 #include <stdint.h>
+#include "tlfloat/tlfloat.h"
 #endif
 
 #ifndef CONFIG
 #error CONFIG macro not defined
 #endif
-
-double Sleef_fma_internal(const double x, const double y, const double z);
-float Sleef_fmaf_internal(const float x, const float y, const float z);
 
 #ifndef ENABLE_BUILTIN_MATH
 
@@ -44,9 +42,9 @@ float Sleef_fmaf_internal(const float x, const float y, const float z);
 
 #if CONFIG == 1
 #undef FMA
-#define FMA Sleef_fma_internal
+#define FMA tlfloat_fma
 #undef FMAF
-#define FMAF Sleef_fmaf_internal
+#define FMAF tlfloat_fmaf
 #endif
 
 #if !defined(SLEEF_GENHEADER)

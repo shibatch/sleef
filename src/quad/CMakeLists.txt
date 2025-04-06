@@ -207,14 +207,14 @@ foreach(SIMD ${SLEEF_SUPPORTED_QUAD_EXTENSIONS})
     target_compile_definitions(${OBJECT} PRIVATE ENABLE_${SIMD}=1 DORENAME=1 ${COMMON_TARGET_DEFINITIONS})
 
     set_target_properties(${OBJECT} PROPERTIES ${COMMON_TARGET_PROPERTIES})
-    add_dependencies(${OBJECT} qrename${SIMD}.h_generated)
+    add_dependencies(${OBJECT} qrename${SIMD}.h_generated ext_tlfloat)
     target_compile_options(${OBJECT} PRIVATE ${FLAGS_ENABLE_${SIMD}})
 
     list(APPEND SLEEFQUAD_OBJECTS $<TARGET_OBJECTS:${OBJECT}>)
   endif()
 endforeach()
 
-add_library(sleefquad rempitabqp.c ${SLEEFQUAD_OBJECTS})
+add_library(sleefquad rempitabqp.c printf.c ${SLEEFQUAD_OBJECTS})
 
 set_target_properties(sleefquad PROPERTIES
   VERSION ${SLEEF_VERSION}
@@ -229,7 +229,7 @@ if(LIBM AND ((NOT COMPILER_SUPPORTS_BUILTIN_MATH) OR (SLEEF_ARCH_32BIT AND SLEEF
   target_link_libraries(sleefquad ${LIBM})
 endif()
 
-target_link_libraries(sleefquad ${TARGET_LIBSLEEF})
+target_link_libraries(sleefquad ${TARGET_LIBSLEEF} ${TLFLOAT_LIBRARIES} ${LIBM})
 
 # --------------------------------------------------------------------
 # Inline headers
