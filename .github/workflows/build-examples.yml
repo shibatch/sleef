@@ -44,7 +44,7 @@ jobs:
           cmake -S . -B _build-native -GNinja \
             -DCMAKE_INSTALL_PREFIX=$(pwd)/_install-native \
             -DCMAKE_TOOLCHAIN_FILE=$(pwd)/toolchains/native-gcc.cmake \
-            ${COMMON_CMAKE_FLAGS}
+            ${COMMON_CMAKE_FLAGS} -DCMAKE_INSTALL_PREFIX=./install-native
           cmake --build _build-native
           cmake --install _build-native
 

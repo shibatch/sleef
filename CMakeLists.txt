@@ -88,6 +88,10 @@ if ((NOT "${CMAKE_C_COMPILER_ID}" STREQUAL "${CMAKE_CXX_COMPILER_ID}") OR
   message(FATAL_ERROR "Different versions of C compiler and C++ compiler")
 endif()
 
+if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  message(FATAL_ERROR "Please specify CMAKE_INSTALL_PREFIX")
+endif()
+
 #
 
 if (DEFINED SLEEF_BUILD_SHARED_LIBS)
