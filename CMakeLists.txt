@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.18)
 
-set(SLEEF_VERSION 3.9.0)
+set(SLEEF_VERSION 4.0.0)
 
 message(STATUS "Configuring SLEEF ${SLEEF_VERSION}")
 project(SLEEF VERSION ${SLEEF_VERSION} LANGUAGES C CXX)

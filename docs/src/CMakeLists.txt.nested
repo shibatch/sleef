@@ -9,7 +9,7 @@ add_subdirectory("sleef")
 
 include_directories(${sleef_BINARY_DIR}/include)
 include_directories(${sleef_SOURCE_DIR}/include)
-link_directories(${sleef_BINARY_DIR}/lib)
+link_directories(${sleef_BINARY_DIR}/lib ${CMAKE_INSTALL_PREFIX}/lib)
 
 add_executable(hellox86 hellox86.c)
 set_target_properties(hellox86 PROPERTIES C_STANDARD 99)
