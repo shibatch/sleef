@@ -82,6 +82,27 @@
 #include "sleefquadinline_purecfma_scalar.h"
 #endif
 
+#if (defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)) && !defined(SLEEF_STATIC_LIBS)
+#ifdef SLEEF_IMPORT_IS_EXPORT
+#define SLEEF_IMPORT __declspec(dllexport)
+#else // #ifdef SLEEF_IMPORT_IS_EXPORT
+#define SLEEF_IMPORT __declspec(dllimport)
+#if (defined(_MSC_VER))
+#pragma comment(lib,"sleefquad.lib")
+#endif // #if (defined(_MSC_VER))
+#endif // #ifdef SLEEF_IMPORT_IS_EXPORT
+#else // #if (defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)) && !defined(SLEEF_STATIC_LIBS)
+#define SLEEF_IMPORT
+#endif // #if (defined(__MINGW32__) || defined(__MINGW64__) || defined(__CYGWIN__) || defined(_MSC_VER)) && !defined(SLEEF_STATIC_LIBS)
+
+SLEEF_IMPORT Sleef_quad Sleef_strtoq(const char *str, char **endptr);
+SLEEF_IMPORT int Sleef_fprintf(FILE *fp, const char *fmt, ...);
+SLEEF_IMPORT int Sleef_vfprintf(FILE *fp, const char *fmt, va_list ap);
+SLEEF_IMPORT int Sleef_printf(const char *fmt, ...);
+SLEEF_IMPORT int Sleef_vprintf(const char *fmt, va_list ap);
+SLEEF_IMPORT int Sleef_snprintf(char *str, size_t size, const char *fmt, ...);
+SLEEF_IMPORT int Sleef_vsnprintf(char *str, size_t size, const char *fmt, va_list ap);
+
 #endif // #if !defined(USE_INLINE_HEADER)
 
 #include "qtesterutil.h"
@@ -704,8 +725,6 @@ int main2(int argc, char **argv) {
       exit(-1);
     }
   }
-#elif defined(ENABLE_PUREC_SCALAR)
-#pragma message ("SLEEF_QUAD_C not defined")
 #endif
 
   {
