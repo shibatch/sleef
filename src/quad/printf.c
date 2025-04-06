@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include <stdarg.h>
 
 #include "tlfloat/tlfloat.h"
@@ -9,7 +10,10 @@
 typedef Sleef_quad vargquad;
 
 EXPORT vargquad Sleef_strtoq(const char *str, const char **endptr) {
-  return tlfloat_strtoq(str, endptr);
+  tlfloat_quad q = tlfloat_strtoq(str, endptr);
+  vargquad a;
+  memcpy(&a, &q, sizeof(a));
+  return a;
 }
 
 EXPORT int Sleef_vfprintf(FILE *fp, const char *fmt, va_list ap) {
