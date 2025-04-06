@@ -402,6 +402,7 @@ endif()
 
 if (SLEEF_BUILD_INLINE_HEADERS AND SED_COMMAND AND CMAKE_CUDA_COMPILER)
   add_executable(qiutcuda qiutcuda.cu)
+  target_link_libraries(qiutcuda sleefquad ${TARGET_LIBSLEEF} ${TLFLOAT_LIBRARIES})
   set_target_properties(qiutcuda PROPERTIES LINKER_LANGUAGE CUDA)
   target_compile_options(qiutcuda PRIVATE "--fmad=false;-Xcompiler;-fext-numeric-literals;-Xcompiler;-ffp-contract=off")
   add_dependencies(qiutcuda ${TARGET_QINLINE_HEADERS})

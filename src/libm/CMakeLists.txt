@@ -241,6 +241,7 @@ endif()
 set(STANDARD_SOURCES rempitab.c)
 
 add_library(${TARGET_LIBSLEEF} ${STANDARD_SOURCES})
+target_link_libraries(${TARGET_LIBSLEEF} ${TLFLOAT_LIBRARIES})
 add_dependencies(${TARGET_LIBSLEEF} ${TARGET_HEADERS} ext_tlfloat)
 set_target_properties(${TARGET_LIBSLEEF} PROPERTIES
   VERSION ${SLEEF_VERSION}
