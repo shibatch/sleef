@@ -71,6 +71,25 @@ pipeline {
             	     }
                 }
 
+                stage('x86_64 windows vs2022') {
+            	     agent { label 'windows11 && vs2022' }
+                     options { skipDefaultCheckout() }
+            	     steps {
+                         cleanWs()
+                         checkout scm
+		     	 bat """
+			 call "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
+			 if not %ERRORLEVEL% == 0 exit /b %ERRORLEVEL%
+			 if exist ..\\install\\ rmdir /S /Q ..\\install
+			 set PATH "%PATH%;%CD%\\..\\install\\bin"
+			 call "winbuild-msvc.bat" -DCMAKE_INSTALL_PREFIX=../../install -DCMAKE_BUILD_TYPE=Release -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_DFT=True -DSLEEF_ENFORCE_DFT=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_ENFORCE_SSE2=TRUE -DSLEEF_ENFORCE_AVX2=TRUE -DSLEEF_ENFORCE_AVX512F=TRUE -DSLEEF_ENFORCE_TESTER4=True -DSLEEF_BUILD_SHARED_LIBS=ON
+			 if not %ERRORLEVEL% == 0 exit /b %ERRORLEVEL%
+			 ctest -j 4 --output-on-failure
+			 exit /b %ERRORLEVEL%
+			 """
+		     }
+		}
+
                 stage('x86_64 windows clang') {
             	     agent { label 'windows11 && vs2022' }
                      options { skipDefaultCheckout() }
@@ -82,24 +101,6 @@ pipeline {
 			 if not %ERRORLEVEL% == 0 exit /b %ERRORLEVEL%
 			 if exist ..\\install\\ rmdir /S /Q ..\\install
 			 call "winbuild-clang.bat" -DCMAKE_INSTALL_PREFIX=../../install -DCMAKE_BUILD_TYPE=Release -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_DFT=True -DSLEEF_ENFORCE_DFT=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_ENFORCE_SSE2=TRUE -DSLEEF_ENFORCE_AVX2=TRUE -DSLEEF_ENFORCE_AVX512F=TRUE -DSLEEF_ENABLE_TESTER4=True -DSLEEF_ENFORCE_TESTER4=True -DSLEEF_DISABLE_SSL=True
-			 if not %ERRORLEVEL% == 0 exit /b %ERRORLEVEL%
-			 ctest -j 4 --output-on-failure
-			 exit /b %ERRORLEVEL%
-			 """
-		     }
-		}
-
-                stage('x86_64 windows vs2022') {
-            	     agent { label 'windows11 && vs2022' }
-                     options { skipDefaultCheckout() }
-            	     steps {
-                         cleanWs()
-                         checkout scm
-		     	 bat """
-			 call "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat"
-			 if not %ERRORLEVEL% == 0 exit /b %ERRORLEVEL%
-			 if exist ..\\install\\ rmdir /S /Q ..\\install
-			 call "winbuild-msvc.bat" -DCMAKE_INSTALL_PREFIX=../../install -DCMAKE_BUILD_TYPE=Release -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_DFT=True -DSLEEF_ENFORCE_DFT=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_ENFORCE_SSE2=TRUE -DSLEEF_ENFORCE_AVX2=TRUE -DSLEEF_ENFORCE_AVX512F=TRUE -DSLEEF_ENFORCE_TESTER4=True -DSLEEF_BUILD_SHARED_LIBS=ON
 			 if not %ERRORLEVEL% == 0 exit /b %ERRORLEVEL%
 			 ctest -j 4 --output-on-failure
 			 exit /b %ERRORLEVEL%
