@@ -201,7 +201,7 @@ pipeline {
 			 rm -rf build-native
  			 mkdir build-native
 			 cd build-native
-			 cmake -GNinja .. -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_DFT=TRUE -DSLEEF_ENFORCE_DFT=TRUE
+			 cmake -GNinja .. -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_DFT=TRUE -DSLEEF_ENFORCE_DFT=TRUE -DCMAKE_INSTALL_PREFIX=../install-native
 			 cmake -E time ninja
 			 cd ..
  			 mkdir build
@@ -227,7 +227,7 @@ pipeline {
 			 rm -rf build-native
  			 mkdir build-native
 			 cd build-native
-			 cmake -GNinja .. -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_DFT=TRUE -DSLEEF_ENFORCE_DFT=TRUE
+			 cmake -GNinja .. -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_DFT=TRUE -DSLEEF_ENFORCE_DFT=TRUE -DCMAKE_INSTALL_PREFIX=../install-native
 			 cmake -E time ninja
 			 cd ..
  			 mkdir build
