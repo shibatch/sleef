@@ -106,8 +106,8 @@ endif()
 # Include TLFloat as a submodule
 
 if (SLEEF_ENABLE_TLFLOAT)
-  set(TLFLOAT_MINIMUM_VERSION 1.15.1)
-  set(TLFLOAT_GIT_TAG "74ad6a19583fd08f30845744479d3d67f30d06f0")
+  set(TLFLOAT_MINIMUM_VERSION 1.16.0)
+  set(TLFLOAT_GIT_TAG "4cc749ac08c910894a632a94afa68a157cb68d4c")
 
   set(TLFLOAT_SOURCE_DIR "${PROJECT_SOURCE_DIR}/submodules/tlfloat")
   set(TLFLOAT_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}")
@@ -311,6 +311,7 @@ if(CMAKE_C_COMPILER_ID MATCHES "(GNU|Clang|QCC)")
     # functions.
 
     string(CONCAT FLAGS_WALL ${FLAGS_WALL} " -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE -Wno-deprecated-declarations")
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS True)
   endif()
 elseif(MSVC)
   # Intel vector extensions.
@@ -332,6 +333,7 @@ elseif(MSVC)
   set(FLAG_PRESERVE_COMMENTS "/C")
   set(FLAG_INCLUDE "/I")
   set(FLAG_DEFINE "/D")
+  set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS True)
 endif()
 
 set(SLEEF_C_FLAGS "${FLAGS_WALL} ${FLAGS_STRICTMATH} ${FLAGS_OTHERS}")
