@@ -85,13 +85,13 @@ jobs:
       - name: Hello example native
         shell: bash -ex -o pipefail {0}
         run: |
-          gcc docs/src/hellox86.c -static -o _examples-native/hellox86 -I_install-native/include -L_install-native/lib -lsleef
+          gcc docs/src/hellox86.c -static -o _examples-native/hellox86 -I_install-native/include -L_install-native/lib -lsleef -ltlfloat
           ./_examples-native/hellox86
 
       - name: DFT example native
         shell: bash -ex -o pipefail {0}
         run: |
-          gcc docs/src/tutorial.c -static -o _examples-native/dft -I_install-native/include -L_install-native/lib -lsleefdft -lsleef -lm -fopenmp -lstdc++
+          gcc docs/src/tutorial.c -static -o _examples-native/dft -I_install-native/include -L_install-native/lib -lsleefdft -lsleef -ltlfloat -lm -fopenmp -lstdc++
           ./_examples-native/dft
           ./_examples-native/dft
 
