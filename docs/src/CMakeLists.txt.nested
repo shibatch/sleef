@@ -14,7 +14,7 @@ link_directories(${sleef_BINARY_DIR}/lib ${CMAKE_INSTALL_PREFIX}/lib)
 add_executable(hellox86 hellox86.c)
 set_target_properties(hellox86 PROPERTIES C_STANDARD 99)
 add_dependencies(hellox86 sleef)
-target_link_libraries(hellox86 sleef)
+target_link_libraries(hellox86 sleef tlfloat)
 
 #
 
@@ -23,5 +23,5 @@ if (SLEEF_BUILD_DFT)
   set_target_properties(dfttutorial PROPERTIES C_STANDARD 99)
   add_dependencies(dfttutorial sleef)
   find_library(LIBM m)
-  target_link_libraries(dfttutorial sleef sleefdft ${LIBM} -fopenmp -lstdc++)
+  target_link_libraries(dfttutorial sleefdft sleef tlfloat ${LIBM} -fopenmp stdc++)
 endif()
