@@ -127,8 +127,8 @@ http://www.boost.org/LICENSE_1_0.txt. Contributions to this project are
 accepted under the same license.
 
 SLEEF project aims to serve society as a whole, not just specific
-companies or organizations. We do not necessarily welcome you
-submitting a patch that is only convenient for your company.
+companies or organizations. We charge a fee for maintaining patches
+that are convenient only for your company.
 
 The fact that our software is released under an open source license
 only means that you can use the current and older versions of the
