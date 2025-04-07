@@ -91,15 +91,6 @@ static INLINE int vavailability_i(int name) {
 #define DFTPRIORITY 30
 #endif
 
-#if CONFIG == 2 && defined(__AVX512F__)
-static INLINE int vavailability_i(int name) {
-  int d = cpuSupportsAVX512F();
-  return d ? 3 : 0;
-}
-#define ISANAME "AVX512FNOFMA"
-#define DFTPRIORITY 0
-#endif
-
 #endif // #if !defined(SLEEF_GENHEADER)
 
 static INLINE void vprefetch_v_p(const void *ptr) { _mm_prefetch((const char *)ptr, _MM_HINT_T0); }

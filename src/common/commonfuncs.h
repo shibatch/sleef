@@ -3,7 +3,7 @@
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#if !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA) || defined(ENABLE_RVVM1) || defined(ENABLE_RVVM1NOFMA) || defined(ENABLE_RVVM2) || defined(ENABLE_RVVM2NOFMA))
+#if !(defined(ENABLE_SVE) || defined(ENABLE_RVVM1) || defined(ENABLE_RVVM2))
 typedef struct {
   vdouble x, y, z;
 } vdouble3;
@@ -210,7 +210,7 @@ static INLINE CONST vdouble vtoward0_vd_vd(vdouble x) { // returns nextafter(x, 
   return vsel_vd_vo_vd_vd(veq_vo_vd_vd(x, vcast_vd_d(0)), vcast_vd_d(0), t);
 }
 
-#if !(defined(ENABLE_RVVM1) || defined(ENABLE_RVVM1NOFMA) || defined(ENABLE_RVVM2) || defined(ENABLE_RVVM2NOFMA))
+#if !(defined(ENABLE_RVVM1) || defined(ENABLE_RVVM2))
 static INLINE CONST vdouble vmulsign_vd_vd_vd(vdouble x, vdouble y) {
   return vreinterpret_vd_vm(vxor_vm_vm_vm(vreinterpret_vm_vd(x), vsignbit_vm_vd(y)));
 }
@@ -220,7 +220,7 @@ static INLINE CONST vdouble vsign_vd_vd(vdouble d) {
   return vmulsign_vd_vd_vd(vcast_vd_d(1.0), d);
 }
 
-#if !(defined(ENABLE_RVVM1) || defined(ENABLE_RVVM1NOFMA) || defined(ENABLE_RVVM2) || defined(ENABLE_RVVM2NOFMA))
+#if !(defined(ENABLE_RVVM1) || defined(ENABLE_RVVM2))
 static INLINE CONST vdouble vorsign_vd_vd_vd(vdouble x, vdouble y) {
   return vreinterpret_vd_vm(vor_vm_vm_vm(vreinterpret_vm_vd(x), vsignbit_vm_vd(y)));
 }
@@ -286,7 +286,7 @@ static INLINE CONST vopmask visodd_vo_vd(vdouble d) {
 
 // ilogb
 
-#if !defined(ENABLE_AVX512F) && !defined(ENABLE_AVX512FNOFMA)
+#if !defined(ENABLE_AVX512F)
 static INLINE CONST vint vilogbk_vi_vd(vdouble d) {
   vopmask o = vlt_vo_vd_vd(d, vcast_vd_d(4.9090934652977266E-91));
   d = vsel_vd_vo_vd_vd(o, vmul_vd_vd_vd(vcast_vd_d(2.037035976334486E90), d), d);

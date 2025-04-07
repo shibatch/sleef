@@ -77,18 +77,6 @@ extern const float Sleef_rempitabsp[];
 #endif
 #endif
 
-#ifdef ENABLE_AVX512FNOFMA
-#define CONFIG 2
-#if !defined(SLEEF_GENHEADER)
-#include "helperavx512f.h"
-#else
-#include "macroonlyAVX512FNOFMA.h"
-#endif
-#ifdef DORENAME
-#include "renameavx512fnofma.h"
-#endif
-#endif
-
 // Arm
 
 #ifdef ENABLE_ADVSIMD
@@ -103,18 +91,6 @@ extern const float Sleef_rempitabsp[];
 #endif
 #endif
 
-#ifdef ENABLE_ADVSIMDNOFMA
-#define CONFIG 2
-#if !defined(SLEEF_GENHEADER)
-#include "helperadvsimd.h"
-#else
-#include "macroonlyADVSIMDNOFMA.h"
-#endif
-#ifdef DORENAME
-#include "renameadvsimdnofma.h"
-#endif
-#endif
-
 #ifdef ENABLE_SVE
 #define CONFIG 1
 #if !defined(SLEEF_GENHEADER)
@@ -124,18 +100,6 @@ extern const float Sleef_rempitabsp[];
 #endif
 #ifdef DORENAME
 #include "renamesve.h"
-#endif /* DORENAME */
-#endif /* ENABLE_SVE */
-
-#ifdef ENABLE_SVENOFMA
-#define CONFIG 2
-#if !defined(SLEEF_GENHEADER)
-#include "helpersve.h"
-#else
-#include "macroonlySVENOFMA.h"
-#endif
-#ifdef DORENAME
-#include "renamesvenofma.h"
 #endif /* DORENAME */
 #endif /* ENABLE_SVE */
 
@@ -153,18 +117,6 @@ extern const float Sleef_rempitabsp[];
 #endif
 #endif
 
-#ifdef ENABLE_VSXNOFMA
-#define CONFIG 2
-#if !defined(SLEEF_GENHEADER)
-#include "helperpower_128.h"
-#else
-#include "macroonlyVSXNOFMA.h"
-#endif
-#ifdef DORENAME
-#include "renamevsxnofma.h"
-#endif
-#endif
-
 #ifdef ENABLE_VSX3
 #define CONFIG 3
 #if !defined(SLEEF_GENHEADER)
@@ -174,18 +126,6 @@ extern const float Sleef_rempitabsp[];
 #endif
 #ifdef DORENAME
 #include "renamevsx3.h"
-#endif
-#endif
-
-#ifdef ENABLE_VSX3NOFMA
-#define CONFIG 4
-#if !defined(SLEEF_GENHEADER)
-#include "helperpower_128.h"
-#else
-#include "macroonlyVSX3NOFMA.h"
-#endif
-#ifdef DORENAME
-#include "renamevsx3nofma.h"
 #endif
 #endif
 
@@ -201,18 +141,6 @@ extern const float Sleef_rempitabsp[];
 #endif
 #endif
 
-#ifdef ENABLE_VXENOFMA
-#define CONFIG 141
-#if !defined(SLEEF_GENHEADER)
-#include "helpers390x_128.h"
-#else
-#include "macroonlyVXENOFMA.h"
-#endif
-#ifdef DORENAME
-#include "renamevxenofma.h"
-#endif
-#endif
-
 #ifdef ENABLE_VXE2
 #define CONFIG 150
 #if !defined(SLEEF_GENHEADER)
@@ -222,18 +150,6 @@ extern const float Sleef_rempitabsp[];
 #endif
 #ifdef DORENAME
 #include "renamevxe2.h"
-#endif
-#endif
-
-#ifdef ENABLE_VXE2NOFMA
-#define CONFIG 151
-#if !defined(SLEEF_GENHEADER)
-#include "helpers390x_128.h"
-#else
-#include "macroonlyVXE2NOFMA.h"
-#endif
-#ifdef DORENAME
-#include "renamevxe2nofma.h"
 #endif
 #endif
 
@@ -251,19 +167,6 @@ extern const float Sleef_rempitabsp[];
 #endif
 #endif
 
-#ifdef ENABLE_RVVM1NOFMA
-#define CONFIG 2
-#define ENABLE_RVV_SP
-#if !defined(SLEEF_GENHEADER)
-#include "helperrvv.h"
-#else
-#include "macroonlyRVVM1NOFMA.h"
-#endif
-#ifdef DORENAME
-#include "renamervvm1nofma.h"
-#endif
-#endif
-
 #ifdef ENABLE_RVVM2
 #define CONFIG 1
 #define ENABLE_RVV_SP
@@ -274,19 +177,6 @@ extern const float Sleef_rempitabsp[];
 #endif
 #ifdef DORENAME
 #include "renamervvm2.h"
-#endif
-#endif
-
-#ifdef ENABLE_RVVM2NOFMA
-#define CONFIG 2
-#define ENABLE_RVV_SP
-#if !defined(SLEEF_GENHEADER)
-#include "helperrvv.h"
-#else
-#include "macroonlyRVVM2NOFMA.h"
-#endif
-#ifdef DORENAME
-#include "renamervvm2nofma.h"
 #endif
 #endif
 
@@ -360,7 +250,7 @@ static INLINE CONST vmask vsignbit_vm_vf(vfloat f) {
   return vand_vm_vm_vm(vreinterpret_vm_vf(f), vreinterpret_vm_vf(vcast_vf_f(-0.0f)));
 }
 
-#if !(defined(ENABLE_RVVM1) || defined(ENABLE_RVVM1NOFMA) || defined(ENABLE_RVVM2) || defined(ENABLE_RVVM2NOFMA))
+#if !(defined(ENABLE_RVVM1) || defined(ENABLE_RVVM2))
 static INLINE CONST vfloat vmulsign_vf_vf_vf(vfloat x, vfloat y) {
   return vreinterpret_vf_vm(vxor_vm_vm_vm(vreinterpret_vm_vf(x), vsignbit_vm_vf(y)));
 }
@@ -391,7 +281,7 @@ static INLINE CONST vopmask visint_vo_vf(vfloat y) { return veq_vo_vf_vf(vtrunca
 
 static INLINE CONST vopmask visnumber_vo_vf(vfloat x) { return vnot_vo32_vo32(vor_vo_vo_vo(visinf_vo_vf(x), visnan_vo_vf(x))); }
 
-#if !defined(ENABLE_AVX512F) && !defined(ENABLE_AVX512FNOFMA)
+#if !defined(ENABLE_AVX512F)
 static INLINE CONST vint2 vilogbk_vi2_vf(vfloat d) {
   vopmask o = vlt_vo_vf_vf(d, vcast_vf_f(5.421010862427522E-20f));
   d = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(vcast_vf_f(1.8446744073709552E19f), d), d);
@@ -448,7 +338,7 @@ static INLINE CONST vfloat vldexp3_vf_vf_vi2(vfloat d, vint2 q) {
 
 EXPORT CONST vfloat xldexpf(vfloat x, vint2 q) { return vldexp_vf_vf_vi2(x, q); }
 
-#if !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA) || defined(ENABLE_RVVM1) || defined(ENABLE_RVVM1NOFMA) || defined(ENABLE_RVVM2) || defined(ENABLE_RVVM2NOFMA))
+#if !(defined(ENABLE_SVE) || defined(ENABLE_RVVM1) || defined(ENABLE_RVVM2))
 typedef struct {
   vfloat d;
   vint2 i;
@@ -478,7 +368,7 @@ static dfi_t dfisetdf_dfi_dfi_vf2(dfi_t dfi, vfloat2 v) {
 }
 #endif
 
-#if !(defined(ENABLE_RVVM1) || defined(ENABLE_RVVM1NOFMA) || defined(ENABLE_RVVM2) || defined(ENABLE_RVVM2NOFMA))
+#if !(defined(ENABLE_RVVM1) || defined(ENABLE_RVVM2))
 static INLINE CONST vfloat vorsign_vf_vf_vf(vfloat x, vfloat y) {
   return vreinterpret_vf_vm(vor_vm_vm_vm(vreinterpret_vm_vf(x), vsignbit_vm_vf(y)));
 }
@@ -504,7 +394,7 @@ static INLINE CONST fi_t rempisubf(vfloat x) {
 static INLINE CONST dfi_t rempif(vfloat a) {
   vfloat2 x, y;
   vint2 ex = vilogb2k_vi2_vf(a);
-#if defined(ENABLE_AVX512F) || defined(ENABLE_AVX512FNOFMA)
+#if defined(ENABLE_AVX512F)
   ex = vandnot_vi2_vi2_vi2(vsra_vi2_vi2_i(ex, 31), ex);
   ex = vand_vi2_vi2_vi2(ex, vcast_vi2_i(127));
 #endif
@@ -759,7 +649,7 @@ EXPORT CONST vfloat xtanf(vfloat d) {
   if (LIKELY(vtestallones_i_vo32(vlt_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(TRIGRANGEMAX2f*0.5f))))) {
     q = vrint_vi2_vf(vmul_vf_vf_vf(d, vcast_vf_f((float)(2 * M_1_PI))));
     u = vcast_vf_vi2(q);
-#if (defined(ENABLE_PUREC_SCALAR) || defined(ENABLE_PURECFMA_SCALAR) || defined(ENABLE_VXE) || defined(ENABLE_VXENOFMA) || defined(ENABLE_VXE2) || defined(ENABLE_VXE2NOFMA)) && !defined(__clang__) && __GNUC__ == 13
+#if (defined(ENABLE_PUREC_SCALAR) || defined(ENABLE_PURECFMA_SCALAR) || defined(ENABLE_VXE) || defined(ENABLE_VXE2)) && !defined(__clang__) && __GNUC__ == 13
     u = vsel_vf_vo_vf_vf(veq_vo_vi2_vi2(q, vcast_vi2_i(0)), vcast_vf_f(0), u);
 #endif
     x = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_A2f*0.5f), x);
@@ -808,7 +698,7 @@ EXPORT CONST vfloat xtanf(vfloat d) {
 
   q = vrint_vi2_vf(vmul_vf_vf_vf(d, vcast_vf_f((float)(2 * M_1_PI))));
   u = vcast_vf_vi2(q);
-#if (defined(ENABLE_PUREC_SCALAR) || defined(ENABLE_PURECFMA_SCALAR) || defined(ENABLE_VXE) || defined(ENABLE_VXENOFMA) || defined(ENABLE_VXE2) || defined(ENABLE_VXE2NOFMA)) && !defined(__clang__) && __GNUC__ == 13
+#if (defined(ENABLE_PUREC_SCALAR) || defined(ENABLE_PURECFMA_SCALAR) || defined(ENABLE_VXE) || defined(ENABLE_VXE2)) && !defined(__clang__) && __GNUC__ == 13
     u = vsel_vf_vo_vf_vf(veq_vo_vi2_vi2(q, vcast_vi2_i(0)), vcast_vf_f(0), u);
 #endif
   x = vmla_vf_vf_vf_vf(u, vcast_vf_f(-PI_A2f*0.5f), d);
@@ -1831,7 +1721,7 @@ EXPORT CONST vfloat xatanf_u1(vfloat d) {
 EXPORT CONST vfloat xlogf(vfloat d) {
   vfloat x, x2, t, m;
 
-#if !defined(ENABLE_AVX512F) && !defined(ENABLE_AVX512FNOFMA)
+#if !defined(ENABLE_AVX512F)
   vopmask o = vlt_vo_vf_vf(d, vcast_vf_f(SLEEF_FLT_MIN));
   d = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(d, vcast_vf_f((float)(INT64_C(1) << 32) * (float)(INT64_C(1) << 32))), d);
   vint2 e = vilogb2k_vi2_vf(vmul_vf_vf_vf(d, vcast_vf_f(1.0f/0.75f)));
@@ -1852,7 +1742,7 @@ EXPORT CONST vfloat xlogf(vfloat d) {
   t = vmla_vf_vf_vf_vf(t, x2, vcast_vf_f(0.666666686534881591796875f));
   t = vmla_vf_vf_vf_vf(t, x2, vcast_vf_f(2.0f));
 
-#if !defined(ENABLE_AVX512F) && !defined(ENABLE_AVX512FNOFMA)
+#if !defined(ENABLE_AVX512F)
   x = vmla_vf_vf_vf_vf(x, t, vmul_vf_vf_vf(vcast_vf_f(0.693147180559945286226764f), vcast_vf_vi2(e)));
   x = vsel_vf_vo_vf_vf(vispinf_vo_vf(d), vcast_vf_f(SLEEF_INFINITYf), x);
   x = vsel_vf_vo_vf_vf(vor_vo_vo_vo(vlt_vo_vf_vf(d, vcast_vf_f(0)), visnan_vo_vf(d)), vcast_vf_f(SLEEF_NANf), x);
@@ -1923,7 +1813,7 @@ EXPORT CONST vfloat xcbrtf(vfloat d) {
   vfloat x, y, q = vcast_vf_f(1.0), t;
   vint2 e, qu, re;
 
-#if defined(ENABLE_AVX512F) || defined(ENABLE_AVX512FNOFMA)
+#if defined(ENABLE_AVX512F)
   vfloat s = d;
 #endif
   e = vadd_vi2_vi2_vi2(vilogbk_vi2_vf(vabs_vf_vf(d)), vcast_vi2_i(1));
@@ -1950,7 +1840,7 @@ EXPORT CONST vfloat xcbrtf(vfloat d) {
   y = vmul_vf_vf_vf(vmul_vf_vf_vf(d, x), x);
   y = vmul_vf_vf_vf(vsub_vf_vf_vf(y, vmul_vf_vf_vf(vmul_vf_vf_vf(vcast_vf_f(2.0f / 3.0f), y), vmla_vf_vf_vf_vf(y, x, vcast_vf_f(-1.0f)))), q);
 
-#if defined(ENABLE_AVX512F) || defined(ENABLE_AVX512FNOFMA)
+#if defined(ENABLE_AVX512F)
   y = vsel_vf_vo_vf_vf(visinf_vo_vf(s), vmulsign_vf_vf_vf(vcast_vf_f(SLEEF_INFINITYf), s), y);
   y = vsel_vf_vo_vf_vf(veq_vo_vf_vf(s, vcast_vf_f(0)), vmulsign_vf_vf_vf(vcast_vf_f(0), s), y);
 #endif
@@ -1965,7 +1855,7 @@ EXPORT CONST vfloat xcbrtf_u1(vfloat d) {
   vfloat2 q2 = vcast_vf2_f_f(1, 0), u, v;
   vint2 e, qu, re;
 
-#if defined(ENABLE_AVX512F) || defined(ENABLE_AVX512FNOFMA)
+#if defined(ENABLE_AVX512F)
   vfloat s = d;
 #endif
   e = vadd_vi2_vi2_vi2(vilogbk_vi2_vf(vabs_vf_vf(d)), vcast_vi2_i(1));
@@ -2008,7 +1898,7 @@ EXPORT CONST vfloat xcbrtf_u1(vfloat d) {
   z = vsel_vf_vo_vf_vf(visinf_vo_vf(d), vmulsign_vf_vf_vf(vcast_vf_f(SLEEF_INFINITYf), vf2getx_vf_vf2(q2)), z);
   z = vsel_vf_vo_vf_vf(veq_vo_vf_vf(d, vcast_vf_f(0)), vreinterpret_vf_vm(vsignbit_vm_vf(vf2getx_vf_vf2(q2))), z);
 
-#if defined(ENABLE_AVX512F) || defined(ENABLE_AVX512FNOFMA)
+#if defined(ENABLE_AVX512F)
   z = vsel_vf_vo_vf_vf(visinf_vo_vf(s), vmulsign_vf_vf_vf(vcast_vf_f(SLEEF_INFINITYf), s), z);
   z = vsel_vf_vo_vf_vf(veq_vo_vf_vf(s, vcast_vf_f(0)), vmulsign_vf_vf_vf(vcast_vf_f(0), s), z);
 #endif
@@ -2021,7 +1911,7 @@ static INLINE CONST vfloat2 logkf(vfloat d) {
   vfloat2 x, x2;
   vfloat t, m;
 
-#if !defined(ENABLE_AVX512F) && !defined(ENABLE_AVX512FNOFMA)
+#if !defined(ENABLE_AVX512F)
   vopmask o = vlt_vo_vf_vf(d, vcast_vf_f(SLEEF_FLT_MIN));
   d = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(d, vcast_vf_f((float)(INT64_C(1) << 32) * (float)(INT64_C(1) << 32))), d);
   vint2 e = vilogb2k_vi2_vf(vmul_vf_vf_vf(d, vcast_vf_f(1.0f/0.75f)));
@@ -2041,7 +1931,7 @@ static INLINE CONST vfloat2 logkf(vfloat d) {
   t = vmla_vf_vf_vf_vf(t, vf2getx_vf_vf2(x2), vcast_vf_f(0.400007992982864379882812));
   vfloat2 c = vcast_vf2_f_f(0.66666662693023681640625f, 3.69183861259614332084311e-09f);
 
-#if !defined(ENABLE_AVX512F) && !defined(ENABLE_AVX512FNOFMA)
+#if !defined(ENABLE_AVX512F)
   vfloat2 s = dfmul_vf2_vf2_vf(vcast_vf2_f_f(0.69314718246459960938f, -1.904654323148236017e-09f), vcast_vf_vi2(e));
 #else
   vfloat2 s = dfmul_vf2_vf2_vf(vcast_vf2_f_f(0.69314718246459960938f, -1.904654323148236017e-09f), e);
@@ -2056,7 +1946,7 @@ static INLINE CONST vfloat2 logkf(vfloat d) {
 static INLINE CONST vfloat logk3f(vfloat d) {
   vfloat x, x2, t, m;
 
-#if !defined(ENABLE_AVX512F) && !defined(ENABLE_AVX512FNOFMA)
+#if !defined(ENABLE_AVX512F)
   vopmask o = vlt_vo_vf_vf(d, vcast_vf_f(SLEEF_FLT_MIN));
   d = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(d, vcast_vf_f((float)(INT64_C(1) << 32) * (float)(INT64_C(1) << 32))), d);
   vint2 e = vilogb2k_vi2_vf(vmul_vf_vf_vf(d, vcast_vf_f(1.0f/0.75f)));
@@ -2077,7 +1967,7 @@ static INLINE CONST vfloat logk3f(vfloat d) {
   t = vmla_vf_vf_vf_vf(t, x2, vcast_vf_f(0.666666686534881591796875f));
   t = vmla_vf_vf_vf_vf(t, x2, vcast_vf_f(2.0f));
 
-#if !defined(ENABLE_AVX512F) && !defined(ENABLE_AVX512FNOFMA)
+#if !defined(ENABLE_AVX512F)
   x = vmla_vf_vf_vf_vf(x, t, vmul_vf_vf_vf(vcast_vf_f(0.693147180559945286226764f), vcast_vf_vi2(e)));
 #else
   x = vmla_vf_vf_vf_vf(x, t, vmul_vf_vf_vf(vcast_vf_f(0.693147180559945286226764f), e));
@@ -2091,7 +1981,7 @@ EXPORT CONST vfloat xlogf_u1(vfloat d) {
   vfloat2 x;
   vfloat t, m, x2;
 
-#if !defined(ENABLE_AVX512F) && !defined(ENABLE_AVX512FNOFMA)
+#if !defined(ENABLE_AVX512F)
   vopmask o = vlt_vo_vf_vf(d, vcast_vf_f(SLEEF_FLT_MIN));
   d = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(d, vcast_vf_f((float)(INT64_C(1) << 32) * (float)(INT64_C(1) << 32))), d);
   vint2 e = vilogb2k_vi2_vf(vmul_vf_vf_vf(d, vcast_vf_f(1.0f/0.75f)));
@@ -2117,7 +2007,7 @@ EXPORT CONST vfloat xlogf_u1(vfloat d) {
 
   vfloat r = vadd_vf_vf_vf(vf2getx_vf_vf2(s), vf2gety_vf_vf2(s));
 
-#if !defined(ENABLE_AVX512F) && !defined(ENABLE_AVX512FNOFMA)
+#if !defined(ENABLE_AVX512F)
   r = vsel_vf_vo_vf_vf(vispinf_vo_vf(d), vcast_vf_f(SLEEF_INFINITYf), r);
   r = vsel_vf_vo_vf_vf(vor_vo_vo_vo(vlt_vo_vf_vf(d, vcast_vf_f(0)), visnan_vo_vf(d)), vcast_vf_f(SLEEF_NANf), r);
   r = vsel_vf_vo_vf_vf(veq_vo_vf_vf(d, vcast_vf_f(0)), vcast_vf_f(-SLEEF_INFINITYf), r);
@@ -2346,7 +2236,7 @@ static INLINE CONST vfloat2 logk2f(vfloat2 d) {
   vfloat t;
   vint2 e;
 
-#if !defined(ENABLE_AVX512F) && !defined(ENABLE_AVX512FNOFMA)
+#if !defined(ENABLE_AVX512F)
   e = vilogbk_vi2_vf(vmul_vf_vf_vf(vf2getx_vf_vf2(d), vcast_vf_f(1.0f/0.75f)));
 #else
   e = vrint_vi2_vf(vgetexp_vf_vf(vmul_vf_vf_vf(vf2getx_vf_vf2(d), vcast_vf_f(1.0f/0.75f))));
@@ -2531,7 +2421,7 @@ EXPORT CONST vfloat xlog10f(vfloat d) {
   vfloat2 x;
   vfloat t, m, x2;
 
-#if !defined(ENABLE_AVX512F) && !defined(ENABLE_AVX512FNOFMA)
+#if !defined(ENABLE_AVX512F)
   vopmask o = vlt_vo_vf_vf(d, vcast_vf_f(SLEEF_FLT_MIN));
   d = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(d, vcast_vf_f((float)(INT64_C(1) << 32) * (float)(INT64_C(1) << 32))), d);
   vint2 e = vilogb2k_vi2_vf(vmul_vf_vf_vf(d, vcast_vf_f(1.0/0.75)));
@@ -2550,7 +2440,7 @@ EXPORT CONST vfloat xlog10f(vfloat d) {
   t = vmla_vf_vf_vf_vf(t, x2, vcast_vf_f( +0.1735493541e+0));
   t = vmla_vf_vf_vf_vf(t, x2, vcast_vf_f( +0.2895309627e+0));
   
-#if !defined(ENABLE_AVX512F) && !defined(ENABLE_AVX512FNOFMA)
+#if !defined(ENABLE_AVX512F)
   vfloat2 s = dfmul_vf2_vf2_vf(vcast_vf2_f_f(0.30103001, -1.432098889e-08), vcast_vf_vi2(e));
 #else
   vfloat2 s = dfmul_vf2_vf2_vf(vcast_vf2_f_f(0.30103001, -1.432098889e-08), e);
@@ -2561,7 +2451,7 @@ EXPORT CONST vfloat xlog10f(vfloat d) {
 
   vfloat r = vadd_vf_vf_vf(vf2getx_vf_vf2(s), vf2gety_vf_vf2(s));
 
-#if !defined(ENABLE_AVX512F) && !defined(ENABLE_AVX512FNOFMA)
+#if !defined(ENABLE_AVX512F)
   r = vsel_vf_vo_vf_vf(vispinf_vo_vf(d), vcast_vf_f(SLEEF_INFINITY), r);
   r = vsel_vf_vo_vf_vf(vor_vo_vo_vo(vlt_vo_vf_vf(d, vcast_vf_f(0)), visnan_vo_vf(d)), vcast_vf_f(SLEEF_NAN), r);
   r = vsel_vf_vo_vf_vf(veq_vo_vf_vf(d, vcast_vf_f(0)), vcast_vf_f(-SLEEF_INFINITY), r);
@@ -2576,7 +2466,7 @@ EXPORT CONST vfloat xlog2f(vfloat d) {
   vfloat2 x;
   vfloat t, m, x2;
 
-#if !defined(ENABLE_AVX512F) && !defined(ENABLE_AVX512FNOFMA)
+#if !defined(ENABLE_AVX512F)
   vopmask o = vlt_vo_vf_vf(d, vcast_vf_f(SLEEF_FLT_MIN));
   d = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(d, vcast_vf_f((float)(INT64_C(1) << 32) * (float)(INT64_C(1) << 32))), d);
   vint2 e = vilogb2k_vi2_vf(vmul_vf_vf_vf(d, vcast_vf_f(1.0/0.75)));
@@ -2595,7 +2485,7 @@ EXPORT CONST vfloat xlog2f(vfloat d) {
   t = vmla_vf_vf_vf_vf(t, x2, vcast_vf_f(+0.5764790177e+0f));
   t = vmla_vf_vf_vf_vf(t, x2, vcast_vf_f(+0.9618012905120f));
   
-#if !defined(ENABLE_AVX512F) && !defined(ENABLE_AVX512FNOFMA)
+#if !defined(ENABLE_AVX512F)
   vfloat2 s = dfadd2_vf2_vf_vf2(vcast_vf_vi2(e),
 				dfmul_vf2_vf2_vf2(x, vcast_vf2_f_f(2.8853900432586669922, 3.2734474483568488616e-08)));
 #else
@@ -2607,7 +2497,7 @@ EXPORT CONST vfloat xlog2f(vfloat d) {
 
   vfloat r = vadd_vf_vf_vf(vf2getx_vf_vf2(s), vf2gety_vf_vf2(s));
 
-#if !defined(ENABLE_AVX512F) && !defined(ENABLE_AVX512FNOFMA)
+#if !defined(ENABLE_AVX512F)
   r = vsel_vf_vo_vf_vf(vispinf_vo_vf(d), vcast_vf_f(SLEEF_INFINITY), r);
   r = vsel_vf_vo_vf_vf(vor_vo_vo_vo(vlt_vo_vf_vf(d, vcast_vf_f(0)), visnan_vo_vf(d)), vcast_vf_f(SLEEF_NAN), r);
   r = vsel_vf_vo_vf_vf(veq_vo_vf_vf(d, vcast_vf_f(0)), vcast_vf_f(-SLEEF_INFINITY), r);
@@ -2621,7 +2511,7 @@ EXPORT CONST vfloat xlog2f(vfloat d) {
 EXPORT CONST vfloat xlog2f_u35(vfloat d) {
   vfloat m, t, x, x2;
 
-#if !defined(ENABLE_AVX512F) && !defined(ENABLE_AVX512FNOFMA)
+#if !defined(ENABLE_AVX512F)
   vopmask o = vlt_vo_vf_vf(d, vcast_vf_f(SLEEF_FLT_MIN));
   d = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(d, vcast_vf_f((float)(INT64_C(1) << 32) * (float)(INT64_C(1) << 32))), d);
   vint2 e = vilogb2k_vi2_vf(vmul_vf_vf_vf(d, vcast_vf_f(1.0/0.75)));
@@ -2640,7 +2530,7 @@ EXPORT CONST vfloat xlog2f_u35(vfloat d) {
   t = vmla_vf_vf_vf_vf(t, x2, vcast_vf_f(+0.5764843822e+0));
   t = vmla_vf_vf_vf_vf(t, x2, vcast_vf_f(+0.9618024230e+0));
   
-#if !defined(ENABLE_AVX512F) && !defined(ENABLE_AVX512FNOFMA)
+#if !defined(ENABLE_AVX512F)
   vfloat r = vmla_vf_vf_vf_vf(vmul_vf_vf_vf(x2, x), t,
 			      vmla_vf_vf_vf_vf(x, vcast_vf_f(+0.2885390043e+1), vcast_vf_vi2(e)));
 
@@ -2663,7 +2553,7 @@ EXPORT CONST vfloat xlog1pf(vfloat d) {
 
   vfloat dp1 = vadd_vf_vf_vf(d, vcast_vf_f(1));
 
-#if !defined(ENABLE_AVX512F) && !defined(ENABLE_AVX512FNOFMA)
+#if !defined(ENABLE_AVX512F)
   vopmask o = vlt_vo_vf_vf(dp1, vcast_vf_f(SLEEF_FLT_MIN));
   dp1 = vsel_vf_vo_vf_vf(o, vmul_vf_vf_vf(dp1, vcast_vf_f((float)(INT64_C(1) << 32) * (float)(INT64_C(1) << 32))), dp1);
   vint2 e = vilogb2k_vi2_vf(vmul_vf_vf_vf(dp1, vcast_vf_f(1.0f/0.75f)));
@@ -3164,7 +3054,7 @@ EXPORT CONST vfloat xcospif_u05(vfloat d) {
 }
 #endif // #if !defined(DETERMINISTIC)
 
-#if !(defined(ENABLE_SVE) || defined(ENABLE_SVENOFMA) || defined(ENABLE_RVVM1) || defined(ENABLE_RVVM1NOFMA) || defined(ENABLE_RVVM2) || defined(ENABLE_RVVM2NOFMA))
+#if !(defined(ENABLE_SVE) || defined(ENABLE_RVVM1) || defined(ENABLE_RVVM2))
   typedef struct {
     vfloat2 a, b;
   } df2;
