@@ -59,7 +59,7 @@ jobs:
           # Configure and build project depending on sleef as nested project
           cmake -S . -B _build-nested -GNinja \
             -DCMAKE_TOOLCHAIN_FILE=$(pwd)/sleef/toolchains/native-gcc.cmake \
-            ${COMMON_CMAKE_FLAGS}
+            ${COMMON_CMAKE_FLAGS} -DCMAKE_INSTALL_PREFIX=./install-nested
           cmake --build _build-nested -j
 
       - name: Run examples
@@ -115,7 +115,7 @@ jobs:
           cd ~/project
           # Configure and build project depending on sleef as submodule
           # Options are passed in CMakeLists.txt directly
-          cmake -S . -B _build-submodule  -GNinja \
+          cmake -S . -B _build-submodule -DCMAKE_INSTALL_PREFIX=./install-submodule -GNinja \
             -DSLEEF_BUILD_DFT_TUTORIAL=ON \
             -DCMAKE_TOOLCHAIN_FILE=~/project/toolchains/native-gcc.cmake
           cmake --build _build-submodule -j

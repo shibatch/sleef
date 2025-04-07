@@ -3,8 +3,7 @@
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-double Sleef_fma_internal(const double x, const double y, const double z);
-float Sleef_fmaf_internal(const float x, const float y, const float z);
+#include "tlfloat/tlfloat.h"
 
 #if CONFIG == 2
 
@@ -188,8 +187,8 @@ static INLINE vdouble vfma_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) {
   vstoreu_v_p_vd(ax, x);
   vstoreu_v_p_vd(ay, y);
   vstoreu_v_p_vd(az, z);
-  az[0] = Sleef_fma_internal(ax[0], ay[0], az[0]);
-  az[1] = Sleef_fma_internal(ax[1], ay[1], az[1]);
+  az[0] = tlfloat_fma(ax[0], ay[0], az[0]);
+  az[1] = tlfloat_fma(ax[1], ay[1], az[1]);
   return vloadu_vd_p(az);
 }
 
@@ -313,10 +312,10 @@ static INLINE vfloat vfma_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) {
   vstoreu_v_p_vf(ax, x);
   vstoreu_v_p_vf(ay, y);
   vstoreu_v_p_vf(az, z);
-  az[0] = Sleef_fmaf_internal(ax[0], ay[0], az[0]);
-  az[1] = Sleef_fmaf_internal(ax[1], ay[1], az[1]);
-  az[2] = Sleef_fmaf_internal(ax[2], ay[2], az[2]);
-  az[3] = Sleef_fmaf_internal(ax[3], ay[3], az[3]);
+  az[0] = tlfloat_fmaf(ax[0], ay[0], az[0]);
+  az[1] = tlfloat_fmaf(ax[1], ay[1], az[1]);
+  az[2] = tlfloat_fmaf(ax[2], ay[2], az[2]);
+  az[3] = tlfloat_fmaf(ax[3], ay[3], az[3]);
   return vloadu_vf_p(az);
 }
 

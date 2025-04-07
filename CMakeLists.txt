@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.18)
 
-set(SLEEF_VERSION 3.9.0)
+set(SLEEF_VERSION 4.0.0)
 
 message(STATUS "Configuring SLEEF ${SLEEF_VERSION}")
 project(SLEEF VERSION ${SLEEF_VERSION} LANGUAGES C CXX)
@@ -86,6 +86,10 @@ option(SLEEF_ENFORCE_OPENMP "Build fails if OPENMP is not supported by the compi
 if ((NOT "${CMAKE_C_COMPILER_ID}" STREQUAL "${CMAKE_CXX_COMPILER_ID}") OR
     (NOT CMAKE_C_COMPILER_VERSION VERSION_EQUAL CMAKE_CXX_COMPILER_VERSION))
   message(FATAL_ERROR "Different versions of C compiler and C++ compiler")
+endif()
+
+if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  message(FATAL_ERROR "Please specify CMAKE_INSTALL_PREFIX")
 endif()
 
 #
