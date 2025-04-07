@@ -45,6 +45,7 @@ jobs:
         shell: bash -ex -o pipefail {0}
         run: |
           # Create new project
+	  rm -rf ~/project
           mkdir -p ~/project
           # Move examples to root of project
           cp docs/src/CMakeLists.txt.nested ~/project/CMakeLists.txt
@@ -102,6 +103,7 @@ jobs:
         shell: bash -ex -o pipefail {0}
         run: |
           # Create new project
+	  rm -rf ~/project
           mkdir -p ~/project
           # Move examples to root of project
           cp docs/src/CMakeLists.txt ~/project/
