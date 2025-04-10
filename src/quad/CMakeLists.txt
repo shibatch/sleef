@@ -229,7 +229,7 @@ if(LIBM AND ((NOT COMPILER_SUPPORTS_BUILTIN_MATH) OR (SLEEF_ARCH_32BIT AND SLEEF
   target_link_libraries(sleefquad ${LIBM})
 endif()
 
-target_link_libraries(sleefquad ${TARGET_LIBSLEEF} ${TLFLOAT_LIBRARIES} ${LIBM})
+target_link_libraries(sleefquad ${TARGET_TRYEXT_OBJ} ${TARGET_LIBSLEEF} ${TLFLOAT_LIBRARIES} ${LIBM})
 
 # --------------------------------------------------------------------
 # Inline headers

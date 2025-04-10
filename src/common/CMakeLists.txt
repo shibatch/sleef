@@ -10,6 +10,7 @@ endif()
 
 # This is a workaround of appveyor bug
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${SLEEF_C_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} ${SLEEF_C_FLAGS}")
 
 # Target TARGET_LIBCOMMON_OBJ
 
@@ -62,3 +63,8 @@ if(COMPILER_SUPPORTS_QUADMATH)
   target_link_libraries(${TARGET_QTESTERUTIL_OBJ} "-lquadmath")
   target_compile_definitions(${TARGET_QTESTERUTIL_OBJ} PRIVATE ENABLEFLOAT128=1)
 endif()
+
+# Target TARGET_TRYEXT_OBJ
+add_library(${TARGET_TRYEXT_OBJ} OBJECT tryext.cpp)
+target_compile_definitions(${TARGET_TRYEXT_OBJ} PRIVATE ${COMMON_TARGET_DEFINITIONS})
+install(TARGETS ${TARGET_TRYEXT_OBJ} EXPORT sleefTargets)

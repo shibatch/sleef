@@ -9,37 +9,7 @@
 #define CONST
 #endif
 
-#if defined(_MSC_VER) || defined(__MINGW32__) || defined(__MINGW64__)
-static jmp_buf sigjmp;
-#define SETJMP(x) setjmp(x)
-#define LONGJMP longjmp
-#else
-static sigjmp_buf sigjmp;
-#define SETJMP(x) sigsetjmp(x, 1)
-#define LONGJMP siglongjmp
-#endif
-
-static void sighandler(int signum) {
-  LONGJMP(sigjmp, 1);
-}
-
-static int cpuSupportsExt(void (*tryExt)()) {
-  static int cache = -1;
-  if (cache != -1) return cache;
-
-  void (*org);
-  org = signal(SIGILL, sighandler);
-
-  if (SETJMP(sigjmp) == 0) {
-    (*tryExt)();
-    cache = 1;
-  } else {
-    cache = 0;
-  }
-
-  signal(SIGILL, org);
-  return cache;
-}
+int Sleef_cpuSupportsExt_internal(void (*tryExt)());
 
 #define DISPATCH_vq_vq(qtype, funcName, pfn, dfn, funcExt0, funcExt1)	\
   static CONST qtype (*pfn)(qtype arg0);			\

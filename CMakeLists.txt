@@ -279,6 +279,7 @@ set(TARGET_LIBCOMMON_OBJ "common")
 set(TARGET_PSHA_OBJ "psha_obj")
 set(TARGET_TESTERUTIL_OBJ "testerutil_obj")
 set(TARGET_QTESTERUTIL_OBJ "qtesterutil_obj")
+set(TARGET_TRYEXT_OBJ "tryext_obj")
 
 # Function used to add an executable that is executed on host
 function(add_host_executable TARGETNAME)

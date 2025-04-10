@@ -579,8 +579,6 @@ int main2(int argc, char **argv) {
       exit(-1);
     }
   }
-#elif defined(ENABLE_PUREC_SCALAR)
-#pragma message ("SLEEF_QUAD_C not defined")
 #endif
 
   {

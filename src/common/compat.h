@@ -4,6 +4,7 @@
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #endif
 
+#include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/file.h>
