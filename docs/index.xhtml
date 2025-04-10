@@ -89,7 +89,9 @@
   scalar functions. Calls to these scalar SLEEF functions can be
   <a class="underlined"
   href="additional.xhtml#vectorizing">auto-vectorized</a> by GCC and
-  Clang.
+  Clang. These functions return deterministic values across all
+  architectures. That is, they are designed to return exactly the same
+  value for the same argument even on different architectures.
 </p>
 
 <p>

@@ -351,33 +351,6 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 
 <hr/>
 
-<p class="funcname"><b id="Sleef_registerPrintfHook" class="func">Sleef_registerPrintfHook</b>, <b id="Sleef_registerPrintfHook" class="func">Sleef_unregisterPrintfHook</b> - Register and unregister C library hooks to printf family funcions in the GNU C Library</p>
-
-<p class="header">Synopsis</p>
-
-<p class="synopsis">
-#include &lt;sleefquad.h&gt;<br/>
-<br/>
-<b class="type">void</b> <b class="func">Sleef_registerPrintfHook</b>( <b class="type">void</b> );<br/>
-<b class="type">void</b> <b class="func">Sleef_unregisterPrintfHook</b>( <b class="type">void</b> );<br/>
-<br/>
-<span class="normal">Link with</span> -lsleefquad -ltlfloat.
-</p>
-
-<p class="header">Description</p>
-
-<p class="noindent">
-  These functions are defined only on systems with Glibc. Glibc has a
-  functionality for installing C library hooks to extend conversion
-  capability of its printf-familiy
-  functions. <b class="func">Sleef_registerPrintfHook</b> installs C
-  library hooks to add support for the <b>Q</b> and <b>P</b>
-  modifiers. <b class="func">Sleef_unregisterPrintfHook</b> uninstalls
-  the C library hooks.
-</p>
-
-<hr/>
-
 <p class="funcname"><b id="Sleef_cast_to_doubleq1" class="func">Sleef_cast_to_doubleq1</b>, <b id="Sleef_cast_to_doubleq1_purec" class="func">Sleef_cast_to_doubleq1_purec</b>, <b id="Sleef_cast_to_doubleq1_purecfma" class="func">Sleef_cast_to_doubleq1_purecfma</b> - Convert QP number to double-precision number</p>
 
 <p class="header">Synopsis</p>
