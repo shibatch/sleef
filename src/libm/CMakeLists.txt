@@ -169,7 +169,6 @@ foreach(SIMD ${SLEEF_SUPPORTED_LIBM_EXTENSIONS})
     # Need lowercase string for rename header
     string(TOLOWER ${SIMD} vecarch)
     set(OBJECT_${SIMD} "sleef${vecarch}")
-    set(OBJECTDET_${SIMD} "sleefdet${vecarch}")
     set(HEADER_${SIMD} ${CMAKE_CURRENT_BINARY_DIR}/include/rename${vecarch}.h)
     list(APPEND HEADER_FILES_GENERATED ${HEADER_${SIMD}})
 
@@ -277,31 +276,21 @@ foreach(SIMD ${SLEEF_SUPPORTED_LIBM_EXTENSIONS})
 
     # Create a library
     add_library(${OBJECT_${SIMD}} OBJECT ${SIMD_SOURCES} ${HEADER_${SIMD}})
-    add_library(${OBJECTDET_${SIMD}} OBJECT ${SIMD_SOURCES} ${HEADER_${SIMD}})
-    target_compile_definitions(${OBJECTDET_${SIMD}} PRIVATE DETERMINISTIC=1)
 
     if(COMPILER_SUPPORTS_BUILTIN_MATH)
       target_compile_definitions(${OBJECT_${SIMD}} PRIVATE ENABLE_BUILTIN_MATH=1)
-      target_compile_definitions(${OBJECTDET_${SIMD}} PRIVATE ENABLE_BUILTIN_MATH=1)
     endif()
 
     if(SLEEF_ENABLE_ALTDIV)
       target_compile_definitions(${OBJECT_${SIMD}} PRIVATE SLEEF_ENABLE_ALTDIV=1)
-      target_compile_definitions(${OBJECTDET_${SIMD}} PRIVATE SLEEF_ENABLE_ALTDIV=1)
     endif()
 
     if(SLEEF_ENABLE_ALTSQRT)
       target_compile_definitions(${OBJECT_${SIMD}} PRIVATE SLEEF_ENABLE_ALTSQRT=1)
-      target_compile_definitions(${OBJECTDET_${SIMD}} PRIVATE SLEEF_ENABLE_ALTSQRT=1)
     endif()
 
     if (INDEX_ALIAS EQUAL -1)
       target_compile_definitions(${OBJECT_${SIMD}} PRIVATE
-	ENABLE_${SIMD}=1
-	DORENAME=1
-	${COMMON_TARGET_DEFINITIONS}
-	)
-      target_compile_definitions(${OBJECTDET_${SIMD}} PRIVATE
 	ENABLE_${SIMD}=1
 	DORENAME=1
 	${COMMON_TARGET_DEFINITIONS}
@@ -323,14 +312,7 @@ foreach(SIMD ${SLEEF_SUPPORTED_LIBM_EXTENSIONS})
        	)
       add_custom_target(alias_${SIMDLC}.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/include/alias_${SIMDLC}.h)
       add_dependencies(${OBJECT_${SIMD}} alias_${SIMDLC}.h_generated)
-      add_dependencies(${OBJECTDET_${SIMD}} alias_${SIMDLC}.h_generated)
       target_compile_definitions(${OBJECT_${SIMD}} PRIVATE
-	ENABLE_${SIMD}=1
-	DORENAME=1
-	${COMMON_TARGET_DEFINITIONS}
-	ALIAS_NO_EXT_SUFFIX=\"alias_${SIMDLC}.h\"
-	)
-      target_compile_definitions(${OBJECTDET_${SIMD}} PRIVATE
 	ENABLE_${SIMD}=1
 	DORENAME=1
 	${COMMON_TARGET_DEFINITIONS}
@@ -339,23 +321,15 @@ foreach(SIMD ${SLEEF_SUPPORTED_LIBM_EXTENSIONS})
     endif()
 
     add_dependencies(${OBJECT_${SIMD}} rename${SIMD}.h_generated ext_tlfloat)
-    add_dependencies(${OBJECTDET_${SIMD}} rename${SIMD}.h_generated ext_tlfloat)
 
     set_target_properties(${OBJECT_${SIMD}} PROPERTIES
-      ${COMMON_TARGET_PROPERTIES}
-      )
-
-    set_target_properties(${OBJECTDET_${SIMD}} PROPERTIES
       ${COMMON_TARGET_PROPERTIES}
       )
 
     target_compile_options(${OBJECT_${SIMD}} PRIVATE
       ${FLAGS_ENABLE_${SIMD}})
 
-    target_compile_options(${OBJECTDET_${SIMD}} PRIVATE
-      ${FLAGS_ENABLE_${SIMD}})
-
-    target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:${OBJECT_${SIMD}}> $<TARGET_OBJECTS:${OBJECTDET_${SIMD}}>)
+    target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:${OBJECT_${SIMD}}>)
   endif(COMPILER_SUPPORTS_${SIMD})
 endforeach()
 
