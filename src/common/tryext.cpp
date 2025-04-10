@@ -4,14 +4,13 @@
 using namespace std;
 
 extern "C" {
-int Sleef_cpuSupportsExt_internal(void (*tryExt)());
+int Sleef_cpuSupportsExt_internal(void (*tryExt)(), int *cache);
 }
 
 static void sighandler(int signum) { LONGJMP(sigjmp, 1); }
 
-int Sleef_cpuSupportsExt_internal(void (*tryExt)()) {
-  static int cache = -1;
-  if (cache != -1) return cache;
+int Sleef_cpuSupportsExt_internal(void (*tryExt)(), int *cache) {
+  if (*cache != -1) return *cache;
 
   static mutex mtx;
 
@@ -22,11 +21,11 @@ int Sleef_cpuSupportsExt_internal(void (*tryExt)()) {
 
   if (SETJMP(sigjmp) == 0) {
     (*tryExt)();
-    cache = 1;
+    *cache = 1;
   } else {
-    cache = 0;
+    *cache = 0;
   }
 
   signal(SIGILL, org);
-  return cache;
+  return *cache;
 }

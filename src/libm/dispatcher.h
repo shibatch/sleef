@@ -9,7 +9,7 @@
 #define CONST
 #endif
 
-int Sleef_cpuSupportsExt_internal(void (*tryExt)());
+int Sleef_cpuSupportsExt_internal(void (*tryExt)(), int *cache);
 
 #ifndef VECALIAS_vf_vf
 #define VECALIAS_vf_vf(fptype, funcNameS, funcName, veclen)
