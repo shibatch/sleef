@@ -26,22 +26,6 @@ set(TESTER3_DEFINITIONS_PURECFMA_SCALAR DPTYPE=double SPTYPE=float DPTYPESPEC=d1
 
 #
 
-if (SLEEF_ARCH_X86)
-  set(TEST3_FINZ purec_scalar purecfma_scalar sse2 avx2128 avx2 avx512f)
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
-  set(TEST3_FINZ purec_scalar purecfma_scalar advsimd sve)
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
-  set(TEST3_FINZ purec_scalar purecfma_scalar vsx vsx3)
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "s390x")
-  set(TEST3_FINZ purec_scalar purecfma_scalar vxe vxe2)
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "riscv64")
-  set(TEST3_FINZ purec_scalar purecfma_scalar rvvm1 rvvm2)
-else()
-  set(TEST3_FINZ purec_scalar purecfma_scalar)
-endif()
-
-#
-
 link_directories(${sleef_BINARY_DIR}/lib)                 # libsleef
 link_directories(${sleef_BINARY_DIR}/src/common)          # common.a
 include_directories(${sleef_BINARY_DIR}/include)          # sleef.h
@@ -325,6 +309,17 @@ foreach(SIMD ${SLEEF_SUPPORTED_LIBM_EXTENSIONS})
 endforeach()
 
 #
+
+if (SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
+  # tester4dspscalar
+  add_executable(tester4dspscalar ${TESTER4_SRC})
+  target_compile_definitions(tester4dspscalar PRIVATE
+    ENABLE_DSP_SCALAR=1 ${COMMON_TARGET_DEFINITIONS})
+  target_compile_options(tester4dspscalar PRIVATE ${FLAGS_ENABLE_PUREC_SCALAR})
+  target_link_libraries(tester4dspscalar ${TARGET_LIBSLEEF} ${TLFLOAT_LIBRARIES} ${TARGET_TESTERUTIL_OBJ})
+  add_dependencies(tester4dspscalar ${TARGET_HEADERS} ${TARGET_LIBSLEEF} ext_tlfloat)
+  add_test_with_emu(3.0 tester4dspscalar)
+endif(SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
 
 if (SLEEF_ARCH_X86)
   if (SLEEF_ENABLE_TESTER)

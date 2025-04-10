@@ -301,7 +301,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_strtoq</b>( <b class="type">const char *</b> <i class="var">str</i>, <b class="type">char **</b> <i class="var">endptr</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -328,7 +328,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">int</b> <b class="func">Sleef_vfprintf</b>( <b class="type">FILE *</b> <i class="var">fp</i>, <b class="type">const char *</b> <i class="var">fmt</i>, <b class="type">va_list</b> <i class="var">ap</i> );<br/>
 <b class="type">int</b> <b class="func">Sleef_vsnprintf</b>( <b class="type">char *</b> <i class="var">str</i>, <b class="type">size_t</b> <i class="var">size</i>, <b class="type">const char *</b> <i class="var">fmt</i>, <b class="type">va_list</b> <i class="var">ap</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -361,7 +361,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">void</b> <b class="func">Sleef_registerPrintfHook</b>( <b class="type">void</b> );<br/>
 <b class="type">void</b> <b class="func">Sleef_unregisterPrintfHook</b>( <b class="type">void</b> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -389,7 +389,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">double</b> <b class="func">Sleef_cast_to_doubleq1_purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <b class="type">double</b> <b class="func">Sleef_cast_to_doubleq1_purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -411,7 +411,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_cast_from_doubleq1_purec</b>( <b class="type">double</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_cast_from_doubleq1_purecfma</b>( <b class="type">double</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -434,7 +434,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">int64_t</b> <b class="func">Sleef_cast_to_int64q1_purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <b class="type">int64_t</b> <b class="func">Sleef_cast_to_int64q1_purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -457,7 +457,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_cast_from_int64q1_purec</b>( <b class="type">int64_t</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_cast_from_int64q1_purecfma</b>( <b class="type">int64_t</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -480,7 +480,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">uint64_t</b> <b class="func">Sleef_cast_to_uint64q1_purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <b class="type">uint64_t</b> <b class="func">Sleef_cast_to_uint64q1_purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -503,7 +503,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_cast_from_uint64q1_purec</b>( <b class="type">uint64_t</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_cast_from_uint64q1_purecfma</b>( <b class="type">uint64_t</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -543,7 +543,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">int32_t</b> <b class="func">Sleef_icmpeqq1_purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i>, <b class="type">Sleef_quad</b> <i class="var">b</i> );<br/>
 <b class="type">int32_t</b> <b class="func">Sleef_icmpneq1_purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i>, <b class="type">Sleef_quad</b> <i class="var">b</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -570,7 +570,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">int32_t</b> <b class="func">Sleef_icmpq1_purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i>, <b class="type">Sleef_quad</b> <i class="var">b</i> );<br/>
 <b class="type">int32_t</b> <b class="func">Sleef_icmpq1_purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i>, <b class="type">Sleef_quad</b> <i class="var">b</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -596,7 +596,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">int32_t</b> <b class="func">Sleef_iunordq1_purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i>, <b class="type">Sleef_quad</b> <i class="var">b</i> );<br/>
 <b class="type">int32_t</b> <b class="func">Sleef_iunordq1_purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i>, <b class="type">Sleef_quad</b> <i class="var">b</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -633,7 +633,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_divq1_u05purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i>, <b class="type">Sleef_quad</b> <i class="var">b</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_negq1_purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -658,7 +658,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_sqrtq1_u05purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_sqrtq1_u05purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -682,7 +682,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_sinq1_u10purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_sinq1_u10purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -706,7 +706,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_cosq1_u10purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_cosq1_u10purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -730,7 +730,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_tanq1_u10purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_tanq1_u10purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -754,7 +754,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_asinq1_u10purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_asinq1_u10purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -778,7 +778,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_acosq1_u10purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_acosq1_u10purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -802,7 +802,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_atanq1_u10purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_atanq1_u10purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -826,7 +826,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_atan2q1_u10purec</b>( <b class="type">Sleef_quad</b> <i class="var">y</i>, <b class="type">Sleef_quad</b> <i class="var">x</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_atan2q1_u10purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">y</i>, <b class="type">Sleef_quad</b> <i class="var">x</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -852,7 +852,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_expq1_u10purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_expq1_u10purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -876,7 +876,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_exp2q1_u10purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_exp2q1_u10purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -899,7 +899,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_exp10q1_u10purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_exp10q1_u10purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -922,7 +922,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_expm1q1_u10purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_expm1q1_u10purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -946,7 +946,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_logq1_u10purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_logq1_u10purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -970,7 +970,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_log2q1_u10purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_log2q1_u10purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -994,7 +994,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_log10q1_u10purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_log10q1_u10purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1018,7 +1018,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_log1pq1_u10purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_log1pq1_u10purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1042,7 +1042,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_powq1_u10purec</b>( <b class="type">Sleef_quad</b> <i class="var">x</i>, <b class="type">Sleef_quad</b> <i class="var">y</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_powq1_u10purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">x</i>, <b class="type">Sleef_quad</b> <i class="var">y</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1065,7 +1065,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_sinhq1_u10purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_sinhq1_u10purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1089,7 +1089,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_coshq1_u10purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_coshq1_u10purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1113,7 +1113,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_tanhq1_u10purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_tanhq1_u10purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1137,7 +1137,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_asinhq1_u10purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_asinhq1_u10purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1161,7 +1161,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_acoshq1_u10purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_acoshq1_u10purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1185,7 +1185,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_atanhq1_u10purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_atanhq1_u10purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1209,7 +1209,7 @@ with <b id="sleef_q" class="func">sleef_q</b> function.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_truncq1_purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_truncq1_purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1232,7 +1232,7 @@ format, nearest to but no larger in magnitude than the argument.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_floorq1_purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_floorq1_purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1255,7 +1255,7 @@ than <i class="var">a</i>.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_ceilq1_purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_ceilq1_purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1278,7 +1278,7 @@ than <i class="var">a</i>.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_roundq1_purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_roundq1_purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1301,7 +1301,7 @@ rounding halfway cases away from zero.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_rintq1_purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_rintq1_purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1324,7 +1324,7 @@ round-to-even method.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_fabsq1_purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_fabsq1_purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1346,7 +1346,7 @@ These functions return the absolute value of <i class="var">a</i>.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_copysignq1_purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i>, <b class="type">Sleef_quad</b> <i class="var">b</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_copysignq1_purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i>, <b class="type">Sleef_quad</b> <i class="var">b</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1369,7 +1369,7 @@ of <i class="var">a</i> and the sign of <i class="var">b</i>.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_fmaxq1_purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i>, <b class="type">Sleef_quad</b> <i class="var">b</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_fmaxq1_purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i>, <b class="type">Sleef_quad</b> <i class="var">b</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1392,7 +1392,7 @@ and <i class="var">b</i>.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_fminq1_purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i>, <b class="type">Sleef_quad</b> <i class="var">b</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_fminq1_purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i>, <b class="type">Sleef_quad</b> <i class="var">b</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1415,7 +1415,7 @@ and <i class="var">b</i>.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_fdimq1_u05purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i>, <b class="type">Sleef_quad</b> <i class="var">b</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_fdimq1_u05purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i>, <b class="type">Sleef_quad</b> <i class="var">b</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1439,7 +1439,7 @@ of these functions are 0.5000000001 ULP.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_fmodq1_purec</b>( <b class="type">Sleef_quad</b> <i class="var">x</i>, <b class="type">Sleef_quad</b> <i class="var">y</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_fmodq1_purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">x</i>, <b class="type">Sleef_quad</b> <i class="var">y</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1464,7 +1464,7 @@ an integer.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_remainderq1_purec</b>( <b class="type">Sleef_quad</b> <i class="var">x</i>, <b class="type">Sleef_quad</b> <i class="var">y</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_remainderq1_purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">x</i>, <b class="type">Sleef_quad</b> <i class="var">y</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1489,7 +1489,7 @@ with the round-to-even method.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_frexpq1_purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i>, <b class="type">int *</b> <i class="var">ptr</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_frexpq1_purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i>, <b class="type">int *</b> <i class="var">ptr</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1515,7 +1515,7 @@ and the functions return <i>f</i>.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_modfq1_purec</b>( <b class="type">Sleef_quad</b> <i class="var">a</i>, <b class="type">Sleef_quad *</b> <i class="var">ptr</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_modfq1_purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">a</i>, <b class="type">Sleef_quad *</b> <i class="var">ptr</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1541,7 +1541,7 @@ in <i class="var">*ptr</i>, and the functions return <i>f</i>.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_hypotq1_u05purec</b>( <b class="type">Sleef_quad</b> <i class="var">x</i>, <b class="type">Sleef_quad</b> <i class="var">y</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_hypotq1_u05purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">x</i>, <b class="type">Sleef_quad</b> <i class="var">y</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1565,7 +1565,7 @@ these functions are 0.5000000001 ULP.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_fmaq1_u05purec</b>( <b class="type">Sleef_quad</b> <i class="var">x</i>, <b class="type">Sleef_quad</b> <i class="var">y</i>, <b class="type">Sleef_quad</b> <i class="var">z</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_fmaq1_u05purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">x</i>, <b class="type">Sleef_quad</b> <i class="var">y</i>, <b class="type">Sleef_quad</b> <i class="var">z</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1589,7 +1589,7 @@ these functions are 0.5000000001 ULP.
 <b class="type">Sleef_quad</b> <b class="func">Sleef_ldexpq1_purec</b>( <b class="type">Sleef_quad</b> <i class="var">x</i>, <b class="type">int</b> <i class="var">e</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_ldexpq1_purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">x</i>, <b class="type">int</b> <i class="var">e</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1611,7 +1611,7 @@ These functions return <i class="var">x</i> 2<sup><i class="var">e</i></sup>.
 <b class="type">int</b> <b class="func">Sleef_ilogbq1_purec</b>( <b class="type">Sleef_quad</b> <i class="var">x</i> );<br/>
 <b class="type">int</b> <b class="func">Sleef_ilogbq1_purecfma</b>( <b class="type">Sleef_quad</b> <i class="var">x</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>

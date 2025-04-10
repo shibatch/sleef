@@ -114,7 +114,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_loadq4_avx2</b>( <b class="type">Sleef_quad *</b> <i class="var">ptr</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_loadq8_avx512f</b>( <b class="type">Sleef_quad *</b> <i class="var">ptr</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -139,7 +139,7 @@
 <b class="type">void</b> <b class="func">Sleef_storeq4_avx2</b>( <b class="type">Sleef_quad *</b> <i class="var">ptr</i>, <b class="type">Sleef_quadx4</b> <i class="var">v</i> );<br/>
 <b class="type">void</b> <b class="func">Sleef_storeq8_avx512f</b>( <b class="type">Sleef_quad *</b> <i class="var">ptr</i>, <b class="type">Sleef_quadx8</b> <i class="var">v</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -163,7 +163,7 @@
 <b class="type">Sleef_quad</b> <b class="func">Sleef_getq4_avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">v</i>, <b class="type">int</b> <i class="var">index</i> );<br/>
 <b class="type">Sleef_quad</b> <b class="func">Sleef_getq8_avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">v</i>, <b class="type">int</b> <i class="var">index</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -188,7 +188,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_setq4_avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">v</i>, <b class="type">int</b> <i class="var">index</i>, <b class="type">Sleef_quad</b> <i class="var">e</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_setq8_avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">v</i>, <b class="type">int</b> <i class="var">index</i>, <b class="type">Sleef_quad</b> <i class="var">e</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -214,7 +214,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_splatq4_avx2</b>( <b class="type">Sleef_quad</b> <i class="var">e</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_splatq8_avx512f</b>( <b class="type">Sleef_quad</b> <i class="var">e</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -240,7 +240,7 @@
 <b class="type">__m256d</b> <b class="func">Sleef_cast_to_doubleq4_avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i> );<br/>
 <b class="type">__m512d</b> <b class="func">Sleef_cast_to_doubleq8_avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -264,7 +264,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_cast_from_doubleq4_avx2</b>( <b class="type">__m256d</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_cast_from_doubleq8_avx512f</b>( <b class="type">__m512d</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -289,7 +289,7 @@
 <b class="type">__m256i</b> <b class="func">Sleef_cast_to_int64q4_avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i> );<br/>
 <b class="type">__m512i</b> <b class="func">Sleef_cast_to_int64q8_avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -314,7 +314,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_cast_from_int64q4_avx2</b>( <b class="type">__m256i</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_cast_from_int64q8_avx512f</b>( <b class="type">__m512i</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -339,7 +339,7 @@
 <b class="type">__m256i</b> <b class="func">Sleef_cast_to_uint64q4_avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i> );<br/>
 <b class="type">__m512i</b> <b class="func">Sleef_cast_to_uint64q8_avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -364,7 +364,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_cast_from_uint64q4_avx2</b>( <b class="type">__m256i</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_cast_from_uint64q8_avx512f</b>( <b class="type">__m512i</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -418,7 +418,7 @@
 <b class="type">__m256i</b> <b class="func">Sleef_icmpeqq8_avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i>, <b class="type">Sleef_quadx8</b> <i class="var">b</i> );<br/>
 <b class="type">__m256i</b> <b class="func">Sleef_icmpneq8_avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i>, <b class="type">Sleef_quadx8</b> <i class="var">b</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -443,7 +443,7 @@
 <b class="type">__m128i</b> <b class="func">Sleef_icmpq4_avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i>, <b class="type">Sleef_quadx4</b> <i class="var">b</i> );<br/>
 <b class="type">__m256i</b> <b class="func">Sleef_icmpq8_avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i>, <b class="type">Sleef_quadx8</b> <i class="var">b</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -468,7 +468,7 @@
 <b class="type">__m128i</b> <b class="func">Sleef_iunordq4_avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i>, <b class="type">Sleef_quadx4</b> <i class="var">b</i> );<br/>
 <b class="type">__m256i</b> <b class="func">Sleef_iunordq8_avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i>, <b class="type">Sleef_quadx8</b> <i class="var">b</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -493,7 +493,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_iselectq4_avx2</b>( <b class="type">__m128i</b> <i class="var">c</i>, <b class="type">Sleef_quadx4</b> <i class="var">a</i>, <b class="type">Sleef_quadx4</b> <i class="var">b</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_iselectq8_avx512f</b>( <b class="type">__m256i</b> <i class="var">c</i>, <b class="type">Sleef_quadx8</b> <i class="var">a</i>, <b class="type">Sleef_quadx8</b> <i class="var">b</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -542,7 +542,7 @@
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_divq8_u05avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i>, <b class="type">Sleef_quadx8</b> <i class="var">b</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_negq8_avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -567,7 +567,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_sqrtq4_u05avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_sqrtq8_u05avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -592,7 +592,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_sinq4_u10avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_sinq8_u10avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -617,7 +617,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_cosq4_u10avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_cosq8_u10avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -642,7 +642,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_tanq4_u10avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_tanq8_u10avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -667,7 +667,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_asinq4_u10avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_asinq8_u10avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -692,7 +692,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_acosq4_u10avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_acosq8_u10avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -717,7 +717,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_atanq4_u10avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_atanq8_u10avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -742,7 +742,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_atanq4_u10avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">y</i>, <b class="type">Sleef_quadx4</b> <i class="var">x</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_atanq8_u10avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">y</i>, <b class="type">Sleef_quadx8</b> <i class="var">x</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -767,7 +767,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_expq4_u10avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_expq8_u10avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -792,7 +792,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_exp2q4_u10avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_exp2q8_u10avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -817,7 +817,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_exp10q4_u10avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_exp10q8_u10avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -842,7 +842,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_expm1q4_u10avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_expm1q8_u10avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -867,7 +867,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_logq4_u10avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_logq8_u10avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -892,7 +892,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_log2q4_u10avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_log2q8_u10avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -917,7 +917,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_log10q4_u10avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_log10q8_u10avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -942,7 +942,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_log1pq4_u10avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_log1pq8_u10avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -967,7 +967,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_powq4_u10avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">x</i>, <b class="type">Sleef_quadx4</b> <i class="var">y</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_powq8_u10avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">x</i>, <b class="type">Sleef_quadx8</b> <i class="var">y</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -992,7 +992,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_sinhq4_u10avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_sinhq8_u10avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1017,7 +1017,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_coshq4_u10avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_coshq8_u10avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1042,7 +1042,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_tanhq4_u10avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_tanhq8_u10avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1067,7 +1067,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_asinhq4_u10avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_asinhq8_u10avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1092,7 +1092,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_acoshq4_u10avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_acoshq8_u10avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1117,7 +1117,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_atanhq4_u10avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_atanhq8_u10avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1142,7 +1142,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_truncq4_avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_truncq8_avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1167,7 +1167,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_floorq4_avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_floorq8_avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1192,7 +1192,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_ceilq4_avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_ceilq8_avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1217,7 +1217,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_roundq4_avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_roundq8_avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1242,7 +1242,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_rintq4_avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_rintq8_avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1267,7 +1267,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_fabsq4_avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">a</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_fabsq8_avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">a</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1292,7 +1292,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_copysignq4_avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">x</i>, <b class="type">Sleef_quadx4</b> <i class="var">y</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_copysignq8_avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">x</i>, <b class="type">Sleef_quadx8</b> <i class="var">y</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1317,7 +1317,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_fmaxq4_avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">x</i>, <b class="type">Sleef_quadx4</b> <i class="var">y</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_fmaxq8_avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">x</i>, <b class="type">Sleef_quadx8</b> <i class="var">y</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1342,7 +1342,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_fminq4_avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">x</i>, <b class="type">Sleef_quadx4</b> <i class="var">y</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_fminq8_avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">x</i>, <b class="type">Sleef_quadx8</b> <i class="var">y</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1367,7 +1367,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_fdimq4_u05avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">x</i>, <b class="type">Sleef_quadx4</b> <i class="var">y</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_fdimq8_u05avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">x</i>, <b class="type">Sleef_quadx8</b> <i class="var">y</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1392,7 +1392,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_fmodq4_avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">x</i>, <b class="type">Sleef_quadx4</b> <i class="var">y</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_fmodq8_avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">x</i>, <b class="type">Sleef_quadx8</b> <i class="var">y</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1417,7 +1417,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_remainderq4_avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">x</i>, <b class="type">Sleef_quadx4</b> <i class="var">y</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_remainderq8_avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">x</i>, <b class="type">Sleef_quadx8</b> <i class="var">y</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1442,7 +1442,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_frexpq4_avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">x</i>, <b class="type">__m128i *</b> <i class="var">ptr</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_frexpq8_avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">x</i>, <b class="type">__m256i *</b> <i class="var">ptr</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1467,7 +1467,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_modfq4_avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">x</i>, <b class="type">Sleef_quadx4 *</b> <i class="var">ptr</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_modfq8_avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">x</i>, <b class="type">Sleef_quadx8 *</b> <i class="var">ptr</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1492,7 +1492,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_hypotq4_u05avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">x</i>, <b class="type">Sleef_quadx4</b> <i class="var">y</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_hypotq8_u05avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">x</i>, <b class="type">Sleef_quadx8</b> <i class="var">y</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1517,7 +1517,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_fmaq4_u05avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">x</i>, <b class="type">Sleef_quadx4</b> <i class="var">y</i>, <b class="type">Sleef_quadx4</b> <i class="var">z</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_fmaq8_u05avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">x</i>, <b class="type">Sleef_quadx8</b> <i class="var">y</i>, <b class="type">Sleef_quadx8</b> <i class="var">z</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1542,7 +1542,7 @@
 <b class="type">Sleef_quadx4</b> <b class="func">Sleef_ldexpq4_avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">x</i>, <b class="type">__m128i</b> <i class="var">e</i> );<br/>
 <b class="type">Sleef_quadx8</b> <b class="func">Sleef_ldexpq8_avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">x</i>, <b class="type">__m256i</b> <i class="var">e</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -1567,7 +1567,7 @@
 <b class="type">__m128i</b> <b class="func">Sleef_ilogbq4_avx2</b>( <b class="type">Sleef_quadx4</b> <i class="var">x</i> );<br/>
 <b class="type">__m256i</b> <b class="func">Sleef_ilogbq8_avx512f</b>( <b class="type">Sleef_quadx8</b> <i class="var">x</i> );<br/>
 <br/>
-<span class="normal">Link with</span> -lsleefquad.
+<span class="normal">Link with</span> -lsleefquad -ltlfloat.
 </p>
 
 <p class="header">Description</p>
