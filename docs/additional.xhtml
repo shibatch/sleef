@@ -32,7 +32,6 @@
       <li><a href="#vectorizing">Vectorizing calls to scalar functions</a></li>
       <li><a href="#lto">Using link time optimization</a></li>
       <li><a href="#inline">Using header files of inlinable functions</a></li>
-      <li><a href="#wasm">Utilizing SLEEF for WebAssembly</a></li>
       <li><a href="#dispatcher">How the dispatcher works</a></li>
       <li><a href="#ulp">ULP, gradual underflow and flush-to-zero mode</a></li>
       <li><a href="#paynehanek">Explanatory source code for the modified Payne Hanek reduction method</a></li>
@@ -255,48 +254,6 @@ $ nm -g a.out
 $ &block;
 </pre>
 
-
-<h2 id="wasm">Utilizing SLEEF for WebAssembly</h2>
-
-<p class="noindent">
-Since <a class="underlined"
-href="https://emscripten.org/">Emscripten</a> supports SSE2
-intrinsics, the SSE2 inlinable function header can be used for
-<a class="underlined" href="https://webassembly.org/">WebAssembly</a>.
-</p>
-
-<pre class="code">
-<code>#include &lt;stdio.h&gt;</code>
-<code>#include &lt;emmintrin.h&gt;</code>
-<code></code>
-<code>#include &quot;sleefinline_sse2.h&quot;</code>
-<code></code>
-<code>int main(int argc, char **argv) {</code>
-<code>  double a[] = {2, 10};</code>
-<code>  double b[] = {3, 20};</code>
-<code></code>
-<code>  __m128d va, vb, vc;</code>
-<code></code>
-<code>  va = _mm_loadu_pd(a);</code>
-<code>  vb = _mm_loadu_pd(b);</code>
-<code></code>
-<code>  vc = Sleef_powd2_u10sse2(va, vb);</code>
-<code></code>
-<code>  double c[2];</code>
-<code></code>
-<code>  _mm_storeu_pd(c, vc);</code>
-<code></code>
-<code>  printf(&quot;pow(%g, %g) = %gn&quot;, a[0], b[0], c[0]);</code>
-<code>  printf(&quot;pow(%g, %g) = %gn&quot;, a[1], b[1], c[1]);</code>
-<code>}</code>
-</pre>
-
-<pre class="command">$ emcc -O3 -msimd128 -msse2 hellowasm.c
-$ ../node-v15.7.0-linux-x64/bin/node --experimental-wasm-simd ./a.out.js
-pow(2, 3) = 8
-pow(10, 20) = 1e+20
-$ &block;
-</pre>
 
 <h2 id="dispatcher">How the dispatchers work</h2>
 

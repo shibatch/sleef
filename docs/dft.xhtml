@@ -44,7 +44,7 @@
 </p>
 
 <pre class="code">
-<code>// gcc tutorial.c -lsleefdft -lsleef -lm -lstdc++</code>
+<code>// gcc tutorial.c -lsleefdft -lsleef -ltlfloat -lm -lstdc++</code>
 <code>#include &lt;stdio.h&gt;</code>
 <code>#include &lt;stdlib.h&gt;</code>
 <code>#include &lt;stdint.h&gt;</code>
@@ -131,7 +131,7 @@
   that you need to link with libstdc++.
 </p>
 
-<pre class="command">$ gcc tutorial.c -lsleefdft -lsleef -lm -lstdc++
+<pre class="command">$ gcc tutorial.c -lsleefdft -lsleef -ltlfloat -lm -lstdc++
 </pre>
 
 <p>
@@ -199,7 +199,7 @@
 <br/>
 <b class="type">void *</b> <b class="func">Sleef_malloc</b>(<b class="type">size_t</b> <i class="var">z</i>);<br/>
 <br/>
-Link with -lsleef.
+Link with -lsleef -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -226,7 +226,7 @@ Link with -lsleef.
 <br/>
 <b class="type">void</b> <b class="func">Sleef_free</b>(<b class="type">void *</b><i class="var">ptr</i>);<br/>
 <br/>
-Link with -lsleef.
+Link with -lsleef -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -249,7 +249,7 @@ with <b class="func">Sleef_free</b>.
 <br/>
 <b class="type">void</b> <b class="func">SleefDFT_setPlanFilePath</b>(<b class="type">const char *</b><i class="var">path</i>, <b class="type">const char *</b><i class="var">arch</i>, <b class="type">uint64_t</b> <i class="var">mode</i>);<br/>
 <br/>
-Link with -lsleefdft -lsleef.
+Link with -lsleefdft -lsleef -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -314,7 +314,7 @@ below.
 <br/>
 <b class="type">void</b> <b class="func">SleefDFT_savePlan</b>(<b class="type">const char *</b><i class="var">path</i>);<br/>
 <br/>
-Link with -lsleefdft -lsleef.
+Link with -lsleefdft -lsleef -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -339,7 +339,7 @@ Link with -lsleefdft -lsleef.
 <b class="type">struct SleefDFT *</b> <b class="func">SleefDFT_double_init1d</b>(<b class="type">uint32_t</b> <i class="var">n</i>, <b class="type">const double *</b><i class="var">in</i>, <b class="type">double *</b><i class="var">out</i>, <b class="type">uint64_t</b> <i class="var">mode</i>);<br/>
 <b class="type">struct SleefDFT *</b> <b class="func">SleefDFT_float_init1d</b>(<b class="type">uint32_t</b> <i class="var">n</i>, <b class="type">const float *</b><i class="var">in</i>, <b class="type">float *</b><i class="var">out</i>, <b class="type">uint64_t</b> <i class="var">mode</i>);<br/>
 <br/>
-Link with -lsleefdft -lsleef.
+Link with -lsleefdft -lsleef -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -434,7 +434,7 @@ Link with -lsleefdft -lsleef.
 <b class="type">struct SleefDFT *</b> <b class="func">SleefDFT_double_init2d</b>(<b class="type">uint32_t</b> <i class="var">n</i>, <b class="type">uint32_t</b> <i class="var">m</i>, <b class="type">const double *</b><i class="var">in</i>, <b class="type">double *</b><i class="var">out</i>, <b class="type">uint64_t</b> <i class="var">mode</i>);<br/>
 <b class="type">struct SleefDFT *</b> <b class="func">SleefDFT_float_init2d</b>(<b class="type">uint32_t</b> <i class="var">n</i>, <b class="type">uint32_t</b> <i class="var">m</i>, <b class="type">const float *</b><i class="var">in</i>, <b class="type">float *</b><i class="var">out</i>, <b class="type">uint64_t</b> <i class="var">mode</i>);<br/>
 <br/>
-Link with -lsleefdft -lsleef.
+Link with -lsleefdft -lsleef -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -470,7 +470,7 @@ Link with -lsleefdft -lsleef.
 <b class="type">void</b> <b class="func">SleefDFT_float_execute</b>(<b class="type">struct SleefDFT *</b><i class="var">ptr</i>, <b class="type">const float *</b><i class="var">in</i>, <b class="type">float *</b><i class="var">out</i>);<br/>
 <b class="type">void</b> <b class="func">SleefDFT_execute</b>(<b class="type">struct SleefDFT *</b><i class="var">ptr</i>, <b class="type">const void *</b><i class="var">in</i>, <b class="type">void *</b><i class="var">out</i>);<br/>
 <br/>
-Link with -lsleefdft -lsleef.
+Link with -lsleefdft -lsleef -ltlfloat.
 </p>
 
 <p class="header">Description</p>
@@ -496,7 +496,7 @@ to <i class="var">in</i> and <i class="var">out</i>.
 <br/>
 <b class="type">void</b> <b class="func">SleefDFT_dispose</b>(<b class="type">struct SleefDFT *</b><i class="var">ptr</i>);<br/>
 <br/>
-Link with -lsleefdft -lsleef.
+Link with -lsleefdft -lsleef -ltlfloat.
 </p>
 
 <p class="header">Description</p>
