@@ -3,26 +3,26 @@
 
 # TESTER3_DEFINITIONS
 
-set(TESTER3_DEFINITIONS_SSE2          ATR=finz_ DPTYPE=__m128d SPTYPE=__m128 DPTYPESPEC=d2 SPTYPESPEC=f4  EXTSPEC=sse2)
-set(TESTER3_DEFINITIONS_AVX2128       ATR=finz_ DPTYPE=__m128d SPTYPE=__m128 DPTYPESPEC=d2 SPTYPESPEC=f4  EXTSPEC=avx2128)
-set(TESTER3_DEFINITIONS_FMA4          ATR=finz_ DPTYPE=__m256d SPTYPE=__m256 DPTYPESPEC=d4 SPTYPESPEC=f8  EXTSPEC=fma4)
-set(TESTER3_DEFINITIONS_AVX2          ATR=finz_ DPTYPE=__m256d SPTYPE=__m256 DPTYPESPEC=d4 SPTYPESPEC=f8  EXTSPEC=avx2)
-set(TESTER3_DEFINITIONS_AVX512F       ATR=finz_ DPTYPE=__m512d SPTYPE=__m512 DPTYPESPEC=d8 SPTYPESPEC=f16 EXTSPEC=avx512f)
+set(TESTER3_DEFINITIONS_SSE2            DPTYPE=__m128d SPTYPE=__m128 DPTYPESPEC=d2 SPTYPESPEC=f4  EXTSPEC=sse2)
+set(TESTER3_DEFINITIONS_AVX2128         DPTYPE=__m128d SPTYPE=__m128 DPTYPESPEC=d2 SPTYPESPEC=f4  EXTSPEC=avx2128)
+set(TESTER3_DEFINITIONS_FMA4            DPTYPE=__m256d SPTYPE=__m256 DPTYPESPEC=d4 SPTYPESPEC=f8  EXTSPEC=fma4)
+set(TESTER3_DEFINITIONS_AVX2            DPTYPE=__m256d SPTYPE=__m256 DPTYPESPEC=d4 SPTYPESPEC=f8  EXTSPEC=avx2)
+set(TESTER3_DEFINITIONS_AVX512F         DPTYPE=__m512d SPTYPE=__m512 DPTYPESPEC=d8 SPTYPESPEC=f16 EXTSPEC=avx512f)
 
-set(TESTER3_DEFINITIONS_ADVSIMD       ATR=finz_ DPTYPE=float64x2_t SPTYPE=float32x4_t DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=advsimd)
-set(TESTER3_DEFINITIONS_SVE           ATR=finz_ DPTYPE=svfloat64_t SPTYPE=svfloat32_t DPTYPESPEC=dx SPTYPESPEC=fx EXTSPEC=sve)
+set(TESTER3_DEFINITIONS_ADVSIMD         DPTYPE=float64x2_t SPTYPE=float32x4_t DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=advsimd)
+set(TESTER3_DEFINITIONS_SVE             DPTYPE=svfloat64_t SPTYPE=svfloat32_t DPTYPESPEC=dx SPTYPESPEC=fx EXTSPEC=sve)
 
-set(TESTER3_DEFINITIONS_VSX       ATR=finz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vsx)
-set(TESTER3_DEFINITIONS_VSX3      ATR=finz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vsx3)
+set(TESTER3_DEFINITIONS_VSX             DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vsx)
+set(TESTER3_DEFINITIONS_VSX3            DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vsx3)
 
-set(TESTER3_DEFINITIONS_VXE       ATR=finz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vxe)
-set(TESTER3_DEFINITIONS_VXE2      ATR=finz_ DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vxe2)
+set(TESTER3_DEFINITIONS_VXE             DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vxe)
+set(TESTER3_DEFINITIONS_VXE2            DPTYPE=SLEEF_VECTOR_DOUBLE SPTYPE=SLEEF_VECTOR_FLOAT DPTYPESPEC=d2 SPTYPESPEC=f4 EXTSPEC=vxe2)
 
-set(TESTER3_DEFINITIONS_RVVM1      ATR=finz_ DPTYPE=vfloat64m1_t SPTYPE=vfloat32m1_t DPTYPESPEC=dx SPTYPESPEC=fx EXTSPEC=rvvm1 ENABLE_RVVM1)
-set(TESTER3_DEFINITIONS_RVVM2      ATR=finz_ DPTYPE=vfloat64m2_t SPTYPE=vfloat32m2_t DPTYPESPEC=dx SPTYPESPEC=fx EXTSPEC=rvvm2 ENABLE_RVVM2)
+set(TESTER3_DEFINITIONS_RVVM1           DPTYPE=vfloat64m1_t SPTYPE=vfloat32m1_t DPTYPESPEC=dx SPTYPESPEC=fx EXTSPEC=rvvm1 ENABLE_RVVM1)
+set(TESTER3_DEFINITIONS_RVVM2           DPTYPE=vfloat64m2_t SPTYPE=vfloat32m2_t DPTYPESPEC=dx SPTYPESPEC=fx EXTSPEC=rvvm2 ENABLE_RVVM2)
 
-set(TESTER3_DEFINITIONS_PUREC_SCALAR    ATR=finz_ DPTYPE=double SPTYPE=float DPTYPESPEC=d1 SPTYPESPEC=f1 EXTSPEC=purec)
-set(TESTER3_DEFINITIONS_PURECFMA_SCALAR ATR=finz_ DPTYPE=double SPTYPE=float DPTYPESPEC=d1 SPTYPESPEC=f1 EXTSPEC=purecfma)
+set(TESTER3_DEFINITIONS_PUREC_SCALAR    DPTYPE=double SPTYPE=float DPTYPESPEC=d1 SPTYPESPEC=f1 EXTSPEC=purec)
+set(TESTER3_DEFINITIONS_PURECFMA_SCALAR DPTYPE=double SPTYPE=float DPTYPESPEC=d1 SPTYPESPEC=f1 EXTSPEC=purecfma)
 
 #
 
@@ -180,30 +180,6 @@ macro(test_extension SIMD)
       endif()
       list(APPEND IUT_LIST ${TARGET_IUT${SIMD}})
 
-      # The iut programs whose names begin with "iuty" are the iut for the
-      # deterministic version of functions. By checking the result of
-      # testing with iutysse2, for example, it can be checked that the
-      # corresponding deterministic functions passes the accuracy and
-      # nonnumber tests.
-
-      string(CONCAT IUTYNAME "iuty" ${LCSIMD})
-      add_executable(${IUTYNAME} ${IUT_SRC})
-      target_compile_options(${IUTYNAME}
-	PRIVATE ${FLAGS_ENABLE_${SIMD}})
-      target_compile_definitions(${IUTYNAME}
-	PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS} DETERMINISTIC=1)
-      target_link_libraries(${IUTYNAME} ${TARGET_LIBSLEEF} ${TARGET_TESTERUTIL_OBJ}
-	${TLFLOAT_LIBRARIES} ${LIBM} ${LIBRT})
-      add_dependencies(${IUTYNAME} ${TARGET_HEADERS})
-      add_dependencies(${IUTYNAME} ${TARGET_LIBSLEEF})
-      set_target_properties(${IUTYNAME} PROPERTIES ${COMMON_TARGET_PROPERTIES})
-      if (DEFINED COSTOVERRIDE_${SIMD})
-	add_test_iut(${IUTYNAME} ${COSTOVERRIDE_${SIMD}})
-      else()
-	add_test_iut(${IUTYNAME} 1.0)
-      endif()
-      list(APPEND IUT_LIST ${IUTYNAME})
-
       # The iut programs whose names begin with "iuti" are the iut for the
       # inline version of functions.
 
@@ -255,26 +231,6 @@ macro(test_extension SIMD)
 
       #
 
-      string(CONCAT TARGET_TESTER4Y_${SIMD} "tester4y" ${LCSIMD})
-
-      add_executable(${TARGET_TESTER4Y_${SIMD}} ${TESTER4_SRC})
-      target_compile_options(${TARGET_TESTER4Y_${SIMD}}
-	PRIVATE ${FLAGS_ENABLE_${SIMD}})
-      target_compile_definitions(${TARGET_TESTER4Y_${SIMD}}
-	PRIVATE ENABLE_${SIMD}=1 ${COMMON_TARGET_DEFINITIONS} DETERMINISTIC=1)
-      target_link_libraries(${TARGET_TESTER4Y_${SIMD}} ${TARGET_LIBSLEEF} ${TLFLOAT_LIBRARIES} ${TARGET_TESTERUTIL_OBJ})
-      add_dependencies(${TARGET_TESTER4Y_${SIMD}} ${TARGET_HEADERS})
-      add_dependencies(${TARGET_TESTER4Y_${SIMD}} ${TARGET_LIBSLEEF})
-      add_dependencies(${TARGET_TESTER4Y_${SIMD}} ext_tlfloat)
-      set_target_properties(${TARGET_TESTER4Y_${SIMD}} PROPERTIES ${COMMON_TARGET_PROPERTIES})
-      if (DEFINED COSTOVERRIDE_${SIMD})
-	add_test_with_emu(${COSTOVERRIDE_${SIMD}} ${TARGET_TESTER4Y_${SIMD}})
-      else()
-	add_test_with_emu(1.0 ${TARGET_TESTER4Y_${SIMD}})
-      endif()
-
-      #
-
       list(FIND SLEEF_SUPPORTED_INLINE_LIBM_EXTENSIONS ${SIMD} INDEX_INLINE)
       if (SLEEF_BUILD_INLINE_HEADERS AND NOT INDEX_INLINE EQUAL -1)
 	string(CONCAT TARGET_TESTER4I_${SIMD} "tester4i" ${LCSIMD})
@@ -309,32 +265,17 @@ macro(test_extension SIMD)
       # Build tester2 SIMD
       string(TOLOWER ${SIMD} SCSIMD)
       foreach(P dp sp)
-	      set(T "tester2${SCSIMD}${P}")
-	      add_executable(${T} tester2simd${P}.c)
-	      target_compile_options(${T} PRIVATE ${FLAGS_ENABLE_${SIMD}})
-	      target_compile_definitions(${T} PRIVATE ENABLE_${SIMD}=1 USEMPFR=1 ${COMMON_TARGET_DEFINITIONS})
-	      set_target_properties(${T} PROPERTIES ${COMMON_TARGET_PROPERTIES})
-	      target_link_libraries(${T} ${TARGET_LIBSLEEF} ${TARGET_TESTERUTIL_OBJ} ${TLFLOAT_LIBRARIES} ${LIB_MPFR} ${LIBGMP} ${LIBM})
-	      add_dependencies(${T} ${TARGET_HEADERS})
-	      add_dependencies(${T} ${TARGET_LIBSLEEF})
-	      if (MPFR_INCLUDE_DIR)
-		target_include_directories(${T} PRIVATE ${MPFR_INCLUDE_DIR})
-	      endif()
-
-	      # The tester2 programs whose name begins with "tester2y" are the
-	      # testing program for the deterministic version of functions.
-
-	      set(T "tester2y${SCSIMD}${P}")
-	      add_executable(${T} tester2simd${P}.c)
-	      target_compile_options(${T} PRIVATE ${FLAGS_ENABLE_${SIMD}})
-	      target_compile_definitions(${T} PRIVATE ENABLE_${SIMD}=1 USEMPFR=1 ${COMMON_TARGET_DEFINITIONS} DETERMINISTIC=1)
-	      set_target_properties(${T} PROPERTIES ${COMMON_TARGET_PROPERTIES})
-	      target_link_libraries(${T} ${TARGET_LIBSLEEF} ${TARGET_TESTERUTIL_OBJ} ${TLFLOAT_LIBRARIES} ${LIB_MPFR} ${LIBGMP} ${LIBM})
-	      add_dependencies(${T} ${TARGET_HEADERS})
-	      add_dependencies(${T} ${TARGET_LIBSLEEF})
-	      if (MPFR_INCLUDE_DIR)
-		target_include_directories(${T} PRIVATE ${MPFR_INCLUDE_DIR})
-	      endif()
+	set(T "tester2${SCSIMD}${P}")
+	add_executable(${T} tester2simd${P}.c)
+	target_compile_options(${T} PRIVATE ${FLAGS_ENABLE_${SIMD}})
+	target_compile_definitions(${T} PRIVATE ENABLE_${SIMD}=1 USEMPFR=1 ${COMMON_TARGET_DEFINITIONS})
+	set_target_properties(${T} PROPERTIES ${COMMON_TARGET_PROPERTIES})
+	target_link_libraries(${T} ${TARGET_LIBSLEEF} ${TARGET_TESTERUTIL_OBJ} ${TLFLOAT_LIBRARIES} ${LIB_MPFR} ${LIBGMP} ${LIBM})
+	add_dependencies(${T} ${TARGET_HEADERS})
+	add_dependencies(${T} ${TARGET_LIBSLEEF})
+	if (MPFR_INCLUDE_DIR)
+	  target_include_directories(${T} PRIVATE ${MPFR_INCLUDE_DIR})
+	endif()
       endforeach()
     endif()
 
@@ -364,20 +305,17 @@ macro(test_extension SIMD)
     add_dependencies(${T} ${TARGET_HEADERS})
     add_dependencies(${T} ${TARGET_LIBSLEEF})
 
-    list(FIND TEST3_FINZ ${SCSIMD} INDEX_TEST3_FINZ)
-    if (NOT INDEX_TEST3_FINZ EQUAL -1)
-      if (SDE_COMMAND)
-	add_test(NAME tester3${SCSIMD} COMMAND ${SDE_COMMAND} "--" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tester3${SCSIMD} ${sleef_SOURCE_DIR}/src/libm-tester/hash_finz.txt)
-      elseif(EMULATOR)
-	add_test(NAME tester3${SCSIMD} COMMAND ${EMULATOR} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tester3${SCSIMD} ${sleef_SOURCE_DIR}/src/libm-tester/hash_finz.txt)
-      else()
-	add_test(NAME tester3${SCSIMD} COMMAND tester3${SCSIMD} ${sleef_SOURCE_DIR}/src/libm-tester/hash_finz.txt)
-      endif()
-      if (DEFINED COSTOVERRIDE_${SIMD})
-	set_tests_properties(tester3${SCSIMD} PROPERTIES COST ${COSTOVERRIDE_${SIMD}})
-      else()
-	set_tests_properties(tester3${SCSIMD} PROPERTIES COST 0.5)
-      endif()
+    if (SDE_COMMAND)
+      add_test(NAME tester3${SCSIMD} COMMAND ${SDE_COMMAND} "--" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tester3${SCSIMD} ${sleef_SOURCE_DIR}/src/libm-tester/hash_finz.txt)
+    elseif(EMULATOR)
+      add_test(NAME tester3${SCSIMD} COMMAND ${EMULATOR} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tester3${SCSIMD} ${sleef_SOURCE_DIR}/src/libm-tester/hash_finz.txt)
+    else()
+      add_test(NAME tester3${SCSIMD} COMMAND tester3${SCSIMD} ${sleef_SOURCE_DIR}/src/libm-tester/hash_finz.txt)
+    endif()
+    if (DEFINED COSTOVERRIDE_${SIMD})
+      set_tests_properties(tester3${SCSIMD} PROPERTIES COST ${COSTOVERRIDE_${SIMD}})
+    else()
+      set_tests_properties(tester3${SCSIMD} PROPERTIES COST 0.5)
     endif()
   endif(COMPILER_SUPPORTS_${SIMD})
 endmacro(test_extension)

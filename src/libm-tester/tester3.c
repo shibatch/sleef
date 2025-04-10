@@ -145,8 +145,8 @@ static vfloat64m2_t vd2gety_vd_vd2(vfloat64m4_t v) { return __riscv_vget_f64m2(v
 
 //
 
-// ATR = cinz_, NAME = sin, TYPE = d2, ULP = u35, EXT = sse2
-#define FUNC(ATR, NAME, TYPE, ULP, EXT) Sleef_ ## ATR ## NAME ## TYPE ## _ ## ULP ## EXT
+// NAME = sin, TYPE = d2, ULP = u35, EXT = sse2
+#define FUNC(NAME, TYPE, ULP, EXT) Sleef_ ## NAME ## TYPE ## _ ## ULP ## EXT
 #define _TYPE2(TYPE) Sleef_ ## TYPE ## _2
 #define TYPE2(TYPE) _TYPE2(TYPE)
 #define SET(TYPE) set ## TYPE
@@ -162,85 +162,85 @@ static SPTYPE vf2gety_vf_vf2(TYPE2(SPTYPE) v) { return v.y; }
 //
 
 #define initDigest 					\
-    EVP_MD_CTX *ctx; ctx = EVP_MD_CTX_new();		\
-    if (!ctx) {						\
-        fprintf(stderr, "Error creating context.\n");	\
-        return 0;					\
-    }							\
-    if (!EVP_DigestInit_ex(ctx, EVP_sha256(), NULL)) {	\
-        fprintf(stderr, "Error initializing context.\n"); \
-        return 0;					\
-    }
+  EVP_MD_CTX *ctx; ctx = EVP_MD_CTX_new();		\
+  if (!ctx) {						\
+    fprintf(stderr, "Error creating context.\n");	\
+    return 0;						\
+  }							\
+  if (!EVP_DigestInit_ex(ctx, EVP_sha256(), NULL)) {	\
+    fprintf(stderr, "Error initializing context.\n");	\
+    return 0;						\
+  }
 
-#define checkDigest(NAME, ULP) do {				\
-    unsigned int sha256_digest_len = EVP_MD_size(EVP_sha256());	\
-    unsigned char *sha256_digest;				\
-    sha256_digest = (unsigned char *)malloc(sha256_digest_len);	\
-    if (!EVP_DigestFinal_ex(ctx, sha256_digest, &sha256_digest_len)) { \
-      fprintf(stderr, "Error finalizing digest.\n");		\
-      return 0;							\
-    }								\
-    EVP_MD_CTX_free(ctx);					\
-    unsigned char mes[256], buf[256];				\
-    memset(mes, 0, 256);					\
-    sprintf((char *)mes, "%s ", #NAME " " #ULP);		\
-    char tmp[3] = { 0 };					\
-    for (int i = 0; i < sha256_digest_len; i++) {		\
-      snprintf(tmp, sizeof(tmp), "%02x", sha256_digest[i]);	\
-      strncat((char *)mes, tmp, sizeof(mes)-1);			\
-    }								\
-    free(sha256_digest);					\
-    if (fp != NULL) {						\
+#define checkDigest(NAME, ULP) do {					\
+    unsigned int sha256_digest_len = EVP_MD_size(EVP_sha256());		\
+    unsigned char *sha256_digest;					\
+    sha256_digest = (unsigned char *)malloc(sha256_digest_len);		\
+    if (!EVP_DigestFinal_ex(ctx, sha256_digest, &sha256_digest_len)) {	\
+      fprintf(stderr, "Error finalizing digest.\n");			\
+      return 0;								\
+    }									\
+    EVP_MD_CTX_free(ctx);						\
+    unsigned char mes[256], buf[256];					\
+    memset(mes, 0, 256);						\
+    sprintf((char *)mes, "%s ", #NAME " " #ULP);			\
+    char tmp[3] = { 0 };						\
+    for (int i = 0; i < sha256_digest_len; i++) {			\
+      snprintf(tmp, sizeof(tmp), "%02x", sha256_digest[i]);		\
+      strncat((char *)mes, tmp, sizeof(mes)-1);				\
+    }									\
+    free(sha256_digest);						\
+    if (fp != NULL) {							\
       fgets((char *)buf, 250, fp);					\
       if (strncmp((char *)mes, (char *)buf, strlen((char *)mes)) != 0) { \
-	puts((char *)mes);					\
-	puts((char *)buf);					\
-	success = 0;						\
-      }								\
-    } else puts((char *)mes);					\
+	puts((char *)mes);						\
+	puts((char *)buf);						\
+	success = 0;							\
+      }									\
+    } else puts((char *)mes);						\
   } while(0)
 
 #if defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
 #define convertEndianness(ptr, len) do {				\
-  for(int k=0;k<len/2;k++) {						\
-    unsigned char t = ((unsigned char *)ptr)[k];			\
-    ((unsigned char *)ptr)[k] = ((unsigned char *)ptr)[len-1-k];	\
-    ((unsigned char *)ptr)[len-1-k] = t;				\
-  }									\
+    for(int k=0;k<len/2;k++) {						\
+      unsigned char t = ((unsigned char *)ptr)[k];			\
+      ((unsigned char *)ptr)[k] = ((unsigned char *)ptr)[len-1-k];	\
+      ((unsigned char *)ptr)[len-1-k] = t;				\
+    }									\
   } while(0)
 #else
 #define convertEndianness(ptr, len)
 #endif
 
-#define exec_d_d(ATR, NAME, ULP, TYPE, TSX, EXT, arg) do {		\
-    int r = xrand() & 0xffff;						\
-    DPTYPE vx = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (arg, r));	\
-    double fx = GET(TYPE)(vx, r);					\
-    convertEndianness(&fx, sizeof(double));				\
-    EVP_DigestUpdate(ctx, &fx, sizeof(double));				\
+#define exec_d_d(NAME, ULP, TYPE, TSX, EXT, arg) do {		\
+    int r = xrand() & 0xffff;					\
+    DPTYPE vx = FUNC(NAME, TSX, ULP, EXT) (SET(TYPE) (arg, r));	\
+    double fx = GET(TYPE)(vx, r);				\
+    convertEndianness(&fx, sizeof(double));			\
+    EVP_DigestUpdate(ctx, &fx, sizeof(double));			\
   } while(0)
 
 #define test_d_d(NAME, ULP, START, END, NSTEP) do {		\
     initDigest							\
-    double step = ((double)(END) - (double)(START))/NSTEP;	\
+      double step = ((double)(END) - (double)(START))/NSTEP;	\
     for(double d = (START);d < (END);d += step)			\
-      exec_d_d(ATR, NAME, ULP, DPTYPE, DPTYPESPEC, EXTSPEC, d);	\
+      exec_d_d(NAME, ULP, DPTYPE, DPTYPESPEC, EXTSPEC, d);	\
     checkDigest(NAME, ULP);					\
   } while(0)
 
-#define testu_d_d(NAME, ULP, START, END, NSTEP) do {			\
-    initDigest								\
-    uint64_t step = (d2u(END) - d2u(START))/NSTEP;			\
-    for(uint64_t u = d2u(START);u < d2u(END);u += step)			\
-      exec_d_d(ATR, NAME, ULP, DPTYPE, DPTYPESPEC, EXTSPEC, u2d(u));	\
-    checkDigest(NAME, ULP);						\
+#define testu_d_d(NAME, ULP, START, END, NSTEP) do {		\
+    initDigest							\
+      uint64_t step = (d2u(END) - d2u(START))/NSTEP;		\
+    for(uint64_t u = d2u(START);u < d2u(END);u += step)		\
+      exec_d_d(NAME, ULP, DPTYPE, DPTYPESPEC, EXTSPEC, u2d(u));	\
+    checkDigest(NAME, ULP);					\
   } while(0)
 
 //
 
-#define exec_d2_d(ATR, NAME, ULP, TYPE, TSX, EXT, arg) do {		\
+#define exec_d2_d(NAME, ULP, TYPE, TSX, EXT, arg) do {			\
     int r = xrand() & 0xffff;						\
-    TYPE2(TYPE) vx2 = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE)(arg, r)); \
+    TYPE2(TYPE) vx2 = FUNC(NAME, TSX, ULP, EXT) (SET(TYPE)(arg, r));	\
     double fxx = GET(TYPE)(vd2getx_vd_vd2(vx2), r), fxy = GET(TYPE)(vd2gety_vd_vd2(vx2), r); \
     convertEndianness(&fxx, sizeof(double));				\
     EVP_DigestUpdate(ctx, &fxx, sizeof(double));			\
@@ -248,19 +248,19 @@ static SPTYPE vf2gety_vf_vf2(TYPE2(SPTYPE) v) { return v.y; }
     EVP_DigestUpdate(ctx, &fxy, sizeof(double));			\
   } while(0)
 
-#define test_d2_d(NAME, ULP, START, END, NSTEP) do {			\
-    initDigest								\
-    double step = ((double)(END) - (double)(START))/NSTEP;		\
-    for(double d = (START);d < (END);d += step)				\
-      exec_d2_d(ATR, NAME, ULP, DPTYPE, DPTYPESPEC, EXTSPEC, d);	\
-    checkDigest(NAME, ULP);						\
+#define test_d2_d(NAME, ULP, START, END, NSTEP) do {		\
+    initDigest							\
+      double step = ((double)(END) - (double)(START))/NSTEP;	\
+    for(double d = (START);d < (END);d += step)			\
+      exec_d2_d(NAME, ULP, DPTYPE, DPTYPESPEC, EXTSPEC, d);	\
+    checkDigest(NAME, ULP);					\
   } while(0)
 
 //
 
-#define exec_d_d_d(ATR, NAME, ULP, TYPE, TSX, EXT, argu, argv) do {	\
+#define exec_d_d_d(NAME, ULP, TYPE, TSX, EXT, argu, argv) do {		\
     int r = xrand() & 0xffff;						\
-    DPTYPE vx = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (argu, r), SET(TYPE) (argv, r)); \
+    DPTYPE vx = FUNC(NAME, TSX, ULP, EXT) (SET(TYPE) (argu, r), SET(TYPE) (argv, r)); \
     double fx = GET(TYPE)(vx, r);					\
     convertEndianness(&fx, sizeof(double));				\
     EVP_DigestUpdate(ctx, &fx, sizeof(double));				\
@@ -268,45 +268,45 @@ static SPTYPE vf2gety_vf_vf2(TYPE2(SPTYPE) v) { return v.y; }
 
 #define test_d_d_d(NAME, ULP, STARTU, ENDU, NSTEPU, STARTV, ENDV, NSTEPV) do { \
     initDigest								\
-    double stepu = ((double)(ENDU) - (double)(STARTU))/NSTEPU;		\
+      double stepu = ((double)(ENDU) - (double)(STARTU))/NSTEPU;	\
     double stepv = ((double)(ENDV) - (double)(STARTV))/NSTEPV;		\
     for(double u = (STARTU);u < (ENDU);u += stepu)			\
       for(double v = (STARTV);v < (ENDV);v += stepv)			\
-	exec_d_d_d(ATR, NAME, ULP, DPTYPE, DPTYPESPEC, EXTSPEC, u, v);	\
+	exec_d_d_d(NAME, ULP, DPTYPE, DPTYPESPEC, EXTSPEC, u, v);	\
     checkDigest(NAME, ULP);						\
   } while(0)
 
 //
 
-#define exec_f_f(ATR, NAME, ULP, TYPE, TSX, EXT, arg) do {		\
-    int r = xrand() & 0xffff;						\
-    SPTYPE vx = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (arg, r));	\
-    float fx = GET(TYPE)(vx, r);					\
-    convertEndianness(&fx, sizeof(float));				\
-    EVP_DigestUpdate(ctx, &fx, sizeof(float));				\
+#define exec_f_f(NAME, ULP, TYPE, TSX, EXT, arg) do {		\
+    int r = xrand() & 0xffff;					\
+    SPTYPE vx = FUNC(NAME, TSX, ULP, EXT) (SET(TYPE) (arg, r));	\
+    float fx = GET(TYPE)(vx, r);				\
+    convertEndianness(&fx, sizeof(float));			\
+    EVP_DigestUpdate(ctx, &fx, sizeof(float));			\
   } while(0)
 
 #define test_f_f(NAME, ULP, START, END, NSTEP) do {		\
     initDigest							\
-    float step = ((double)(END) - (double)(START))/NSTEP;	\
+      float step = ((double)(END) - (double)(START))/NSTEP;	\
     for(float d = (START);d < (END);d += step)			\
-      exec_f_f(ATR, NAME, ULP, SPTYPE, SPTYPESPEC, EXTSPEC, d);	\
+      exec_f_f(NAME, ULP, SPTYPE, SPTYPESPEC, EXTSPEC, d);	\
     checkDigest(NAME ## f, ULP);				\
   } while(0)
 
-#define testu_f_f(NAME, ULP, START, END, NSTEP) do {			\
-    initDigest								\
-    uint32_t step = (f2u(END) - f2u(START))/NSTEP;			\
-    for(uint32_t u = f2u(START);u < f2u(END);u += step)			\
-      exec_f_f(ATR, NAME, ULP, SPTYPE, SPTYPESPEC, EXTSPEC, u2f(u));	\
-    checkDigest(NAME ## f, ULP);					\
+#define testu_f_f(NAME, ULP, START, END, NSTEP) do {		\
+    initDigest							\
+      uint32_t step = (f2u(END) - f2u(START))/NSTEP;		\
+    for(uint32_t u = f2u(START);u < f2u(END);u += step)		\
+      exec_f_f(NAME, ULP, SPTYPE, SPTYPESPEC, EXTSPEC, u2f(u));	\
+    checkDigest(NAME ## f, ULP);				\
   } while(0)
 
 //
 
-#define exec_f2_f(ATR, NAME, ULP, TYPE, TSX, EXT, arg) do {		\
+#define exec_f2_f(NAME, ULP, TYPE, TSX, EXT, arg) do {			\
     int r = xrand() & 0xffff;						\
-    TYPE2(TYPE) vx2 = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (arg, r)); \
+    TYPE2(TYPE) vx2 = FUNC(NAME, TSX, ULP, EXT) (SET(TYPE) (arg, r));	\
     float fxx = GET(TYPE)(vf2getx_vf_vf2(vx2), r), fxy = GET(TYPE)(vf2gety_vf_vf2(vx2), r); \
     convertEndianness(&fxx, sizeof(float));				\
     EVP_DigestUpdate(ctx, &fxx, sizeof(float));				\
@@ -314,19 +314,19 @@ static SPTYPE vf2gety_vf_vf2(TYPE2(SPTYPE) v) { return v.y; }
     EVP_DigestUpdate(ctx, &fxy, sizeof(float));				\
   } while(0)
 
-#define test_f2_f(NAME, ULP, START, END, NSTEP) do {			\
-    initDigest								\
-    float step = ((float)(END) - (float)(START))/NSTEP;			\
-    for(float d = (START);d < (END);d += step)				\
-      exec_f2_f(ATR, NAME, ULP, SPTYPE, SPTYPESPEC, EXTSPEC, d);	\
-    checkDigest(NAME ## f, ULP);					\
+#define test_f2_f(NAME, ULP, START, END, NSTEP) do {		\
+    initDigest							\
+      float step = ((float)(END) - (float)(START))/NSTEP;	\
+    for(float d = (START);d < (END);d += step)			\
+      exec_f2_f(NAME, ULP, SPTYPE, SPTYPESPEC, EXTSPEC, d);	\
+    checkDigest(NAME ## f, ULP);				\
   } while(0)
 
 //
 
-#define exec_f_f_f(ATR, NAME, ULP, TYPE, TSX, EXT, argu, argv) do {	\
+#define exec_f_f_f(NAME, ULP, TYPE, TSX, EXT, argu, argv) do {		\
     int r = xrand() & 0xffff;						\
-    SPTYPE vx = FUNC(ATR, NAME, TSX, ULP, EXT) (SET(TYPE) (argu, r), SET(TYPE) (argv, r)); \
+    SPTYPE vx = FUNC(NAME, TSX, ULP, EXT) (SET(TYPE) (argu, r), SET(TYPE) (argv, r)); \
     float fx = GET(TYPE)(vx, r);					\
     convertEndianness(&fx, sizeof(float));				\
     EVP_DigestUpdate(ctx, &fx, sizeof(float));				\
@@ -334,21 +334,21 @@ static SPTYPE vf2gety_vf_vf2(TYPE2(SPTYPE) v) { return v.y; }
 
 #define test_f_f_f(NAME, ULP, STARTU, ENDU, NSTEPU, STARTV, ENDV, NSTEPV) do { \
     initDigest								\
-    float stepu = ((float)(ENDU) - (float)(STARTU))/NSTEPU;		\
+      float stepu = ((float)(ENDU) - (float)(STARTU))/NSTEPU;		\
     float stepv = ((float)(ENDV) - (float)(STARTV))/NSTEPV;		\
     for(float u = (STARTU);u < (ENDU);u += stepu)			\
       for(float v = (STARTV);v < (ENDV);v += stepv)			\
-	exec_f_f_f(ATR, NAME, ULP, SPTYPE, SPTYPESPEC, EXTSPEC, u, v);	\
+	exec_f_f_f(NAME, ULP, SPTYPE, SPTYPESPEC, EXTSPEC, u, v);	\
     checkDigest(NAME ## f, ULP);					\
   } while(0)
 
 //
 
-#define try_feature(TYPE, ATR_, TSX, EXT, arg)				\
-  GET(TYPE) (FUNC(ATR_, pow, TSX, u10, EXT) (SET(TYPE) (arg, 0), SET(TYPE) (arg, 0)), 0)
+#define try_feature(TYPE, TSX, EXT, arg)				\
+  GET(TYPE) (FUNC(pow, TSX, u10, EXT) (SET(TYPE) (arg, 0), SET(TYPE) (arg, 0)), 0)
 
 int check_feature(double d, float f) {
-  d = try_feature(DPTYPE, ATR, DPTYPESPEC, EXTSPEC, d);
+  d = try_feature(DPTYPE, DPTYPESPEC, EXTSPEC, d);
   return d == d;
 }
 
