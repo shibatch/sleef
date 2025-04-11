@@ -73,6 +73,7 @@ jobs:
       - name: Build msys2-${{ matrix.sys }}-${{ matrix.lto }}
         shell: msys2 {0}
         run: |
+	  export LD_LIBRARY_PATH=$(pwd)/_install-msys2-${{ matrix.sys }}-${{ matrix.lto }}/lib
           EXTRA_CMAKE_FLAGS=""
           if [[ ${{ matrix.sys }} = "clang64" ]]; then
             EXTRA_CMAKE_FLAGS="$EXTRA_CMAKE_FLAGS -DSLEEF_ENFORCE_SSE2=ON -DSLEEF_ENFORCE_SSE4=ON -DSLEEF_ENFORCE_AVX=ON -DSLEEF_ENFORCE_AVX2=ON -DSLEEF_ENFORCE_AVX512F=ON -DSLEEF_ENFORCE_FMA4=ON"
@@ -160,6 +161,7 @@ jobs:
         env:
           CTEST_OUTPUT_ON_FAILURE: "TRUE"
         run: |
+	  export LD_LIBRARY_PATH=$(pwd)/_install-msys2-${{ matrix.sys }}-${{ matrix.lto }}/lib
           cd _build-msys2-${{ matrix.sys }}-${{ matrix.lto }}
           ctest -j$(nproc)
 

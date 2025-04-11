@@ -35,7 +35,6 @@ int main(int argc, char **argv) {
   static char *ulpSuffixStr[] = { "", "_u1", "_u05", "_u35", "_u15", "_u3500" };
   
   if (argc == 4 || argc == 5) {
-    char *atrPrefix = strcmp(argv[1], "-") == 0 ? NULL : argv[1];
     char *wdp = argv[2];
     char *wsp = argv[3];
     char *isaname = argc == 4 ? "" : argv[4];
@@ -43,29 +42,16 @@ int main(int argc, char **argv) {
 
     //
 
-    printf("#ifndef DETERMINISTIC\n\n");
-
     for(int i=0;funcList[i].name != NULL;i++) {
       if (funcList[i].ulp >= 0) {
 	printf("#define x%s%s Sleef_%s%sd%s_u%02d%s\n",
 	       funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
 	       "", funcList[i].name, wdp,
 	       funcList[i].ulp, isaname);
-	if (atrPrefix != NULL) {
-	  printf("#define y%s%s Sleef_%s%sd%s_u%02d%s\n",
-		 funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
-		 atrPrefix, funcList[i].name, wdp,
-		 funcList[i].ulp, isaname);
-	}
       } else {
 	printf("#define x%s Sleef_%s%sd%s%s%s\n",
 	       funcList[i].name,
 	       "", funcList[i].name, wdp, isaub, isaname);
-	if (atrPrefix != NULL) {
-	  printf("#define y%s Sleef_%s%sd%s%s%s\n",
-		 funcList[i].name,
-		 atrPrefix, funcList[i].name, wdp, isaub, isaname);
-	}
       }
     }
 
@@ -77,59 +63,12 @@ int main(int argc, char **argv) {
 	       funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
 	       "", funcList[i].name, wsp,
 	       funcList[i].ulp, isaname);
-	if (atrPrefix != NULL) {
-	  printf("#define y%sf%s Sleef_%s%sf%s_u%02d%s\n",
-		 funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
-		 atrPrefix, funcList[i].name, wsp,
-		 funcList[i].ulp, isaname);
-	}
       } else {
 	printf("#define x%sf Sleef_%s%sf%s%s%s\n",
 	       funcList[i].name,
 	       "", funcList[i].name, wsp, isaub, isaname);
-	if (atrPrefix != NULL) {
-	  printf("#define y%sf Sleef_%s%sf%s%s%s\n",
-		 funcList[i].name,
-		 atrPrefix, funcList[i].name, wsp, isaub, isaname);
-	}
       }
     }
-
-    //
-
-    if (atrPrefix != NULL) {
-      printf("\n#else //#ifndef DETERMINISTIC\n\n");
-
-      for(int i=0;funcList[i].name != NULL;i++) {
-	if (funcList[i].ulp >= 0) {
-	  printf("#define x%s%s Sleef_%s%sd%s_u%02d%s\n",
-		 funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
-		 atrPrefix, funcList[i].name, wdp,
-		 funcList[i].ulp, isaname);
-	} else {
-	  printf("#define x%s Sleef_%s%sd%s%s%s\n",
-		 funcList[i].name,
-		 atrPrefix, funcList[i].name, wdp, isaub, isaname);
-	}
-      }
-
-      printf("\n");
-  
-      for(int i=0;funcList[i].name != NULL;i++) {
-	if (funcList[i].ulp >= 0) {
-	  printf("#define x%sf%s Sleef_%s%sf%s_u%02d%s\n",
-		 funcList[i].name, ulpSuffixStr[funcList[i].ulpSuffix],
-		 atrPrefix, funcList[i].name, wsp,
-		 funcList[i].ulp, isaname);
-	} else {
-	  printf("#define x%sf Sleef_%s%sf%s%s%s\n",
-		 funcList[i].name,
-		 atrPrefix, funcList[i].name, wsp, isaub, isaname);
-	}
-      }
-    }
-
-    printf("\n#endif // #ifndef DETERMINISTIC\n");
   }
   else {
     char *atrPrefix = strcmp(argv[1], "-") == 0 ? NULL : argv[1];

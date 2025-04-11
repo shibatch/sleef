@@ -3,6 +3,8 @@
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
+namespace sleef {
+
 ALIGNED(8192) void tbut2f_%SHIFT%_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const real *RESTRICT tbl, const int K) {
   const int shift = %SHIFT% + LOG2VECWIDTH, k = 1 << (shift - LOG2VECWIDTH);
   int i=0;
@@ -4866,3 +4868,5 @@ ALIGNED(8192) void tbut128b_%SHIFT%_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t
   }
 }
 #endif
+
+} // namespace sleef

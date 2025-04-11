@@ -1,15 +1,16 @@
 #include <mutex>
+#include "misc.h"
 #include "compat.h"
 
 using namespace std;
 
 extern "C" {
-int Sleef_cpuSupportsExt_internal(void (*tryExt)(), int *cache);
+NOEXPORT int Sleef_cpuSupportsExt_internal(void (*tryExt)(), int *cache);
 }
 
 static void sighandler(int signum) { LONGJMP(sigjmp, 1); }
 
-int Sleef_cpuSupportsExt_internal(void (*tryExt)(), int *cache) {
+NOEXPORT int Sleef_cpuSupportsExt_internal(void (*tryExt)(), int *cache) {
   if (*cache != -1) return *cache;
 
   static mutex mtx;
