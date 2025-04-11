@@ -1,3 +1,7 @@
+#if defined(__MINGW32__) || defined(__MINGW64__) || defined(_MSC_VER)
+#include <Windows.h>
+#endif
+
 #include <mutex>
 #include "misc.h"
 #include "compat.h"
