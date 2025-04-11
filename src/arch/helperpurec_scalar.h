@@ -116,7 +116,6 @@ typedef Sleef_uint64_2t vargquad;
 //
 
 static INLINE int vavailability_i(int name) { return -1; }
-static INLINE void vprefetch_v_p(const void *ptr) {}
 
 static INLINE int vtestallones_i_vo64(vopmask g) { return g; }
 static INLINE int vtestallones_i_vo32(vopmask g) { return g; }

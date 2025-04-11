@@ -3,7 +3,7 @@
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#if (defined (__GNUC__) || defined (__clang__) || defined(__INTEL_COMPILER)) && !defined(_MSC_VER)
+#if (defined (__GNUC__) || defined (__clang__)) && !defined(_MSC_VER)
 #define CONST __attribute__((const))
 #else
 #define CONST
