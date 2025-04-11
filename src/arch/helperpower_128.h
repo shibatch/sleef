@@ -59,7 +59,6 @@
 #define DFTPRIORITY 25
 
 static INLINE int vavailability_i(int name) { return 3; }
-static INLINE void vprefetch_v_p(const void *ptr) { }
 
 /**********************************************
  ** Types

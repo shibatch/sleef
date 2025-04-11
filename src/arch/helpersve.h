@@ -287,8 +287,6 @@ static INLINE tdi_t tdisettd_tdi_tdi_vd3(tdi_t tdi, vdouble3 v) {
 //@#define ALL_TRUE_MASK svdup_n_s32(0xffffffff)
 //@#define ALL_FALSE_MASK svdup_n_s32(0x0)
 
-static INLINE void vprefetch_v_p(const void *ptr) {}
-
 //
 //
 //

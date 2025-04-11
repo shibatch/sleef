@@ -1345,8 +1345,6 @@ static vquad loadu_vq_p(const int32_t *ptr) {
 static INLINE vquad cast_vq_aq(vargquad aq) { return aq; }
 static INLINE vargquad cast_aq_vq(vquad vq) { return vq; }
 
-static INLINE void vprefetch_v_p(const void *ptr) {}
-
 
 /****************************************/
 /* RVV_SP and RVV_DP reconciliation     */

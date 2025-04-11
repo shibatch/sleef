@@ -68,7 +68,6 @@ typedef vquad vargquad;
 #define DFTPRIORITY 10
 
 static INLINE int vavailability_i(int name) { return 3; }
-static INLINE void vprefetch_v_p(const void *ptr) { }
 
 static INLINE int vtestallones_i_vo32(vopmask g) {
   uint32x2_t x0 = vand_u32(vget_low_u32(g), vget_high_u32(g));

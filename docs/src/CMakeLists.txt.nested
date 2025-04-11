@@ -14,7 +14,7 @@ link_directories(${sleef_BINARY_DIR}/lib ${CMAKE_INSTALL_PREFIX}/lib)
 add_executable(hellox86 hellox86.c)
 set_target_properties(hellox86 PROPERTIES C_STANDARD 99)
 add_dependencies(hellox86 sleef)
-target_link_libraries(hellox86 sleef tlfloat)
+target_link_libraries(hellox86 sleef tlfloat stdc++)
 
 #
 

@@ -57,6 +57,7 @@ jobs:
       - name: Build ${{ matrix.os }}-${{ matrix.arch }}
         shell: bash -ex -o pipefail {0}
         run: |
+          export LD_LIBRARY_PATH=$(pwd)/_install-${{ matrix.os }}-${{ matrix.arch }}/lib
           cmake -S . -B _build-${{ matrix.os }}-${{ matrix.arch }} -GNinja \
             -DCMAKE_INSTALL_PREFIX=$(pwd)/_install-${{ matrix.os }}-${{ matrix.arch }} ${COMMON_CMAKE_FLAGS}
           cmake --build _build-${{ matrix.os }}-${{ matrix.arch }}
@@ -113,6 +114,7 @@ jobs:
         env:
           CTEST_OUTPUT_ON_FAILURE: "TRUE"
         run: |
+          export LD_LIBRARY_PATH=$(pwd)/_install-${{ matrix.os }}-${{ matrix.arch }}/lib
           cd _build-${{ matrix.os }}-${{ matrix.arch }}
           ctest -j$(sysctl -n hw.logicalcpu)
 

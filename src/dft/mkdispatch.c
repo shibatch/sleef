@@ -40,6 +40,8 @@ int main(int argc, char **argv) {
   printf("\n");
 
   if (strcmp(baseType, "paramonly") == 0) exit(0);
+
+  printf("namespace sleef {\n");
   
   for(int k=isastart;k<argc;k++) {
     for(int config=0;config<4;config++) {
@@ -250,4 +252,6 @@ int main(int argc, char **argv) {
   for(int k=isastart;k<argc;k++) printf("getPtr_%s, ", argv[k]);
   for(int k=0;k<16-(argc-isastart);k++) printf("NULL, ");
   printf("\n};\n\n");
+
+  printf("} // namespace sleef\n");
 }

@@ -56,6 +56,7 @@ jobs:
       - name: Build nested project
         shell: bash -ex -o pipefail {0}
         run: |
+          export LD_LIBRARY_PATH=$(pwd)/project/install-nested/lib
           cd ~/project
           # Configure and build project depending on sleef as nested project
           cmake -S . -B _build-nested -GNinja \
@@ -66,6 +67,7 @@ jobs:
       - name: Run examples
         shell: bash -ex -o pipefail {0}
         run: |
+          export LD_LIBRARY_PATH=$(pwd)/project/install-nested/lib
           cd ~/project/_build-nested
           ./hellox86
           ./dfttutorial 4
@@ -114,6 +116,7 @@ jobs:
       - name: Build project with submodule
         shell: bash -ex -o pipefail {0}
         run: |
+          export LD_LIBRARY_PATH=$(pwd)/project/install-submodule/lib
           cd ~/project
           # Configure and build project depending on sleef as submodule
           # Options are passed in CMakeLists.txt directly
@@ -125,6 +128,7 @@ jobs:
       - name: Run examples
         shell: bash -ex -o pipefail {0}
         run: |
+          export LD_LIBRARY_PATH=$(pwd)/project/install-submodule/lib
           cd ~/project/_build-submodule
           ./hellox86
           ./dfttutorial 4
