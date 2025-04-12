@@ -315,6 +315,37 @@ pipeline {
 			 '''
             	     }
 		 }
+
+		stage('cross-ppc64el gcc noexp') {
+            	     agent { label 'x86_64 && ubuntu24 && cuda' }
+            	     steps {
+                         cleanWs()
+                         checkout scm
+	    	     	 sh '''
+                	 echo "Cross ppc64el gcc without experimental features on" `hostname`
+			 export NATIVE_INSTALL_PREFIX=`pwd`/install-native
+			 export LD_LIBRARY_PATH=$NATIVE_INSTALL_PREFIX/lib
+			 export CROSS_INSTALL_PREFIX=`pwd`/install
+			 export QEMU_LD_PREFIX=$CROSS_INSTALL_PREFIX/lib
+			 rm -rf build-native
+ 			 mkdir build-native
+			 cd build-native
+			 export NATIVE_BUILD_DIR=`pwd`
+			 cmake -GNinja .. -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_DFT=TRUE -DSLEEF_ENFORCE_DFT=TRUE -DCMAKE_INSTALL_PREFIX=$NATIVE_INSTALL_PREFIX
+			 cmake -E time ninja
+			 cd ..
+ 			 mkdir build
+			 cd build
+			 cmake -GNinja .. -DCMAKE_TOOLCHAIN_FILE=../toolchains/ppc64el-gcc.cmake -DNATIVE_BUILD_DIR=$NATIVE_BUILD_DIR -DCMAKE_INSTALL_PREFIX=$CROSS_INSTALL_PREFIX -DSLEEF_SHOW_CONFIG=1 -DSLEEF_ENFORCE_TESTER3=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_DFT=TRUE -DSLEEF_ENFORCE_DFT=TRUE -DSLEEF_ENFORCE_TESTER4=True -DSLEEF_ENABLE_TESTER=False -DSLEEF_BUILD_SHARED_LIBS=ON
+			 cmake -E time ninja
+			 export OMP_WAIT_POLICY=passive
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+			 export LD_LIBRARY_PATH=/usr/powerpc64le-linux-gnu/lib
+		         ctest -j `nproc`
+			 ninja install
+			 '''
+            	     }
+		 }
             }
         }
     }
