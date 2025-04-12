@@ -14,8 +14,7 @@ permissions:
 
 env:
   COMMON_CMAKE_FLAGS: >
-    -DSLEEF_BUILD_DFT=False
-    -DSLEEF_ENFORCE_DFT=False
+    -DSLEEF_ENFORCE_DFT=OFF
     -DSLEEF_BUILD_QUAD=ON
     -DSLEEF_BUILD_STATIC_TEST_BINS=ON
     -DSLEEF_ENFORCE_TESTER=ON
@@ -76,18 +75,18 @@ jobs:
           export LD_LIBRARY_PATH=$(pwd)/_install-msys2-${{ matrix.sys }}-${{ matrix.lto }}/lib
           EXTRA_CMAKE_FLAGS=""
           if [[ ${{ matrix.sys }} = "clang64" ]]; then
-            EXTRA_CMAKE_FLAGS="$EXTRA_CMAKE_FLAGS -DSLEEF_ENFORCE_SSE2=ON -DSLEEF_ENFORCE_SSE4=ON -DSLEEF_ENFORCE_AVX=ON -DSLEEF_ENFORCE_AVX2=ON -DSLEEF_ENFORCE_AVX512F=ON -DSLEEF_ENFORCE_FMA4=ON"
+            EXTRA_CMAKE_FLAGS="$EXTRA_CMAKE_FLAGS -DSLEEF_ENFORCE_SSE2=ON -DSLEEF_ENFORCE_AVX2=ON -DSLEEF_ENFORCE_AVX512F=ON"
             [[ ${{ matrix.lto }} = "lto" ]] && EXTRA_CMAKE_FLAGS="$EXTRA_CMAKE_FLAGS -DSLEEF_ENABLE_LTO=ON"
           elif [[ ${{ matrix.sys }} = "clangarm64" ]]; then
             [[ ${{ matrix.lto }} = "lto" ]] && EXTRA_CMAKE_FLAGS="$EXTRA_CMAKE_FLAGS -DSLEEF_ENABLE_LTO=ON"
           elif [[ ${{ matrix.sys }} = "mingw64" || ${{ matrix.sys }} = "ucrt64" ]]; then
-            EXTRA_CMAKE_FLAGS="$EXTRA_CMAKE_FLAGS -DSLEEF_ENFORCE_SSE2=ON -DSLEEF_ENFORCE_SSE4=ON -DSLEEF_ENFORCE_AVX=ON -DSLEEF_ENFORCE_AVX2=ON -DSLEEF_ENFORCE_AVX512F=ON -DSLEEF_ENFORCE_FMA4=ON"
+            EXTRA_CMAKE_FLAGS="$EXTRA_CMAKE_FLAGS -DSLEEF_ENFORCE_SSE2=ON -DSLEEF_ENFORCE_AVX2=ON -DSLEEF_ENFORCE_AVX512F=ON"
           fi
           cmake -S . -B _build-msys2-${{ matrix.sys }}-${{ matrix.lto }} -GNinja \
             ${COMMON_CMAKE_FLAGS} \
             ${EXTRA_CMAKE_FLAGS} \
             -DCMAKE_INSTALL_PREFIX=$(pwd)/_install-msys2-${{ matrix.sys }}-${{ matrix.lto }} \
-            -DOPENSSL_EXTRA_LIBRARIES="-lws2_32 -lcrypt32"
+            -DSLEEF_OPENSSL_EXTRA_LIBRARIES="-lws2_32 -lcrypt32"
           cmake --build _build-msys2-${{ matrix.sys }}-${{ matrix.lto }}
           cmake --install _build-msys2-${{ matrix.sys }}-${{ matrix.lto }}
 

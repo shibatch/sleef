@@ -9,7 +9,7 @@
 #define CONST
 #endif
 
-int Sleef_cpuSupportsExt_internal(void (*tryExt)(), int *cache);
+int Sleef_internal_cpuSupportsExt(void (*tryExt)(), int *cache);
 
 #define DISPATCH_vq_vq(qtype, funcName, pfn, dfn, funcExt0, funcExt1)	\
   static CONST qtype (*pfn)(qtype arg0);			\

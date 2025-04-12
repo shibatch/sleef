@@ -64,7 +64,7 @@ if(COMPILER_SUPPORTS_QUADMATH)
   target_compile_definitions(${TARGET_QTESTERUTIL_OBJ} PRIVATE ENABLEFLOAT128=1)
 endif()
 
-# Target TARGET_TRYEXT_OBJ
-add_library(${TARGET_TRYEXT_OBJ} OBJECT tryext.cpp)
-target_compile_definitions(${TARGET_TRYEXT_OBJ} PRIVATE ${COMMON_TARGET_DEFINITIONS})
-install(TARGETS ${TARGET_TRYEXT_OBJ} EXPORT sleefTargets)
+# Target TARGET_COMMONXX_OBJ
+add_library(${TARGET_COMMONXX_OBJ} OBJECT commonxx.cpp)
+target_compile_definitions(${TARGET_COMMONXX_OBJ} PRIVATE ${COMMON_TARGET_DEFINITIONS})
+install(TARGETS ${TARGET_COMMONXX_OBJ} EXPORT sleefTargets)

@@ -40,7 +40,7 @@ using namespace std;
 
 #define INFINITY_ (1e+300 * 1e+300)
 
-namespace sleef {
+namespace sleef_internal {
   class Action {
   public:
     int config, level, N;
@@ -215,7 +215,7 @@ namespace sleef {
   extern FILE *defaultVerboseFP;
 }
 
-using namespace sleef;
+using namespace sleef_internal;
 
 struct SleefDFT {
   uint32_t magic;

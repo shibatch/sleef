@@ -59,7 +59,7 @@ elseif(SLEEF_ARCH_AARCH64)
     DSPX2_AARCH64
     )
   set(QMKDISP_PARAMS_X2 2 Sleef_quadx2 float64x2_t int32x2_t int64x2_t uint64x2_t advsimd x)
-elseif(SLEEF_ARCH_PPC64)
+elseif(SLEEF_ARCH_PPC64 AND COMPILER_SUPPORTS_VSX)
   set(SLEEF_HEADER_LIST
     VSX
     VSX3
@@ -69,7 +69,7 @@ elseif(SLEEF_ARCH_PPC64)
     DSPX2_PPC64
     )
   set(QMKDISP_PARAMS_X2 2 Sleef_quadx2 "SLEEF_VECTOR_DOUBLE" "SLEEF_VECTOR_INT" "SLEEF_VECTOR_LONGLONG" "SLEEF_VECTOR_ULONGLONG" vsx vsx3)
-elseif(SLEEF_ARCH_S390X)
+elseif(SLEEF_ARCH_S390X AND COMPILER_SUPPORTS_VXE)
   set(SLEEF_HEADER_LIST
     VXE
     VXE2
@@ -229,7 +229,7 @@ if(LIBM AND ((NOT COMPILER_SUPPORTS_BUILTIN_MATH) OR (SLEEF_ARCH_32BIT AND SLEEF
   target_link_libraries(sleefquad ${LIBM})
 endif()
 
-target_link_libraries(sleefquad ${TARGET_TRYEXT_OBJ} ${TARGET_LIBSLEEF} ${TLFLOAT_LIBRARIES} ${LIBM})
+target_link_libraries(sleefquad ${TARGET_COMMONXX_OBJ} ${TARGET_LIBSLEEF} ${TLFLOAT_LIBRARIES} ${LIBM})
 
 # --------------------------------------------------------------------
 # Inline headers

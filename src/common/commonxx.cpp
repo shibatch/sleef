@@ -3,18 +3,27 @@
 #endif
 
 #include <mutex>
+#include <chrono>
 #include "misc.h"
 #include "compat.h"
 
 using namespace std;
 
 extern "C" {
-NOEXPORT int Sleef_cpuSupportsExt_internal(void (*tryExt)(), int *cache);
+EXPORT uint64_t Sleef_currentTimeMicros();
+NOEXPORT int Sleef_internal_cpuSupportsExt(void (*tryExt)(), int *cache);
 }
+
+EXPORT uint64_t Sleef_currentTimeMicros() {
+  return chrono::duration_cast<chrono::microseconds>
+    (chrono::system_clock::now() - chrono::system_clock::from_time_t(0)).count();
+}
+
+//
 
 static void sighandler(int signum) { LONGJMP(sigjmp, 1); }
 
-NOEXPORT int Sleef_cpuSupportsExt_internal(void (*tryExt)(), int *cache) {
+NOEXPORT int Sleef_internal_cpuSupportsExt(void (*tryExt)(), int *cache) {
   if (*cache != -1) return *cache;
 
   static mutex mtx;

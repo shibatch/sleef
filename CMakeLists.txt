@@ -13,24 +13,20 @@ set(CMAKE_CXX_STANDARD 20)
 
 option(SLEEF_BUILD_STATIC_TEST_BINS "Build statically linked test executables" OFF)
 option(SLEEF_ENABLE_LTO "Enable LTO on GCC or ThinLTO on clang" OFF)
+option(SLEEF_ENABLE_ASAN "Enable address sanitizing on all targets." OFF)
 option(SLEEF_BUILD_LIBM "libsleef will be built." ON)
 option(SLEEF_BUILD_DFT "libsleefdft will be built." OFF)
 option(SLEEF_BUILD_QUAD "libsleefquad will be built." OFF)
 option(SLEEF_BUILD_TESTS "Tests will be built." ON)
 option(SLEEF_BUILD_INLINE_HEADERS "Build header for inlining whole SLEEF functions" OFF)
+option(SLEEF_SHOW_CONFIG "Show SLEEF configuration status messages." ON)
+option(SLEEF_SHOW_ERROR_LOG "Show cmake error log." OFF)
 
 option(SLEEF_ENFORCE_DFT "Build fails if DFT is not built" OFF)
 option(SLEEFDFT_ENABLE_STREAM "Streaming instructions are utilized in DFT." OFF)
 
-option(SLEEF_TEST_ALL_IUT "Perform tests on implementations with all vector extensions" OFF)
-option(SLEEF_SHOW_CONFIG "Show SLEEF configuration status messages." ON)
-option(SLEEF_SHOW_ERROR_LOG "Show cmake error log." OFF)
-option(SLEEF_ASAN "Enable address sanitizing on all targets." OFF)
-
 option(SLEEF_ENABLE_TESTER "Enable testing libm with tester" OFF)
 option(SLEEF_ENFORCE_TESTER "Build fails if tester is not available" OFF)
-
-option(SLEEF_ENFORCE_TESTER3 "Build fails if tester3 is not built" OFF)
 
 option(SLEEF_ENABLE_TESTER4 "Enable testing with tester4" ON)
 option(SLEEF_ENFORCE_TESTER4 "Build fails if tester4 is not available" OFF)
@@ -38,48 +34,144 @@ option(SLEEF_ENFORCE_TESTER4 "Build fails if tester4 is not available" OFF)
 option(SLEEF_ENABLE_ALTDIV  "Enable alternative division method (aarch64 only)" OFF)
 option(SLEEF_ENABLE_ALTSQRT "Enable alternative sqrt method (aarch64 only)" OFF)
 
-option(SLEEF_DISABLE_FFTW "Disable testing the DFT library with FFTW" OFF)
-option(SLEEF_DISABLE_MPFR "Disable testing with the MPFR library" OFF)
+option(SLEEF_ENABLE_FFTW "Enable testing the DFT library with FFTW" ON)
+option(SLEEF_ENABLE_MPFR "Enable testing with the MPFR library" ON)
 option(SLEEF_ENABLE_TLFLOAT "Enable use of TLFloat library" ON)
 
-option(SLEEF_DISABLE_SSL "Disable testing with the SSL library" OFF)
-set(OPENSSL_EXTRA_LIBRARIES "" CACHE STRING "Extra libraries for openssl")
+option(SLEEF_ENABLE_SSL "Enable testing with the SSL library" ON)
+set(SLEEF_OPENSSL_EXTRA_LIBRARIES "" CACHE STRING "Extra libraries for openssl")
 
-option(SLEEF_ENABLE_CUDA "Enable CUDA" OFF)
+option(SLEEF_ENABLE_OPENMP "Enable OPENMP" ON)
+option(SLEEF_ENFORCE_OPENMP "Build fails if OPENMP is not supported by the compiler" OFF)
 
 option(SLEEF_BUILD_WITH_LIBM "build libsleef with libm, can turn off on Windows to solve mutiple math functions issue." ON)
 
-option(SLEEF_DISABLE_LONG_DOUBLE "Disable long double" OFF)
-option(SLEEF_ENFORCE_LONG_DOUBLE "Build fails if long double is not supported by the compiler" OFF)
-
-option(SLEEF_DISABLE_FLOAT128 "Disable float128" OFF)
+option(SLEEF_ENABLE_FLOAT128 "Enable float128" ON)
 option(SLEEF_ENFORCE_FLOAT128 "Build fails if float128 is not supported by the compiler" OFF)
 
-option(SLEEF_DISABLE_SSE2 "Disable SSE2" OFF)
+option(SLEEF_ENABLE_SSE2 "Enable SSE2" ON)
 option(SLEEF_ENFORCE_SSE2 "Build fails if SSE2 is not supported by the compiler" OFF)
-option(SLEEF_DISABLE_AVX2 "Disable AVX2" OFF)
+option(SLEEF_ENABLE_AVX2 "Enable AVX2" ON)
 option(SLEEF_ENFORCE_AVX2 "Build fails if AVX2 is not supported by the compiler" OFF)
-option(SLEEF_DISABLE_AVX512F "Disable AVX512F" OFF)
+option(SLEEF_ENABLE_AVX512F "Enable AVX512F" OFF)
 option(SLEEF_ENFORCE_AVX512F "Build fails if AVX512F is not supported by the compiler" OFF)
-option(SLEEF_DISABLE_SVE "Disable SVE" OFF)
+option(SLEEF_ENABLE_SVE "Enable SVE" OFF)
 option(SLEEF_ENFORCE_SVE "Build fails if SVE is not supported by the compiler" OFF)
-option(SLEEF_DISABLE_VSX "Disable VSX" OFF)
+option(SLEEF_ENABLE_VSX "Enable VSX" OFF)
 option(SLEEF_ENFORCE_VSX "Build fails if VSX is not supported by the compiler" OFF)
-option(SLEEF_DISABLE_VSX3 "Disable VSX3" OFF)
+option(SLEEF_ENABLE_VSX3 "Enable VSX3" OFF)
 option(SLEEF_ENFORCE_VSX3 "Build fails if VSX3 is not supported by the compiler" OFF)
-option(SLEEF_DISABLE_VXE "Disable VXE" OFF)
+option(SLEEF_ENABLE_VXE "Enable VXE" OFF)
 option(SLEEF_ENFORCE_VXE "Build fails if VXE is not supported by the compiler" OFF)
-option(SLEEF_DISABLE_VXE2 "Disable VXE2" OFF)
+option(SLEEF_ENABLE_VXE2 "Enable VXE2" OFF)
 option(SLEEF_ENFORCE_VXE2 "Build fails if VXE2 is not supported by the compiler" OFF)
-option(SLEEF_DISABLE_RVVM1 "Disable RVVM1" OFF)
+option(SLEEF_ENABLE_RVVM1 "Enable RVVM1" OFF)
 option(SLEEF_ENFORCE_RVVM1 "Build fails if RVVM1 is not supported by the compiler" OFF)
-option(SLEEF_DISABLE_RVVM2 "Disable RVVM2" OFF)
+option(SLEEF_ENABLE_RVVM2 "Enable RVVM2" OFF)
 option(SLEEF_ENFORCE_RVVM2 "Build fails if RVVM2 is not supported by the compiler" OFF)
 
+option(SLEEF_ENABLE_CUDA "Enable CUDA" OFF)
 option(SLEEF_ENFORCE_CUDA "Build fails if CUDA is not supported" OFF)
 
-option(SLEEF_DISABLE_OPENMP "Disable OPENMP" OFF)
-option(SLEEF_ENFORCE_OPENMP "Build fails if OPENMP is not supported by the compiler" OFF)
+#
+
+if (SLEEF_ENFORCE_DFT)
+  set(SLEEF_BUILD_DFT ON)
+endif()
+
+if (SLEEF_ENFORCE_TESTER)
+  set(SLEEF_ENABLE_TESTER ON)
+endif()
+
+if (SLEEF_ENFORCE_TESTER4)
+  set(SLEEF_ENABLE_TESTER4 ON)
+endif()
+
+if (SLEEF_ENFORCE_OPENMP)
+  set(SLEEF_ENABLE_OPENMP ON)
+endif()
+
+if (SLEEF_ENFORCE_FLOAT128)
+  set(SLEEF_ENABLE_FLOAT128 ON)
+endif()
+
+#
+
+if (SLEEF_ENFORCE_SSE2)
+  set(SLEEF_ENABLE_SSE2 ON)
+endif()
+
+if (SLEEF_ENFORCE_AVX2)
+  set(SLEEF_ENABLE_AVX2 ON)
+endif()
+
+if (SLEEF_ENFORCE_AVX512F)
+  set(SLEEF_ENABLE_AVX512F ON)
+endif()
+
+if (SLEEF_ENABLE_AVX512F)
+  message(WARNING "You enabled AVX512F support, which is an experimental feature. Experimental features may be removed without notice.")
+endif()
+
+if (SLEEF_ENFORCE_SVE)
+  set(SLEEF_ENABLE_SVE ON)
+endif()
+
+if (SLEEF_ENABLE_SVE)
+  message(WARNING "You enabled SVE support, which is an experimental feature. Experimental features may be removed without notice.")
+endif()
+
+if (SLEEF_ENFORCE_VSX)
+  set(SLEEF_ENABLE_VSX ON)
+endif()
+
+if (SLEEF_ENABLE_VSX)
+  message(WARNING "You enabled VSX support, which is an experimental feature. Experimental features may be removed without notice.")
+endif()
+
+if (SLEEF_ENFORCE_VSX3)
+  set(SLEEF_ENABLE_VSX3 ON)
+endif()
+
+if (SLEEF_ENABLE_VSX3)
+  message(WARNING "You enabled VSX3 support, which is an experimental feature. Experimental features may be removed without notice.")
+endif()
+
+if (SLEEF_ENFORCE_VXE)
+  set(SLEEF_ENABLE_VXE ON)
+endif()
+
+if (SLEEF_ENABLE_VXE)
+  message(WARNING "You enabled VXE support, which is an experimental feature. Experimental features may be removed without notice.")
+endif()
+
+if (SLEEF_ENFORCE_VXE2)
+  set(SLEEF_ENABLE_VXE2 ON)
+endif()
+
+if (SLEEF_ENABLE_VXE2)
+  message(WARNING "You enabled VXE2 support, which is an experimental feature. Experimental features may be removed without notice.")
+endif()
+
+if (SLEEF_ENFORCE_RVVM1)
+  set(SLEEF_ENABLE_RVVM1 ON)
+endif()
+
+if (SLEEF_ENABLE_RVVM1)
+  message(WARNING "You enabled RVVM1 support, which is an experimental feature. Experimental features may be removed without notice.")
+endif()
+
+if (SLEEF_ENFORCE_RVVM2)
+  set(SLEEF_ENABLE_RVVM2 ON)
+endif()
+
+if (SLEEF_ENABLE_RVVM2)
+  message(WARNING "You enabled RVVM2 support, which is an experimental feature. Experimental features may be removed without notice.")
+endif()
+
+if (SLEEF_ENFORCE_CUDA)
+  set(SLEEF_ENABLE_CUDA ON)
+endif()
 
 #
 
@@ -279,7 +371,7 @@ set(TARGET_LIBCOMMON_OBJ "common")
 set(TARGET_PSHA_OBJ "psha_obj")
 set(TARGET_TESTERUTIL_OBJ "testerutil_obj")
 set(TARGET_QTESTERUTIL_OBJ "qtesterutil_obj")
-set(TARGET_TRYEXT_OBJ "tryext_obj")
+set(TARGET_COMMONXX_OBJ "commonxx_obj")
 
 # Function used to add an executable that is executed on host
 function(add_host_executable TARGETNAME)

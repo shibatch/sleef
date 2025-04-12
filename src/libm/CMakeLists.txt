@@ -240,7 +240,7 @@ endif()
 set(STANDARD_SOURCES rempitab.c)
 
 add_library(${TARGET_LIBSLEEF} ${STANDARD_SOURCES})
-target_link_libraries(${TARGET_LIBSLEEF} ${TARGET_TRYEXT_OBJ} ${TLFLOAT_LIBRARIES})
+target_link_libraries(${TARGET_LIBSLEEF} ${TARGET_COMMONXX_OBJ} ${TLFLOAT_LIBRARIES})
 add_dependencies(${TARGET_LIBSLEEF} ${TARGET_HEADERS} ext_tlfloat)
 set_target_properties(${TARGET_LIBSLEEF} PROPERTIES
   VERSION ${SLEEF_VERSION}
@@ -606,7 +606,7 @@ if (SLEEF_ARCH_X86)
   endif()
 endif(SLEEF_ARCH_X86)
 
-if (SLEEF_ARCH_PPC64)
+if (SLEEF_ARCH_PPC64 AND COMPILER_SUPPORTS_VSX)
   # Target disppower_128.c
   sleef_generate_disp_simd(power_128 2 4 SLEEF_VECTOR_DOUBLE SLEEF_VECTOR_FLOAT SLEEF_VECTOR_INT vsx vsx3 x)
 
@@ -631,9 +631,9 @@ if (SLEEF_ARCH_PPC64)
     set_target_properties(tryvsx3_obj PROPERTIES ${COMMON_TARGET_PROPERTIES})
     target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:tryvsx3_obj>)
   endif()
-endif(SLEEF_ARCH_PPC64)
+endif(SLEEF_ARCH_PPC64 AND COMPILER_SUPPORTS_VSX)
 
-if (SLEEF_ARCH_S390X)
+if (SLEEF_ARCH_S390X AND COMPILER_SUPPORTS_VXE)
   # Target disps390x_128.c
   sleef_generate_disp_simd(s390x_128 2 4 SLEEF_VECTOR_DOUBLE SLEEF_VECTOR_FLOAT SLEEF_VECTOR_INT vxe vxe2 x)
 
@@ -652,7 +652,7 @@ if (SLEEF_ARCH_S390X)
   add_dependencies(disps390x_128_obj disps390x_128.c_generated renamedsp128.h_generated ${TARGET_HEADERS})
   target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:disps390x_128_obj>)
 
-endif(SLEEF_ARCH_S390X)
+endif(SLEEF_ARCH_S390X AND COMPILER_SUPPORTS_VXE)
 
 # --------------------------------------------------------------------
 # Install
