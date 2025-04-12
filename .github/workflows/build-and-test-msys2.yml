@@ -87,7 +87,7 @@ jobs:
             ${COMMON_CMAKE_FLAGS} \
             ${EXTRA_CMAKE_FLAGS} \
             -DCMAKE_INSTALL_PREFIX=$(pwd)/_install-msys2-${{ matrix.sys }}-${{ matrix.lto }} \
-            -DOPENSSL_EXTRA_LIBRARIES="-lws2_32 -lcrypt32"
+            -DSLEEF_OPENSSL_EXTRA_LIBRARIES="-lws2_32 -lcrypt32"
           cmake --build _build-msys2-${{ matrix.sys }}-${{ matrix.lto }}
           cmake --install _build-msys2-${{ matrix.sys }}-${{ matrix.lto }}
 

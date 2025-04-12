@@ -75,6 +75,28 @@ option(SLEEF_ENFORCE_CUDA "Build fails if CUDA is not supported" OFF)
 
 #
 
+if (SLEEF_ENFORCE_DFT)
+  set(SLEEF_BUILD_DFT ON)
+endif()
+
+if (SLEEF_ENFORCE_TESTER)
+  set(SLEEF_ENABLE_TESTER ON)
+endif()
+
+if (SLEEF_ENFORCE_TESTER4)
+  set(SLEEF_ENABLE_TESTER4 ON)
+endif()
+
+if (SLEEF_ENFORCE_OPENMP)
+  set(SLEEF_ENABLE_OPENMP ON)
+endif()
+
+if (SLEEF_ENFORCE_FLOAT128)
+  set(SLEEF_ENABLE_FLOAT128 ON)
+endif()
+
+#
+
 if (SLEEF_ENFORCE_SSE2)
   set(SLEEF_ENABLE_SSE2 ON)
 endif()
