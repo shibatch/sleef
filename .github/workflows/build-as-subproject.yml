@@ -17,6 +17,7 @@ env:
   COMMON_CMAKE_FLAGS: >
     -DSLEEF_SHOW_CONFIG=ON
     -DSLEEF_BUILD_QUAD=ON
+    -DSLEEF_BUILD_DFT=ON
     -DSLEEF_ENFORCE_DFT=ON
     -DSLEEF_BUILD_TESTS=OFF
 
@@ -70,7 +71,6 @@ jobs:
           export LD_LIBRARY_PATH=$(pwd)/project/install-nested/lib
           cd ~/project/_build-nested
           ./hellox86
-          ./dfttutorial 4
           ./dfttutorial 4
 
       - name: Upload nested artifacts
@@ -131,7 +131,6 @@ jobs:
           export LD_LIBRARY_PATH=$(pwd)/project/install-submodule/lib
           cd ~/project/_build-submodule
           ./hellox86
-          ./dfttutorial 4
           ./dfttutorial 4
 
       - name: Upload submodule artifacts
