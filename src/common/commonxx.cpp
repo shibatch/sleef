@@ -3,6 +3,7 @@
 #endif
 
 #include <mutex>
+#include <chrono>
 #include "misc.h"
 #include "compat.h"
 
