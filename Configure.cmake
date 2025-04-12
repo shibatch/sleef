@@ -47,10 +47,6 @@ else()
   message(STATUS "Detection of OpenSSL is skipped since SLEEF_ENABLE_SSL is false")
 endif()
 
-if (SLEEF_ENFORCE_TESTER3 AND NOT SLEEF_OPENSSL_FOUND)
-  message(FATAL_ERROR "SLEEF_ENFORCE_TESTER3 is specified and OpenSSL not found")
-endif()
-
 # Some toolchains require explicit linking of the libraries following.
 find_library(LIB_MPFR mpfr)
 if(SLEEF_BUILD_WITH_LIBM)

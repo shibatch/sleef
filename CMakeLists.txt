@@ -28,8 +28,6 @@ option(SLEEFDFT_ENABLE_STREAM "Streaming instructions are utilized in DFT." OFF)
 option(SLEEF_ENABLE_TESTER "Enable testing libm with tester" OFF)
 option(SLEEF_ENFORCE_TESTER "Build fails if tester is not available" OFF)
 
-option(SLEEF_ENFORCE_TESTER3 "Build fails if tester3 is not built" OFF)
-
 option(SLEEF_ENABLE_TESTER4 "Enable testing with tester4" ON)
 option(SLEEF_ENFORCE_TESTER4 "Build fails if tester4 is not available" OFF)
 

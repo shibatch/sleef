@@ -324,7 +324,7 @@ if (SLEEF_ARCH_AARCH64)
   endif(SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
 endif()
 
-if (SLEEF_ARCH_PPC64)
+if (SLEEF_ARCH_PPC64 AND COMPILER_SUPPORTS_VSX)
   if (SLEEF_ENABLE_TESTER)
     # Compile executable 'qiutdspx2'
     add_executable(qiutdspx2 ${IUT_SRC})
@@ -361,7 +361,7 @@ if (SLEEF_ARCH_PPC64)
   endif(SLEEF_ENABLE_TESTER4 AND TLFLOAT_LIBRARIES)
 endif()
 
-if (SLEEF_ARCH_S390X)
+if (SLEEF_ARCH_S390X AND COMPILER_SUPPORTS_VXE)
   if (SLEEF_ENABLE_TESTER)
     # Compile executable 'qiutdspx2'
     add_executable(qiutdspx2 ${IUT_SRC})
