@@ -37,7 +37,7 @@ static const real ctbl[] = {
   0.04906767432741801425355085940205324135377L, -0.9987954562051723927007702841240899260811L,
 };
 
-namespace sleef {
+namespace sleef_internal {
 
 ALIGNED(8192) void dft2f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
@@ -14204,4 +14204,4 @@ const void *getPtr_%ISA%(int name) {
 }
 #endif
 
-} // namespace sleef
+} // namespace sleef_internal

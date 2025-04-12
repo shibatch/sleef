@@ -76,12 +76,12 @@ jobs:
           export LD_LIBRARY_PATH=$(pwd)/_install-msys2-${{ matrix.sys }}-${{ matrix.lto }}/lib
           EXTRA_CMAKE_FLAGS=""
           if [[ ${{ matrix.sys }} = "clang64" ]]; then
-            EXTRA_CMAKE_FLAGS="$EXTRA_CMAKE_FLAGS -DSLEEF_ENFORCE_SSE2=ON -DSLEEF_ENFORCE_SSE4=ON -DSLEEF_ENFORCE_AVX=ON -DSLEEF_ENFORCE_AVX2=ON -DSLEEF_ENFORCE_AVX512F=ON -DSLEEF_ENFORCE_FMA4=ON"
+            EXTRA_CMAKE_FLAGS="$EXTRA_CMAKE_FLAGS -DSLEEF_ENFORCE_SSE2=ON -DSLEEF_ENFORCE_AVX2=ON -DSLEEF_ENFORCE_AVX512F=ON"
             [[ ${{ matrix.lto }} = "lto" ]] && EXTRA_CMAKE_FLAGS="$EXTRA_CMAKE_FLAGS -DSLEEF_ENABLE_LTO=ON"
           elif [[ ${{ matrix.sys }} = "clangarm64" ]]; then
             [[ ${{ matrix.lto }} = "lto" ]] && EXTRA_CMAKE_FLAGS="$EXTRA_CMAKE_FLAGS -DSLEEF_ENABLE_LTO=ON"
           elif [[ ${{ matrix.sys }} = "mingw64" || ${{ matrix.sys }} = "ucrt64" ]]; then
-            EXTRA_CMAKE_FLAGS="$EXTRA_CMAKE_FLAGS -DSLEEF_ENFORCE_SSE2=ON -DSLEEF_ENFORCE_SSE4=ON -DSLEEF_ENFORCE_AVX=ON -DSLEEF_ENFORCE_AVX2=ON -DSLEEF_ENFORCE_AVX512F=ON -DSLEEF_ENFORCE_FMA4=ON"
+            EXTRA_CMAKE_FLAGS="$EXTRA_CMAKE_FLAGS -DSLEEF_ENFORCE_SSE2=ON -DSLEEF_ENFORCE_AVX2=ON -DSLEEF_ENFORCE_AVX512F=ON"
           fi
           cmake -S . -B _build-msys2-${{ matrix.sys }}-${{ matrix.lto }} -GNinja \
             ${COMMON_CMAKE_FLAGS} \

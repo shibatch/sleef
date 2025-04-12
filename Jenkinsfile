@@ -42,7 +42,31 @@ pipeline {
 			 export LD_LIBRARY_PATH=$INSTALL_PREFIX/lib
  			 mkdir build
 			 cd build
-			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_DFT=TRUE -DSLEEF_ENFORCE_DFT=TRUE -DSLEEFDFT_ENABLE_STREAM=True -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_INLINE_HEADERS=TRUE -DSLEEF_ENFORCE_SSE2=TRUE -DSLEEF_ENFORCE_AVX2=TRUE -DSLEEF_ENFORCE_AVX512F=TRUE -DSLEEF_ENFORCE_TESTER4=True -DSLEEF_ENABLE_TESTER=True -DSLEEF_ENFORCE_TESTER=True -DSLEEF_ASAN=True
+			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_DFT=TRUE -DSLEEF_ENFORCE_DFT=TRUE -DSLEEFDFT_ENABLE_STREAM=True -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_INLINE_HEADERS=TRUE -DSLEEF_ENFORCE_SSE2=TRUE -DSLEEF_ENFORCE_AVX2=TRUE -DSLEEF_ENFORCE_AVX512F=TRUE -DSLEEF_ENFORCE_TESTER4=True -DSLEEF_ENABLE_TESTER=True -DSLEEF_ENFORCE_TESTER=True -DSLEEF_ENABLE_ASAN=True
+			 cmake -E time ninja
+			 export OMP_WAIT_POLICY=passive
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j `nproc`
+		         ninja install
+			 '''
+            	     }
+                }
+
+                stage('x86_64 linux clang-19 noexp') {
+            	     agent { label 'x86_64 && ubuntu24 && avx512f' }
+                     options { skipDefaultCheckout() }
+            	     steps {
+                         cleanWs()
+                         checkout scm
+	    	     	 sh '''
+                	 echo "x86_64 clang-19 without experimental features on" `hostname`
+			 export CC=clang-19
+			 export CXX=clang++-19
+			 export INSTALL_PREFIX=`pwd`/install
+			 export LD_LIBRARY_PATH=$INSTALL_PREFIX/lib
+ 			 mkdir build
+			 cd build
+			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_DFT=TRUE -DSLEEF_ENFORCE_DFT=TRUE -DSLEEFDFT_ENABLE_STREAM=True -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_INLINE_HEADERS=TRUE -DSLEEF_ENFORCE_SSE2=TRUE -DSLEEF_ENFORCE_AVX2=TRUE -DSLEEF_ENFORCE_TESTER4=True -DSLEEF_ENABLE_TESTER=True -DSLEEF_ENFORCE_TESTER=True
 			 cmake -E time ninja
 			 export OMP_WAIT_POLICY=passive
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
@@ -67,7 +91,7 @@ pipeline {
 			 export LD_LIBRARY_PATH=$INSTALL_PREFIX/lib
  			 mkdir build
 			 cd build
-			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX -DSLEEF_SHOW_CONFIG=1 -DSLEEF_ENABLE_CUDA=True -DSLEEF_ENFORCE_CUDA=True -DSLEEF_BUILD_DFT=TRUE -DSLEEF_ENFORCE_DFT=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_INLINE_HEADERS=TRUE -DSLEEF_ENFORCE_SSE2=TRUE -DSLEEF_ENFORCE_AVX2=TRUE -DSLEEF_ENFORCE_AVX512F=TRUE -DSLEEF_ENFORCE_TESTER4=True -DSLEEF_ENABLE_TESTER=True -DSLEEF_ENFORCE_TESTER=True -DSLEEF_BUILD_SHARED_LIBS=ON
+			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX -DSLEEF_SHOW_CONFIG=1 -DSLEEF_ENFORCE_CUDA=True -DSLEEF_BUILD_DFT=TRUE -DSLEEF_ENFORCE_DFT=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_INLINE_HEADERS=TRUE -DSLEEF_ENFORCE_SSE2=TRUE -DSLEEF_ENFORCE_AVX2=TRUE -DSLEEF_ENFORCE_AVX512F=TRUE -DSLEEF_ENFORCE_TESTER4=True -DSLEEF_ENABLE_TESTER=True -DSLEEF_ENFORCE_TESTER=True -DSLEEF_BUILD_SHARED_LIBS=ON
 			 cmake -E time ninja
 			 export OMP_WAIT_POLICY=passive
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
@@ -96,7 +120,7 @@ pipeline {
 		     }
 		}
 
-                stage('x86_64 windows clang') {
+                stage('x86_64 windows clang noexp') {
             	     agent { label 'windows11 && vs2022' }
                      options { skipDefaultCheckout() }
             	     steps {
@@ -107,7 +131,7 @@ pipeline {
 			 if not %ERRORLEVEL% == 0 exit /b %ERRORLEVEL%
 			 if exist ..\\install\\ rmdir /S /Q ..\\install
 			 set PATH=%PATH%;%CD%\\..\\install\\bin
-			 call "winbuild-clang.bat" -DCMAKE_INSTALL_PREFIX=../../install -DCMAKE_BUILD_TYPE=Release -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_DFT=True -DSLEEF_ENFORCE_DFT=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_ENFORCE_SSE2=TRUE -DSLEEF_ENFORCE_AVX2=TRUE -DSLEEF_ENFORCE_AVX512F=TRUE -DSLEEF_ENABLE_TESTER4=True -DSLEEF_ENFORCE_TESTER4=True -DSLEEF_DISABLE_SSL=True
+			 call "winbuild-clang.bat" -DCMAKE_INSTALL_PREFIX=../../install -DCMAKE_BUILD_TYPE=Release -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_DFT=True -DSLEEF_ENFORCE_DFT=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_ENFORCE_SSE2=TRUE -DSLEEF_ENFORCE_AVX2=TRUE -DSLEEF_ENABLE_TESTER4=True -DSLEEF_ENFORCE_TESTER4=True -DSLEEF_ENABLE_SSL=False
 			 if not %ERRORLEVEL% == 0 exit /b %ERRORLEVEL%
 			 ctest -j 4 --output-on-failure
 			 exit /b %ERRORLEVEL%
@@ -165,14 +189,14 @@ pipeline {
             	     }
                 }
 
-                stage('aarch64 linux clang-19') {
+                stage('aarch64 linux clang-19-lto') {
             	     agent { label 'aarch64 && ubuntu24 && apple' }
                      options { skipDefaultCheckout() }
             	     steps {
                          cleanWs()
                          checkout scm
 	    	     	 sh '''
-                	 echo "aarch64 clang-19 on" `hostname`
+                	 echo "aarch64 clang-19 with LTO on" `hostname`
 			 export CC=clang-19
 			 export CXX=clang++-19
 			 export INSTALL_PREFIX=`pwd`/install
@@ -202,6 +226,28 @@ pipeline {
  			 mkdir build
 			 cd build
 			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_DFT=TRUE -DSLEEF_ENFORCE_DFT=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_INLINE_HEADERS=TRUE -DSLEEF_ENFORCE_SVE=TRUE -DEMULATOR=qemu-aarch64-static -DSLEEF_ENFORCE_TESTER4=True -DSLEEF_ENABLE_TESTER=False -DSLEEF_BUILD_SHARED_LIBS=ON
+			 cmake -E time oomstaller --max-parallel `nproc` ninja -j `nproc`
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j `nproc`
+			 '''
+            	     }
+                }
+
+                stage('aarch64 linux gcc-14 noexp') {
+            	     agent { label 'aarch64 && ubuntu24 && apple' }
+                     options { skipDefaultCheckout() }
+            	     steps {
+                         cleanWs()
+                         checkout scm
+	    	     	 sh '''
+                	 echo "aarch64 gcc-14 without experimental features on" `hostname`
+			 export CC=gcc-14
+			 export CXX=g++-14
+			 export INSTALL_PREFIX=`pwd`/install
+			 export LD_LIBRARY_PATH=$INSTALL_PREFIX/lib
+ 			 mkdir build
+			 cd build
+			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_DFT=TRUE -DSLEEF_ENFORCE_DFT=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_INLINE_HEADERS=TRUE -DSLEEF_ENFORCE_TESTER4=True -DSLEEF_ENABLE_TESTER=False -DSLEEF_BUILD_SHARED_LIBS=ON
 			 cmake -E time oomstaller --max-parallel `nproc` ninja -j `nproc`
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
 		         ctest -j `nproc`

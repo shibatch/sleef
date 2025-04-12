@@ -508,7 +508,7 @@ template bool SleefDFT2DXX<float, Sleef_float2, MAXSHIFTSP, MAXBUTWIDTHSP>::load
 template void SleefDFT2DXX<double, Sleef_double2, MAXSHIFTDP, MAXBUTWIDTHDP>::saveMeasurementResults();
 template void SleefDFT2DXX<float, Sleef_float2, MAXSHIFTSP, MAXBUTWIDTHSP>::saveMeasurementResults();
 
-namespace sleef {
+namespace sleef_internal {
   PlanManager planManager;
   FILE *defaultVerboseFP = stdout;
 }
