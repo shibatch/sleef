@@ -80,10 +80,10 @@ file.
   Please change the directory to sleef-3.X and run the following commands.
 
 <pre class="command">$ sudo apt-get install libmpfr-dev libssl-dev libfftw3-dev
-$ cmake -S . -B build/
+$ cmake -S . -B build/ -DCMAKE_INSTALL_PREFIX=./install
 $ cmake --build build/ --clean-first -j `nproc`
 $ ctest --test-dir build/ -j `nproc`
-$ sudo cmake --install build/ --prefix /path/to/install/dir
+$ cmake --install build/
 </pre>
 </p>
 
@@ -103,7 +103,7 @@ $ sudo cmake --install build/ --prefix /path/to/install/dir
   with the same version to build the library and other source codes.
 </p>
 
-<pre class="command">$ CC=gcc CXX=g++ cmake -DBUILD_SHARED_LIBS=FALSE -DSLEEF_ENABLE_LTO=TRUE ..</pre>
+<pre class="command">$ cmake -S . -B build/ -DCMAKE_INSTALL_PREFIX=./install -DSLEEF_ENABLE_LTO=TRUE</pre>
 
 <p>
   In order to build the library with thinLTO support with clang, you
@@ -111,7 +111,7 @@ $ sudo cmake --install build/ --prefix /path/to/install/dir
   clang compiler.
 </p>
 
-<pre class="command">$ CC=clang-19 CXX=clang++-19 cmake -DBUILD_SHARED_LIBS=FALSE -DSLEEF_ENABLE_LTO=TRUE -DSLEEF_LLVM_AR_COMMAND=llvm-ar-19 -DCMAKE_EXE_LINKER_FLAGS=-fuse-ld=lld-19 ..</pre>
+<pre class="command">$ CC=clang-19 CXX=clang++-19 cmake -S . -B build/ -DCMAKE_INSTALL_PREFIX=./install -DSLEEF_ENABLE_LTO=TRUE -DSLEEF_LLVM_AR_COMMAND=llvm-ar-19 -DCMAKE_EXE_LINKER_FLAGS=-fuse-ld=lld-19</pre>
 
 
 <h3 id="inline">Building the header files for inlining the whole SLEEF functions</h3>
@@ -125,7 +125,7 @@ $ sudo cmake --install build/ --prefix /path/to/install/dir
   that includes one of these header files.
 </p>
 
-<pre class="command">$ cmake -DSLEEF_BUILD_INLINE_HEADERS=TRUE ..</pre>
+<pre class="command">$ cmake -S . -B build/ -DCMAKE_INSTALL_PREFIX=./install -DSLEEF_BUILD_INLINE_HEADERS=TRUE</pre>
 
 <h2 id="MSVC">Compiling the library with Microsoft Visual C++</h2>
 
@@ -141,7 +141,7 @@ $ sudo cmake --install build/ --prefix /path/to/install/dir
   Studio.
 </p>
 
-<pre class="command">D:\sleef-3.X> winbuild-msvc -DCMAKE_BUILD_TYPE=Release -DSLEEF_BUILD_DFT=True -DSLEEF_BUILD_QUAD=True
+<pre class="command">D:\sleef-3.X> winbuild-msvc -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./install
 </pre>
 
 
@@ -152,7 +152,7 @@ $ sudo cmake --install build/ --prefix /path/to/install/dir
   of commands for building SLEEF with Clang on Windows.
 </p>
 
-<pre class="command">D:\sleef-3.X> winbuild-clang -DCMAKE_BUILD_TYPE=Release -DSLEEF_BUILD_DFT=True -DSLEEF_BUILD_QUAD=True
+<pre class="command">D:\sleef-3.X> winbuild-clang -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./install
 </pre>
 
 <p>
@@ -161,7 +161,7 @@ $ sudo cmake --install build/ --prefix /path/to/install/dir
 </p>
 
 <pre class="command">D:\sleef-3.X> set CLANGINSTALLDIR=C:\Program Files\LLVM
-D:\sleef-3.X> winbuild-clang -DCMAKE_BUILD_TYPE=Release -DSLEEF_BUILD_DFT=True -DSLEEF_BUILD_QUAD=True
+D:\sleef-3.X> winbuild-clang -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./install
 </pre>
 
 
@@ -207,7 +207,7 @@ D:\sleef-3.X> winbuild-clang -DCMAKE_BUILD_TYPE=Release -DSLEEF_BUILD_DFT=True -
   code on Linux computers.
 </p>
 
-<pre class="command" style="margin-top: 2.0em; margin-bottom: 0.5cm;">$ gcc hellox86.c -o hellox86 -lsleef -ltlfloat
+<pre class="command" style="margin-top: 2.0em; margin-bottom: 0.5cm;">$ gcc docs/src/hellox86.c -o hellox86 -L./install/lib -I./install/include -lsleef -ltlfloat
 $ ./hellox86
 pow(2, 3) = 8
 pow(10, 20) = 1e+20
@@ -260,13 +260,11 @@ $ &block;</pre>
 <h2 id="cross">Cross compilation for Linux</h2>
 
 <p>
-Below, we explain two methods for cross-compiling SLEEF. Both rely on
-the toolchain files provided under toolchains directory. Below are
-examples of cross-compiling SLEEF for AArch64 on a platform with
-x86_64 Linux.
+Below, we explain the method for cross-compiling SLEEF. It relies on
+the toolchain files provided under toolchains directory. Below is an
+example of cross-compiling SLEEF for S390X architecrure on a platform
+with x86_64 Linux.
 </p>
-
-<h3 id="method1">Method 1</h3>
 
 <p>
 Please run the following from the root directory of SLEEF:
@@ -278,7 +276,7 @@ Please run the following from the root directory of SLEEF:
 1. First, compile the native SLEEF.
 </p>
 
-<pre class="command" style="margin-top: 2.0em; margin-bottom: 0.5cm;">$ cmake -S . -B build-native
+<pre class="command" style="margin-top: 2.0em; margin-bottom: 0.5cm;">$ cmake -S . -B build-native/ -DCMAKE_INSTALL_PREFIX=./install-native
 $ cmake --build build-native -j --clean-first
 </pre>
 
@@ -286,48 +284,10 @@ $ cmake --build build-native -j --clean-first
 2. Cross-compile the target platform's SLEEF.
 </p>
 
-<pre class="command" style="margin-top: 2.0em; margin-bottom: 0.5cm;">$ cmake -DCMAKE_TOOLCHAIN_FILE=./toolchains/aarch64-gcc.cmake -DNATIVE_BUILD_DIR=$(pwd)/build-native/ -S . -B build
-$ cmake --build build -j --clean-first
+<pre class="command" style="margin-top: 2.0em; margin-bottom: 0.5cm;">$ cmake -DCMAKE_TOOLCHAIN_FILE=./toolchains/s390x-gcc.cmake -DNATIVE_BUILD_DIR=$(pwd)/build-native/ -DCMAKE_INSTALL_PREFIX=./install-cross -S . -B build-cross
+$ cmake --build build-cross -j --clean-first
 </pre>
 
-<h3 id="method2">Method 2</h3>
-
-<p>
-If QEMU is available on your environement, there is no need to compile
-the native SLEEF. Please run the following from the root directory of
-SLEEF.
-</p>
-
-<br/>
-
-<p>
-1. Install qemu on Ubuntu.
-</p>
-
-<pre class="command" style="margin-top: 2.0em; margin-bottom: 0.5cm;">$ sudo apt install -y qemu-user-static binfmt-support
-</pre>
-
-<p>
-2. Set the environment variable.
-</p>
-
-<pre class="command" style="margin-top: 2.0em; margin-bottom: 0.5cm;">$ export SLEEF_TARGET_EXEC_USE_QEMU=ON
-</pre>
-
-<p>
-3. Set the dynamic linker/loader path.
-</p>
-
-<pre class="command" style="margin-top: 2.0em; margin-bottom: 0.5cm;">$ export QEMU_LD_PREFIX=/usr/aarch64-linux-gnu/
-</pre>
-
-<p>
-4. Cross-compile the target platform's SLEEF.
-</p>
-
-<pre class="command" style="margin-top: 2.0em; margin-bottom: 0.5cm;">$ cmake -DCMAKE_TOOLCHAIN_FILE=./toolchains/aarch64-gcc.cmake -S . -B build
-$ cmake --build build -j --clean-first
-</pre>
 
 <p class="footer">
   Copyright &copy; 2010-2025 SLEEF Project, Naoki Shibata and contributors.<br/>
