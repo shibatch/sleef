@@ -61,14 +61,14 @@ git clone https://github.com/shibatch/sleef
 . Make a separate directory to create an out-of-source build
 
 ....
-cd sleef && mkdir build
+cd sleef && mkdir build && cd build
 ....
 
 [arabic, start=3]
 . Run cmake to configure the project
 
 ....
-cmake -S . -B build
+cmake .. -DCMAKE_INSTALL_PREFIX=../../install
 ....
 
 By default this will generate shared libraries. In order to generate
@@ -80,14 +80,14 @@ For more verbose output add option `-DSLEEF_SHOW_CONFIG=ON`.
 . Run make to build the project
 
 ....
-cmake --build build -j --clean-first
+cmake --build . -j --clean-first
 ....
 
 [arabic, start=5]
 . Run tests using ctests
 
 ....
-ctest --test-dir build -j
+ctest -j `nproc`
 ....
 
 For more detailed build instructions please refer to
@@ -108,7 +108,7 @@ Assuming following instructions were followed.
 . Install to specified directory `<prefix>`
 
 ....
-cmake --install build --prefix=<prefix>
+cmake --install .
 ....
 
 === Uninstall
