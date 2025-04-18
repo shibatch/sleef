@@ -49,11 +49,11 @@ option(SLEEF_BUILD_WITH_LIBM "build libsleef with libm, can turn off on Windows 
 option(SLEEF_ENABLE_FLOAT128 "Enable float128" ON)
 option(SLEEF_ENFORCE_FLOAT128 "Build fails if float128 is not supported by the compiler" OFF)
 
-option(SLEEF_ENABLE_SSE2 "Enable SSE2" ON)
+option(SLEEF_ENABLE_SSE2 "Enable SSE2" OFF)
 option(SLEEF_ENFORCE_SSE2 "Build fails if SSE2 is not supported by the compiler" OFF)
 option(SLEEF_ENABLE_AVX2 "Enable AVX2" ON)
 option(SLEEF_ENFORCE_AVX2 "Build fails if AVX2 is not supported by the compiler" OFF)
-option(SLEEF_ENABLE_AVX512F "Enable AVX512F" OFF)
+option(SLEEF_ENABLE_AVX512F "Enable AVX512F" ON)
 option(SLEEF_ENFORCE_AVX512F "Build fails if AVX512F is not supported by the compiler" OFF)
 option(SLEEF_ENABLE_SVE "Enable SVE" OFF)
 option(SLEEF_ENFORCE_SVE "Build fails if SVE is not supported by the compiler" OFF)
@@ -101,6 +101,10 @@ if (SLEEF_ENFORCE_SSE2)
   set(SLEEF_ENABLE_SSE2 ON)
 endif()
 
+if (SLEEF_ENABLE_SSE2)
+  message(WARNING "You enabled SSE2 support, which is an experimental feature. Experimental features may be removed without notice.")
+endif()
+
 if (SLEEF_ENFORCE_AVX2)
   set(SLEEF_ENABLE_AVX2 ON)
 endif()
@@ -109,16 +113,12 @@ if (SLEEF_ENFORCE_AVX512F)
   set(SLEEF_ENABLE_AVX512F ON)
 endif()
 
-if (SLEEF_ENABLE_AVX512F)
-  message(WARNING "You enabled AVX512F support, which is an experimental feature. Experimental features may be removed without notice.")
-endif()
-
 if (SLEEF_ENFORCE_SVE)
   set(SLEEF_ENABLE_SVE ON)
 endif()
 
 if (SLEEF_ENABLE_SVE)
-  message(WARNING "You enabled SVE support, which is an experimental feature. Experimental features may be removed without notice.")
+  message(WARNING "You enabled SVE support, which is an unmaintained feature. Unmaintained features may not build correctly and may be removed without notice.")
 endif()
 
 if (SLEEF_ENFORCE_VSX)

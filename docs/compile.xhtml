@@ -141,7 +141,7 @@ $ cmake --install build/
   Studio.
 </p>
 
-<pre class="command">D:\sleef-3.X> winbuild-msvc -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./install
+<pre class="command">D:\sleef-3.X> winbuild-msvc -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="%CD%/install"
 </pre>
 
 
@@ -152,7 +152,7 @@ $ cmake --install build/
   of commands for building SLEEF with Clang on Windows.
 </p>
 
-<pre class="command">D:\sleef-3.X> winbuild-clang -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./install
+<pre class="command">D:\sleef-3.X> winbuild-clang -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="%CD%/install"
 </pre>
 
 <p>
@@ -161,7 +161,7 @@ $ cmake --install build/
 </p>
 
 <pre class="command">D:\sleef-3.X> set CLANGINSTALLDIR=C:\Program Files\LLVM
-D:\sleef-3.X> winbuild-clang -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=./install
+D:\sleef-3.X> winbuild-clang -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="%CD%/install"
 </pre>
 
 
