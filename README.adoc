@@ -33,17 +33,17 @@ The following table summarizes currently supported OSes and compilers.
 
 [cols="1, 1, 1"]
 |===
-| x86_64 | SSE2 | Experimental support, Seeking sponsorship
+| x86_64 | SSE2 | Experimental support, seeking sponsorship
 | x86_64 | AVX2 | Mainline support
 | x86_64 | AVX512F | Mainline support
-| RISC-V | RVVM1 | Experimental, Seeking sponsorship
-| RISC-V | RVVM2 | Experimental, Seeking sponsorship
+| RISC-V | RVVM1 | Experimental, seeking sponsorship
+| RISC-V | RVVM2 | Experimental, seeking sponsorship
 | AArch64 | AdvSIMD | Mainline support
 | AArch64 | SVE | Unmaintained
-| PowerPC | VSX | Experimental, Seeking sponsorship
-| PowerPC | VSX3 | Experimental, Seeking sponsorship
-| S390 | VXE | Experimental, Seeking sponsorship
-| X390 | VXE2 | Experimental, Seeking sponsorship
+| PowerPC | VSX | Experimental, seeking sponsorship
+| PowerPC | VSX3 | Experimental, seeking sponsorship
+| S390 | VXE | Experimental, seeking sponsorship
+| S390 | VXE2 | Experimental, seeking sponsorship
 |===
 
 Unmaintained and experimental features may be removed without notice.
