@@ -29,6 +29,28 @@ The following table summarizes currently supported OSes and compilers.
 &#x2714; : Tested on CI, &#x2753; : Not tested, &#x274c; : Not supported
 
 
+=== Support status of each vector extension
+
+[cols="1, 1, 1"]
+|===
+| x86_64 | SSE2 | Experimental support, seeking sponsorship
+| x86_64 | AVX2 | Mainline support
+| x86_64 | AVX512F | Mainline support
+| RISC-V | RVVM1 | Experimental, seeking sponsorship
+| RISC-V | RVVM2 | Experimental, seeking sponsorship
+| AArch64 | AdvSIMD | Mainline support
+| AArch64 | SVE | Unmaintained
+| PowerPC | VSX | Experimental, seeking sponsorship
+| PowerPC | VSX3 | Experimental, seeking sponsorship
+| S390 | VXE | Experimental, seeking sponsorship
+| S390 | VXE2 | Experimental, seeking sponsorship
+|===
+
+Unmaintained and experimental features may be removed without notice.
+
+Unmaintained features are not tested and may not build correctly.
+
+
 == How to build SLEEF
 
 The library itself does not have any additional dependency.

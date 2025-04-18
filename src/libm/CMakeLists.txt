@@ -583,7 +583,7 @@ function(sleef_generate_rename_simd simd)
   add_custom_target(renamed${simd}.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/include/renamed${simd}.h)
   endfunction()
 
-if (SLEEF_ARCH_X86)
+if (SLEEF_ARCH_X86 AND COMPILER_SUPPORTS_SSE2)
   # Target dispsse.c
   sleef_generate_disp_simd(sse 2 4 __m128d __m128 __m128i sse2 avx2128 x)
 
@@ -604,7 +604,7 @@ if (SLEEF_ARCH_X86)
     add_dependencies(dispsse_obj dispsse.c_generated renamedsp128.h_generated ${TARGET_HEADERS})
     target_sources(${TARGET_LIBSLEEF} PRIVATE $<TARGET_OBJECTS:dispsse_obj>)
   endif()
-endif(SLEEF_ARCH_X86)
+endif(SLEEF_ARCH_X86 AND COMPILER_SUPPORTS_SSE2)
 
 if (SLEEF_ARCH_PPC64 AND COMPILER_SUPPORTS_VSX)
   # Target disppower_128.c
