@@ -633,7 +633,9 @@ namespace {
     }
 
     int getThreadNum() {
-      return thIdMap.at(this_thread::get_id());
+      auto id = this_thread::get_id();
+      if (thIdMap.count(id) == 0) return 0;
+      return thIdMap.at(id);
     }
   };
 
