@@ -11,22 +11,6 @@ if (SLEEFDFT_MAXBUTWIDTH GREATER 7)
   message(FATAL_ERROR "SLEEFDFT_MAXBUTWIDTH has to be smaller than 8." )
 endif()
 
-set(SLEEFDFT_MINSHIFT 1 CACHE STRING "Min hardcoded shift")
-set(SLEEFDFT_MAXSHIFT 1 CACHE STRING "Max hardcoded shift")
-
-if ((${SLEEFDFT_MINSHIFT} GREATER ${SLEEFDFT_MAXSHIFT}) OR (${SLEEFDFT_MINSHIFT} LESS 1))
-  message(FATAL_ERROR "SLEEFDFT_MINSHIFT, SLEEFDFT_MAXSHIFT range error")
-endif()
-
-math(EXPR SLEEFDFT_MAXSHIFT_MINUS_1 "${SLEEFDFT_MAXSHIFT} - 1")
-if (${SLEEFDFT_MINSHIFT} LESS ${SLEEFDFT_MAXSHIFT})
-  foreach(J RANGE ${SLEEFDFT_MINSHIFT} ${SLEEFDFT_MAXSHIFT_MINUS_1})
-    list(APPEND LISTSHIFTSTR ${J})
-  endforeach()
-else()
-  set(LISTSHIFTSTR)
-endif()
-
 # Settings
 
 # Constants definition
@@ -210,8 +194,13 @@ endif()
 
 # Compiler properties
 
-set(CMAKE_C_FLAGS "${ORG_CMAKE_C_FLAGS} ${DFT_C_FLAGS} ${OpenMP_C_FLAGS}")
-set(CMAKE_CXX_FLAGS "${ORG_CMAKE_C_FLAGS} ${DFT_C_FLAGS} ${OpenMP_C_FLAGS}")
+if(OPENMP_FOUND)
+  set(CMAKE_C_FLAGS "${ORG_CMAKE_C_FLAGS} ${DFT_C_FLAGS} ${OpenMP_C_FLAGS}")
+  set(CMAKE_CXX_FLAGS "${ORG_CMAKE_C_FLAGS} ${DFT_C_FLAGS} ${OpenMP_C_FLAGS}")
+else()
+  set(CMAKE_C_FLAGS "${ORG_CMAKE_C_FLAGS} ${DFT_C_FLAGS}")
+  set(CMAKE_CXX_FLAGS "${ORG_CMAKE_C_FLAGS} ${DFT_C_FLAGS}")
+endif()
 
 if(MSVC)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
@@ -227,9 +216,11 @@ endif()
 
 set(COMMON_TARGET_DEFINITIONS ${COMMON_TARGET_DEFINITIONS}
   MAXBUTWIDTHDP=${SLEEFDFT_MAXBUTWIDTH} MAXBUTWIDTHSP=${SLEEFDFT_MAXBUTWIDTH}
-  MINSHIFTDP=${SLEEFDFT_MINSHIFT} MAXSHIFTDP=${SLEEFDFT_MAXSHIFT}
-  MINSHIFTSP=${SLEEFDFT_MINSHIFT} MAXSHIFTSP=${SLEEFDFT_MAXSHIFT}
 )
+
+if (SLEEFDFT_ENABLE_PARALLELFOR)
+  set(COMMON_TARGET_DEFINITIONS ${COMMON_TARGET_DEFINITIONS} SLEEF_ENABLE_PARALLELFOR=1)
+endif()
 
 if (SLEEFDFT_ENABLE_STREAM)
   set(COMMON_TARGET_DEFINITIONS ${COMMON_TARGET_DEFINITIONS} ENABLE_STREAM=1)
@@ -266,7 +257,7 @@ endif()
 
 add_custom_command(OUTPUT dispatchparam.h
   COMMENT "Generating dispatchparam.h"
-  COMMAND $<TARGET_FILE:${TARGET_MKDISPATCH}> paramonly ALL ${SLEEFDFT_MAXBUTWIDTH} ${SLEEFDFT_MINSHIFT} ${SLEEFDFT_MAXSHIFT} ${ISALIST_SP} > ${CMAKE_CURRENT_BINARY_DIR}/dispatchparam.h
+  COMMAND $<TARGET_FILE:${TARGET_MKDISPATCH}> paramonly ALL ${SLEEFDFT_MAXBUTWIDTH} 1 1 ${ISALIST_SP} > ${CMAKE_CURRENT_BINARY_DIR}/dispatchparam.h
   DEPENDS ${TARGET_MKDISPATCH}
   )
 add_custom_target(dispatchparam.h_generated SOURCES ${CMAKE_CURRENT_BINARY_DIR}/dispatchparam.h)
@@ -282,7 +273,7 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
   string(CONCAT S "dispatch" ${ST} ".hpp")                  # S is dispatchdp.hpp
   add_custom_command(OUTPUT ${S}
     COMMENT "Generating ${S}"
-    COMMAND $<TARGET_FILE:${TARGET_MKDISPATCH}> ${LT} ${CST} ${SLEEFDFT_MAXBUTWIDTH} ${SLEEFDFT_MINSHIFT} ${SLEEFDFT_MAXSHIFT} ${ISALIST_${CST}} > ${S}
+    COMMAND $<TARGET_FILE:${TARGET_MKDISPATCH}> ${LT} ${CST} ${SLEEFDFT_MAXBUTWIDTH} 1 1 ${ISALIST_${CST}} > ${S}
     DEPENDS ${TARGET_MKDISPATCH}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
@@ -346,26 +337,6 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
       DEPENDS ${TARGET_MKUNROLL} unroll0.cpp.in.copied
       )
     add_custom_target(unroll_target_${ST} DEPENDS ${UNROLL_TARGET_${CST}})
-
-    #
-
-    foreach(I ${LISTSHIFTSTR})
-      foreach(E ${ISALIST_${CST}})                              # E is "sse2dp"
-	foreach(N ${NLIST})
-	  string(CONCAT UC unroll_ ${N} _ ${E} _ ${I} ".cpp")   # UC is "unroll_0_sse2dp_1.cpp"
-	  set(UNROLL_TARGET_${CST}_${I} ${UNROLL_TARGET_${CST}_${I}} ${UC})
-	endforeach()
-      endforeach()
-      message(STATUS "Unroll target for ${CST}_${I} : ${UNROLL_TARGET_${CST}_${I}}")
-
-      add_custom_command(OUTPUT ${UNROLL_TARGET_${CST}_${I}}
-      	COMMENT "Generating ${UNROLL_TARGET_${CST}_${I}}"
-      	COMMAND $<TARGET_FILE:${TARGET_MKUNROLL}> unroll1.cpp.in ${LT} ${CST} ${I} ${ISALIST_${CST}}
-      	WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-      	DEPENDS ${TARGET_MKUNROLL} unroll1.cpp.in.copied
-      )
-      add_custom_target(unroll_target_${ST}_${I} DEPENDS ${UNROLL_TARGET_${CST}_${I}})
-    endforeach()
   endif()
 endforeach()
 
@@ -388,19 +359,6 @@ foreach(T ${LIST_SUPPORTED_FPTYPE})
       target_compile_options(${UG} PRIVATE ${CFLAGS_${E}})
       add_dependencies(${UG} ${TARGET_HEADERS} unroll_target_${ST} ext_tlfloat)
       list(APPEND UNROLL_OBJECTS $<TARGET_OBJECTS:${UG}>)
-
-      foreach(I ${LISTSHIFTSTR})
-	string(CONCAT U unroll_ ${N} _ ${E} _ ${I})         # U  is "unroll_0_sse2dp_1"
-	string(CONCAT UG ${U} "_obj")                       # UG is "unroll_0_sse2dp_1_obj"
-	string(CONCAT UC ${U} ".cpp")                       # UC is "unroll_0_sse2dp_1.cpp"
-	add_library(${UG} OBJECT ${UC})
-	set_target_properties(${UG} PROPERTIES ${COMMON_TARGET_PROPERTIES})
-	target_include_directories(${UG} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-	target_compile_definitions(${UG} PRIVATE ${COMMON_TARGET_DEFINITIONS} ${MACRODEF_${E}})
-	target_compile_options(${UG} PRIVATE ${CFLAGS_${E}})
-	add_dependencies(${UG} ${TARGET_HEADERS} unroll_target_${ST}_${I} ext_tlfloat)
-	list(APPEND UNROLL_OBJECTS $<TARGET_OBJECTS:${UG}>)
-      endforeach()
     endforeach()
   endforeach()
 endforeach()

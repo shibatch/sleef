@@ -3,6 +3,14 @@
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
+#ifdef SLEEF_ENABLE_PARALLELFOR
+%DEFINE% SLEEF_ENABLE_PARALLELFOR_
+#endif
+
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+#include <functional>
+#endif
+
 static const real ctbl[] = {
   0.7071067811865475243818940365159164684883L, -0.7071067811865475243818940365159164684883L,
   0.9238795325112867561014214079495587839119L, -0.382683432365089771723257530688933059082L,
@@ -38,12 +46,22 @@ static const real ctbl[] = {
 };
 
 namespace sleef_internal {
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  void parallelFor(int64_t start_, int64_t end_, int64_t inc_, std::function<void(int64_t, int64_t, int64_t)> func_);
+#endif
+
+  //
 
 ALIGNED(8192) void dft2f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + i0*2;
     const real *in = in0 + i0*2;
@@ -51,13 +69,21 @@ ALIGNED(8192) void dft2f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRIC
     store(out, (0 << shift), plus(load(in, (0 << shift)), load(in, (1 << shift))));
     store(out, (1 << shift), minus(load(in, (0 << shift)), load(in, (1 << shift))));
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void but2f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + q[i];
     const real *in = in0 + i0*2;
@@ -67,13 +93,21 @@ ALIGNED(8192) void but2f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const 
     real2 v4 = minus(load(in, (0 << inShift)), load(in, (1 << inShift)));
     store(out, (1 << outShift), ctimesminusplus(v4, tbl[0 + tbloffset], ctimes(reverse(v4), tbl[1 + tbloffset])));
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void but2b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + q[i];
     const real *in = in0 + i0*2;
@@ -83,13 +117,21 @@ ALIGNED(8192) void but2b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const 
     real2 v4 = minus(load(in, (0 << inShift)), load(in, (1 << inShift)));
     store(out, (1 << outShift), ctimesminusplus(v4, tbl[0 + tbloffset], ctimes(reverse(v4), tbl[1 + tbloffset])));
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void tbut2f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + q[i];
     const real *in = in0 + i0*2;
@@ -99,13 +141,21 @@ ALIGNED(8192) void tbut2f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const
     real2 v4 = minus(load(in, (0 << inShift)), load(in, (1 << inShift)));
     scatter(out, 1, 2, timesminusplus(v4, load(tbl, 0 * VECWIDTH + tbloffset), times(reverse(v4), load(tbl, 1 * VECWIDTH + tbloffset))));
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void tbut2b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + q[i];
     const real *in = in0 + i0*2;
@@ -115,13 +165,21 @@ ALIGNED(8192) void tbut2b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const
     real2 v4 = minus(load(in, (0 << inShift)), load(in, (1 << inShift)));
     scatter(out, 1, 2, timesminusplus(v4, load(tbl, 0 * VECWIDTH + tbloffset), times(reverse(v4), load(tbl, 1 * VECWIDTH + tbloffset))));
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void dft4f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + i0*2;
     const real *in = in0 + i0*2;
@@ -139,13 +197,21 @@ ALIGNED(8192) void dft4f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRIC
    store(out, 2 << shift, minus(v12, v13));
    store(out, 0 << shift, plus(v12, v13));
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void dft4b_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + i0*2;
     const real *in = in0 + i0*2;
@@ -163,13 +229,21 @@ ALIGNED(8192) void dft4b_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRIC
    store(out, 2 << shift, minus(v12, v13));
    store(out, 0 << shift, plus(v12, v13));
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void but4f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + q[i];
     const real *in = in0 + i0*2;
@@ -191,13 +265,21 @@ ALIGNED(8192) void but4f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const 
    store(out, 1 << outShift, ctimesminusplus(reverse(v9), tbl[2 + tbloffset], ctimes(v9, tbl[3 + tbloffset])));
    store(out, 3 << outShift, ctimesminusplus(reverse(v11), tbl[4 + tbloffset], ctimes(v11, tbl[5 + tbloffset])));
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void but4b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + q[i];
     const real *in = in0 + i0*2;
@@ -219,13 +301,21 @@ ALIGNED(8192) void but4b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const 
    store(out, 1 << outShift, ctimesminusplus(reverse(v9), tbl[2 + tbloffset], ctimes(v9, tbl[3 + tbloffset])));
    store(out, 3 << outShift, ctimesminusplus(reverse(v11), tbl[4 + tbloffset], ctimes(v11, tbl[5 + tbloffset])));
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void tbut4f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + q[i];
     const real *in = in0 + i0*2;
@@ -247,13 +337,21 @@ ALIGNED(8192) void tbut4f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const
    scatter(out, 1, 4, timesminusplus(reverse(v9), load(tbl, 2 * VECWIDTH + tbloffset), times(v9, load(tbl, 3 * VECWIDTH + tbloffset))));
    scatter(out, 3, 4, timesminusplus(reverse(v11), load(tbl, 4 * VECWIDTH + tbloffset), times(v11, load(tbl, 5 * VECWIDTH + tbloffset))));
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void tbut4b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + q[i];
     const real *in = in0 + i0*2;
@@ -275,14 +373,22 @@ ALIGNED(8192) void tbut4b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const
    scatter(out, 1, 4, timesminusplus(reverse(v9), load(tbl, 2 * VECWIDTH + tbloffset), times(v9, load(tbl, 3 * VECWIDTH + tbloffset))));
    scatter(out, 3, 4, timesminusplus(reverse(v11), load(tbl, 4 * VECWIDTH + tbloffset), times(v11, load(tbl, 5 * VECWIDTH + tbloffset))));
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 #if MAXBUTWIDTH%TYPEID% >= 3
 ALIGNED(8192) void dft8f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + i0*2;
     const real *in = in0 + i0*2;
@@ -322,13 +428,21 @@ ALIGNED(8192) void dft8f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRIC
    store(out, 1 << shift, plus(v21, v38));
    store(out, 5 << shift, minus(v21, v38));
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void dft8b_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + i0*2;
     const real *in = in0 + i0*2;
@@ -368,13 +482,21 @@ ALIGNED(8192) void dft8b_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRIC
    store(out, 1 << shift, plus(v21, v39));
    store(out, 5 << shift, minus(v21, v39));
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void but8f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + q[i];
     const real *in = in0 + i0*2;
@@ -422,13 +544,21 @@ ALIGNED(8192) void but8f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const 
    real2 v84 = minus(v29, v49);
    store(out, 7 << outShift, ctimesminusplus(v84, tbl[0 + tbloffset], ctimes(reverse(v84), tbl[1 + tbloffset])));
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void but8b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + q[i];
     const real *in = in0 + i0*2;
@@ -476,13 +606,21 @@ ALIGNED(8192) void but8b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const 
    real2 v84 = minus(v29, v49);
    store(out, 7 << outShift, ctimesminusplus(v84, tbl[0 + tbloffset], ctimes(reverse(v84), tbl[1 + tbloffset])));
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void tbut8f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + q[i];
     const real *in = in0 + i0*2;
@@ -530,13 +668,21 @@ ALIGNED(8192) void tbut8f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const
    real2 v84 = minus(v29, v49);
    scatter(out, 7, 8, timesminusplus(v84, load(tbl, 0 * VECWIDTH + tbloffset), times(reverse(v84), load(tbl, 1 * VECWIDTH + tbloffset))));
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void tbut8b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + q[i];
     const real *in = in0 + i0*2;
@@ -584,15 +730,23 @@ ALIGNED(8192) void tbut8b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const
    real2 v84 = minus(v29, v49);
    scatter(out, 7, 8, timesminusplus(v84, load(tbl, 0 * VECWIDTH + tbloffset), times(reverse(v84), load(tbl, 1 * VECWIDTH + tbloffset))));
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 #endif
 
 #if MAXBUTWIDTH%TYPEID% >= 4
 ALIGNED(8192) void dft16f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + i0*2;
     const real *in = in0 + i0*2;
@@ -686,13 +840,21 @@ ALIGNED(8192) void dft16f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRI
    store(out, 11 << shift, minus(v170, v171));
    store(out, 3 << shift, plus(v170, v171));
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void dft16b_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + i0*2;
     const real *in = in0 + i0*2;
@@ -786,13 +948,21 @@ ALIGNED(8192) void dft16b_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRI
    store(out, 3 << shift, plus(v170, v171));
    store(out, 11 << shift, minus(v170, v171));
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void but16f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + q[i];
     const real *in = in0 + i0*2;
@@ -902,13 +1072,21 @@ ALIGNED(8192) void but16f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const
    real2 v183 = minusplus(uminus(v179), v180);
    store(out, 13 << outShift, ctimesminusplus(reverse(v183), tbl[32 + tbloffset], ctimes(v183, tbl[33 + tbloffset])));
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void but16b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + q[i];
     const real *in = in0 + i0*2;
@@ -1018,13 +1196,21 @@ ALIGNED(8192) void but16b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const
    real2 v183 = minusplus(uminus(v179), v180);
    store(out, 13 << outShift, ctimesminusplus(reverse(v183), tbl[32 + tbloffset], ctimes(v183, tbl[33 + tbloffset])));
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void tbut16f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + q[i];
     const real *in = in0 + i0*2;
@@ -1134,13 +1320,21 @@ ALIGNED(8192) void tbut16f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, cons
    real2 v183 = minusplus(uminus(v179), v180);
    scatter(out, 13, 16, timesminusplus(reverse(v183), load(tbl, 32 * VECWIDTH + tbloffset), times(v183, load(tbl, 33 * VECWIDTH + tbloffset))));
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void tbut16b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + q[i];
     const real *in = in0 + i0*2;
@@ -1250,15 +1444,23 @@ ALIGNED(8192) void tbut16b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, cons
    real2 v183 = minusplus(uminus(v179), v180);
    scatter(out, 13, 16, timesminusplus(reverse(v183), load(tbl, 32 * VECWIDTH + tbloffset), times(v183, load(tbl, 33 * VECWIDTH + tbloffset))));
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 #endif
 
 #if MAXBUTWIDTH%TYPEID% >= 5
 ALIGNED(8192) void dft32f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + i0*2;
     const real *in = in0 + i0*2;
@@ -1482,13 +1684,21 @@ ALIGNED(8192) void dft32f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRI
    store(out, 29 << shift, minus(v350, v366));
    store(out, 13 << shift, plus(v350, v366));
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void dft32b_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + i0*2;
     const real *in = in0 + i0*2;
@@ -1712,13 +1922,21 @@ ALIGNED(8192) void dft32b_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRI
    store(out, 19 << shift, minus(v430, v431));
    store(out, 3 << shift, plus(v430, v431));
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void but32f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + q[i];
     const real *in = in0 + i0*2;
@@ -1974,13 +2192,21 @@ ALIGNED(8192) void but32f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const
    real2 v472 = minus(v419, v439);
    store(out, 21 << outShift, ctimesminusplus(v472, tbl[0 + tbloffset], ctimes(reverse(v472), tbl[1 + tbloffset])));
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void but32b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + q[i];
     const real *in = in0 + i0*2;
@@ -2236,13 +2462,21 @@ ALIGNED(8192) void but32b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const
    real2 v472 = minus(v419, v439);
    store(out, 21 << outShift, ctimesminusplus(v472, tbl[0 + tbloffset], ctimes(reverse(v472), tbl[1 + tbloffset])));
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void tbut32f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + q[i];
     const real *in = in0 + i0*2;
@@ -2498,13 +2732,21 @@ ALIGNED(8192) void tbut32f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, cons
    real2 v472 = minus(v419, v439);
    scatter(out, 21, 32, timesminusplus(v472, load(tbl, 0 * VECWIDTH + tbloffset), times(reverse(v472), load(tbl, 1 * VECWIDTH + tbloffset))));
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void tbut32b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + q[i];
     const real *in = in0 + i0*2;
@@ -2760,15 +3002,23 @@ ALIGNED(8192) void tbut32b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, cons
    real2 v472 = minus(v419, v439);
    scatter(out, 21, 32, timesminusplus(v472, load(tbl, 0 * VECWIDTH + tbloffset), times(reverse(v472), load(tbl, 1 * VECWIDTH + tbloffset))));
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 #endif
 
 #if MAXBUTWIDTH%TYPEID% >= 6
 ALIGNED(8192) void dft64f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + i0*2;
     const real *in = in0 + i0*2;
@@ -3296,13 +3546,21 @@ ALIGNED(8192) void dft64f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRI
    store(out, 29 << shift, minus(uplusminus(v894), v895));
 // Pres : 15312
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void dft64b_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + i0*2;
     const real *in = in0 + i0*2;
@@ -3830,13 +4088,21 @@ ALIGNED(8192) void dft64b_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRI
    store(out, 29 << shift, minus(uplusminus(v894), v895));
 // Pres : 15320
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void but64f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + q[i];
     const real *in = in0 + i0*2;
@@ -4428,13 +4694,21 @@ ALIGNED(8192) void but64f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const
    store(out, 23 << outShift, ctimesminusplus(reverse(v1285), tbl[222 + tbloffset], ctimes(v1285, tbl[223 + tbloffset])));
 // Pres : 17339
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void but64b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + q[i];
     const real *in = in0 + i0*2;
@@ -5026,13 +5300,21 @@ ALIGNED(8192) void but64b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const
    store(out, 23 << outShift, ctimesminusplus(reverse(v1285), tbl[222 + tbloffset], ctimes(v1285, tbl[223 + tbloffset])));
 // Pres : 17339
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void tbut64f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + q[i];
     const real *in = in0 + i0*2;
@@ -5624,13 +5906,21 @@ ALIGNED(8192) void tbut64f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, cons
    scatter(out, 23, 64, timesminusplus(reverse(v1285), load(tbl, 222 * VECWIDTH + tbloffset), times(v1285, load(tbl, 223 * VECWIDTH + tbloffset))));
 // Pres : 17339
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void tbut64b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + q[i];
     const real *in = in0 + i0*2;
@@ -6222,6 +6512,9 @@ ALIGNED(8192) void tbut64b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, cons
    scatter(out, 23, 64, timesminusplus(reverse(v1285), load(tbl, 222 * VECWIDTH + tbloffset), times(v1285, load(tbl, 223 * VECWIDTH + tbloffset))));
 // Pres : 17339
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 #endif
 
@@ -6230,9 +6523,14 @@ ALIGNED(8192) void tbut64b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, cons
 #if MAXBUTWIDTH%TYPEID% >= 7
 ALIGNED(8192) void dft128f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + i0*2;
     const real *in = in0 + i0*2;
@@ -7450,13 +7748,21 @@ ALIGNED(8192) void dft128f_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTR
    store(out, 63 << shift, plus(v2439, v2455));
 // Pres : 68124
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void dft128b_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTRICT in0, const int shift) {
   const int k = 1 << (shift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + i0*2;
     const real *in = in0 + i0*2;
@@ -8674,13 +8980,21 @@ ALIGNED(8192) void dft128b_%CONFIG%_%ISA%(real *RESTRICT out0, const real *RESTR
    store(out, 15 << shift, plus(v2462, v2463));
 // Pres : 68088
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void but128f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + q[i];
     const real *in = in0 + i0*2;
@@ -10026,13 +10340,21 @@ ALIGNED(8192) void but128f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, cons
    store(out, 125 << outShift, ctimesminusplus(v2558, tbl[0 + tbloffset], ctimes(reverse(v2558), tbl[1 + tbloffset])));
 // Pres : 76263
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void but128b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const int outShift, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + q[i];
     const real *in = in0 + i0*2;
@@ -11378,13 +11700,21 @@ ALIGNED(8192) void but128b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, cons
    store(out, 125 << outShift, ctimesminusplus(v2558, tbl[0 + tbloffset], ctimes(reverse(v2558), tbl[1 + tbloffset])));
 // Pres : 76263
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void tbut128f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + q[i];
     const real *in = in0 + i0*2;
@@ -12730,13 +13060,21 @@ ALIGNED(8192) void tbut128f_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, con
    scatter(out, 125, 128, timesminusplus(v2558, load(tbl, 0 * VECWIDTH + tbloffset), times(reverse(v2558), load(tbl, 1 * VECWIDTH + tbloffset))));
 // Pres : 76263
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 
 ALIGNED(8192) void tbut128b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, const real *RESTRICT in0, const int inShift, const real *RESTRICT tbl, const int K) {
   const int k = 1 << (inShift - LOG2VECWIDTH);
+#ifndef SLEEF_ENABLE_PARALLELFOR_
   int i=0;
 #pragma omp parallel for
   for(i=0;i < k;i++) {
+#else
+  parallelFor(0, k, 1, [&](int64_t start, int64_t end, int64_t inc) {
+  for(int i=start;i<end;i+=inc) {
+#endif
     int i0 = i << LOG2VECWIDTH;
     real *out = out0 + q[i];
     const real *in = in0 + i0*2;
@@ -14082,6 +14420,9 @@ ALIGNED(8192) void tbut128b_%CONFIG%_%ISA%(real *RESTRICT out0, uint32_t *q, con
    scatter(out, 125, 128, timesminusplus(v2558, load(tbl, 0 * VECWIDTH + tbloffset), times(reverse(v2558), load(tbl, 1 * VECWIDTH + tbloffset))));
 // Pres : 76263
   }
+#ifdef SLEEF_ENABLE_PARALLELFOR_
+  });
+#endif
 }
 #endif
 

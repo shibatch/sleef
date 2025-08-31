@@ -26,7 +26,7 @@ static sigjmp_buf sigjmp;
 
 #else
 
-#include <Windows.h>
+#include <windows.h>
 #include <io.h>
 #include <signal.h>
 #include <setjmp.h>

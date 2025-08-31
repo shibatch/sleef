@@ -3,6 +3,14 @@
 //    (See accompanying file LICENSE.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
+#include <vector>
+#include <unordered_map>
+#include <utility>
+#include <atomic>
+#include <thread>
+#include <condition_variable>
+#include <memory>
+
 #include <cstdio>
 #include <cstdlib>
 #include <cstdint>
@@ -12,8 +20,9 @@
 #include <cassert>
 #include <cmath>
 
+#ifndef SLEEF_ENABLE_PARALLELFOR
 #include <omp.h>
-#include <vector>
+#endif
 
 #include "compat.h"
 #include "misc.h"
@@ -515,4 +524,137 @@ namespace sleef_internal {
 
 EXPORT void SleefDFT_setDefaultVerboseFP(FILE *fp) {
   defaultVerboseFP = fp;
+}
+
+// The internal parallel-for framework
+
+namespace {
+  class ParallelForManager {
+    const unsigned nth;
+    volatile bool shuttingDown = false, running = false;
+    vector<shared_ptr<thread>> vth;
+    vector<bool> idle;
+    mutex mtx;
+    condition_variable condVar;
+    unordered_map<thread::id, unsigned> thIdMap;
+
+    int64_t inc = 1;
+    vector<pair<size_t, size_t>> schedule;
+    atomic<size_t> counter;
+    function<void(int64_t, int64_t, int64_t)> theFunc;
+
+    void thEntry(const unsigned n) {
+      while(!shuttingDown) {
+	while(running && !shuttingDown) {
+	  size_t c = counter.fetch_add(1, memory_order_relaxed);
+	  if (c >= schedule.size()) break;
+	  int64_t start = schedule[c].first, end = schedule[c].second;
+	  theFunc(start, end, inc);
+	}
+
+	unique_lock lock(mtx);
+	running = false;
+	if (!idle[n]) {
+	  idle[n] = true;
+	  condVar.notify_all();
+	}
+
+	while(!shuttingDown && idle[n]) condVar.wait(lock);
+      }
+    }
+
+    template<typename T>
+    void waitUntilAllIdle(unique_lock<T> &lock) {
+      for(unsigned i=0;i<nth;i++) {
+	while(!idle[i]) condVar.wait(lock);
+      }
+    }
+  public:
+    ParallelForManager() : nth(thread::hardware_concurrency()) {
+      idle.resize(nth);
+
+      for(unsigned i=0;i < nth;i++) {
+	vth.push_back(make_shared<thread>(&ParallelForManager::thEntry, this, i));
+	thIdMap[vth[i]->get_id()] = i;
+      }
+
+      thIdMap[this_thread::get_id()] = 0;
+    }
+
+    ~ParallelForManager() {
+      {
+	unique_lock lock(mtx);
+	shuttingDown = true;
+	condVar.notify_all();
+      }
+
+      for(auto t : vth) t->join();
+    }
+
+    void run(int64_t start, int64_t end, int64_t inc_,
+	     function<void(int64_t, int64_t, int64_t)> func_) {
+      unique_lock lock(mtx);
+      waitUntilAllIdle(lock);
+      inc = inc_;
+      if (inc == 0) { fprintf(stderr, "ParallelForManager::run inc must not be 0\n"); abort(); }
+
+      {
+	const int N = 5;
+
+	schedule.clear();
+
+	int64_t p = start;
+
+	for(int i=2;i<N;i++) {
+	  int64_t end_ = (end - start) * ((1 << i) - 1) / (1 << i) + start;
+	  int64_t bs = max((end - start) / (inc * nth * (1 << i)), (int64_t)1) * inc;
+
+	  while(p < end_) {
+	    schedule.push_back(pair<int64_t, int64_t>(p, min(int64_t(p + bs), end)));
+	    p += bs;
+	  }
+	}
+
+	int64_t bs = max((end - start) / (inc * nth * (1 << N)), (int64_t)1) * inc;
+
+	while(p < end) {
+	  schedule.push_back(pair<int64_t, int64_t>(p, min(int64_t(p + bs), end)));
+	  p += bs;
+	}
+      }
+
+      counter = 0;
+      theFunc = func_;
+      running = true;
+      for(unsigned i=0;i<nth;i++) idle[i] = false;
+      condVar.notify_all();
+
+      waitUntilAllIdle(lock);
+    }
+
+    int getThreadNum() {
+      return thIdMap.at(this_thread::get_id());
+    }
+  };
+
+#ifdef SLEEF_ENABLE_PARALLELFOR
+  static ParallelForManager parallelForManager;
+#endif
+}
+
+namespace sleef_internal {
+  void parallelFor(int64_t start_, int64_t end_, int64_t inc_,
+		   function<void(int64_t, int64_t, int64_t)> func_) {
+#ifdef SLEEF_ENABLE_PARALLELFOR
+    parallelForManager.run(start_, end_, inc_, func_);
+#endif
+  }
+
+  int getThreadNum() {
+#ifndef SLEEF_ENABLE_PARALLELFOR
+      return omp_get_thread_num();
+#else
+      return parallelForManager.getThreadNum();
+#endif
+  }
 }
