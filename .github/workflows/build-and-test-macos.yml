@@ -52,6 +52,7 @@ jobs:
       - name: Install dependencies
         run: |
           brew update
+          brew upgrade
           brew install -q cmake ninja gmp mpfr pkg-config openssl@3
 
       - name: Build ${{ matrix.os }}-${{ matrix.arch }}
@@ -99,6 +100,7 @@ jobs:
       - name: Install dependencies
         run: |
           brew update
+          brew upgrade
           brew install -q cmake ninja gmp mpfr pkg-config openssl@3
 
       - name: Download build-${{ matrix.os }}-${{ matrix.arch }} artifacts
