@@ -104,8 +104,9 @@ int main(int argc, char **argv) {
 
 	if ((config & 2) == 0) {
 	  char *s0 = replaceAll(s, "#pragma", "//pragma");
-	  s = replaceAll(s0, "%DEFINE%", "//#define");
-	  free(s0);
+	  char *s1 = replaceAll(s0, "%DEFINE%", "//#define");
+	  free(s); free(s0);
+	  s = s1;
 	} else {
 	  char *s0 = replaceAll(s, "%DEFINE%", "#define");
 	  free(s);
