@@ -23,7 +23,12 @@ option(SLEEF_SHOW_CONFIG "Show SLEEF configuration status messages." ON)
 option(SLEEF_SHOW_ERROR_LOG "Show cmake error log." OFF)
 
 option(SLEEF_ENFORCE_DFT "Build fails if DFT is not built" OFF)
-option(SLEEFDFT_ENABLE_STREAM "Streaming instructions are utilized in DFT." OFF)
+if(SLEEF_TARGET_PROCESSOR MATCHES "(x86|AMD64|amd64|^i.86$)")
+  option(SLEEFDFT_ENABLE_STREAM "Streaming instructions are utilized in DFT." ON)
+else()
+  option(SLEEFDFT_ENABLE_STREAM "Streaming instructions are utilized in DFT." OFF)
+endif()
+option(SLEEFDFT_ENABLE_PARALLELFOR "Enable experimental parallel-for, which replaces OpenMP." OFF)
 
 option(SLEEF_ENABLE_TESTER "Enable testing libm with tester" OFF)
 option(SLEEF_ENFORCE_TESTER "Build fails if tester is not available" OFF)
@@ -77,6 +82,10 @@ option(SLEEF_ENFORCE_CUDA "Build fails if CUDA is not supported" OFF)
 
 if (SLEEF_ENFORCE_DFT)
   set(SLEEF_BUILD_DFT ON)
+endif()
+
+if (SLEEFDFT_ENABLE_PARALLELFOR)
+  message(WARNING "Internal parallel-for is an experimental feature. This may degrade performance.")
 endif()
 
 if (SLEEF_ENFORCE_TESTER)

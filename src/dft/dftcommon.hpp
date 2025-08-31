@@ -11,6 +11,7 @@
 #include <tuple>
 #include <utility>
 #include <mutex>
+#include <functional>
 
 using namespace std;
 
@@ -20,6 +21,11 @@ using namespace std;
 #define MAGIC_DOUBLE 0x27182818
 #define MAGIC2D_FLOAT 0x53589793
 #define MAGIC2D_DOUBLE 0x28459045
+
+#define MINSHIFTDP 1
+#define MINSHIFTSP 1
+#define MAXSHIFTDP 1
+#define MAXSHIFTSP 1
 
 #define CONFIG_STREAM 1
 #define CONFIG_MT 2
@@ -213,6 +219,10 @@ namespace sleef_internal {
 
   extern PlanManager planManager;
   extern FILE *defaultVerboseFP;
+
+  void parallelFor(int64_t start_, int64_t end_, int64_t inc_, std::function<void(int64_t, int64_t, int64_t)> func_);
+
+  int getThreadNum();
 }
 
 using namespace sleef_internal;

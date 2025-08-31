@@ -1,5 +1,5 @@
 #if defined(__MINGW32__) || defined(__MINGW64__) || defined(_MSC_VER)
-#include <Windows.h>
+#include <windows.h>
 #endif
 
 #include <mutex>
