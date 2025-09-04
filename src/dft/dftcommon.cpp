@@ -534,7 +534,7 @@ namespace {
     volatile bool shuttingDown = false, running = false;
     vector<shared_ptr<thread>> vth;
     vector<bool> idle;
-    mutex mtx;
+    mutex mtx, mtx2;
     condition_variable condVar;
     unordered_map<thread::id, unsigned> thIdMap;
 
@@ -593,6 +593,7 @@ namespace {
 
     void run(int64_t start, int64_t end, int64_t inc_,
 	     function<void(int64_t, int64_t, int64_t)> func_) {
+      unique_lock lock2(mtx2);
       unique_lock lock(mtx);
       waitUntilAllIdle(lock);
       inc = inc_;
