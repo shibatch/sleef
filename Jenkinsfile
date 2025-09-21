@@ -140,7 +140,7 @@ pipeline {
 		}
 
                 stage('riscv linux gcc-14') {
-            	     agent { label 'riscv && ubuntu23' }
+            	     agent { label 'riscv && ubuntu24' }
                      options { skipDefaultCheckout() }
             	     steps {
 		         script {
@@ -150,8 +150,35 @@ pipeline {
                          checkout scm
 	    	     	 sh '''
                 	 echo "riscv gcc-14 on" `hostname`
-			 export CC=gcc-14.2.0
-			 export CXX=g++-14.2.0
+			 export CC=gcc-14
+			 export CXX=g++-14
+			 export INSTALL_PREFIX=`pwd`/install
+			 export LD_LIBRARY_PATH=$INSTALL_PREFIX/lib
+ 			 mkdir build
+			 cd build
+			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX -DSLEEF_SHOW_CONFIG=1 -DSLEEF_BUILD_DFT=False -DSLEEF_ENFORCE_DFT=False -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_INLINE_HEADERS=TRUE -DSLEEF_ENFORCE_TESTER4=True -DSLEEF_ENABLE_TESTER=False -DSLEEF_ENFORCE_RVVM1=True -DSLEEF_ENFORCE_RVVM2=True
+			 cmake -E time oomstaller --max-parallel `nproc` ninja -j `nproc`
+			 export OMP_WAIT_POLICY=passive
+		         export CTEST_OUTPUT_ON_FAILURE=TRUE
+		         ctest -j `nproc`
+		         ninja install
+			 '''
+            	     }
+		}
+
+                stage('riscv linux clang-20') {
+            	     agent { label 'riscv && ubuntu24' }
+                     options { skipDefaultCheckout() }
+            	     steps {
+		         script {
+			     System.setProperty("org.jenkinsci.plugins.durabletask.BourneShellScript.HEARTBEAT_CHECK_INTERVAL", "86400");
+			 }
+                         cleanWs()
+                         checkout scm
+	    	     	 sh '''
+                	 echo "riscv clang-20 on" `hostname`
+			 export CC=clang-20
+			 export CXX=clang++-20
 			 export INSTALL_PREFIX=`pwd`/install
 			 export LD_LIBRARY_PATH=$INSTALL_PREFIX/lib
  			 mkdir build
