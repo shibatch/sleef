@@ -166,7 +166,7 @@ pipeline {
             	     }
 		}
 
-                stage('riscv linux clang-20') {
+                stage('riscv linux clang-19') {
             	     agent { label 'riscv && ubuntu24' }
                      options { skipDefaultCheckout() }
             	     steps {
@@ -176,9 +176,9 @@ pipeline {
                          cleanWs()
                          checkout scm
 	    	     	 sh '''
-                	 echo "riscv clang-20 on" `hostname`
-			 export CC=clang-20
-			 export CXX=clang++-20
+                	 echo "riscv clang-19 on" `hostname`
+			 export CC=clang-19
+			 export CXX=clang++-19
 			 export INSTALL_PREFIX=`pwd`/install
 			 export LD_LIBRARY_PATH=$INSTALL_PREFIX/lib
  			 mkdir build
