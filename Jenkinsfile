@@ -217,7 +217,7 @@ pipeline {
                 }
 
                 stage('aarch64 linux clang-19-lto') {
-            	     agent { label 'aarch64 && ubuntu24 && apple' }
+            	     agent { label 'aarch64 && ubuntu24' }
                      options { skipDefaultCheckout() }
             	     steps {
                          cleanWs()
@@ -230,7 +230,7 @@ pipeline {
 			 export LD_LIBRARY_PATH=$INSTALL_PREFIX/lib
  			 mkdir build
 			 cd build
-			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX -DSLEEF_SHOW_CONFIG=1 -DSLEEF_ENFORCE_DFT=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_INLINE_HEADERS=TRUE -DSLEEF_ENFORCE_SVE=TRUE -DEMULATOR=qemu-aarch64-static -DSLEEF_ENFORCE_TESTER4=True -DSLEEF_ENABLE_LTO=True -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=lld-19"
+			 cmake .. -GNinja -DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX -DSLEEF_SHOW_CONFIG=1 -DSLEEF_ENFORCE_DFT=TRUE -DSLEEF_BUILD_QUAD=TRUE -DSLEEF_BUILD_INLINE_HEADERS=TRUE -DSLEEF_ENFORCE_SVE=TRUE -DEMULATOR=qemu-aarch64-static -DSLEEF_ENFORCE_TESTER4=True -DSLEEF_ENABLE_LTO=True -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=lld-19" -DSLEEFDFT_ENABLE_PARALLELFOR=True
 			 cmake -E time oomstaller --max-parallel `nproc` ninja -j `nproc`
 		         export CTEST_OUTPUT_ON_FAILURE=TRUE
 		         ctest -j `nproc`
@@ -239,7 +239,7 @@ pipeline {
                 }
 
                 stage('aarch64 linux gcc-14') {
-            	     agent { label 'aarch64 && ubuntu24 && apple' }
+            	     agent { label 'aarch64 && ubuntu24' }
                      options { skipDefaultCheckout() }
             	     steps {
                          cleanWs()
@@ -261,7 +261,7 @@ pipeline {
                 }
 
                 stage('aarch64 linux gcc-14 noexp') {
-            	     agent { label 'aarch64 && ubuntu24 && apple' }
+            	     agent { label 'aarch64 && ubuntu24' }
                      options { skipDefaultCheckout() }
             	     steps {
                          cleanWs()
