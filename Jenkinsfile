@@ -217,7 +217,7 @@ pipeline {
                 }
 
                 stage('aarch64 linux clang-19-lto') {
-            	     agent { label 'aarch64 && ubuntu24 && apple' }
+            	     agent { label 'aarch64 && ubuntu24' }
                      options { skipDefaultCheckout() }
             	     steps {
                          cleanWs()
@@ -239,7 +239,7 @@ pipeline {
                 }
 
                 stage('aarch64 linux gcc-14') {
-            	     agent { label 'aarch64 && ubuntu24 && apple' }
+            	     agent { label 'aarch64 && ubuntu24' }
                      options { skipDefaultCheckout() }
             	     steps {
                          cleanWs()
@@ -261,7 +261,7 @@ pipeline {
                 }
 
                 stage('aarch64 linux gcc-14 noexp') {
-            	     agent { label 'aarch64 && ubuntu24 && apple' }
+            	     agent { label 'aarch64 && ubuntu24' }
                      options { skipDefaultCheckout() }
             	     steps {
                          cleanWs()
