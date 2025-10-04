@@ -185,17 +185,10 @@ void SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::freeTables() {
     tbl[N] = NULL;
   }
 
-  for(int i=0;i<nThread;i++) {
-    Sleef_free(x1[i]);
-    x1[i] = nullptr;
-    Sleef_free(x0[i]);
-    x0[i] = nullptr;
+  for(auto a : xn) {
+    Sleef_free(a.second.first);
+    Sleef_free(a.second.second);
   }
-
-  free(x1);
-  x1 = nullptr;
-  free(x0);
-  x0 = nullptr;
 }
 
 template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
@@ -632,12 +625,6 @@ namespace {
 
       waitUntilAllIdle(lock);
     }
-
-    int getThreadNum() {
-      auto id = this_thread::get_id();
-      if (thIdMap.count(id) == 0) return 0;
-      return thIdMap.at(id);
-    }
   };
 
 #ifdef SLEEF_ENABLE_PARALLELFOR
@@ -650,14 +637,6 @@ namespace sleef_internal {
 		   function<void(int64_t, int64_t, int64_t)> func_) {
 #ifdef SLEEF_ENABLE_PARALLELFOR
     parallelForManager.run(start_, end_, inc_, func_);
-#endif
-  }
-
-  int getThreadNum() {
-#ifndef SLEEF_ENABLE_PARALLELFOR
-      return omp_get_thread_num();
-#else
-      return parallelForManager.getThreadNum();
 #endif
   }
 }
