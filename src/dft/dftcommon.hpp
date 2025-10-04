@@ -80,11 +80,13 @@ namespace sleef_internal {
   
     //
 
+    mutex mtx;
+
     real **tbl[MAXBUTWIDTH+1];
     real *rtCoef0, *rtCoef1;
     uint32_t **perm;
 
-    real **x0, **x1;
+    unordered_map<thread::id, pair<real *, real *>> xn;
 
     int isa = 0;
     int planMode = 0;
@@ -221,8 +223,6 @@ namespace sleef_internal {
   extern FILE *defaultVerboseFP;
 
   void parallelFor(int64_t start_, int64_t end_, int64_t inc_, std::function<void(int64_t, int64_t, int64_t)> func_);
-
-  int getThreadNum();
 }
 
 using namespace sleef_internal;

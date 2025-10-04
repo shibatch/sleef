@@ -482,8 +482,20 @@ public:
 
 template<typename real, typename real2, int MAXSHIFT, int MAXBUTWIDTH>
 void SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::measurementRun(real *d, const real *s, const vector<Action> &path, uint64_t niter) {
-  const int tn = getThreadNum();
-  real *t[] = { x1[tn], x0[tn], d };
+  auto tid = this_thread::get_id();
+  real *t[] = { nullptr, nullptr, d };
+  {
+    unique_lock lock(mtx);
+    if (xn.count(tid) != 0) {
+      auto e = xn[tid];
+      t[0] = e.first;
+      t[1] = e.second;
+    } else {
+      t[0] = (real *)Sleef_malloc(sizeof(real) * 2 * (1L << log2len));
+      t[1] = (real *)Sleef_malloc(sizeof(real) * 2 * (1L << log2len));
+      xn[tid] = pair<real *, real *>{ t[0], t[1] };
+    }
+  }
 
   for(uint64_t i=0;i<niter;i++) {
     const real *lb = s;
@@ -1090,14 +1102,6 @@ SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::SleefDFTXX(uint32_t n, const rea
   for(int level = log2len;level >= 1;level--) {
     perm[level] = (uint32_t *)Sleef_malloc(sizeof(uint32_t) * ((1 << log2len) + 8));
   }
-
-  x0 = (real **)malloc(sizeof(real *) * nThread);
-  x1 = (real **)malloc(sizeof(real *) * nThread);
-
-  for(int i=0;i<nThread;i++) {
-    x0[i] = (real *)Sleef_malloc(sizeof(real) * 2 * n);
-    x1[i] = (real *)Sleef_malloc(sizeof(real) * 2 * n);
-  }
   
   if ((mode & SLEEF_MODE_REAL) != 0) {
     rtCoef0 = (real *)Sleef_malloc(sizeof(real) * n);
@@ -1335,9 +1339,21 @@ void SleefDFTXX<real, real2, MAXSHIFT, MAXBUTWIDTH>::execute(const real *s0, rea
 
   //
 
-  const int tn = getThreadNum();
-  real *t[] = { x1[tn], x0[tn], d };
-  
+  auto tid = this_thread::get_id();
+  real *t[] = { nullptr, nullptr, d };
+  {
+    unique_lock lock(mtx);
+    if (xn.count(tid) != 0) {
+      auto e = xn[tid];
+      t[0] = e.first;
+      t[1] = e.second;
+    } else {
+      t[0] = (real *)Sleef_malloc(sizeof(real) * 2 * (1L << log2len));
+      t[1] = (real *)Sleef_malloc(sizeof(real) * 2 * (1L << log2len));
+      xn[tid] = pair<real *, real *>{ t[0], t[1] };
+    }
+  }
+
   const real *lb = s;
   int nb = 0;
 
