@@ -1,154 +1,4 @@
-== SLEEF - SIMD Library for Evaluating Elementary Functions
-
-image:http://img.shields.io/badge/DOI-10.1109/TPDS.2019.2960333-blue.svg[TPDS, link=https://ieeexplore.ieee.org/document/8936472]
-
-SLEEF is a library that implements vectorized versions of C standard
-math functions. This library also includes DFT subroutines.
-
-* *Web Page:* https://sleef.org/
-* *Sources:* https://github.com/shibatch/sleef
-
-
-== Supported environment
-
-=== Test matrix
-
-The following table summarizes currently supported OSes and compilers.
-
-[cols="1,1,1,1,1,1,1,1,1"]
-|===
-|        2+|Linux            4+|Windows                              2+|Mac
-|          |gcc      |llvm     |MSVC     |Clang    |MinGW    |Cygwin   |Clang    |GCC
-|x86_64    |&#x2714; |&#x2714; |&#x2714; |&#x2714; |&#x2714; |&#x2753; |&#x2714; |&#x2753;
-|RISC-V 64 |&#x2714; |&#x2753; |N/A      |N/A      |N/A      |N/A      |N/A      |N/A
-|AArch64   |&#x2714; |&#x2714; |&#x274c; |&#x274c; |&#x274c; |&#x274c; |&#x2714; |&#x2753;
-|POWER     |&#x2714; |&#x2753; |N/A      |N/A      |N/A      |N/A      |N/A      |N/A
-|S390X     |&#x2714; |&#x2753; |N/A      |N/A      |N/A      |N/A      |N/A      |N/A
-|=== 
-
-&#x2714; : Tested on CI, &#x2753; : Not tested, &#x274c; : Not supported
-
-
-=== Support status of each vector extension
-
-[cols="1, 1, 1"]
-|===
-| x86_64 | SSE2 | Experimental support, seeking sponsorship
-| x86_64 | AVX2 | Mainline support
-| x86_64 | AVX512F | Mainline support
-| RISC-V | RVVM1 | Experimental, seeking sponsorship
-| RISC-V | RVVM2 | Experimental, seeking sponsorship
-| AArch64 | AdvSIMD | Mainline support
-| AArch64 | SVE | Unmaintained
-| PowerPC | VSX | Experimental, seeking sponsorship
-| PowerPC | VSX3 | Experimental, seeking sponsorship
-| S390 | VXE | Experimental, seeking sponsorship
-| S390 | VXE2 | Experimental, seeking sponsorship
-|===
-
-Unmaintained and experimental features may be removed without notice.
-
-Unmaintained features are not tested and may not build correctly.
-
-
-== How to build SLEEF
-
-The library itself does not have any additional dependency.
-
-In order to build SLEEF, you need CMake 3.18+, and C and C++ compilers of the same version.
-It is also recommended to have the following tools.
-
-* Ninja
-* Git
-
-https://github.com/shibatch/tlfloat[TLFloat] is automatically downloaded if no suitable version is found on your system.
-
-Some tests require:
-
-* libssl and libcrypto, that can be provided by installing openssl.
-* libm, libgmp and libmpfr
-* libfftw.
-
-
-The build procedure is as follows.
-
-[arabic]
-. Check out the source code from our GitHub repository
-
-....
-git clone https://github.com/shibatch/sleef
-....
-
-[arabic, start=2]
-. Make a separate directory to create an out-of-source build
-
-....
-cd sleef && mkdir build && cd build
-....
-
-[arabic, start=3]
-. Run cmake to configure the project
-
-....
-cmake .. -DCMAKE_INSTALL_PREFIX=../../install
-....
-
-By default this will generate shared libraries. In order to generate
-static libraries, pass option `-DBUILD_SHARED_LIBS=OFF`.
-
-For more verbose output add option `-DSLEEF_SHOW_CONFIG=ON`.
-
-[arabic, start=4]
-. Run make to build the project
-
-....
-cmake --build . -j --clean-first
-....
-
-[arabic, start=5]
-. Run tests using ctests
-
-....
-ctest -j `nproc`
-....
-
-For more detailed build instructions please refer to
-https://sleef.org/compile.xhtml#preliminaries[our web page].
-
-== How to cross-compile SLEEF
-
-For more detailed please refer to
-https://sleef.org/compile.xhtml#cross[cross-compile SLEEF]
-
-== Install SLEEF
-
-=== From source
-
-Assuming following instructions were followed.
-
-[arabic, start=6]
-. Install to specified directory `<prefix>`
-
-....
-cmake --install .
-....
-
-=== Uninstall
-
-In order to uninstall SLEEF library and headers run
-
-....
-sudo xargs rm -v < build/install_manifest.txt
-....
-
-== License
-
-The software is distributed under the Boost Software License, Version
-1.0. See accompanying file link:./LICENSE.txt[LICENSE.txt] or copy at
-http://www.boost.org/LICENSE_1_0.txt. Contributions to this project are
-accepted under the same license.
-
-==== Building a Sustainable Future for Our Open Source Projects
+#### Building a Sustainable Future for Our Open Source Projects
 
 We believe that Free and Open Source Software (FOSS) is a wonderful
 ecosystem that allows anyone to use software freely. However, to
@@ -213,7 +63,7 @@ victims will be you, the company** that built its product on top of an
 unmaintained foundation, not the developers who can move on to other
 opportunities.
 
-==== Our Request for Support
+#### Our Request for Support
 
 We request ongoing financial support from organizations that
 incorporate our project's deliverables into their products or services
@@ -261,10 +111,16 @@ invest in the ecosystem they rely on. We hope our collaborative
 approach can contribute to shaping a more balanced and enduring future
 for FOSS.
 
-For details, please see our
-https://github.com/shibatch/nofreelunch?tab=coc-ov-file[Code of
-Conduct] or its https://youtu.be/35zFfdCuBII[introduction video]. For
-reuse of this sustainability statement, see
-link:SUSTAINABILITY.md[SUSTAINABILITY.md].
+For details, please see our [Code of
+Conduct](https://github.com/shibatch/nofreelunch?tab=coc-ov-file) or
+its [introduction video](https://youtu.be/35zFfdCuBII).
 
-Copyright © 2010-2025 SLEEF Project, Naoki Shibata and contributors.
+---
+
+This sustainability statement is copyrighted by Naoki Shibata 2025.
+Licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
+
+If you agree with the purpose of this statement, you can copy the text
+into your project's README to help spread awareness. When doing so,
+please also include a file named `SUSTAINABILITY.md` within your
+repository that contains the statement and attribution.
