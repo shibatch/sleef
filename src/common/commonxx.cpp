@@ -30,6 +30,14 @@ NOEXPORT int Sleef_internal_cpuSupportsExt(void (*tryExt)(), int *cache) {
 
   unique_lock<mutex> lock(mtx);
 
+#ifdef _MSC_VER
+  __try {
+    (*tryExt)();
+    *cache = 1;
+  } __except(EXCEPTION_EXECUTE_HANDLER) {
+    *cache = 0;
+  }
+#else
   typedef void (*sighandler_t)(int);
   sighandler_t org = signal(SIGILL, sighandler);
 
@@ -41,5 +49,6 @@ NOEXPORT int Sleef_internal_cpuSupportsExt(void (*tryExt)(), int *cache) {
   }
 
   signal(SIGILL, org);
+#endif
   return *cache;
 }
