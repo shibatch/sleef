@@ -20,10 +20,7 @@ The following table summarizes currently supported OSes and compilers.
 |        2+|Linux            4+|Windows                              2+|Mac
 |          |gcc      |llvm     |MSVC     |Clang    |MinGW    |Cygwin   |Clang    |GCC
 |x86_64    |&#x2714; |&#x2714; |&#x2714; |&#x2714; |&#x2714; |&#x2753; |&#x2714; |&#x2753;
-|RISC-V 64 |&#x2714; |&#x2753; |N/A      |N/A      |N/A      |N/A      |N/A      |N/A
 |AArch64   |&#x2714; |&#x2714; |&#x274c; |&#x274c; |&#x274c; |&#x274c; |&#x2714; |&#x2753;
-|POWER     |&#x2714; |&#x2753; |N/A      |N/A      |N/A      |N/A      |N/A      |N/A
-|S390X     |&#x2714; |&#x2753; |N/A      |N/A      |N/A      |N/A      |N/A      |N/A
 |=== 
 
 &#x2714; : Tested on CI, &#x2753; : Not tested, &#x274c; : Not supported
@@ -36,17 +33,12 @@ The following table summarizes currently supported OSes and compilers.
 | x86_64 | SSE2 | Experimental support, seeking sponsorship
 | x86_64 | AVX2 | Mainline support
 | x86_64 | AVX512F | Mainline support
-| RISC-V | RVVM1 | Experimental, seeking sponsorship
-| RISC-V | RVVM2 | Experimental, seeking sponsorship
 | AArch64 | AdvSIMD | Mainline support
-| AArch64 | SVE | Unmaintained
-| PowerPC | VSX | Experimental, seeking sponsorship
-| PowerPC | VSX3 | Experimental, seeking sponsorship
-| S390 | VXE | Experimental, seeking sponsorship
-| S390 | VXE2 | Experimental, seeking sponsorship
+| RISC-V | RVVM1 | Unmaintained
+| RISC-V | RVVM2 | Unmaintained
 |===
 
-Unmaintained and experimental features may be removed without notice.
+Unmaintained features may be removed without notice.
 
 Unmaintained features are not tested and may not build correctly.
 
