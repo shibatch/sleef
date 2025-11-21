@@ -1,24 +1,34 @@
-Our project provides only the current and previous versions of
-software free of charge. No other materials and services are provided
-free of charge unless they are explicitly stated to be free of
-charge.
+## NOTICE TO ALL CONTRIBUTORS
 
-Our project collects a fee from you to approve your PR. The specific
-amount you need to pay will be determined by negotiation, depending on
-the nature of the PR and your project. We will not charge a fee if you
-are not making a profit from the deliverables of this project, or for
-minor bug fixes that do not involve specification changes. If a
-significant percentage of those who will benefit from your patch are
-considered to be direct or indirect customers of your company, you
-will be required to pay a fee.
+**Please read carefully before submitting this Pull Request.**
 
-The fee you pay is for the review and does not include the cost of any
-future maintenance of your code. Your code added by this PR may be
-removed without notice if our project finds it necessary.
+This policy applies strictly to contributions made on behalf of organizations that incorporate this project's deliverables into their products or services and derive annual revenue exceeding **US $1 million** from those products and services.
 
-By becoming a sponsor of our project, no additional cost will be
-charged to review your PR.
+If you represent such an organization, by clicking "Create pull request" and submitting your contribution, you and your organization are deemed to have expressly agreed to the following Corporate Contributor License Agreement (CCLA):
 
-If you have any questions, please contact us before opening a PR.
+### Corporate Contributor License Agreement (CCLA) Terms:
 
-Simply remove this notice when you open a PR.
+1.  **Transfer of Intellectual Property:**
+    You hereby assign to the Project Maintainer all right, title, and interest in and to this contribution, including all Intellectual Property Rights therein. The Project Maintainer shall be the sole and exclusive owner of the contribution.
+
+2.  **Warranties:**
+    You represent and warrant that this contribution is free from any defects, fit for the particular purpose of the Project, and does not infringe upon the intellectual property rights of any third party.
+
+3.  **Indemnification & Unlimited Liability:**
+    You agree to defend, indemnify, and hold harmless the Project Maintainer from and against any and all claims, damages, losses, and expenses arising out of or resulting from this contribution. **Your liability under this agreement is UNLIMITED.**
+
+---
+
+### Contribution Status Confirmation
+
+**Please check one of the following boxes to confirm your status:**
+*(Checking the box constitutes a legal representation of your status)*
+
+- [ ] **[Corporate Contributor - CCLA Accepted]**
+  I represent an organization that incorporates this project's deliverables into its products or services and derives annual revenue exceeding US $1 million from those products and services. On behalf of my organization, I EXPRESSLY AGREE to the Corporate Contributor License Agreement (CCLA) terms listed above.
+
+- [ ] **[Authorized Exemption]**
+  My organization has established a separate agreement with the Project Maintainer. I confirm that the Project Maintainer has explicitly granted us an exemption from the CCLA for this contribution.
+
+- [ ] **[Individual / Exempt]**
+  I am an **individual contributor**, or I represent an organization that does **NOT** meet the revenue threshold mentioned above. I contribute under the standard project license.
