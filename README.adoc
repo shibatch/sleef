@@ -140,7 +140,7 @@ The software is distributed under the Boost Software License, Version
 http://www.boost.org/LICENSE_1_0.txt. Contributions to this project
 from individual developers and small organizations are accepted under
 the same license. For contributions from corporate users, please refer
-to ./CONTRIBUTING.md[CONTRIBUTING.md].
+to link:./CONTRIBUTING.md[CONTRIBUTING.md].
 
 ==== Building a Sustainable Future for Our Open Source Projects
 
