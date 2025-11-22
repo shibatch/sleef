@@ -137,8 +137,10 @@ sudo xargs rm -v < build/install_manifest.txt
 
 The software is distributed under the Boost Software License, Version
 1.0. See accompanying file link:./LICENSE.txt[LICENSE.txt] or copy at
-http://www.boost.org/LICENSE_1_0.txt. Contributions to this project are
-accepted under the same license.
+http://www.boost.org/LICENSE_1_0.txt. Contributions to this project
+from individual developers and small organizations are accepted under
+the same license. For contributions from corporate users, please refer
+to ./CONTRIBUTING.md[CONTRIBUTING.md].
 
 ==== Building a Sustainable Future for Our Open Source Projects
 
