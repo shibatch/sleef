@@ -97,8 +97,10 @@ We understand that corporate procurement processes were not designed
 with FOSS sustainability in mind. We are committed to finding a
 practical path forward, but your partnership is essential in
 structuring a financial relationship that aligns with your standard
-corporate procedures. Our mutual goal is to treat this partnership as
-a conventional operational expense, removing your internal barriers
+corporate procedures. We simply ask for fairness: do not demand
+contractual terms from maintainers that your own legal department
+would refuse to accept. Our mutual goal is to treat this partnership
+as a conventional operational expense, removing your internal barriers
 and making sustainability a straightforward business practice.
 
 Our goal is to maintain this project stably over the long term and

@@ -1,4 +1,4 @@
-# Contributing to our project
+# Contributing to Our Project
 
 Thank you for your interest in contributing to our project. We welcome contributions from the community to help improve this project.
 
@@ -10,7 +10,7 @@ However, to ensure the sustainability of the project and fairness among stakehol
 
 Many corporations routinely require their business partners to agree to similar provisions (such as unlimited liability and complete transfer of intellectual property). In fact, this project has explicitly been asked by corporate users of our products to agree to these exact types of clauses in the past.
 
-**This CCLA was created specifically in response to those experiences.** During funding negotiations, corporate partners presented us with agreements containing the very terms listed above. When we expressed concerns about unlimited liability and IP transfer, we were told these were "standard business practices" and non-negotiable.
+**This CCLA was created specifically in response to those experiences.** During funding negotiations, corporate partners presented us with agreements containing the very terms listed in the CCLA. When we expressed concerns about unlimited liability and IP transfer, we were told these were "standard business practices" and non-negotiable.
 
 **As stated in our Code of Conduct, we believe corporate participants should treat open source maintainers as equal business partners.** This means not demanding contractual terms from maintainers that the corporation's own legal department would refuse to accept if presented by a counterparty.
 
