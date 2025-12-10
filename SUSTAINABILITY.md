@@ -115,7 +115,7 @@ for FOSS.
 
 For details, please see our [Code of
 Conduct](https://github.com/shibatch/nofreelunch?tab=coc-ov-file) or
-its [introduction video](https://youtu.be/35zFfdCuBII).
+its [introduction video](https://youtu.be/wsh2yKGwK4s).
 
 ---
 

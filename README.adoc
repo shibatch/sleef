@@ -259,7 +259,7 @@ for FOSS.
 
 For details, please see our
 https://github.com/shibatch/nofreelunch?tab=coc-ov-file[Code of
-Conduct] or its https://youtu.be/35zFfdCuBII[introduction video]. For
+Conduct] or its https://youtu.be/wsh2yKGwK4s[introduction video]. For
 reuse of this sustainability statement, see
 link:SUSTAINABILITY.md[SUSTAINABILITY.md].
 
