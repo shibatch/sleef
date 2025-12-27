@@ -2668,6 +2668,8 @@ EXPORT CONST vfloat xerff_u1(vfloat a) {
 	       vsel_vf_vo_f_f(o25, +0.9808536561e-4, +0.7172692567e-3),
 	       vsel_vf_vo_f_f(o25, +0.2395523916e-3, -0.5131045356e-2),
 	       vsel_vf_vo_f_f(o25, +0.1459901541e-3, +0.2708637156e-1));
+#undef C2V
+#define C2V(c) vcast_vf_f(c)
     t2 = poly4df(x, t,
 		 vsel_vf2_vo_vf2_vf2(o25, vcast_vf2_f_f(0.0092883445322513580322, -2.7863745897025330755e-11),
 				     vcast_vf2_f_f(-0.11064319312572479248, 3.7050452777225283007e-09)),
