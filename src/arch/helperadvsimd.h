@@ -96,16 +96,18 @@ static INLINE vint vloadu_vi_p(int32_t *p) { return vld1_s32(p); }
 static INLINE void vstoreu_v_p_vi(int32_t *p, vint v) { vst1_s32(p, v); }
 
 static INLINE vdouble vgather_vd_p_vi(const double *ptr, vint vi) {
-  return ((vdouble) { ptr[vget_lane_s32(vi, 0)], ptr[vget_lane_s32(vi, 1)]} );
+  double tmp[] = { ptr[vget_lane_s32(vi, 0)], ptr[vget_lane_s32(vi, 1)] };
+  return vld1q_f64(tmp);
 }
 
 static INLINE vfloat vgather_vf_p_vi2(const float *ptr, vint2 vi2) {
-  return ((vfloat) {
+  float tmp[] = {
       ptr[vgetq_lane_s32(vi2, 0)],
       ptr[vgetq_lane_s32(vi2, 1)],
       ptr[vgetq_lane_s32(vi2, 2)],
       ptr[vgetq_lane_s32(vi2, 3)]
-    });
+    };
+  return vld1q_f32(tmp);
 }
 
 // Basic logical operations for mask
@@ -742,22 +744,31 @@ static INLINE vdouble vtruncate_vd_vd(vdouble vd) { return vrndq_f64(vd); }
 
 //
 
-#define PNMASK ((vdouble) { +0.0, -0.0 })
-#define NPMASK ((vdouble) { -0.0, +0.0 })
-#define PNMASKf ((vfloat) { +0.0f, -0.0f, +0.0f, -0.0f })
-#define NPMASKf ((vfloat) { -0.0f, +0.0f, -0.0f, +0.0f })
+static INLINE vdouble sleef_make_vd(double a, double b) {
+  double tmp[] = { a, b };
+  return vld1q_f64(tmp);
+}
+static INLINE vfloat sleef_make_vf(float a, float b, float c, float d) {
+  float tmp[] = { a, b, c, d };
+  return vld1q_f32(tmp);
+}
+
+#define PNMASK sleef_make_vd(+0.0, -0.0)
+#define NPMASK sleef_make_vd(-0.0, +0.0)
+#define PNMASKf sleef_make_vf(+0.0f, -0.0f, +0.0f, -0.0f)
+#define NPMASKf sleef_make_vf(-0.0f, +0.0f, -0.0f, +0.0f)
 
 static INLINE vdouble vposneg_vd_vd(vdouble d) { return vreinterpret_vd_vm(vxor_vm_vm_vm(vreinterpret_vm_vd(d), vreinterpret_vm_vd(PNMASK))); }
 static INLINE vdouble vnegpos_vd_vd(vdouble d) { return vreinterpret_vd_vm(vxor_vm_vm_vm(vreinterpret_vm_vd(d), vreinterpret_vm_vd(NPMASK))); }
-static INLINE vfloat vposneg_vf_vf(vfloat d) { return (vfloat)vxor_vm_vm_vm((vmask)d, (vmask)PNMASKf); }
-static INLINE vfloat vnegpos_vf_vf(vfloat d) { return (vfloat)vxor_vm_vm_vm((vmask)d, (vmask)NPMASKf); }
+static INLINE vfloat vposneg_vf_vf(vfloat d) { return vreinterpretq_f32_u32(vxor_vm_vm_vm(vreinterpretq_u32_f32(d), vreinterpretq_u32_f32(PNMASKf))); }
+static INLINE vfloat vnegpos_vf_vf(vfloat d) { return vreinterpretq_f32_u32(vxor_vm_vm_vm(vreinterpretq_u32_f32(d), vreinterpretq_u32_f32(NPMASKf))); }
 
 static INLINE vdouble vsubadd_vd_vd_vd(vdouble x, vdouble y) { return vadd_vd_vd_vd(x, vnegpos_vd_vd(y)); }
 static INLINE vfloat vsubadd_vf_vf_vf(vfloat d0, vfloat d1) { return vadd_vf_vf_vf(d0, vnegpos_vf_vf(d1)); }
 static INLINE vdouble vmlsubadd_vd_vd_vd_vd(vdouble x, vdouble y, vdouble z) { return vsubadd_vd_vd_vd(vmul_vd_vd_vd(x, y), z); }
 static INLINE vfloat vmlsubadd_vf_vf_vf_vf(vfloat x, vfloat y, vfloat z) { return vsubadd_vf_vf_vf(vmul_vf_vf_vf(x, y), z); }
 
-static INLINE vdouble vrev21_vd_vd(vdouble d0) { return (float64x2_t)vcombine_u64(vget_high_u64((uint64x2_t)d0), vget_low_u64((uint64x2_t)d0)); }
+static INLINE vdouble vrev21_vd_vd(vdouble d0) { return vreinterpretq_f64_u64(vcombine_u64(vget_high_u64(vreinterpretq_u64_f64(d0)), vget_low_u64(vreinterpretq_u64_f64(d0)))); }
 static INLINE vdouble vreva2_vd_vd(vdouble vd) { return vd; }
 
 static INLINE void vstream_v_p_vd(double *ptr, vdouble v) { vstore_v_p_vd(ptr, v); }

@@ -288,6 +288,12 @@ typedef struct {
 #define SLEEF_INFINITYl ((long double)SLEEF_INFINITY)
 #define SLEEF_NANl ((long double)SLEEF_NAN)
 
+#define __builtin_inf() SLEEF_INFINITY
+#define __builtin_inff() SLEEF_INFINITYf
+#define __builtin_nan(x) SLEEF_NAN
+#define __builtin_nanf(x) SLEEF_NANf
+#define __builtin_expect(expr, val) (expr)
+
 #if (defined(_M_AMD64) || defined(_M_X64))
 #ifndef __SSE2__
 #define __SSE2__
