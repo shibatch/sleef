@@ -190,7 +190,7 @@ if(SLEEF_TARGET_PROCESSOR MATCHES "(x86|AMD64|amd64|^i.86$)")
   set(SLEEF_ARCH_X86 ON CACHE INTERNAL "True for x86 architecture.")
 
   set(CLANG_FLAGS_ENABLE_PURECFMA_SCALAR "-mavx2;-mfma")
-elseif(SLEEF_TARGET_PROCESSOR MATCHES "aarch64|arm64")
+elseif(SLEEF_TARGET_PROCESSOR MATCHES "aarch64|arm64|AARCH64|ARM64")
   set(SLEEF_ARCH_AARCH64 ON CACHE INTERNAL "True for Aarch64 architecture.")
   # Aarch64 requires support for advsimdfma4
   set(COMPILER_SUPPORTS_ADVSIMD 1)
