@@ -51,7 +51,7 @@ static INLINE double getdouble(double v, int r) { return unifyValue(v); }
 static INLINE float setfloat(float d, int r) { return d; }
 static INLINE float getfloat(float v, int r) { return unifyValuef(v); }
 
-#if defined(__x86_64__) || defined(_MSC_VER)
+#if defined(__x86_64__) || defined(_M_X64)
 static INLINE __m128d set__m128d(double d, int r) { static double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return _mm_loadu_pd(a); }
 static INLINE double get__m128d(__m128d v, int r) { static double a[2]; _mm_storeu_pd(a, v); return unifyValue(a[r & 1]); }
 static INLINE __m128 set__m128(float d, int r) { static float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return _mm_loadu_ps(a); }
@@ -72,7 +72,7 @@ static INLINE float get__m512(__m512 v, int r) { static float a[16]; _mm512_stor
 #endif
 #endif // #if defined(__x86_64__) || defined(_MSC_VER)
 
-#if defined(__aarch64__) && defined(__ARM_NEON)
+#if (defined(__aarch64__) || defined(_M_ARM64)) && defined(__ARM_NEON)
 static INLINE float64x2_t setfloat64x2_t(double d, int r) { double a[2]; memrand(a, sizeof(a)); a[r & 1] = d; return vld1q_f64(a); }
 static INLINE double getfloat64x2_t(float64x2_t v, int r) { double a[2]; vst1q_f64(a, v); return unifyValue(a[r & 1]); }
 static INLINE float32x4_t setfloat32x4_t(float d, int r) { float a[4]; memrand(a, sizeof(a)); a[r & 3] = d; return vld1q_f32(a); }

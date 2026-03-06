@@ -29,7 +29,7 @@ extern "C"
 #define SLEEF_INLINE __forceinline
 #endif
 
-#if defined(__AVX2__) || defined(__aarch64__) || defined(__powerpc64__) || defined(__zarch__) || defined(__FP_FAST_FMA)
+#if defined(__AVX2__) || defined(__aarch64__) || defined(_M_ARM64) || defined(__powerpc64__) || defined(__zarch__) || defined(__FP_FAST_FMA)
 #ifndef __FMA__
 #define __FMA__
 #endif
@@ -130,7 +130,7 @@ SLEEF_IMPORT void *Sleef_malloc(size_t z);
 SLEEF_IMPORT void Sleef_free(void *ptr);
 SLEEF_IMPORT uint64_t Sleef_currentTimeMicros();
 
-#if defined(__x86_64__) || defined(_MSC_VER)
+#if defined(__x86_64__) || defined(_M_X64)
 SLEEF_IMPORT void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx);
 #endif
 

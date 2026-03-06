@@ -33,7 +33,7 @@ EXPORT void *Sleef_malloc(size_t z) { void *ptr = NULL; posix_memalign(&ptr, 409
 EXPORT void Sleef_free(void *ptr) { free(ptr); }
 #endif // #if defined(__MINGW32__) || defined(__MINGW64__) || defined(_MSC_VER)
 
-#ifdef _MSC_VER
+#if defined(_M_X64)
 #include <intrin.h>
 EXPORT void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx) {
   __cpuidex(out, eax, ecx);
@@ -48,7 +48,7 @@ EXPORT void Sleef_x86CpuID(int32_t out[4], uint32_t eax, uint32_t ecx) {
 #endif
 #endif
 
-#if defined(__x86_64__) || defined(_MSC_VER)
+#if defined(__x86_64__) || defined(_M_X64)
 static char x86BrandString[256];
 
 EXPORT char *Sleef_getCpuIdString() {
