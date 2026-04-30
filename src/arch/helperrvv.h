@@ -66,12 +66,14 @@
 //@#define ENABLE_FMA_DP
 #endif
 
-#if __riscv_v_intrinsic < 1000000 && !(defined(__clang_major__) && __clang_major__ >= 18)
+#if __riscv_v_intrinsic < 1000000 && \
+    !(defined(__clang_major__) && __clang_major__ >= 18) && \
+    !(defined(__GNUC__) && !defined(__clang__) && __GNUC__ >= 14)
 // __riscv_vcreate* intrinsics only showed up in v1.0-rc0 of the RVV intrinsics
-// spec and have already been implemented in clang-18, but are useful for
-// eliminating issues with uninitialised data because they are explicit that
-// the whole result has defined values.  Here we do our best to offer fallback
-// implementations where needed.
+// spec and have already been implemented in clang-18 and gcc-14, but are
+// useful for eliminating issues with uninitialised data because they are
+// explicit that the whole result has defined values.  Here we do our best to
+// offer fallback implementations where needed.
 //
 #define __riscv_vcreate_v_f32m1_f32m2(x, y) __riscv_vset(__riscv_vlmul_ext_v_f32m1_f32m2(x), 1, y)
 #define __riscv_vcreate_v_f32m2_f32m4(x, y) __riscv_vset(__riscv_vlmul_ext_v_f32m2_f32m4(x), 1, y)

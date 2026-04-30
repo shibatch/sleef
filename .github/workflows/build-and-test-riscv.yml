@@ -1,0 +1,176 @@
+
+name: "RISC-V Build & Test"
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # Cross-compile for riscv64 targeting the RVV 1.0 ISA (rv64gcv).
+  # The experimental RVVM1 SIMD backend is enabled here so that the
+  # vector code paths are also built and exercised under QEMU.
+  COMMON_CMAKE_FLAGS: >
+    -DSLEEF_SHOW_CONFIG=1
+    -DSLEEF_BUILD_INLINE_HEADERS=ON
+    -DSLEEF_BUILD_DFT=ON
+    -DSLEEF_ENFORCE_DFT=ON
+    -DSLEEF_BUILD_QUAD=ON
+    -DSLEEF_BUILD_STATIC_TEST_BINS=OFF
+    -DSLEEF_ENABLE_RVVM1=ON
+    -DSLEEF_ENFORCE_RVVM1=ON
+
+jobs:
+  build-riscv:
+    runs-on: ubuntu-24.04
+    name: build-riscv64-gcc
+
+    steps:
+      - uses: actions/checkout@v4.1.1
+        with:
+          persist-credentials: false
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            cmake ninja-build pkg-config \
+            libmpfr-dev libgmp-dev libssl-dev \
+            qemu-user-static binfmt-support \
+            gcc-14-riscv64-linux-gnu g++-14-riscv64-linux-gnu
+
+      - name: Print compiler and tool versions
+        run: |
+          riscv64-linux-gnu-gcc-14 --version
+          riscv64-linux-gnu-g++-14 --version
+          qemu-riscv64-static --version
+          cmake --version
+
+      - name: Native build (host tools required for cross build)
+        shell: bash -ex -o pipefail {0}
+        run: |
+          export NATIVE_INSTALL_PREFIX=$(pwd)/_install-native
+          cmake -S . -B _build-native -GNinja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=$NATIVE_INSTALL_PREFIX \
+            -DSLEEF_SHOW_CONFIG=1 \
+            -DSLEEF_BUILD_QUAD=ON \
+            -DSLEEF_BUILD_DFT=ON \
+            -DSLEEF_ENFORCE_DFT=OFF
+          cmake --build _build-native -j$(nproc)
+
+      - name: Cross-build for RISC-V (rv64gcv, RVVM1)
+        shell: bash -ex -o pipefail {0}
+        run: |
+          # The shipped riscv64-gcc.cmake toolchain file only configures
+          # CMAKE_C_COMPILER via find_program. CMake otherwise falls back
+          # to the host /usr/bin/c++ for CXX. Resolve absolute paths and
+          # pass both compilers explicitly.
+          RISCV_CC=$(command -v riscv64-linux-gnu-gcc-14)
+          RISCV_CXX=$(command -v riscv64-linux-gnu-g++-14)
+          echo "Using CC=$RISCV_CC CXX=$RISCV_CXX"
+          export CROSS_INSTALL_PREFIX=$(pwd)/_install-riscv
+          # The RVVM1 backend is enabled via SLEEF_ENABLE_RVVM1 /
+          # SLEEF_ENFORCE_RVVM1. SLEEF's Configure.cmake automatically
+          # appends -march=rv64gcv_zba_zbb_zbs to the RVVM1 sources, so
+          # the toolchain does not need a global -march override.
+          cmake -S . -B _build-riscv -GNinja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_TOOLCHAIN_FILE=$(pwd)/toolchains/riscv64-gcc.cmake \
+            -DCMAKE_C_COMPILER="$RISCV_CC" \
+            -DCMAKE_CXX_COMPILER="$RISCV_CXX" \
+            -DNATIVE_BUILD_DIR=$(pwd)/_build-native \
+            -DCMAKE_INSTALL_PREFIX=$CROSS_INSTALL_PREFIX \
+            ${COMMON_CMAKE_FLAGS}
+          cmake --build _build-riscv -j$(nproc)
+          cmake --install _build-riscv
+
+      - name: Upload build-riscv64-gcc artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-riscv64-gcc
+          path: |
+            _build-riscv
+            _install-riscv
+        if: always()
+
+  test-riscv:
+    runs-on: ubuntu-24.04
+    needs: [build-riscv]
+    name: test-riscv64-gcc
+    env:
+      # QEMU user-mode needs to be told where the riscv64 sysroot
+      # lives so it can locate the dynamic linker
+      # (/lib/ld-linux-riscv64-lp64d.so.1). Without this the kernel
+      # binfmt_misc handler invokes qemu-riscv64-static and qemu
+      # fails with "Could not open '/lib/ld-linux-riscv64-lp64d.so.1'".
+      QEMU_LD_PREFIX: /usr/riscv64-linux-gnu
+
+    steps:
+      - uses: actions/checkout@v4.1.1
+        with:
+          persist-credentials: false
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            cmake ninja-build \
+            libmpfr-dev libgmp-dev libssl-dev \
+            qemu-user-static binfmt-support \
+            gcc-14-riscv64-linux-gnu g++-14-riscv64-linux-gnu
+
+      - name: Register QEMU binfmt for riscv64
+        run: |
+          # Make sure the kernel binfmt_misc handler is enabled so
+          # RISC-V binaries are transparently launched under QEMU.
+          sudo update-binfmts --enable qemu-riscv64 || true
+          cat /proc/sys/fs/binfmt_misc/qemu-riscv64 || true
+          # Sanity check
+          echo 'int main(void){return 0;}' | riscv64-linux-gnu-gcc-14 -x c - -o /tmp/_rvchk
+          /tmp/_rvchk && echo "binfmt OK"
+
+      - name: Download build-riscv64-gcc artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-riscv64-gcc
+
+      - name: Fix permissions
+        run: |
+          chmod -R +x _build-riscv/bin || true
+
+      - name: Test riscv64 (under QEMU)
+        env:
+          CTEST_OUTPUT_ON_FAILURE: "TRUE"
+          OMP_WAIT_POLICY: passive
+        run: |
+          export LD_LIBRARY_PATH=$(pwd)/_install-riscv/lib:$(pwd)/_install-riscv/lib64
+          cd _build-riscv
+          # QEMU emulation is much slower than native, so use fewer parallel
+          # jobs to avoid timeouts and excessive memory use.
+          ctest -j2 --output-on-failure --timeout 1800
+
+      - name: Hello example RISC-V
+        shell: bash -ex -o pipefail {0}
+        run: |
+          export LD_LIBRARY_PATH=$(pwd)/_install-riscv/lib:$(pwd)/_install-riscv/lib64
+          RISCV_CC=$(command -v riscv64-linux-gnu-gcc-14)
+          "$RISCV_CC" -march=rv64gcv_zba_zbb_zbs -static \
+            docs/src/helloriscv.c -o hello-riscv \
+            -I"$(pwd)/_install-riscv/include" \
+            -L"$(pwd)/_install-riscv/lib" -lsleef
+          qemu-riscv64-static -L /usr/riscv64-linux-gnu ./hello-riscv
+
+      - name: Upload test-riscv64-gcc artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-riscv64-gcc
+          path: |
+            _build-riscv/Testing
+        if: always()
