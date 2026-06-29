@@ -5,7 +5,7 @@
 /*          http://www.boost.org/LICENSE_1_0.txt)                    */
 /*********************************************************************/
 
-#if !defined(__ARM_NEON) && !defined(SLEEF_GENHEADER)
+#if !defined(__ARM_NEON) && !defined(_M_ARM64) && !defined(SLEEF_GENHEADER)
 #error Please specify advsimd flags.
 #endif
 
