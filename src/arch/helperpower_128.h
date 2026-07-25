@@ -430,6 +430,12 @@ static INLINE vdouble vrint_vd_vd(vdouble vd)
 static INLINE vfloat vrint_vf_vf(vfloat vf)
 { return vec_rint(vf); }
 
+static INLINE vdouble vfloor_vd_vd(vdouble v) { return vec_floor(v); }
+static INLINE vfloat vfloor_vf_vf(vfloat v) { return vec_floor(v); }
+
+static INLINE vdouble vceil_vd_vd(vdouble v) { return vec_ceil(v); }
+static INLINE vfloat vceil_vf_vf(vfloat v) { return vec_ceil(v); }
+
 /**********************************************
  ** Logical
  **********************************************/

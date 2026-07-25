@@ -90,6 +90,8 @@ static INLINE int vavailability_i(int name) { return 3; }
 
 #define FULL_FP_ROUNDING
 //@#define FULL_FP_ROUNDING
+#define NATIVE_ROUND
+//@#define NATIVE_ROUND
 #define ACCURATE_SQRT
 //@#define ACCURATE_SQRT
 
@@ -750,6 +752,16 @@ static INLINE vint vrint_vi_vd(vdouble vd) {
 static INLINE vdouble vrint_vd_vd(vdouble vd) {
   return svrintn_f64_x(ptrue, vd);
 }
+
+static INLINE vdouble vfloor_vd_vd(vdouble v) { return svrintm_f64_x(ptrue, v); }
+static INLINE vfloat vfloor_vf_vf(vfloat v) { return svrintm_f32_x(ptrue, v); }
+
+static INLINE vdouble vceil_vd_vd(vdouble v) { return svrintp_f64_x(ptrue, v); }
+static INLINE vfloat vceil_vf_vf(vfloat v) { return svrintp_f32_x(ptrue, v); }
+
+static INLINE vdouble vround_vd_vd(vdouble v) { return svrinta_f64_x(ptrue, v); }
+static INLINE vfloat vround_vf_vf(vfloat v) { return svrinta_f32_x(ptrue, v); }
+
 
 // FP math operations
 static INLINE vdouble vadd_vd_vd_vd(vdouble x, vdouble y) {

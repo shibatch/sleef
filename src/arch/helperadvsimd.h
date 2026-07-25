@@ -39,6 +39,8 @@
 
 #define FULL_FP_ROUNDING
 //@#define FULL_FP_ROUNDING
+#define NATIVE_ROUND
+//@#define NATIVE_ROUND
 #define ACCURATE_SQRT
 //@#define ACCURATE_SQRT
 
@@ -528,6 +530,16 @@ static INLINE vdouble vsel_vd_vo_vo_d_d_d(vopmask o0, vopmask o1, double d0, dou
 
 static INLINE vdouble vrint_vd_vd(vdouble d) { return vrndnq_f64(d); }
 static INLINE vfloat vrint_vf_vf(vfloat d) { return vrndnq_f32(d); }
+
+static INLINE vdouble vfloor_vd_vd(vdouble v) { return vrndmq_f64(v); }
+static INLINE vfloat vfloor_vf_vf(vfloat v) { return vrndmq_f32(v); }
+
+static INLINE vdouble vceil_vd_vd(vdouble v) { return vrndpq_f64(v); }
+static INLINE vfloat vceil_vf_vf(vfloat v) { return vrndpq_f32(v); }
+
+static INLINE vdouble vround_vd_vd(vdouble v) { return vrndaq_f64(v); }
+static INLINE vfloat vround_vf_vf(vfloat v) { return vrndaq_f32(v); }
+
 
 /****************************************/
 /* int <--> float conversions           */

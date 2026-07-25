@@ -352,6 +352,12 @@ static INLINE vfloat vtruncate_vf_vf(vfloat vd) {
 static INLINE vfloat vrint_vf_vf(vfloat vd) {
   return _mm512_roundscale_ps(vd, _MM_FROUND_TO_NEAREST_INT |_MM_FROUND_NO_EXC);
 }
+static INLINE vdouble vfloor_vd_vd(vdouble v) { return _mm512_roundscale_pd(v, _MM_FROUND_TO_NEG_INF |_MM_FROUND_NO_EXC); }
+static INLINE vfloat vfloor_vf_vf(vfloat v) { return _mm512_roundscale_ps(v, _MM_FROUND_TO_NEG_INF |_MM_FROUND_NO_EXC); }
+
+static INLINE vdouble vceil_vd_vd(vdouble v) { return _mm512_roundscale_pd(v, _MM_FROUND_TO_POS_INF |_MM_FROUND_NO_EXC); }
+static INLINE vfloat vceil_vf_vf(vfloat v) { return _mm512_roundscale_ps(v, _MM_FROUND_TO_POS_INF |_MM_FROUND_NO_EXC); }
+
 
 static INLINE vfloat vadd_vf_vf_vf(vfloat x, vfloat y) { return _mm512_add_ps(x, y); }
 static INLINE vfloat vsub_vf_vf_vf(vfloat x, vfloat y) { return _mm512_sub_ps(x, y); }
