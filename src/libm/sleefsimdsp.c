@@ -2163,24 +2163,36 @@ EXPORT CONST vfloat xtruncf(vfloat x) {
 }
 
 EXPORT CONST vfloat xfloorf(vfloat x) {
+#ifdef FULL_FP_ROUNDING
+    return vfloor_vf_vf(x);
+#else
   vfloat fr = vsub_vf_vf_vf(x, vcast_vf_vi2(vtruncate_vi2_vf(x)));
   fr = vsel_vf_vo_vf_vf(vlt_vo_vf_vf(fr, vcast_vf_f(0)), vadd_vf_vf_vf(fr, vcast_vf_f(1.0f)), fr);
   return vsel_vf_vo_vf_vf(vor_vo_vo_vo(visinf_vo_vf(x), vge_vo_vf_vf(vabs_vf_vf(x), vcast_vf_f(INT64_C(1) << 23))), x, vcopysign_vf_vf_vf(vsub_vf_vf_vf(x, fr), x));
+#endif
 }
 
 EXPORT CONST vfloat xceilf(vfloat x) {
+#ifdef FULL_FP_ROUNDING
+    return vceil_vf_vf(x);
+#else
   vfloat fr = vsub_vf_vf_vf(x, vcast_vf_vi2(vtruncate_vi2_vf(x)));
   fr = vsel_vf_vo_vf_vf(vle_vo_vf_vf(fr, vcast_vf_f(0)), fr, vsub_vf_vf_vf(fr, vcast_vf_f(1.0f)));
   return vsel_vf_vo_vf_vf(vor_vo_vo_vo(visinf_vo_vf(x), vge_vo_vf_vf(vabs_vf_vf(x), vcast_vf_f(INT64_C(1) << 23))), x, vcopysign_vf_vf_vf(vsub_vf_vf_vf(x, fr), x));
+#endif
 }
 
 EXPORT CONST vfloat xroundf(vfloat d) {
+#ifdef NATIVE_ROUND
+    return vround_vf_vf(d);
+#else
   vfloat x = vadd_vf_vf_vf(d, vcast_vf_f(0.5f));
   vfloat fr = vsub_vf_vf_vf(x, vcast_vf_vi2(vtruncate_vi2_vf(x)));
   x = vsel_vf_vo_vf_vf(vand_vo_vo_vo(vle_vo_vf_vf(x, vcast_vf_f(0)), veq_vo_vf_vf(fr, vcast_vf_f(0))), vsub_vf_vf_vf(x, vcast_vf_f(1.0f)), x);
   fr = vsel_vf_vo_vf_vf(vlt_vo_vf_vf(fr, vcast_vf_f(0)), vadd_vf_vf_vf(fr, vcast_vf_f(1.0f)), fr);
   x = vsel_vf_vo_vf_vf(veq_vo_vf_vf(d, vcast_vf_f(0.4999999701976776123f)), vcast_vf_f(0), x);
   return vsel_vf_vo_vf_vf(vor_vo_vo_vo(visinf_vo_vf(d), vge_vo_vf_vf(vabs_vf_vf(d), vcast_vf_f(INT64_C(1) << 23))), d, vcopysign_vf_vf_vf(vsub_vf_vf_vf(x, fr), d));
+#endif
 }
 
 EXPORT CONST vfloat xrintf(vfloat d) {

@@ -40,6 +40,8 @@
 
 #define ACCURATE_SQRT
 //@#define ACCURATE_SQRT
+#define NATIVE_ROUND
+//@#define NATIVE_ROUND
 #define FULL_FP_ROUNDING
 //@#define FULL_FP_ROUNDING
 
@@ -134,7 +136,14 @@ static INLINE vdouble vcast_vd_d(double d) { return (vdouble) { d, d }; }
 static INLINE vdouble vcast_vd_vi(vint vi) { return (vdouble) { (double)vi[0], (double)vi[1] }; }
 static INLINE vfloat vcast_vf_vi2(vint2 vi) { return (vfloat) { (float)vi[0], (float)vi[1], (float)vi[2], (float)vi[3] }; }
 static INLINE vdouble vtruncate_vd_vd(vdouble vd) { return __builtin_s390_vfidb(vd, 4, 5); }
+
 static INLINE vdouble vrint_vd_vd(vdouble vd) { return __builtin_s390_vfidb(vd, 4, 4); }
+static INLINE vdouble vfloor_vd_vd(vdouble vd) { return __builtin_s390_vfidb(vd, 4, 7); }
+static INLINE vfloat  vfloor_vf_vf(vfloat  vf) { return __builtin_s390_vfisb(vf, 4, 7); }
+static INLINE vdouble vceil_vd_vd (vdouble vd) { return __builtin_s390_vfidb(vd, 4, 6); }
+static INLINE vfloat  vceil_vf_vf (vfloat  vf) { return __builtin_s390_vfisb(vf, 4, 6); }
+static INLINE vdouble vround_vd_vd(vdouble vd) { return __builtin_s390_vfidb(vd, 4, 1); }
+static INLINE vfloat  vround_vf_vf(vfloat  vf) { return __builtin_s390_vfisb(vf, 4, 1); }
 
 static INLINE vint vrint_vi_vd(vdouble vd) {
   vd = vrint_vd_vd(vd);

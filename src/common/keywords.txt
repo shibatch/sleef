@@ -386,6 +386,12 @@ vrev21_vf_vf
 vreva2_vd_vd
 vreva2_vf_vf
 vrint_vd_vd
+vfloor_vd_vd
+vfloor_vf_vf
+vceil_vd_vd
+vceil_vf_vf
+vround_vd_vd
+vround_vf_vf
 vrint2_vd_vd
 vrint_vf_vf
 vrint_vi2_vf

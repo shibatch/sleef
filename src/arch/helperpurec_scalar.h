@@ -27,6 +27,13 @@
 #define TRUNC trunc
 #define TRUNCF truncf
 
+#define FLOOR floor
+#define FLOORF floorf
+#define CEIL ceil
+#define CEILF ceilf
+#define ROUND round
+#define ROUNDF roundf
+
 #else
 
 #define SQRT __builtin_sqrt
@@ -37,6 +44,14 @@
 #define RINTF __builtin_rintf
 #define TRUNC __builtin_trunc
 #define TRUNCF __builtin_truncf
+
+#define FLOOR __builtin_floor
+#define FLOORF __builtin_floorf
+#define CEIL __builtin_ceil
+#define CEILF __builtin_ceilf
+#define ROUND __builtin_round
+#define ROUNDF __builtin_roundf
+
 
 #endif
 
@@ -91,6 +106,8 @@
 #if defined(__aarch64__) || CONFIG == 3
 #define FULL_FP_ROUNDING
 //@#define FULL_FP_ROUNDING
+#define NATIVE_ROUND
+//@#define NATIVE_ROUND
 #endif
 
 #define DFTPRIORITY LOG2VECTLENDP
@@ -189,6 +206,15 @@ static INLINE vint vrint_vi_vd(vdouble d) { return (int32_t)RINT(d); }
 static INLINE vdouble vrint_vd_vd(vdouble vd) { return RINT(vd); }
 static INLINE vdouble vtruncate_vd_vd(vdouble vd) { return TRUNC(vd); }
 static INLINE vint vtruncate_vi_vd(vdouble vd) { return (int32_t)TRUNC(vd); }
+
+static INLINE vdouble vfloor_vd_vd(vdouble v) { return FLOOR(v); }
+static INLINE vfloat vfloor_vf_vf(vfloat v) { return FLOORF(v); }
+
+static INLINE vdouble vceil_vd_vd(vdouble v) { return CEIL(v); }
+static INLINE vfloat vceil_vf_vf(vfloat v) { return CEILF(v); }
+
+static INLINE vdouble vround_vd_vd(vdouble v) { return ROUND(v); }
+static INLINE vfloat vround_vf_vf(vfloat v) { return ROUNDF(v); }
 #else
 static INLINE vint vrint_vi_vd(vdouble a) {
   a += a > 0 ? 0.5 : -0.5;
